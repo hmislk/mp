@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.ItemController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -223,6 +224,16 @@ public class PurchaseOrderRequestController implements Serializable {
 
         }
         saveBill();
+   //     saveBillComponent();
+        getNetTotal();
+    }
+    
+     public void createOrderWithItems() {
+        if (getDealor() == null) {
+            UtilityController.addErrorMessage("Please Select Dealor");
+
+        }
+        saveBill();
         saveBillComponent();
         getNetTotal();
     }
@@ -274,11 +285,15 @@ public class PurchaseOrderRequestController implements Serializable {
     public PurchaseOrderRequestController() {
     }
 
+    
+    @Inject
+    private ItemController itemController;
     public Institution getDealor() {
         return dealor;
     }
 
     public void setDealor(Institution dealor) {
+        getItemController().setInstituion(dealor);
         this.dealor = dealor;
     }
 
@@ -393,5 +408,13 @@ public class PurchaseOrderRequestController implements Serializable {
 
     public void setSelectedBillItems(List<BillItem> selectedBillItems) {
         this.selectedBillItems = selectedBillItems;
+    }
+
+    public ItemController getItemController() {
+        return itemController;
+    }
+
+    public void setItemController(ItemController itemController) {
+        this.itemController = itemController;
     }
 }

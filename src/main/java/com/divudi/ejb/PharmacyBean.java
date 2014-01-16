@@ -235,17 +235,17 @@ public class PharmacyBean {
         hm.put("bch", batch);
         hm.put("dep", department);
         Stock s = getStockFacade().findFirstBySQL(sql, hm);
-        System.err.println("ss" + s);
+//        System.err.println("ss" + s);
         if (s == null) {
             s = new Stock();
             s.setDepartment(department);
             s.setItemBatch(batch);
         }
         s.setStock(s.getStock() + qty);
-        System.err.println("Stock 1 : " + s.getStock());
-        System.err.println("Stock 2 : " + qty);
-        System.err.println("Stock 3 : " + s);
-        System.err.println("Stock 4 : " + s.getId());
+//        System.err.println("Stock 1 : " + s.getStock());
+//        System.err.println("Stock 2 : " + qty);
+//        System.err.println("Stock 3 : " + s);
+//        System.err.println("Stock 4 : " + s.getId());
         if (s.getId() == null || s.getId() == 0) {
             //  Stock ss = new Stock();
             getStockFacade().create(s);

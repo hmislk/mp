@@ -73,7 +73,6 @@ public class PharmacyRecieveBean {
 //
 //       
 //    }
-
     public List<Item> getItemsForDealor(Institution i) {
         String temSql;
         List<Item> tmp;
@@ -150,11 +149,10 @@ public class PharmacyRecieveBean {
         hm.put("bt", b);
         hm.put("btp", billType);
         hm.put("class", bill.getClass());
-        
 
-        double value= getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println("GETTING TOTAL QTY "+value);
+        System.err.println("GETTING TOTAL QTY " + value);
         return value;
     }
 
@@ -171,7 +169,7 @@ public class PharmacyRecieveBean {
         return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
     }
-    
+
     public double getTotalQty(BillItem b, BillType billType) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "   p.creater is not null and"
@@ -251,8 +249,6 @@ public class PharmacyRecieveBean {
 //
 //        return billed - (cancelled + returned);
 //    }
-   
-
     public PharmaceuticalBillItem savePharmacyBillItem(BillItem b, PharmaceuticalBillItem i) {
         PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
         tmp.setBillItem(b);
@@ -267,8 +263,6 @@ public class PharmacyRecieveBean {
 
         return tmp;
     }
-
-   
 
     public BillItem saveBillItem(BillItem tmp, Bill b) {
         //     BillItem tmp = new BillItem();
@@ -445,9 +439,14 @@ public class PharmacyRecieveBean {
     }
 
     public ItemBatch saveItemBatch(BillItem tmp) {
-        System.err.println("Save Item Batch");
+        //   System.err.println("Save Item Batch");
         ItemBatch itemBatch = new ItemBatch();
-        Item itm = tmp.getPharmaceuticalBillItem().getBillItem().getItem();
+        Item itm = tmp.getItem();
+
+        if (itm instanceof Ampp) {
+            itm = ((Ampp) itm).getAmp();
+        }
+
         double purchase = tmp.getPharmaceuticalBillItem().getPurchaseRateInUnit();
         double retail = tmp.getPharmaceuticalBillItem().getRetailRateInUnit();
 
@@ -462,17 +461,9 @@ public class PharmacyRecieveBean {
         HashMap hash = new HashMap();
         String sql;
 
-        if (itm instanceof Amp) {
-            itemBatch.setItem(itm);
-            sql = "Select p from ItemBatch p where  p.item.id=" + itemBatch.getItem().getId()
-                    + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
-
-        } else {
-            Amp amp = getAmpFacade().findFirstBySQL("Select a.amp from Ampp a where a.retired=false and a.id=" + itm.getId());
-            itemBatch.setItem(amp);
-            sql = "Select p from ItemBatch p where  p.item.id=" + amp.getId()
-                    + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
-        }
+        itemBatch.setItem(itm);
+        sql = "Select p from ItemBatch p where  p.item.id=" + itemBatch.getItem().getId()
+                + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
 
         hash.put("doe", itemBatch.getDateOfExpire());
 
@@ -604,9 +595,9 @@ public class PharmacyRecieveBean {
                 msg = "Please Fill Memo and Bank";
             }
         }
-        
-        if(b.getBillItems().isEmpty()){
-            msg="There is no Item to receive";
+
+        if (b.getBillItems().isEmpty()) {
+            msg = "There is no Item to receive";
         }
 
         if (checkItemBatch(b.getBillItems())) {

@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel>
+                <p:panel header="Admitted Patients">
+                    <h:panelGrid id="gpSelectText" columns="3" >
+                        <h:outputLabel value="Type Patinet Name or BHT"/>
+                        <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
+                                        value="#{roomChangeController.current}"
+                                        completeMethod="#{roomChangeController.completePatient}" 
+                                        var="myItem" itemValue="#{myItem}" 
+                                        itemLabel="#{myItem.bhtNo}" 
+                                        size="30"  style="width: 400px;" required="true"> 
+                            <f:ajax execute="acPt" render="gpDetail" event="itemSelect" />
+                            <p:column>
+                                #{myItem.bhtNo}
+                            </p:column>
+                            <p:column>
+                                #{myItem.patient.person.nameWithTitle}
+                            </p:column>
+                        </p:autoComplete>   
+
+                    </h:panelGrid>
+                </p:panel>
+
+                <p:panel id="gpDetail">
+                    <p:panel>
+                        <p:panelGrid columns="2" style="min-width: 100%;">
+                            <p:panel header="Patient Detail" >
+                                <h:panelGrid columns="2">
+                                    <h:outputText  value="Name" ></h:outputText>
+                                    <h:outputText value="#{roomChangeController.current.patient.person.nameWithTitle}"/>
+                                    <h:outputText value="NIC" ></h:outputText>
+                                    <h:outputText  value="#{roomChangeController.current.patient.person.nic}"  />
+                                    <h:outputLabel value="Age"/>
+                                    <h:outputLabel value="#{roomChangeController.current.patient.age}"/>
+                                    <h:outputText value="Address" ></h:outputText>
+                                    <h:outputText  value="#{roomChangeController.current.patient.person.address}" />
+                                    <h:outputText value="Phone No" ></h:outputText>
+                                    <h:outputText  value="#{roomChangeController.current.patient.person.phone}"  />
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <p:panel header="Gardian Detail">
+                                <h:panelGrid columns="2">
+                                    <h:outputText  value="Name" ></h:outputText>
+                                    <h:inputText value="#{roomChangeController.current.guardian.name}"  ></h:inputText>
+                                    <h:outputText value="Address" ></h:outputText>
+                                    <h:inputText  value="#{roomChangeController.current.guardian.address}"  ></h:inputText>
+                                    <h:outputText value="Phone No" ></h:outputText>
+                                    <h:inputText  value="#{roomChangeController.current.guardian.phone}"  ></h:inputText>
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="2" style="min-width: 100%;">
+
+                            <p:panel header="Current Room Detail">
+                                <p:panelGrid columns="2">
+
+                                    <h:outputLabel value="Room Name"/>
+                                    <h:outputLabel value=" #{roomChangeController.currentPatientRoom.roomFacilityCharge.name}"/>
+
+                                    <h:outputLabel  value="Admitted At"/>
+                                    <h:outputLabel  value="#{roomChangeController.currentPatientRoom.admittedAt}"/>                                        
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel header="New Room Detail">
+                                <p:panelGrid columns="2">
+                                    <h:outputLabel value="Type Room Number or Facility"/>
+                                    <p:autoComplete converter="fac" forceSelection="true" id="cmbDoc" value="#{roomChangeController.newRoomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoomChange}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;" required="true">
+                                    </p:autoComplete>
+
+                                     <h:outputLabel value="Change at"/>
+                                     <p:calendar styleClass="dateTimePicker" id="changeAt" value="#{roomChangeController.changeAt}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                        <f:ajax event="dateSelect"  render="changeAt"/>
+                                    </p:calendar>
+                                     
+                                     <h:outputLabel value="Additional Linen Charge"/>
+                                     <h:inputText value="#{roomChangeController.addLinenCharge}"/>
+
+                                </p:panelGrid>                                    
+                            </p:panel>                                    
+                        </p:panelGrid>
+
+                        <p:commandButton id="btnSave" value="Change"  action="#{roomChangeController.change()}" ajax="false" styleClass="buttons">
+                            
+                        </p:commandButton>
+
+                    </p:panel>
+                </p:panel>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

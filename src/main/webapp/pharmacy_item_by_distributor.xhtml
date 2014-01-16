@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+        <h:form>
+            <p:commandButton ajax="false" value="Refresh" action="#{itemsDistributorsController.clearAllItems()}"/>
+            <p:dataTable value="#{itemsDistributorsController.all}" var="i" filteredValue="#{itemsDistributorsController.filter}">
+
+                <h:outputLabel value="#{i.institution.name}"/>
+                </p:column>
+                <p:column headerText="Item Name" filterBy="#{i.item.name}">
+                    <h:outputLabel value="#{i.item.name}"/>
+                </p:column>   
+                <p:column headerText="Catogory" filterBy="#{i.item.category.name}">
+                    <h:outputLabel value="#{i.item.category.name}"/>
+                </p:column>  
+                <p:column headerText="Class" filterBy="#{i.institution.name}">
+                    <h:outputLabel value="#{i.item.category.entityClass}"/>
+                </p:column>
+                <p:column headerText="Manufactures" filterBy="#{i.item.institution.name}">
+                    <h:outputLabel value="#{i.item.institution.name}"/>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>    
+
+
+    </ui:define>
+
+</ui:composition>

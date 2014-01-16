@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+
+                    <p:panel header="Patient" styleClass="alignTop" >
+                        <h:panelGrid columns="2" >
+                            <p:panel header="Search" >
+                                <f:facet name="header" >
+                                    <h:outputLabel value="Search" />
+                                    <p:commandButton id="btnAddPt" style="float: right;" value="New" process="btnAddPt" update="acPt :#{p:component('panelDetails')} " action="#{patientController.prepareAdd()}" >
+
+                                    </p:commandButton>
+                                </f:facet>
+
+                                <h:panelGrid columns="1" >
+                                    <h:outputLabel value="Search by Name/Address" />
+                                    <p:autoComplete widgetVar="aPt" id="acPt" forceSelection="true" 
+                                                    value="#{patientController.current}" 
+                                                    completeMethod="#{patientController.completePatient}" 
+                                                    var="apt" itemLabel="#{apt.person.name}" 
+                                                    itemValue="#{apt}" size="30"  style="width: 400px;">
+                                        <p:column headerText="Name">
+                                            <h:outputLabel value="#{apt.person.nameWithTitle}" />
+                                        </p:column>
+
+                                        <p:column headerText="Age">
+                                            <h:outputLabel value="#{apt.age}" />
+                                        </p:column>
+                                        <p:column headerText="Code">
+                                            <h:outputLabel value="#{apt.code}" />
+                                        </p:column>
+                                        <p:column headerText="Sex">
+                                            <h:outputLabel value="#{apt.person.sex}" />
+                                        </p:column>
+                                        <p:column headerText="Address">
+                                            <h:outputLabel value="#{apt.person.address}" />
+                                        </p:column>
+                                        <p:column headerText="Date of Birth">
+                                            <h:outputLabel value="#{apt.person.dob}" >
+                                                <f:convertDateTime pattern="dd MMMM yyyy"/>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <p:ajax event="itemSelect" process="acPt" update=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} "/>
+                                    </p:autoComplete>
+
+
+
+
+                                    <p:panel  id="panelQueue" header="Add to Queue" >
+                                        <h:panelGrid columns="3" >
+                                            <h:outputLabel value="Doctor" ></h:outputLabel>
+                                            <p:selectOneMenu converter="stfcon" id="scStaff" value="#{practiceBookingController.staff}" style="width: 300px; padding: 2px; margin: auto;" >
+                                                <f:selectItems value="#{practiceBookingController.consultants}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}" />
+                                                <f:ajax  event="change" execute="@this" render="bSession"  />
+                                            </p:selectOneMenu>
+                                            <p:commandButton   value="Add" ajax="false" style="float: right;" 
+                                                               onclick="if (!confirm('Are you sure you want to Add this record?'))
+                                                                           return false;" 
+                                                               action="#{practiceBookingController.addToQueue()}" >                        
+                                            </p:commandButton>
+                                        </h:panelGrid>
+                                        <p:dataTable id="bSession" value="#{practiceBookingController.billSessions}" var='bs'
+                                                     selectionMode="single" rowKey="#{bs.id}"
+                                                     selection="#{practiceBookingController.selectedBillSession}">
+                                            <!--<p:ajax event="rowSelect" process="@this" update=":#{p:component('detail')}" />-->  
+
+                                            <p:column headerText="No">#{bs.serialNo}</p:column>
+                                            <p:column headerText="Patient Name">#{bs.bill.patient.person.nameWithTitle}</p:column>
+                                        </p:dataTable>  
+
+                                    </p:panel>
+
+
+                                </h:panelGrid>
+
+                            </p:panel>
+                            <p:panel id="panelDetails"  >
+                                <f:facet name="header" >
+                                    <h:outputLabel value="Details" />
+                                    <p:commandButton style="float: right;" ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
+                                </f:facet>
+                                <h:panelGrid columns="2" >
+                                    <h:panelGrid columns="2" >
+                                        <h:outputLabel value="Title"/>
+                                        <p:selectOneMenu  rendered="#{patientController.current.person ne null}" id="cmbTitle" value="#{patientController.current.person.title}"  >
+                                            <f:selectItems value="#{patientController.titles}"/>
+                                        </p:selectOneMenu>
+                                        <h:outputLabel rendered="#{patientController.current.person eq null}" value=""/>
+                                        <h:outputLabel value="Name"/>
+                                        <p:inputText autocomplete="off" id="txtNewPtName" value="#{patientController.current.person.name}" style="width: 200px;text-transform:uppercase;">
+                                        </p:inputText>
+                                        <h:outputLabel value="Sex"/>
+                                        <h:outputLabel rendered="#{patientController.current.person eq null}" value=""/>
+                                        <p:selectOneMenu rendered="#{patientController.current.person ne null}" id="txtNewSex"  value="#{patientController.current.person.sex}" style="width: 200px;">
+                                            <f:selectItem itemLabel="Select Sex"/>
+                                            <f:selectItems value="#{patientController.sexs}"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputLabel value="Age"/>
+                                        <h:panelGrid columns="3">
+                                            <p:inputText  id="year" style="width: 50px;" autocomplete="off" value="#{patientController.yearMonthDay.year}">
+                                                <f:ajax event="keyup" execute="@this month day" render="calNewPtDob" listener="#{patientController.dateChangeListen()}"  />
+                                            </p:inputText>
+
+                                            <p:inputText id="month"   style="width: 50px;" autocomplete="off" value="#{patientController.yearMonthDay.month}">
+                                                <f:ajax event="keyup" execute="@this year day" render="calNewPtDob" listener="#{patientController.dateChangeListen()}"  />
+                                            </p:inputText>
+
+                                            <p:inputText id="day"  style="width: 50px;"  autocomplete="off" value="#{patientController.yearMonthDay.day}">
+                                                <f:ajax event="keyup" execute="@this year month" render="calNewPtDob" listener="#{patientController.dateChangeListen()}" />
+                                            </p:inputText>
+                                        </h:panelGrid>
+
+                                        <h:outputLabel value="Address"/>
+                                        <p:inputText  id="txtNewPtAddress" autocomplete="off" value="#{patientController.current.person.address}">
+                                        </p:inputText>
+
+                                        <h:outputLabel value="Phone"/>
+                                        <p:inputMask mask="999-9999999" id="txtNewPtPhone" autocomplete="off" maxlength="11" value="#{patientController.current.person.phone}">
+                                        </p:inputMask>
+                                        <h:outputLabel value="Date of Birth"/>
+                                        <p:calendar  value="#{patientController.current.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
+                                            <!--<f:ajax event="dateSelect" execute="@this" render="txtNewPtAge"/>-->
+                                        </p:calendar>
+
+                                        <h:outputLabel value="Code"/>
+                                        <h:outputLabel value="#{patientController.current.code}" ></h:outputLabel>
+                                    </h:panelGrid>
+
+                                    <p:panel id="panPhoto" >
+                                        <h:form>  
+
+                                            <h:panelGrid columns="2"> 
+                                                <p:graphicImage  style="border: 1px solid red;" id="photos" rendered="#{patientController.current.baImage ne null}"    value="#{patientController.getPhotoByByte(patientController.current.baImage)  }"  >
+                                                </p:graphicImage>
+                                                <h:panelGroup >
+                                                    <p:photoCam widgetVar="pc" listener="#{photoCamBean.oncapturePatientPhoto}" update="photos"/>  
+                                                    <p:commandButton type="button" value="Capture" onclick="PF('pc').capture()"/>  
+                                                </h:panelGroup>
+
+
+
+                                                <p:panel id="ptCard" header="Patient Card" >
+                                                    <div class="fiveinchbill" >
+                                                        <table>
+                                                            <tr>
+                                                                <td colspan="3" >
+                                                                    <h1>Baddegama Medical Services</h1>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3" >
+                                                                    <h1>Infront of Bus Stand, Baddegama</h1>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Name
+                                                                </td>
+                                                                <td>
+                                                                    :
+                                                                </td>
+                                                                <td>
+                                                                    #{patientController.current.person.nameWithTitle}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Age
+                                                                </td>
+                                                                <td>
+                                                                    :
+                                                                </td>
+                                                                <td>
+                                                                    #{patientController.current.age}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Sex
+                                                                </td>
+                                                                <td>
+                                                                    :
+                                                                </td>
+                                                                <td>
+                                                                    #{patientController.current.person.sex}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3" >
+                                                                    
+                                                                    #{patientController.current.id}
+                                                                    
+                                                                    <p:graphicImage rendered="#{patientController.current.id ne null}" value="#{barcodeController.barcodeBy}"  >
+                                                                        <f:param name="code" value="#{patientController.current.id}" />
+                                                                    </p:graphicImage>
+                                                                    
+                                                                    <p:outputLabel  value="#{barcodeController.generateBarcode}"  >
+                                                                        <f:param name="code" value="#{patientController.current.id}" />
+                                                                    </p:outputLabel>
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+
+                                                    </div>
+
+
+                                                </p:panel>
+
+
+
+
+                                            </h:panelGrid>  
+
+                                        </h:form>
+                                    </p:panel>
+
+                                </h:panelGrid>
+
+
+                            </p:panel>
+
+
+
+                        </h:panelGrid>
+                    </p:panel>
+
+                </h:form>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+</html>

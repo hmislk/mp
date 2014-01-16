@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+
+    <ui:define name="content">
+        <h:form>
+            <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+            <p:panel rendered="#{!transferIssueController.printPreview}">
+
+                <f:facet name="header" >                                  
+                    <h:panelGrid columns="4"   >
+                        <f:facet name="header">
+                            <h:outputLabel value="Department :#{transferIssueController.issuedBill.toDepartment.name}" />
+                        </f:facet>
+                        <p:autoComplete converter="stfcon" completeMethod="#{staffController.completeStaffWithoutDoctors}" styleClass="noPrintButton"
+                                        var="w" itemLabel="#{w.person.name}" itemValue="#{w}"
+                                        value="#{transferIssueController.issuedBill.toStaff}" ></p:autoComplete>
+                        <p:commandButton  value="Issue" action="#{transferIssueController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                        </p:commandButton>                        
+                    </h:panelGrid>
+                </f:facet>
+
+
+                <p:dataTable var="bilItem" scrollable="true" scrollHeight="250" 
+                             value="#{transferIssueController.issuedBill.billItems}" 
+                             id="itemList">  
+
+                    <f:facet name="header">  
+                        Requested Item 
+                    </f:facet>  
+
+                    <p:column headerText="Item Name"  style="width:50px!important;">  
+                        <h:outputLabel value="#{bilItem.item.name}"/>                        
+                    </p:column>  
+
+                     <p:column headerText="Batch No"  style="width:50px!important;">  
+                         <h:outputLabel value="#{bilItem.pharmaceuticalBillItem.stock.itemBatch.batchNo}"/>                        
+                    </p:column>  
+                     <p:column headerText="Cost Rate"  style="width:50px!important;">  
+                         <h:outputLabel value="#{bilItem.pharmaceuticalBillItem.stock.itemBatch.purcahseRate}"/>                        
+                    </p:column>  
+                    
+                    <p:column headerText="Qty" style="width:25px!important;">  
+                        <p:inputText value="#{bilItem.qty}" >
+                            <f:ajax event="blur" render="@this"   execute="@this" listener="#{transferIssueController.onEdit(bilItem)}" ></f:ajax>
+                            <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferIssueController.onFocus(bilItem)}"/>
+                        </p:inputText>
+                    </p:column>              
+
+<!--                    <p:column style="width: 10px!important;">
+                        <p:commandButton value="Remove"  ajax="false" action="#{transferIssueController.remove()}">
+                            <f:setPropertyActionListener target="#{transferIssueController.rbillItem}" value="#{billItem}"/>
+                        </p:commandButton>
+                    </p:column>-->
+                </p:dataTable>  
+
+                <p:spacer height="50"/>
+                <ph:history/>
+
+            </p:panel>
+            <p:panel rendered="#{transferIssueController.printPreview}">
+                <p:commandButton ajax="false" action="pharmacy_transfer_request_list" actionListener="#{transferIssueController.makeNull()}" value="Requested List"/>                    
+                <p:commandButton value="Print" ajax="false" action="#" >
+                    <p:printer target="gpBillPreview" ></p:printer>
+                </p:commandButton>
+
+                <p:panel   id="gpBillPreview"   >
+
+                    <ph:transferIssue bill="#{transferIssueController.issuedBill}"/>
+
+                </p:panel>
+
+            </p:panel>
+        </h:form>
+    </ui:define>  
+
+</ui:composition>

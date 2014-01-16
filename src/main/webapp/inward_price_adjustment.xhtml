@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panel header="Inward Price Adjustment Matrix" >
+
+                        <p:panel header="Add new adjustment" >
+                            <p:panelGrid columns="2" >
+                                <h:outputLabel value="Department :" />
+                                <p:autoComplete value="#{inwardPriceAdjustmntController.department}" completeMethod="#{departmentController.completeDept}" 
+                                                var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
+                                    <p:column>#{dep.name}</p:column>
+                                    <p:column>#{dep.institution.name}</p:column>
+                                </p:autoComplete>
+                                <h:outputLabel value="Category/Subcategory" ></h:outputLabel>
+                                <p:autoComplete value="#{inwardPriceAdjustmntController.category}" completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
+                                                var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
+                                    <p:column>#{cat.name}</p:column>
+                                    <p:column>#{cat.parentCategory}</p:column> 
+
+                                </p:autoComplete>
+               
+                                <h:outputLabel value="From" ></h:outputLabel>
+                                <p:inputText value="#{inwardPriceAdjustmntController.fromPrice}" />
+                                <h:outputLabel value="To" ></h:outputLabel>
+                                <p:inputText value="#{inwardPriceAdjustmntController.toPrice}" />
+                                <h:outputLabel value="Margin" ></h:outputLabel>
+                                <p:inputText value="#{inwardPriceAdjustmntController.margin}" />
+                                <h:outputLabel value="" ></h:outputLabel>
+                                <p:commandButton value="Add" ajax="false" action="#{inwardPriceAdjustmntController.saveSelected}" >
+                                </p:commandButton>
+
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Price Matrix" >
+
+                            <p:dataTable value="#{inwardPriceAdjustmntController.items}" var="a" >
+                                <p:column headerText="Institution Name">
+                                    <h:outputLabel value="#{a.institution.name}" />
+                                </p:column>
+
+                                <p:column headerText="Department Name">
+                                    <h:outputLabel value="#{a.department.name}" />
+                                </p:column>
+                                <p:column headerText="Category Name">
+                                    <h:outputLabel value="#{a.category.name}" />
+                                </p:column>
+                                <p:column headerText="From Price">
+                                    <h:outputLabel value="#{a.fromPrice}" >
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column  headerText="To Price">
+                                    <h:outputLabel value="#{a.toPrice}" >
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column  headerText="Margin">
+                                    <h:outputLabel value="#{a.margin}" >
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <h:commandButton value="Delete" action="#{inwardPriceAdjustmntController.delete}">
+                                        <f:setPropertyActionListener value="#{a}" target="#{inwardPriceAdjustmntController.current}"/>
+                                    </h:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+
+
+                        </p:panel>
+
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

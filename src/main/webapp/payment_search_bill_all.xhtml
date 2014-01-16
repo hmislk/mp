@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+        <ui:composition template="./resources/template/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <p:panel header="Search Bills" >
+                        <f:facet name="header" >
+                            <h:panelGroup>
+                                <h:panelGrid columns="5">     
+                                    <h:outputLabel value="Payment Done Search"/>
+                                    <h:outputLabel value="From Date"/>
+                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                        <f:ajax event="dateSelect" render="tblBills"  execute="toDate fromDate" listener="#{billSearch.createPaymentTable()}"/>
+                                    </p:calendar>
+                                    <h:outputLabel value="To Date"/>
+                                    <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                        <f:ajax event="dateSelect" render="tblBills"  execute="toDate fromDate" listener="#{billSearch.createPaymentTable()}"/>
+                                    </p:calendar>
+                                </h:panelGrid>                             
+                            </h:panelGroup>
+                        </f:facet>
+
+                        <p:dataTable id="tblBills" value="#{billSearch.searchBills}" var="bill" 
+                                     paginator="true" rows="20"  lazy="true"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
+                                     rowsPerPageTemplate="5,10,15" >
+                            <p:column headerText="Bill No" filterBy="#{bill.insId}" >
+                                <h:commandLink action="payment_bill_reprint" value="#{bill.insId}">
+                                    <h:outputLabel  ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>                          
+                            <p:column headerText="Billing Centre" filterBy="#{bill.institution.name}" >
+                                <h:commandLink action="payment_bill_reprint" value="#{bill.institution.name}">
+                                    <h:outputLabel  ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Bill Date" filterBy="#{bill.billDate}" >
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel value="#{bill.billDate}" >
+                                        <f:convertDateTime pattern="dd MM yyyy"/>
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Bill Time" filterBy="#{bill.billTime}">
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel value="#{bill.billTime}" >
+                                        <f:convertDateTime pattern="HH:mm "/>
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Doctor" filterBy="#{bill.staff.person.nameWithTitle}" >
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel value="#{bill.staff.person.nameWithTitle}" ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Doctor Phone No" filterBy="#{bill.staff.person.phone}" >
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel value="#{bill.staff.person.phone}" ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Billed By" filterBy="#{bill.creater.webUserPerson.name}" >
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel value="#{bill.creater.webUserPerson.name}" ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>                           
+                            <p:column headerText="Net Value" filterBy="#{bill.netTotal}" >
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel value="#{bill.netTotal}" >
+                                        <f:convertNumber pattern="#,000.00"/>
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Cancellation Details" filterBy="#{bill.cancelledBill.creater.webUserPerson.name}" >
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                                <h:commandLink action="payment_bill_reprint" >
+                                    <h:outputLabel rendered="#{bill.cancelled}" value="#{bill.cancelledBill.createdAt}" >
+                                        <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>
+                            <p:column headerText="Comments">
+                                <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
+                                </h:outputLabel>
+                                <h:outputLabel  rendered="#{bill.cancelledBill ne null}" value="#{bill.cancelledBill.comments}" >
+                                </h:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+
+
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

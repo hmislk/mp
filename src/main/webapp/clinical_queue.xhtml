@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form >
+                    <p:panel >
+
+
+                        <p:panel  id="panelQueue" header="Queue" >
+                            <h:panelGrid columns="3" >
+                                <h:outputLabel value="Doctor" ></h:outputLabel>
+                                <p:selectOneMenu converter="stfcon" id="scStaff" value="#{practiceBookingController.staff}" style="width: 300px; padding: 2px; margin: auto;" >
+                                    <f:selectItems value="#{practiceBookingController.consultants}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}" />
+                                    <f:ajax  event="change" execute="@this" render="bSession"  />
+                                </p:selectOneMenu>
+                                <p:commandButton   value="Refresh" ajax="false" style="float: right;" action="#{practiceBookingController.listBillSessions}" >                        
+                                </p:commandButton>
+                            </h:panelGrid>
+                            <p:dataTable id="bSession" value="#{practiceBookingController.billSessions}" var='bs'
+                                         selectionMode="single" rowKey="#{bs.id}"
+                                         selection="#{practiceBookingController.selectedBillSession}">
+                                <!--<p:ajax event="rowSelect" process="@this" update=":#{p:component('detail')}" />-->  
+
+                                <p:column headerText="No">#{bs.serialNo}</p:column>
+                                <p:column headerText="Patient Name">#{bs.bill.patient.person.nameWithTitle}</p:column>
+                                <p:column headerText="VIsit">
+                                
+                                    <p:commandButton value="Visit" action="#{practiceBookingController.opdVisitFromQueue()}" >
+                                        <f:setPropertyActionListener value="#{bs}" target="#{practiceBookingController.billSession}" ></f:setPropertyActionListener>
+                                    </p:commandButton>
+                                
+                                </p:column>
+                            </p:dataTable>  
+
+                        </p:panel>
+
+
+
+
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+</html>

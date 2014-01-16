@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panel rendered="#{!pharmacyPreSettleController.billPreview}">
+                        <f:facet name="header" >
+                            <h:outputLabel value="Pharmacy Bill Accept Payment" ></h:outputLabel>                        
+                        </f:facet>
+
+                        <h:panelGrid columns="20"  >
+                            <h:outputLabel value="Pharmacy Retail Bill" />
+                            <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
+                            <p:selectOneMenu   id="cmbPs" value="#{pharmacyPreSettleController.preBill.paymentScheme}"  disabled="true" >                                                                     
+                                <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
+                                <p:ajax process="cmbPs wsd wcd" update="lblCardRef txtCardRef creditBank lblCheqRef txtCheqRef bank chequeDate lblSlipRef
+                                        txtSlipRef slipBank slipDate " event="change" />
+                                <!--<p:ajax process="cmbPs wsd wcd" update="pBillDetails  tblBillItem lblCardRef txtCardRef creditBank lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />-->
+                            </p:selectOneMenu>
+
+                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
+                            <p:inputText id="txtCardRef" autocomplete="off"  value="#{pharmacyPreSettleController.creditCardRefNo}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
+                            <h:selectOneMenu id="creditBank" value="#{pharmacyPreSettleController.creditBank}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCheqRef" value="#{pharmacyPreSettleController.chequeRefNo}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="bank" value="#{pharmacyPreSettleController.chequeBank}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+                            <p:calendar id="chequeDate"  value="#{pharmacyPreSettleController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
+                            </p:calendar>
+
+                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtSlipRef" value="#{pharmacyPreSettleController.comment}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="slipBank" value="#{pharmacyPreSettleController.slipBank}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+
+                            <p:calendar id="slipDate"  value="#{pharmacyPreSettleController.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
+                            </p:calendar>
+
+                            <p:commandButton ajax= "false"  value="Settle and Accept Payment" action="#{pharmacyPreSettleController.settleBillWithPay2}" ></p:commandButton>
+
+
+                            <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
+                            <p:watermark id="wsd" value="Slip Date" for="slipDate"/>
+                        </h:panelGrid>
+
+                        <p:panel>
+                            <p:panelGrid columns="3" style="width: 100%;">
+                                <p:panel header="Customer Detail">
+                                    <p:panelGrid columns="2">
+                                        <h:outputLabel value="Name:" ></h:outputLabel>
+                                        <h:outputLabel value="#{pharmacyPreSettleController.preBill.patient.person.name}" ></h:outputLabel>                                        
+                                    </p:panelGrid>
+                                </p:panel>
+                                <p:panel header="Bill Detail">
+                                    <p:panelGrid columns="2">
+                                        <h:outputLabel value="Bill No :" ></h:outputLabel>
+                                        <h:outputLabel value="#{pharmacyPreSettleController.preBill.deptId}" ></h:outputLabel>
+                                        <h:outputLabel value="Total :" ></h:outputLabel>
+                                        <h:outputLabel value="#{pharmacyPreSettleController.preBill.total}" ><f:convertNumber pattern="#,000.00"/></h:outputLabel>
+                                        <h:outputLabel value="Discount :" ></h:outputLabel>
+                                        <h:outputLabel value="#{pharmacyPreSettleController.preBill.discount}" ><f:convertNumber pattern="#,000.00"/></h:outputLabel>
+                                        <h:outputLabel value="Net Total :" ></h:outputLabel>
+                                        <h:outputLabel value="#{pharmacyPreSettleController.preBill.netTotal}" ><f:convertNumber pattern="#,000.00"/></h:outputLabel>
+                                    </p:panelGrid>
+                                </p:panel>
+
+                                <p:panel header="Bill Details" id="pBillDetails"  >
+                                    <p:panelGrid columns="2" columnClasses="numberCol, textCol"  >
+                                        <h:outputLabel value="Total" ></h:outputLabel>
+                                        <h:outputLabel id="total" value="#{pharmacyPreSettleController.preBill.total}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                        <h:outputLabel value="Discount" ></h:outputLabel>
+                                        <h:outputLabel id="dis" value="#{pharmacyPreSettleController.preBill.discount}" >
+                                            <f:convertNumber pattern="#,##0.00" />                                          
+                                        </h:outputLabel>
+                                        <h:outputLabel value="Net Total" ></h:outputLabel>
+                                        <h:outputLabel id="netTotal" value="#{pharmacyPreSettleController.preBill.netTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                        <h:outputLabel value="Tendered" ></h:outputLabel>
+                                        <p:inputText autocomplete="off" id="paid" value="#{pharmacyPreSettleController.cashPaid}" >
+                                            <p:ajax process="total dis netTotal paid" update="balance netTotal" event="blur"/>
+                                        </p:inputText>
+                                        <h:outputLabel  value="Balance " ></h:outputLabel>
+                                        <h:outputLabel id="balance" value="#{pharmacyPreSettleController.balance}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </p:panelGrid>
+
+                                </p:panel>
+                            </p:panelGrid>
+                            <p:panel header="Bill Item Detail">
+                                <p:dataTable rowIndexVar="rowIndex" value="#{pharmacyPreSettleController.preBill.billItems}" var="bip" >
+                                    <p:column>
+                                        <f:facet name="header">No</f:facet>
+                                            #{rowIndex+1}
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Item</f:facet>
+                                            #{bip.item.name}
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Qty</f:facet>
+                                            #{bip.qty}
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Rate</f:facet>
+                                            #{bip.rate}
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Value</f:facet>
+                                            #{bip.grossValue}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </p:panel>
+                    </p:panel>
+
+
+                    <p:panel rendered="#{pharmacyPreSettleController.billPreview}">
+                        <p:commandButton ajax="false" value="Pre Bill Search" actionListener="#{pharmacyBillSearch.recreateModel()}" action="pharmacy_search_pre_bill"/>
+                        <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" >
+                            <p:printer target="gpBillPreview" />
+                        </p:commandButton>
+                        <h:panelGroup id="gpBillPreview" >
+                            <ph:saleBill bill="#{pharmacyPreSettleController.bill}"/>
+                        </h:panelGroup>
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+</html>

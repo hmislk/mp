@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="./resources/template/template.xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="form">  
+
+            <h:panelGrid columns="6">
+                <p:calendar id="date" value="#{shiftTableController.date}" pattern="dd MMMM yyyy" >                    
+                    <f:ajax execute="@this roster" render="staff count lst" event="dateSelect" listener="#{shiftTableController.makeNull}" />
+                </p:calendar>
+                <p:outputLabel value="Select Roster"/>
+                <p:selectOneMenu id="roster" value="#{shiftTableController.roster}">
+                    <f:selectItem itemLabel="Select Roster"/>
+                    <f:selectItems value="#{rosterController.items}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
+                    <f:ajax execute="@this date" render="staff count lst" event="change" listener="#{shiftTableController.makeNull}" />
+                </p:selectOneMenu>
+
+                <p:dataGrid id="staff" columns="3" value="#{shiftTableController.roster.staffList}"   var="s">
+                    <h:outputLabel value="#{s.person.nameWithTitle}(#{s.orderNo})"/>
+                </p:dataGrid>
+
+                <p:commandButton ajax="false" value="Clear" action="#{shiftTableController.clear}" />
+                <p:commandButton ajax="false" value="All Staff" action="#{shiftTableController.flagTrue}"/>
+            </h:panelGrid>
+
+
+
+            <p:dataGrid  id="lst" columns="1" var="data" value="#{shiftTableController.shiftTables}" >
+                <p:dataTable value="#{data.staffShift}" var="sts" editable="true" >
+
+                    <p:ajax event="rowEdit" listener="#{shiftTableController.onEdit}" update=":#{p:component('count')}"/> 
+
+                    <p:column headerText="Shift Name" >
+                        <h:outputLabel value="#{sts.dayShift.shift.name}"/>
+                    </p:column>
+                    <p:column style="min-width: 300px;">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{data.date}" >
+                                <f:convertDateTime pattern="dd MM yyyy"/>
+                            </h:outputLabel>
+                        </f:facet>
+                        <p:cellEditor>  
+                            <f:facet name="output">                                 
+                                <h:outputLabel  value="#{sts.staff.person.name}"/>
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:autoComplete value="#{sts.staff}" disabled="#{sts.finalized}"
+                                                completeMethod="#{shiftTableController.completeStaff}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
+                                                converter="stfcon"   >                                    
+                                </p:autoComplete>
+                            </f:facet>  
+                        </p:cellEditor>
+
+                    </p:column>
+                    <p:column headerText="Day Off">
+                        <p:cellEditor>  
+                            <f:facet name="output">                                 
+                                <p:selectBooleanCheckbox value="#{sts.dayOff}" disabled="true" />
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:selectBooleanCheckbox value="#{sts.dayOff}"/>
+                            </f:facet>  
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Sleeping Day">
+                        <p:cellEditor>  
+                            <f:facet name="output">                                 
+                                <p:selectBooleanCheckbox value="#{sts.sleepingDay}" disabled="true" />
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:selectBooleanCheckbox value="#{sts.sleepingDay}"/>
+                            </f:facet>  
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Starting Record Frm Attendence">                       
+                        <p:cellEditor rendered="#{sts.staff ne null and sts.startRecord.loggedRecord ne null}" >  
+                            <f:facet name="output" >                                 
+                                <h:outputLabel value="#{sts.startRecord.recordTimeStamp}" >
+                                    <f:convertDateTime pattern="hh:mm:ss a"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Continue From Prev" rendered="#{sts.continuedFrom ne null}"/>
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:selectOneMenu converter="fingerPrintRecordCon" value="#{sts.startRecord}"  >  
+                                  
+                                    <f:selectItems value="#{sts.fingerPrintRecordList}" var="i" itemLabel="#{i.recordTimeStamp}" itemValue="#{i}" />
+                                </p:selectOneMenu>
+                            </f:facet>  
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="Ending Record Frm Attendence">
+                        <p:cellEditor rendered="#{sts.staff ne null and sts.startRecord.loggedRecord ne null}">  
+                            <f:facet name="output">                                 
+                                <h:outputLabel value="#{sts.endRecord.recordTimeStamp}" >
+                                    <f:convertDateTime pattern="hh:mm:ss a"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Continue To Next" rendered="#{sts.continuedTo ne null}"/>
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:selectOneMenu converter="fingerPrintRecordCon" value="#{sts.endRecord}">     
+                                  
+                                    <f:selectItems value="#{sts.fingerPrintRecordList}" var="i" itemLabel="#{i.recordTimeStamp}" itemValue="#{i}" />
+                                </p:selectOneMenu>
+                            </f:facet>   
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="Starting Record New">
+                        <p:cellEditor>  
+                            <f:facet name="output">                                 
+                                <h:outputLabel value="#{sts.startRecord.recordTimeStamp}"  rendered="#{sts.startRecord.loggedRecord eq null}" >
+                                    <f:convertDateTime pattern="hh:mm:ss a"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Continue From Prev" rendered="#{sts.continuedFrom ne null}"/>
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:calendar value="#{sts.startRecord.recordTimeStamp}" pattern="dd MMMM yyyy hh mm a" disabled="#{sts.startRecord.loggedRecord ne null}" />
+                            </f:facet>  
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="Ending Record  New">
+                        <p:cellEditor>  
+                            <f:facet name="output">                                 
+                                <h:outputLabel value="#{sts.endRecord.recordTimeStamp}"  rendered="#{sts.startRecord.loggedRecord eq null}"  >
+                                    <f:convertDateTime pattern="hh:mm:ss a"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Continue To Next" rendered="#{sts.continuedTo ne null}"/>
+                            </f:facet>
+                            <f:facet name="input">                              
+                                <p:calendar value="#{sts.endRecord.recordTimeStamp}" pattern="dd MMMM yyyy hh mm a"  disabled="#{sts.endRecord.loggedRecord ne null}"/>
+                            </f:facet>   
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column style="width:6%">  
+                        <p:rowEditor > 
+                        </p:rowEditor>
+                    </p:column>     
+
+                </p:dataTable>  
+            </p:dataGrid>
+
+
+            <h:panelGrid id="count" columns="3">
+                <p:panel header="Shift Detail For this Week" >
+                    <p:dataTable  value="#{shiftTableController.staffWeekDays}"   var="s">
+                        <p:column headerText="Name">#{s.staff.person.nameWithTitle}</p:column>
+                        <p:column headerText="WeekDay">#{s.weekdays}</p:column>
+                        <p:column headerText="Holiday">#{s.holiday}</p:column>
+                        <p:column headerText="Saturday">#{s.saturday}</p:column>
+                        <p:column headerText="Sunday">#{s.sunday}</p:column>
+                        <p:column headerText="Rostered Hour">#{s.rosteredTime}</p:column>
+
+                    </p:dataTable>
+                </p:panel>
+
+
+                <p:panel header="Shift Detail For this Month" >
+                    <p:dataTable  value="#{shiftTableController.staffMonthDays}"   var="s">
+                        <p:column headerText="Name">#{s.staff.person.nameWithTitle}</p:column>
+                        <p:column headerText="WeekDay">#{s.weekdays}</p:column>
+                        <p:column headerText="Holiday">#{s.holiday}</p:column>
+                        <p:column headerText="Saturday">#{s.saturday}</p:column>
+                        <p:column headerText="Sunday">#{s.sunday}</p:column>
+                        <p:column headerText="Rostered Hour">#{s.rosteredTime}</p:column>
+
+                    </p:dataTable>
+                </p:panel>
+
+
+            </h:panelGrid>
+
+
+        </h:form>  
+
+
+
+    </ui:define>
+
+
+
+</ui:composition>

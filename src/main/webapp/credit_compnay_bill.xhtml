@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"                    
+                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+    <ui:define name="content">
+        <h:panelGroup >
+            <h:form  >
+                <p:panel rendered="#{!cashRecieveBillController.printPreview}" >
+                    <f:facet name="header" >
+                        <h:panelGrid columns="15"  >
+                            <h:outputLabel value="Cash Bill" />
+                            <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
+                            <p:selectOneMenu   id="cmbPs" value="#{cashRecieveBillController.current.paymentScheme}">                                                                     
+                                <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
+                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />
+
+                            </p:selectOneMenu>
+                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCardRef" value="#{cashRecieveBillController.current.creditCardRefNo}" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+
+                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCheqRef" value="#{cashRecieveBillController.current.chequeRefNo}" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="bank" value="#{cashRecieveBillController.chequeBank}"  style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+                            <p:calendar id="chequeDate"  value="#{cashRecieveBillController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
+                            </p:calendar>
+
+                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtSlipRef" value="#{cashRecieveBillController.current.comments}" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="slipBank" value="#{cashRecieveBillController.slipBank}"  style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+                            <p:calendar id="slipDate"  value="#{cashRecieveBillController.slipDate}" pattern="dd MMMM yyyy" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
+                            </p:calendar>
+
+                            <p:commandButton  value="Settle" action="#{cashRecieveBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            </p:commandButton>
+                            <p:commandButton value="New Bill" ajax="false" action="#{cashRecieveBillController.prepareNewBill()}" >
+                            </p:commandButton>
+
+                        </h:panelGrid>
+                    </f:facet>
+                    <p:panelGrid columns="3" style="min-width: 100%;">
+                        <p:tabView id="tvPt"  >
+                            <p:ajax event="tabChange"  process="@this" listener="#{cashRecieveBillController.onTabChange}" />
+                            <p:tab id="tabOpd" title="For Opd Bill"  >
+                                <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{cashRecieveBillController.currentBillItem.referenceBill}" completeMethod="#{billController.completeOpdCreditBill}" var="ix" itemLabel="#{ix.patient.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                    <p:column>
+                                        #{ix.patient.person.name}
+                                    </p:column>                                  
+                                    <p:column>
+                                        #{ix.creditCompany.name}
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{ix.createdAt}">
+                                            <f:convertDateTime pattern="dd MM YYYY"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{ix.paidAmount}">
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{ix.netTotal}">
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </h:outputLabel>
+                                    </p:column>
+                                </p:autoComplete>
+                                <p:inputText value="#{cashRecieveBillController.currentBillItem.netValue}"/>
+                                <p:commandButton id="btnAddIx" value="Add" action="#{cashRecieveBillController.addToBill()}" ajax="false"/>
+
+                            </p:tab>
+
+                            <p:tab id="tabBht" title="For Bht Bill">
+                                <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admCon"
+                                                value="#{cashRecieveBillController.currentBillItem.patientEncounter}" 
+                                                completeMethod="#{admissionController.completePatientCredit}"
+                                                var="apt2" itemLabel="#{apt2.bhtNo}" 
+                                                itemValue="#{apt2}" size="30"  style="width: 400px;">
+                                    <p:ajax event="itemSelect" process="acPt2" update="due"/>
+
+                                    <p:column>#{apt2.patient.person.name}</p:column>
+                                    <p:column>#{apt2.bhtNo}</p:column>
+                                </p:autoComplete>   
+
+                                <p:panelGrid columns="3">
+                                    <p:outputLabel value="Due For This Bht : "/>
+                                    <p:outputLabel id="due" value="#{cashRecieveBillController.currentBillItem.patientEncounter.creditUsedAmount}"/>  
+                                    <p:commandButton id="btnAddIx2" value="Add" action="#{cashRecieveBillController.addBhtToBill()}" ajax="false"/>
+                                </p:panelGrid>
+
+
+
+                            </p:tab>
+                        </p:tabView>
+                        <p:dataTable value="#{cashRecieveBillController.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
+                            <f:facet name="header">
+                                Items For Billing
+                            </f:facet>
+                            <p:column>
+                                <f:facet name="header">No</f:facet>
+                                    #{rowIndex+1}
+                            </p:column>
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputLabel value="Bill No" rendered="#{b.patientEncounter eq null}"/>
+                                    <h:outputLabel value="Bht No" rendered="#{b.patientEncounter ne null}"/>
+                                </f:facet>
+                                <p:outputLabel value="#{b.patientEncounter.bhtNo}" rendered="#{b.patientEncounter ne null}"/>
+                                <p:outputLabel value="#{b.referenceBill.insId}" rendered="#{b.patientEncounter eq null}"/>
+                            </p:column>
+                            <p:column headerText="Patient Name">
+                                <p:outputLabel value="#{b.referenceBill.patient.person.name}" rendered="#{b.patientEncounter eq null}"/>
+                                <p:outputLabel value="#{b.patientEncounter.patient.person.name}" rendered="#{b.patientEncounter ne null}"/>
+                            </p:column>
+                            <p:column headerText="Credit Company">     
+                                <p:outputLabel value="#{b.patientEncounter.creditCompany.name}" rendered="#{b.patientEncounter ne null}"/>
+                                <p:outputLabel value="#{b.referenceBill.creditCompany.name}" rendered="#{b.patientEncounter eq null}"/>                                
+                            </p:column>
+                            <p:column headerText="Net Total">#{b.netValue}</p:column>
+                            <p:column headerText="Remove">
+                                <p:commandButton ajax="false" action="#{cashRecieveBillController.remove}" value="X">
+                                    <f:setPropertyActionListener target="#{cashRecieveBillController.index}" value="#{rowIndex}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" style="min-width: 100%;">
+
+                        <p:panelGrid  columns="2">
+                            <p:outputLabel value="Net Total" />
+                            <p:outputLabel id="tot" value="#{cashRecieveBillController.current.netTotal}"/>  
+                                                     
+                            <p:outputLabel value="Description"/>
+                            <p:inputTextarea value="#{cashRecieveBillController.current.comments}"/>                                                         
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </p:panel>
+
+
+
+                <p:panel rendered="#{cashRecieveBillController.printPreview}" >
+                    <p:commandButton value="New Bill" ajax="false" action="#{cashRecieveBillController.prepareNewBill()}" >
+                    </p:commandButton>
+                    <bi:insRecieve billController ="#{cashRecieveBillController}"  bill="#{cashRecieveBillController.current}" dup="false"/>                       
+                </p:panel>
+
+            </h:form>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

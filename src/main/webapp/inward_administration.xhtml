@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <h:panelGrid columns="3" columnClasses="grid1 grid1 grid1"  >
+
+
+
+                        <p:panel header="Administration">
+                            <p:panelGrid columns="1">
+                                <p:commandButton  ajax="false" value="Manage Admission Types" action="inward_admission_type" ></p:commandButton>
+                                <p:commandButton ajax="false" value="Inward Price Adjustment" action="inward_price_adjustment"></p:commandButton>
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Manage Rooms">
+                            <h:panelGrid columns="1" >
+                                <p:commandButton  ajax="false" value="Manage Rooms" action="inward_room" ></p:commandButton>
+                                <p:commandButton  ajax="false" value="Manage Room Categories" action="inward_room_category" ></p:commandButton>
+                                <p:commandButton  ajax="false" value="Manage Room Charge" action="inward_room_facility" ></p:commandButton>
+                            </h:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Manage Time-based Services">
+                            <p:panelGrid columns="1">
+                                <p:commandButton value="Manage Timebased Service Categogries" action="inward_timed_item_category" ></p:commandButton>
+                                <p:commandButton value="Manage Timebased Services" action="inward_timed_item" ></p:commandButton>
+                                <p:commandButton value="Manage Timebased Services Charges" action="inward_timed_item_fee" ></p:commandButton>
+                            </p:panelGrid>
+                        </p:panel>
+
+                    </h:panelGrid>                    
+                </h:form>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

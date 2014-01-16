@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="./resources/template/template.xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel header="Manage Shift" >
+                <h:panelGrid id ="gpVeda" columns="4" >
+
+                    <h:panelGrid id="gpSelect" columns="1"  >
+                        <h:panelGrid columns="2">
+                            <h:outputText  value="Roster" ></h:outputText>
+                            <p:selectOneMenu  id='roster' value="#{shiftController.currentRoster}">
+                                <f:selectItem itemLabel="Select Roster"/>
+                                <f:selectItems value="#{rosterController.items}" var="d" itemLabel="#{d.name}" itemValue="#{d}"/>
+                                <f:ajax event="change" execute="@this" render="gpSelectText gpDetail gpDetail2 tbl"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:panel >
+                            <h:panelGrid id="gpSelectText" >
+                                <p:selectOneListbox  id="lstSelect"   value="#{shiftController.current}" style="min-width: 223px;min-height: 300px;">
+                                    <f:selectItems  value="#{shiftController.shiftList}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" ></f:selectItems>
+                                    <f:ajax render="gpDetail gpDetail2 tbl" execute="@this" >
+                                    </f:ajax>
+                                </p:selectOneListbox>                               
+                            </h:panelGrid>
+                            <h:panelGrid id="gpSelectButtons" columns="3"  >
+                                <p:commandButton id="btnAdd" ajax="false" value="Add"  action="#{shiftController.prepareAdd()}" styleClass="buttons" >
+                                </p:commandButton>
+                                <p:commandButton id="btnDelete" ajax="false" onclick="if (!confirm('Are you sure you want to delete this record?'))
+                                            return false;" action="#{shiftController.delete()}"  value="Delete"  >
+                                </p:commandButton>
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:panelGrid  >
+
+
+
+                    <p:panel id="gpDetail">
+                        <h:panelGrid id="gpDetailText" columns="2">
+                           
+                            <h:outputText  value="Name" ></h:outputText>
+                            <p:inputText  value="#{shiftController.current.name}"  />
+                            <h:outputText  value="Shift Order" ></h:outputText>
+                            <p:inputText  value="#{shiftController.current.shiftOrder}"  />
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="gpDetail2">
+                        <h:panelGrid columns="2">
+                            <h:outputText  value="Day Type" ></h:outputText>
+                            <p:selectOneMenu   value="#{shiftController.currentDayShift.dayType}">
+                                <f:selectItem itemLabel="Select Day Type"/>
+                                <f:selectItems value="#{shiftController.dayTypes}"/>
+                                <f:ajax execute="@this roster" render="start" listener="#{shiftController.checkShift}" event="change"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Starting Time"/>
+                            <p:calendar id='start'  value="#{shiftController.currentDayShift.startingTime}" navigator="true" pattern="hh:mm a" timeOnly="true">                            
+                            </p:calendar>  
+
+                            <p:outputLabel value="End Time"/>                        
+                            <p:calendar  value="#{shiftController.currentDayShift.endingTime}" navigator="true" pattern="hh:mm a" timeOnly="true">                            
+                            </p:calendar>  
+
+                            <p:outputLabel value="Number of Staff"/>
+                            <p:inputText value="#{shiftController.currentDayShift.count}"/>
+
+                        </h:panelGrid>
+                        <p:commandButton ajax="false" value="Add DayShift"  action="#{shiftController.addDayShift}"/>
+                    </p:panel>
+
+                    <p:dataTable id="tbl" value="#{shiftController.dayShifts}" var="d" sortOrder="#{d.dayType},#{d.startingTime}">
+                        <p:column headerText="DayType">#{d.dayType}</p:column>
+                        <p:column headerText="StartingTime">
+                            <h:outputLabel value="#{d.startingTime}">
+                                <f:convertDateTime pattern="hh:mm a"/>
+                            </h:outputLabel></p:column>
+                        <p:column headerText="EndingTime">
+                            <h:outputLabel value="#{d.endingTime}">
+                                <f:convertDateTime pattern="hh:mm a"/>
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="Number of">#{d.count}</p:column>                       
+                        <p:column headerText="Duration">#{d.durationHour}</p:column>
+                        <p:column headerText="Reomve">
+                            <p:commandButton value="Remove" ajax="false" action="#{shiftController.removeDayShift}">
+                                <f:setPropertyActionListener value="#{d}" target="#{shiftController.currentDayShift}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                </h:panelGrid>
+            </p:panel>
+
+
+        </h:form>
+    </ui:define>
+
+
+</ui:composition>

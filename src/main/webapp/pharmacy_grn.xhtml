@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:bi="http://java.sun.com/jsf/composite/bill"
+                xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+
+    <ui:define name="content">
+        <h:form>
+            <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+
+
+            <h:panelGroup rendered="#{!grnController.printPreview}">
+
+                <h:panelGrid columns="5" style="min-width: 100%;">
+                    <h:outputLabel value="DEALOR"/>
+                    <p:autoComplete converter="deal" value="#{grnController.grnBill.fromInstitution}" completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+
+
+                    <p:selectOneMenu   id="cmbPs" value="#{grnController.grnBill.paymentMethod}">    
+                        <f:selectItem itemLabel="SelectPayment method"/>
+                        <f:selectItems value="#{enumController.paymentMethodsForPo}"/>                     
+                    </p:selectOneMenu>
+                    <p:commandButton  value="Settle" action="#{grnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                    </p:commandButton>
+                    <p:commandButton value="Refresh" action="#{grnController.clear}" ajax="false"/>
+                </h:panelGrid>
+
+
+
+                <p:dataTable var="bi"  value="#{grnController.grnBill.billItems}" scrollable="true" scrollHeight="250"
+                             id="itemList"  sortBy="#{ph.bill.id}">  
+
+                    <f:facet name="header">  
+                        Ordered Item 
+                    </f:facet>  
+
+                    <p:column headerText="Item Name"  style="width:50px;" >                                                
+                        <p:selectOneMenu id="item"  value="#{bi.item}">
+                            <f:selectItems value="#{bi.tmpSuggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>
+                            <f:ajax event="change" render="@this qty freeQty purchase retail total :#{p:component('tot')}" 
+                                    execute="@this" listener="#{grnController.onEditItem(bi)}" ></f:ajax>
+                        </p:selectOneMenu>                     
+                    </p:column>  
+
+                    <p:column headerText="Qty" style="width:25px;">                   
+                        <p:inputText value="#{bi.pharmaceuticalBillItem.qty}" id="qty" >
+                            <f:ajax event="blur" render="item @this freeQty purchase retail total :#{p:component('tot')}" 
+                                    execute="item @this freeQty purchase retail" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
+                        </p:inputText>
+                    </p:column>  
+
+                    <p:column headerText="Free" style="width:25px;">                      
+                        <p:inputText id="freeQty"  value="#{bi.pharmaceuticalBillItem.freeQty}" >   
+                            <f:ajax event="blur" render="item qty @this purchase retail total :#{p:component('tot')}" 
+                                    execute="item qty @this purchase retail" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
+                        </p:inputText>
+                    </p:column> 
+
+                    <p:column headerText="Purchase Rate" style="width:25px;">  
+                        <h:panelGroup id="purchase" >
+                            <p:inputText value="#{bi.pharmaceuticalBillItem.purchaseRate}" >
+                                <f:ajax event="blur" render="@this retail total :#{p:component('tot')}"  
+                                        execute="@this qty item qty freeQty purchase retail" listener="#{grnController.onEditPurchaseRate(bi)}" ></f:ajax> 
+                            </p:inputText>
+                            <p:outputLabel value=" X #{bi.item.dblValue}" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                        </h:panelGroup>
+                    </p:column>                  
+
+                    <p:column headerText="Sale Price" style="width:25px;"> 
+                        <h:panelGroup id="retail">
+                            <p:inputText value="#{bi.pharmaceuticalBillItem.retailRate}"  > 
+                                <f:ajax event="blur" render="@this total :#{p:component('tot')}" 
+                                        execute="item qty freeQty purchase @this" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:inputText>
+                            <p:outputLabel value=" X (#{bi.item.dblValue})" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/> 
+                        </h:panelGroup>
+                    </p:column>  
+
+                    <p:column headerText="Total" style="width:25px;font-weight: bold;">  
+                        <h:panelGroup id="total">
+                            <h:outputText value=" #{bi.pharmaceuticalBillItem.purchaseRate*bi.pharmaceuticalBillItem.qty}" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </h:outputText>
+                        </h:panelGroup>
+                    </p:column>  
+
+                    <p:column headerText="Date of Expiry" style="width:25px;">  
+                        <p:calendar  value="#{bi.pharmaceuticalBillItem.doe}"   navigator="true" pattern="dd/MM/yy" requiredMessage="Plse select Date of Expiry"> 
+                            <f:ajax event="dateSelect" execute="@this" render="txtBatch @this" listener="#{grnController.setBatch(bi)}"/>
+                        </p:calendar>  
+                    </p:column> 
+
+
+                    <p:column headerText="Bathch No" style="width:25px;"  >                      
+                        <p:inputText value="#{bi.pharmaceuticalBillItem.stringValue}" id="txtBatch">  
+                            <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
+                        </p:inputText>
+                    </p:column>  
+
+
+                    <p:column style="width:10px;">
+                        <p:commandButton value="Remove" ajax="false" action="#{grnController.removeItem(bi)}"/>
+                    </p:column>
+
+                </p:dataTable>  
+
+                <p:panel>
+                    <p:panelGrid columns="2" style="min-width: 100%">
+
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Invoice No : "/>
+                            <p:inputText value="#{grnController.grnBill.invoiceNumber}" />
+                            <p:outputLabel value="Invoice Date"/>
+                            <p:calendar  value="#{grnController.grnBill.invoiceDate}"   navigator="true" pattern="dd/MM/yy" /> 
+                        </p:panelGrid>                    
+
+                        <p:panelGrid columns="2" id="tot">
+                            <p:outputLabel value="Gross Total"/>
+                            <p:outputLabel id="gro"  value="#{grnController.grossTotal}">
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Tax"/>
+                            <p:inputText id="tx" value="#{grnController.grnBill.tax}" > 
+                                <p:ajax process="gro tx dis" update="net" event="keyup"/>
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:inputText>
+                            <p:outputLabel value="Discount"/>
+                            <p:inputText id="dis" value="#{grnController.grnBill.discount}" >
+                                <p:ajax process="gro tx dis" update="net" event="keyup"/>
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:inputText>
+                            <p:outputLabel value="Net Total"/>
+                            <p:outputLabel id="net"  value="#{grnController.netTotal}" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:outputLabel>
+                        </p:panelGrid>
+
+                    </p:panelGrid>
+                </p:panel>
+
+
+
+            </h:panelGroup>
+            <p:panel rendered="#{grnController.printPreview}">
+                <p:commandButton ajax="false" action="#{grnController.viewPoList()}" value="PO List"/>                    
+                <p:commandButton value="Print" ajax="false" action="#" >
+                    <p:printer target="gpBillPreview" ></p:printer>
+                </p:commandButton>
+                <p:panel   id="gpBillPreview"   >
+
+                    <ph:grn bill="#{grnController.grnBill}"/>
+
+                </p:panel>
+            </p:panel>
+
+        </h:form>
+    </ui:define>  
+
+</ui:composition>

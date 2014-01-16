@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pharmacy="http://java.sun.com/jsf/composite/pharmacy">
+
+    <ui:define name="content">
+
+        <h:outputStylesheet library="css" name="maincss.css" ></h:outputStylesheet>
+
+        <h:form id="bill">
+            <p:panel rendered="#{!pharmacyPurchaseController.printPreview}">
+                <p:panel>
+
+                    <f:facet name="header" > 
+                        <h:panelGrid columns="6"  >
+                            <h:outputText value="Pharmacy Purchase" />                     
+                            <p:selectOneMenu   id="cmbPs" value="#{pharmacyPurchaseController.bill.paymentMethod}">                                                                     
+                                <f:selectItems value="#{enumController.paymentMethodsForPo}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Select Dealor"/>
+                            <p:autoComplete converter="deal" value="#{pharmacyPurchaseController.bill.fromInstitution}" completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+                            <p:commandButton  value="Settle" action="#{pharmacyPurchaseController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            </p:commandButton>
+                            <p:commandButton value="New Bill" ajax="false" action="#{pharmacyPurchaseController.makeNull()}" >
+                            </p:commandButton>
+
+                        </h:panelGrid>
+
+                    </f:facet>
+                </p:panel>
+
+
+                <p:commandButton id="nullButton" value="No Action" action="#" style="display: none;" ></p:commandButton>
+
+                <p:defaultCommand  target="nullButton" />  
+
+                <h:panelGrid id="itemselectgrid" columns="2" style="min-width: 100%;">
+                    <p:panelGrid id="itemSelectgrid1" columns="8">                       
+                        <h:outputLabel value="Select Item"/>
+                        <h:outputLabel value="Qty"/>
+                        <h:outputLabel value="Free"/>
+                        <h:outputLabel value="Purchase Rate"></h:outputLabel>
+                        <h:outputLabel value="Sale Price"></h:outputLabel>
+                        <h:outputLabel value="DOE(dd mm yy)"/>
+                        <h:outputLabel value="Bathch No"/>
+
+                        <h:outputLabel/>
+                        <p:autoComplete onkeypress="if (event.keyCode === 13) {
+                                    document.getElementById('bill:txtQty').focus();
+                                    window.event.returnValue = false;
+                                }" converter="itemcon" 
+                                        value="#{pharmacyPurchaseController.currentBillItem.item}" 
+                                        completeMethod="#{itemController.completeAmpAndAmppItem}" 
+                                        var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                            <p:column headerText="Item" >
+                                <h:outputLabel value="#{vt.name}"></h:outputLabel>
+                            </p:column>
+                            <p:column headerText="Code" >
+                                <h:outputLabel value="#{vt.code}"></h:outputLabel>
+                            </p:column>
+
+                        </p:autoComplete>
+                        <p:inputText onkeypress="if (event.keyCode === 13) {
+                                    document.getElementById('bill:txtFreeQty').focus();
+                                    window.event.returnValue = false;
+                                }" 
+                                     id="txtQty" styleClass="numericTxt" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.qty}" style="width:100%" />  
+                        <p:inputText id="txtFreeQty"  styleClass="numericTxt" 
+                                     onkeypress="if (event.keyCode === 13) {
+                                                 document.getElementById('bill:txtPrate').focus();
+                                                 window.event.returnValue = false;
+                                             }" 
+                                     value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.freeQty}" style="width:100%" /> 
+                        <p:inputText id="txtPrate"  styleClass="numericTxt" 
+                                     onkeypress="if (event.keyCode === 13) {
+                                                 document.getElementById('bill:tmpRetail').focus();
+                                                 window.event.returnValue = false;
+                                             }" 
+                                     value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.purchaseRate}"  >
+                            <p:ajax event="change" process="@this" update="tmpRetail" listener="#{pharmacyPurchaseController.onEditPurchaseRate()}"/>
+                        </p:inputText>
+                        <p:inputText id="tmpRetail"  styleClass="numericTxt" 
+                                     onkeypress="if (event.keyCode === 13) {
+                                                 document.getElementById('bill:calDoe_input').focus();
+                                                 window.event.returnValue = false;
+                                             }" 
+                                     value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.retailRate}"  />  
+
+                        <p:calendar navigator="true"
+                                    onkeypress="if (event.keyCode === 13) {
+                                        document.getElementById('bill:tmp').focus();
+                                        window.event.returnValue = false;
+                                    }" 
+
+                                    id="calDoe" pattern="dd MM yy" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.doe}"   >
+                            <f:ajax event="dateSelect" execute="@this" render="tmp" listener="#{pharmacyPurchaseController.setBatch()}"/>
+                        </p:calendar> 
+                        <p:inputText  styleClass="numericTxt" 
+                                      onkeypress="if (event.keyCode === 13) {
+                                        document.getElementById('bill:btnAdd').click();
+                                        window.event.returnValue = false;
+                                    }" 
+
+                                      id="tmp" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.stringValue}"  />  
+                        <p:commandButton id="btnAdd" value="Add Item" 
+                                         action="#{pharmacyPurchaseController.addItem}" 
+                                         process="itemselectgrid" update="itemList itemselectgrid tot"/>
+                    </p:panelGrid>
+
+                </h:panelGrid>
+
+                <p:dataTable var="ph" value="#{pharmacyPurchaseController.bill.billItems}" id="itemList">  
+                    <f:facet name="header">  
+                        Ordered Item 
+                    </f:facet>  
+
+                    <p:column headerText="Item Name" style="width:30%">  
+
+                        <h:outputLabel id="item" value="#{ph.item.name}" style="width:100%">
+                        </h:outputLabel>
+
+                    </p:column>  
+
+                    <p:column headerText="Qty" style="width:20%">                     
+                        <p:inputText id="qty" value="#{ph.pharmaceuticalBillItem.qty}"  >
+                            <f:ajax event="blur" render="item qty freeQty purchase retail total :#{p:component('tot')}"
+                                    execute="item qty freeQty purchase retail" listener="#{pharmacyPurchaseController.onEdit(ph)}" ></f:ajax> 
+                        </p:inputText>
+                    </p:column>  
+
+                    <p:column headerText="Free" style="width:20%">       
+                        <p:inputText id="freeQty" value="#{ph.pharmaceuticalBillItem.freeQty}" style="width:100%" >
+                            <f:ajax event="blur" render="item qty freeQty purchase retail total :#{p:component('tot')}"
+                                    execute="item qty freeQty purchase retail" listener="#{pharmacyPurchaseController.onEdit(ph)}" ></f:ajax> 
+                        </p:inputText>
+                    </p:column> 
+
+                    <p:column headerText="P. Rate" style="width:24% ;">                     
+                        <h:inputText id="purchase" value="#{ph.pharmaceuticalBillItem.purchaseRate}">
+                            <f:ajax event="blur" render="@this retail total :#{p:component('tot')}"  execute="@this qty item qty freeQty purchase retail" listener="#{pharmacyPurchaseController.onEditPurchaseRate(ph)}" ></f:ajax> 
+                        </h:inputText>
+                        <p:outputLabel value=" X #{ph.item.dblValue}" rendered="#{ph.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                                                
+                    </p:column>              
+
+                    <p:column headerText="S. Rate" style="width:24%">                   
+                        <h:inputText id="retail" value="#{ph.pharmaceuticalBillItem.retailRate}"  label="Price">
+                            <f:ajax event="blur" render="@this total :#{p:component('tot')}"  execute="item qty freeQty purchase retail" listener="#{pharmacyPurchaseController.onEdit(ph)}" ></f:ajax> 
+                        </h:inputText>
+                        <p:outputLabel value=" X (#{ph.item.dblValue})" rendered="#{ph.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                    
+                    </p:column>  
+
+                    <p:column headerText="Value" style="width:20%;font-weight: bold;">  
+                        <h:outputText id="total" value=" #{ph.pharmaceuticalBillItem.purchaseRate*ph.pharmaceuticalBillItem.qty}" />  
+
+                    </p:column>  
+
+
+                    <p:column headerText="Batch" style="width:24%">                   
+                        <h:inputText id="txtBatch" value="#{ph.pharmaceuticalBillItem.stringValue}" >
+                            <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this" listener="#{pharmacyPurchaseController.onEdit(ph)}" ></f:ajax> 
+                        </h:inputText>
+                    </p:column>  
+
+                    <p:column headerText="DoE" style="width:24%">                    
+                        <p:calendar  value="#{ph.pharmaceuticalBillItem.doe}"   navigator="true" pattern="dd/MM/yy" >
+                            <f:ajax event="dateSelect" execute="@this" render="txtBatch" listener="#{pharmacyPurchaseController.setBatch(ph)}"/>
+                        </p:calendar>
+                    </p:column>
+
+                </p:dataTable>  
+
+                <p:panel>
+                    <p:panelGrid columns="2" id="tot" style="min-width: 100%">
+                        <p:outputLabel value="Gross Total"/>
+                        <p:outputLabel id="gro"  value="#{pharmacyPurchaseController.bill.total}" /> 
+                        <p:outputLabel value="Tax"/>
+                        <p:inputText id="tx" value="#{pharmacyPurchaseController.bill.tax}" > 
+                            <p:ajax process="gro tx dis" update="net" event="keyup"/>
+                        </p:inputText>
+                        <p:outputLabel value="Discount"/>
+                        <p:inputText id="dis" value="#{pharmacyPurchaseController.bill.discount}" >
+                            <p:ajax process="gro tx dis" update="net" event="keyup"/>
+                        </p:inputText>
+                        <p:outputLabel value="Net Total"/>
+                        <h:outputLabel id="net"  value="#{pharmacyPurchaseController.bill.netTotal}" > 
+                            <f:convertNumber pattern="#,000.00"/> 
+                        </h:outputLabel>
+                    </p:panelGrid>
+                </p:panel>
+            </p:panel>
+
+            <p:panel rendered="#{pharmacyPurchaseController.printPreview}">
+                <p:commandButton ajax="false" action="#{pharmacyPurchaseController.makeNull()}" value="New Bill"/>                    
+                <p:commandButton value="Print" ajax="false" action="#" >
+                    <p:printer target="gpBillPreview" ></p:printer>
+                </p:commandButton>
+                <p:panel id="gpBillPreview">
+                    <pharmacy:purhcase bill="#{pharmacyPurchaseController.bill}"/>
+                </p:panel>
+            </p:panel>
+        </h:form>
+    </ui:define>  
+
+</ui:composition>

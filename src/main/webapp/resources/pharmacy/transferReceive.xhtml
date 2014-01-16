@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="bill" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+        <div class="posbill noBorder summeryBorder">
+
+            <div class="institutionName">
+                <h:outputLabel value="#{cc.attrs.bill.creater.department.printingName}"/>
+            </div>
+            <div class="institutionContact" >
+                <div>
+                    <h:outputLabel value="#{cc.attrs.bill.creater.department.address}"/>
+                </div>
+                <div >
+                    <h:outputLabel value="#{cc.attrs.bill.creater.department.telephone1} "/>
+                    <h:outputLabel value="#{cc.attrs.bill.creater.department.telephone2}"/>
+                </div>
+                <div >
+                    <h:outputLabel value="#{cc.attrs.bill.creater.department.fax}"/>                                                 
+                </div>
+                <div >
+                    <h:outputLabel value="#{cc.attrs.bill.creater.department.email}"/>                                                 
+                </div>
+            </div>
+
+            <div class="headingBill">
+                <h:outputLabel value="Transfer Recieve Note"   />                           
+            </div>
+
+
+            <div >
+                <h:panelGrid columns="2" class="poDetail" >
+                    <h:outputLabel value="Location From : #{cc.attrs.bill.fromDepartment.name}"/>
+                    <h:outputLabel value="Location To : #{cc.attrs.bill.department.name}"/>
+
+                    <h:outputLabel value="Recieved Person : #{cc.attrs.bill.creater.staff.code}"/>
+                    <h:outputLabel value="Issued Person : #{cc.attrs.bill.backwardReferenceBill.creater.staff.code}"/>
+
+                    <h:outputLabel value="Recieve No : #{cc.attrs.bill.deptId}"/>
+                    <h:outputLabel value="Issue No : #{cc.attrs.bill.backwardReferenceBill.deptId}"/>
+
+                    <h:outputLabel value="Recieved Time : #{cc.attrs.bill.createdAt}"/>
+                    <h:outputLabel value="Issue Time : #{cc.attrs.bill.backwardReferenceBill.createdAt}"/>
+
+                    <h:outputLabel value="Transporter : #{cc.attrs.bill.fromStaff.person.nameWithTitle}"/>
+
+                </h:panelGrid>
+            </div>
+
+            <div >
+                <p:dataTable rowIndexVar="rowIndex" styleClass="normalFont" value="#{cc.attrs.bill.billItems}" var="bip" >
+                    <p:column>
+                        <f:facet name="header">No</f:facet>
+                            #{rowIndex+1}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Code</f:facet>
+                            #{bip.item.code}
+                    </p:column>                                                         
+                    <p:column>
+                        <f:facet name="header">Item</f:facet>
+                            #{bip.item.name}
+                    </p:column>
+                     <p:column>
+                        <f:facet name="header">D O E</f:facet>
+                            #{bip.pharmaceuticalBillItem.doe}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">QTY</f:facet>
+                            #{bip.pharmaceuticalBillItem.qty}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Purchase Rate</f:facet>
+                            #{bip.pharmaceuticalBillItem.purchaseRate}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Purchase Value</f:facet>
+                            #{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Retail Rate</f:facet>
+                            #{bip.pharmaceuticalBillItem.retailRate}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Sale Value</f:facet>
+                            #{bip.pharmaceuticalBillItem.retailRate*bip.pharmaceuticalBillItem.qty}
+                    </p:column>                                   
+
+                </p:dataTable>
+            </div>
+
+
+        </div>
+    </cc:implementation>
+</html>

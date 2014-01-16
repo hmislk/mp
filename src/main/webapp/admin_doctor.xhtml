@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+
+    <ui:define name="content">
+
+        <h:panelGroup >
+            <h:form  >
+                <p:growl autoUpdate="true" />
+                <p:focus id="selectFocus" context="gpSelect" />
+                <p:focus id="detailFocus" context="gpDetail" />
+
+
+
+                <p:panel header="Manage Doctor" >
+                    <h:panelGrid id ="gpVeda" columns="2" >
+
+                        <h:panelGrid id="gpSelect" columns="1"  >
+                            <p:panel >
+                                <h:panelGrid id="gpSelectText" >
+                                    <h:inputText id="txtSearch" value="#{doctorController.selectText}" >
+                                        <f:ajax execute="txtSearch" render="lstSelect" event="keyup" />
+                                    </h:inputText>
+                                    
+                                    <h:selectOneListbox  id="lstSelect"   size="10" value="#{doctorController.current}" style="min-width: 223px;">
+                                        <f:selectItems  value="#{doctorController.selectedItems}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.person.nameWithTitle}"  ></f:selectItems>
+                                        <f:ajax render="gpDetail" execute="lstSelect" >
+                                        </f:ajax>
+                                    </h:selectOneListbox>
+                                </h:panelGrid>
+                                <h:panelGrid id="gpSelectButtons" columns="3"  >
+                                    <h:commandButton id="btnAdd" value="Add"  action="#{doctorController.prepareAdd()}" styleClass="buttons" >
+                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
+                                        </f:ajax>
+                                    </h:commandButton>
+                                    <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
+                                                return false;" action="#{doctorController.delete()}"  value="Delete"  >
+                                    </h:commandButton>
+                                </h:panelGrid>
+
+                            </p:panel>
+                        </h:panelGrid  >
+
+                        <p:panel>
+                            <h:panelGrid id="gpDetail" columns="1">
+                                <h:panelGrid id="gpDetailText" columns="2">
+                                    <h:outputText id="lblName" value="Name" ></h:outputText>
+                                    <h:inputText id="txtName" required="true"  value="#{doctorController.current.person.name}"  ></h:inputText>
+                                    <h:outputText id="lblPhone" value="Phone" ></h:outputText>
+                                    <p:inputMask mask="999-999999" id="txtPhone" value="#{doctorController.current.person.phone}"  ></p:inputMask>
+                                    <h:outputText id="lblFax" value="Fax" ></h:outputText>
+                                    <h:inputText id="txtFax" value="#{doctorController.current.person.fax}"  ></h:inputText>
+                                    <h:outputText id="lblMobile" value="Mobile" ></h:outputText>
+                                    <h:inputText id="txtMobile" value="#{doctorController.current.person.mobile}"  ></h:inputText>
+                                    <h:outputText id="lblAddress" value="Address" ></h:outputText>
+                                    <h:inputText id="txtAddress" value="#{doctorController.current.person.address}"  ></h:inputText>
+                                    <h:outputText value="Speciality" ></h:outputText>                                    
+                                    <h:selectOneListbox id="cmbSpeciality" size="1" value="#{doctorController.current.speciality}" >
+                                        <f:selectItem itemLabel="Please select a speciality"/>
+                                        <f:selectItems value="#{specialityController.items}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" />
+                                    </h:selectOneListbox>
+                                    <h:outputText id="lblReg" value="Registration" ></h:outputText>
+                                    <h:inputText id="txtReg" value="#{doctorController.current.registration}"  ></h:inputText>                 
+                                    <h:outputText id="lblQua" value="Qualification" ></h:outputText>
+                                    <h:inputText id="txtQua" value="#{doctorController.current.qualification}"  ></h:inputText>   
+                                </h:panelGrid>
+                                <h:panelGrid id="gpDetailButtons" columns="2">
+                                    <h:commandButton id="btnSave" value="Save"  action="#{doctorController.saveSelected()}" styleClass="buttons">
+                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
+                                        </f:ajax>
+                                    </h:commandButton>
+
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

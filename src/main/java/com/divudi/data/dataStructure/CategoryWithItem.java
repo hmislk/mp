@@ -17,10 +17,29 @@ public class CategoryWithItem {
 
     private Category category;
     private Department department;
-    //private List<Item> item;
+    private List<Item> item;
     private List<ItemWithFee> itemWithFees;  
     private double subTotal;
     private double subHosTotal;
+
+    public CategoryWithItem(Category category, Department department) {
+        this.category = category;
+        this.department = department;
+    }
+
+    public CategoryWithItem(Category category, List<Item> item) {
+        this.category = category;
+        this.item = item;
+    }
+    
+    
+
+    public CategoryWithItem() {
+    }
+    
+    
+    
+    
 
     public Category getCategory() {
         return category;
@@ -69,5 +88,13 @@ public class CategoryWithItem {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public List<Item> getItem() {
+        return item;
+    }
+
+    public void setItem(List<Item> item) {
+        this.item = item;
     }
 }

@@ -33,8 +33,6 @@
             <p:dataGrid  id="lst" columns="1" var="data" value="#{shiftTableController.shiftTables}" >
                 <p:dataTable value="#{data.staffShift}" var="sts" editable="true" >
 
-                    <p:ajax event="rowEdit" listener="#{shiftTableController.onEdit}" update=":#{p:component('count')}"/> 
-
                     <p:column headerText="Shift Name" >
                         <h:outputLabel value="#{sts.dayShift.shift.name}"/>
                     </p:column>
@@ -44,105 +42,58 @@
                                 <f:convertDateTime pattern="dd MM yyyy"/>
                             </h:outputLabel>
                         </f:facet>
-                        <p:cellEditor>  
-                            <f:facet name="output">                                 
-                                <h:outputLabel  value="#{sts.staff.person.name}"/>
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:autoComplete value="#{sts.staff}" disabled="#{sts.finalized}"
-                                                completeMethod="#{shiftTableController.completeStaff}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
-                                                converter="stfcon"   >                                    
-                                </p:autoComplete>
-                            </f:facet>  
-                        </p:cellEditor>
+
+                        <p:autoComplete value="#{sts.staff}" disabled="#{sts.finalized}"
+                                        completeMethod="#{shiftTableController.completeStaff}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
+                                        converter="stfcon"   >  
+                            <f:ajax event="itemSelect" execute="@this" render=":#{p:component('count')}" listener="#{shiftTableController.onEdit(sts)}" />
+                        </p:autoComplete>
 
                     </p:column>
                     <p:column headerText="Day Off">
-                        <p:cellEditor>  
-                            <f:facet name="output">                                 
-                                <p:selectBooleanCheckbox value="#{sts.dayOff}" disabled="true" />
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:selectBooleanCheckbox value="#{sts.dayOff}"/>
-                            </f:facet>  
-                        </p:cellEditor>
+                        <p:selectBooleanCheckbox  value="#{sts.dayOff}">
+                            <f:ajax event="change" execute="@this" listener="#{shiftTableController.onEditBoolean(tmp)}"/>
+                        </p:selectBooleanCheckbox>
                     </p:column>
-                    <p:column headerText="Sleeping Day">
-                        <p:cellEditor>  
-                            <f:facet name="output">                                 
-                                <p:selectBooleanCheckbox value="#{sts.sleepingDay}" disabled="true" />
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:selectBooleanCheckbox value="#{sts.sleepingDay}"/>
-                            </f:facet>  
-                        </p:cellEditor>
+                    <p:column headerText="Sleeping Day">                                                  
+                        <p:selectBooleanCheckbox value="#{sts.sleepingDay}">
+                            <f:ajax event="change" execute="@this" listener="#{shiftTableController.onEditBoolean(tmp)}"/>
+                        </p:selectBooleanCheckbox>
                     </p:column>
                     <p:column headerText="Starting Record Frm Attendence">                       
-                        <p:cellEditor rendered="#{sts.staff ne null and sts.startRecord.loggedRecord ne null}" >  
-                            <f:facet name="output" >                                 
-                                <h:outputLabel value="#{sts.startRecord.recordTimeStamp}" >
-                                    <f:convertDateTime pattern="hh:mm:ss a"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="Continue From Prev" rendered="#{sts.continuedFrom ne null}"/>
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:selectOneMenu converter="fingerPrintRecordCon" value="#{sts.startRecord}"  >  
-                                  
-                                    <f:selectItems value="#{sts.fingerPrintRecordList}" var="i" itemLabel="#{i.recordTimeStamp}" itemValue="#{i}" />
-                                </p:selectOneMenu>
-                            </f:facet>  
-                        </p:cellEditor>
+                        <h:panelGroup rendered="#{sts.staff ne null and sts.startRecord.loggedRecord ne null}" >                                                         
+                            <p:selectOneMenu converter="fingerPrintRecordCon" value="#{sts.startRecord}"  >  
+                                <f:selectItems value="#{sts.fingerPrintRecordList}" var="i" itemLabel="#{i.recordTimeStamp}" itemValue="#{i}" />
+                                <f:ajax event="change" execute="@this" listener="#{shiftTableController.onEditBoolean(tmp)}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
                     </p:column>
 
                     <p:column headerText="Ending Record Frm Attendence">
-                        <p:cellEditor rendered="#{sts.staff ne null and sts.startRecord.loggedRecord ne null}">  
-                            <f:facet name="output">                                 
-                                <h:outputLabel value="#{sts.endRecord.recordTimeStamp}" >
-                                    <f:convertDateTime pattern="hh:mm:ss a"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="Continue To Next" rendered="#{sts.continuedTo ne null}"/>
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:selectOneMenu converter="fingerPrintRecordCon" value="#{sts.endRecord}">     
-                                  
-                                    <f:selectItems value="#{sts.fingerPrintRecordList}" var="i" itemLabel="#{i.recordTimeStamp}" itemValue="#{i}" />
-                                </p:selectOneMenu>
-                            </f:facet>   
-                        </p:cellEditor>
+                        <h:panelGroup rendered="#{sts.staff ne null and sts.startRecord.loggedRecord ne null}">  
+
+                            <p:selectOneMenu converter="fingerPrintRecordCon" value="#{sts.endRecord}">     
+
+                                <f:selectItems value="#{sts.fingerPrintRecordList}" var="i" itemLabel="#{i.recordTimeStamp}" itemValue="#{i}" />
+                                <f:ajax event="change" execute="@this" listener="#{shiftTableController.onEditBoolean(tmp)}"/>
+                            </p:selectOneMenu>
+
+                        </h:panelGroup>
                     </p:column>
 
                     <p:column headerText="Starting Record New">
-                        <p:cellEditor>  
-                            <f:facet name="output">                                 
-                                <h:outputLabel value="#{sts.startRecord.recordTimeStamp}"  rendered="#{sts.startRecord.loggedRecord eq null}" >
-                                    <f:convertDateTime pattern="hh:mm:ss a"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="Continue From Prev" rendered="#{sts.continuedFrom ne null}"/>
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:calendar value="#{sts.startRecord.recordTimeStamp}" pattern="dd MMMM yyyy hh mm a" disabled="#{sts.startRecord.loggedRecord ne null}" />
-                            </f:facet>  
-                        </p:cellEditor>
+                        <p:calendar value="#{sts.startRecord.recordTimeStamp}" pattern="dd MMMM yyyy hh mm a" disabled="#{sts.startRecord.loggedRecord ne null}" >
+                            <f:ajax event="dateSelect" execute="@this" listener="#{shiftTableController.onEditBoolean(tmp)}"/>
+                        </p:calendar>
                     </p:column>
 
                     <p:column headerText="Ending Record  New">
-                        <p:cellEditor>  
-                            <f:facet name="output">                                 
-                                <h:outputLabel value="#{sts.endRecord.recordTimeStamp}"  rendered="#{sts.startRecord.loggedRecord eq null}"  >
-                                    <f:convertDateTime pattern="hh:mm:ss a"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="Continue To Next" rendered="#{sts.continuedTo ne null}"/>
-                            </f:facet>
-                            <f:facet name="input">                              
-                                <p:calendar value="#{sts.endRecord.recordTimeStamp}" pattern="dd MMMM yyyy hh mm a"  disabled="#{sts.endRecord.loggedRecord ne null}"/>
-                            </f:facet>   
-                        </p:cellEditor>
+
+                        <p:calendar value="#{sts.endRecord.recordTimeStamp}" pattern="dd MMMM yyyy hh mm a"  disabled="#{sts.endRecord.loggedRecord ne null}">
+                            <f:ajax event="dateSelect" execute="@this" listener="#{shiftTableController.onEditBoolean(tmp)}"/>
+                        </p:calendar>
                     </p:column>
 
-                    <p:column style="width:6%">  
-                        <p:rowEditor > 
-                        </p:rowEditor>
-                    </p:column>     
 
                 </p:dataTable>  
             </p:dataGrid>

@@ -26,6 +26,8 @@
                     </p:selectOneMenu>
                     <p:commandButton  value="Settle" action="#{grnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                     </p:commandButton>
+                    <p:commandButton  value="Get Last Edited" action="#{grnController.findLastEdited()}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                    </p:commandButton>
                     <p:commandButton value="Refresh" action="#{grnController.clear}" ajax="false"/>
                 </h:panelGrid>
 

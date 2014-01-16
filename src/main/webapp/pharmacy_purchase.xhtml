@@ -52,8 +52,7 @@
                         <p:autoComplete onkeypress="if (event.keyCode === 13) {
                                     document.getElementById('bill:txtQty').focus();
                                     window.event.returnValue = false;
-                                }" converter="itemcon" 
-                                        value="#{pharmacyPurchaseController.currentBillItem.item}" 
+                                }"    value="#{pharmacyPurchaseController.currentBillItem.item}" 
                                         completeMethod="#{itemController.completeAmpAndAmppItem}" 
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
@@ -61,6 +60,10 @@
                             </p:column>
                             <p:column headerText="Code" >
                                 <h:outputLabel value="#{vt.code}"></h:outputLabel>
+                            </p:column>
+                             <p:column headerText="Pack Size" >
+                               <p:outputLabel value=" X #{vt.dblValue}" 
+                                              rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
                             </p:column>
 
                         </p:autoComplete>

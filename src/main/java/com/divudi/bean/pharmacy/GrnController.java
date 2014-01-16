@@ -528,6 +528,19 @@ public class GrnController implements Serializable {
 
     }
 
+    public void findLastEdited() {
+        String sql = "Select b From BilledBill b where b.creater is null and  b.retired=false and b.billType= :bTp "
+                + " and b.referenceBill.id=" + getApproveBill().getId();
+        HashMap tmp = new HashMap();
+        tmp.put("bTp", BillType.PharmacyGrnBill);
+        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
+
+        if (!bil.isEmpty()) {
+            setGrnBill(bil.get(0));
+        }
+
+    }
+
     public void clear() {
         String sql = "Select b From BilledBill b where b.creater is null and  b.retired=false and b.billType= :bTp "
                 + " and b.referenceBill.id=" + getApproveBill().getId();
@@ -648,7 +661,7 @@ public class GrnController implements Serializable {
         dealor = null;
         pos = null;
         printPreview = false;
-        grossTotal=0;
+        grossTotal = 0;
 //        billItems = null;
         //    System.err.println("Setting Approve Bill " + getPharmaceuticalBillItem().size());
         createGrn();

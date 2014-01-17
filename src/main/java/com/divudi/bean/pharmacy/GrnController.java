@@ -477,7 +477,7 @@ public class GrnController implements Serializable {
         for (PharmaceuticalBillItem i : tmp) {
             System.err.println("Qty Unit : " + i.getQtyInUnit());
 //            System.err.println("Remaining Qty : " + i.getRemainingQty());
-            double remains = getPharmacyBillBean().calQty(i);
+            double remains = getPharmacyBillBean().calQtyInTwoSql(i);
             System.err.println("Tot GRN Qty : " + remains);
             System.err.println("QTY : " + i.getQtyInUnit());
             if (i.getQtyInUnit() >= remains && (i.getQtyInUnit() - remains) != 0) {

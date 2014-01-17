@@ -104,6 +104,7 @@ public enum Privileges {
     PharmacyPurchaseCancellation,
     PharmacyPurchaseReturn,
     PharmacyAdministration,
+    PharmacyStockAdjustment,
     
     ClinicalPatientSummery,
     ClinicalPatientDetails,

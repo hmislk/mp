@@ -26,7 +26,7 @@
                 </f:facet>
 
 
-                <p:dataTable var="bilItem" scrollable="true" scrollHeight="250" 
+                <p:dataTable var="bItm" scrollable="true" scrollHeight="250" 
                              value="#{transferIssueController.issuedBill.billItems}" 
                              id="itemList">  
 
@@ -35,28 +35,33 @@
                     </f:facet>  
 
                     <p:column headerText="Item Name"  style="width:50px!important;">  
-                        <h:outputLabel value="#{bilItem.item.name}"/>                        
+                        <p:selectOneMenu id="item"  value="#{bItm.item}">
+                            <f:selectItems value="#{bItm.tmpSuggession}" var="ii" itemLabel="#{ii.name}" itemValue="#{ii}"/>
+                            <f:ajax event="change" render="@this qty  :#{p:component('tab')}"  execute="@this"
+                                    listener="#{transferIssueController.onEdit(bItm)}" ></f:ajax>
+                        </p:selectOneMenu> 
+
                     </p:column>  
 
-                     <p:column headerText="Batch No"  style="width:50px!important;">  
-                         <h:outputLabel value="#{bilItem.pharmaceuticalBillItem.stock.itemBatch.batchNo}"/>                        
+                    <p:column headerText="Batch No"  style="width:50px!important;">  
+                        <h:outputLabel value="#{bItm.pharmaceuticalBillItem.stock.itemBatch.batchNo}"/>                        
                     </p:column>  
-                     <p:column headerText="Cost Rate"  style="width:50px!important;">  
-                         <h:outputLabel value="#{bilItem.pharmaceuticalBillItem.stock.itemBatch.purcahseRate}"/>                        
+                    <p:column headerText="Cost Rate"  style="width:50px!important;">  
+                        <h:outputLabel value="#{bItm.pharmaceuticalBillItem.stock.itemBatch.purcahseRate}"/>                        
                     </p:column>  
-                    
+
                     <p:column headerText="Qty" style="width:25px!important;">  
-                        <p:inputText value="#{bilItem.qty}" >
-                            <f:ajax event="blur" render="@this"   execute="@this" listener="#{transferIssueController.onEdit(bilItem)}" ></f:ajax>
-                            <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferIssueController.onFocus(bilItem)}"/>
+                        <p:inputText id="qty" value="#{bItm.pharmaceuticalBillItem.qty}" >
+                            <f:ajax event="blur" render="@this"   execute="@this" listener="#{transferIssueController.onEdit(bItm)}" ></f:ajax>
+                            <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferIssueController.onFocus(bItm)}"/>
                         </p:inputText>
                     </p:column>              
 
-<!--                    <p:column style="width: 10px!important;">
-                        <p:commandButton value="Remove"  ajax="false" action="#{transferIssueController.remove()}">
-                            <f:setPropertyActionListener target="#{transferIssueController.rbillItem}" value="#{billItem}"/>
-                        </p:commandButton>
-                    </p:column>-->
+                    <!--                    <p:column style="width: 10px!important;">
+                                            <p:commandButton value="Remove"  ajax="false" action="#{transferIssueController.remove()}">
+                                                <f:setPropertyActionListener target="#{transferIssueController.rbillItem}" value="#{bItm}"/>
+                                            </p:commandButton>
+                                        </p:column>-->
                 </p:dataTable>  
 
                 <p:spacer height="50"/>

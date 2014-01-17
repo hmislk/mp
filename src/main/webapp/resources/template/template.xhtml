@@ -123,7 +123,7 @@
                                         <p:menuitem  ajax="false" action="pharmacy_transfer_request_list"  value="Transfer Requested List" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                           
                                         <p:menuitem  ajax="false" action="pharmacy_transfer_issued_list"  value="Transfer Issued List" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                                                                        
                                     </p:submenu>                                   
-                                    <p:submenu label="Adjustments" >
+                                    <p:submenu label="Adjustments" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}">
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_department"  value="Department Stock(QTY)" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_staff"  value="Staff Stock Adjustment" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_purchase_rate"  value="Purchase Rate" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
@@ -274,6 +274,12 @@
 
                                             <h:outputLabel value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
                                             <p:autoComplete value="#{sessionController.department}"  style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;"  completeMethod="#{departmentController.completeDept}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" forceSelection="true" rendered="true" requiredMessage="You must select a department" >
+                                                <p:column headerText="Department">
+                                                    #{dept.name}
+                                                </p:column>
+                                                 <p:column headerText="Institution">
+                                                    #{dept.institution.name}
+                                                </p:column>
                                             </p:autoComplete>
                                             <h:outputLabel value="Username"  style="text-align: left; margin: 5px; padding: 5px;"  ></h:outputLabel>
                                             <p:inputText autocomplete="off"  value="#{sessionController.userName}"  style="text-align: left; margin: 5px; padding: 5px;" ></p:inputText>

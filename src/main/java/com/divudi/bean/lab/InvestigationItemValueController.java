@@ -82,7 +82,6 @@ public class InvestigationItemValueController implements Serializable {
         System.out.println("7");
         Map m = new HashMap();
         String sql;
-<<<<<<< HEAD
         sql = "select v.name from InvestigationItemValue v "
                 + "where v.investigationItem=:ii and v.retired=false and"
                 + " (upper(v.code) like :s or upper(v.name) like :s) order by v.name";
@@ -91,23 +90,6 @@ public class InvestigationItemValueController implements Serializable {
         List<String> sls = getFacade().findString(sql, m);
         System.out.println("m = " + m);
         System.out.println("sql = " + sql);
-=======
-        List<String> sls;
-        if (ii == null) {
-            sql = "select v.name from InvestigationItemValue v "
-                    + "where v.retired=false and"
-                    + " (upper(v.code) like :s or upper(v.name) like :s) order by v.name";
-            m.put("s", "'%" + qry.toUpperCase() + "%'");
-            sls = getFacade().findString(sql, m);
-        } else {
-            sql = "select v.name from InvestigationItemValue v "
-                    + "where v.investigationItem=:ii and v.retired=false and"
-                    + " (upper(v.code) like :s or upper(v.name) like :s) order by v.name";
-            m.put("s", "'%" + qry.toUpperCase() + "%'");
-            m.put("ii", ii);
-            sls = getFacade().findString(sql, m);
-        }
->>>>>>> origin/master
         System.out.println("sls = " + sls);
         return sls;
     }

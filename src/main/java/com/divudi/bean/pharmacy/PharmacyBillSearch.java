@@ -1104,6 +1104,9 @@ public class PharmacyBillSearch implements Serializable {
 
             getBillFacade().create(cb);
             pharmacyCancelBillItems(cb);
+            
+            getBill().getReferenceBill().setReferenceBill(null);
+            getBillFacade().edit(getBill().getReferenceBill());
 
             getBill().setReferenceBill(null);
 

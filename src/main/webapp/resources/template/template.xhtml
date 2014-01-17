@@ -36,7 +36,7 @@
                                 <h:outputLabel value="#{labels.topic}" />
                             </f:facet>
                             <p:menubar styleClass="nonPrintBlock" style=" border: 0px;" >
-                                <p:menuitem  ajax="false"  action="./report/aboutUs_2" value="Home" ></p:menuitem>
+                                <p:menuitem  ajax="false"  value="Home" ></p:menuitem>
                                 <p:submenu label="OPD" rendered="#{webUserController.hasPrivilege('Opd')}">
                                     <p:menuitem ajax="false" action="#{billController.prepareNewBill}" value="Bill" rendered="#{webUserController.hasPrivilege('OpdBilling')}" ></p:menuitem>
                                     <p:submenu label="Packages">

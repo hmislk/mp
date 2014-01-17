@@ -30,8 +30,9 @@ public enum BillNumberSuffix {
     PURRET,//Purchase Return
     PURCAN,//Purchase Cancel
     PHTI,//Transfer Issue
-    PHTICAN,//Trnsfer Cancel
+    PHTICAN,//Trnsfer Issue Cancel
     PHTR,//Transfer Recieve
+    PHTRCAN,//Transfer Receive Cancel
     PHTRQ,//Transfer Request
     //PHPRE,//Pre Bill
     PHSAL,

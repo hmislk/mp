@@ -31,12 +31,18 @@
                         Requested Item 
                     </f:facet>  
 
-                    <p:column headerText="Item Name" style="width:25px!important;">  
-                        <h:outputText value=" #{ph.item.name}"  />                     
+                    <p:column headerText="Item Name"  style="width:25px!important;">  
+                        <p:selectOneMenu id="item"  value="#{ph.item}">
+                            <f:selectItems value="#{ph.tmpSuggession}" var="ii" itemLabel="#{ii.name}" itemValue="#{ii}"/>
+                            <f:ajax event="change" render="@this qty  :#{p:component('tab')}"  execute="@this"
+                                    listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
+                        </p:selectOneMenu> 
+
                     </p:column>  
 
+
                     <p:column headerText="Qty" style="width:25px!important;">                      
-                        <p:inputText value="#{ph.qty}" >  
+                        <p:inputText id="qty" value="#{ph.pharmaceuticalBillItem.qty}" >  
                             <f:ajax event="blur" render=":#{p:component('tab')} "  execute="@this" listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
                         </p:inputText>
                     </p:column>  

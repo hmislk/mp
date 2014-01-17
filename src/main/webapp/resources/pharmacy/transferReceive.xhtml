@@ -93,11 +93,12 @@
                         <f:facet name="header">Retail Rate</f:facet>
                             #{bip.pharmaceuticalBillItem.retailRate}
                     </p:column>
-                    <p:column>
-                        <f:facet name="header">Sale Value</f:facet>
-                            #{bip.pharmaceuticalBillItem.retailRate*bip.pharmaceuticalBillItem.qty}
-                    </p:column>                                   
-
+                    <p:columnGroup type="footer">
+                        <p:row>
+                            <p:column footerText="Total" colspan="6"/>
+                            <p:column footerText="#{cc.attrs.bill.netTotal}"/>
+                        </p:row>
+                    </p:columnGroup>
                 </p:dataTable>
             </div>
 

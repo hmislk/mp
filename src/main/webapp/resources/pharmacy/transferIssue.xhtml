@@ -79,19 +79,19 @@
                     </p:column>
                     <p:column style="text-align: right;">
                         <f:facet name="header">Cost Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.stock.itemBatch.purcahseRate}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputLabel>
                     </p:column>
                     <p:column style="text-align: right;">
-                        <f:facet name="header">Value</f:facet>
-                        <h:outputLabel value="#{0-bip.pharmaceuticalBillItem.stock.itemBatch.purcahseRate*bip.pharmaceuticalBillItem.qty}">
+                        <f:facet name="header">Value </f:facet>
+                        <h:outputLabel value="#{0-bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputLabel>
                     </p:column>
                     <p:column style="text-align: right;">
                         <f:facet name="header">Sale Price</f:facet>                           
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.retailRate}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputLabel>
                     </p:column>

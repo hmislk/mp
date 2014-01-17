@@ -13,6 +13,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.entity.lab.InvestigationItem;
 import com.divudi.facade.InvestigationItemValueFacade;
 import com.divudi.entity.lab.InvestigationItemValue;
+import com.divudi.entity.lab.PatientReportItemValue;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -57,21 +58,38 @@ public class InvestigationItemValueController implements Serializable {
         System.out.println("completing values");
         FacesContext context = FacesContext.getCurrentInstance();
         InvestigationItem ii;
+        System.out.println("1");
+        System.out.println(context
+                .getApplication()
+                .evaluateExpressionGet(FacesContext.getCurrentInstance(),
+                        "#{pv}", PatientReportItemValue.class));
+        System.out.println("2");
         try {
-            ii = (InvestigationItem) UIComponent.getCurrentComponent(context).getAttributes().get("ii");
+            System.out.println("3");
+            PatientReportItemValue priv = (PatientReportItemValue) context
+                    .getApplication()
+                    .evaluateExpressionGet(FacesContext.getCurrentInstance(),
+                            "#{pv}", PatientReportItemValue.class);
+            System.out.println("4");
+            ii = priv.getInvestigationItem();
+            System.out.println("5");
             System.out.println("ii = " + ii);
         } catch (Exception e) {
             ii = null;
             System.out.println("error " + e.getMessage());
+            System.out.println("6");
         }
+        System.out.println("7");
         Map m = new HashMap();
         String sql;
         sql = "select v.name from InvestigationItemValue v "
                 + "where v.investigationItem=:ii and v.retired=false and"
                 + " (upper(v.code) like :s or upper(v.name) like :s) order by v.name";
-        m.put("s","'%"+ qry.toUpperCase()+"%'");
+        m.put("s", "%" + qry.toUpperCase() + "%");
         m.put("ii", ii);
         List<String> sls = getFacade().findString(sql, m);
+        System.out.println("m = " + m);
+        System.out.println("sql = " + sql);
         System.out.println("sls = " + sls);
         return sls;
     }

@@ -102,6 +102,10 @@
                                 <p:submenu label="Pharmacy"  rendered="#{webUserController.hasPrivilege('Pharmacy')}">
                                     <p:submenu label="Sale">
                                         <p:menuitem  ajax="false" action="pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
+                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale_cashier"  value="Sale for Cashier" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
+                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale_bht"  value="Inward Sale" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
+                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
+                                        
                                         <p:menuitem  ajax="false" action="pharmacy_search_sale_bill"  value="Search Sale Bill" rendered="#{webUserController.hasPrivilege('Pharmacy')}" actionListener="#{billSearch.recreateModel2}" ></p:menuitem>                                        
                                         <p:menuitem  ajax="false" action="pharmacy_search_sale_bill_item"  value="Search Sale Bill Items" rendered="#{webUserController.hasPrivilege('Pharmacy')}" actionListener="#{billSearch.recreateModel2}" ></p:menuitem>                                        
                                         <p:submenu label="Return">

@@ -156,6 +156,21 @@ public class PharmacyRecieveBean {
         return value;
     }
 
+    public double getTotalQty(BillItem b, BillType billType) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  p.creater is not null and"
+                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
+
+        HashMap hm = new HashMap();
+        hm.put("bt", b);
+        hm.put("btp", billType);
+
+        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+
+        System.err.println("GETTING TOTAL QTY " + value);
+        return value;
+    }
+
     public double getTotalQty(BillItem b, BillType billType, Bill refund, Bill cancel) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "  (type(p.bill)=:class or type(p.bill)=:class2)and p.creater is not null and"
@@ -170,20 +185,19 @@ public class PharmacyRecieveBean {
 
     }
 
-    public double getTotalQty(BillItem b, BillType billType) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "   p.creater is not null and"
-                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
-
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-//        hm.put("class", refund.getClass());
-//        hm.put("class2", cancel.getClass());
-        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-    }
-
+//    public double getTotalQtyInSingleSql(BillItem b, BillType billType) {
+//        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+//                + "   p.creater is not null and"
+//                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
+//
+//        HashMap hm = new HashMap();
+//        hm.put("bt", b);
+//        hm.put("btp", billType);
+////        hm.put("class", refund.getClass());
+////        hm.put("class2", cancel.getClass());
+//        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+//
+//    }
     public double getReturnedTotalQty(BillItem b, BillType billType, Bill bill) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "  type(p.bill)=:class and p.bill.creater is not null and"
@@ -193,6 +207,19 @@ public class PharmacyRecieveBean {
         hm.put("bt", b);
         hm.put("btp", billType);
         hm.put("class", bill.getClass());
+
+        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+
+    }
+
+    public double getReturnedTotalQty(BillItem b, BillType billType) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  p.bill.creater is not null and"
+                + " p.referanceBillItem.referanceBillItem=:bt and p.bill.billType=:btp";
+
+        HashMap hm = new HashMap();
+        hm.put("bt", b);
+        hm.put("btp", billType);
 
         return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
@@ -216,6 +243,20 @@ public class PharmacyRecieveBean {
         System.err.println("Cal Qty " + (Math.abs(recieveNet) - Math.abs(retuernedNet)));
 
         return (Math.abs(recieveNet) - Math.abs(retuernedNet));
+    }
+
+    public double calQtyInTwoSql(PharmaceuticalBillItem po) {
+
+        double grns = getTotalQty(po.getBillItem(), BillType.PharmacyGrnBill);
+        double grnReturn = getReturnedTotalQty(po.getBillItem(), BillType.PharmacyGrnReturn);
+
+        double netQty = grns - grnReturn;
+
+        System.err.println("GRN " + grns);
+        System.err.println("GRN Return " + grnReturn);
+        System.err.println("Net " + netQty);
+
+        return netQty;
     }
 
     public double calQty2(BillItem bil) {
@@ -501,6 +542,20 @@ public class PharmacyRecieveBean {
         return items;
     }
 
+    public List<Item> findPack(Amp amp) {
+
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "SELECT i from Ampp i where i.retired=false and "
+                + " i.amp=:am";
+
+        hm.put("am", amp);
+
+        return getItemFacade().findBySQL(sql, hm);
+
+    }
+
+   
     public List<Item> findItem(Ampp tmp, List<Item> items) {
 
         String sql;

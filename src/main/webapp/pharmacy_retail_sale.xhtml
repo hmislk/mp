@@ -124,8 +124,7 @@
 
                                                             <p:inputText  id="ipTblQty" value="#{bi.qty}" style="width:96%" label="Qty" >
                                                                 <f:convertNumber integerOnly="true" />
-                                                                <f:ajax event="keyup" execute="@this rate" render="gros @this :#{p:component('pBillDetails')}" listener="#{pharmacySaleController.onEdit(bi)}"/>
-                                                                <f:ajax event="change" render="@this" execute="@this" />
+                                                                <f:ajax event="change" render="@this gros :#{p:component('pBillDetails')}" execute="@this rate" listener="#{pharmacySaleController.onEdit(bi)}"/>
                                                             </p:inputText>
 
                                                         </p:column>

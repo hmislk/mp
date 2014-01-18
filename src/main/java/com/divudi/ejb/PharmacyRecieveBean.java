@@ -198,7 +198,6 @@ public class PharmacyRecieveBean {
 //        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 //
 //    }
-
     public double getReturnedTotalQty(BillItem b, BillType billType, Bill bill) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "  type(p.bill)=:class and p.bill.creater is not null and"
@@ -543,6 +542,20 @@ public class PharmacyRecieveBean {
         return items;
     }
 
+    public List<Item> findPack(Amp amp) {
+
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "SELECT i from Ampp i where i.retired=false and "
+                + " i.amp=:am";
+
+        hm.put("am", amp);
+
+        return getItemFacade().findBySQL(sql, hm);
+
+    }
+
+   
     public List<Item> findItem(Ampp tmp, List<Item> items) {
 
         String sql;

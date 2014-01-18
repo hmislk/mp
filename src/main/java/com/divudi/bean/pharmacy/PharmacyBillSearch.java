@@ -649,7 +649,7 @@ public class PharmacyBillSearch implements Serializable {
             }
         }
 
-        if (getBill().getBillType() == BillType.PharmacyTransferIssue) {
+        if (getBill().getBillType() == BillType.PharmacyTransferIssue) {            
             if (getBill().getForwardReferenceBill() != null) {
                 UtilityController.addErrorMessage("Item for this bill already recieve");
                 return true;
@@ -1219,7 +1219,7 @@ public class PharmacyBillSearch implements Serializable {
         }
     }
 
-    private boolean checkGrnItems() {
+    private boolean checkBillItemStock() {
         for (BillItem bi : getBill().getBillItems()) {
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
@@ -1235,7 +1235,7 @@ public class PharmacyBillSearch implements Serializable {
                 return;
             }
 
-            if (checkGrnItems()) {
+            if (checkBillItemStock()) {
                 UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't cancel ");
                 return;
             }
@@ -1314,6 +1314,11 @@ public class PharmacyBillSearch implements Serializable {
             if (pharmacyErrorCheck()) {
                 return;
             }
+            
+             if (checkBillItemStock()) {
+                UtilityController.addErrorMessage("Items for this Note Already issued so you can't cancel ");
+                return;
+            }
 
             CancelledBill cb = pharmacyCreateCancelBill();
             cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.PHTRCAN));
@@ -1349,7 +1354,7 @@ public class PharmacyBillSearch implements Serializable {
                 return;
             }
 
-            if (checkGrnItems()) {
+            if (checkBillItemStock()) {
                 UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't cancel ");
                 return;
             }

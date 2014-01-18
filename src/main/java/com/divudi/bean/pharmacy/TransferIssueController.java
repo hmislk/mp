@@ -185,8 +185,8 @@ public class TransferIssueController implements Serializable {
                 phItem.setQtyInUnit(sq.getQty());
                 System.err.println("Pharmac Item QTY " + phItem.getQtyInUnit());
                 phItem.setFreeQtyInUnit(i.getFreeQtyInUnit());
-                phItem.setPurchaseRate(i.getPurchaseRate());
-                phItem.setRetailRate(i.getRetailRate());
+                phItem.setPurchaseRateInUnit(sq.getStock().getItemBatch().getPurcahseRate());
+                phItem.setRetailRateInUnit(sq.getStock().getItemBatch().getRetailsaleRate());
                 phItem.setStock(sq.getStock());
                 phItem.setDoe(sq.getStock().getItemBatch().getDateOfExpire());
                 phItem.setItemBatch(sq.getStock().getItemBatch());

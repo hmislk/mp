@@ -134,14 +134,18 @@ public class TransferIssueController implements Serializable {
         issuedBill = null;
         create();
     }
+    
+    
 
     private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findItem((Amp) item, suggessions);
+            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
+            suggessions.add(item);
         } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findItem((Ampp) item, suggessions);
+            suggessions = getPharmacyRecieveBean().findPack(((Ampp)item).getAmp());
+            suggessions.add(((Ampp)item).getAmp());
         }
         
         System.err.println("Sugg" +suggessions);
@@ -181,8 +185,8 @@ public class TransferIssueController implements Serializable {
                 phItem.setQtyInUnit(sq.getQty());
                 System.err.println("Pharmac Item QTY " + phItem.getQtyInUnit());
                 phItem.setFreeQtyInUnit(i.getFreeQtyInUnit());
-                phItem.setPurchaseRate(i.getPurchaseRate());
-                phItem.setRetailRate(i.getRetailRate());
+                phItem.setPurchaseRateInUnit(sq.getStock().getItemBatch().getPurcahseRate());
+                phItem.setRetailRateInUnit(sq.getStock().getItemBatch().getRetailsaleRate());
                 phItem.setStock(sq.getStock());
                 phItem.setDoe(sq.getStock().getItemBatch().getDateOfExpire());
                 phItem.setItemBatch(sq.getStock().getItemBatch());

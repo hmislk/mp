@@ -137,19 +137,23 @@ public class TransferReceiveController implements Serializable {
         create();
     }
 
-    private List<Item> getSuggession(Item item) {
+     private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findItem((Amp) item, suggessions);
+            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
+            suggessions.add(item);
         } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findItem((Ampp) item, suggessions);
+            Amp amp=((Ampp)item).getAmp();
+            suggessions = getPharmacyRecieveBean().findPack(amp);
+            suggessions.add(amp);
         }
-
-        System.err.println("Sugg" + suggessions);
+        
+        System.err.println("Sugg" +suggessions);
 
         return suggessions;
     }
+
 
     public void saveBillComponent() {
         String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getIssuedBill().getId();

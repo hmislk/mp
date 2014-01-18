@@ -75,12 +75,23 @@
                                         <p:commandButton value="New Procedure" ajax="false" action="#{theatreModuleController.newProcedure() }"  style="float: right;"></p:commandButton>
                                     </f:facet>
                                     <p:panelGrid columns="2" >
-                                        <h:outputLabel value="Name" >
+                                        <h:outputLabel value="Surgery Name" >
                                         </h:outputLabel>
-                                        <p:inputText value="#{theatreModuleController.procedure.name}" ></p:inputText>
-                                        <h:outputLabel value="Date / Time" >
+                                        <p:selectOneMenu value="#{theatreModuleController.procedure.item}" >
+                                            <f:selectItem itemLabel="Select Surgery" ></f:selectItem>
+                                            <f:selectItems value="#{procedureController.items}" var="p" itemLabel="#{p.name}" itemValue="#{p}" ></f:selectItems>
+                                        </p:selectOneMenu>
+                                        <h:outputLabel value="Surery Date" >
                                         </h:outputLabel>
-                                        <p:calendar value="#{theatreModuleController.procedure.dateTime}" pattern="dd MMMM yyyy hh:mm" >
+                                        <p:calendar value="#{theatreModuleController.procedure.dateTime}" pattern="dd MMMM yyyy" >
+                                        </p:calendar>
+                                        <h:outputLabel value="Start Time" >
+                                        </h:outputLabel>
+                                        <p:calendar value="#{theatreModuleController.procedure.fromTime}" pattern="dd MMMM yyyy hh:mm" >
+                                        </p:calendar>
+                                        <h:outputLabel value="End Time" >
+                                        </h:outputLabel>
+                                        <p:calendar value="#{theatreModuleController.procedure.toTime}" pattern="dd MMMM yyyy hh:mm" >
                                         </p:calendar>
                                     </p:panelGrid>
                                 </p:panel>

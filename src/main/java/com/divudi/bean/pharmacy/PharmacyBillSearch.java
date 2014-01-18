@@ -649,6 +649,13 @@ public class PharmacyBillSearch implements Serializable {
             }
         }
 
+        if (getBill().getBillType() == BillType.PharmacyTransferIssue) {            
+            if (getBill().getForwardReferenceBill() != null) {
+                UtilityController.addErrorMessage("Item for this bill already recieve");
+                return true;
+            }
+        }
+
         if (getBill().getComments() == null || getBill().getComments().trim().equals("")) {
             UtilityController.addErrorMessage("Please enter a comment");
             return true;
@@ -795,6 +802,84 @@ public class PharmacyBillSearch implements Serializable {
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
             getPharmacyBean().updateStock(ph.getStock(), qty);
+
+            getBillItemFacede().edit(b);
+
+            can.getBillItems().add(b);
+        }
+
+        getBillFacade().edit(can);
+    }
+
+    private void pharmacyCancelIssuedItems(CancelledBill can) {
+        for (BillItem nB : getBill().getBillItems()) {
+            BillItem b = new BillItem();
+            b.setBill(can);
+            b.copy(nB);
+            b.invertValue(nB);
+
+            b.setReferanceBillItem(nB);
+
+            b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            b.setCreater(getSessionController().getLoggedUser());
+
+            PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
+            ph.copy(nB.getPharmaceuticalBillItem());
+            ph.invertValue(nB.getPharmaceuticalBillItem());
+
+            getPharmaceuticalBillItemFacade().create(ph);
+
+            b.setPharmaceuticalBillItem(ph);
+            getBillItemFacede().create(b);
+
+            ph.setBillItem(b);
+            getPharmaceuticalBillItemFacade().edit(ph);
+
+            //    updateRemainingQty(nB);
+            //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
+            double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
+            System.err.println("Updating QTY " + qty);
+            getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty));
+            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty));
+
+            getBillItemFacede().edit(b);
+
+            can.getBillItems().add(b);
+        }
+
+        getBillFacade().edit(can);
+    }
+    
+     private void pharmacyCancelReceivedItems(CancelledBill can) {
+        for (BillItem nB : getBill().getBillItems()) {
+            BillItem b = new BillItem();
+            b.setBill(can);
+            b.copy(nB);
+            b.invertValue(nB);
+
+            b.setReferanceBillItem(nB);
+
+            b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            b.setCreater(getSessionController().getLoggedUser());
+
+            PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
+            ph.copy(nB.getPharmaceuticalBillItem());
+            ph.invertValue(nB.getPharmaceuticalBillItem());
+
+            getPharmaceuticalBillItemFacade().create(ph);
+
+            b.setPharmaceuticalBillItem(ph);
+            getBillItemFacede().create(b);
+
+            ph.setBillItem(b);
+            getPharmaceuticalBillItemFacade().edit(ph);
+
+            //    updateRemainingQty(nB);
+            //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
+            double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
+            System.err.println("Updating QTY " + qty);
+            getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty));
+            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty));
 
             getBillItemFacede().edit(b);
 
@@ -1104,7 +1189,7 @@ public class PharmacyBillSearch implements Serializable {
 
             getBillFacade().create(cb);
             pharmacyCancelBillItems(cb);
-            
+
             getBill().getReferenceBill().setReferenceBill(null);
             getBillFacade().edit(getBill().getReferenceBill());
 
@@ -1134,7 +1219,7 @@ public class PharmacyBillSearch implements Serializable {
         }
     }
 
-    private boolean checkGrnItems() {
+    private boolean checkBillItemStock() {
         for (BillItem bi : getBill().getBillItems()) {
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
@@ -1150,7 +1235,7 @@ public class PharmacyBillSearch implements Serializable {
                 return;
             }
 
-            if (checkGrnItems()) {
+            if (checkBillItemStock()) {
                 UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't cancel ");
                 return;
             }
@@ -1190,13 +1275,86 @@ public class PharmacyBillSearch implements Serializable {
         }
     }
 
+    public void pharmacyTransferIssueCancel() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+            if (pharmacyErrorCheck()) {
+                return;
+            }
+
+            CancelledBill cb = pharmacyCreateCancelBill();
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.PHTICAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.PHTICAN));
+
+            getBillFacade().create(cb);
+
+            pharmacyCancelIssuedItems(cb);
+
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit(getBill());
+
+            getBill().getBackwardReferenceBill().setForwardReferenceBill(null);
+            getBillFacade().edit(getBill().getBackwardReferenceBill());
+
+            getBill().setBackwardReferenceBill(null);
+            getBill().setForwardReferenceBill(null);
+            getBillFacade().edit(getBill());
+
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+    }
+    
+     public void pharmacyTransferReceiveCancel() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+            if (pharmacyErrorCheck()) {
+                return;
+            }
+            
+             if (checkBillItemStock()) {
+                UtilityController.addErrorMessage("Items for this Note Already issued so you can't cancel ");
+                return;
+            }
+
+            CancelledBill cb = pharmacyCreateCancelBill();
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.PHTRCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.PHTRCAN));
+
+            getBillFacade().create(cb);
+
+            pharmacyCancelReceivedItems(cb);
+
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit(getBill());
+
+            getBill().getBackwardReferenceBill().setForwardReferenceBill(null);
+            getBillFacade().edit(getBill().getBackwardReferenceBill());
+
+            getBill().setBackwardReferenceBill(null);
+            getBill().setForwardReferenceBill(null);
+            getBillFacade().edit(getBill());
+
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+    }
+
     public void pharmacyPurchaseCancel() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {
                 return;
             }
 
-            if (checkGrnItems()) {
+            if (checkBillItemStock()) {
                 UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't cancel ");
                 return;
             }

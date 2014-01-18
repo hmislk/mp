@@ -36,7 +36,7 @@
                                 <h:outputLabel value="#{labels.topic}" />
                             </f:facet>
                             <p:menubar styleClass="nonPrintBlock" style=" border: 0px;" >
-                                <p:menuitem  ajax="false"  action="./report/aboutUs_2" value="Home" ></p:menuitem>
+                                <p:menuitem  ajax="false"  value="Home" ></p:menuitem>
                                 <p:submenu label="OPD" rendered="#{webUserController.hasPrivilege('Opd')}">
                                     <p:menuitem ajax="false" action="#{billController.prepareNewBill}" value="Bill" rendered="#{webUserController.hasPrivilege('OpdBilling')}" ></p:menuitem>
                                     <p:submenu label="Packages">
@@ -66,6 +66,7 @@
                                         <p:menuitem  ajax="false"  action="inward_timed_service_consume" value="Add Timed Services" actionListener="#{inwardTimedItemController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                        
                                         <p:menuitem  ajax="false"  action="inward_additional_charge" value="Add Additional Charge" actionListener="#{inwardAdditionalChargeController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  action="inward_professional_bill" value="Add Professional Fee" actionListener="#{inwardProfessionalBillController.prepareNewBill}"  rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
+                                        <p:menuitem  ajax="false"  action="inward_surgery_add" value="Add Surgeries" actionListener="#{theatreModuleController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
                                         <p:menuitem  ajax="false"  action="inward_payment_bill" value="Payment Bill" actionListener="#{inwardPaymentController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  action="inward_refund_bill" value="Payment Refund" actionListener="#{inwardRefundController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
                                     </p:submenu>
@@ -123,19 +124,19 @@
                                         <p:menuitem  ajax="false" action="pharmacy_transfer_request_list"  value="Transfer Requested List" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                           
                                         <p:menuitem  ajax="false" action="pharmacy_transfer_issued_list"  value="Transfer Issued List" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                                                                        
                                     </p:submenu>                                   
-                                    <p:submenu label="Adjustments" >
+                                    <p:submenu label="Adjustments" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}">
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_department"  value="Department Stock(QTY)" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_staff"  value="Staff Stock Adjustment" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_purchase_rate"  value="Purchase Rate" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_retail_sale_rate"  value="Sale Rate" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
-                                        
+
                                     </p:submenu>
                                     <p:submenu label="Dealor Payment" >
                                         <p:menuitem  ajax="false" action="pharmacy_search_dealor_due"  value="Dealor Due Search" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem ajax="false" action="pharmacy_search_dealor_due_age" actionListener="#{dealorDueController.makeNull}" value="Dealor Due By Age" />
                                         <p:menuitem ajax="false" action="pharmacy_bill_dealor" value="GRN Payment" />   
                                         <p:menuitem ajax="false" action="pharmacy_search_dealor_payment" value="GRN Payment Done Search"  actionListener="#{billSearch.recreateModel2()}" />   
-                                       
+
                                     </p:submenu>
                                     <p:menuitem  ajax="false" action="pharmacy_search"  value="Search" actionListener="#{billSearch.recreateModel}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                  
                                     <p:menuitem  ajax="false" action="pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
@@ -274,6 +275,12 @@
 
                                             <h:outputLabel value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
                                             <p:autoComplete value="#{sessionController.department}"  style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;"  completeMethod="#{departmentController.completeDept}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" forceSelection="true" rendered="true" requiredMessage="You must select a department" >
+                                                <p:column headerText="Department">
+                                                    #{dept.name}
+                                                </p:column>
+                                                <p:column headerText="Institution">
+                                                    #{dept.institution.name}
+                                                </p:column>
                                             </p:autoComplete>
                                             <h:outputLabel value="Username"  style="text-align: left; margin: 5px; padding: 5px;"  ></h:outputLabel>
                                             <p:inputText autocomplete="off"  value="#{sessionController.userName}"  style="text-align: left; margin: 5px; padding: 5px;" ></p:inputText>

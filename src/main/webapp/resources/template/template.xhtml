@@ -66,6 +66,7 @@
                                         <p:menuitem  ajax="false"  action="inward_timed_service_consume" value="Add Timed Services" actionListener="#{inwardTimedItemController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                        
                                         <p:menuitem  ajax="false"  action="inward_additional_charge" value="Add Additional Charge" actionListener="#{inwardAdditionalChargeController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  action="inward_professional_bill" value="Add Professional Fee" actionListener="#{inwardProfessionalBillController.prepareNewBill}"  rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
+                                        <p:menuitem  ajax="false"  action="inward_surgery_add" value="Add Surgeries" actionListener="#{theatreModuleController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
                                         <p:menuitem  ajax="false"  action="inward_payment_bill" value="Payment Bill" actionListener="#{inwardPaymentController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  action="inward_refund_bill" value="Payment Refund" actionListener="#{inwardRefundController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
                                     </p:submenu>
@@ -128,14 +129,14 @@
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_staff"  value="Staff Stock Adjustment" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_purchase_rate"  value="Purchase Rate" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_retail_sale_rate"  value="Sale Rate" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
-                                        
+
                                     </p:submenu>
                                     <p:submenu label="Dealor Payment" >
                                         <p:menuitem  ajax="false" action="pharmacy_search_dealor_due"  value="Dealor Due Search" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                         <p:menuitem ajax="false" action="pharmacy_search_dealor_due_age" actionListener="#{dealorDueController.makeNull}" value="Dealor Due By Age" />
                                         <p:menuitem ajax="false" action="pharmacy_bill_dealor" value="GRN Payment" />   
                                         <p:menuitem ajax="false" action="pharmacy_search_dealor_payment" value="GRN Payment Done Search"  actionListener="#{billSearch.recreateModel2()}" />   
-                                       
+
                                     </p:submenu>
                                     <p:menuitem  ajax="false" action="pharmacy_search"  value="Search" actionListener="#{billSearch.recreateModel}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                  
                                     <p:menuitem  ajax="false" action="pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
@@ -277,7 +278,7 @@
                                                 <p:column headerText="Department">
                                                     #{dept.name}
                                                 </p:column>
-                                                 <p:column headerText="Institution">
+                                                <p:column headerText="Institution">
                                                     #{dept.institution.name}
                                                 </p:column>
                                             </p:autoComplete>

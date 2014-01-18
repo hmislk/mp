@@ -31,7 +31,7 @@ import javax.inject.Inject;
  *
  * @author Buddhika
  */
-@Named(value = "theatreModuleController")
+@Named
 @SessionScoped
 public class TheatreModuleController implements Serializable {
 
@@ -62,6 +62,17 @@ public class TheatreModuleController implements Serializable {
     @Inject
     SessionController sessionController;
 
+    public void makeNull() {
+        patient = null;
+        admission = null;
+        procedure = null;
+        encounterComponent = null;
+        encounterComponents = null;
+        procedures = null;
+        staff = null;
+
+    }
+
     /**
      * Creates a new instance of TheatreModuleController
      */
@@ -79,7 +90,7 @@ public class TheatreModuleController implements Serializable {
         if (getProcedure() == null) {
             return;
         }
-        if (getProcedure().getName()==null || getProcedure().getName().equals("")) {
+        if (getProcedure().getName() == null || getProcedure().getName().equals("")) {
             UtilityController.addErrorMessage("Please select encounter");
             return;
         }
@@ -113,7 +124,7 @@ public class TheatreModuleController implements Serializable {
 
         saveProcedure();
 
-        if (encounterComponent.getBillFee() != null) {
+        if (encounterComponent.getBillFee() != null && encounterComponent.getBillFee().getFeeValue()!=0) {
 
             BilledBill bill = new BilledBill();
             bill.setGrantTotal(encounterComponent.getBillFee().getFeeValue());

@@ -134,14 +134,18 @@ public class TransferIssueController implements Serializable {
         issuedBill = null;
         create();
     }
+    
+    
 
     private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findItem((Amp) item, suggessions);
+            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
+            suggessions.add(item);
         } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findItem((Ampp) item, suggessions);
+            suggessions = getPharmacyRecieveBean().findPack(((Ampp)item).getAmp());
+            suggessions.add(((Ampp)item).getAmp());
         }
         
         System.err.println("Sugg" +suggessions);

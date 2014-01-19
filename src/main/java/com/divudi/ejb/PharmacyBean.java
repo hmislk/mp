@@ -392,7 +392,9 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
+        System.err.println("Before Update "+stock.getStock());
         stock.setStock(stock.getStock() - qty);
+        System.err.println("After  Update "+stock.getStock());
         getStockFacade().edit(stock);
     }
 
@@ -415,9 +417,9 @@ public class PharmacyBean {
         if (stock.getStock() == null) {
             stock.setStock(0.0);
         }
-//        System.err.println("1 Stock " + stock.getStock());
+        System.err.println("Before Update" + stock.getStock());
         stock.setStock(stock.getStock() + qty);
-//        System.err.println("2 Stock " + stock.getStock());
+        System.err.println("After Update " + stock.getStock());
         getStockFacade().edit(stock);
     }
 

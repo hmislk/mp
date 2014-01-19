@@ -47,7 +47,11 @@
                                     execute="@this" listener="#{grnController.onEditItem(bi)}" ></f:ajax>
                         </p:selectOneMenu>                     
                     </p:column>  
-
+                    
+                    <p:column headerText="Ordered Qty" style="width: 50px!important;" >                   
+                        <h:outputLabel value="#{bi.referanceBillItem.pharmaceuticalBillItem.qty}"/>
+                    </p:column>  
+                    
                     <p:column headerText="Qty" style="width: 50px!important;" >                   
                         <p:inputText value="#{bi.pharmaceuticalBillItem.qty}" id="qty" style="width:50px!important; padding: 3px;margin: 3px;">
                             <f:ajax event="blur" render="item @this freeQty purchase retail total :#{p:component('tot')}" 

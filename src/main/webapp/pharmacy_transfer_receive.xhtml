@@ -25,7 +25,7 @@
                 </p:panel>
 
                 <p:dataTable var="ph" value="#{transferReceiveController.receivedBill.billItems}" 
-                             id="itemList" scrollable="true" scrollHeight="250">  
+                             id="itemList" scrollable="true" scrollHeight="250" sortBy="#{ph.searialNo}">  
 
                     <f:facet name="header">  
                         Requested Item 

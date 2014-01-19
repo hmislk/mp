@@ -228,7 +228,7 @@ public class TransferIssueController implements Serializable {
             getBillItemFacade().edit(i);
 
             //Remove Department Stock
-            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit());
+            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit(),i.getPharmaceuticalBillItem(),getSessionController().getDepartment());
 
             //Addinng Staff
             Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem().getStock().getItemBatch(),

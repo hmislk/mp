@@ -239,7 +239,7 @@ public class TransferReceiveController implements Serializable {
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
             //Deduc Staff Stock
 
-            getPharmacyBean().deductFromStock(staffStock, qty);
+            getPharmacyBean().deductFromStock(staffStock, qty,i.getPharmaceuticalBillItem(),getSessionController().getDepartment());
 
             //Add To Stock
 //            System.err.println("Stock " + stock);

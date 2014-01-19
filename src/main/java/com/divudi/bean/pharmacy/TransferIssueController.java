@@ -72,18 +72,12 @@ public class TransferIssueController implements Serializable {
     @EJB
     private PharmacyRecieveBean pharmacyRecieveBean;
 
-    private BillItem rbillItem;
-
-    public void remove() {
-        rbillItem.setBill(null);
-
-        getBillItemFacade().edit(rbillItem);
-
-        System.err.println("RM " + rbillItem);
-        System.err.println("Size 1" + getIssuedBill().getBillItems().size());
-        getIssuedBill().getBillItems().remove(rbillItem);
-        System.err.println("Size 2" + getIssuedBill().getBillItems().size());
-        getBillFacade().edit(getIssuedBill());
+    public void remove(BillItem billItem) {
+       getIssuedBill().getBillItems().remove(billItem);
+       getBillFacade().edit(getIssuedBill());
+       
+       billItem.setBill(null);
+       getBillItemFacade().edit(billItem);
 
     }
 
@@ -424,14 +418,7 @@ public class TransferIssueController implements Serializable {
         this.pharmacyController = pharmacyController;
     }
 
-    public BillItem getRbillItem() {
-        return rbillItem;
-    }
-
-    public void setRbillItem(BillItem rbillItem) {
-        this.rbillItem = rbillItem;
-    }
-
+    
     public PharmacyRecieveBean getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }

@@ -56,8 +56,7 @@ public class TransferRequestController implements Serializable {
     private ItemsDistributorsFacade itemsDistributorsFacade;
     private Bill bill;
     private Institution dealor;
-    private Item currentItem;
-    private List<PharmaceuticalBillItem> pharmaceuticalBillItems;
+    private BillItem currentBillItem;
     //   private boolean printPreview;
     //   private double netTotal;
     @EJB
@@ -65,8 +64,7 @@ public class TransferRequestController implements Serializable {
 
     public void recreate() {
         bill = null;
-        pharmaceuticalBillItems = null;
-        currentItem = null;
+        currentBillItem = null;
         dealor = null;
         //      printPreview = false;
     }
@@ -79,31 +77,27 @@ public class TransferRequestController implements Serializable {
 
         saveBill();
 
-        PharmaceuticalBillItem ptd = new PharmaceuticalBillItem();
-        //    ptd.setPurchaseRate(getPharmacyBean().getPurchaseRate(getCurrentItem(), getSessionController().getDepartment()));
-
         BillItem bi = new BillItem();
         bi.setBill(getBill());
-        bi.setItem(getCurrentItem());
+        bi.setItem(getCurrentBillItem().getItem());
         bi.setSearialNo(getBill().getBillItems().size() + 1);
         getBillItemFacade().create(bi);
 
         PharmaceuticalBillItem phi = new PharmaceuticalBillItem();
         phi.setBillItem(bi);
 
-        phi.setQty(getPharmacyBean().getOrderingQty(getCurrentItem(), getSessionController().getDepartment()));
-        phi.setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(getCurrentItem(), getSessionController().getDepartment()));
-        phi.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentItem(), getSessionController().getDepartment()));
-
+        phi.setQty(getCurrentBillItem().getPharmaceuticalBillItem().getQty());
+        phi.setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(bi.getItem(), getSessionController().getDepartment()));
+        phi.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(bi.getItem(), getSessionController().getDepartment()));
+        phi.setBillItem(bi);
         getPharmaceuticalBillItemFacade().create(phi);
+        
+        bi.setPharmaceuticalBillItem(phi);
+        getBillItemFacade().edit(bi);
 
-        //  p.setPurchaseRate(getPharmacyBean().getPurchaseRate(getCurrentItem(), getSessionController().getDepartment()));
-        phi.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentItem(), getSessionController().getDepartment()));
+        getBill().getBillItems().add(bi);
 
-        getPharmacyBillItem().add(phi);
-//        getNetTotal();
-
-        currentItem = null;
+        currentBillItem = null;
     }
 
     @Inject
@@ -132,13 +126,6 @@ public class TransferRequestController implements Serializable {
 
     }
 
-    public List<PharmaceuticalBillItem> getPharmacyBillItem() {
-        if (pharmaceuticalBillItems == null) {
-            pharmaceuticalBillItems = new ArrayList<>();
-        }
-        return pharmaceuticalBillItems;
-    }
-
     public PharmaceuticalBillItem savePharmacyBillItem(BillItem b) {
         PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
         tmp.setBillItem(b);
@@ -155,8 +142,8 @@ public class TransferRequestController implements Serializable {
             return;
         }
 
-        for (PharmaceuticalBillItem ph : getPharmaceuticalBillItems()) {
-            if (ph.getQty() == 0.0) {
+        for (BillItem bi : getBill().getBillItems()) {
+            if (bi.getPharmaceuticalBillItem().getQty() == 0.0) {
                 UtilityController.addErrorMessage("Check Items Qty");
                 return;
             }
@@ -171,6 +158,15 @@ public class TransferRequestController implements Serializable {
 
         //   printPreview = true;
         recreate();
+    }
+
+    public void remove(BillItem billItem) {
+        getBill().getBillItems().remove(billItem);
+        getBillFacade().edit(getBill());
+        
+        billItem.setBill(null);
+        getBillItemFacade().edit(billItem);
+
     }
 
     public TransferRequestController() {
@@ -252,28 +248,12 @@ public class TransferRequestController implements Serializable {
         this.pharmacyBean = pharmacyBean;
     }
 
-    public Item getCurrentItem() {
-        return currentItem;
-    }
-
-    public void setCurrentItem(Item currentItem) {
-        this.currentItem = currentItem;
-    }
-
     public ItemsDistributorsFacade getItemsDistributorsFacade() {
         return itemsDistributorsFacade;
     }
 
     public void setItemsDistributorsFacade(ItemsDistributorsFacade itemsDistributorsFacade) {
         this.itemsDistributorsFacade = itemsDistributorsFacade;
-    }
-
-    public List<PharmaceuticalBillItem> getPharmaceuticalBillItems() {
-        return pharmaceuticalBillItems;
-    }
-
-    public void setPharmaceuticalBillItems(List<PharmaceuticalBillItem> pharmaceuticalBillItems) {
-        this.pharmaceuticalBillItems = pharmaceuticalBillItems;
     }
 
     public PharmacyRecieveBean getPharmacyBillBean() {
@@ -299,4 +279,17 @@ public class TransferRequestController implements Serializable {
 //    public void setPrintPreview(boolean printPreview) {
 //        this.printPreview = printPreview;
 //    }
+    public BillItem getCurrentBillItem() {
+        if (currentBillItem == null) {
+            currentBillItem = new BillItem();
+            PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
+            ph.setBillItem(currentBillItem);
+            currentBillItem.setPharmaceuticalBillItem(ph);
+        }
+        return currentBillItem;
+    }
+
+    public void setCurrentBillItem(BillItem currentBillItem) {
+        this.currentBillItem = currentBillItem;
+    }
 }

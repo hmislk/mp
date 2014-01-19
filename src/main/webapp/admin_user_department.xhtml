@@ -30,6 +30,14 @@
                                 <p:column headerText="Department Name">
                                     #{i.department.name}                              
                                 </p:column>
+                                 <p:column headerText="Institution Name">
+                                    #{i.department.institution.name}                              
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton ajax="false" value="Remove" action="#{userDepartmentController.delete()}">
+                                        <f:setPropertyActionListener value="#{i}" target="#{userDepartmentController.current}"/>
+                                    </p:commandButton>
+                                </p:column>
                             </p:dataTable>                        
                         </p:panel>
 
@@ -38,7 +46,7 @@
                     <p:panelGrid columns="2">
                         <p:panel>
                             <h:outputText value="Institution" ></h:outputText>
-                            <p:selectOneMenu  required="true" value="#{userDepartmentController.currentInstituion}" id="ins2"  >
+                            <p:selectOneMenu  value="#{userDepartmentController.currentInstituion}" id="ins2"  >
                                 <f:selectItem itemLabel="Please select an institutie"/>
                                 <f:selectItems value="#{institutionController.items}" var="i" itemLabel="#{i.name}" itemValue="#{i}" />
                                 <f:ajax render="dept2" execute="ins2" event="change"/>

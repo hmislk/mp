@@ -155,7 +155,7 @@ public class TransferIssueController implements Serializable {
         String sql = "Select p from PharmaceuticalBillItem p where "
                 + " p.billItem.bill=:bill order by p.billItem.searialNo ";
         hm.put("bill", getRequestedBill());
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql);
+        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql,hm);
 
         for (PharmaceuticalBillItem i : tmp) {
 

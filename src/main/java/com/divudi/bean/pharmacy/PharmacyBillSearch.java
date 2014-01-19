@@ -113,7 +113,7 @@ public class PharmacyBillSearch implements Serializable {
             for (BillItem bItem : b.getBillItems()) {
                 double updatingQty = bItem.getPharmaceuticalBillItem().getQtyInUnit() + bItem.getPharmaceuticalBillItem().getFreeQtyInUnit();
                 System.err.println("UPDATING QTY : " + updatingQty);
-                getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(updatingQty));
+                getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(updatingQty),bItem.getPharmaceuticalBillItem(), getSessionController().getDepartment());
                 bItem.setRetired(true);
                 bItem.setRetiredAt(new Date());
                 bItem.setRetirer(getSessionController().getLoggedUser());
@@ -801,7 +801,7 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
-            getPharmacyBean().updateStock(ph.getStock(), qty);
+            getPharmacyBean().updateStock(ph.getStock(), qty,ph,getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
 
@@ -839,8 +839,8 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
-            getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty));
-            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty));
+            getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty),ph , getSessionController().getDepartment());
+            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty),ph,getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
 
@@ -878,8 +878,8 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
-            getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty));
-            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty));
+            getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty),ph,getSessionController().getDepartment());
+            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty),ph,getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
 
@@ -953,7 +953,7 @@ public class PharmacyBillSearch implements Serializable {
             getPharmaceuticalBillItemFacade().edit(ph);
 
             System.err.println("Updating QTY " + ph.getQtyInUnit());
-            getPharmacyBean().updateStock(ph.getStock(), ph.getQtyInUnit());
+            getPharmacyBean().updateStock(ph.getStock(), ph.getQtyInUnit(),ph,getSessionController().getDepartment());
 
             //    updateRemainingQty(nB);
             // if (b.getReferanceBillItem() != null) {

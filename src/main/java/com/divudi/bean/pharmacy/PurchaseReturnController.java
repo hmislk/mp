@@ -178,7 +178,7 @@ public class PurchaseReturnController implements Serializable {
             i.setPharmaceuticalBillItem(tmpPharmaceuticalBillItem);
             getBillItemFacade().edit(i);
 
-            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit());
+            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit(),i.getPharmaceuticalBillItem(),getSessionController().getDepartment());
 
             getReturnBill().getBillItems().add(i);
         }

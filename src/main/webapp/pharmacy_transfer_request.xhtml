@@ -28,7 +28,7 @@
                         <p:autoComplete converter="dep" value="#{transferRequestController.bill.toDepartment}" completeMethod="#{departmentController.completeDept}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />                    
                     </p:panelGrid>
                     <p:panel header="Add Item ">
-                        <p:autoComplete  value="#{transferRequestController.currentItem}"
+                        <p:autoComplete  value="#{transferRequestController.currentBillItem.item}"
                                         completeMethod="#{itemController.completeAmpAndAmppItem}" 
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
@@ -42,27 +42,30 @@
                                                rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
                             </p:column>
                         </p:autoComplete>
+                        <p:inputText value="#{transferRequestController.currentBillItem.pharmaceuticalBillItem.qty}"/>
                         <p:commandButton value="Add Item" action="#{transferRequestController.addItem}" ajax="false"/>
                     </p:panel>
                 </p:panelGrid>
-                <p:dataTable styleClass="noBorder" var="ph"  scrollable="true" scrollHeight="250"  value="#{transferRequestController.pharmacyBillItem}" id="itemList" editable="true" sortBy="#{ph.billItem.bill.id}">  
+                <p:dataTable styleClass="noBorder" var="bi"  scrollable="true" scrollHeight="250"  value="#{transferRequestController.bill.billItems}" sortOrder="#{bi.searialNo}" id="itemList" editable="true" sortBy="#{ph.billItem.bill.id}">  
 
                     <f:facet name="header">  
                         Pharmacy Bill Item 
                     </f:facet>  
 
-                    <p:column headerText="Item Name" style="width:50px!important;">  
-                        #{ph.billItem.item.name} 
+                    <p:column headerText="Item Name" >  
+                        #{bi.item.name} 
                     </p:column>  
 
-                    <p:column headerText="Qty" style="width:25px!important;">                          
-                        <p:inputText  id="qty" value="#{ph.qty}" label="Qty">                         
-                            <f:ajax event="blur" render=":#{p:component('tab')} "  execute="@this" listener="#{transferRequestController.onEdit(ph)}" ></f:ajax>
-                            <f:ajax event="focus" render=":#{p:component('tab')} "  execute="@this" listener="#{transferRequestController.onEdit(ph)}" ></f:ajax>
+                    <p:column headerText="Qty" >                          
+                        <p:inputText  id="qty" value="#{bi.pharmaceuticalBillItem.qty}" label="Qty">                         
+                            <f:ajax event="blur" render=":#{p:component('tab')} "  execute="@this" listener="#{transferRequestController.onEdit(bi)}" ></f:ajax>
+                            <f:ajax event="focus" render=":#{p:component('tab')} "  execute="@this" listener="#{transferRequestController.onEdit(bi)}" ></f:ajax>
                         </p:inputText>
                     </p:column>  
 
-
+                    <p:column>
+                        <p:commandButton ajax="false" value="Remove" action="#{transferRequestController.remove(bi)}"/>
+                    </p:column>
                 </p:dataTable>  
 
                 <p:spacer height="50"/>

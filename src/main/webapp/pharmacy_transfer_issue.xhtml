@@ -57,11 +57,10 @@
                         </p:inputText>
                     </p:column>              
 
-                    <!--                    <p:column style="width: 10px!important;">
-                                            <p:commandButton value="Remove"  ajax="false" action="#{transferIssueController.remove()}">
-                                                <f:setPropertyActionListener target="#{transferIssueController.rbillItem}" value="#{bItm}"/>
-                                            </p:commandButton>
-                                        </p:column>-->
+                    <p:column style="width: 10px!important;">
+                        <p:commandButton value="Remove"  ajax="false" action="#{transferIssueController.remove(bItm)}">
+                        </p:commandButton>
+                    </p:column>
                 </p:dataTable>  
 
                 <p:spacer height="50"/>

@@ -113,10 +113,9 @@ public class DealorDueController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and b.paidAmount!=(0-b.netTotal) and "
+                + "  between :frm and :to and b.paidAmount!=abs(b.netTotal) and "
                 + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
                 + " and (b.billType=:tp1 or b.billType=:tp2)";
-        hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());
         hm.put("ins", institution);
@@ -130,10 +129,9 @@ public class DealorDueController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         sql = "Select b From Bill b where b.retired=false and b.createdAt is not null and "
-                + " b.paidAmount!=(0-b.netTotal) and b.cancelled=false and "
+                + " b.paidAmount!=abs(b.netTotal) and b.cancelled=false and "
                 + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2)";
-        hm = new HashMap();
+                + " and (b.billType=:tp1 or b.billType=:tp2)";      
         hm.put("ins", inst);
         hm.put("tp1", BillType.PharmacyGrnBill);
         hm.put("tp2", BillType.PharmacyGrnReturn);

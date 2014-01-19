@@ -164,7 +164,7 @@ public class PharmacyBean {
         m.put("d", department);
         m.put("i", item);
         sql = "select sum(s.stock) from Stock s where s.department=:d and s.itemBatch.item=:i";
-        return getStockFacade().findAggregateDbl(sql, m);
+        return getStockFacade().findDoubleByJpql(sql, m);
 
     }
 
@@ -404,6 +404,8 @@ public class PharmacyBean {
         System.err.println("After  Update " + stock.getStock());
         getStockFacade().edit(stock);
     }
+    
+
 
     public void updateStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
         if (stock == null) {
@@ -416,6 +418,8 @@ public class PharmacyBean {
 
         getStockFacade().edit(stock);
     }
+    
+  
 
     public void addToStockHistory(PharmaceuticalBillItem pbi, Department d) {
         StockHistory sh;

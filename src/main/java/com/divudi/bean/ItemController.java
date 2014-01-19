@@ -8,6 +8,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.entity.Institution;
 import com.divudi.facade.ItemFacade;
 import com.divudi.entity.Item;
 
@@ -34,6 +35,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.persistence.TemporalType;
 import com.divudi.entity.Packege;
+
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
@@ -50,16 +52,36 @@ public class ItemController implements Serializable {
     SessionController sessionController;
     private Item current;
     private List<Item> items = null;
+    private Institution instituion;
+
+    public List<Item> completeDealorItem(String query) {
+        List<Item> suggestions;
+        String sql;
+        HashMap hm = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            sql = "select c.item from ItemsDistributors c where c.retired=false "
+                    + " and c.institution=:ins and (upper(c.item.name) like :q or "
+                    + " upper(c.item.barcode) like :q or upper(c.item.code) like :q )order by c.item.name";
+            hm.put("ins", getInstituion());
+            hm.put("q", "%" + query + "%");
+            System.out.println(sql);
+            suggestions = getFacade().findBySQL(sql, hm, 20);
+        }
+        return suggestions;
+
+    }
 
     public List<Item> completeItem(String query) {
         List<Item> suggestions;
         String sql;
         if (query == null) {
-            suggestions = new ArrayList<Item>();
+            suggestions = new ArrayList<>();
         } else {
             sql = "select c from Item c where c.retired=false and (upper(c.name) like '%" + query.toUpperCase() + "%' or upper(c.barcode) like '%" + query.toUpperCase() + "%' order or upper(c.code) like '%" + query.toUpperCase() + "%' order )order by c.name";
             System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql,20);
+            suggestions = getFacade().findBySQL(sql, 20);
         }
         return suggestions;
 
@@ -79,14 +101,13 @@ public class ItemController implements Serializable {
             tmpMap.put("ampp", Ampp.class);
             tmpMap.put("vmp", Vmp.class);
             tmpMap.put("vmpp", Vmpp.class);
-            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP,10);
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 10);
         }
         return suggestions;
 
     }
-    
 
-        public List<Item> completeAmps(String query) {
+    public List<Item> completeAmps(String query) {
         List<Item> suggestions;
         String sql;
         HashMap tmpMap = new HashMap();
@@ -96,14 +117,49 @@ public class ItemController implements Serializable {
             sql = "select c from Item c where c.retired=false and type(c)= :amp and (upper(c.name) like '%" + query.toUpperCase() + "%' or upper(c.code) like '%" + query.toUpperCase() + "%' or upper(c.barcode) like '%" + query.toUpperCase() + "%'  ) order by c.name";
             System.out.println(sql);
             tmpMap.put("amp", Amp.class);
-            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP,10);
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 10);
         }
         return suggestions;
 
     }
 
-    
-     public List<Item> completeAmpAndAmppItem(String query) {
+    public List<Item> completeAmpItem(String query) {
+        List<Item> suggestions;
+        String sql;
+        HashMap tmpMap = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+
+            sql = "select c from Item c where c.retired=false and (type(c)= :amp or type(c)= :ampp) and (upper(c.name) like :str or upper(c.code) like :str or upper(c.barcode) like :str ) order by c.name";
+            System.out.println(sql);
+            tmpMap.put("amp", Amp.class);
+            //  tmpMap.put("ampp", Ampp.class);
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
+        }
+        return suggestions;
+
+    }
+
+    public List<Item> completeAmpAndAmppItem(String query) {
+        List<Item> suggestions;
+        String sql;
+        HashMap tmpMap = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+
+            sql = "select c from Item c where c.retired=false and (type(c)= :amp or type(c)=:ampp ) and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
+            System.out.println(sql);
+            tmpMap.put("amp", Amp.class);
+            tmpMap.put("ampp", Ampp.class);
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
+        }
+        return suggestions;
+
+    }
+
+    public List<Item> completeAmpAndAmppItemWithCode(String query) {
         List<Item> suggestions;
         String sql;
         HashMap tmpMap = new HashMap();
@@ -116,7 +172,7 @@ public class ItemController implements Serializable {
             tmpMap.put("amp", Amp.class);
             tmpMap.put("ampp", Ampp.class);
             tmpMap.put("str", "%" + query.toUpperCase() + "%");
-            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP,30);
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
         }
         return suggestions;
 
@@ -139,12 +195,12 @@ public class ItemController implements Serializable {
     public List<Item> completeService(String query) {
         List<Item> suggestions;
         String sql;
-        HashMap hm=new HashMap();
+        HashMap hm = new HashMap();
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
             sql = "select c from Item c where c.retired=false and type(c)=Service and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-          
+
             System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
@@ -168,18 +224,18 @@ public class ItemController implements Serializable {
 
     public List<Item> completeItemWithoutPack(String query) {
         List<Item> suggestions;
-        HashMap m=new HashMap();
+        HashMap m = new HashMap();
         String sql;
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
             sql = "select c from Item c where c.retired=false and type(c)!=:pac "
                     + " and (type(c)=:ser or type(c)=:ins)  and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-            m.put("pac",Packege.class);
-            m.put("ser",Service.class);
-            m.put("ins",Investigation.class);
-        //    System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql,m,20);
+            m.put("pac", Packege.class);
+            m.put("ser", Service.class);
+            m.put("ins", Investigation.class);
+            //    System.out.println(sql);
+            suggestions = getFacade().findBySQL(sql, m, 20);
         }
         return suggestions;
     }
@@ -330,6 +386,14 @@ public class ItemController implements Serializable {
         getItems();
         current = null;
         getCurrent();
+    }
+
+    public Institution getInstituion() {
+        return instituion;
+    }
+
+    public void setInstituion(Institution instituion) {
+        this.instituion = instituion;
     }
 
     @FacesConverter(forClass = Item.class)

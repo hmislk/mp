@@ -73,7 +73,6 @@ public class PharmacyRecieveBean {
 //
 //       
 //    }
-
     public List<Item> getItemsForDealor(Institution i) {
         String temSql;
         List<Item> tmp;
@@ -150,11 +149,25 @@ public class PharmacyRecieveBean {
         hm.put("bt", b);
         hm.put("btp", billType);
         hm.put("class", bill.getClass());
-        
 
-        double value= getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println("GETTING TOTAL QTY "+value);
+        System.err.println("GETTING TOTAL QTY " + value);
+        return value;
+    }
+
+    public double getTotalQty(BillItem b, BillType billType) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  p.creater is not null and"
+                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
+
+        HashMap hm = new HashMap();
+        hm.put("bt", b);
+        hm.put("btp", billType);
+
+        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+
+        System.err.println("GETTING TOTAL QTY " + value);
         return value;
     }
 
@@ -171,21 +184,20 @@ public class PharmacyRecieveBean {
         return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
     }
-    
-    public double getTotalQty(BillItem b, BillType billType) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "   p.creater is not null and"
-                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
 
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-//        hm.put("class", refund.getClass());
-//        hm.put("class2", cancel.getClass());
-        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-    }
-
+//    public double getTotalQtyInSingleSql(BillItem b, BillType billType) {
+//        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+//                + "   p.creater is not null and"
+//                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
+//
+//        HashMap hm = new HashMap();
+//        hm.put("bt", b);
+//        hm.put("btp", billType);
+////        hm.put("class", refund.getClass());
+////        hm.put("class2", cancel.getClass());
+//        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+//
+//    }
     public double getReturnedTotalQty(BillItem b, BillType billType, Bill bill) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "  type(p.bill)=:class and p.bill.creater is not null and"
@@ -195,6 +207,19 @@ public class PharmacyRecieveBean {
         hm.put("bt", b);
         hm.put("btp", billType);
         hm.put("class", bill.getClass());
+
+        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+
+    }
+
+    public double getReturnedTotalQty(BillItem b, BillType billType) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  p.bill.creater is not null and"
+                + " p.referanceBillItem.referanceBillItem=:bt and p.bill.billType=:btp";
+
+        HashMap hm = new HashMap();
+        hm.put("bt", b);
+        hm.put("btp", billType);
 
         return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
@@ -218,6 +243,20 @@ public class PharmacyRecieveBean {
         System.err.println("Cal Qty " + (Math.abs(recieveNet) - Math.abs(retuernedNet)));
 
         return (Math.abs(recieveNet) - Math.abs(retuernedNet));
+    }
+
+    public double calQtyInTwoSql(PharmaceuticalBillItem po) {
+
+        double grns = getTotalQty(po.getBillItem(), BillType.PharmacyGrnBill);
+        double grnReturn = getReturnedTotalQty(po.getBillItem(), BillType.PharmacyGrnReturn);
+
+        double netQty = grns - grnReturn;
+
+        System.err.println("GRN " + grns);
+        System.err.println("GRN Return " + grnReturn);
+        System.err.println("Net " + netQty);
+
+        return netQty;
     }
 
     public double calQty2(BillItem bil) {
@@ -251,8 +290,6 @@ public class PharmacyRecieveBean {
 //
 //        return billed - (cancelled + returned);
 //    }
-   
-
     public PharmaceuticalBillItem savePharmacyBillItem(BillItem b, PharmaceuticalBillItem i) {
         PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
         tmp.setBillItem(b);
@@ -267,8 +304,6 @@ public class PharmacyRecieveBean {
 
         return tmp;
     }
-
-   
 
     public BillItem saveBillItem(BillItem tmp, Bill b) {
         //     BillItem tmp = new BillItem();
@@ -445,9 +480,14 @@ public class PharmacyRecieveBean {
     }
 
     public ItemBatch saveItemBatch(BillItem tmp) {
-        System.err.println("Save Item Batch");
+        //   System.err.println("Save Item Batch");
         ItemBatch itemBatch = new ItemBatch();
-        Item itm = tmp.getPharmaceuticalBillItem().getBillItem().getItem();
+        Item itm = tmp.getItem();
+
+        if (itm instanceof Ampp) {
+            itm = ((Ampp) itm).getAmp();
+        }
+
         double purchase = tmp.getPharmaceuticalBillItem().getPurchaseRateInUnit();
         double retail = tmp.getPharmaceuticalBillItem().getRetailRateInUnit();
 
@@ -462,17 +502,9 @@ public class PharmacyRecieveBean {
         HashMap hash = new HashMap();
         String sql;
 
-        if (itm instanceof Amp) {
-            itemBatch.setItem(itm);
-            sql = "Select p from ItemBatch p where  p.item.id=" + itemBatch.getItem().getId()
-                    + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
-
-        } else {
-            Amp amp = getAmpFacade().findFirstBySQL("Select a.amp from Ampp a where a.retired=false and a.id=" + itm.getId());
-            itemBatch.setItem(amp);
-            sql = "Select p from ItemBatch p where  p.item.id=" + amp.getId()
-                    + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
-        }
+        itemBatch.setItem(itm);
+        sql = "Select p from ItemBatch p where  p.item.id=" + itemBatch.getItem().getId()
+                + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
 
         hash.put("doe", itemBatch.getDateOfExpire());
 
@@ -510,6 +542,20 @@ public class PharmacyRecieveBean {
         return items;
     }
 
+    public List<Item> findPack(Amp amp) {
+
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "SELECT i from Ampp i where i.retired=false and "
+                + " i.amp=:am";
+
+        hm.put("am", amp);
+
+        return getItemFacade().findBySQL(sql, hm);
+
+    }
+
+   
     public List<Item> findItem(Ampp tmp, List<Item> items) {
 
         String sql;
@@ -604,9 +650,9 @@ public class PharmacyRecieveBean {
                 msg = "Please Fill Memo and Bank";
             }
         }
-        
-        if(b.getBillItems().isEmpty()){
-            msg="There is no Item to receive";
+
+        if (b.getBillItems().isEmpty()) {
+            msg = "There is no Item to receive";
         }
 
         if (checkItemBatch(b.getBillItems())) {

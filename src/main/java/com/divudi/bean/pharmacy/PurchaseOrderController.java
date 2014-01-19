@@ -71,17 +71,16 @@ public class PurchaseOrderController implements Serializable {
     @EJB
     private CommonFunctions commonFunctions;
     private LazyDataModel<Bill> searchBills;
-    
-     public void removeItem(BillItem bi) {
+
+    public void removeItem(BillItem bi) {
         getAprovedBill().getBillItems().remove(bi);
         getBillFacade().edit(getAprovedBill());
-        
+
         bi.setBill(null);
         getBillItemFacade().edit(bi);
-     
+
         getNetTotal();
     }
-
 
     public void createAll() {
         searchBills = null;
@@ -247,6 +246,10 @@ public class PurchaseOrderController implements Serializable {
         getNetTotal();
         editBill();
 
+        //Update Requested Bill Reference
+        getRequestedBill().setReferenceBill(getAprovedBill());
+        getBillFacade().edit(getRequestedBill());
+
         return viewRequestedList();
         //   printPreview = true;
 
@@ -265,8 +268,8 @@ public class PurchaseOrderController implements Serializable {
         getAprovedBill().setTotal(getNetTotal());
         getAprovedBill().setNetTotal(getNetTotal());
 
-        getAprovedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getRequestedBill().getDepartment(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
-        getAprovedBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getRequestedBill().getInstitution(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
+        getAprovedBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getRequestedBill().getDepartment(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
+        getAprovedBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getRequestedBill().getInstitution(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
 
         getAprovedBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getAprovedBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -406,9 +409,6 @@ public class PurchaseOrderController implements Serializable {
             saveBillComponent();
         }
 
-        //Update Requested Bill Reference
-        getRequestedBill().setReferenceBill(getAprovedBill());
-        getBillFacade().edit(getRequestedBill());
     }
 
     public void setRequestedBill(Bill requestedBill) {

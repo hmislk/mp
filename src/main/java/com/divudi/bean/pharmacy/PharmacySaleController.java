@@ -189,25 +189,34 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
-        double oldQty = getOldQty(tmp);
+        double oldQty = getOldQty(tmp);        
         double newQty = tmp.getQty();
+        double currentStock=getStockByBillItem(tmp);
 
-        //   System.err.println("old " + oldQty);
-        //   System.err.println("new " + newQty);
-        if (newQty > getStockByBillItem(tmp)) {
-            tmp.setQty(0.0);
+        System.err.println("old " + oldQty);
+        System.err.println("new " + newQty);
+
+        double updationValue = newQty - oldQty;
+
+        System.err.println("Updation Qty " + updationValue);
+        System.err.println("Current Stock Qty " + currentStock);
+
+        if (updationValue > currentStock) {
+            tmp.setQty(oldQty);
             getBillItemFacade().edit(tmp);
-            UtilityController.addErrorMessage("No Sufficient Stocks");
+            UtilityController.addErrorMessage("No Sufficient Stocks Old Qty value is resetted");
             return;
         }
 
+        //   getPharmacyBean().updateStock(tmp.getPharmaceuticalBillItem().getStock(), updationValue);
+//
         if (oldQty > newQty) {
             double max = oldQty - newQty;
-            //   System.err.println("Max " + max);
+            System.err.println("Max " + max);
             getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), max);
         } else {
             double min = newQty - oldQty;
-            //     System.err.println("Min " + min);
+            System.err.println("Min " + min);
             getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), min);
         }
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());

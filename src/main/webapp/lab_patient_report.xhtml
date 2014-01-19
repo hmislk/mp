@@ -183,9 +183,7 @@
                                         <p:column >
                                             <h:panelGroup rendered="#{pv.investigationItem.ixItemType eq 'Value'}">
                                                 <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Memo'}" >
-                                                    <p:inputTextarea id="txtMicMemoVal"   value="#{patientReportController.memoEnterVal}"   style="min-width: 200px;" completeMethod="#{investigationItemValueController.completeValues}" >
-                                                        <f:attribute name="ii" value="#{pv.investigationItem}" />
-                                                        <f:ajax event="blur"  execute="@this" listener="#{patientReportController.saveMemoVal(pv.id)}" ></f:ajax>
+                                                    <p:inputTextarea id="txtMicMemoVal"   style="min-width: 200px;" completeMethod="#{investigationItemValueController.completeValues}"  >
                                                     </p:inputTextarea>
                                                     <p:watermark  value="#{pv.lobValue}" for="txtMicMemoVal" />
                                                 </h:panelGroup>

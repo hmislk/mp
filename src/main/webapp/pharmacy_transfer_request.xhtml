@@ -28,7 +28,20 @@
                         <p:autoComplete converter="dep" value="#{transferRequestController.bill.toDepartment}" completeMethod="#{departmentController.completeDept}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />                    
                     </p:panelGrid>
                     <p:panel header="Add Item ">
-                        <p:autoComplete converter="itemcon" value="#{transferRequestController.currentItem}" completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+                        <p:autoComplete  value="#{transferRequestController.currentItem}"
+                                        completeMethod="#{itemController.completeAmpAndAmppItem}" 
+                                        var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                            <p:column headerText="Item" >
+                                <h:outputLabel value="#{vt.name}"></h:outputLabel>
+                            </p:column>
+                            <p:column headerText="Code" >
+                                <h:outputLabel value="#{vt.code}"></h:outputLabel>
+                            </p:column>
+                            <p:column headerText="Pack Size" >
+                                <p:outputLabel value=" X #{vt.dblValue}" 
+                                               rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                            </p:column>
+                        </p:autoComplete>
                         <p:commandButton value="Add Item" action="#{transferRequestController.addItem}" ajax="false"/>
                     </p:panel>
                 </p:panelGrid>
@@ -58,7 +71,7 @@
 
             </p:panel>   
 
-            
+
         </h:form>
     </ui:define>  
 

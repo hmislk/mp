@@ -44,6 +44,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.primefaces.event.CellEditEvent;
 
 /**
@@ -115,10 +116,10 @@ public class PatientReportController implements Serializable {
         if (r == null) {
             System.out.println("r is null");
 //            if (ix.getReportType()==InvestigationReportType.Microbiology ) {
-            if (ix.getReportType()==InvestigationReportType.Microbiology ) {
-                r=createNewMicrobiologyReport(pi, ix);
+            if (ix.getReportType() == InvestigationReportType.Microbiology) {
+                r = createNewMicrobiologyReport(pi, ix);
             } else {
-                r=createNewPatientReport(pi, ix);
+                r = createNewPatientReport(pi, ix);
             }
             System.out.println("r = " + r);
             getCommonReportItemController().setCategory(ix.getReportFormat());
@@ -128,7 +129,7 @@ public class PatientReportController implements Serializable {
             getCommonReportItemController().setCategory(currentReportInvestigation.getReportFormat());
         }
         currentPatientReport = r;
-        if (currentPatientReport!=null && currentPatientReport.getApproveUser() != null) {
+        if (currentPatientReport != null && currentPatientReport.getApproveUser() != null) {
             getStaffController().setCurrent(currentPatientReport.getApproveUser().getStaff());
         } else {
             getStaffController().setCurrent(null);
@@ -448,7 +449,12 @@ public class PatientReportController implements Serializable {
                 Double d = val.getDoubleValue();
                 if (d == null || d == 0) {
                     try {
-                        d = Double.parseDouble(val.getStrValue());
+                        if (NumberUtils.isNumber(val.getStrValue())) {
+                            d = Double.parseDouble(val.getStrValue());
+                        } else {
+                            d = 0.0;
+                        }
+
                     } catch (NumberFormatException e) {
                         d = 0.0;
                     }
@@ -753,7 +759,7 @@ public class PatientReportController implements Serializable {
         Investigation ix = (Investigation) pi.getInvestigation().getReportedAs();
         currentReportInvestigation = ix;
         currentPtIx = pi;
-        if (ix.getReportType()==InvestigationReportType.Microbiology ) {
+        if (ix.getReportType() == InvestigationReportType.Microbiology) {
             createNewMicrobiologyReport(pi, ix);
         } else {
             createNewPatientReport(pi, ix);
@@ -800,7 +806,11 @@ public class PatientReportController implements Serializable {
 
         java.lang.Long getKey(String value) {
             java.lang.Long key;
-            key = Long.valueOf(value);
+            if (NumberUtils.isNumber(value)) {
+                key = Long.valueOf(value);
+            } else {
+                key = 0l;
+            }
             return key;
         }
 

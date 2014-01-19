@@ -53,6 +53,12 @@ public class PatientEncounter implements Serializable {
     Patient patient;
     @ManyToOne
     Person guardian;
+    @ManyToOne
+    private Item item;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date fromTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date toTime;
     //Created Properties
     @ManyToOne
     WebUser creater;
@@ -113,6 +119,7 @@ public class PatientEncounter implements Serializable {
 
     @Transient
     List<ClinicalFindingValue> plans;
+    
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
@@ -474,6 +481,30 @@ public class PatientEncounter implements Serializable {
 
     public void setLastPatientRoom(PatientRoom lastPatientRoom) {
         this.lastPatientRoom = lastPatientRoom;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public Date getFromTime() {
+        return fromTime;
+    }
+
+    public void setFromTime(Date fromTime) {
+        this.fromTime = fromTime;
+    }
+
+    public Date getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(Date toTime) {
+        this.toTime = toTime;
     }
 
 }

@@ -619,18 +619,18 @@ public class PharmacyRecieveBean {
         getBillItemFacade().edit(i.getBillItem());
     }
 
-    public BillItem saveBillItem(Item i, Bill b, SessionController s) {
-        BillItem tmp = new BillItem();
-        tmp.setBill(b);
-        tmp.setItem(i);
-        //  tmp.setQty(getPharmacyBean().getOrderingQty(i, s.getDepartment()));
-        // tmp.setRate(getPharmacyBean().getPurchaseRate(i, s.getDepartment()));
-        // tmp.setNetValue(tmp.getQty() * tmp.getRate());
-
-        getBillItemFacade().create(tmp);
-
-        return tmp;
-    }
+//    public BillItem saveBillItem(Item i, Bill b, SessionController s) {
+//        BillItem tmp = new BillItem();
+//        tmp.setBill(b);
+//        tmp.setItem(i);
+//        //  tmp.setQty(getPharmacyBean().getOrderingQty(i, s.getDepartment()));
+//        // tmp.setRate(getPharmacyBean().getPurchaseRate(i, s.getDepartment()));
+//        // tmp.setNetValue(tmp.getQty() * tmp.getRate());
+//
+//        getBillItemFacade().create(tmp);
+//
+//        return tmp;
+//    }
 
     public String errorCheck(Bill b) {
         String msg = "";

@@ -71,7 +71,6 @@ public class TransferIssueController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private PharmacyRecieveBean pharmacyRecieveBean;
-   
 
     private BillItem rbillItem;
 
@@ -134,27 +133,28 @@ public class TransferIssueController implements Serializable {
         issuedBill = null;
         create();
     }
-    
-    
 
     private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
+            suggessions = getPharmacyRecieveBean().findPack((Amp) item);
             suggessions.add(item);
         } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findPack(((Ampp)item).getAmp());
-            suggessions.add(((Ampp)item).getAmp());
+            suggessions = getPharmacyRecieveBean().findPack(((Ampp) item).getAmp());
+            suggessions.add(((Ampp) item).getAmp());
         }
-        
-        System.err.println("Sugg" +suggessions);
+
+        System.err.println("Sugg" + suggessions);
 
         return suggessions;
     }
 
     public void saveBillComponent() {
-        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getRequestedBill().getId();
+        HashMap hm = new HashMap();
+        String sql = "Select p from PharmaceuticalBillItem p where "
+                + " p.billItem.bill=:bill order by p.billItem.searialNo ";
+        hm.put("bill", getRequestedBill());
         List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql);
 
         for (PharmaceuticalBillItem i : tmp) {
@@ -169,17 +169,17 @@ public class TransferIssueController implements Serializable {
                 System.err.println("QTY " + sq.getQty());
                 BillItem bItem = new BillItem();
                 bItem.setBill(getIssuedBill());
+                bItem.setSearialNo(getIssuedBill().getBillItems().size() + 1);
                 bItem.setItem(i.getBillItem().getItem());
                 bItem.setReferanceBillItem(i.getBillItem());
                 bItem.setQty(sq.getQty());
-                System.err.println("Bill Item QTY " + bItem.getQty());            
-               
-                
+                System.err.println("Bill Item QTY " + bItem.getQty());
+
                 getBillItemFacade().create(bItem);
-                
-                 bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
-           //     System.err.println("List "+bItem.getTmpSuggession());
-                
+
+                bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
+                //     System.err.println("List "+bItem.getTmpSuggession());
+
                 PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
                 phItem.setBillItem(bItem);
                 phItem.setQtyInUnit(sq.getQty());

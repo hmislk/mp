@@ -25,59 +25,7 @@
                             </p:commandButton>                          
                         </f:facet>
 
-                        <p:panel>
-                            <p:panelGrid columns="2" style="width: 100%;">
-                                <p:panel header="Dealor Detail">
-                                    <p:panelGrid columns="2">
-                                        <h:outputLabel value="Dealor ​Name:" ></h:outputLabel>
-                                        <h:outputLabel value="#{pharmacyBillSearch.bill.toInstitution.name }" ></h:outputLabel>                                        
-                                    </p:panelGrid>
-                                </p:panel>
-                                <p:panel header="Bill Detail">
-                                    <p:panelGrid columns="2">
-                                        <h:outputLabel value="Bill No :" ></h:outputLabel>
-                                        <h:outputLabel value="#{pharmacyBillSearch.bill.deptId}" ></h:outputLabel>
-                                        <h:outputLabel value="Payment Type : " ></h:outputLabel>
-                                        <h:outputLabel value="#{pharmacyBillSearch.bill.paymentScheme.name}" ></h:outputLabel>
-
-                                        <h:outputLabel value="Total :" ></h:outputLabel>
-                                        <h:outputLabel value="#{pharmacyBillSearch.bill.total}" ><f:convertNumber pattern="#,##0.00" /></h:outputLabel>
-                                        <h:outputLabel value="Discount :" ></h:outputLabel>
-                                        <h:outputLabel value="#{pharmacyBillSearch.bill.discount}" ><f:convertNumber pattern="#,##0.00" /></h:outputLabel>
-                                        <h:outputLabel value="Net Total :" ></h:outputLabel>
-                                        <h:outputLabel value="#{pharmacyBillSearch.bill.netTotal}" ><f:convertNumber pattern="#,##0.00" /></h:outputLabel>
-                                    </p:panelGrid>
-                                </p:panel>
-                            </p:panelGrid>
-                            <p:panel header="Bill Item Detail">
-                                <p:dataTable rowIndexVar="rowIndex" value="#{pharmacyBillSearch.bill.billItems}" var="bip" >
-                                    <p:column>
-                                        <f:facet name="header">No</f:facet>
-                                            #{rowIndex+1} -  #{bip.id}
-                                    </p:column>
-                                    <p:column>
-                                        <f:facet name="header">Item</f:facet>
-                                            #{bip.item.name}
-                                    </p:column>
-                                    <p:column>
-                                        <f:facet name="header">QTY</f:facet>
-                                            #{bip.pharmaceuticalBillItem.qty}
-                                    </p:column>
-                                    <p:column>
-                                        <f:facet name="header">Purchase Rate</f:facet>
-                                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}">
-                                            <f:convertNumber pattern="#,00.00"/>
-                                        </h:outputLabel>
-                                    </p:column>
-                                    <p:column>
-                                        <f:facet name="header">Value</f:facet>
-                                        <h:outputLabel  value="#{bip.netValue}">
-                                            <f:convertNumber pattern="#,000.00"/>
-                                        </h:outputLabel>
-                                    </p:column>
-                                </p:dataTable>
-                            </p:panel>
-                        </p:panel>
+                       
                     </p:panel>
 
 

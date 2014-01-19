@@ -45,7 +45,7 @@
                         <p:commandButton value="Add Item" action="#{transferRequestController.addItem}" ajax="false"/>
                     </p:panel>
                 </p:panelGrid>
-                <p:dataTable var="ph"  scrollable="true" scrollHeight="250"  value="#{transferRequestController.pharmacyBillItem}" id="itemList" editable="true" sortBy="#{ph.billItem.bill.id}">  
+                <p:dataTable styleClass="noBorder" var="ph"  scrollable="true" scrollHeight="250"  value="#{transferRequestController.pharmacyBillItem}" id="itemList" editable="true" sortBy="#{ph.billItem.bill.id}">  
 
                     <f:facet name="header">  
                         Pharmacy Bill Item 

@@ -477,7 +477,7 @@ public class GrnController implements Serializable {
         for (PharmaceuticalBillItem i : tmp) {
             System.err.println("Qty Unit : " + i.getQtyInUnit());
 //            System.err.println("Remaining Qty : " + i.getRemainingQty());
-            double remains = getPharmacyBillBean().calQty(i);
+            double remains = getPharmacyBillBean().calQtyInTwoSql(i);
             System.err.println("Tot GRN Qty : " + remains);
             System.err.println("QTY : " + i.getQtyInUnit());
             if (i.getQtyInUnit() >= remains && (i.getQtyInUnit() - remains) != 0) {
@@ -525,6 +525,19 @@ public class GrnController implements Serializable {
         saveBillComponent();
 //        }
         calGrossTotal();
+
+    }
+
+    public void findLastEdited() {
+        String sql = "Select b From BilledBill b where b.creater is null and  b.retired=false and b.billType= :bTp "
+                + " and b.referenceBill.id=" + getApproveBill().getId();
+        HashMap tmp = new HashMap();
+        tmp.put("bTp", BillType.PharmacyGrnBill);
+        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
+
+        if (!bil.isEmpty()) {
+            setGrnBill(bil.get(0));
+        }
 
     }
 
@@ -648,7 +661,7 @@ public class GrnController implements Serializable {
         dealor = null;
         pos = null;
         printPreview = false;
-        grossTotal=0;
+        grossTotal = 0;
 //        billItems = null;
         //    System.err.println("Setting Approve Bill " + getPharmaceuticalBillItem().size());
         createGrn();

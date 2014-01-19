@@ -186,10 +186,10 @@ public class ShiftTableController implements Serializable {
         }
 
         if (preShift != null) {
-            //   UtilityController.addSuccessMessage("This Staff continue From : " + preShift.getDayShift().getShift().getName());
+            UtilityController.addSuccessMessage("This Staff continue From : " + preShift.getDayShift().getShift().getName());
             return preShift;
         } else if (preDayStaffShift != null && tmp.getDayShift().getShift().getShiftOrder() == 1) {
-            // UtilityController.addSuccessMessage("This Staff continue From : " + preDayStaffShift.getDayShift().getShift().getName());
+            UtilityController.addSuccessMessage("This Staff continue From : " + preDayStaffShift.getDayShift().getShift().getName());
             return preDayStaffShift;
         } else {
             return null;
@@ -288,10 +288,10 @@ public class ShiftTableController implements Serializable {
         }
 
         if (frwStaffShift != null) {
-            //  UtilityController.addSuccessMessage("This Staff continue to : " + frwStaffShift.getDayShift().getShift().getName());
+            UtilityController.addSuccessMessage("This Staff continue to : " + frwStaffShift.getDayShift().getShift().getName());
             return frwStaffShift;
         } else if (frwDayStaffShift != null && tmp.getDayShift().getShift().getShiftOrder() == getMaxShiftOrder(tmp)) {
-            //   UtilityController.addSuccessMessage("This Staff continue to : " + frwDayStaffShift.getDayShift().getShift().getName());
+            UtilityController.addSuccessMessage("This Staff continue to : " + frwDayStaffShift.getDayShift().getShift().getName());
             return frwDayStaffShift;
         } else {
             return null;
@@ -328,17 +328,19 @@ public class ShiftTableController implements Serializable {
         getStaffShiftFacade().edit(tmp);
     }
 
-    public void onEdit(RowEditEvent event) {
-        StaffShift tmp = (StaffShift) event.getObject();
+    public void onEdit(StaffShift tmp) {
+        //   StaffShift tmp = (StaffShift) event.getObject();
         currentStaff = tmp.getStaff();
 
-//        if (checkStaffShift(tmp)) {
-//            tmp.setStaff(null);
-//            shiftTables = null;
-//            UtilityController.addErrorMessage("This Staff already added for this shift");
-//            return;
-//        }
         updateStaffShift(tmp);
+
+    }
+
+    public void onEditBoolean(StaffShift tmp) {
+        //   StaffShift tmp = (StaffShift) event.getObject();
+        currentStaff = tmp.getStaff();
+
+        getStaffShiftFacade().edit(tmp);
 
     }
 

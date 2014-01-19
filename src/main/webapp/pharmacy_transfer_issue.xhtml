@@ -28,7 +28,7 @@
 
                 <p:dataTable var="bItm" scrollable="true" scrollHeight="250" 
                              value="#{transferIssueController.issuedBill.billItems}" 
-                             id="itemList">  
+                             id="itemList" sortBy="#{bItm.searialNo}">  
 
                     <f:facet name="header">  
                         Requested Item 

@@ -82,14 +82,25 @@ public class TransferRequestController implements Serializable {
         PharmaceuticalBillItem ptd = new PharmaceuticalBillItem();
         //    ptd.setPurchaseRate(getPharmacyBean().getPurchaseRate(getCurrentItem(), getSessionController().getDepartment()));
 
-        BillItem b = getPharmacyBillBean().saveBillItem(getCurrentItem(), getBill(), getSessionController());
+        BillItem bi = new BillItem();
+        bi.setBill(getBill());
+        bi.setItem(getCurrentItem());
+        bi.setSearialNo(getBill().getBillItems().size() + 1);
+        getBillItemFacade().create(bi);
 
-        PharmaceuticalBillItem p = getPharmacyBillBean().savePharmacyBillItem(b, getSessionController().getDepartment());
+        PharmaceuticalBillItem phi = new PharmaceuticalBillItem();
+        phi.setBillItem(bi);
+
+        phi.setQty(getPharmacyBean().getOrderingQty(getCurrentItem(), getSessionController().getDepartment()));
+        phi.setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(getCurrentItem(), getSessionController().getDepartment()));
+        phi.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentItem(), getSessionController().getDepartment()));
+
+        getPharmaceuticalBillItemFacade().create(phi);
 
         //  p.setPurchaseRate(getPharmacyBean().getPurchaseRate(getCurrentItem(), getSessionController().getDepartment()));
-        p.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentItem(), getSessionController().getDepartment()));
+        phi.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentItem(), getSessionController().getDepartment()));
 
-        getPharmacyBillItem().add(p);
+        getPharmacyBillItem().add(phi);
 //        getNetTotal();
 
         currentItem = null;

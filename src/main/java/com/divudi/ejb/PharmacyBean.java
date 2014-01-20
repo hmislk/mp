@@ -398,7 +398,7 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
-        addToStockHistory(pbi, d);
+      //  addToStockHistory(pbi, d);
         System.err.println("Before Update " + stock.getStock());
         stock.setStock(stock.getStock() - qty);
         System.err.println("After  Update " + stock.getStock());
@@ -409,7 +409,7 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
-        addToStockHistory(pbi, d);
+      //  addToStockHistory(pbi, d);
         System.err.println("Before Update " + stock.getStock());
         stock.setStock(stock.getStock() + qty);
         System.err.println("After Update " + stock.getStock());
@@ -462,7 +462,7 @@ public class PharmacyBean {
         if (stock.getStock() == null) {
             stock.setStock(0.0);
         }
-        addToStockHistory(pbi, d);
+       // addToStockHistory(pbi, d);
         System.err.println("Before Update" + stock.getStock());
         stock.setStock(stock.getStock() + qty);
         System.err.println("After Update " + stock.getStock());
@@ -473,7 +473,7 @@ public class PharmacyBean {
         if (item instanceof Ampp) {
             item = ((Ampp) item).getAmp();
         }
-        addToStockHistory(pbi, d);
+        //addToStockHistory(pbi, d);
         String sql;
         sql = "select s from Stock s where s.itemBatch.item.id = " + item.getId() + " and s.staff.id = " + staff.getId() + " order by s.itemBatch.dateOfExpire desc";
         List<Stock> stocks = getStockFacade().findBySQL(sql);

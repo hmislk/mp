@@ -1200,41 +1200,6 @@ public class BillSearch implements Serializable {
     @EJB
     private ItemBatchFacade itemBatchFacade;
 
-    public void pharmacyCancelBill() {
-        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
-            if (pharmacyErrorCheck()) {
-                return;
-            }
-
-            CancelledBill cb = pharmacyCreateCancelBill();
-
-            getBillFacade().create(cb);
-
-            pharmacyCancelBillItems(cb);
-
-            if (getBill().getBillType() == BillType.PharmacyGrnBill) {
-                List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL("Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId());
-
-                for (PharmaceuticalBillItem ph : tmp) {
-                    getPharmacyBean().deductFromStock(ph.getItemBatch(), ph.getQty() + ph.getFreeQty(), getBill().getDepartment());
-
-                    getPharmacyBean().reSetPurchaseRate(ph.getItemBatch(), getBill().getDepartment());
-                    getPharmacyBean().reSetRetailRate(ph.getItemBatch(), getSessionController().getDepartment());
-                }
-            }
-
-            getBill().setCancelled(true);
-            getBill().setCancelledBill(cb);
-            getBillFacade().edit(getBill());
-            UtilityController.addSuccessMessage("Cancelled");
-
-            printPreview = true;
-
-        } else {
-            UtilityController.addErrorMessage("No Bill to cancel");
-        }
-    }
-
     private void returnBillFee(Bill b, BillItem bt, List<BillFee> tmp) {
         for (BillFee nB : tmp) {
             BillFee bf = new BillFee();

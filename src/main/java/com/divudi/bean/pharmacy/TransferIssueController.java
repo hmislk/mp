@@ -73,11 +73,11 @@ public class TransferIssueController implements Serializable {
     private PharmacyRecieveBean pharmacyRecieveBean;
 
     public void remove(BillItem billItem) {
-       getIssuedBill().getBillItems().remove(billItem);
-       getBillFacade().edit(getIssuedBill());
-       
-       billItem.setBill(null);
-       getBillItemFacade().edit(billItem);
+        getIssuedBill().getBillItems().remove(billItem);
+        getBillFacade().edit(getIssuedBill());
+
+        billItem.setBill(null);
+        getBillItemFacade().edit(billItem);
 
     }
 
@@ -127,34 +127,29 @@ public class TransferIssueController implements Serializable {
         issuedBill = null;
         create();
     }
-    
-    
 
     private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
+            suggessions = getPharmacyRecieveBean().findPack((Amp) item);
             suggessions.add(item);
         } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findPack(((Ampp)item).getAmp());
-            suggessions.add(((Ampp)item).getAmp());
+            suggessions = getPharmacyRecieveBean().findPack(((Ampp) item).getAmp());
+            suggessions.add(((Ampp) item).getAmp());
         }
-        
-        System.err.println("Sugg" +suggessions);
+
+        System.err.println("Sugg" + suggessions);
 
         return suggessions;
     }
-
-    
-
 
     public void saveBillComponent() {
         HashMap hm = new HashMap();
         String sql = "Select p from PharmaceuticalBillItem p where "
                 + " p.billItem.bill=:bill order by p.billItem.searialNo ";
         hm.put("bill", getRequestedBill());
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql,hm);
+        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql, hm);
 
         for (PharmaceuticalBillItem i : tmp) {
 
@@ -227,7 +222,8 @@ public class TransferIssueController implements Serializable {
             getBillItemFacade().edit(i);
 
             //Remove Department Stock
-            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit(),i.getPharmaceuticalBillItem(),getSessionController().getDepartment());
+            getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(),
+                    Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             //Addinng Staff
             Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem().getStock().getItemBatch(),
@@ -423,7 +419,6 @@ public class TransferIssueController implements Serializable {
         this.pharmacyController = pharmacyController;
     }
 
-    
     public PharmacyRecieveBean getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }
@@ -431,7 +426,5 @@ public class TransferIssueController implements Serializable {
     public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
-
-    
 
 }

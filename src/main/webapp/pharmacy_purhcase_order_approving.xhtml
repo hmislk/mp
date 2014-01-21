@@ -23,10 +23,10 @@
                                 <f:selectItem itemLabel="SelectPayment method"/>
                                 <f:selectItems value="#{enumController.paymentMethodsForPo}"/>
                             </p:selectOneMenu>
-                            <p:outputLabel id="tot"  value="   Total :  #{purchaseOrderController.netTotal}"/>    
+                            <p:outputLabel id="tot"  value="Total :  #{purchaseOrderController.netTotal}"/>    
                         </h:panelGrid>
                     </f:facet>
-                    <p:dataTable scrollable="true" scrollHeight="250"
+                    <p:dataTable scrollable="true" styleClass="noBorder" scrollHeight="250"
                                  var="bi" value="#{purchaseOrderController.aprovedBill.billItems }"
                                  id="itemList" sortBy="#{bi.bill.id}">  
 

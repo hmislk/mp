@@ -191,7 +191,7 @@ public class PharmacySaleController implements Serializable {
 
         double oldQty = getOldQty(tmp);        
         double newQty = tmp.getQty();
-        double currentStock=getStockByBillItem(tmp);
+        double currentStock = getStockByBillItem(tmp);
 
         System.err.println("old " + oldQty);
         System.err.println("new " + newQty);
@@ -210,15 +210,18 @@ public class PharmacySaleController implements Serializable {
 
         //   getPharmacyBean().updateStock(tmp.getPharmaceuticalBillItem().getStock(), updationValue);
 //
-        if (oldQty > newQty) {
+        if (oldQty == newQty) {
+            return;
+        } else if (oldQty > newQty) {
             double max = oldQty - newQty;
             System.err.println("Max " + max);
-            getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), max);
+            getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), max, tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         } else {
             double min = newQty - oldQty;
             System.err.println("Min " + min);
-            getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), min);
+            getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), min, tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         }
+
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
 
         getBillItemFacade().edit(tmp);
@@ -332,7 +335,7 @@ public class PharmacySaleController implements Serializable {
     public void reAddToStock() {
         for (BillItem bItem : getPreBill().getBillItems()) {
             System.err.println("QTY " + bItem.getQty());
-            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(bItem.getQty()));
+            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(bItem.getQty()),bItem.getPharmaceuticalBillItem(),getSessionController().getDepartment());
             bItem.setRetired(true);
             getBillItemFacade().edit(bItem);
         }
@@ -631,7 +634,7 @@ public class PharmacySaleController implements Serializable {
 
         getBillItemFacade().edit(tbi);
 
-        getPharmacyBean().updateStock(tbi.getPharmaceuticalBillItem().getStock(), tbi.getPharmaceuticalBillItem().getQty());
+        getPharmacyBean().updateStock(tbi.getPharmaceuticalBillItem().getStock(), tbi.getPharmaceuticalBillItem().getQty(),tbi.getPharmaceuticalBillItem(),getSessionController().getDepartment());
 
         getPreBill().getBillItems().add(tbi);
 
@@ -765,7 +768,7 @@ public class PharmacySaleController implements Serializable {
 
     public void removeBillItem(BillItem b) {
 
-        getPharmacyBean().updateStock(b.getPharmaceuticalBillItem().getStock(), b.getQty());
+        getPharmacyBean().updateStock(b.getPharmaceuticalBillItem().getStock(), b.getQty(),b.getPharmaceuticalBillItem(),getSessionController().getDepartment());
 
         PharmaceuticalBillItem tmpPharmacy = b.getPharmaceuticalBillItem();
         b.setBill(null);

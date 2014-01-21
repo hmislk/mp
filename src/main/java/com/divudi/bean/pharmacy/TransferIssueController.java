@@ -71,20 +71,13 @@ public class TransferIssueController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private PharmacyRecieveBean pharmacyRecieveBean;
-   
 
-    private BillItem rbillItem;
-
-    public void remove() {
-        rbillItem.setBill(null);
-
-        getBillItemFacade().edit(rbillItem);
-
-        System.err.println("RM " + rbillItem);
-        System.err.println("Size 1" + getIssuedBill().getBillItems().size());
-        getIssuedBill().getBillItems().remove(rbillItem);
-        System.err.println("Size 2" + getIssuedBill().getBillItems().size());
-        getBillFacade().edit(getIssuedBill());
+    public void remove(BillItem billItem) {
+       getIssuedBill().getBillItems().remove(billItem);
+       getBillFacade().edit(getIssuedBill());
+       
+       billItem.setBill(null);
+       getBillItemFacade().edit(billItem);
 
     }
 
@@ -153,9 +146,14 @@ public class TransferIssueController implements Serializable {
         return suggessions;
     }
 
+    
+
     public void saveBillComponent() {
-        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getRequestedBill().getId();
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql);
+        HashMap hm = new HashMap();
+        String sql = "Select p from PharmaceuticalBillItem p where "
+                + " p.billItem.bill=:bill order by p.billItem.searialNo ";
+        hm.put("bill", getRequestedBill());
+        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql,hm);
 
         for (PharmaceuticalBillItem i : tmp) {
 
@@ -169,17 +167,17 @@ public class TransferIssueController implements Serializable {
                 System.err.println("QTY " + sq.getQty());
                 BillItem bItem = new BillItem();
                 bItem.setBill(getIssuedBill());
+                bItem.setSearialNo(getIssuedBill().getBillItems().size() + 1);
                 bItem.setItem(i.getBillItem().getItem());
                 bItem.setReferanceBillItem(i.getBillItem());
                 bItem.setQty(sq.getQty());
-                System.err.println("Bill Item QTY " + bItem.getQty());            
-               
-                
+                System.err.println("Bill Item QTY " + bItem.getQty());
+
                 getBillItemFacade().create(bItem);
-                
-                 bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
-           //     System.err.println("List "+bItem.getTmpSuggession());
-                
+
+                bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
+                //     System.err.println("List "+bItem.getTmpSuggession());
+
                 PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
                 phItem.setBillItem(bItem);
                 phItem.setQtyInUnit(sq.getQty());
@@ -228,7 +226,7 @@ public class TransferIssueController implements Serializable {
             getBillItemFacade().edit(i);
 
             //Remove Department Stock
-            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit());
+            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit(),i.getPharmaceuticalBillItem(),getSessionController().getDepartment());
 
             //Addinng Staff
             Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem().getStock().getItemBatch(),
@@ -424,14 +422,7 @@ public class TransferIssueController implements Serializable {
         this.pharmacyController = pharmacyController;
     }
 
-    public BillItem getRbillItem() {
-        return rbillItem;
-    }
-
-    public void setRbillItem(BillItem rbillItem) {
-        this.rbillItem = rbillItem;
-    }
-
+    
     public PharmacyRecieveBean getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }
@@ -439,5 +430,7 @@ public class TransferIssueController implements Serializable {
     public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
+
+    
 
 }

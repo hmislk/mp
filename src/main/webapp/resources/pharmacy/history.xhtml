@@ -31,7 +31,7 @@
             </h:panelGrid>
             <p:tabView  style="min-height: 250px;"   activeIndex="0" >
                 <p:tab   title="Stock"    >
-                    <p:dataTable value="#{pharmacyController.institutionStocks}" var="ins">
+                    <p:dataTable styleClass="noBorder" value="#{pharmacyController.institutionStocks}" var="ins">
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column >
@@ -92,7 +92,7 @@
                 </p:tab>
 
                 <p:tab   title="Sale"    >
-                    <p:dataTable value="#{pharmacyController.institutionSales}" var="ins">
+                    <p:dataTable styleClass="noBorder" value="#{pharmacyController.institutionSales}" var="ins">
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column >
@@ -177,7 +177,7 @@
                 </p:tab>
 
                 <p:tab   title="Transfer Issue"    >
-                    <p:dataTable id="trIssue" value="#{pharmacyController.institutionTransferIssue}" var="ins">
+                    <p:dataTable styleClass="noBorder" id="trIssue" value="#{pharmacyController.institutionTransferIssue}" var="ins">
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column >
@@ -262,7 +262,7 @@
                 </p:tab>
 
                 <p:tab   title="Transfer Receive "    >
-                    <p:dataTable id="trRceive" value="#{pharmacyController.institutionTransferReceive}" var="ins">
+                    <p:dataTable styleClass="noBorder" id="trRceive" value="#{pharmacyController.institutionTransferReceive}" var="ins">
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column >
@@ -348,7 +348,7 @@
 
                 <p:tab  title="GRN"  >
 
-                    <p:dataTable id="grn" value="#{pharmacyController.grns}" var="dd2" scrollable="true" scrollHeight="150" >
+                    <p:dataTable styleClass="noBorder" id="grn" value="#{pharmacyController.grns}" var="dd2" scrollable="true" scrollHeight="150" >
                         <p:column headerText="GRN No">
                             #{dd2.bill.deptId}
                         </p:column>
@@ -375,7 +375,7 @@
 
                 <p:tab  title="Purchase Orders"  >
 
-                    <p:dataTable id="po" value="#{pharmacyController.pos}" var="dd3" scrollable="true" scrollHeight="150" >
+                    <p:dataTable styleClass="noBorder" id="po" value="#{pharmacyController.pos}" var="dd3" scrollable="true" scrollHeight="150" >
                         <p:column headerText="Po No">
                             #{dd3.bill.deptId}
                         </p:column>
@@ -393,7 +393,7 @@
 
                 <p:tab  title="Direct Purchase"  >
 
-                    <p:dataTable id="dp" value="#{pharmacyController.directPurchase}" var="dd3" scrollable="true" scrollHeight="150" >
+                    <p:dataTable styleClass="noBorder" id="dp" value="#{pharmacyController.directPurchase}" var="dd3" scrollable="true" scrollHeight="150" >
                         <p:column headerText="Bill No">
                             #{dd3.bill.deptId}
                         </p:column>

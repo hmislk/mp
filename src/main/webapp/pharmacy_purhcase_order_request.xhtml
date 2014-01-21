@@ -79,7 +79,7 @@
 
 
                 </h:panelGrid>
-                <p:dataTable rowIndexVar="i" var="bi" scrollable="true" rowKey="#{bi.id}"
+                <p:dataTable styleClass="noBorder" rowIndexVar="i" var="bi" scrollable="true" rowKey="#{bi.id}"
                              scrollHeight="250" value="#{purchaseOrderRequestController.currentBill.billItems}" 
                              id="itemList" selection="#{purchaseOrderRequestController.selectedBillItems}" >  
 

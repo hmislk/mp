@@ -60,6 +60,10 @@
                             <p:column headerText="Code" >
                                 <h:outputLabel value="#{vt.code}"></h:outputLabel>
                             </p:column>
+                             <p:column headerText="Pack Size" >
+                               <p:outputLabel value=" X #{vt.dblValue}" 
+                                              rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                            </p:column>
                             <p:column headerText="Pack Size" >
                                 <p:outputLabel value=" X #{vt.dblValue}" 
                                                rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
@@ -89,7 +93,7 @@
 
                 </h:panelGrid>
 
-                <p:dataTable var="ph" value="#{pharmacyPurchaseController.bill.billItems}" id="itemList">  
+                <p:dataTable styleClass="noBorder" var="ph" value="#{pharmacyPurchaseController.bill.billItems}" id="itemList">  
                     <f:facet name="header">  
                         Ordered Item 
                     </f:facet>  

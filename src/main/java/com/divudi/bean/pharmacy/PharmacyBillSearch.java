@@ -1211,7 +1211,7 @@ public class PharmacyBillSearch implements Serializable {
 
     private boolean checkStock(PharmaceuticalBillItem pharmaceuticalBillItem) {
         double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getBill().getDepartment());
-
+        
         if (pharmaceuticalBillItem.getQtyInUnit() > stockQty) {
             return true;
         } else {

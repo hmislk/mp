@@ -21,49 +21,6 @@
 
                         </f:facet>
 
-                        <p:panel>
-                            <p:panelGrid columns="2" style="width: 100%;">
-                                <p:panel header="Detail">
-                                    <p:panelGrid columns="2">
-                                        <h:outputLabel value="Company Name:" ></h:outputLabel>
-                                        <h:outputLabel value="#{dealorPaymentBillSearch.bill.toInstitution.name }" ></h:outputLabel>                                        
-                                    </p:panelGrid>
-                                </p:panel>
-                                <p:panel header="Bill Detail">
-                                    <p:panelGrid columns="2">
-                                        <h:outputLabel value="Bill No :" ></h:outputLabel>
-                                        <h:outputLabel value="#{dealorPaymentBillSearch.bill.insId}" ></h:outputLabel>
-                                        <h:outputLabel value="Payment Type : " ></h:outputLabel>
-                                        <h:outputLabel value="#{dealorPaymentBillSearch.bill.paymentScheme.name}" ></h:outputLabel>                                        
-                                        <h:outputLabel value="Net Total :" ></h:outputLabel>
-                                        <h:outputLabel value="#{dealorPaymentBillSearch.bill.netTotal}" ></h:outputLabel>
-                                    </p:panelGrid>
-                                </p:panel>
-                            </p:panelGrid>
-                            <p:panel header="Bill Item Detail">
-                                <p:dataTable rowIndexVar="rowIndex" value="#{dealorPaymentBillSearch.billItems}" var="b" >
-                                    <p:column>
-                                        <f:facet name="header">
-                                            <p:outputLabel value="No"/>
-                                        </f:facet>
-                                        <p:outputLabel value="#{rowIndex+1}"/>
-                                    </p:column>
-                                    <p:column >    
-                                        <f:facet name="header">
-                                            <p:outputLabel value="Bht No" rendered="#{b.patientEncounter ne null}"/>
-                                            <p:outputLabel value="Bill No" rendered="#{b.patientEncounter eq null}"/>
-                                        </f:facet>
-                                        <p:outputLabel value="#{b.referenceBill.insId}" rendered="#{b.patientEncounter eq null}"/>
-                                        <p:outputLabel value="#{b.patientEncounter.bhtNo}" rendered="#{b.patientEncounter ne null}"/>
-                                    </p:column>                                    
-                                    <p:column headerText="Patient Name">
-                                        <p:outputLabel value="#{b.referenceBill.patient.person.name}" rendered="#{b.patientEncounter eq null}"/>
-                                        <p:outputLabel value="#{b.patientEncounter.patient.person.name}" rendered="#{b.patientEncounter ne null}"/>
-                                    </p:column>                                    
-                                    <p:column headerText="Net Total">#{b.netValue}</p:column>
-                                </p:dataTable>
-                            </p:panel>
-                        </p:panel>
                     </p:panel>
 
 

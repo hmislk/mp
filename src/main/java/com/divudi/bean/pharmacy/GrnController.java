@@ -58,7 +58,7 @@ import org.primefaces.model.LazyDataModel;
  *
  * @author safrin
  */
-@Named(value = "grnController")
+@Named
 @SessionScoped
 public class GrnController implements Serializable {
 

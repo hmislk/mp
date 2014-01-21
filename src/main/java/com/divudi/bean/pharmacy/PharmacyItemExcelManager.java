@@ -382,7 +382,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 cell = sheet.getCell(barcodeCol, i);
                 strBarcode = cell.getContents();
                 System.out.println("strBarCode = " + strBarcode);
-                amp.setCode(strCode);
+                amp.setCode(strBarcode);
                 getAmpFacade().edit(amp);
                 //Distributor
                 cell = sheet.getCell(distributorCol, i);
@@ -411,11 +411,90 @@ public class PharmacyItemExcelManager implements Serializable {
         }
     }
 
-    
-    
-    
-    
-      public String importToExcelCategoriOnly() {
+    public String importToExcelBarcode() {
+        System.out.println("importing to excel");
+        
+        String strAmp;
+        String strBarcode;
+        
+        PharmaceuticalItemCategory cat;
+        
+        Amp amp;
+        File inputWorkbook;
+        Workbook w;
+        Cell cell;
+        InputStream in;
+        UtilityController.addSuccessMessage(file.getFileName());
+        try {
+            UtilityController.addSuccessMessage(file.getFileName());
+            in = file.getInputstream();
+            File f;
+            f = new File(Calendar.getInstance().getTimeInMillis() + file.getFileName());
+            FileOutputStream out = new FileOutputStream(f);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            inputWorkbook = new File(f.getAbsolutePath());
+
+            UtilityController.addSuccessMessage("Excel File Opened");
+            w = Workbook.getWorkbook(inputWorkbook);
+            Sheet sheet = w.getSheet(0);
+
+            for (int i = startRow; i < sheet.getRows(); i++) {
+
+                Map m = new HashMap();
+
+                //Amp
+                cell = sheet.getCell(ampCol, i);
+                strAmp = cell.getContents();
+                System.out.println("strAmp = " + strAmp);
+                m = new HashMap();
+                m.put("n", strAmp);
+
+                amp = ampFacade.findFirstBySQL("SELECT c FROM Amp c Where upper(c.name)=:n", m);
+                if (amp == null) {
+
+                } else {
+                    amp.setRetired(false);
+                    getAmpFacade().edit(amp);
+                }
+
+                if (amp == null) {
+                    continue;
+                }
+                
+                //Code
+                cell = sheet.getCell(codeCol, i);
+                strBarcode = cell.getContents();
+                amp.setCode(strBarcode);
+                
+                //Barcode
+                cell = sheet.getCell(barcodeCol, i);
+                strBarcode = cell.getContents();
+                amp.setBarcode(strBarcode);
+                
+                getAmpFacade().edit(amp);
+                
+            }
+
+            UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
+            return "";
+        } catch (IOException ex) {
+            UtilityController.addErrorMessage(ex.getMessage());
+            return "";
+        } catch (BiffException e) {
+            UtilityController.addErrorMessage(e.getMessage());
+            return "";
+        }
+    }
+
+    public String importToExcelCategoriOnly() {
         System.out.println("importing to excel");
         String strCat;
         String strAmp = null;
@@ -494,12 +573,6 @@ public class PharmacyItemExcelManager implements Serializable {
         }
     }
 
-   
-    
-    
-    
-    
-    
     @EJB
     ItemsDistributorsFacade itemsDistributorsFacade;
 

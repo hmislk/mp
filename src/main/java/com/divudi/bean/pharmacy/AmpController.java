@@ -91,7 +91,7 @@ public class AmpController implements Serializable {
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
         if (qry != null) {
-            a = getFacade().findBySQL("select c from Amp c where c.retired=false and (upper(c.name) like :n or upper(c.code) like :n or upper(c.barcode) like :n) order by c.name", m, 10);
+            a = getFacade().findBySQL("select c from Amp c where c.retired=false and (upper(c.name) like :n or upper(c.code) like :n or upper(c.barcode) like :n) order by c.name", m, 30);
             System.out.println("a size is " + a.size());
         }
         if (a == null) {

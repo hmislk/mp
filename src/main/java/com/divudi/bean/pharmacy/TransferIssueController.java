@@ -127,22 +127,27 @@ public class TransferIssueController implements Serializable {
         issuedBill = null;
         create();
     }
+    
+    
 
     private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findPack((Amp) item);
+            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
             suggessions.add(item);
         } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findPack(((Ampp) item).getAmp());
-            suggessions.add(((Ampp) item).getAmp());
+            suggessions = getPharmacyRecieveBean().findPack(((Ampp)item).getAmp());
+            suggessions.add(((Ampp)item).getAmp());
         }
-
-        System.err.println("Sugg" + suggessions);
+        
+        System.err.println("Sugg" +suggessions);
 
         return suggessions;
     }
+
+    
+
 
     public void saveBillComponent() {
         HashMap hm = new HashMap();
@@ -426,5 +431,7 @@ public class TransferIssueController implements Serializable {
     public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
+
+    
 
 }

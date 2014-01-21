@@ -67,7 +67,7 @@ public class ItemController implements Serializable {
             hm.put("ins", getInstituion());
             hm.put("q", "%" + query + "%");
             System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql, hm, 20);
+            suggestions = getFacade().findBySQL(sql,hm, 20);
         }
         return suggestions;
 
@@ -153,25 +153,6 @@ public class ItemController implements Serializable {
             System.out.println(sql);
             tmpMap.put("amp", Amp.class);
             tmpMap.put("ampp", Ampp.class);
-            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
-        }
-        return suggestions;
-
-    }
-
-    public List<Item> completeAmpAndAmppItemWithCode(String query) {
-        List<Item> suggestions;
-        String sql;
-        HashMap tmpMap = new HashMap();
-        if (query == null) {
-            suggestions = new ArrayList<>();
-        } else {
-
-            sql = "select c from Item c where c.retired=false and (type(c)= :amp or type(c)= :ampp) and (upper(c.name) like :str or upper(c.code) like :str or upper(c.barcode) like :str ) order by c.name";
-            System.out.println(sql);
-            tmpMap.put("amp", Amp.class);
-            tmpMap.put("ampp", Ampp.class);
-            tmpMap.put("str", "%" + query.toUpperCase() + "%");
             suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
         }
         return suggestions;

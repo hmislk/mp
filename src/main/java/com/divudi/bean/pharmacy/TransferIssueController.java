@@ -148,6 +148,7 @@ public class TransferIssueController implements Serializable {
 
     
 
+
     public void saveBillComponent() {
         HashMap hm = new HashMap();
         String sql = "Select p from PharmaceuticalBillItem p where "

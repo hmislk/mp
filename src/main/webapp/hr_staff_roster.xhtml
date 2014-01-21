@@ -27,9 +27,10 @@
 
                                 </p:autoComplete> 
 
-                                <p:commandButton  value="Add Staff" ajax="false"
+                                <p:commandButton id="btnAddStaff" value="Add Staff" ajax="false"
                                                   action="#{rosterStaffController.add}" >                                      
                                 </p:commandButton>  
+                                <p:defaultCommand target="btnAddStaff"/>
                             </h:panelGrid>
                         </p:panel>
                         <p:panel id="col">                            

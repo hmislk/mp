@@ -38,7 +38,7 @@
                             <p:ajax event="click" process="dtbItem" update=":#{p:component('pPreview')} :#{p:component('pDetails')} "/>
 
                         </p:selectOneMenu>
-                        <h:commandButton action="#{investigationItemController.removeItem()}" value="Remove"/>
+                        <h:commandButton action="#{investigationItemController.removeItem()}" value="Remove" />
                     </p:panel>
 
                     <p:panel  id="pDetails" >
@@ -186,10 +186,10 @@
                             <h:outputText value="Back Color"/>
                             <p:inputText id="txtBackColor" value="#{investigationItemController.current.cssBackColor}"/>
 
-                             <h:outputText value="Format String"/>
-                             <p:inputText id="txtFormat" value="#{investigationItemController.current.formatString}"/>
+                            <h:outputText value="Format String"/>
+                            <p:inputText id="txtFormat" value="#{investigationItemController.current.formatString}"/>
 
-                            
+
                             <h:outputText value="Perfix"/>
                             <p:inputText id="txtPrefix" value="#{investigationItemController.current.formatPrefix}"/>
 

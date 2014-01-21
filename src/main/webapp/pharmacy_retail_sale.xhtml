@@ -38,7 +38,10 @@
 
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
                                             
-                                            <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacySaleController.stock}" converter="stockCon" completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
+                                            <p:autoComplete   forceSelection="true"  id="acStock" 
+                                                              value="#{pharmacySaleController.stock}" 
+                                                              converter="stockCon" 
+                                                              completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
                                                               var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
                                                               style="width: 50px!important;">
                                                 <p:column headerText="Item">

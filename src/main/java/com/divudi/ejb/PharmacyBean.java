@@ -136,10 +136,7 @@ public class PharmacyBean {
                 + " and s.department=:dep";
         hm.put("batch", batch);
         hm.put("dep", department);
-        
-        double st= getStockFacade().findDoubleByJpql(sql, hm);
-        System.err.println("Getting : "+st);
-        return st;
+        return getStockFacade().findDoubleByJpql(sql, hm);
     }
 
     public double getStockQty(ItemBatch batch, Staff staff) {
@@ -376,8 +373,9 @@ public class PharmacyBean {
         Map m = new HashMap();
         m.put("i", item);
         m.put("d", department);
+        m.put("q", 0.0);
         sql = "select s from Stock s where s.itemBatch.item=:i "
-                + " and s.department=:d order by s.itemBatch.dateOfExpire asc";
+                + " and s.department=:d and s.stock >:q order by s.itemBatch.dateOfExpire desc";
         List<Stock> stocks = getStockFacade().findBySQL(sql, m);
         List<StockQty> list = new ArrayList<>();
         double toAddQty = qty;
@@ -389,9 +387,6 @@ public class PharmacyBean {
                 list.add(new StockQty(s, toAddQty));
                 break;
             } else {
-                System.err.println("To Add " + toAddQty);
-                System.err.println("To Add " + s.getStock());
-
                 toAddQty = toAddQty - s.getStock();
                 list.add(new StockQty(s, s.getStock()));
                 //      deductFromStock(s.getItemBatch(), s.getStock(), department);
@@ -404,7 +399,7 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
-        //  addToStockHistory(pbi, d);
+      //  addToStockHistory(pbi, d);
         System.err.println("Before Update " + stock.getStock());
         stock.setStock(stock.getStock() - qty);
         System.err.println("After  Update " + stock.getStock());
@@ -415,7 +410,7 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
-        //  addToStockHistory(pbi, d);
+      //  addToStockHistory(pbi, d);
         System.err.println("Before Update " + stock.getStock());
         stock.setStock(stock.getStock() + qty);
         System.err.println("After Update " + stock.getStock());
@@ -468,7 +463,7 @@ public class PharmacyBean {
         if (stock.getStock() == null) {
             stock.setStock(0.0);
         }
-        // addToStockHistory(pbi, d);
+       // addToStockHistory(pbi, d);
         System.err.println("Before Update" + stock.getStock());
         stock.setStock(stock.getStock() + qty);
         System.err.println("After Update " + stock.getStock());

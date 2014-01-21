@@ -31,6 +31,7 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail " execute="" >
                                         </f:ajax>
                                     </h:commandButton>
+                                    
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{timedItemController.delete()}"  value="Delete"  >
                                     </h:commandButton>
@@ -43,9 +44,11 @@
                         <p:panel header="Edit Details">
                             <f:facet name="header" >
                                 <h:outputLabel value="Edit Details" ></h:outputLabel>
+                                
                                 <p:commandButton style="float:right;" id="btnSave" value="Save"   action="#{timedItemController.saveSelected()}" styleClass="buttons" 
                                                  ajax="false" >
                                 </p:commandButton>
+                                <p:defaultCommand target="btnSave"/>
                             </f:facet>
                             <h:panelGrid id="gpDetail" columns="1">
                                 <h:panelGrid id="gpDetailText" columns="2">

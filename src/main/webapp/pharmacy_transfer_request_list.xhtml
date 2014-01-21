@@ -20,8 +20,9 @@
                 <p:calendar id="toDate" value="#{transferIssueController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm"  >
                 </p:calendar>
 
-                <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;"/>  
-
+                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;"/>  
+ <p:defaultCommand target="btnRefresh"/>
+                
             </p:panelGrid>
 
             <p:dataTable value="#{transferIssueController.requests}" var="p">

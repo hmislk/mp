@@ -70,23 +70,24 @@
                                     <h:commandButton id="btnAddTo" value="Add"  action="#{packageItemFeeController.saveCharge}" styleClass="buttons">
                                         <f:ajax render="dtbFee gpVeda" execute="gpVeda :#{p:component('cur')}"  />
                                     </h:commandButton>
+                                    <p:defaultCommand target="btnAddTo"/>
                                 </h:panelGrid>
 
                                 <p:dataTable id="dtbFee" rowIndexVar="rowIndex" value="#{packageItemFeeController.charges}" var="bi" >
                                     <p:column headerText="Fee Name">
-                                        #{bi.name}
+                                        <h:outputLabel value="#{bi.name}"/>
                                     </p:column>
                                     <p:column headerText="Speciality">
-                                        #{bi.speciality.name}
+                                        <h:outputLabel value="#{bi.speciality.name}"/>
                                     </p:column>
                                     <p:column headerText="Department">
-                                        #{bi.department.name}
+                                        <h:outputLabel value="#{bi.department.name}"/>
                                     </p:column>
                                     <p:column headerText="Staff">
-                                        #{bi.staff.person.nameWithTitle}
+                                        <h:outputLabel value="#{bi.staff.person.nameWithTitle}"/>
                                     </p:column>
                                     <p:column headerText="Fee">
-                                        #{bi.fee}
+                                        <h:outputLabel value="#{bi.fee}"/>
                                     </p:column>
                                     <p:column headerText="Remove">
                                         <h:commandButton id="remove" value="Remove" action="#{packageItemFeeController.removeFee}" >

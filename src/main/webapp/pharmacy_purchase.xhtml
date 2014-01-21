@@ -52,7 +52,7 @@
                         <h:outputLabel/>
 
                         <p:autoComplete id="acItem"   value="#{pharmacyPurchaseController.currentBillItem.item}" 
-                                        completeMethod="#{itemController.completeAmpAndAmppItemWithCode}" 
+                                        completeMethod="#{itemController.completeAmpAndAmppItem}" 
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>

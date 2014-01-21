@@ -136,7 +136,10 @@ public class PharmacyBean {
                 + " and s.department=:dep";
         hm.put("batch", batch);
         hm.put("dep", department);
-        return getStockFacade().findDoubleByJpql(sql, hm);
+        
+        double st= getStockFacade().findDoubleByJpql(sql, hm);
+        System.err.println("Getting : "+st);
+        return st;
     }
 
     public double getStockQty(ItemBatch batch, Staff staff) {
@@ -386,6 +389,9 @@ public class PharmacyBean {
                 list.add(new StockQty(s, toAddQty));
                 break;
             } else {
+                System.err.println("To Add " + toAddQty);
+                System.err.println("To Add " + s.getStock());
+
                 toAddQty = toAddQty - s.getStock();
                 list.add(new StockQty(s, s.getStock()));
                 //      deductFromStock(s.getItemBatch(), s.getStock(), department);
@@ -398,7 +404,7 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
-      //  addToStockHistory(pbi, d);
+        //  addToStockHistory(pbi, d);
         System.err.println("Before Update " + stock.getStock());
         stock.setStock(stock.getStock() - qty);
         System.err.println("After  Update " + stock.getStock());
@@ -409,7 +415,7 @@ public class PharmacyBean {
         if (stock == null) {
             return;
         }
-      //  addToStockHistory(pbi, d);
+        //  addToStockHistory(pbi, d);
         System.err.println("Before Update " + stock.getStock());
         stock.setStock(stock.getStock() + qty);
         System.err.println("After Update " + stock.getStock());
@@ -462,7 +468,7 @@ public class PharmacyBean {
         if (stock.getStock() == null) {
             stock.setStock(0.0);
         }
-       // addToStockHistory(pbi, d);
+        // addToStockHistory(pbi, d);
         System.err.println("Before Update" + stock.getStock());
         stock.setStock(stock.getStock() + qty);
         System.err.println("After Update " + stock.getStock());

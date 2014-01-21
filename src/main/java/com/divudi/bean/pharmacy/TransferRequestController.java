@@ -103,12 +103,12 @@ public class TransferRequestController implements Serializable {
     @Inject
     private PharmacyController pharmacyController;
 
-    public void onEdit(PharmaceuticalBillItem tmp) {
+    public void onEdit(BillItem tmp) {
 
         //  PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
-        getBillItemFacade().edit(tmp.getBillItem());
-        getPharmaceuticalBillItemFacade().edit(tmp);
-        getPharmacyController().setPharmacyItem(tmp.getBillItem().getItem());
+        getBillItemFacade().edit(tmp);
+        getPharmaceuticalBillItemFacade().edit(tmp.getPharmaceuticalBillItem());
+        getPharmacyController().setPharmacyItem(tmp.getItem());
 //        getNetTotal();
     }
 

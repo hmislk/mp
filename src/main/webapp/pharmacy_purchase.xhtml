@@ -36,9 +36,10 @@
 
                 <p:commandButton id="nullButton" value="No Action" action="#" style="display: none;" ></p:commandButton>
 
-                <p:defaultCommand  target="nullButton" />  
+                <p:defaultCommand  target="btnAdd" />  
 
                 <h:panelGrid id="itemselectgrid" columns="2" style="min-width: 100%;">
+                    <p:focus id="focusItem" for="acItem" ></p:focus>
                     <p:panelGrid id="itemSelectgrid1" columns="8">                       
                         <h:outputLabel value="Select Item"/>
                         <h:outputLabel value="Qty"/>
@@ -49,10 +50,8 @@
                         <h:outputLabel value="Bathch No"/>
 
                         <h:outputLabel/>
-                        <p:autoComplete onkeypress="if (event.keyCode === 13) {
-                                    document.getElementById('bill:txtQty').focus();
-                                    window.event.returnValue = false;
-                                }"    value="#{pharmacyPurchaseController.currentBillItem.item}" 
+
+                        <p:autoComplete id="acItem"   value="#{pharmacyPurchaseController.currentBillItem.item}" 
                                         completeMethod="#{itemController.completeAmpAndAmppItem}" 
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
@@ -65,53 +64,35 @@
                                <p:outputLabel value=" X #{vt.dblValue}" 
                                               rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
                             </p:column>
+                             <p:column headerText="Pack Size" >
+                               <p:outputLabel value=" X #{vt.dblValue}" 
+                                              rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                            </p:column>
+                            <p:column headerText="Pack Size" >
+                                <p:outputLabel value=" X #{vt.dblValue}" 
+                                               rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                            </p:column>
 
                         </p:autoComplete>
-                        <p:inputText onkeypress="if (event.keyCode === 13) {
-                                    document.getElementById('bill:txtFreeQty').focus();
-                                    window.event.returnValue = false;
-                                }" 
-                                     id="txtQty" styleClass="numericTxt" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.qty}" style="width:100%" />  
+                        <p:inputText id="txtQty" styleClass="numericTxt" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.qty}" style="width:100%" />  
                         <p:inputText id="txtFreeQty"  styleClass="numericTxt" 
-                                     onkeypress="if (event.keyCode === 13) {
-                                                 document.getElementById('bill:txtPrate').focus();
-                                                 window.event.returnValue = false;
-                                             }" 
                                      value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.freeQty}" style="width:100%" /> 
                         <p:inputText id="txtPrate"  styleClass="numericTxt" 
-                                     onkeypress="if (event.keyCode === 13) {
-                                                 document.getElementById('bill:tmpRetail').focus();
-                                                 window.event.returnValue = false;
-                                             }" 
                                      value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.purchaseRate}"  >
-                            <p:ajax event="change" process="@this" update="tmpRetail" listener="#{pharmacyPurchaseController.onEditPurchaseRate()}"/>
+                            <p:ajax event="keydown" process="@this" update="tmpRetail" listener="#{pharmacyPurchaseController.onEditPurchaseRate()}"/>
                         </p:inputText>
                         <p:inputText id="tmpRetail"  styleClass="numericTxt" 
-                                     onkeypress="if (event.keyCode === 13) {
-                                                 document.getElementById('bill:calDoe_input').focus();
-                                                 window.event.returnValue = false;
-                                             }" 
                                      value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.retailRate}"  />  
 
                         <p:calendar navigator="true"
-                                    onkeypress="if (event.keyCode === 13) {
-                                        document.getElementById('bill:tmp').focus();
-                                        window.event.returnValue = false;
-                                    }" 
-
                                     id="calDoe" pattern="dd MM yy" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.doe}"   >
                             <f:ajax event="dateSelect" execute="@this" render="tmp" listener="#{pharmacyPurchaseController.setBatch()}"/>
                         </p:calendar> 
                         <p:inputText  styleClass="numericTxt" 
-                                      onkeypress="if (event.keyCode === 13) {
-                                        document.getElementById('bill:btnAdd').click();
-                                        window.event.returnValue = false;
-                                    }" 
-
                                       id="tmp" value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.stringValue}"  />  
                         <p:commandButton id="btnAdd" value="Add Item" 
                                          action="#{pharmacyPurchaseController.addItem}" 
-                                         process="itemselectgrid" update="itemList itemselectgrid tot"/>
+                                         process="itemselectgrid" update="itemList itemselectgrid tot focusItem"/>
                     </p:panelGrid>
 
                 </h:panelGrid>
@@ -123,7 +104,7 @@
 
                     <p:column headerText="Item Name" style="width:30%">  
 
-                        <h:outputLabel id="item" value="#{ph.item.name}" style="width:100%">
+                        <h:outputLabel id="item" value="#{ph.item.name} - #{ph.item.code}" style="width:100%">
                         </h:outputLabel>
 
                     </p:column>  

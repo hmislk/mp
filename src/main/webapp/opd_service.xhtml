@@ -26,7 +26,8 @@
                                     </h:inputText>
 
                                     <p:selectOneListbox converter="serv"   id="lstSelect"   value="#{serviceController.current}" style="min-width: 223px; height: 300px;">
-                                        <f:selectItems  value="#{serviceController.selectedItems}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" ></f:selectItems>
+                                        <f:selectItems  value="#{serviceController.selectedItems}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
+                                        </f:selectItems>
                                         <p:ajax event="change"   update="gpDetail" process="lstSelect" >
                                         </p:ajax>
                                     </p:selectOneListbox>
@@ -53,6 +54,7 @@
                                 <p:commandButton style="float:right;" id="btnSave" value="Save"   action="#{serviceController.saveSelected()}" styleClass="buttons"
                                                  ajax="false" >
                                 </p:commandButton>
+                                <p:defaultCommand target="btnSave"/>
                             </f:facet>
                             <h:panelGrid id="gpDetail" columns="1">
                                 <h:panelGrid id="gpDetailText" columns="2">

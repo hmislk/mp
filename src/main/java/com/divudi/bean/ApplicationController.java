@@ -23,15 +23,15 @@ import javax.enterprise.context.ApplicationScoped;
 public class ApplicationController {
 
     Date startTime;
-    List<SessionController> sessionControllers;
+//    List<SessionController> sessionControllers;
 
-    public List<SessionController> getSessionControllers() {
-        return sessionControllers;
-    }
-
-    public void setSessionControllers(List<SessionController> sessionControllers) {
-        this.sessionControllers = sessionControllers;
-    }
+//    public List<SessionController> getSessionControllers() {
+//        return sessionControllers;
+//    }
+//
+//    public void setSessionControllers(List<SessionController> sessionControllers) {
+//        this.sessionControllers = sessionControllers;
+//    }
 
     public Date getStartTime() {
         return startTime;
@@ -44,9 +44,9 @@ public class ApplicationController {
     @PostConstruct
     public void recordStart() {
         startTime = Calendar.getInstance().getTime();
-        if (sessionControllers == null) {
-            sessionControllers = new ArrayList<>();
-        }
+//        if (sessionControllers == null) {
+//            sessionControllers = new ArrayList<>();
+//        }
     }
 
     List<Logins> loggins;
@@ -76,13 +76,13 @@ public class ApplicationController {
         Logins login = sc.getThisLogin();
         loggins.add(login);
         try {
-            for (SessionController s : getSessionControllers()) {
-                if (s.getLoggedUser().equals(login.getWebUser())) {
-                    System.out.println("making log out");
-                    s.logout();
-                }
-            }
-            getSessionControllers().add(sc);
+//            for (SessionController s : getSessionControllers()) {
+//                if (s.getLoggedUser().equals(login.getWebUser())) {
+//                    System.out.println("making log out");
+//                    s.logout();
+//                }
+//            }
+//            getSessionControllers().add(sc);
         } catch (Exception e) {
             System.out.println("Error in addToLogins of Application controller." + e.getMessage());
         }
@@ -92,7 +92,7 @@ public class ApplicationController {
         Logins login = sc.getThisLogin();
         System.out.println("sessions logged before removing is " + getLoggins().size());
         loggins.remove(login);
-        sessionControllers.remove(sc);
+//        sessionControllers.remove(sc);
     }
 
     /**

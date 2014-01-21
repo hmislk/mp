@@ -32,7 +32,9 @@
                             <h:outputLabel value="Salary"/>
                             <p:inputText  value="#{staffBasicController.current.staffPaySheetComponentValue}"/>
 
-                            <p:commandButton value="Add"  action="#{staffBasicController.save}" ajax="false"/>
+                            <p:commandButton id="btnAdd" value="Add"  action="#{staffBasicController.save}" ajax="false"/>
+                            <p:defaultCommand target="btnAdd"/>
+                            
                             <p:commandButton value="Clear" action="#{staffBasicController.makeNull}"  ajax="false" />
 
                         </h:panelGrid>

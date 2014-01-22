@@ -21,8 +21,8 @@
                 </p:calendar>
 
                 <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;"/>  
- <p:defaultCommand target="btnRefresh"/>
-                
+                <p:defaultCommand target="btnRefresh"/>
+
             </p:panelGrid>
 
             <p:dataTable value="#{transferIssueController.requests}" var="p">
@@ -34,7 +34,7 @@
                 </p:column>
                 <p:column headerText="From Department">
                     <h:commandLink action="pharmacy_reprint_transfer_request">
-                        #{p.fromDepartment.name}
+                        #{p.department.name}
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 

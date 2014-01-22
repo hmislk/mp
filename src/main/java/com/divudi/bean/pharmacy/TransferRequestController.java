@@ -15,7 +15,6 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
-import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
@@ -25,8 +24,7 @@ import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 
@@ -91,7 +89,7 @@ public class TransferRequestController implements Serializable {
         phi.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(bi.getItem(), getSessionController().getDepartment()));
         phi.setBillItem(bi);
         getPharmaceuticalBillItemFacade().create(phi);
-        
+
         bi.setPharmaceuticalBillItem(phi);
         getBillItemFacade().edit(bi);
 
@@ -103,12 +101,12 @@ public class TransferRequestController implements Serializable {
     @Inject
     private PharmacyController pharmacyController;
 
-    public void onEdit(PharmaceuticalBillItem tmp) {
+    public void onEdit(BillItem tmp) {
 
         //  PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
-        getBillItemFacade().edit(tmp.getBillItem());
-        getPharmaceuticalBillItemFacade().edit(tmp);
-        getPharmacyController().setPharmacyItem(tmp.getBillItem().getItem());
+        getBillItemFacade().edit(tmp);
+        getPharmaceuticalBillItemFacade().edit(tmp.getPharmaceuticalBillItem());
+        getPharmacyController().setPharmacyItem(tmp.getItem());
 //        getNetTotal();
     }
 
@@ -152,7 +150,10 @@ public class TransferRequestController implements Serializable {
         getBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getBill(), BillType.PharmacyTransferRequest, BillNumberSuffix.PHTRQ));
         getBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getBill(), BillType.PharmacyTransferRequest, BillNumberSuffix.PHTRQ));
 
-        getPharmacyBillBean().editBill(getBill(), getSessionController().getLoggedUser());
+        getBill().setCreater(getSessionController().getLoggedUser());
+        getBill().setCreatedAt(Calendar.getInstance().getTime());
+        
+        getBillFacade().edit(getBill());
 
         UtilityController.addSuccessMessage("Transfer Request Succesfully Created");
 
@@ -163,7 +164,7 @@ public class TransferRequestController implements Serializable {
     public void remove(BillItem billItem) {
         getBill().getBillItems().remove(billItem);
         getBillFacade().edit(getBill());
-        
+
         billItem.setBill(null);
         getBillItemFacade().edit(billItem);
 

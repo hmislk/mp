@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.divudi.bean.pharmacy;
 
-import com.divudi.ejb.ItemMovementReportEjb;
+import com.divudi.ejb.PharmacyErrorCheckingEjb;
+import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Item;
 import javax.inject.Named;
@@ -20,17 +20,22 @@ import javax.ejb.EJB;
  *
  * @author ruhunu
  */
-@Named(value = "itemMovementReportController")
+@Named
 @SessionScoped
-public class ItemMovementReportController implements Serializable {
-@EJB
-        ItemMovementReportEjb ejb;
-        
+public class PharmacyErrorChecking implements Serializable {
+
+    @EJB
+    PharmacyErrorCheckingEjb ejb;
+
     List<BillItem> billItems;
     Date fromDate;
     Date toDate;
     Item item;
-    
+    List<Bill> mismatchPreBills;
+
+    public void listMismatchPreBills() {
+        mismatchPreBills = getEjb().errPreBills();
+    }
 
     public List<BillItem> getBillItems() {
         return billItems;
@@ -39,22 +44,22 @@ public class ItemMovementReportController implements Serializable {
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
     }
-    
-    public void listPharmacyMovement(){
-        billItems = getEjb().allBillItems(item,fromDate, toDate);
+
+    public void listPharmacyMovement() {
+        billItems = getEjb().allBillItems(item, fromDate, toDate);
     }
-    
+
     /**
      * Creates a new instance of ItemMovementReportController
      */
-    public ItemMovementReportController() {
+    public PharmacyErrorChecking() {
     }
 
-    public ItemMovementReportEjb getEjb() {
+    public PharmacyErrorCheckingEjb getEjb() {
         return ejb;
     }
 
-    public void setEjb(ItemMovementReportEjb ejb) {
+    public void setEjb(PharmacyErrorCheckingEjb ejb) {
         this.ejb = ejb;
     }
 
@@ -81,8 +86,13 @@ public class ItemMovementReportController implements Serializable {
     public void setItem(Item item) {
         this.item = item;
     }
-    
-    
-    
-    
+
+    public List<Bill> getMismatchPreBills() {
+        return mismatchPreBills;
+    }
+
+    public void setMismatchPreBills(List<Bill> mismatchPreBills) {
+        this.mismatchPreBills = mismatchPreBills;
+    }
+
 }

@@ -25,7 +25,9 @@
                                     converter="stfcon"   >   
                         <f:ajax execute="@this date" render="lst" event="itemSelect"/>
                     </p:autoComplete>
-                    <p:commandButton ajax="false" value="Add" action="#{staffLeaveController.save}"/>
+                    <p:commandButton id="btnAdd" ajax="false" value="Add" action="#{staffLeaveController.save}"/>
+                    <p:defaultCommand target="btnAdd"/>
+                    
                     <p:commandButton ajax="false" value="Clear" action="#{staffLeaveController.clear}"/>
                 </h:panelGrid>
                 <p:dataTable id="lst" value="#{staffLeaveController.items}" var="i" >

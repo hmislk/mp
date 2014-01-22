@@ -36,7 +36,7 @@
                                         </f:ajax>
                                     </h:commandButton>
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
-                                        return false;" action="#{admissionTypeController.delete()}"  value="Delete"  >
+                                                return false;" action="#{admissionTypeController.delete()}"  value="Delete"  >
                                     </h:commandButton>
                                 </h:panelGrid>
                             </p:panel>
@@ -61,7 +61,7 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>
-
+                                    <p:defaultCommand target="btnSave"/>
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

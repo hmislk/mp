@@ -33,36 +33,40 @@
 
 
 
-                <p:dataTable var="bi"  value="#{grnController.grnBill.billItems}" scrollable="true" scrollHeight="250"
+                <p:dataTable var="bi" styleClass="noBorder" value="#{grnController.grnBill.billItems}" scrollable="true" scrollHeight="250"
                              id="itemList"  sortBy="#{ph.bill.id}">  
 
                     <f:facet name="header">  
                         Ordered Item 
                     </f:facet>  
 
-                    <p:column headerText="Item Name"  style="width:50px;" >                                                
-                        <p:selectOneMenu id="item"  value="#{bi.item}">
+                    <p:column headerText="Item Name" style="width: 250px!important;"  >                                                
+                        <p:selectOneMenu id="item"  value="#{bi.item}" >
                             <f:selectItems value="#{bi.tmpSuggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>
                             <f:ajax event="change" render="@this qty freeQty purchase retail total :#{p:component('tot')}" 
                                     execute="@this" listener="#{grnController.onEditItem(bi)}" ></f:ajax>
                         </p:selectOneMenu>                     
                     </p:column>  
-
-                    <p:column headerText="Qty" style="width:25px;">                   
-                        <p:inputText value="#{bi.pharmaceuticalBillItem.qty}" id="qty" >
+                    
+                    <p:column headerText="Ordered Qty" >                   
+                        <h:outputLabel value="#{bi.referanceBillItem.pharmaceuticalBillItem.qty}"/>
+                    </p:column>  
+                    
+                    <p:column headerText="Receiving Qty"  >                   
+                        <p:inputText value="#{bi.pharmaceuticalBillItem.qty}" id="qty">
                             <f:ajax event="blur" render="item @this freeQty purchase retail total :#{p:component('tot')}" 
                                     execute="item @this freeQty purchase retail" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
                         </p:inputText>
                     </p:column>  
 
-                    <p:column headerText="Free" style="width:25px;">                      
+                    <p:column headerText="Free"   >                      
                         <p:inputText id="freeQty"  value="#{bi.pharmaceuticalBillItem.freeQty}" >   
                             <f:ajax event="blur" render="item qty @this purchase retail total :#{p:component('tot')}" 
                                     execute="item qty @this purchase retail" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
                         </p:inputText>
                     </p:column> 
 
-                    <p:column headerText="Purchase Rate" style="width:25px;">  
+                    <p:column headerText="Purchase Rate"   >  
                         <h:panelGroup id="purchase" >
                             <p:inputText value="#{bi.pharmaceuticalBillItem.purchaseRate}" >
                                 <f:ajax event="blur" render="@this retail total :#{p:component('tot')}"  
@@ -72,7 +76,7 @@
                         </h:panelGroup>
                     </p:column>                  
 
-                    <p:column headerText="Sale Price" style="width:25px;"> 
+                    <p:column headerText="Sale Price"  > 
                         <h:panelGroup id="retail">
                             <p:inputText value="#{bi.pharmaceuticalBillItem.retailRate}"  > 
                                 <f:ajax event="blur" render="@this total :#{p:component('tot')}" 
@@ -83,7 +87,7 @@
                         </h:panelGroup>
                     </p:column>  
 
-                    <p:column headerText="Total" style="width:25px;font-weight: bold;">  
+                    <p:column headerText="Total"  >  
                         <h:panelGroup id="total">
                             <h:outputText value=" #{bi.pharmaceuticalBillItem.purchaseRate*bi.pharmaceuticalBillItem.qty}" >
                                 <f:convertNumber pattern="#,##0.00" />
@@ -91,21 +95,21 @@
                         </h:panelGroup>
                     </p:column>  
 
-                    <p:column headerText="Date of Expiry" style="width:25px;">  
+                    <p:column headerText="Date of Expiry" >  
                         <p:calendar  value="#{bi.pharmaceuticalBillItem.doe}"   navigator="true" pattern="dd/MM/yy" requiredMessage="Plse select Date of Expiry"> 
                             <f:ajax event="dateSelect" execute="@this" render="txtBatch @this" listener="#{grnController.setBatch(bi)}"/>
                         </p:calendar>  
                     </p:column> 
 
 
-                    <p:column headerText="Bathch No" style="width:25px;"  >                      
+                    <p:column headerText="Bathch No" >                      
                         <p:inputText value="#{bi.pharmaceuticalBillItem.stringValue}" id="txtBatch">  
                             <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
                         </p:inputText>
                     </p:column>  
 
 
-                    <p:column style="width:10px;">
+                    <p:column >
                         <p:commandButton value="Remove" ajax="false" action="#{grnController.removeItem(bi)}"/>
                     </p:column>
 

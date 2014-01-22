@@ -21,7 +21,8 @@
                                     <f:selectItem itemLabel="Select Bill Type"/>
                                     <f:selectItems value="#{enumController.pharmacyBillTypes}" var="i" itemLabel="#{i.label}" itemValue="#{i}" />
                                 </p:selectOneMenu>
-                                <p:commandButton ajax="false" value="Search" action="#{billSearch.createTableByBillType()}"/>
+                                <p:commandButton ajax="false" id="btnRefresh" value="Search" action="#{billSearch.createTableByBillType()}"/>
+                                 <p:defaultCommand target="btnRefresh"/>
                                 
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      

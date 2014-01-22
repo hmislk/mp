@@ -37,8 +37,11 @@
                                             <p:outputLabel value="Medicines/Devices" ></p:outputLabel>
 
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
-                                            
-                                            <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacySaleController.stock}" converter="stockCon" completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
+
+                                            <p:autoComplete   forceSelection="true"  id="acStock" 
+                                                              value="#{pharmacySaleController.stock}" 
+                                                              converter="stockCon" 
+                                                              completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
                                                               var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
                                                               style="width: 50px!important;">
                                                 <p:column headerText="Item">
@@ -65,13 +68,13 @@
                                                 <p:ajax event="focus" process="acStock :#{p:component('cmbPs')}"  ></p:ajax>
                                                 <p:ajax event="itemSelect"   listener="#{pharmacySaleController.handleSelect}"  update="txtQty txtRate focusQty" ></p:ajax>
                                             </p:autoComplete>
-                                            
+
                                         </h:panelGrid>
                                         <h:panelGrid columns="1" >
                                             <p:outputLabel value="Quentity" ></p:outputLabel>
                                             <p:inputText   autocomplete="off" id="txtQty" value="#{pharmacySaleController.qty}" style="width: 50px!important;"   >
-                                                <p:ajax event="focus"  listener="#{pharmacySaleController.calculateRateListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
-                                                <p:ajax event="keydown"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                                <p:ajax event="keyup"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                                <p:ajax event="blur"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
                                             </p:inputText>
                                         </h:panelGrid>
                                         <h:panelGrid columns="1" >
@@ -124,8 +127,7 @@
 
                                                             <p:inputText  id="ipTblQty" value="#{bi.qty}" style="width:96%" label="Qty" >
                                                                 <f:convertNumber integerOnly="true" />
-                                                                <f:ajax event="keyup" execute="@this rate" render="gros @this :#{p:component('pBillDetails')}" listener="#{pharmacySaleController.onEdit(bi)}"/>
-                                                                <f:ajax event="change" render="@this" execute="@this" />
+                                                                <f:ajax event="change" render="@this gros :#{p:component('pBillDetails')}" execute="@this rate" listener="#{pharmacySaleController.onEdit(bi)}"/>
                                                             </p:inputText>
 
                                                         </p:column>

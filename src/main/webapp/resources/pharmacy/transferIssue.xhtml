@@ -61,7 +61,7 @@
 
             <div >
 
-                <p:dataTable rowIndexVar="rowIndex" styleClass="normalFont" value="#{cc.attrs.bill.billItems}" var="bip" >
+                <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.transBillItems}" var="bip" >
                     <p:column>
                         <f:facet name="header">No</f:facet>
                             #{rowIndex+1}
@@ -70,9 +70,7 @@
                         <f:facet name="header">Item Name</f:facet>
                             #{bip.item.name}
                     </p:column>
-
-
-
+                    
                     <p:column>
                         <f:facet name="header">QTY</f:facet>
                             #{0-bip.pharmaceuticalBillItem.qty}

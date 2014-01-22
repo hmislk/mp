@@ -56,7 +56,9 @@
                                             <p:inputText required="true" value="#{webUserController.current.code}" maxlength="10" ></p:inputText>
 
                                             
-                                             <p:commandButton value="Create User" action="#{webUserController.saveNewUser()}" ajax="false" ></p:commandButton>
+                                            <p:commandButton id="btnCreateUser" value="Create User" action="#{webUserController.saveNewUser()}" ajax="false" >
+                                             </p:commandButton>
+                                            <p:defaultCommand target="btnCreateUser"/>
                                         </h:panelGrid>
 
                                     </p:panel>

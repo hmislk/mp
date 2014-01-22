@@ -37,9 +37,9 @@
                                 <h:outputLabel value="Margin" ></h:outputLabel>
                                 <p:inputText value="#{inwardPriceAdjustmntController.margin}" />
                                 <h:outputLabel value="" ></h:outputLabel>
-                                <p:commandButton value="Add" ajax="false" action="#{inwardPriceAdjustmntController.saveSelected}" >
+                                <p:commandButton id="btnAdd" value="Add" ajax="false" action="#{inwardPriceAdjustmntController.saveSelected}" >
                                 </p:commandButton>
-
+                                <p:defaultCommand target="btnAdd"/>
                             </p:panelGrid>
                         </p:panel>
 

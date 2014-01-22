@@ -55,17 +55,42 @@
                         <h:outputLabel value="#{pharmacyErrorChecking.calculatedStock}" ></h:outputLabel>
                         <br/>
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
+                        <h:outputLabel value="#{pharmacyErrorChecking.itemStock}" ></h:outputLabel>
+                        <br/>
+                        <h:outputLabel value="Current Stock" ></h:outputLabel>
                         <h:outputLabel value="" ></h:outputLabel>
 
-                        <p:dataTable value="#{pharmacyErrorChecking.billItems}" var="pb" >
+                        <p:dataTable value="#{pharmacyErrorChecking.billItems}" var="pb" 
+                                     rowStyleClass="#{(pb.retired eq true or pb.bill.retired eq true) ?'greenText' : ''} 
+                                     #{((pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnBill' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyGrnReturn' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PurchaseReturn' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.PreBill' and pb.bill.billType eq 'PharmacyPre' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferIssue' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferReceive' )
+                                       )? 'redText' : ''}
+                                     #{((pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyGrnBill' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnReturn' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PurchaseReturn' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.RefundBill' and pb.bill.billType eq 'PharmacyPre' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferIssue' )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferReceive' )
+                                       )? 'greenText' : ''}"
+
+                                     sortBy="#{pb.id}" >
 
                             <p:column headerText="id" >
-                                <h:outputLabel value="#{pb.id}" >
-                                </h:outputLabel>
+                                <h:commandButton action="pharmacy_reprint_bill">
+                                    <h:outputLabel value="#{pb.id}" >
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{pb.bill}" target="#{pharmacyBillSearch.bill}"/>
+                                </h:commandButton>
                             </p:column>
 
                             <p:column headerText="Bill Date/Time" >
-                                <h:outputLabel value="#{pb.bill.billDate}" >
+                                <h:outputLabel value="#{pb.createdAt}" >
                                     <f:convertDateTime pattern="dd MMM yyyy hh:mm a" ></f:convertDateTime>
                                 </h:outputLabel>
                             </p:column>
@@ -83,7 +108,7 @@
                             </p:column>
 
                             <p:column headerText="Bill Date/Time" >
-                                <h:outputLabel value="#{pb.bill.referenceBill.billDate}" >
+                                <h:outputLabel value="#{pb.bill.referenceBill.createdAt}" >
                                     <f:convertDateTime pattern="dd MMM yyyy hh:mm a" ></f:convertDateTime>
                                 </h:outputLabel>
                             </p:column>
@@ -93,26 +118,26 @@
                                 </h:outputLabel>
                             </p:column>
 
-                            
-                             <p:column headerText="Bill Class" >
-                                 <h:outputLabel value="#{pb.bill.billClass}" >
+
+                            <p:column headerText="Bill Class" >
+                                <h:outputLabel value="#{pb.bill.billClass}" >
                                 </h:outputLabel>
                             </p:column>
-                            
-                            
+
+
                             <p:column headerText="Bill Retired" >
                                 <h:outputLabel value="#{pb.bill.retired}" >
                                 </h:outputLabel>
                             </p:column>
-                            
-                            
+
+
                             <p:column headerText="Bill Item Retired" >
                                 <h:outputLabel value="#{pb.retired}" >
                                 </h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Id" >
-                                <h:outputLabel value="#{pb.referanceBillItem.id}" >
+                                <h:outputLabel value="#{pb.bill.referenceBill.id}" >
                                 </h:outputLabel>
                             </p:column>
                             <p:column headerText="Bill Date/Time" >

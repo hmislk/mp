@@ -174,6 +174,8 @@
 
                                 <p:panel header="Microbiology"    rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType eq 'Microbiology'}" >
 
+                                    <f:view contentType="text/html">
+
                                     <p:dataTable id="tblMicVals" value="#{patientReportController.currentPatientReport.patientReportItemOfValueType}"  var="pv"  >
 
                                         <p:column >
@@ -183,7 +185,7 @@
                                         <p:column >
                                             <h:panelGroup rendered="#{pv.investigationItem.ixItemType eq 'Value'}">
                                                 <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Memo'}" >
-                                                    <p:inputTextarea id="txtMicMemoVal"   style="min-width: 200px;" completeMethod="#{investigationItemValueController.completeValues}"  >
+                                                    <p:inputTextarea id="txtMicMemoVal"   minQueryLength="1"  style="min-width: 200px;" completeMethod="#{investigationItemValueController.completeValues}"  >
                                                     </p:inputTextarea>
                                                     <p:watermark  value="#{pv.lobValue}" for="txtMicMemoVal" />
                                                 </h:panelGroup>
@@ -207,6 +209,9 @@
 
                                         </p:column>
                                     </p:dataTable>
+
+                                    </f:view>
+
                                 </p:panel>
 
 
@@ -370,9 +375,10 @@
                                 <table id="micro" style="position: absolute; top: 38%; left:10%; font-size: 12px!important;" >
                                     <tr>
                                         <td id="micromemos">
+                                            <h1>sdf</h1>
                                             <table>
                                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
-                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.cssTop lt 50 }" >
+                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.transCssTop  lt 50 }" >
 
                                                         <tr>
                                                             <td>
@@ -414,7 +420,7 @@
                                         <td id="miccomments">
                                             <table>
                                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
-                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.cssTop > 50 }" >
+                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.transCssTop gt 50 }" >
 
                                                         <tr>
                                                             <td>

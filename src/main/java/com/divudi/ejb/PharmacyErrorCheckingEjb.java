@@ -44,8 +44,8 @@ public class PharmacyErrorCheckingEjb {
     }
 
     public double getTotalQty(BillType billType, Bill bill, Department department, Item item) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "  type(p.bill)=:class and p.creater is not null and p.retired=false and "
+        String sql = "Select abs(sum(p.pharmaceuticalBillItem.qty)) from BillItem p where"
+                + "  type(p.bill)=:class and p.creater is not null and (p.bill.retired=false  ) and "
                 + " p.item=:itm and p.bill.billType=:btp and p.bill.department=:dep ";
 
         HashMap hm = new HashMap();
@@ -66,6 +66,22 @@ public class PharmacyErrorCheckingEjb {
         m.put("d", department);
         m.put("i", item);
         sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d";
+        return getBillItemFacade().findBySQL(sql, m);
+    }
+
+    public List<BillItem> allBillItems2(Item item, Department department) {
+        String sql;
+        Map m = new HashMap();
+        m.put("d", department);
+        m.put("i", item);
+        m.put("btp1", BillType.PharmacyTransferRequest);
+        m.put("btp2", BillType.PharmacyOrder);
+        m.put("btp3", BillType.PharmacyOrderApprove);
+        m.put("btp4", BillType.PharmacyAdjustment);
+        m.put("btp5", BillType.PharmacySale);
+        sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d and bi.bill.createdAt is not null "
+                + " and (bi.bill.billType!=:btp1 and bi.bill.billType!=:btp2 "
+                + "and bi.bill.billType!=:btp3 and bi.bill.billType!=:btp4 and bi.bill.billType!=:btp5)";
         return getBillItemFacade().findBySQL(sql, m);
     }
 

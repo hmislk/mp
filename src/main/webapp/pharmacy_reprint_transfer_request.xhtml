@@ -54,7 +54,11 @@
                                     </p:column>
                                     <p:column>
                                         <f:facet name="header">Value</f:facet>
-                                            #{bip.netValue}
+                                            #{bip.pharmaceuticalBillItem.qty}
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Value</f:facet>
+                                            #{bip.pharmaceuticalBillItem.purchaseRate}
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

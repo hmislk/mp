@@ -64,6 +64,8 @@ public class PharmacyErrorChecking implements Serializable {
     public void listPharmacyMovement() {
         billItems = getEjb().allBillItems(item, department);
 
+//        billItems = getEjb().allBillItems2(item, department);
+
         //  calculateTotals(getEjb().allBillItemsWithCreatedAt(item, department));
         calculateTotals2();
     }
@@ -72,8 +74,8 @@ public class PharmacyErrorChecking implements Serializable {
     private BillFacade billFacade;
     @EJB
     private PharmacyBean pharmacyBean;
-    
-    public double getItemStock(){
+
+    public double getItemStock() {
         return getPharmacyBean().getStockQty(item, department);
     }
 
@@ -96,7 +98,7 @@ public class PharmacyErrorChecking implements Serializable {
 
         calculatedStock -= getEjb().getTotalQty(BillType.PurchaseReturn, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PurchaseReturn, new CancelledBill(), department, item);
-
+            
         calculatedStock -= getEjb().getTotalQty(BillType.PharmacyPre, new PreBill(), department, item);
 
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
@@ -109,6 +111,7 @@ public class PharmacyErrorChecking implements Serializable {
 
     }
 
+    
     public void calculateTotals(List<BillItem> bis) {
         calculatedStock = 0.0;
         calculatedSaleValue = 0.0;

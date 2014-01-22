@@ -43,7 +43,8 @@
 
                     <p:column headerText="Qty" style="width:25px!important;">                      
                         <p:inputText id="qty" value="#{ph.pharmaceuticalBillItem.qty}" >  
-                            <f:ajax event="blur" render=":#{p:component('tab')} "  execute="@this" listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
+                            <f:ajax event="blur" render="@this"  execute="@this item" listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
+                            <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferReceiveController.onFocus(ph)}"/>
                         </p:inputText>
                     </p:column>  
 

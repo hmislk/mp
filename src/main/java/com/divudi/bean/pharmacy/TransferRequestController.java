@@ -152,6 +152,8 @@ public class TransferRequestController implements Serializable {
 
         getBill().setCreater(getSessionController().getLoggedUser());
         getBill().setCreatedAt(Calendar.getInstance().getTime());
+        
+        getBillFacade().edit(getBill());
 
         UtilityController.addSuccessMessage("Transfer Request Succesfully Created");
 

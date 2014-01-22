@@ -32,8 +32,12 @@
                         </p:panel>
                         <p:panel>
                             <h:panelGroup >
-                                <h:commandButton value="Add" action="#{itemsDistributorsController.addToPackage()}"></h:commandButton>
-                                <h:commandButton value="Remove" action="#{itemsDistributorsController.removeFromPackage()}"></h:commandButton>
+                                <h:commandButton id="btnAdd" value="Add" action="#{itemsDistributorsController.addToPackage()}">
+                                </h:commandButton>
+                                
+                                <h:commandButton value="Remove" action="#{itemsDistributorsController.removeFromPackage()}">
+                                </h:commandButton>
+                                 <p:defaultCommand target="btnAdd"/>
                             </h:panelGroup> 
                         </p:panel>
                         <p:panel header="Select Item For Distributor">

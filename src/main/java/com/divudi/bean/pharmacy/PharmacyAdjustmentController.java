@@ -514,36 +514,7 @@ public class PharmacyAdjustmentController implements Serializable {
         return pbi;
     }
 
-    private void saveSaleBillItems() {
-        for (BillItem tbi : billItems) {
-
-            BillItem sbi = new BillItem();
-
-            sbi.setBill(getSaleBill());
-            sbi.setReferanceBillItem(tbi);
-            sbi.setCreatedAt(Calendar.getInstance().getTime());
-            sbi.setCreater(getSessionController().getLoggedUser());
-
-            sbi.setItem(tbi.getItem());
-            sbi.setQty(tbi.getQty());
-
-            sbi.setGrossValue(tbi.getGrossValue());
-            sbi.setNetValue(tbi.getNetValue());
-            sbi.setDiscount(tbi.getDiscount());
-
-            sbi.setDiscountRate(tbi.getDiscountRate());
-            sbi.setRate(tbi.getRate());
-            sbi.setNetRate(tbi.getNetRate());
-
-            getBillItemFacade().edit(sbi);
-            clonePharmacyItem(sbi, tbi);
-
-            getPharmacyBean().deductFromStock(tbi.getItem(), tbi.getQty(), tbi.getBill().getDepartment());
-
-            getSaleBill().getBillItems().add(sbi);
-        }
-        getBillFacade().edit(getSaleBill());
-    }
+    
 
     private void saveDeptAdjustmentBillItems() {
         billItem = null;
@@ -672,26 +643,7 @@ public class PharmacyAdjustmentController implements Serializable {
         billPreview = true;
     }
 
-    public void settleBillWithPay2() {
-        editingQty = null;
-        if (errorCheckForSaleBill()) {
-            return;
-        }
-      //  Patient pt = savePatient();
-
-        //savePreBill(pt);
-        //   savePreBillItems();
-        saveSaleBill(getDeptAdjustmentPreBill().getPatient());
-        saveSaleBillItems();
-
-        setBill(getBillFacade().find(getSaleBill().getId()));
-
-        clearBill();
-        clearBillItem();
-        billPreview = true;
-
-    }
-
+  
     public String newPharmacyRetailSale() {
         clearBill();
         clearBillItem();

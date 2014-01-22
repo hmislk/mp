@@ -27,7 +27,7 @@
                                     <h:inputText id="txtSearch" value="#{doctorController.selectText}" >
                                         <f:ajax execute="txtSearch" render="lstSelect" event="keyup" />
                                     </h:inputText>
-                                    
+
                                     <h:selectOneListbox  id="lstSelect"   size="10" value="#{doctorController.current}" style="min-width: 223px;">
                                         <f:selectItems  value="#{doctorController.selectedItems}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.person.nameWithTitle}"  ></f:selectItems>
                                         <f:ajax render="gpDetail" execute="lstSelect" >
@@ -75,7 +75,7 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>
-
+                                    <p:defaultCommand target="btnSave"/>
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

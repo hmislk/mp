@@ -8,6 +8,7 @@ package com.divudi.bean.pharmacy;
 import com.divudi.ejb.PharmacyErrorCheckingEjb;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
+import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -32,9 +33,10 @@ public class PharmacyErrorChecking implements Serializable {
     Date toDate;
     Item item;
     List<Bill> mismatchPreBills;
+    Department department;
 
     public void listMismatchPreBills() {
-        mismatchPreBills = getEjb().errPreBills();
+        mismatchPreBills = getEjb().errPreBills(department);
     }
 
     public List<BillItem> getBillItems() {
@@ -94,5 +96,16 @@ public class PharmacyErrorChecking implements Serializable {
     public void setMismatchPreBills(List<Bill> mismatchPreBills) {
         this.mismatchPreBills = mismatchPreBills;
     }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+
+
 
 }

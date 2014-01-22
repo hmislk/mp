@@ -163,10 +163,10 @@ public class BillSearch implements Serializable {
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
             sql = "Select b from RefundBill b where  b.retired=false and b.institution=:ins and"
-                    + " b.createdAt between :fd and :td and b.billType=:bt and b.billedBill is null "
+                    + " b.createdAt between :fd and :td and b.billType=:bt "
                     + " order by b.id desc ";
         } else {
-            sql = "select b from RefundBill b where b.billType = :bt and b.billedBill is null and b.institution=:ins "
+            sql = "select b from RefundBill b where b.billType = :bt and b.institution=:ins "
                     + "  and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
@@ -578,12 +578,12 @@ public class BillSearch implements Serializable {
         Map temMap = new HashMap();
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from RefundBill b where b.billedBill is null and b.cancelled=false "
+            sql = "select b from RefundBill b where  b.cancelled=false "
                     + "  and b.billType = :billType and b.institution=:ins "
                     + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.id desc ";
 
         } else {
-            sql = "select b from RefundBill b where  b.billedBill is null and b.cancelled=false "
+            sql = "select b from RefundBill b where   b.cancelled=false "
                     + "  and  b.billType = :billType and b.institution=:ins  "
                     + " and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.department.name) like '%" + txtSearch.toUpperCase() + "%' "

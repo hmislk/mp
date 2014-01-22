@@ -630,10 +630,10 @@ public class PharmacyBillSearch implements Serializable {
             return true;
         }
 
-        if (getBill().isRefunded()) {
-            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
-            return true;
-        }
+//        if (getBill().isRefunded()) {
+//            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
+//            return true;
+//        }
 
         if (getBill().getBillType() == BillType.PharmacyOrderApprove) {
             if (checkGrn()) {
@@ -644,7 +644,7 @@ public class PharmacyBillSearch implements Serializable {
 
         if (getBill().getBillType() == BillType.PharmacyGrnBill) {
             if (checkGrnReturn()) {
-                UtilityController.addErrorMessage("Grn head been Returned u can't cancell bill ");
+                UtilityController.addErrorMessage("Grn had been Returned u can't cancell bill ");
                 return true;
             }
         }
@@ -665,7 +665,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkGrn() {
-        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
                 + " and b.cancelled=false and b.billType=:btp and "
                 + " b.referenceBill=:ref and b.referenceBill.cancelled=false ";
         HashMap hm = new HashMap();
@@ -681,7 +681,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkGrnReturn() {
-        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
                 + " and b.cancelled=false and b.billType=:btp and "
                 + " b.referenceBill=:ref and b.referenceBill.cancelled=false";
         HashMap hm = new HashMap();

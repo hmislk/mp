@@ -180,14 +180,9 @@ public class PharmacyPurchaseController implements Serializable {
             return;
         }
 
-        //     saveBill();
+        saveBill();
         //   saveBillComponent();
         getPharmacyBillBean().calSaleFreeValue(getBill());
-
-        getBill().setCreater(getSessionController().getLoggedUser() );
-        getBill().setCreatedAt(Calendar.getInstance().getTime());
-        getBill().setDepartment(getSessionController().getDepartment());
-        getBillFacade().edit(getBill());
 
         for (BillItem i : getBill().getBillItems()) {
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
@@ -289,7 +284,9 @@ public class PharmacyPurchaseController implements Serializable {
         getBill().setCreatedAt(new Date());
         getBill().setCreater(getSessionController().getLoggedUser());
 
-        getBillFacade().create(getBill());
+ 
+
+        getBillFacade().edit(getBill());
 
     }
 

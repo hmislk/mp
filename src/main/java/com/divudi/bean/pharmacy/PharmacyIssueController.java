@@ -484,7 +484,7 @@ public class PharmacyIssueController implements Serializable {
 
         getBillItemFacade().edit(tbi);
 
-        getPharmacyBean().addToStock(tbi.getPharmaceuticalBillItem().getStock(), Math.abs(tbi.getPharmaceuticalBillItem().getQty()), tbi.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+        getPharmacyBean().deductFromStock(tbi.getPharmaceuticalBillItem().getStock(), Math.abs(tbi.getPharmaceuticalBillItem().getQty()), tbi.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
         getPreBill().getBillItems().add(tbi);
 
@@ -599,7 +599,7 @@ public class PharmacyIssueController implements Serializable {
 
     public void removeBillItem(BillItem b) {
 
-        getPharmacyBean().deductFromStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+        getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
         PharmaceuticalBillItem tmpPharmacy = b.getPharmaceuticalBillItem();
         b.setBill(null);

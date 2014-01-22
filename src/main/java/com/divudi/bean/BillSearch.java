@@ -216,20 +216,22 @@ public class BillSearch implements Serializable {
         Map temMap = new HashMap();
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from PreBill b where b.billType = :billType and b.institution=:ins "
+            sql = "select b from PreBill b where b.billType = :billType and b.institution=:ins and"
                     + " b.referenceBill.billType=:refBillType "
                     + " and b.createdAt between :fromDate and :toDate and b.retired=false "
                     + " order by b.id desc ";
         } else {
             sql = "select b from PreBill b where b.billType = :billType and "
                     + " b.referenceBill.billType=:refBillType and b.institution=:ins"
-                    + "  and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
+                    + "  and  (upper(b.insId) like :q "
+                    + " or upper(b.paymentScheme.paymentMethod) like :q "
+                    + " or upper(b.paymentScheme.name) like :q "
+                    + " or upper(b.netTotal) like :q "
+                    + " or upper(b.total) like :q )  and"
                     + " b.createdAt between :fromDate and :toDate and b.retired=false "
                     + "order by b.id desc  ";
+
+            temMap.put("q", "%" + txtSearch.toUpperCase() + "%");
 
         }
         temMap.put("billType", BillType.PharmacyPre);

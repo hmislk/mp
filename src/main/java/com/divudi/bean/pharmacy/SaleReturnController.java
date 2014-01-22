@@ -136,7 +136,7 @@ public class SaleReturnController implements Serializable {
 
         getReturnBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(
                 getSessionController().getInstitution(), new RefundBill(), BillType.PharmacyPre, BillNumberSuffix.PHRET));
-       
+
         getReturnBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(
                 getSessionController().getDepartment(), new RefundBill(), BillType.PharmacyPre, BillNumberSuffix.PHRET));
 
@@ -199,7 +199,7 @@ public class SaleReturnController implements Serializable {
             getBillItemFacade().edit(i.getBillItem());
 
             //   getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
-            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit());
+            getPharmacyBean().addToStock(i.getPharmaceuticalBillItem().getStock(), Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             //   i.getBillItem().getTmpReferenceBillItem().getPharmaceuticalBillItem().setRemainingQty(i.getRemainingQty() - i.getQty());
             //   getPharmaceuticalBillItemFacade().edit(i.getBillItem().getTmpReferenceBillItem().getPharmaceuticalBillItem());
@@ -306,7 +306,7 @@ public class SaleReturnController implements Serializable {
                 PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
                 tmp.setBillItem(bi);
                 tmp.copy(i);
-                
+
                 // getPharmaceuticalBillItemFacade().create(tmp);
                 pid.setGrnBillItem(i.getBillItem());
                 pid.setPoBillItem(i.getBillItem().getReferanceBillItem());

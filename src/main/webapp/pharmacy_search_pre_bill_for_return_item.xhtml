@@ -18,8 +18,9 @@
                                 <p:inputText id="txtSearch" value="#{billSearch.txtSearch}"  style="width:500px;">
                                     
                                 </p:inputText>
-                                <p:commandButton ajax="false" value="Refresh" action="#{billSearch.createPreBillsForReturn()}"/>
-                                
+                                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" action="#{billSearch.createPreBillsForReturn()}"/>
+                                 <p:defaultCommand target="btnRefresh"/>
+                                 
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                   
                                     

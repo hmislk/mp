@@ -126,20 +126,7 @@ public class PharmacyRecieveBean {
         return retailPrice;
     }
 
-    public void editBill(Bill b, WebUser w) {
-        b.setCreater(w);
-        b.setCreatedAt(Calendar.getInstance().getTime());
-
-        getBillFacade().edit(b);
-    }
-
-    public void editBillItem(BillItem i, WebUser w) {
-        i.setCreatedAt(Calendar.getInstance().getTime());
-        i.setCreater(w);
-
-        getBillItemFacade().edit(i);
-    }
-
+  
     public double getTotalQty(BillItem b, BillType billType, Bill bill) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "  type(p.bill)=:class and p.creater is not null and"
@@ -290,45 +277,7 @@ public class PharmacyRecieveBean {
 //
 //        return billed - (cancelled + returned);
 //    }
-    public PharmaceuticalBillItem savePharmacyBillItem(BillItem b, PharmaceuticalBillItem i) {
-        PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
-        tmp.setBillItem(b);
-        tmp.setQtyInUnit(i.getQtyInUnit() - calQty(i));
-        tmp.setFreeQtyInUnit(i.getFreeQtyInUnit());
-        tmp.setPurchaseRate(i.getPurchaseRate());
-        tmp.setRetailRate(i.getRetailRate());
-
-        //   tmp.setLastPurchaseRate(getPharmacyBean().getLastPurchaseRate(b.getItem(),department));
-        System.err.println("Last Purchase Price : " + tmp.getLastPurchaseRate());
-        getPharmaceuticalBillItemFacade().create(tmp);
-
-        return tmp;
-    }
-
-    public BillItem saveBillItem(BillItem tmp, Bill b) {
-        //     BillItem tmp = new BillItem();
-        tmp.setBill(b);
-    //    tmp.setItem(i.getBillItem().getItem());
-        //    tmp.setReferanceBillItem(i.getBillItem());
-
-        //   tmp.setQty(i.getQty() - calQty(i));
-        //    tmp.setNetValue(i.getQty() *);
-        getBillItemFacade().create(tmp);
-
-        return tmp;
-    }
-
-    public PharmaceuticalBillItem savePharmacyBillItem(BillItem b, Department d) {
-        PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
-        tmp.setBillItem(b);
-
-        tmp.setQty(getPharmacyBean().getOrderingQty(b.getItem(), d));
-        tmp.setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(b.getItem(), d));
-        tmp.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(b.getItem(), d));
-
-        getPharmaceuticalBillItemFacade().create(tmp);
-        return tmp;
-    }
+   
 
 //    public double checkQty(PharmaceuticalBillItem ph) {
 //        if (ph.getQty() == 0.0) {

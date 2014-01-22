@@ -163,10 +163,10 @@ public class BillSearch implements Serializable {
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
             sql = "Select b from RefundBill b where  b.retired=false and b.institution=:ins and"
-                    + " b.createdAt between :fd and :td and b.billType=:bt and b.billedBill is null "
+                    + " b.createdAt between :fd and :td and b.billType=:bt "
                     + " order by b.id desc ";
         } else {
-            sql = "select b from RefundBill b where b.billType = :bt and b.billedBill is null and b.institution=:ins "
+            sql = "select b from RefundBill b where b.billType = :bt and b.institution=:ins "
                     + "  and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
@@ -216,20 +216,22 @@ public class BillSearch implements Serializable {
         Map temMap = new HashMap();
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from PreBill b where b.billType = :billType and b.institution=:ins "
+            sql = "select b from PreBill b where b.billType = :billType and b.institution=:ins and"
                     + " b.referenceBill.billType=:refBillType "
                     + " and b.createdAt between :fromDate and :toDate and b.retired=false "
                     + " order by b.id desc ";
         } else {
             sql = "select b from PreBill b where b.billType = :billType and "
                     + " b.referenceBill.billType=:refBillType and b.institution=:ins"
-                    + "  and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
+                    + "  and  (upper(b.insId) like :q "
+                    + " or upper(b.paymentScheme.paymentMethod) like :q "
+                    + " or upper(b.paymentScheme.name) like :q "
+                    + " or upper(b.netTotal) like :q "
+                    + " or upper(b.total) like :q )  and"
                     + " b.createdAt between :fromDate and :toDate and b.retired=false "
                     + "order by b.id desc  ";
+
+            temMap.put("q", "%" + txtSearch.toUpperCase() + "%");
 
         }
         temMap.put("billType", BillType.PharmacyPre);
@@ -576,12 +578,12 @@ public class BillSearch implements Serializable {
         Map temMap = new HashMap();
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from RefundBill b where b.billedBill is null and b.cancelled=false "
+            sql = "select b from RefundBill b where  b.cancelled=false "
                     + "  and b.billType = :billType and b.institution=:ins "
                     + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.id desc ";
 
         } else {
-            sql = "select b from RefundBill b where  b.billedBill is null and b.cancelled=false "
+            sql = "select b from RefundBill b where   b.cancelled=false "
                     + "  and  b.billType = :billType and b.institution=:ins  "
                     + " and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.department.name) like '%" + txtSearch.toUpperCase() + "%' "
@@ -1199,41 +1201,6 @@ public class BillSearch implements Serializable {
     }
     @EJB
     private ItemBatchFacade itemBatchFacade;
-
-    public void pharmacyCancelBill() {
-        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
-            if (pharmacyErrorCheck()) {
-                return;
-            }
-
-            CancelledBill cb = pharmacyCreateCancelBill();
-
-            getBillFacade().create(cb);
-
-            pharmacyCancelBillItems(cb);
-
-            if (getBill().getBillType() == BillType.PharmacyGrnBill) {
-                List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL("Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId());
-
-                for (PharmaceuticalBillItem ph : tmp) {
-                    getPharmacyBean().deductFromStock(ph.getItemBatch(), ph.getQty() + ph.getFreeQty(), getBill().getDepartment());
-
-                    getPharmacyBean().reSetPurchaseRate(ph.getItemBatch(), getBill().getDepartment());
-                    getPharmacyBean().reSetRetailRate(ph.getItemBatch(), getSessionController().getDepartment());
-                }
-            }
-
-            getBill().setCancelled(true);
-            getBill().setCancelledBill(cb);
-            getBillFacade().edit(getBill());
-            UtilityController.addSuccessMessage("Cancelled");
-
-            printPreview = true;
-
-        } else {
-            UtilityController.addErrorMessage("No Bill to cancel");
-        }
-    }
 
     private void returnBillFee(Bill b, BillItem bt, List<BillFee> tmp) {
         for (BillFee nB : tmp) {

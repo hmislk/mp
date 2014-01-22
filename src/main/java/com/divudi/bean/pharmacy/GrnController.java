@@ -176,7 +176,7 @@ public class GrnController implements Serializable {
             // getPharmacyBillBean().preCalForAddToStock(i, itemBatch, getSessionController().getDepartment());
 
             double addingQty = i.getPharmaceuticalBillItem().getQtyInUnit() + i.getPharmaceuticalBillItem().getFreeQtyInUnit();
-            Stock stock = getPharmacyBean().addToStock(itemBatch, addingQty, getSessionController().getDepartment());
+            Stock stock = getPharmacyBean().addToStock(itemBatch, Math.abs(addingQty), getSessionController().getDepartment());
 
             getPharmacyBean().setPurchaseRate(itemBatch, getSessionController().getDepartment());
             getPharmacyBean().setRetailRate(itemBatch, getSessionController().getDepartment());

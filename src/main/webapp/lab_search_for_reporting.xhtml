@@ -13,7 +13,9 @@
                     <p:panel header="Search Bills" >
                         <h:panelGrid columns="1" >
                             <h:panelGroup >
-                                <p:panelGrid columns="6" >
+                                <p:panelGrid columns="7" >
+                                    <p:commandButton value="List All" actionListener="#{labReportSearchByInstitutionController.listAllPatientInvestigations}" update="tblBills" ></p:commandButton>
+                                    
                                     <h:inputText autocomplete="off" style="width: 600px;" id="txtSearch" value="#{labReportSearchByInstitutionController.txtSearch}" >
                                         <f:ajax render="tblBills" execute="txtSearch fromDate toDate" event="keyup" />
                                     </h:inputText>

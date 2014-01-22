@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.divudi.ejb;
 
+import com.divudi.data.BillType;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
@@ -27,14 +27,13 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class PharmacyErrorCheckingEjb {
+
     @EJB
     BillItemFacade billItemFacade;
     @EJB
     BillFacade billFacade;
-    
-    
-    
-    public List<BillItem> allBillItems(Item item, Date fromDate, Date toDate){
+
+    public List<BillItem> allBillItems(Item item, Date fromDate, Date toDate) {
         String sql;
         Map m = new HashMap();
         m.put("fd", fromDate);
@@ -44,29 +43,98 @@ public class PharmacyErrorCheckingEjb {
         return getBillItemFacade().findBySQL(sql, m);
     }
 
-    
-    
-    public List<Bill> errPreBills(Department dept){
+    public double getTotalQty(BillType billType, Bill bill, Department department, Item item) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  type(p.bill)=:class and p.creater is not null and p.retired=false and "
+                + " p.item=:itm and p.bill.billType=:btp and p.bill.department=:dep ";
+
+        HashMap hm = new HashMap();
+        hm.put("itm", item);
+        hm.put("btp", billType);
+        hm.put("dep", department);
+        hm.put("class", bill.getClass());
+
+        double value = getBillFacade().findDoubleByJpql(sql, hm);
+
+        System.err.println(billType + " : " + value);
+        return value;
+    }
+
+    public List<BillItem> allBillItems(Item item, Department department) {
         String sql;
         Map m = new HashMap();
+        m.put("d", department);
+        m.put("i", item);
+        sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d";
+        return getBillItemFacade().findBySQL(sql, m);
+    }
+
+    public List<BillItem> allBillItemsWithCreatedAt(Item item, Department department) {
+        String sql;
+        Map m = new HashMap();
+        m.put("d", department);
+        m.put("i", item);
+        sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d"
+                + "  and bi.bill.createdAt is not null";
+        return getBillItemFacade().findBySQL(sql, m);
+    }
+
+    public List<BillItem> allBillItems(Item item) {
+        String sql;
+        Map m = new HashMap();
+        m.put("i", item);
+        sql = "select bi from BillItem bi where bi.item=:i";
+        return getBillItemFacade().findBySQL(sql, m);
+    }
+
+    public List<Bill> errPreBills(Department dept) {
+        System.out.println("errrPreBills");
+        String sql;
+
+        Map m = new HashMap();
         m.put("d", dept);
-        sql="select pb from PreBill pb where pb.retired=false and pb.department=:d order by pb.id";
-        List<Bill> pbs= getBillFacade().findBySQL(sql);
+        sql = "select pb from PreBill pb where pb.retired=false and pb.department=:d order by pb.id";
+        System.out.println("m = " + m);
+        System.out.println("sql = " + sql);
+        List<Bill> pbs = getBillFacade().findBySQL(sql, m);
         List<Bill> epbs = new ArrayList<Bill>();
-        for(Bill pb:pbs){
-            boolean error=false;
+        epbs = new ArrayList<Bill>();
+        for (Bill pb : pbs) {
+
+            boolean err1 = false;
             Bill bb = pb.getReferenceBill();
-            if(bb.getBillItems().size()!=pb.getBillItems().size()){
-                error=true;
+
+            if (bb == null) {
+                System.out.println("bb is null");
+                if (pb.getBillItems() != null) {
+                    System.out.println("pb has bill Items = " + pb.getBillItems());
+                    for (BillItem bi : pb.getBillItems()) {
+                        System.out.println("bi = " + bi);
+                        if (bi.isRetired() != false) {
+                            System.out.println("bi is NOT retired ");
+                            System.err.println("err1");
+                            err1 = true;
+                        }
+                    }
+                }
+            } else {
+                if (bb.getBillItems() != null && pb.getBillItems() != null) {
+                    if (bb.getNetTotal() != pb.getNetTotal()) {
+                        System.out.println("bb.getBillItems().size() = " + bb.getNetTotal());
+                        System.out.println("pb.getBillItems().size() = " + pb.getNetTotal());
+                        err1 = true;
+                        System.err.println("err 2");
+                    }
+                }
             }
-            if(error=true){
+            if (err1 = true) {
                 epbs.add(pb);
             }
-            
+
         }
         return epbs;
     }
-    
+
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     public BillItemFacade getBillItemFacade() {
@@ -84,7 +152,5 @@ public class PharmacyErrorCheckingEjb {
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
     }
-    
-    
-    
+
 }

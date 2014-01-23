@@ -98,10 +98,15 @@ public class PharmacyErrorChecking implements Serializable {
         calculatedStock -= getEjb().getTotalQty(BillType.PurchaseReturn, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PurchaseReturn, new CancelledBill(), department, item);
             
-        calculatedStock -= getEjb().getTotalQty(BillType.PharmacyPre, new PreBill(), department, item);
-
+        calculatedStock -= getEjb().getTotalQtyPreDiduction(BillType.PharmacyPre, new PreBill(), department, item);
+        
+        //Re Add to Stock of Pre Bill
+        calculatedStock+=getEjb().getTotalQtyPreAdd(BillType.PharmacyPre, new PreBill(), department, item);
+        
+       
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
 
+       
         calculatedStock -= getEjb().getTotalQty(BillType.PharmacyTransferIssue, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyTransferIssue, new CancelledBill(), department, item);
 

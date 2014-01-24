@@ -35,6 +35,7 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
                                         </f:ajax>
                                     </h:commandButton>
+                                    
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{investigationTubeController.delete()}"  value="Delete"  >
                                     </h:commandButton>

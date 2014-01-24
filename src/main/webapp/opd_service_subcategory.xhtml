@@ -53,13 +53,17 @@
 
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
+                                    
                                     <h:commandButton id="btnSave" value="Add Sub Category"  action="#{serviceSubCategoryController.saveSelected()}" styleClass="buttons">
                                         <f:ajax render="btnDelete btnSave   lstSelect lstSelect1 gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>
+                                    <p:defaultCommand target="btnSave"/>
+                                    
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{serviceSubCategoryController.delete()}"  value="Delete"  >
                                     </h:commandButton>
+                                    
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

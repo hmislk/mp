@@ -286,7 +286,6 @@ public class PharmacyAdjustmentController implements Serializable {
         return items;
     }
 
-    
     public List<Stock> completeAllStocks(String qry) {
         List<Stock> items;
         String sql;
@@ -301,7 +300,6 @@ public class PharmacyAdjustmentController implements Serializable {
         return items;
     }
 
-    
     public List<Stock> completeStaffStocks(String qry) {
         List<Stock> items;
         String sql;
@@ -486,50 +484,24 @@ public class PharmacyAdjustmentController implements Serializable {
 
     }
 
-    private PharmaceuticalBillItem clonePharmacyItem(BillItem newSaleBillItem, BillItem oldSaleBillItem) {
-        PharmaceuticalBillItem pbi;
-        boolean createNew = false;
-        if (newSaleBillItem.getPharmaceuticalBillItem() == null) {
-            pbi = new PharmaceuticalBillItem();
-            pbi.setBillItem(newSaleBillItem);
-            createNew = true;
-        } else {
-            pbi = newSaleBillItem.getPharmaceuticalBillItem();
-        }
-        pbi.setDoe(oldSaleBillItem.getPharmaceuticalBillItem().getDoe());
-        pbi.setFreeQty(oldSaleBillItem.getPharmaceuticalBillItem().getFreeQty());
-        pbi.setItemBatch(oldSaleBillItem.getPharmaceuticalBillItem().getItemBatch());
-        pbi.setPurchaseRate(oldSaleBillItem.getPharmaceuticalBillItem().getPurchaseRate());
-        pbi.setQty(oldSaleBillItem.getPharmaceuticalBillItem().getQty());
-        pbi.setRetailRate(oldSaleBillItem.getPharmaceuticalBillItem().getRetailRate());
-        pbi.setStock(oldSaleBillItem.getPharmaceuticalBillItem().getStock());
-        pbi.setStockHistory(oldSaleBillItem.getPharmaceuticalBillItem().getStockHistory());
-        pbi.setStringValue(oldSaleBillItem.getPharmaceuticalBillItem().getStringValue());
-        pbi.setWholesaleRate(oldSaleBillItem.getPharmaceuticalBillItem().getWholesaleRate());
-        if (createNew) {
-            getPharmaceuticalBillItemFacade().create(pbi);
-        } else {
-            getPharmaceuticalBillItemFacade().edit(pbi);
-        }
-        return pbi;
-    }
-
-    
-
+  
     private void saveDeptAdjustmentBillItems() {
         billItem = null;
         BillItem tbi = getBillItem();
 
-        tbi.getPharmaceuticalBillItem().setStock(stock);
+        PharmaceuticalBillItem ph = getBillItem().getPharmaceuticalBillItem();
+
+        tbi.setPharmaceuticalBillItem(null);
+        ph.setStock(stock);
 
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setQty(qty);
 
         //pharmaceutical Bill Item
-        tbi.getPharmaceuticalBillItem().setDoe(getStock().getItemBatch().getDateOfExpire());
-        tbi.getPharmaceuticalBillItem().setFreeQty(0.0);
-        tbi.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
-        tbi.getPharmaceuticalBillItem().setQty(qty);
+        ph.setDoe(getStock().getItemBatch().getDateOfExpire());
+        ph.setFreeQty(0.0);
+        ph.setItemBatch(getStock().getItemBatch());
+        ph.setQty(qty);
 
         //Rates
         //Values
@@ -540,23 +512,26 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setBill(getDeptAdjustmentPreBill());
         tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);
-        getDeptAdjustmentPreBill().getBillItems().add(tbi);
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
-//        getBillItemFacade().edit(tbi);
+        getPharmaceuticalBillItemFacade().create(ph);
+        tbi.setPharmaceuticalBillItem(ph);
+        getBillItemFacade().create(tbi);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
+        getDeptAdjustmentPreBill().getBillItems().add(tbi);
         getBillFacade().edit(getDeptAdjustmentPreBill());
     }
 
-    
     private void savePrAdjustmentBillItems() {
         billItem = null;
         BillItem tbi = getBillItem();
-        tbi.getPharmaceuticalBillItem().setPurchaseRate(pr);
+        PharmaceuticalBillItem ph = getBillItem().getPharmaceuticalBillItem();
+
+        ph.setPurchaseRate(pr);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setRate(pr);
         //pharmaceutical Bill Item
-        tbi.getPharmaceuticalBillItem().setStock(stock);
+        ph.setStock(stock);
         //Rates
         //Values
         tbi.setGrossValue(getStock().getItemBatch().getRetailsaleRate() * getStock().getStock());
@@ -566,22 +541,27 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setBill(getDeptAdjustmentPreBill());
         tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);
-        getDeptAdjustmentPreBill().getBillItems().add(tbi);
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
-//        getBillItemFacade().edit(tbi);
+        getPharmaceuticalBillItemFacade().create(ph);
+        tbi.setPharmaceuticalBillItem(ph);
+
+        getBillItemFacade().create(tbi);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
+        getDeptAdjustmentPreBill().getBillItems().add(tbi);
         getBillFacade().edit(getDeptAdjustmentPreBill());
     }
 
     private void saveRsrAdjustmentBillItems() {
         billItem = null;
         BillItem tbi = getBillItem();
-        tbi.getPharmaceuticalBillItem().setPurchaseRate(rsr);
+        PharmaceuticalBillItem ph=getBillItem().getPharmaceuticalBillItem();
+        
+        ph.setPurchaseRate(rsr);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setRate(rsr);
         //pharmaceutical Bill Item
-        tbi.getPharmaceuticalBillItem().setStock(stock);
+        ph.setStock(stock);
         //Rates
         //Values
         tbi.setGrossValue(getStock().getItemBatch().getRetailsaleRate() * getStock().getStock());
@@ -590,17 +570,17 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setInwardChargeType(InwardChargeType.Medicine);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setBill(getDeptAdjustmentPreBill());
-        tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);
-        getDeptAdjustmentPreBill().getBillItems().add(tbi);
+        tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);       
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
-//        getBillItemFacade().edit(tbi);
+        getPharmaceuticalBillItemFacade().create(ph);
+        tbi.setPharmaceuticalBillItem(ph);
+        getBillItemFacade().create(tbi);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
+        getDeptAdjustmentPreBill().getBillItems().add(tbi);
         getBillFacade().edit(getDeptAdjustmentPreBill());
     }
 
-    
-    
     public void adjustDepartmentStock() {
         saveDeptAdjustmentBill();
         saveDeptAdjustmentBillItems();
@@ -620,7 +600,7 @@ public class PharmacyAdjustmentController implements Serializable {
         clearBillItem();
         billPreview = true;
     }
-    
+
     public void adjustRetailRate() {
         saveDeptAdjustmentBill();
         saveRsrAdjustmentBillItems();
@@ -643,7 +623,6 @@ public class PharmacyAdjustmentController implements Serializable {
         billPreview = true;
     }
 
-  
     public String newPharmacyRetailSale() {
         clearBill();
         clearBillItem();
@@ -861,9 +840,9 @@ public class PharmacyAdjustmentController implements Serializable {
         removingBillItem = null;
         editingBillItem = null;
         qty = null;
-        pr=null;
-        rsr=null;
-        wsr=null;
+        pr = null;
+        rsr = null;
+        wsr = null;
         stock = null;
         editingQty = null;
     }
@@ -1196,7 +1175,4 @@ public class PharmacyAdjustmentController implements Serializable {
         this.wsr = wsr;
     }
 
-    
-    
-    
 }

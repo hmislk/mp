@@ -177,11 +177,11 @@ public class PharmacyIssueController implements Serializable {
         if (oldQty > newQty) {
             double max = oldQty - newQty;
             System.err.println("Max " + max);
-            getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), max);
+            getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), Math.abs(max), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         } else {
             double min = newQty - oldQty;
             System.err.println("Min " + min);
-            getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), min);
+            getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), Math.abs(min), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         }
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
 
@@ -268,7 +268,7 @@ public class PharmacyIssueController implements Serializable {
     public void reAddToStock() {
 
         for (BillItem bItem : getPreBill().getBillItems()) {
-            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getItemBatch(), bItem.getQty(), bItem.getBill().getDepartment());
+            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getItemBatch(), Math.abs(bItem.getQty()), bItem.getBill().getDepartment());
             bItem.setRetired(true);
             getBillItemFacade().edit(bItem);
         }
@@ -385,7 +385,6 @@ public class PharmacyIssueController implements Serializable {
         calculateAllRates();
     }
 
-
     private void savePaymentScheme(Bill b) {
         getPreBill().setCreditCompany(creditCompany);
         if (b.getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Cheque)) {
@@ -485,7 +484,7 @@ public class PharmacyIssueController implements Serializable {
 
         getBillItemFacade().edit(tbi);
 
-        getPharmacyBean().updateStock(tbi.getPharmaceuticalBillItem().getStock(), tbi.getPharmaceuticalBillItem().getQty());
+        getPharmacyBean().deductFromStock(tbi.getPharmaceuticalBillItem().getStock(), Math.abs(tbi.getPharmaceuticalBillItem().getQty()), tbi.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
         getPreBill().getBillItems().add(tbi);
 
@@ -600,7 +599,7 @@ public class PharmacyIssueController implements Serializable {
 
     public void removeBillItem(BillItem b) {
 
-        getPharmacyBean().updateStock(b.getPharmaceuticalBillItem().getStock(), b.getQty());
+        getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
         PharmaceuticalBillItem tmpPharmacy = b.getPharmaceuticalBillItem();
         b.setBill(null);
@@ -709,9 +708,8 @@ public class PharmacyIssueController implements Serializable {
         getBillItem();
         bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getRetailsaleRate());
         bi.setNetRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getPurcahseRate());
-        bi.setDiscount(bi.getRate()-bi.getNetRate());
+        bi.setDiscount(bi.getRate() - bi.getNetRate());
     }
-
 
     private void clearBill() {
         preBill = null;
@@ -786,7 +784,6 @@ public class PharmacyIssueController implements Serializable {
         this.pharmacyBean = pharmacyBean;
     }
 
-    
     public YearMonthDay getYearMonthDay() {
         if (yearMonthDay == null) {
             yearMonthDay = new YearMonthDay();
@@ -984,7 +981,6 @@ public class PharmacyIssueController implements Serializable {
         this.printBill = printBill;
     }
 
-   
     public PaymentScheme getPaymentScheme() {
         System.err.println("GEtting Paymen");
         return paymentScheme;

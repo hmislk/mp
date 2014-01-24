@@ -18,7 +18,7 @@
                 <h:form id="bill" >
 
                     <p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>
-                    <p:defaultCommand  target="btnSettle" />  
+                    <p:defaultCommand  target="btnAdd" />  
 
 
 
@@ -37,8 +37,11 @@
                                             <p:outputLabel value="Medicines/Devices" ></p:outputLabel>
 
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
-                                            
-                                            <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacySaleController.stock}" converter="stockCon" completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
+
+                                            <p:autoComplete   forceSelection="true"  id="acStock" 
+                                                              value="#{pharmacySaleController.stock}" 
+                                                              converter="stockCon" 
+                                                              completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
                                                               var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
                                                               style="width: 50px!important;">
                                                 <p:column headerText="Item">
@@ -65,13 +68,13 @@
                                                 <p:ajax event="focus" process="acStock :#{p:component('cmbPs')}"  ></p:ajax>
                                                 <p:ajax event="itemSelect"   listener="#{pharmacySaleController.handleSelect}"  update="txtQty txtRate focusQty" ></p:ajax>
                                             </p:autoComplete>
-                                            
+
                                         </h:panelGrid>
                                         <h:panelGrid columns="1" >
                                             <p:outputLabel value="Quentity" ></p:outputLabel>
                                             <p:inputText   autocomplete="off" id="txtQty" value="#{pharmacySaleController.qty}" style="width: 50px!important;"   >
-                                                <p:ajax event="focus"  listener="#{pharmacySaleController.calculateRateListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
-                                                <p:ajax event="keydown"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                                <p:ajax event="keyup"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                                <p:ajax event="blur"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
                                             </p:inputText>
                                         </h:panelGrid>
                                         <h:panelGrid columns="1" >
@@ -204,7 +207,11 @@
 
                                         <p:calendar id="slipDate"  value="#{pharmacySaleController.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
                                         </p:calendar>
-                                        <p:commandButton id="btnSettle" ajax= "false"  value="Settle" action="#{pharmacySaleController.settleBillWithPay}" update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}"></p:commandButton>
+
+                                        <p:commandButton ajax= "false" value="For Cashier" action="#{pharmacySaleController.settlePreBill()}" update="tblBillItem txtRate txtQty acStock" process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}" ></p:commandButton>
+
+
+                                        <p:commandButton ajax= "false"  value="Settle" action="#{pharmacySaleController.settleBillWithPay}" update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}"></p:commandButton>
                                         <p:commandButton value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBill}"  ></p:commandButton>
 
                                         <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
@@ -266,6 +273,12 @@
                         </h:panelGrid>
                     </p:panel>
 
+
+                </h:form>
+
+                <h:form>
+
+
                     <p:panel  rendered="#{pharmacySaleController.billPreview}" >
 
 
@@ -294,8 +307,6 @@
 
 
                 </h:form>
-
-
 
             </ui:define>
 

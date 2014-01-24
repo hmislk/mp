@@ -15,8 +15,9 @@
                             <h:outputLabel value="PHARMACY BILL SEARCH SALE BILL  "/>
                             <h:panelGrid columns="6" >
                                  
-                                <p:commandButton ajax="false" value="Refresh" action="#{billSearch.createPharmacyTable()}"/>
-                                
+                                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" action="#{billSearch.createPharmacyTable()}"/>
+                                 <p:defaultCommand target="btnRefresh"/>
+                                 
                                 <p:inputText id="txtSearch" value="#{billSearch.txtSearch}"  style="width:500px;"/>
                                 
                                 <h:outputLabel value="From Date"/>

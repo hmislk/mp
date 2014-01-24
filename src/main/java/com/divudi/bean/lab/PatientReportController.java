@@ -780,6 +780,7 @@ public class PatientReportController implements Serializable {
         this.currentPatientReport = currentPatientReport;
         if (currentPatientReport != null) {
             getCommonReportItemController().setCategory(currentPatientReport.getItem().getReportFormat());
+            currentPtIx=currentPatientReport.getPatientInvestigation();
         }
     }
 

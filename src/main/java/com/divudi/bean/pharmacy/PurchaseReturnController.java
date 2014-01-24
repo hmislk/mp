@@ -15,13 +15,10 @@ import com.divudi.ejb.PharmacyRecieveBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
-import com.divudi.entity.pharmacy.Vmp;
-import com.divudi.entity.pharmacy.Vmpp;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
@@ -135,7 +132,6 @@ public class PurchaseReturnController implements Serializable {
 
     }
 
-   
     private void saveReturnBill() {
         getReturnBill().setInvoiceDate(getBill().getInvoiceDate());
         getReturnBill().setReferenceBill(getBill());
@@ -166,8 +162,8 @@ public class PurchaseReturnController implements Serializable {
             i.setNetValue(i.getPharmaceuticalBillItem().getQtyInUnit() * i.getPharmaceuticalBillItem().getPurchaseRateInUnit());
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
-            
-            PharmaceuticalBillItem tmpPharmaceuticalBillItem=i.getPharmaceuticalBillItem();
+
+            PharmaceuticalBillItem tmpPharmaceuticalBillItem = i.getPharmaceuticalBillItem();
             i.setPharmaceuticalBillItem(null);
 
             getBillItemFacade().create(i);
@@ -178,13 +174,12 @@ public class PurchaseReturnController implements Serializable {
             i.setPharmaceuticalBillItem(tmpPharmaceuticalBillItem);
             getBillItemFacade().edit(i);
 
-            getPharmacyBean().updateStock(i.getPharmaceuticalBillItem().getStock(), i.getPharmaceuticalBillItem().getQtyInUnit());
+            getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(), Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             getReturnBill().getBillItems().add(i);
         }
 
     }
-
 
     private boolean checkStock(PharmaceuticalBillItem pharmaceuticalBillItem) {
         double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getBill().getDepartment());
@@ -248,7 +243,7 @@ public class PurchaseReturnController implements Serializable {
             bi.setQty(0.0);
             bi.setBill(getReturnBill());
             bi.setItem(i.getBillItem().getItem());
-            bi.setReferanceBillItem(i.getBillItem());         
+            bi.setReferanceBillItem(i.getBillItem());
 
             PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
             tmp.copy(i);
@@ -256,10 +251,10 @@ public class PurchaseReturnController implements Serializable {
 
             double rBilled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PurchaseReturn, new BilledBill());
 
-            System.err.println("Billed Qty "+i.getQty());
-            System.err.println("Return Qty "+rBilled);
+            System.err.println("Billed Qty " + i.getQty());
+            System.err.println("Return Qty " + rBilled);
             tmp.setQty(i.getQty() - Math.abs(rBilled));
-            
+
             bi.setPharmaceuticalBillItem(tmp);
 
             List<Item> suggessions = new ArrayList<>();

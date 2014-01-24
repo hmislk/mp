@@ -207,14 +207,15 @@ public class BillController implements Serializable {
         String sql;
         HashMap hash = new HashMap();
         if (qry != null) {
-            sql = "select c from BilledBill c where c.paidAmount!=(0-c.netTotal) and c.billType= :btp "
-                    + " and c.paymentMethod= :pm and c.cancelledBill is null and "
+            sql = "select c from BilledBill c where c.paidAmount!=abs(c.netTotal) and c.billType= :btp "
+                    + " and c.cancelledBill is null and "
                     + " c.retired=false and ((upper(c.deptId) "
-                    + " like '%" + qry.trim().toUpperCase() + "%') or"
-                    + " (upper(c.fromInstitution.name)  like '%" + qry.trim().toUpperCase() + "%' ))"
+                    + " like :q ) or"
+                    + " (upper(c.fromInstitution.name)  like :q ))"
                     + " order by c.fromInstitution.name";
             hash.put("btp", BillType.PharmacyGrnBill);
-            hash.put("pm", PaymentMethod.Credit);
+            hash.put("q","%"+ qry.toUpperCase()+"%");
+       //     hash.put("pm", PaymentMethod.Credit);
             a = getFacade().findBySQL(sql, hash);
         }
         if (a == null) {

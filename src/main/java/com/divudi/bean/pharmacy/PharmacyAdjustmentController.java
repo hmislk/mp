@@ -279,7 +279,7 @@ public class PharmacyAdjustmentController implements Serializable {
         double d = 0.0;
         m.put("s", d);
         m.put("n", "%" + qry.toUpperCase() + "%");
-        sql = "select i from Stock i where i.stock >:s and i.department=:d and upper(i.itemBatch.item.name) like :n order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n ) order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         items = getStockFacade().findBySQL(sql, m, 20);
         itemsWithoutStocks = completeRetailSaleItems(qry);
         System.out.println("selectedSaleitems = " + itemsWithoutStocks);
@@ -294,7 +294,8 @@ public class PharmacyAdjustmentController implements Serializable {
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         double d = 0.0;
         m.put("n", "%" + qry.toUpperCase() + "%");
-        sql = "select i from Stock i where i.department=:d and upper(i.itemBatch.item.name) like :n order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        sql = "select i from Stock i where i.department=:d and (upper(i.itemBatch.item.name)like :n  or upper(i.itemBatch.item.code) like :n  or upper(i.itemBatch.item.barcode) like :n ) order "
+                 + " by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         items = getStockFacade().findBySQL(sql, m, 20);
         itemsWithoutStocks = completeRetailSaleItems(qry);
         System.out.println("selectedSaleitems = " + itemsWithoutStocks);
@@ -514,36 +515,7 @@ public class PharmacyAdjustmentController implements Serializable {
         return pbi;
     }
 
-    private void saveSaleBillItems() {
-        for (BillItem tbi : billItems) {
-
-            BillItem sbi = new BillItem();
-
-            sbi.setBill(getSaleBill());
-            sbi.setReferanceBillItem(tbi);
-            sbi.setCreatedAt(Calendar.getInstance().getTime());
-            sbi.setCreater(getSessionController().getLoggedUser());
-
-            sbi.setItem(tbi.getItem());
-            sbi.setQty(tbi.getQty());
-
-            sbi.setGrossValue(tbi.getGrossValue());
-            sbi.setNetValue(tbi.getNetValue());
-            sbi.setDiscount(tbi.getDiscount());
-
-            sbi.setDiscountRate(tbi.getDiscountRate());
-            sbi.setRate(tbi.getRate());
-            sbi.setNetRate(tbi.getNetRate());
-
-            getBillItemFacade().edit(sbi);
-            clonePharmacyItem(sbi, tbi);
-
-            getPharmacyBean().deductFromStock(tbi.getItem(), tbi.getQty(), tbi.getBill().getDepartment());
-
-            getSaleBill().getBillItems().add(sbi);
-        }
-        getBillFacade().edit(getSaleBill());
-    }
+    
 
     private void saveDeptAdjustmentBillItems() {
         billItem = null;
@@ -672,26 +644,7 @@ public class PharmacyAdjustmentController implements Serializable {
         billPreview = true;
     }
 
-    public void settleBillWithPay2() {
-        editingQty = null;
-        if (errorCheckForSaleBill()) {
-            return;
-        }
-      //  Patient pt = savePatient();
-
-        //savePreBill(pt);
-        //   savePreBillItems();
-        saveSaleBill(getDeptAdjustmentPreBill().getPatient());
-        saveSaleBillItems();
-
-        setBill(getBillFacade().find(getSaleBill().getId()));
-
-        clearBill();
-        clearBillItem();
-        billPreview = true;
-
-    }
-
+  
     public String newPharmacyRetailSale() {
         clearBill();
         clearBillItem();

@@ -77,6 +77,15 @@
                                 </h:commandLink>
                             </p:column>                          
 
+                              <p:column headerText="Qty2" filterBy="#{pi.qty}"  >
+                                <h:commandLink action="pharmacy_reprint_bill_sale" >
+                                    <h:outputLabel value="#{pi.pharmaceuticalBillItem.qtyInUnit}" >
+                                        <f:convertNumber pattern="#0.00"/>
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
+                                </h:commandLink>
+                            </p:column>                          
+
                             <p:column headerText="Bill item Value" filterBy="#{pi.netValue}"  >
                                 <h:commandLink action="pharmacy_reprint_bill_sale" >
                                     <h:outputLabel value="#{pi.netValue}" >

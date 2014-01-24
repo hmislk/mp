@@ -42,7 +42,8 @@
                                 <f:selectItems value="#{paymentSchemeController.items}" var="d" itemLabel="#{d.name}" itemValue="#{d}" />
                             </p:selectOneMenu>
                         </p:panel>
-                        <h:commandButton value="Add Payment Scheme" action="#{userPaymentSchemeController.addPaymentSchemeForUser()}"/>
+                        <h:commandButton id="btnAddPaymentScheme" value="Add Payment Scheme" action="#{userPaymentSchemeController.addPaymentSchemeForUser()}"/>
+                        <p:defaultCommand target="btnAddPaymentScheme"/>
                     </p:panelGrid>
 
                 </p:panel>

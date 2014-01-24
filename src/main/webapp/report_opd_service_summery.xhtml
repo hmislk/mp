@@ -14,7 +14,8 @@
             <p:panel>
                 <f:facet name="header" >                
 
-                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
+                    <p:commandButton id="btnRefresh" value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
+                    <p:defaultCommand target="btnRefresh"/>
 
                     <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
                         <p:printer target="panelPrint" />
@@ -93,8 +94,8 @@
                                 </h:outputLabel>
                             </f:facet>
                         </p:column>
-                        
-                    
+
+
 
 
                         <p:column colspan="2" footerText="COUNT  (#{serviceSummery.countTotal})">

@@ -18,7 +18,7 @@
                 <h:form id="bill" >
 
                     <p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>
-                    <p:defaultCommand  target="nullButton2" />  
+                    <p:defaultCommand  target="btnAdd" />  
 
 
 
@@ -273,6 +273,12 @@
                         </h:panelGrid>
                     </p:panel>
 
+
+                </h:form>
+
+                <h:form>
+
+
                     <p:panel  rendered="#{pharmacySaleController.billPreview}" >
 
 
@@ -301,8 +307,6 @@
 
 
                 </h:form>
-
-
 
             </ui:define>
 

@@ -136,14 +136,16 @@ public class BillSearch implements Serializable {
             sql = "select bi from BillItem bi where bi.bill.referenceBill.billType=:rBType "
                     + " and type(bi.bill.referenceBill)=:rClass and bi.bill.institution=:ins "
                     + " and   type(bi.bill)=:class and  bi.bill.billType=:bType and"
-                    + "  (upper(bi.bill.patient.person.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(bi.bill.patient.person.phone) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(bi.bill.deptId) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(bi.bill.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(bi.bill.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(bi.bill.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(bi.bill.total) like '%" + txtSearch.toUpperCase() + "%' ) "
+                    + "  (upper(bi.bill.patient.person.name) like :str "
+                    + " or upper(bi.bill.patient.person.phone) like :str "
+                    + "  or upper(bi.bill.deptId) like :str or "
+                    + " upper(bi.bill.paymentScheme.paymentMethod) like :str "
+                    + " or upper(bi.bill.paymentScheme.name) like :str "
+                    + " or upper(bi.bill.netTotal) like :str "
+                    + " or upper(bi.bill.total) like :str or upper(bi.item.name) like :str ) "
                     + " and bi.createdAt between :fromDate and :toDate order by bi.id desc";
+       
+        m.put("str","% "+ txtSearch.toUpperCase()+" %");
         }
 
         List<BillItem> tmp = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
@@ -505,11 +507,11 @@ public class BillSearch implements Serializable {
         Map temMap = new HashMap();
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from Bill b where (type(b)=:class1 or type(b)=:class2) and b.billType = :billType "
+            sql = "select b from Bill b where (type(b)=:class1 or type(b)=:class2) and b.department=:dep and b.billType = :billType "
                     + " and b.createdAt between :fromDate and :toDate and b.retired=false "
                     + "order by b.id desc  ";
         } else {
-            sql = "select b from Bill b where  (type(b)=:class1 or type(b)=:class2)  and b.billType = :billType "
+            sql = "select b from Bill b where  (type(b)=:class1 or type(b)=:class2) and b.department=:dep  and b.billType = :billType "
                     + " and  (upper(b.deptId) like '%" + txtSearch.toUpperCase() + "%' or "
                     + " upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.fromInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
@@ -528,6 +530,7 @@ public class BillSearch implements Serializable {
         temMap.put("class1", BilledBill.class);
         temMap.put("class2", PreBill.class);
         temMap.put("billType", billType);
+        temMap.put("dep", getSessionController().getDepartment());
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //temMap.put("dep", getSessionController().getDepartment());

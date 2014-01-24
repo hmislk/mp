@@ -64,9 +64,9 @@ public class PharmacyErrorChecking implements Serializable {
         billItems = getEjb().allBillItems(item, department);
 
 //        billItems = getEjb().allBillItems2(item, department);
-
         //  calculateTotals(getEjb().allBillItemsWithCreatedAt(item, department));
-        calculateTotals2();
+        //     calculateTotals2();
+        calculateTotals3();
     }
 
     @EJB
@@ -97,16 +97,15 @@ public class PharmacyErrorChecking implements Serializable {
 
         calculatedStock -= getEjb().getTotalQty(BillType.PurchaseReturn, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PurchaseReturn, new CancelledBill(), department, item);
-            
-        calculatedStock -= getEjb().getTotalQtyPreDiduction(BillType.PharmacyPre, new PreBill(), department, item);
-        
-        //Re Add to Stock of Pre Bill
-        calculatedStock+=getEjb().getTotalQtyPreAdd(BillType.PharmacyPre, new PreBill(), department, item);
-        
-       
-        calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
 
-       
+        calculatedStock -= getEjb().getTotalQtyPreDiduction(BillType.PharmacyPre, new PreBill(), department, item);
+        //Re Add to Stock of Pre Bill
+        //  calculatedStock += getEjb().getTotalQtyPreAdd(BillType.PharmacyPre, new PreBill(), department, item);
+        calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
+        //    calculatedStock -= getEjb().getTotalQtyByBillItem(BillType.PharmacySale, new BilledBill(), department, item);
+        //    calculatedStock += getEjb().getTotalQtyByBillItem(BillType.PharmacySale, new CancelledBill(), department, item);
+        //    calculatedStock += getEjb().getTotalQtyByBillItem(BillType.PharmacySale, new RefundBill(), department, item);
+
         calculatedStock -= getEjb().getTotalQty(BillType.PharmacyTransferIssue, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyTransferIssue, new CancelledBill(), department, item);
 
@@ -115,7 +114,54 @@ public class PharmacyErrorChecking implements Serializable {
 
     }
 
-    
+    public void calculateTotals3() {
+        calculatedStock = 0.0;
+        calculatedSaleValue = 0.0;
+        calculatedPurchaseValue = 0.0;
+        currentStock = 0.0;
+        currentSaleValue = 0.0;
+        currentPurchaseValue = 0.0;
+
+        for (BillItem bi : getEjb().getTotalBillItems(department, item)) {
+            switch (bi.getBill().getBillType()) {
+                case PharmacyGrnBill:
+                case PharmacyPurchaseBill:
+                case PharmacyTransferReceive:
+                    if (bi.getBill() instanceof BilledBill) {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                    } else {
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                    }
+                    break;
+                case PharmacyGrnReturn:
+                case PurchaseReturn:
+                case PharmacyTransferIssue:
+                    if (bi.getBill() instanceof BilledBill) {
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                    } else {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                    }
+                    break;
+            }
+        }
+
+        System.err.println("Befor "+calculatedStock);
+        double saleQty = 0;
+        for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
+          
+                calculatedStock-=Math.abs(bi.getQty());
+                saleQty+=Math.abs(bi.getQty());
+
+        }
+
+       // calculatedStock -= saleQty;
+
+        System.err.println("SaleQty " + saleQty);
+
+        calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
+
+    }
+
     public void calculateTotals(List<BillItem> bis) {
         calculatedStock = 0.0;
         calculatedSaleValue = 0.0;

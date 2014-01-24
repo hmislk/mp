@@ -18,11 +18,14 @@
 
                     <f:facet name="header" >
                         <h:outputLabel value="List of Service"></h:outputLabel>
+                        
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >
                             <p:printer target="panIx" />
                         </p:commandButton>
-                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" actionListener="#{serviceController.recreateModel}">                            
+                        
+                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" actionListener="#{serviceController.recreateModel}">                            
                         </p:commandButton>
+                        <p:defaultCommand target="btnRefresh"/>
 
                         <p:commandButton value="Excel" ajax="false">
                             <pe:exporter type="xlsx" target="tblBills" fileName="DepartmentIncome"

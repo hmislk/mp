@@ -151,7 +151,7 @@
 
                                                             </h:panelGrid>
 
-                                                            <h:panelGrid rendered="#{pip.investigation.reportFormat ne 'Microbiology Report Format'}" >
+                                                            <h:panelGrid rendered="#{pip.investigation.reportType ne 'Microbiology'}" >
                                                                 <ui:repeat value="#{pip.investigation.reportItems}" var="myix" >
                                                                     <h:panelGroup rendered="#{myix.retired==false and myix.ixItemType eq 'Value' }"  >                                      
                                                                         <h:outputLabel  rendered="#{myix.retired==false and myix.ixItemType eq 'Value' }" styleClass="worksheetval" value="#{myix.name}"  style="font-size: 11px!important;"  ></h:outputLabel>
@@ -163,7 +163,7 @@
 
                                                             </h:panelGrid>
 
-                                                            <h:panelGroup rendered="#{pip.investigation.reportFormat eq 'Microbiology Report Format'}" style="width: 100%;" >
+                                                            <h:panelGroup rendered="#{pip.investigation.reportType eq 'Microbiology'}"  style="width: 100%;" >
                                                                 <p:panelGrid columns="2"  >
 
                                                                     <h:outputLabel value="Macroscopy"   style="font-size: 11px!important;">

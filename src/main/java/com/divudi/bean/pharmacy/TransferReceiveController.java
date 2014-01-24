@@ -8,8 +8,6 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.ItemBatchQty;
-import com.divudi.data.StockQty;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
@@ -17,11 +15,9 @@ import com.divudi.ejb.PharmacyRecieveBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
-import com.divudi.entity.pharmacy.ItemBatch;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.Vmp;
@@ -59,6 +55,8 @@ public class TransferReceiveController implements Serializable {
     ///////
     @Inject
     private SessionController sessionController;
+    @Inject
+    private PharmacyController pharmacyController;
     ////
     @EJB
     private BillFacade billFacade;
@@ -76,6 +74,10 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private PharmacyRecieveBean pharmacyRecieveBean;
 
+    public void onFocus(BillItem tmp) {
+        getPharmacyController().setPharmacyItem(tmp.getItem());
+    }
+
     public void makeNull() {
         issuedBill = null;
         receivedBill = null;
@@ -86,7 +88,7 @@ public class TransferReceiveController implements Serializable {
 
     public List<Bill> getIssued() {
         String sql;
-        sql = "Select b From BilledBill b where b.retired=false and"
+        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
                 + " b.toDepartment=:dep and b.billType= :bTp "
                 + " and b.createdAt between :fromDate and :toDate ";
 
@@ -137,27 +139,29 @@ public class TransferReceiveController implements Serializable {
         create();
     }
 
-     private List<Item> getSuggession(Item item) {
+    private List<Item> getSuggession(Item item) {
         List<Item> suggessions = new ArrayList<>();
 
         if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findPack((Amp)item);
+            suggessions = getPharmacyRecieveBean().findPack((Amp) item);
             suggessions.add(item);
         } else if (item instanceof Ampp) {
-            Amp amp=((Ampp)item).getAmp();
+            Amp amp = ((Ampp) item).getAmp();
             suggessions = getPharmacyRecieveBean().findPack(amp);
             suggessions.add(amp);
         }
-        
-        System.err.println("Sugg" +suggessions);
+
+        System.err.println("Sugg" + suggessions);
 
         return suggessions;
     }
 
-
     public void saveBillComponent() {
-        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getIssuedBill().getId();
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql);
+        HashMap hm = new HashMap();
+        String sql = "Select p from PharmaceuticalBillItem p where "
+                + " p.billItem.bill=:bill order by p.billItem.searialNo ";
+        hm.put("bill", getIssuedBill());
+        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql, hm);
 
         for (PharmaceuticalBillItem i : tmp) {
 
@@ -166,6 +170,7 @@ public class TransferReceiveController implements Serializable {
             bItem.setReferanceBillItem(i.getBillItem());
             bItem.copy(i.getBillItem());
             bItem.setQty(i.getQtyInUnit());
+            bItem.setSearialNo(getReceivedBill().getBillItems().size() + 1);
             getBillItemFacade().create(bItem);
 
             bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
@@ -219,7 +224,6 @@ public class TransferReceiveController implements Serializable {
 //        }
 //        return s;
 //    }
-
     public void settle() {
 
         for (BillItem i : getReceivedBill().getBillItems()) {
@@ -241,12 +245,12 @@ public class TransferReceiveController implements Serializable {
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
             //Deduc Staff Stock
 
-            getPharmacyBean().deductFromStock(staffStock, qty);
+            getPharmacyBean().deductFromStock(staffStock, Math.abs(qty), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             //Add To Stock
 //            System.err.println("Stock " + stock);
 //            System.err.println("item Batch " + stock.getItemBatch());
-            Stock addedStock = getPharmacyBean().addToStock(staffStock.getItemBatch(), qty, getSessionController().getDepartment());
+            Stock addedStock = getPharmacyBean().addToStock(staffStock.getItemBatch(), Math.abs(qty), getSessionController().getDepartment());
 
             i.getPharmaceuticalBillItem().setItemBatch(addedStock.getItemBatch());
             i.getPharmaceuticalBillItem().setStock(addedStock);
@@ -296,6 +300,8 @@ public class TransferReceiveController implements Serializable {
             tmp.setQty(oldValue);
             UtilityController.addErrorMessage("You cant recieved over than Issued Qty setted Old Value");
         }
+
+     //   getPharmacyController().setPharmacyItem(tmp.getItem());
     }
 
     public void saveBill() {
@@ -428,6 +434,14 @@ public class TransferReceiveController implements Serializable {
 
     public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
+    }
+
+    public PharmacyController getPharmacyController() {
+        return pharmacyController;
+    }
+
+    public void setPharmacyController(PharmacyController pharmacyController) {
+        this.pharmacyController = pharmacyController;
     }
 
 }

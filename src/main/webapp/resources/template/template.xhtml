@@ -36,7 +36,7 @@
                                 <h:outputLabel value="#{labels.topic}" />
                             </f:facet>
                             <p:menubar styleClass="nonPrintBlock" style=" border: 0px;" >
-                                <p:menuitem  ajax="false"  value="Home" ></p:menuitem>
+                                <p:menuitem  ajax="false"  value="Home" action="index" ></p:menuitem>
                                 <p:submenu label="OPD" rendered="#{webUserController.hasPrivilege('Opd')}">
                                     <p:menuitem ajax="false" action="#{billController.prepareNewBill}" value="Bill" rendered="#{webUserController.hasPrivilege('OpdBilling')}" ></p:menuitem>
                                     <p:submenu label="Packages">
@@ -103,10 +103,7 @@
                                 <p:submenu label="Pharmacy"  rendered="#{webUserController.hasPrivilege('Pharmacy')}">
                                     <p:submenu label="Sale">
                                         <p:menuitem  ajax="false" action="pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
-                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale_cashier"  value="Sale for Cashier" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
-                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale_bht"  value="Inward Sale" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
-                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
-                                        
+                                        <p:menuitem  ajax="false" action="pharmacy_retail_sale_for_cashier"  value="Sale for cashier" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                       
                                         <p:menuitem  ajax="false" action="pharmacy_search_sale_bill"  value="Search Sale Bill" rendered="#{webUserController.hasPrivilege('Pharmacy')}" actionListener="#{billSearch.recreateModel2}" ></p:menuitem>                                        
                                         <p:menuitem  ajax="false" action="pharmacy_search_sale_bill_item"  value="Search Sale Bill Items" rendered="#{webUserController.hasPrivilege('Pharmacy')}" actionListener="#{billSearch.recreateModel2}" ></p:menuitem>                                        
                                         <p:submenu label="Return">
@@ -150,6 +147,7 @@
 
                                 </p:submenu>
                                 <p:submenu label="Channeling" rendered="#{webUserController.hasPrivilege('Channelling')}">                                
+                                    
                                     <p:menuitem  ajax="false"  value="Channel Booking"  action="channel_booking" actionListener="#{bookingController.makeNull}"></p:menuitem>
                                     <p:menuitem  ajax="false"  value="Past Booking"  action="channel_booking_past" actionListener="#{bookingPastController.makeNull}"></p:menuitem>
                                     <p:menuitem  ajax="false"  value="Booked List"  action="channel_booked_list" actionListener="#{bookingPastController.makeNull}"></p:menuitem>
@@ -163,9 +161,8 @@
                                         <p:menuitem  ajax="false"  value="Pay Doctor"  action="channel_payment_staff_bill"></p:menuitem>
                                         <p:menuitem  ajax="false"  value="Payment Due Search"  action="channel_payments_due_search"></p:menuitem>
                                         <p:menuitem  ajax="false"  value="Payment Done Search"  action="channel_payment_bill_search" actionListener="#{billSearch.recreateModel}"></p:menuitem>
-
-
-                                    </p:submenu>  
+                                   </p:submenu>  
+                                    
                                 </p:submenu>
                                 <p:submenu label="Payment"  rendered="#{webUserController.hasPrivilege('Payment')}">
                                     <p:menuitem  ajax="false"  action="payment_staff_bill" value="Pay Doctor/Staff" rendered="#{webUserController.hasPrivilege('PaymentBilling')}" ></p:menuitem>
@@ -280,10 +277,10 @@
                                             <h:outputLabel value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
                                             <p:autoComplete value="#{sessionController.department}"  style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;"  completeMethod="#{departmentController.completeDept}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" forceSelection="true" rendered="true" requiredMessage="You must select a department" >
                                                 <p:column headerText="Department">
-                                                    #{dept.name}
+                                                    <h:outputLabel value="#{dept.name}"/>
                                                 </p:column>
                                                 <p:column headerText="Institution">
-                                                    #{dept.institution.name}
+                                                    <h:outputLabel value="#{dept.institution.name}"/>
                                                 </p:column>
                                             </p:autoComplete>
                                             <h:outputLabel value="Username"  style="text-align: left; margin: 5px; padding: 5px;"  ></h:outputLabel>
@@ -318,7 +315,6 @@
             <div style="position: fixed; bottom: 10px; right: 10px; " class="nonPrintBlock" >
                 <p:clock pattern="HH:mm a - dd MMMM yyyy" mode="server"  />  
             </div>
-
 
         </p:panel>
 

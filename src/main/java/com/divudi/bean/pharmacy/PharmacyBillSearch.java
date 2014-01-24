@@ -113,7 +113,7 @@ public class PharmacyBillSearch implements Serializable {
             for (BillItem bItem : b.getBillItems()) {
                 double updatingQty = bItem.getPharmaceuticalBillItem().getQtyInUnit() + bItem.getPharmaceuticalBillItem().getFreeQtyInUnit();
                 System.err.println("UPDATING QTY : " + updatingQty);
-                getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(updatingQty));
+                getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(updatingQty), bItem.getPharmaceuticalBillItem(), getSessionController().getDepartment());
                 bItem.setRetired(true);
                 bItem.setRetiredAt(new Date());
                 bItem.setRetirer(getSessionController().getLoggedUser());
@@ -630,10 +630,10 @@ public class PharmacyBillSearch implements Serializable {
             return true;
         }
 
-        if (getBill().isRefunded()) {
-            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
-            return true;
-        }
+//        if (getBill().isRefunded()) {
+//            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
+//            return true;
+//        }
 
         if (getBill().getBillType() == BillType.PharmacyOrderApprove) {
             if (checkGrn()) {
@@ -644,12 +644,12 @@ public class PharmacyBillSearch implements Serializable {
 
         if (getBill().getBillType() == BillType.PharmacyGrnBill) {
             if (checkGrnReturn()) {
-                UtilityController.addErrorMessage("Grn head been Returned u can't cancell bill ");
+                UtilityController.addErrorMessage("Grn had been Returned u can't cancell bill ");
                 return true;
             }
         }
 
-        if (getBill().getBillType() == BillType.PharmacyTransferIssue) {            
+        if (getBill().getBillType() == BillType.PharmacyTransferIssue) {
             if (getBill().getForwardReferenceBill() != null) {
                 UtilityController.addErrorMessage("Item for this bill already recieve");
                 return true;
@@ -665,7 +665,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkGrn() {
-        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
                 + " and b.cancelled=false and b.billType=:btp and "
                 + " b.referenceBill=:ref and b.referenceBill.cancelled=false ";
         HashMap hm = new HashMap();
@@ -681,7 +681,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkGrnReturn() {
-        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
                 + " and b.cancelled=false and b.billType=:btp and "
                 + " b.referenceBill=:ref and b.referenceBill.cancelled=false";
         HashMap hm = new HashMap();
@@ -769,7 +769,7 @@ public class PharmacyBillSearch implements Serializable {
 //        getPharmaceuticalBillItemFacade().edit(po);
 //
 //    }
-    private void pharmacyCancelBillItems(CancelledBill can) {
+    private void pharmacyCancelBillItemsAddStock(CancelledBill can) {
         for (BillItem nB : getBill().getBillItems()) {
             BillItem b = new BillItem();
             b.setBill(can);
@@ -801,7 +801,49 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
-            getPharmacyBean().updateStock(ph.getStock(), qty);
+            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+
+            getBillItemFacede().edit(b);
+
+            can.getBillItems().add(b);
+        }
+
+        getBillFacade().edit(can);
+    }
+
+    private void pharmacyCancelBillItemsReduceStock(CancelledBill can) {
+        for (BillItem nB : getBill().getBillItems()) {
+            BillItem b = new BillItem();
+            b.setBill(can);
+            b.copy(nB);
+            b.invertValue(nB);
+
+            if (can.getBillType() == BillType.PharmacyGrnBill || can.getBillType() == BillType.PharmacyGrnReturn) {
+                b.setReferanceBillItem(nB.getReferanceBillItem());
+            } else {
+                b.setReferanceBillItem(nB);
+            }
+
+            b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            b.setCreater(getSessionController().getLoggedUser());
+
+            PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
+            ph.copy(nB.getPharmaceuticalBillItem());
+            ph.invertValue(nB.getPharmaceuticalBillItem());
+
+            getPharmaceuticalBillItemFacade().create(ph);
+
+            b.setPharmaceuticalBillItem(ph);
+            getBillItemFacede().create(b);
+
+            ph.setBillItem(b);
+            getPharmaceuticalBillItemFacade().edit(ph);
+
+            //    updateRemainingQty(nB);
+            //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
+            double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
+            System.err.println("Updating QTY " + qty);
+            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
 
@@ -839,8 +881,8 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
-            getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty));
-            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty));
+            getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
 
@@ -849,8 +891,8 @@ public class PharmacyBillSearch implements Serializable {
 
         getBillFacade().edit(can);
     }
-    
-     private void pharmacyCancelReceivedItems(CancelledBill can) {
+
+    private void pharmacyCancelReceivedItems(CancelledBill can) {
         for (BillItem nB : getBill().getBillItems()) {
             BillItem b = new BillItem();
             b.setBill(can);
@@ -878,8 +920,8 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             System.err.println("Updating QTY " + qty);
-            getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty));
-            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty));
+            getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
 
@@ -953,7 +995,7 @@ public class PharmacyBillSearch implements Serializable {
             getPharmaceuticalBillItemFacade().edit(ph);
 
             System.err.println("Updating QTY " + ph.getQtyInUnit());
-            getPharmacyBean().updateStock(ph.getStock(), ph.getQtyInUnit());
+            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
 
             //    updateRemainingQty(nB);
             // if (b.getReferanceBillItem() != null) {
@@ -1006,43 +1048,6 @@ public class PharmacyBillSearch implements Serializable {
     @EJB
     private ItemBatchFacade itemBatchFacade;
 
-    public void pharmacyCancelBill() {
-        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
-            if (pharmacyErrorCheck()) {
-                return;
-            }
-
-            CancelledBill cb = pharmacyCreateCancelBill();
-            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.PHCAN));
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.PHCAN));
-
-            getBillFacade().create(cb);
-
-            pharmacyCancelBillItems(cb);
-
-            if (getBill().getBillType() == BillType.PharmacyGrnBill) {
-                List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL("Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId());
-
-                for (PharmaceuticalBillItem ph : tmp) {
-                    getPharmacyBean().deductFromStock(ph.getItemBatch(), ph.getQtyInUnit() + ph.getFreeQtyInUnit(), getBill().getDepartment());
-
-                    getPharmacyBean().reSetPurchaseRate(ph.getItemBatch(), getBill().getDepartment());
-                    getPharmacyBean().reSetRetailRate(ph.getItemBatch(), getSessionController().getDepartment());
-                }
-            }
-
-            getBill().setCancelled(true);
-            getBill().setCancelledBill(cb);
-            getBillFacade().edit(getBill());
-            UtilityController.addSuccessMessage("Cancelled");
-
-            printPreview = true;
-
-        } else {
-            UtilityController.addErrorMessage("No Bill to cancel");
-        }
-    }
-
     public void pharmacyRetailCancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {
@@ -1089,7 +1094,7 @@ public class PharmacyBillSearch implements Serializable {
 
             getBillFacade().create(cb);
 
-            pharmacyCancelBillItems(cb);
+            pharmacyCancelBillItemsAddStock(cb);
 
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
@@ -1188,7 +1193,7 @@ public class PharmacyBillSearch implements Serializable {
             cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.POCAN));
 
             getBillFacade().create(cb);
-            pharmacyCancelBillItems(cb);
+            pharmacyCancelBillItemsWithoutUpdatingStock(cb);
 
             getBill().getReferenceBill().setReferenceBill(null);
             getBillFacade().edit(getBill().getReferenceBill());
@@ -1210,9 +1215,11 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkStock(PharmaceuticalBillItem pharmaceuticalBillItem) {
+        System.err.println("Batch "+pharmaceuticalBillItem.getItemBatch());
         double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getBill().getDepartment());
-
-        if (pharmaceuticalBillItem.getQtyInUnit() > stockQty) {
+        System.err.println("Stock Qty" + stockQty);
+        System.err.println("Ph Qty" + pharmaceuticalBillItem.getQtyInUnit());
+        if (Math.abs(pharmaceuticalBillItem.getQtyInUnit()) > stockQty) {
             return true;
         } else {
             return false;
@@ -1220,6 +1227,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkBillItemStock() {
+        System.err.println("Checking Item Stock");
         for (BillItem bi : getBill().getBillItems()) {
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
@@ -1251,7 +1259,7 @@ public class PharmacyBillSearch implements Serializable {
 
             getBillFacade().create(cb);
 
-            pharmacyCancelBillItems(cb);
+            pharmacyCancelBillItemsReduceStock(cb);
 //
 //            List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL("Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId());
 //
@@ -1308,14 +1316,14 @@ public class PharmacyBillSearch implements Serializable {
             UtilityController.addErrorMessage("No Bill to cancel");
         }
     }
-    
-     public void pharmacyTransferReceiveCancel() {
+
+    public void pharmacyTransferReceiveCancel() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {
                 return;
             }
-            
-             if (checkBillItemStock()) {
+
+            if (checkBillItemStock()) {
                 UtilityController.addErrorMessage("Items for this Note Already issued so you can't cancel ");
                 return;
             }
@@ -1370,7 +1378,7 @@ public class PharmacyBillSearch implements Serializable {
 
             getBillFacade().create(cb);
 
-            pharmacyCancelBillItems(cb);
+            pharmacyCancelBillItemsReduceStock(cb);
 
 //            //   List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL("Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId());
 //            for (BillItem bi : getBill().getBillItems()) {
@@ -1404,7 +1412,7 @@ public class PharmacyBillSearch implements Serializable {
 
             getBillFacade().create(cb);
 
-            pharmacyCancelBillItems(cb);
+            pharmacyCancelBillItemsAddStock(cb);
 
             //        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL("Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId());
 //            for (PharmaceuticalBillItem ph : tmp) {

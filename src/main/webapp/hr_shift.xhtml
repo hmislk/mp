@@ -71,7 +71,8 @@
                             <p:inputText value="#{shiftController.currentDayShift.count}"/>
 
                         </h:panelGrid>
-                        <p:commandButton ajax="false" value="Add DayShift"  action="#{shiftController.addDayShift}"/>
+                        <p:commandButton id="btnAddDayShift" ajax="false" value="Add DayShift"  action="#{shiftController.addDayShift}"/>
+                        <p:defaultCommand target="btnAddDayShift"/>
                     </p:panel>
 
                     <p:dataTable id="tbl" value="#{shiftController.dayShifts}" var="d" sortOrder="#{d.dayType},#{d.startingTime}">

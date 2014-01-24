@@ -70,6 +70,7 @@
                                     <h:commandButton id="btnAddTo" value="Add"  action="#{itemFeeController.saveCharge}" styleClass="buttons">
                                         <!--<f:ajax render="gpDetail" execute="gpDetail"  />-->
                                     </h:commandButton>
+                                    <p:defaultCommand target="btnAddTo"/>
                                 </h:panelGrid>
 
                                 <p:dataTable id="dtbFee" rowIndexVar="rowIndex" value="#{itemFeeController.charges}" var="bi" >

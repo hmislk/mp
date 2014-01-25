@@ -71,7 +71,7 @@ public class PharmacyErrorCheckingEjb {
         hm.put("dep", department);
         hm.put("class", PreBill.class);
 
-        return getBillFacade().findBySQL(sql, hm);
+        return getBillItemFacade().findBySQL(sql, hm);
 
     }
     

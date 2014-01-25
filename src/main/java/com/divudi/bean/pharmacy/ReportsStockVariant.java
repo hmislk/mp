@@ -111,7 +111,7 @@ public class ReportsStockVariant implements Serializable {
             //////////////
             records.add(r);
 
-            systemStockValue += r.getSystemStock();
+            systemStockValue += (r.getSystemStock()+);
             calCulatedStockValue += r.getCalCulatedStock();
         }
 

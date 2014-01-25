@@ -74,7 +74,7 @@
                     <h:outputLabel value="Invoice No : #{cc.attrs.bill.invoiceNumber}"/>
                     <h:outputLabel value="P.O.Approve By : #{cc.attrs.bill.referenceBill.creater.staff.code}"/>
                     <h:outputLabel value="Supplier : #{cc.attrs.bill.fromInstitution.name}"/>
-                    <h:outputLabel value="Location : #{cc.attrs.bill.referenceBill.referenceBill.creater.department.name}"/>
+                    <h:outputLabel value="Location : #{cc.attrs.bill.referenceBill.creater.department.name}"/>
                 </h:panelGrid>
             </div>
 
@@ -101,7 +101,7 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Rcv QTY</f:facet>
-                            #{bip.pharmaceuticalBillItem.qtyInUnit}
+                            #{bip.pharmaceuticalBillItem.qty}
                     </p:column>
 <!--                    <p:column>
                         <f:facet name="header">Remaining QTY</f:facet>
@@ -113,13 +113,13 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Cur Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRateInUnit}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}">
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Last Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.lastPurchaseRateInUnit}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.lastPurchaseRate}">
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
@@ -131,7 +131,7 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Sale Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.retailRateInUnit}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.retailRate}">
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>

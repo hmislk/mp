@@ -60,7 +60,7 @@
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
                         <h:outputLabel value="" ></h:outputLabel>
 
-                        <p:dataTable value="#{pharmacyErrorChecking.billItems}" var="pb" 
+                        <p:dataTable value="#{pharmacyErrorChecking.billItems}" var="pb"  rowIndexVar="i"
                                      rowStyleClass="#{(pb.retired eq true or pb.bill.retired eq true) ?'greenText' : ''} 
                                      #{((pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnBill' )or
@@ -70,13 +70,13 @@
                                        (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferIssue' )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferReceive' )
                                        )? 'redText' : ''}
-                                     #{((pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' )or
-                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyGrnBill' )or
-                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnReturn' )or
-                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PurchaseReturn' )or
-                                       (pb.bill.billClass eq 'class com.divudi.entity.RefundBill' and pb.bill.billType eq 'PharmacyPre' )or
-                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferIssue' )or
-                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferReceive' )
+                                     #{((pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' and pb.bill.createdAt ne null )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyGrnBill' and pb.bill.createdAt ne null )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnReturn' and pb.bill.createdAt ne null )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PurchaseReturn' and pb.bill.createdAt ne null )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.RefundBill' and pb.bill.billType eq 'PharmacyPre' and pb.bill.createdAt ne null )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferIssue' and pb.bill.createdAt ne null )or
+                                       (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferReceive' and pb.bill.createdAt ne null )
                                        )? 'greenText' : ''}"
 
                                      sortBy="#{pb.id}" >
@@ -87,6 +87,12 @@
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{pb.bill}" target="#{pharmacyBillSearch.bill}"/>
                                 </h:commandButton>
+                            </p:column>
+                            
+                            <p:column headerText="Department" >                              
+                                    <h:outputLabel value="#{pb.bill.department.name}" >
+                                    </h:outputLabel>
+                                   
                             </p:column>
 
                             <p:column headerText="Bill Date/Time" >
@@ -102,6 +108,7 @@
                                 <h:outputLabel value="#{pb.qty}" >
                                 </h:outputLabel>
                             </p:column>
+                          
                             <p:column headerText="Actual Qty" >
                                 <h:outputLabel value="#{pb.pharmaceuticalBillItem.qtyInUnit}" >
                                 </h:outputLabel>
@@ -140,15 +147,27 @@
                                 <h:outputLabel value="#{pb.bill.referenceBill.id}" >
                                 </h:outputLabel>
                             </p:column>
+                              <p:column headerText="Ref Bill Type" >
+                                  <h:outputLabel value="#{pb.bill.referenceBill.billType}" >
+                                </h:outputLabel>
+                            </p:column>
+                            
+                            <p:column headerText="Ref Bill Class" >
+                                <h:outputLabel value="#{pb.bill.referenceBill.class}" >
+                                </h:outputLabel>
+                            </p:column>
+                            
                             <p:column headerText="Bill Date/Time" >
-                                <h:outputLabel value="#{pb.referanceBillItem.bill.billDate}" >
+                                <h:outputLabel value="#{pb.referanceBillItem.bill.createdAt}" >
                                     <f:convertDateTime pattern="dd MMM yyyy hh:mm a" ></f:convertDateTime>
                                 </h:outputLabel>
                             </p:column>
-                            <p:column headerText="Id" >
-                                <h:outputLabel value="#{pb.referanceBillItem.bill.insId}" >
+                          
+                              <p:column headerText="Department" >
+                                  <h:outputLabel value="#{pb.bill.referenceBill.department.name}" >
                                 </h:outputLabel>
                             </p:column>
+                          
                             <p:column headerText="Qty" >
                                 <h:outputLabel value="#{pb.referanceBillItem.qty}" >
                                 </h:outputLabel>

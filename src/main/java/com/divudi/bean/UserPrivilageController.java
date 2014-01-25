@@ -105,7 +105,8 @@ public class UserPrivilageController implements Serializable {
         TreeNode node300 = new PrivilageNode("Pharmacy Menu", node3, Privileges.Pharmacy);
         TreeNode node301 = new PrivilageNode("Pharmacy Administration", node3, Privileges.PharmacyAdministration);
         TreeNode node306 = new PrivilageNode("Pharmacy Stock Adjustment", node3, Privileges.PharmacyStockAdjustment);
-       
+        TreeNode node307 = new PrivilageNode("Pharmacy Re Add To Stock", node3, Privileges.PharmacyReAddToStock);
+
         ///////////////////////
         TreeNode node302 = new PrivilageNode("GRN", node3);
         TreeNode node3021 = new PrivilageNode("GRN", node302, Privileges.PharmacyGoodReceive);
@@ -127,7 +128,6 @@ public class UserPrivilageController implements Serializable {
         TreeNode node3052 = new PrivilageNode("Purchase Cancel", node305, Privileges.PharmacyPurchaseCancellation);
         TreeNode node3053 = new PrivilageNode("Purchase Return", node305, Privileges.PharmacyPurchaseReturn);
         ///////////////////
-        
 
         TreeNode node4 = new PrivilageNode("Payment", tmproot);
         TreeNode node400 = new PrivilageNode("Payment Menu", node4, Privileges.Payment);

@@ -358,6 +358,14 @@ public class PharmacySaleController implements Serializable {
         billPreview = false;
         return "pharmacy_retail_sale";
     }
+    
+    public String newSaleBillForCashier() {
+        reAddToStock();
+        clearBill();
+        clearBillItem();
+        billPreview = false;
+        return "pharmacy_retail_sale_for_cashier";
+    }
 
     public List<Item> completeRetailSaleItems(String qry) {
         Map m = new HashMap<>();

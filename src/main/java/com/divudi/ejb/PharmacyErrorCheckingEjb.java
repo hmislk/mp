@@ -120,7 +120,7 @@ public class PharmacyErrorCheckingEjb {
       //  hm.put("refType", BillType.PharmacySale);
         
         
-        return getBillFacade().findBySQL(sql, hm);
+        return getBillItemFacade().findBySQL(sql, hm);
 
     }
     

@@ -225,7 +225,6 @@ public class VariantAdjustment implements Serializable {
         this.reportedBill = reportedBill;
         adjustedBill = null;
         printPreview = false;
-        stockVarientBillItems=null;
         createAdjustmentBill();
     }
 

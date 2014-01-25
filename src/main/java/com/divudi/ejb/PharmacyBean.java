@@ -130,8 +130,8 @@ public class PharmacyBean {
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     public double getStockQty(ItemBatch batch, Department department) {
-    //    System.err.println("Item Batch "+batch);
-   //     System.err.println("Deprtment "+department);
+        //    System.err.println("Item Batch "+batch);
+        //     System.err.println("Deprtment "+department);
         String sql;
         HashMap hm = new HashMap();
         sql = "select sum(s.stock) from Stock s where s.itemBatch=:batch "
@@ -208,8 +208,20 @@ public class PharmacyBean {
     }
 
     public boolean resetStock(Stock stock, double qty) {
-        stock.setStock(qty);
-        getStockFacade().edit(stock);
+        if (stock == null) {
+            return false;
+        }
+        if (stock.getStock() == null) {
+            return false;
+        }
+
+        if (stock.getId() == null) {
+            return false;
+        }
+
+        Stock fetchedStock = getStockFacade().find(stock.getId());
+        fetchedStock.setStock(qty);
+        getStockFacade().edit(fetchedStock);
         return true;
     }
 
@@ -398,15 +410,27 @@ public class PharmacyBean {
         return list;
     }
 
-    public void deductFromStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
+    public boolean deductFromStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
         if (stock == null) {
-            return;
+            return false;
         }
+        if (stock.getStock() == null) {
+            return false;
+        }
+
+        if (stock.getId() == null) {
+            return false;
+        }
+
+        Stock fetchedStock = getStockFacade().find(stock.getId());
+
         //  addToStockHistory(pbi, d);
-        System.err.println("Before Update " + stock.getStock());
-        stock.setStock(stock.getStock() - qty);
-        System.err.println("After  Update " + stock.getStock());
-        getStockFacade().edit(stock);
+        System.err.println("Before Update " + fetchedStock.getStock());
+        stock.setStock(fetchedStock.getStock() - qty);
+        System.err.println("After  Update " + fetchedStock.getStock());
+        getStockFacade().edit(fetchedStock);
+
+        return true;
     }
 
 //    public void updateStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
@@ -420,7 +444,6 @@ public class PharmacyBean {
 //
 //        getStockFacade().edit(stock);
 //    }
-
     public void addToStockHistory(PharmaceuticalBillItem pbi, Department d) {
         StockHistory sh;
         String sql;
@@ -459,18 +482,27 @@ public class PharmacyBean {
         }
     }
 
-    public void addToStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
+    public boolean addToStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
         if (stock == null) {
-            return;
+            return false;
         }
         if (stock.getStock() == null) {
-            stock.setStock(0.0);
+            return false;
         }
+
+        if (stock.getId() == null) {
+            return false;
+        }
+
+        Stock fetchedStock = getStockFacade().find(stock.getId());
+
         // addToStockHistory(pbi, d);
-        System.err.println("Before Update" + stock.getStock());
-        stock.setStock(stock.getStock() + qty);
-        System.err.println("After Update " + stock.getStock());
-        getStockFacade().edit(stock);
+        System.err.println("Before Update" + fetchedStock.getStock());
+        stock.setStock(fetchedStock.getStock() + qty);
+        System.err.println("After Update " + fetchedStock.getStock());
+        getStockFacade().edit(fetchedStock);
+
+        return true;
     }
 
     public List<ItemBatchQty> deductFromStock(Item item, double qty, Staff staff, PharmaceuticalBillItem pbi, Department d) {

@@ -104,7 +104,7 @@ public class PharmacyErrorCheckingEjb {
 //                + " and i.item=:itm and i.bill.billType=:btp ";        
         
                 String sql = "Select p from BillItem p where"
-                + "  type(p.bill)=:class and p.bill.referenceBill is not null and  "
+                + "  type(p.bill)=:class and  "
                 + " p.item=:itm and p.bill.retired=false "
                 + " and p.bill.billType=:btp "
                 + " and p.bill.department=:dep ";
@@ -118,11 +118,12 @@ public class PharmacyErrorCheckingEjb {
 
         //newly Added
       //  hm.put("refType", BillType.PharmacySale);
-        
         List<BillItem> list=getBillItemFacade().findBySQL(sql, hm);
+        
         if(list==null){
-            list=new ArrayList<>();
+            list = new ArrayList<>();
         }
+        
         return list ;
 
     }

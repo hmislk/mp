@@ -18,14 +18,9 @@
     <dependencies>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.5.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>2.5.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>unknown.binary</groupId>
@@ -79,6 +74,7 @@
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>  
             <groupId>org.primefaces</groupId>  
@@ -170,7 +166,12 @@
             <artifactId>joda-time</artifactId>
             <version>2.3</version>
         </dependency>
- 
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.5.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

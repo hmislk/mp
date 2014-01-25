@@ -78,9 +78,8 @@ public class ReportsStockVariant implements Serializable {
         String sql;
         Map m = new HashMap();
         m.put("dep", department);
-        m.put("cat",category);
         sql = "select i.itemBatch.item,sum(i.stock) from Stock i where "
-                + " i.department=:dep and i.itemBatch.item.category=:cat group by i.itemBatch.item order by i.itemBatch.item.name";
+                + " i.department=:dep  group by i.itemBatch.item order by i.itemBatch.item.name";
 
         return getStockFacade().findAggregates(sql, m);
 

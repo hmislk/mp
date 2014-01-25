@@ -60,7 +60,8 @@
                                 <f:selectItems value="#{userDepartmentController.currentInsDepartments}" var="d" itemLabel="#{d.name}" itemValue="#{d}" />
                             </p:selectOneMenu>
                         </p:panel>
-                        <h:commandButton value="Add Departments" action="#{userDepartmentController.addDepartmentForUser()}"/>
+                        <h:commandButton id="btnAddDepartments" value="Add Departments" action="#{userDepartmentController.addDepartmentForUser()}"/>
+                        <p:defaultCommand target="btnAddDepartments"/>
                     </p:panelGrid>
 
                 </p:panel>

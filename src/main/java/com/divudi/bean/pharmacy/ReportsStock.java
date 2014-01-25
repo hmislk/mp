@@ -185,7 +185,8 @@ public class ReportsStock implements Serializable {
         m = new HashMap();
         m.put("cat", category);
         m.put("dep", department);
-        sql = "select s from Stock s where s.department=:dep and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
+        m.put("sq", 0.0);
+        sql = "select s from Stock s where s.stock>:sq and s.department=:dep and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
@@ -196,6 +197,30 @@ public class ReportsStock implements Serializable {
         }
 
     }
+    
+    
+    public void fillCategoryStocksWithZero() {
+        if (department == null || category == null) {
+            UtilityController.addErrorMessage("Please select a department && Category");
+            return;
+        }
+        Map m;
+        String sql;
+        records = new ArrayList<>();
+        m = new HashMap();
+        m.put("cat", category);
+        m.put("dep", department);
+        sql = "select s from Stock s where s.department=:dep and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+        for (Stock ts : stocks) {
+            stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
+            stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
+        }
+
+    }
+    
 
     public void fillAllDistributorStocks() {
         if (department == null) {

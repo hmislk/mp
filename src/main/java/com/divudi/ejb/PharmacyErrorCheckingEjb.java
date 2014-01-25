@@ -75,6 +75,8 @@ public class PharmacyErrorCheckingEjb {
 
     }
     
+     
+     
     public double getTotalQtyByBillItem(BillType billType, Bill bill, Department department, Item item) {
         String sql = "Select abs(sum(p.qty)) from BillItem p where"
                 + "  type(p.bill)=:class and p.bill.createdAt is not null  and "

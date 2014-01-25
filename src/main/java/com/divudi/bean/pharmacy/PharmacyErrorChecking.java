@@ -145,17 +145,18 @@ public class PharmacyErrorChecking implements Serializable {
             }
         }
 
-        System.err.println("Befor "+calculatedStock);
+        System.err.println("Befor " + calculatedStock);
         double saleQty = 0;
         for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
-          
-                calculatedStock-=Math.abs(bi.getQty());
-                saleQty+=Math.abs(bi.getQty());
+
+            if (bi.getQty() != null) {
+                calculatedStock -= Math.abs(bi.getQty());
+                saleQty += Math.abs(bi.getQty());
+            }
 
         }
 
        // calculatedStock -= saleQty;
-
         System.err.println("SaleQty " + saleQty);
 
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);

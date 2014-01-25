@@ -118,9 +118,13 @@ public class PharmacyErrorCheckingEjb {
 
         //newly Added
       //  hm.put("refType", BillType.PharmacySale);
+        List<BillItem> list=getBillItemFacade().findBySQL(sql, hm);
         
+        if(list==null){
+            list = new ArrayList<>();
+        }
         
-        return getBillItemFacade().findBySQL(sql, hm);
+        return list ;
 
     }
     

@@ -184,14 +184,29 @@ public class PharmacySaleController implements Serializable {
 
     }
 
+    private double getStockByStock(Stock stock) {
+        String sql;
+        Map m = new HashMap();
+        Stock st = getStockFacade().find(stock.getId());
+        return st.getStock() ;
+
+    }
+
     public void onEdit(BillItem tmp) {
         if (tmp.getQty() == null) {
             return;
         }
 
+        
         double oldQty = getOldQty(tmp);
         double newQty = tmp.getQty();
-        double currentStock = getStockByBillItem(tmp);
+        
+         if(newQty<=0){
+            UtilityController.addErrorMessage("Can not enter a minus value");
+            return;
+        }
+        
+        double currentStock = getStockByStock(tmp.getPharmaceuticalBillItem().getStock());
 
         System.err.println("old " + oldQty);
         System.err.println("new " + newQty);
@@ -285,6 +300,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void setQty(Double qty) {
+        if(qty!=null && qty<=0){
+            UtilityController.addErrorMessage("Can not enter a minus value");
+            return;
+        }
         this.qty = qty;
     }
 
@@ -358,7 +377,7 @@ public class PharmacySaleController implements Serializable {
         billPreview = false;
         return "pharmacy_retail_sale";
     }
-    
+
     public String newSaleBillForCashier() {
         reAddToStock();
         clearBill();

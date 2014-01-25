@@ -23,7 +23,11 @@
                             <h:outputLabel value="Category" ></h:outputLabel>
                             <p:autoComplete completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStock.category}" >
                             </p:autoComplete>
+                            
                             <p:commandButton ajax="false" value="Process" actionListener="#{reportsStock.fillCategoryStocks()}" ></p:commandButton>
+                            <p:commandButton ajax="false" value="Process with Empty Stocks" actionListener="#{reportsStock.fillCategoryStocksWithZero()}" ></p:commandButton>
+                            
+                            
                             <p:commandButton value="Print" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>

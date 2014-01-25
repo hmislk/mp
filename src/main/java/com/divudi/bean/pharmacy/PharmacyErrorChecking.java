@@ -129,8 +129,10 @@ public class PharmacyErrorChecking implements Serializable {
                 case PharmacyTransferReceive:
                     if (bi.getBill() instanceof BilledBill) {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
                     } else {
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
                     }
                     break;
                 case PharmacyGrnReturn:
@@ -138,24 +140,27 @@ public class PharmacyErrorChecking implements Serializable {
                 case PharmacyTransferIssue:
                     if (bi.getBill() instanceof BilledBill) {
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
                     } else {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
                     }
                     break;
             }
         }
 
-        System.err.println("Befor "+calculatedStock);
+        System.err.println("Befor " + calculatedStock);
         double saleQty = 0;
         for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
-          
-                calculatedStock-=Math.abs(bi.getQty());
-                saleQty+=Math.abs(bi.getQty());
+
+            if (bi.getQty() != null) {
+                calculatedStock -= Math.abs(bi.getQty());
+                saleQty += Math.abs(bi.getQty());
+            }
 
         }
 
-       // calculatedStock -= saleQty;
-
+        // calculatedStock -= saleQty;
         System.err.println("SaleQty " + saleQty);
 
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);

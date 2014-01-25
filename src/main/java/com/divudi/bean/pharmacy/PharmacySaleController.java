@@ -197,16 +197,14 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
-        
         double oldQty = getOldQty(tmp);
         double newQty = tmp.getQty();
-        
-        
-         if(newQty<=0){
+
+        if (newQty <= 0) {
             UtilityController.addErrorMessage("Can not enter a minus value");
             return;
         }
-        
+
         Stock currentStock = getStockByStock(tmp.getPharmaceuticalBillItem().getStock());
 
         System.err.println("old " + oldQty);
@@ -231,11 +229,11 @@ public class PharmacySaleController implements Serializable {
         } else if (oldQty > newQty) {
             double max = oldQty - newQty;
             System.err.println("Max " + max);
-            getPharmacyBean().addToStock(currentStock, Math.abs(max), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+            getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), Math.abs(max), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         } else {
             double min = newQty - oldQty;
             System.err.println("Min " + min);
-            getPharmacyBean().deductFromStock(currentStock, Math.abs(min), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+            getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), Math.abs(min), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         }
 
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
@@ -301,7 +299,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void setQty(Double qty) {
-        if(qty!=null && qty<=0){
+        if (qty != null && qty <= 0) {
             UtilityController.addErrorMessage("Can not enter a minus value");
             return;
         }
@@ -795,6 +793,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void removeBillItem(BillItem b) {
+        // Stock currentStock=
 
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 

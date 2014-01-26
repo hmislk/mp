@@ -797,7 +797,7 @@ public class PharmacySaleController implements Serializable {
 
     public void removeBillItem(BillItem b) {
         // Stock currentStock=
-
+//testing
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
         b.setRetired(true);

@@ -149,8 +149,8 @@ public class VariantAdjustment implements Serializable {
 
     public void Adjust() {
         getAdjustedBill().setBackwardReferenceBill(getReportedBill());
-        getAdjustedBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getReportedBill().getDepartment(), getAdjustedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.ADJ));
-        getAdjustedBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getReportedBill().getInstitution(), getAdjustedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.ADJ));
+        getAdjustedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getReportedBill().getDepartment(), getAdjustedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.ADJ));
+        getAdjustedBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getReportedBill().getInstitution(), getAdjustedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.ADJ));
 
         getAdjustedBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getAdjustedBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -201,6 +201,7 @@ public class VariantAdjustment implements Serializable {
     }
 
     public void createBillComponent() {
+        stockVarientBillItems=null;
         String sql = "Select p from StockVarientBillItem p where p.bill=:bil order by p.item.name ";
         HashMap hm = new HashMap();
         hm.put("bil", getReportedBill());
@@ -225,12 +226,14 @@ public class VariantAdjustment implements Serializable {
         this.reportedBill = reportedBill;
         adjustedBill = null;
         printPreview = false;
+        stockVarientBillItems=null;
         createAdjustmentBill();
     }
 
     public Bill getAdjustedBill() {
         if (adjustedBill == null) {
             adjustedBill = new BilledBill();
+            adjustedBill.setBillType(BillType.PharmacyMajorAdjustment);
         }
         return adjustedBill;
     }

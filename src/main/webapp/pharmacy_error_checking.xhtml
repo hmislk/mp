@@ -27,6 +27,7 @@
                         <p:column headerText="Institution">
                             <h:outputLabel value="#{dept.institution.name}"/>
                         </p:column>
+                      
                     </p:autoComplete>
                     <p:autoComplete value="#{pharmacyErrorChecking.item}"  
                                     style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;"  
@@ -56,6 +57,9 @@
                         <br/>
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
                         <h:outputLabel value="#{pharmacyErrorChecking.itemStock}" ></h:outputLabel>
+                        <br/>
+                        <h:outputLabel value="Category" ></h:outputLabel>
+                        <h:outputLabel value="#{pharmacyErrorChecking.item.category.name}" ></h:outputLabel>
                         <br/>
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
                         <h:outputLabel value="" ></h:outputLabel>

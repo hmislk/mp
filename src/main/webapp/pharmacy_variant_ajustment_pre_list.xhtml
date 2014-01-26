@@ -34,7 +34,7 @@
                              rowsPerPageTemplate="5,10,15" var="b">
 
                     <p:column headerText="Report ID">                     
-                        <h:outputLabel  value="#{b.deptId}">                              
+                        <h:outputLabel  value="#{b.id}">                              
                         </h:outputLabel>                        
                     </p:column>
 
@@ -76,13 +76,13 @@
                         </p:commandButton>
                     </p:column>
                     <p:column headerText="View Reported Bill">
-                        <p:commandButton ajax="false" value="View Reported" action="pharmacy_reprint_po" >
-                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
+                        <p:commandButton ajax="false" value="View Reported" action="pharmacy_reprint_variant_report" >
+                            <f:setPropertyActionListener target="#{variantAdjustment.reportedBill}" value="#{b}"/>
                         </p:commandButton>
                     </p:column>
                     <p:column headerText="View Adjusted Bill">
-                        <p:commandButton ajax="false" value="View Adjusted Bill" action="pharmacy_reprint_po">
-                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b.forwardReferenceBill}"/>
+                        <p:commandButton ajax="false" value="View Adjusted Bill" action="pharmacy_reprint_variant_report">
+                            <f:setPropertyActionListener target="#{variantAdjustment.reportedBill}" value="#{b.forwardReferenceBill}"/>
                         </p:commandButton>
                     </p:column>
                 </p:dataTable>

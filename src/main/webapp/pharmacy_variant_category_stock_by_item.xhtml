@@ -56,7 +56,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="System Stock"/>    
                                     </f:facet>
-                                    <h:outputLabel value="#{i.systemStock}"  >
+                                    <h:outputLabel id="sysStock" value="#{i.systemStock}"  >
                                         <f:convertNumber integerOnly="true" ></f:convertNumber>
                                     </h:outputLabel>                                  
                                 </p:column>
@@ -65,7 +65,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Calculated Stock"/>    
                                     </f:facet>
-                                    <h:outputLabel  value="#{i.calCulatedStock}"  >
+                                    <h:outputLabel id="calStock"  value="#{i.calCulatedStock}"  >
                                         <f:convertNumber integerOnly="true" ></f:convertNumber>
                                     </h:outputLabel>                                  
                                 </p:column>
@@ -74,7 +74,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Physical Stock"/>    
                                     </f:facet>
-                                    <p:inputText  value="#{i.physicalStock}"  >
+                                    <p:inputText id="calStock"  value="#{i.physicalStock}"  >
                                         <f:convertNumber integerOnly="true" ></f:convertNumber>
                                     </p:inputText>                             
                                 </p:column>
@@ -83,7 +83,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="System - Physical"/>    
                                     </f:facet>
-                                    <h:outputLabel value="#{i.systemStock-i.physicalStock}"  >
+                                    <h:outputLabel id="varSysPhy" value="#{i.systemStock-i.physicalStock}"  >
                                         <f:convertNumber integerOnly="true" ></f:convertNumber>
                                     </h:outputLabel>                    
                                 </p:column>
@@ -92,7 +92,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Calculated - Physical"/>    
                                     </f:facet>
-                                    <h:outputLabel value="#{i.calCulatedStock-i.physicalStock}"  >
+                                    <h:outputLabel id="varCalPhy" value="#{i.calCulatedStock-i.physicalStock}"  >
                                         <f:convertNumber integerOnly="true" ></f:convertNumber>
                                     </h:outputLabel>                            
                                 </p:column>

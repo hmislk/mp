@@ -65,25 +65,24 @@
                         </h:outputLabel>
                     </p:column>
 
-                    <p:column headerText="Adusted ReportId" filterBy="#{b.referenceBill.deptId}" >                       
-                        <h:outputLabel  value="#{b.referenceBill.deptId}" rendered="#{b.referenceBill.cancelled eq false}"/>                         
+                    <p:column headerText="Adusted ReportId" filterBy="#{b.forwardReferenceBill.deptId}" >                       
+                        <h:outputLabel  value="#{b.forwardReferenceBill.deptId}" rendered="#{b.forwardReferenceBill.cancelled eq false}"/>                         
                     </p:column>
 
                     <p:column headerText="Adjust">
                         <p:commandButton ajax="false" value="Adjust" 
-                                         action="pharmacy_variant_adjustment"
-                                         disabled="#{b.referenceBill.creater ne null and b.referenceBill.cancelled eq false}">
+                                         action="pharmacy_variant_adjustment">
                             <f:setPropertyActionListener target="#{variantAdjustment.reportedBill}" value="#{b}"/>
                         </p:commandButton>
                     </p:column>
                     <p:column headerText="View Reported Bill">
-                        <p:commandButton ajax="false" value="View Reported" action="pharmacy_reprint_po" disabled="#{b.referenceBill.creater eq null or b.referenceBill.referenceBill eq null}">
+                        <p:commandButton ajax="false" value="View Reported" action="pharmacy_reprint_po" >
                             <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                         </p:commandButton>
                     </p:column>
                     <p:column headerText="View Adjusted Bill">
-                        <p:commandButton ajax="false" value="View Adjusted Bill" action="pharmacy_reprint_po" disabled="#{b.referenceBill.creater eq null or b.referenceBill.referenceBill eq null}">
-                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b.referenceBill}"/>
+                        <p:commandButton ajax="false" value="View Adjusted Bill" action="pharmacy_reprint_po">
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b.forwardReferenceBill}"/>
                         </p:commandButton>
                     </p:column>
                 </p:dataTable>

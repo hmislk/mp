@@ -220,6 +220,7 @@ public class PharmacySaleController implements Serializable {
 
         if (updationValue > currentStock.getStock()) {
             tmp.setQty(oldQty);
+            tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - Math.abs(oldQty));
             getBillItemFacade().edit(tmp);
             UtilityController.addErrorMessage("No Sufficient Stocks Old Qty value is resetted");
             return;
@@ -243,6 +244,9 @@ public class PharmacySaleController implements Serializable {
 
         getBillItemFacade().edit(tmp);
 
+        tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - tmp.getQty());
+        getPharmaceuticalBillItemFacade().edit(tmp.getPharmaceuticalBillItem());
+
         calculateBillItemForEditing(tmp);
 
         calTotal();
@@ -259,6 +263,7 @@ public class PharmacySaleController implements Serializable {
         }
 
         bi.setQty(editingQty);
+        bi.getPharmaceuticalBillItem().setQtyInUnit(0-editingQty);
         calculateBillItemForEditing(bi);
 
         calTotal();
@@ -648,8 +653,9 @@ public class PharmacySaleController implements Serializable {
         //tbi.setDblValue(tbi.getQty());
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
+
         PharmaceuticalBillItem tmpPharmacyItem = tbi.getPharmaceuticalBillItem();
-        tmpPharmacyItem.setQty(0 - tbi.getQty());
+
         tbi.setPharmaceuticalBillItem(null);
         getBillItemFacade().create(tbi);
 
@@ -748,6 +754,7 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
+        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - qty);
         billItem.getPharmaceuticalBillItem().setStock(stock);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
         calculateBillItem();
@@ -847,7 +854,7 @@ public class PharmacySaleController implements Serializable {
         billItem.getPharmaceuticalBillItem().setDoe(getStock().getItemBatch().getDateOfExpire());
         billItem.getPharmaceuticalBillItem().setFreeQty(0.0);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
-        billItem.getPharmaceuticalBillItem().setQty(qty);
+        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - qty);
 
         //Rates
         //Values

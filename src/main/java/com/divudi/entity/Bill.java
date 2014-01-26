@@ -49,7 +49,7 @@ public class Bill implements Serializable {
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<BillFee> billFees = new ArrayList<>();
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    List<BillItem> billItems ;
+    List<BillItem> billItems;
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<BillComponent> billComponents = new ArrayList<>();
 
@@ -62,7 +62,14 @@ public class Bill implements Serializable {
 
     public List<BillItem> getTransBillItems() {
         if (billItems != null) {
-            transBillItems = sort(billItems, on(BillItem.class).getSearialNo());
+            transBillItems = new ArrayList<>();
+            for (BillItem b : billItems) {
+                if (!b.isRetired()) {
+                    transBillItems.add(b);
+                }
+            }
+
+            transBillItems = sort(transBillItems, on(BillItem.class).getSearialNo());
         } else {
             transBillItems = new ArrayList<>();
         }
@@ -94,7 +101,7 @@ public class Bill implements Serializable {
         patientEncounter = bill.getPatientEncounter();
         referredBy = bill.getReferredBy();
         referringDepartment = bill.getReferringDepartment();
-  //      referenceBill=bill.getReferenceBill();
+        //      referenceBill=bill.getReferenceBill();
         //  paymentScheme=bill.getPaymentScheme();
         //   paymentMethod=bill.getPaymentMethod();
         comments = bill.getComments();
@@ -364,9 +371,10 @@ public class Bill implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if(billItems==null){
+        if (billItems == null) {
             billItems = new ArrayList<>();
         }
+
         return billItems;
     }
 
@@ -961,7 +969,5 @@ public class Bill implements Serializable {
     public void setBackwardReferenceBill(Bill backwardReferenceBill) {
         this.backwardReferenceBill = backwardReferenceBill;
     }
-
-    
 
 }

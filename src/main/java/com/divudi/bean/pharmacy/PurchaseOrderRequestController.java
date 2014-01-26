@@ -56,11 +56,9 @@ public class PurchaseOrderRequestController implements Serializable {
     @EJB
     private ItemsDistributorsFacade itemsDistributorsFacade;
     private Bill currentBill;
-    private Institution dealor;
-    private Item currentItem;
+    private BillItem currentBillItem;
     private List<BillItem> selectedBillItems;
-    //private List<PharmaceuticalBillItem> pharmaceuticalBillItems;
-    private double netTotal;
+    //private List<PharmaceuticalBillItem> pharmaceuticalBillItems;   
     @EJB
     PharmacyRecieveBean pharmacyBillBean;
     
@@ -85,12 +83,11 @@ public class PurchaseOrderRequestController implements Serializable {
 
     public void recreate() {
         currentBill = null;
-        currentItem = null;
-        dealor = null;
+        currentBillItem = null;       
     }
 
     public void addItem() {
-        if (getCurrentItem() == null) {
+        if (getCurrentBillItem().getItem() == null) {
             UtilityController.addErrorMessage("Please select and item from the list");
             return;
         }
@@ -218,18 +215,10 @@ public class PurchaseOrderRequestController implements Serializable {
         getBillFacade().edit(getCurrentBill());
     }
 
-    public void createOrder() {
-        if (getDealor() == null) {
-            UtilityController.addErrorMessage("Please Select Dealor");
-
-        }
-        saveBill();
-   //     saveBillComponent();
-        getNetTotal();
-    }
+  
     
      public void createOrderWithItems() {
-        if (getDealor() == null) {
+        if (getIn == null) {
             UtilityController.addErrorMessage("Please Select Dealor");
 
         }
@@ -275,10 +264,7 @@ public class PurchaseOrderRequestController implements Serializable {
 
         UtilityController.addSuccessMessage("Request Succesfully Created");
 
-        dealor = null;
-        currentItem = null;
-        netTotal = 0.0;
-        currentBill = null;
+    recreate();
 
     }
 
@@ -288,13 +274,9 @@ public class PurchaseOrderRequestController implements Serializable {
     
     @Inject
     private ItemController itemController;
-    public Institution getDealor() {
-        return dealor;
-    }
-
-    public void setDealor(Institution dealor) {
-        getItemController().setInstituion(dealor);
-        this.dealor = dealor;
+   
+    public void setInsListener() {
+        getItemController().setInstituion(getCurrentBill().getToInstitution());       
     }
 
     public BillNumberBean getBillNumberBean() {
@@ -364,13 +346,7 @@ public class PurchaseOrderRequestController implements Serializable {
         this.pharmacyBean = pharmacyBean;
     }
 
-    public Item getCurrentItem() {
-        return currentItem;
-    }
-
-    public void setCurrentItem(Item currentItem) {
-        this.currentItem = currentItem;
-    }
+   
 
     public ItemsDistributorsFacade getItemsDistributorsFacade() {
         return itemsDistributorsFacade;
@@ -380,20 +356,7 @@ public class PurchaseOrderRequestController implements Serializable {
         this.itemsDistributorsFacade = itemsDistributorsFacade;
     }
 
-    public double getNetTotal() {
-
-        netTotal = 0.0;
-        for (BillItem bi : getCurrentBill().getBillItems()) {
-            netTotal += bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
-        }
-
-        return netTotal;
-    }
-
-    public void setNetTotal(double netTotal) {
-        this.netTotal = netTotal;
-    }
-
+   
     public PharmacyController getPharmacyController() {
         return pharmacyController;
     }
@@ -416,5 +379,19 @@ public class PurchaseOrderRequestController implements Serializable {
 
     public void setItemController(ItemController itemController) {
         this.itemController = itemController;
+    }
+
+    public BillItem getCurrentBillItem() {
+        if(currentBillItem==null){
+            currentBillItem=new BillItem();
+            PharmaceuticalBillItem ph=new PharmaceuticalBillItem();
+            currentBillItem.setPharmaceuticalBillItem(ph);
+            ph.setBillItem(currentBillItem);
+        }
+        return currentBillItem;
+    }
+
+    public void setCurrentBillItem(BillItem currentBillItem) {
+        this.currentBillItem = currentBillItem;
     }
 }

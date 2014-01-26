@@ -55,6 +55,9 @@ public class Bill implements Serializable {
 
     @Transient
     List<BillItem> transBillItems;
+
+    @Transient
+    private List<BillItem> transActiveBillItem;
     @ManyToOne
     private Bill forwardReferenceBill;
     @ManyToOne
@@ -968,6 +971,24 @@ public class Bill implements Serializable {
 
     public void setBackwardReferenceBill(Bill backwardReferenceBill) {
         this.backwardReferenceBill = backwardReferenceBill;
+    }
+
+    public List<BillItem> getTransActiveBillItem() {
+        if (billItems != null) {
+            transActiveBillItem = new ArrayList<>();
+            for (BillItem b : billItems) {
+                if (!b.isRetired()) {
+                    transActiveBillItem.add(b);
+                }
+            }
+        } else {
+            transActiveBillItem = new ArrayList<>();
+        }
+        return transActiveBillItem;
+    }
+
+    public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
+        this.transActiveBillItem = transActiveBillItem;
     }
 
 }

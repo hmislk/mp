@@ -36,6 +36,7 @@ import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
+import com.divudi.facade.StockHistoryFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -614,7 +615,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     private void saveSaleBillItems() {
-        for (BillItem tbi : getPreBill().getBillItems()) {
+        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
             BillItem newBil = new BillItem();
 
             newBil.copy(tbi);
@@ -711,7 +712,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     private boolean checkItemBatch() {
-        for (BillItem bItem : getPreBill().getBillItems()) {
+        for (BillItem bItem : getPreBill().getTransActiveBillItem()) {
             if (bItem.getPharmaceuticalBillItem().getStock().getId() == getBillItem().getPharmaceuticalBillItem().getStock().getId()) {
                 return true;
             }
@@ -756,9 +757,6 @@ public class PharmacySaleController implements Serializable {
         billItem.setItem(getStock().getItemBatch().getItem());
         billItem.setBill(getPreBill());
 
-//        billItem.setSearialNo(getBillItems().size() + 1);
-        //   getBillItems().add(billItem);
-        //     getPreBill().getBillItems().add(billItem);
         if (getPreBill().getId() == null) {
             savePreBill();
         }
@@ -778,7 +776,7 @@ public class PharmacySaleController implements Serializable {
         double netTot = 0.0;
         double discount = 0.0;
         double grossTot = 0.0;
-        for (BillItem b : getPreBill().getBillItems()) {
+        for (BillItem b : getPreBill().getTransActiveBillItem()) {
             if (b.isRetired()) {
                 continue;
             }
@@ -794,6 +792,9 @@ public class PharmacySaleController implements Serializable {
         setNetTotal(getPreBill().getNetTotal());
     }
 
+    @EJB
+    private StockHistoryFacade stockHistoryFacade;
+
     public void removeBillItem(BillItem b) {
         // Stock currentStock=
 
@@ -805,9 +806,10 @@ public class PharmacySaleController implements Serializable {
         b.setRetirer(getSessionController().getLoggedUser());
         getBillItemFacade().edit(b);
 
-        getPreBill().getBillItems().remove(b);
-
-        setPreBill((PreBill) getBillFacade().find(getPreBill().getId()));
+        b.getPharmaceuticalBillItem().getStockHistory().setRetired(true);
+        b.getPharmaceuticalBillItem().getStockHistory().setRetiredAt(new Date());
+        b.getPharmaceuticalBillItem().getStockHistory().setRetireComments("Remove From Bill");
+        getStockHistoryFacade().edit(b.getPharmaceuticalBillItem().getStockHistory());
 
         calTotal();
     }
@@ -882,7 +884,7 @@ public class PharmacySaleController implements Serializable {
 
     public void calculateAllRates() {
         System.out.println("calculating all rates");
-        for (BillItem tbi : getPreBill().getBillItems()) {
+        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
             calculateRates(tbi);
             calculateBillItemForEditing(tbi);
         }
@@ -1273,6 +1275,14 @@ public class PharmacySaleController implements Serializable {
     public void setPaymentScheme(PaymentScheme paymentScheme) {
         //     System.err.println("Setting Pay");
         this.paymentScheme = paymentScheme;
+    }
+
+    public StockHistoryFacade getStockHistoryFacade() {
+        return stockHistoryFacade;
+    }
+
+    public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
+        this.stockHistoryFacade = stockHistoryFacade;
     }
 
 }

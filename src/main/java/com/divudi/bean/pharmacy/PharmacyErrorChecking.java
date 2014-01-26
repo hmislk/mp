@@ -191,7 +191,12 @@ public class PharmacyErrorChecking implements Serializable {
             }
 
             System.out.println("calculatedStock = " + calculatedStock + " " + bi.getBill().getBillType() + " " + bi.getBill().getClass() + " " + bi.getId());
-
+//
+            //
+            //
+            //
+            //
+        
         }
 
 //        System.err.println("Befor " + calculatedStock);

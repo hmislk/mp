@@ -459,6 +459,9 @@ public class PharmacyBean {
         }
     }
 
+    
+    //
+    
     public void addToStock(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
         if (stock == null) {
             return;
@@ -472,6 +475,11 @@ public class PharmacyBean {
         System.err.println("After Update " + stock.getStock());
         getStockFacade().edit(stock);
     }
+    
+    //hhhh
+    
+    
+    
 
     public List<ItemBatchQty> deductFromStock(Item item, double qty, Staff staff, PharmaceuticalBillItem pbi, Department d) {
         if (item instanceof Ampp) {

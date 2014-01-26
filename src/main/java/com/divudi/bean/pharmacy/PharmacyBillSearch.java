@@ -110,20 +110,10 @@ public class PharmacyBillSearch implements Serializable {
 
     public void addToStock() {
         for (Bill b : getSelectedBills()) {
-            for (BillItem bItem : b.getBillItems()) {
-                double updatingQty = bItem.getPharmaceuticalBillItem().getQtyInUnit() + bItem.getPharmaceuticalBillItem().getFreeQtyInUnit();
-                System.err.println("UPDATING QTY : " + updatingQty);
-                getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(updatingQty), bItem.getPharmaceuticalBillItem(), getSessionController().getDepartment());
-                bItem.setRetired(true);
-                bItem.setRetiredAt(new Date());
-                bItem.setRetirer(getSessionController().getLoggedUser());
-                getBillItemFacede().edit(bItem);
+            String msg = getPharmacyBean().reAddToStock(b, getSessionController().getLoggedUser(), getSessionController().getDepartment());
+            if (msg != null) {
+                UtilityController.addErrorMessage(msg);
             }
-            b.setRetired(true);
-            b.setRetiredAt(new Date());
-            b.setRetirer(getSessionController().getLoggedUser());
-            b.setRetireComments("Stock Re Update");
-            getBillFacade().edit(b);
         }
 
         recreateModel();
@@ -634,7 +624,6 @@ public class PharmacyBillSearch implements Serializable {
 //            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
 //            return true;
 //        }
-
         if (getBill().getBillType() == BillType.PharmacyOrderApprove) {
             if (checkGrn()) {
                 UtilityController.addErrorMessage("Grn already head been Come u can't bill ");
@@ -1215,7 +1204,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkStock(PharmaceuticalBillItem pharmaceuticalBillItem) {
-        System.err.println("Batch "+pharmaceuticalBillItem.getItemBatch());
+        System.err.println("Batch " + pharmaceuticalBillItem.getItemBatch());
         double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getBill().getDepartment());
         System.err.println("Stock Qty" + stockQty);
         System.err.println("Ph Qty" + pharmaceuticalBillItem.getQtyInUnit());

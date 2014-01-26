@@ -197,15 +197,11 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
-        
         //
-        
         double oldQty = getOldQty(tmp);
         double newQty = tmp.getQty();
 
-        
         //
-        
         if (newQty <= 0) {
             UtilityController.addErrorMessage("Can not enter a minus value");
             return;
@@ -357,14 +353,11 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void reAddToStock() {
-        for (BillItem bItem : getPreBill().getBillItems()) {
-            System.err.println("QTY " + bItem.getQty());
-            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(bItem.getQty()), bItem.getPharmaceuticalBillItem(), getSessionController().getDepartment());
-            bItem.setRetired(true);
-            getBillItemFacade().edit(bItem);
+        String msg = getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
+        if (msg != null) {
+            UtilityController.addErrorMessage(msg);
         }
-        getPreBill().setRetired(true);
-        getBillFacade().edit(getPreBill());
+
     }
 
     public String newSaleBillWithoutReduceStock() {
@@ -786,6 +779,9 @@ public class PharmacySaleController implements Serializable {
         double discount = 0.0;
         double grossTot = 0.0;
         for (BillItem b : getPreBill().getBillItems()) {
+            if (b.isRetired()) {
+                continue;
+            }
             netTot = netTot + b.getNetValue();
             grossTot = grossTot + b.getGrossValue();
             discount = discount + b.getDiscount();
@@ -803,19 +799,15 @@ public class PharmacySaleController implements Serializable {
 
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
-        PharmaceuticalBillItem tmpPharmacy = b.getPharmaceuticalBillItem();
-        b.setBill(null);
-        b.setPharmaceuticalBillItem(null);
+        b.setRetired(true);
+        b.setRetiredAt(new Date());
+        b.setRetireComments("Remove From Bill ");
+        b.setRetirer(getSessionController().getLoggedUser());
         getBillItemFacade().edit(b);
 
-        tmpPharmacy.setBillItem(null);
-        getPharmaceuticalBillItemFacade().edit(tmpPharmacy);
-
         getPreBill().getBillItems().remove(b);
-        getBillFacade().edit(getPreBill());
 
-        getBillItemFacade().remove(b);
-        getPharmaceuticalBillItemFacade().remove(tmpPharmacy);
+        setPreBill((PreBill) getBillFacade().find(getPreBill().getId()));
 
         calTotal();
     }

@@ -105,14 +105,6 @@ public class PharmacyBean {
         getBillFacade().create(newPre);
 
         for (BillItem bItem : bill.getBillItems()) {
-            System.err.println("QTY " + bItem.getQty());
-            if (!addToStock(bItem.getPharmaceuticalBillItem().getStock(),
-                    Math.abs(bItem.getQty()), bItem.getPharmaceuticalBillItem(),
-                    department)) {
-
-                msg = "Be Carefull Some Item Are Not Added To Stock.Contact Superior Person";
-
-            }
 
             BillItem newBillItem = new BillItem();
             newBillItem.copy(bItem);
@@ -125,6 +117,13 @@ public class PharmacyBean {
             ph.copy(bItem.getPharmaceuticalBillItem());
             ph.setBillItem(newBillItem);
             getPharmaceuticalBillItemFacade().create(ph);
+
+            System.err.println("QTY " + bItem.getQty());
+            if (!addToStock(ph.getStock(), Math.abs(bItem.getQty()), ph, department)) {
+
+                msg = "Be Carefull Some Item Are Not Added To Stock.Contact Superior Person";
+
+            }
 
         }
 

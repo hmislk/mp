@@ -523,7 +523,10 @@ public class PharmacyBean {
 
         sh.setDepartment(d);
         sh.setInstitution(d.getInstitution());
-        sh.setStockQty(getStockQty(pbi.getBillItem().getItem(), d));
+        
+        Stock fetchedStock=getStockFacade().find(pbi.getStock().getId());
+        
+        sh.setStockQty(fetchedStock.getStock());
         sh.setItem(pbi.getBillItem().getItem());
         if (pbi.getStock() != null && pbi.getStock().getItemBatch() != null) {
             sh.setItemBatch(pbi.getStock().getItemBatch());

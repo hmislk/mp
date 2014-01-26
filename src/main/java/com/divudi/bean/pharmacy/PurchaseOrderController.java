@@ -244,11 +244,12 @@ public class PurchaseOrderController implements Serializable {
         }
 
         getNetTotal();
-        editBill();
 
         //Update Requested Bill Reference
         getRequestedBill().setReferenceBill(getAprovedBill());
         getBillFacade().edit(getRequestedBill());
+
+        editBill();
 
         return viewRequestedList();
         //   printPreview = true;

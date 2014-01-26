@@ -263,11 +263,16 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
         
+        ph.setBillItem(null);
         getPharmaceuticalBillItemFacade().create(ph);
         
         tbi.setPharmaceuticalBillItem(ph);
         
         getBillItemFacade().create(tbi);
+        
+        
+        ph.setBillItem(tbi);
+        getPharmaceuticalBillItemFacade().edit(ph);
 
         getDeptAdjustmentPreBill().getBillItems().add(tbi);
         
@@ -280,6 +285,7 @@ public class PharmacyAdjustmentController implements Serializable {
         BillItem tbi = getBillItem();
         PharmaceuticalBillItem ph = getBillItem().getPharmaceuticalBillItem();
 
+        ph.setBillItem(null);
         ph.setPurchaseRate(pr);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setRate(pr);
@@ -300,6 +306,9 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setPharmaceuticalBillItem(ph);
 
         getBillItemFacade().create(tbi);
+        
+        ph.setBillItem(tbi);
+        getPharmaceuticalBillItemFacade().edit(ph);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
         getDeptAdjustmentPreBill().getBillItems().add(tbi);
         getBillFacade().edit(getDeptAdjustmentPreBill());
@@ -310,6 +319,7 @@ public class PharmacyAdjustmentController implements Serializable {
         BillItem tbi = getBillItem();
         PharmaceuticalBillItem ph = getBillItem().getPharmaceuticalBillItem();
 
+        ph.setBillItem(null);
         ph.setPurchaseRate(rsr);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setRate(rsr);
@@ -328,7 +338,11 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setCreater(getSessionController().getLoggedUser());
         getPharmaceuticalBillItemFacade().create(ph);
         tbi.setPharmaceuticalBillItem(ph);
+        
         getBillItemFacade().create(tbi);
+        
+        ph.setBillItem(tbi);
+        getPharmaceuticalBillItemFacade().edit(ph);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
         getDeptAdjustmentPreBill().getBillItems().add(tbi);
         getBillFacade().edit(getDeptAdjustmentPreBill());

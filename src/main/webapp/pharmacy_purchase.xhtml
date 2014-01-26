@@ -60,13 +60,13 @@
                             <p:column headerText="Code" >
                                 <h:outputLabel value="#{vt.code}"></h:outputLabel>
                             </p:column>
-                             <p:column headerText="Pack Size" >
-                               <p:outputLabel value=" X #{vt.dblValue}" 
-                                              rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                            <p:column headerText="Pack Size" >
+                                <p:outputLabel value=" X #{vt.dblValue}" 
+                                               rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
                             </p:column>
-                             <p:column headerText="Pack Size" >
-                               <p:outputLabel value=" X #{vt.dblValue}" 
-                                              rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
+                            <p:column headerText="Pack Size" >
+                                <p:outputLabel value=" X #{vt.dblValue}" 
+                                               rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
                             </p:column>
                             <p:column headerText="Pack Size" >
                                 <p:outputLabel value=" X #{vt.dblValue}" 
@@ -79,7 +79,9 @@
                                      value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.freeQty}" style="width:100%" /> 
                         <p:inputText id="txtPrate"  styleClass="numericTxt" 
                                      value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.purchaseRate}"  >
-                            <p:ajax event="keydown" process="@this" update="tmpRetail" listener="#{pharmacyPurchaseController.onEditPurchaseRate()}"/>
+                            
+                            <!-- <p:ajax event="keydown" process="@this" update="tmpRetail" listener="#{pharmacyPurchaseController.onEditPurchaseRate()}"/> -->
+                            
                         </p:inputText>
                         <p:inputText id="tmpRetail"  styleClass="numericTxt" 
                                      value="#{pharmacyPurchaseController.currentBillItem.pharmaceuticalBillItem.retailRate}"  />  
@@ -153,6 +155,12 @@
                         <p:calendar  value="#{ph.pharmaceuticalBillItem.doe}"   navigator="true" pattern="dd/MM/yy" >
                             <f:ajax event="dateSelect" execute="@this" render="txtBatch" listener="#{pharmacyPurchaseController.setBatch(ph)}"/>
                         </p:calendar>
+                    </p:column>
+
+
+                    <p:column headerText="Profit Margin" style="width:24%">                    
+                        <h:outputText id="total" value=" #{(ph.pharmaceuticalBillItem.retailRate - ph.pharmaceuticalBillItem.purchaseRate ) / 100}" />  
+
                     </p:column>
 
                 </p:dataTable>  

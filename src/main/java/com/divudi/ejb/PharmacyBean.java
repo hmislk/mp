@@ -345,12 +345,12 @@ public class PharmacyBean {
 
     public boolean deductFromStock(ItemBatch itemBatch, double qty, Staff staff) {
         String sql;
-        HashMap hm=new HashMap();
+        HashMap hm = new HashMap();
         sql = "Select s from Stock s where s.itemBatch=:batch "
                 + "and s.staff=:stf";
-       hm.put("batch",itemBatch);
-       hm.put("stf", staff);
-        Stock s = getStockFacade().findFirstBySQL(sql,hm);
+        hm.put("batch", itemBatch);
+        hm.put("stf", staff);
+        Stock s = getStockFacade().findFirstBySQL(sql, hm);
         if (s == null) {
             s = new Stock();
             s.setStaff(staff);
@@ -362,7 +362,7 @@ public class PharmacyBean {
         s.setStock(s.getStock() - qty);
         if (s.getId() == null || s.getId() == 0) {
             getStockFacade().create(s);
-        } else {           
+        } else {
             getStockFacade().edit(s);
         }
         return true;
@@ -461,10 +461,12 @@ public class PharmacyBean {
         if (stock == null) {
             return false;
         }
-        //  addToStockHistory(pbi, d);
+
         if (stock.getId() == null) {
             return false;
         }
+
+        addToStockHistory(pbi, d);
 
         stock = getStockFacade().find(stock.getId());
 
@@ -588,8 +590,6 @@ public class PharmacyBean {
         }
         return dl;
     }
-
-   
 
 //    public double getRetailRate(Item item, Department department) {
 //

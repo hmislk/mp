@@ -78,8 +78,9 @@ public class ReportsStockVariant implements Serializable {
         String sql;
         Map m = new HashMap();
         m.put("dep", department);
+        m.put("cat",category);
         sql = "select i.itemBatch.item,sum(i.stock),avg(i.itemBatch.purcahseRate) from Stock i where "
-                + " i.department=:dep  group by i.itemBatch.item order by i.itemBatch.item.name";
+                + " i.department=:dep and i.itemBatch.item.category=:cat group by i.itemBatch.item order by i.itemBatch.item.name";
 
         return getStockFacade().findAggregates(sql, m);
 
@@ -101,8 +102,8 @@ public class ReportsStockVariant implements Serializable {
         for (Object[] obj : calDepartmentStock()) {
             StockVarientBillItem r = new StockVarientBillItem();
             r.setItem((Item) obj[0]);
-            r.setSystemStock((Double) obj[1]); 
-            r.setAveragePurchaseRate((Double)obj[2]);
+            r.setSystemStock((Double) obj[1]);
+            r.setPurchaseRate((Double)obj[2]);
             /////////
             getPharmacyErrorChecking().setItem(r.getItem());
             getPharmacyErrorChecking().setDepartment(department);
@@ -111,8 +112,8 @@ public class ReportsStockVariant implements Serializable {
             //////////////
             records.add(r);
 
-            systemStockValue += (r.getSystemStock()*r.getAveragePurchaseRate());
-            calCulatedStockValue += (r.getCalCulatedStock()*r.getAveragePurchaseRate());
+            systemStockValue += (r.getSystemStock()*r.getPurchaseRate());
+            calCulatedStockValue += (r.getCalCulatedStock()*r.getPurchaseRate());
         }
 
     }

@@ -38,7 +38,7 @@ public class StockVarientBillItem implements Serializable {
     private double calCulatedStock;
     private double physicalStock;
     private double adjustedStock;
-    private double averagePurchaseRate;
+    private double purchaseRate;
     /////////////////
     //Created Properties
     @ManyToOne
@@ -166,12 +166,12 @@ public class StockVarientBillItem implements Serializable {
         this.retireComments = retireComments;
     }
 
-    public double getAveragePurchaseRate() {
-        return averagePurchaseRate;
+    public double getPurchaseRate() {
+        return purchaseRate;
     }
 
-    public void setAveragePurchaseRate(double averagePurchaseRate) {
-        this.averagePurchaseRate = averagePurchaseRate;
+    public void setPurchaseRate(double purchaseRate) {
+        this.purchaseRate = purchaseRate;
     }
 
 }

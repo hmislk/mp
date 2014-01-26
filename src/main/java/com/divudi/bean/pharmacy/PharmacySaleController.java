@@ -36,6 +36,7 @@ import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
+import com.divudi.facade.StockHistoryFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -184,14 +185,30 @@ public class PharmacySaleController implements Serializable {
 
     }
 
+    private Stock getStockByStock(Stock stock) {
+        String sql;
+        Map m = new HashMap();
+        Stock st = getStockFacade().find(stock.getId());
+        return st;
+
+    }
+
     public void onEdit(BillItem tmp) {
         if (tmp.getQty() == null) {
             return;
         }
 
+        //
         double oldQty = getOldQty(tmp);
         double newQty = tmp.getQty();
-        double currentStock = getStockByBillItem(tmp);
+
+        //
+        if (newQty <= 0) {
+            UtilityController.addErrorMessage("Can not enter a minus value");
+            return;
+        }
+
+        Stock currentStock = getStockByStock(tmp.getPharmaceuticalBillItem().getStock());
 
         System.err.println("old " + oldQty);
         System.err.println("new " + newQty);
@@ -201,8 +218,9 @@ public class PharmacySaleController implements Serializable {
         System.err.println("Updation Qty " + updationValue);
         System.err.println("Current Stock Qty " + currentStock);
 
-        if (updationValue > currentStock) {
+        if (updationValue > currentStock.getStock()) {
             tmp.setQty(oldQty);
+            tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - Math.abs(oldQty));
             getBillItemFacade().edit(tmp);
             UtilityController.addErrorMessage("No Sufficient Stocks Old Qty value is resetted");
             return;
@@ -226,6 +244,9 @@ public class PharmacySaleController implements Serializable {
 
         getBillItemFacade().edit(tmp);
 
+        tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - tmp.getQty());
+        getPharmaceuticalBillItemFacade().edit(tmp.getPharmaceuticalBillItem());
+
         calculateBillItemForEditing(tmp);
 
         calTotal();
@@ -242,6 +263,7 @@ public class PharmacySaleController implements Serializable {
         }
 
         bi.setQty(editingQty);
+        bi.getPharmaceuticalBillItem().setQtyInUnit(0-editingQty);
         calculateBillItemForEditing(bi);
 
         calTotal();
@@ -285,6 +307,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void setQty(Double qty) {
+        if (qty != null && qty <= 0) {
+            UtilityController.addErrorMessage("Can not enter a minus value");
+            return;
+        }
         this.qty = qty;
     }
 
@@ -333,14 +359,11 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void reAddToStock() {
-        for (BillItem bItem : getPreBill().getBillItems()) {
-            System.err.println("QTY " + bItem.getQty());
-            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getStock(), Math.abs(bItem.getQty()), bItem.getPharmaceuticalBillItem(), getSessionController().getDepartment());
-            bItem.setRetired(true);
-            getBillItemFacade().edit(bItem);
+        String msg = getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
+        if (msg != null) {
+            UtilityController.addErrorMessage(msg);
         }
-        getPreBill().setRetired(true);
-        getBillFacade().edit(getPreBill());
+
     }
 
     public String newSaleBillWithoutReduceStock() {
@@ -358,7 +381,7 @@ public class PharmacySaleController implements Serializable {
         billPreview = false;
         return "pharmacy_retail_sale";
     }
-    
+
     public String newSaleBillForCashier() {
         reAddToStock();
         clearBill();
@@ -597,7 +620,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     private void saveSaleBillItems() {
-        for (BillItem tbi : getPreBill().getBillItems()) {
+        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
             BillItem newBil = new BillItem();
 
             newBil.copy(tbi);
@@ -630,8 +653,9 @@ public class PharmacySaleController implements Serializable {
         //tbi.setDblValue(tbi.getQty());
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
+
         PharmaceuticalBillItem tmpPharmacyItem = tbi.getPharmaceuticalBillItem();
-        tmpPharmacyItem.setQty(0 - tbi.getQty());
+
         tbi.setPharmaceuticalBillItem(null);
         getBillItemFacade().create(tbi);
 
@@ -694,7 +718,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     private boolean checkItemBatch() {
-        for (BillItem bItem : getPreBill().getBillItems()) {
+        for (BillItem bItem : getPreBill().getTransActiveBillItem()) {
             if (bItem.getPharmaceuticalBillItem().getStock().getId() == getBillItem().getPharmaceuticalBillItem().getStock().getId()) {
                 return true;
             }
@@ -730,6 +754,7 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
+        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - qty);
         billItem.getPharmaceuticalBillItem().setStock(stock);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
         calculateBillItem();
@@ -739,9 +764,6 @@ public class PharmacySaleController implements Serializable {
         billItem.setItem(getStock().getItemBatch().getItem());
         billItem.setBill(getPreBill());
 
-//        billItem.setSearialNo(getBillItems().size() + 1);
-        //   getBillItems().add(billItem);
-        //     getPreBill().getBillItems().add(billItem);
         if (getPreBill().getId() == null) {
             savePreBill();
         }
@@ -761,7 +783,10 @@ public class PharmacySaleController implements Serializable {
         double netTot = 0.0;
         double discount = 0.0;
         double grossTot = 0.0;
-        for (BillItem b : getPreBill().getBillItems()) {
+        for (BillItem b : getPreBill().getTransActiveBillItem()) {
+            if (b.isRetired()) {
+                continue;
+            }
             netTot = netTot + b.getNetValue();
             grossTot = grossTot + b.getGrossValue();
             discount = discount + b.getDiscount();
@@ -774,23 +799,24 @@ public class PharmacySaleController implements Serializable {
         setNetTotal(getPreBill().getNetTotal());
     }
 
-    public void removeBillItem(BillItem b) {
+    @EJB
+    private StockHistoryFacade stockHistoryFacade;
 
+    public void removeBillItem(BillItem b) {
+        // Stock currentStock=
+//testing
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
-        PharmaceuticalBillItem tmpPharmacy = b.getPharmaceuticalBillItem();
-        b.setBill(null);
-        b.setPharmaceuticalBillItem(null);
+        b.setRetired(true);
+        b.setRetiredAt(new Date());
+        b.setRetireComments("Remove From Bill ");
+        b.setRetirer(getSessionController().getLoggedUser());
         getBillItemFacade().edit(b);
 
-        tmpPharmacy.setBillItem(null);
-        getPharmaceuticalBillItemFacade().edit(tmpPharmacy);
-
-        getPreBill().getBillItems().remove(b);
-        getBillFacade().edit(getPreBill());
-
-        getBillItemFacade().remove(b);
-        getPharmaceuticalBillItemFacade().remove(tmpPharmacy);
+        b.getPharmaceuticalBillItem().getStockHistory().setRetired(true);
+        b.getPharmaceuticalBillItem().getStockHistory().setRetiredAt(new Date());
+        b.getPharmaceuticalBillItem().getStockHistory().setRetireComments("Remove From Bill");
+        getStockHistoryFacade().edit(b.getPharmaceuticalBillItem().getStockHistory());
 
         calTotal();
     }
@@ -828,7 +854,7 @@ public class PharmacySaleController implements Serializable {
         billItem.getPharmaceuticalBillItem().setDoe(getStock().getItemBatch().getDateOfExpire());
         billItem.getPharmaceuticalBillItem().setFreeQty(0.0);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
-        billItem.getPharmaceuticalBillItem().setQty(qty);
+        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - qty);
 
         //Rates
         //Values
@@ -865,7 +891,7 @@ public class PharmacySaleController implements Serializable {
 
     public void calculateAllRates() {
         System.out.println("calculating all rates");
-        for (BillItem tbi : getPreBill().getBillItems()) {
+        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
             calculateRates(tbi);
             calculateBillItemForEditing(tbi);
         }
@@ -1256,6 +1282,14 @@ public class PharmacySaleController implements Serializable {
     public void setPaymentScheme(PaymentScheme paymentScheme) {
         //     System.err.println("Setting Pay");
         this.paymentScheme = paymentScheme;
+    }
+
+    public StockHistoryFacade getStockHistoryFacade() {
+        return stockHistoryFacade;
+    }
+
+    public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
+        this.stockHistoryFacade = stockHistoryFacade;
     }
 
 }

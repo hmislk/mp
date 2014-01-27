@@ -68,6 +68,7 @@ public class PharmacyPurchaseController implements Serializable {
     private BillItem currentBillItem;
     //private PharmacyItemData currentPharmacyItemData;
     private boolean printPreview;
+    private List<BillItem> billItems;
     ///////////
     //  private List<PharmacyItemData> pharmacyItemDatas;
 
@@ -182,7 +183,7 @@ public class PharmacyPurchaseController implements Serializable {
 
         saveBill();
         //   saveBillComponent();
-        getPharmacyBillBean().calSaleFreeValue(getBill());
+//        getPharmacyBean().calSaleFreeValue(getBill(),getBillItems);
 
         for (BillItem i : getBill().getBillItems()) {
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
@@ -197,12 +198,13 @@ public class PharmacyPurchaseController implements Serializable {
             ItemBatch itemBatch = getPharmacyBillBean().saveItemBatch(i);
             double addingQty = i.getPharmaceuticalBillItem().getQtyInUnit() + i.getPharmaceuticalBillItem().getFreeQtyInUnit();
 
-            Stock stock = getPharmacyBean().addToStock(itemBatch, Math.abs(addingQty), getSessionController().getDepartment());
+            i.getPharmaceuticalBillItem().setItemBatch(itemBatch);
+
             getPharmacyBean().setPurchaseRate(itemBatch, getSessionController().getDepartment());
             getPharmacyBean().setRetailRate(itemBatch, getSessionController().getDepartment());
 
+            Stock stock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(), Math.abs(addingQty), getSessionController().getDepartment());
             i.getPharmaceuticalBillItem().setStock(stock);
-            i.getPharmaceuticalBillItem().setItemBatch(itemBatch);
 
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
@@ -283,8 +285,6 @@ public class PharmacyPurchaseController implements Serializable {
 
         getBill().setCreatedAt(new Date());
         getBill().setCreater(getSessionController().getLoggedUser());
-
- 
 
         getBillFacade().edit(getBill());
 
@@ -484,6 +484,17 @@ public class PharmacyPurchaseController implements Serializable {
 
     public void setCurrentBillItem(BillItem currentBillItem) {
         this.currentBillItem = currentBillItem;
+    }
+
+    public List<BillItem> getBillItems() {
+        if (billItems == null) {
+            billItems = new ArrayList<>();
+        }
+        return billItems;
+    }
+
+    public void setBillItems(List<BillItem> billItems) {
+        this.billItems = billItems;
     }
 
 }

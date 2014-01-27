@@ -99,7 +99,7 @@ public class SaleReturnController implements Serializable {
     public void onEdit(PharmacyItemData tmp) {
         //    PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
 
-        if (tmp.getBillItem().getQty() > getPharmacyRecieveBean().calQty2(tmp.getBillItem().getReferanceBillItem())) {
+        if (tmp.getBillItem().getQty() > getPharmacyBean().calQty2(tmp.getBillItem().getReferanceBillItem())) {
             tmp.getBillItem().setQty(0.0);
             UtilityController.addErrorMessage("You cant return over than ballanced Qty ");
         }
@@ -312,7 +312,7 @@ public class SaleReturnController implements Serializable {
                 pid.setPoBillItem(i.getBillItem().getReferanceBillItem());
 
                 //tmp.setQty(getPharmacyRecieveBean().calQty(pid.getPoBillItem().getPharmaceuticalBillItem()));
-                double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre, new RefundBill());
+                double rFund = getPharmacyBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre, new RefundBill());
                 //  double rCacnelled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacySale, new CancelledBill());
 
                 System.err.println("Refund " + rFund);

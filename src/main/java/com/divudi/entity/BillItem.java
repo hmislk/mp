@@ -5,7 +5,9 @@
 package com.divudi.entity;
 
 import com.divudi.data.inward.InwardChargeType;
+import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
+import com.divudi.entity.pharmacy.Vmpp;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -87,13 +89,14 @@ public class BillItem implements Serializable {
     InwardChargeType inwardChargeType;
     String agentRefNo;
 
-    
 //    @Transient
     int searialNo;
     @Transient
     double totalGrnQty;
     @Transient
     private List<Item> tmpSuggession;
+    @Transient
+    private double tmpQty;
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -109,15 +112,15 @@ public class BillItem implements Serializable {
         Rate = billItem.getRate();
         netRate = billItem.getNetRate();
         searialNo = billItem.getSearialNo();
-      //  referanceBillItem=billItem.getReferanceBillItem();
+        //  referanceBillItem=billItem.getReferanceBillItem();
     }
 
     public BillItem() {
     }
 
     public void invertValue(BillItem billItem) {
-      //  qty = 0 - billItem.getQty();
-      //  Rate = 0 - billItem.getRate();
+        //  qty = 0 - billItem.getQty();
+        //  Rate = 0 - billItem.getRate();
         discount = 0 - billItem.getDiscount();
         netRate = 0 - billItem.getNetRate();
         grossValue = 0 - billItem.getGrossValue();
@@ -150,10 +153,10 @@ public class BillItem implements Serializable {
     }
 
     public PharmaceuticalBillItem getPharmaceuticalBillItem() {
-        if (pharmaceuticalBillItem == null) {
-            pharmaceuticalBillItem = new PharmaceuticalBillItem();
-            pharmaceuticalBillItem.setBillItem(this);
-        }
+//        if (pharmaceuticalBillItem == null) {
+//            pharmaceuticalBillItem = new PharmaceuticalBillItem();
+//            pharmaceuticalBillItem.setBillItem(this);
+//        }
         return pharmaceuticalBillItem;
     }
 
@@ -391,6 +394,7 @@ public class BillItem implements Serializable {
 
     public void setQty(Double Qty) {
         this.qty = Qty;
+
     }
 
     public double getRemainingQty() {
@@ -452,13 +456,33 @@ public class BillItem implements Serializable {
 //    public void setDblValue(double dblValue) {
 //        this.dblValue = dblValue;
 //    }
-
     public List<Item> getTmpSuggession() {
         return tmpSuggession;
     }
 
     public void setTmpSuggession(List<Item> tmpSuggession) {
         this.tmpSuggession = tmpSuggession;
+    }
+
+    public double getTmpQty() {
+        if (getItem() instanceof Ampp || getItem() instanceof Vmpp) {
+            return tmpQty / getItem().getDblValue();
+        } else {
+            return tmpQty;
+        }
+    }
+
+    public void setTmpQty(double tmpQty) {
+        qty = tmpQty;
+        if (getItem() instanceof Ampp || getItem() instanceof Vmpp) {
+            this.tmpQty = tmpQty * getItem().getDblValue();
+        } else {
+            this.tmpQty = tmpQty;
+        }
+
+        if (getPharmaceuticalBillItem() != null) {
+            getPharmaceuticalBillItem().setQty(qty);
+        }
     }
 
 }

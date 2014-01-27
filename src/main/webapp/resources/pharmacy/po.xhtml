@@ -13,7 +13,7 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-         <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+        <h:outputStylesheet library="css" name="pharmacyA4.css"/>
         <div class="posbill noBorder summeryBorder">
 
             <div class="institutionName">
@@ -41,14 +41,14 @@
 
             <div class="poDetail" >
                 <h:panelGrid columns="2" style="min-width: 100%">
-                    
+
                     <h:panelGroup>
                         <h:outputLabel value="Supplier Name : "/>
                         <h:outputLabel value="#{cc.attrs.bill.toInstitution.name}"   /> 
                     </h:panelGroup>
-                    
+
                     <h:outputLabel value="P.O.No : #{cc.attrs.bill.deptId}"/>
-                    
+
                     <h:panelGroup>
                         <h:outputLabel value="Payment Type : "/>
                         <h:outputLabel value="#{cc.attrs.bill.paymentMethod}"/>
@@ -72,14 +72,14 @@
 
             <div >
                 <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip"  style="margin: 20px!important; padding: 20px!important; margin-right: 150px;">
-                    
+
                     <p:column style="width: 50px!important; text-align: right!important; padding-right: 20px;">
                         <f:facet name="header">
                             <h:outputLabel value="No"/>
                         </f:facet>
                         <h:outputLabel value="#{rowIndex+1}"/>
                     </p:column>
-                    
+
                     <p:column style="text-align: left!important;">
                         <f:facet name="header">
                             <h:outputLabel value="Item Name"/>
@@ -91,7 +91,7 @@
                         <f:facet name="header">
                             <h:outputLabel value="QTY"/>
                         </f:facet>   
-                        
+
                         <h:outputLabel value="#{bip.pharmaceuticalBillItem.qty}">
                             <f:convertNumber integerOnly="true"/>
                         </h:outputLabel>
@@ -102,12 +102,12 @@
 
             <div class="preparedBy" style="padding: 20px; margin: 20px; padding-bottom: 2px; margin-bottom: 2px;">
                 <h:outputLabel value="Prepared By : #{cc.attrs.bill.referenceBill.creater.webUserPerson.nameWithTitle}"/>
-               
+
             </div>
 
             <div class="authorizedBy" style="padding-left: 20px; padding-top: 2px; margin-left: 20px; margin-top: 2px;">
                 <h:outputLabel value="Authorized By : #{cc.attrs.bill.creater.webUserPerson.nameWithTitle}"/>
-               
+
             </div>
 
             <div>

@@ -197,12 +197,13 @@ public class PharmacyPurchaseController implements Serializable {
             ItemBatch itemBatch = getPharmacyBillBean().saveItemBatch(i);
             double addingQty = i.getPharmaceuticalBillItem().getQtyInUnit() + i.getPharmaceuticalBillItem().getFreeQtyInUnit();
 
-            Stock stock = getPharmacyBean().addToStock(itemBatch, Math.abs(addingQty), getSessionController().getDepartment());
+            i.getPharmaceuticalBillItem().setItemBatch(itemBatch);
+            Stock stock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(), Math.abs(addingQty), getSessionController().getDepartment());
             getPharmacyBean().setPurchaseRate(itemBatch, getSessionController().getDepartment());
             getPharmacyBean().setRetailRate(itemBatch, getSessionController().getDepartment());
 
             i.getPharmaceuticalBillItem().setStock(stock);
-            i.getPharmaceuticalBillItem().setItemBatch(itemBatch);
+           
 
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());

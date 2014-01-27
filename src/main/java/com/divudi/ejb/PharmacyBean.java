@@ -104,7 +104,7 @@ public class PharmacyBean {
         newPre.setBackwardReferenceBill(bill);
         getBillFacade().create(newPre);
 
-        for (BillItem bItem : bill.getBillItems()) {
+        for (BillItem bItem : bill.getTransActiveBillItem()) {
 
             BillItem newBillItem = new BillItem();
             newBillItem.copy(bItem);

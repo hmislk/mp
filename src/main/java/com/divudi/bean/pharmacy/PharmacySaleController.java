@@ -373,6 +373,15 @@ public class PharmacySaleController implements Serializable {
         billPreview = false;
         return "pharmacy_retail_sale";
     }
+    
+    
+    public String newSaleBillWithoutReduceStockForCashier() {
+        //  reAddToStock();
+        clearBill();
+        clearBillItem();
+        billPreview = false;
+        return "pharmacy_retail_sale_for_cashier";
+    }
 
     public String newSaleBill() {
         reAddToStock();

@@ -245,14 +245,15 @@ public class TransferReceiveController implements Serializable {
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
             //Deduc Staff Stock
 
-            getPharmacyBean().deductFromStock(staffStock, Math.abs(qty), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+            getPharmacyBean().deductFromStockStaff(staffStock, Math.abs(qty), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             //Add To Stock
 //            System.err.println("Stock " + stock);
 //            System.err.println("item Batch " + stock.getItemBatch());
-            Stock addedStock = getPharmacyBean().addToStock(staffStock.getItemBatch(), Math.abs(qty), getSessionController().getDepartment());
+            i.getPharmaceuticalBillItem().setItemBatch(staffStock.getItemBatch());
 
-            i.getPharmaceuticalBillItem().setItemBatch(addedStock.getItemBatch());
+            Stock addedStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(), Math.abs(qty), getSessionController().getDepartment());
+
             i.getPharmaceuticalBillItem().setStock(addedStock);
             i.getPharmaceuticalBillItem().setStaffStock(staffStock);
 
@@ -301,7 +302,7 @@ public class TransferReceiveController implements Serializable {
             UtilityController.addErrorMessage("You cant recieved over than Issued Qty setted Old Value");
         }
 
-     //   getPharmacyController().setPharmacyItem(tmp.getItem());
+        //   getPharmacyController().setPharmacyItem(tmp.getItem());
     }
 
     public void saveBill() {

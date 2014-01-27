@@ -265,18 +265,7 @@ public class PharmacyIssueController implements Serializable {
         this.itemsWithoutStocks = itemsWithoutStocks;
     }
 
-    public void reAddToStock() {
-
-        getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
-
-    }
-
-    public String newSaleBill() {
-        clearBill();
-        clearBillItem();
-        billPreview = false;
-        return "pharmacy_retail_sale";
-    }
+   
 
     public List<Item> completeRetailSaleItems(String qry) {
         Map m = new HashMap<>();

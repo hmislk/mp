@@ -9,14 +9,11 @@ import com.divudi.data.ItemBatchQty;
 import com.divudi.data.StockQty;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
-import com.divudi.entity.BilledBill;
-import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.PreBill;
-import com.divudi.entity.RefundBill;
 import com.divudi.entity.Staff;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.pharmacy.Amp;
@@ -300,17 +297,22 @@ public class PharmacyBean {
         hm.put("bch", pharmaceuticalBillItem.getItemBatch());
         hm.put("dep", department);
         Stock s = getStockFacade().findFirstBySQL(sql, hm);
+//        System.err.println("ss" + s);
         if (s == null) {
             s = new Stock();
             s.setDepartment(department);
             s.setItemBatch(pharmaceuticalBillItem.getItemBatch());
         }
         s.setStock(s.getStock() + qty);
+//        System.err.println("Stock 1 : " + s.getStock());
+//        System.err.println("Stock 2 : " + qty);
+//        System.err.println("Stock 3 : " + s);
+//        System.err.println("Stock 4 : " + s.getId());
         if (s.getId() == null || s.getId() == 0) {
+            //  Stock ss = new Stock();
             getStockFacade().create(s);
         } else {
-            pharmaceuticalBillItem.setStock(s);
-            addToStockHistory(pharmaceuticalBillItem, department);
+            addToStockHistory(pharmaceuticalBillItem,s, department);
             getStockFacade().edit(s);
         }
         return s;
@@ -464,7 +466,7 @@ public class PharmacyBean {
             return false;
         }
 
-        addToStockHistory(pbi, d);
+        addToStockHistory(pbi,stock, d);
 
         stock = getStockFacade().find(stock.getId());
 
@@ -476,20 +478,36 @@ public class PharmacyBean {
         return true;
     }
 
-    public void addToStockHistory(PharmaceuticalBillItem pbi, Department d) {
-        if (pbi == null) {
+    public boolean deductFromStockStaff(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
+        if (stock == null) {
+            return false;
+        }
+
+        if (stock.getId() == null) {
+            return false;
+        }
+
+     //   addToStockHistory(pbi, d);
+        stock = getStockFacade().find(stock.getId());
+
+        System.err.println("Before Update " + stock.getStock());
+        stock.setStock(stock.getStock() - qty);
+        System.err.println("After  Update " + stock.getStock());
+        getStockFacade().edit(stock);
+
+        return true;
+    }
+
+    public void addToStockHistory(PharmaceuticalBillItem phItem, Stock stock, Department d) {
+        if (phItem == null) {
             return;
         }
 
-        if (pbi.getBillItem() == null) {
+        if (phItem.getBillItem() == null) {
             return;
         }
 
-        if (pbi.getBillItem().getItem() == null) {
-            return;
-        }
-
-        if (pbi.getStock().getId() == null) {
+        if (phItem.getBillItem().getItem() == null) {
             return;
         }
 
@@ -497,7 +515,7 @@ public class PharmacyBean {
         String sql;
         sql = "Select sh from StockHistory sh where sh.pbItem=:pbi";
         Map m = new HashMap();
-        m.put("pbi", pbi);
+        m.put("pbi", phItem);
         sh = getStockHistoryFacade().findFirstBySQL(sql, m);
         if (sh == null) {
             sh = new StockHistory();
@@ -506,7 +524,7 @@ public class PharmacyBean {
         }
 
         sh.setFromDate(Calendar.getInstance().getTime());
-        sh.setPbItem(pbi);
+        sh.setPbItem(phItem);
         sh.setHxDate(Calendar.getInstance().get(Calendar.DATE));
         sh.setHxMonth(Calendar.getInstance().get(Calendar.MONTH));
         sh.setHxWeek(Calendar.getInstance().get(Calendar.WEEK_OF_YEAR));
@@ -517,20 +535,18 @@ public class PharmacyBean {
         sh.setDepartment(d);
         sh.setInstitution(d.getInstitution());
 
-        Stock fetchedStock = getStockFacade().find(pbi.getStock().getId());
+        Stock fetchedStock = getStockFacade().find(stock.getId());
 
         sh.setStockQty(fetchedStock.getStock());
-        sh.setItem(pbi.getBillItem().getItem());
-        if (pbi.getStock() != null && pbi.getStock().getItemBatch() != null) {
-            sh.setItemBatch(pbi.getStock().getItemBatch());
-        } else {
-            sh.setItemBatch(pbi.getItemBatch());
-        }
+        sh.setItem(phItem.getBillItem().getItem());
+        sh.setItemBatch(fetchedStock.getItemBatch());
 
         getStockHistoryFacade().create(sh);
 
-        pbi.setStockHistory(sh);
-        getPharmaceuticalBillItemFacade().edit(pbi);
+        phItem.setStockHistory(sh);
+        getPharmaceuticalBillItemFacade().edit(phItem);
+        
+        System.err.println("Histry Saved "+sh.getStockQty());
 
     }
 
@@ -547,7 +563,7 @@ public class PharmacyBean {
             return false;
         }
 
-        addToStockHistory(pbi, d);
+        addToStockHistory(pbi,stock, d);
 
         stock = getStockFacade().find(stock.getId());
 
@@ -1261,154 +1277,6 @@ public class PharmacyBean {
 
     public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
         this.stockHistoryFacade = stockHistoryFacade;
-    }
-
-    public double calQty(PharmaceuticalBillItem po) {
-
-        double billed = getTotalQty(po.getBillItem(), BillType.PharmacyGrnBill, new BilledBill());
-        double cancelled = getTotalQty(po.getBillItem(), BillType.PharmacyGrnBill, new CancelledBill());;
-        double returnedB = getReturnedTotalQty(po.getBillItem(), BillType.PharmacyGrnReturn, new BilledBill());
-        double returnedC = getReturnedTotalQty(po.getBillItem(), BillType.PharmacyGrnReturn, new CancelledBill());
-
-        double recieveNet = Math.abs(billed) - Math.abs(cancelled);
-        double retuernedNet = Math.abs(returnedB) - Math.abs(returnedC);
-        System.err.println("BILLED " + billed);
-        System.err.println("Cancelled " + cancelled);
-        System.err.println("recieveNet " + recieveNet);
-        System.err.println("Refunded Bill " + returnedB);
-        System.err.println("Refunded Cancelld " + returnedC);
-        System.err.println("retuernedNet " + retuernedNet);
-        System.err.println("Cal Qty " + (Math.abs(recieveNet) - Math.abs(retuernedNet)));
-
-        return (Math.abs(recieveNet) - Math.abs(retuernedNet));
-    }
-
-    public double getTotalQty(BillItem b, BillType billType, Bill bill) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "  type(p.bill)=:class and p.creater is not null and"
-                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
-
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-        hm.put("class", bill.getClass());
-
-        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-        System.err.println("GETTING TOTAL QTY " + value);
-        return value;
-    }
-
-    public boolean checkQty(PharmaceuticalBillItem ph) {
-
-        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.id=" + ph.getBillItem().getReferanceBillItem().getId();
-        PharmaceuticalBillItem po = getPharmaceuticalBillItemFacade().findFirstBySQL(sql);
-
-        //    Item poItem = po.getBillItem().getItem();
-        //    Item grnItem = ph.getBillItem().getItem();
-        double poQty, grnQty, remains;
-        poQty = Math.abs(po.getQtyInUnit());
-        remains = Math.abs(poQty) - calQty(po);
-        grnQty = Math.abs(ph.getQtyInUnit());
-
-        System.err.println("poQty : " + poQty);
-        System.err.println("grnQty : " + grnQty);
-        System.err.println("remain : " + remains);
-
-        if (remains < grnQty) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    public double getReturnedTotalQty(BillItem b, BillType billType, Bill bill) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "  type(p.bill)=:class and p.bill.creater is not null and"
-                + " p.referanceBillItem.referanceBillItem=:bt and p.bill.billType=:btp";
-
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-        hm.put("class", bill.getClass());
-
-        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-    }
-
-    public double getReturnedTotalQty(BillItem b, BillType billType) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "  p.bill.creater is not null and"
-                + " p.referanceBillItem.referanceBillItem=:bt and p.bill.billType=:btp";
-
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-
-        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-    }
-
-    public double getTotalQty(BillItem b, BillType billType) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "  p.creater is not null and"
-                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
-
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-
-        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-        System.err.println("GETTING TOTAL QTY " + value);
-        return value;
-    }
-
-    public double getTotalQty(BillItem b, BillType billType, Bill refund, Bill cancel) {
-        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
-                + "  (type(p.bill)=:class or type(p.bill)=:class2)and p.creater is not null and"
-                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
-
-        HashMap hm = new HashMap();
-        hm.put("bt", b);
-        hm.put("btp", billType);
-        hm.put("class", refund.getClass());
-        hm.put("class2", cancel.getClass());
-        return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-
-    }
-
-    public double calQtyInTwoSql(PharmaceuticalBillItem po) {
-
-        double grns = getTotalQty(po.getBillItem(), BillType.PharmacyGrnBill);
-        double grnReturn = getReturnedTotalQty(po.getBillItem(), BillType.PharmacyGrnReturn);
-
-        double netQty = grns - grnReturn;
-
-        System.err.println("GRN " + grns);
-        System.err.println("GRN Return " + grnReturn);
-        System.err.println("Net " + netQty);
-
-        return netQty;
-    }
-
-    public double calQty2(BillItem bil) {
-
-        double returnBill = getTotalQty(bil, BillType.PharmacySale, new RefundBill());
-
-        System.err.println("RETURN " + returnBill);
-
-        return bil.getQty() - returnBill;
-    }
-
-    public double calQty3(BillItem bil) {
-
-        double returnBill = getTotalQty(bil, BillType.PharmacyPre, new RefundBill());
-
-        System.err.println("RETURN " + returnBill);
-
-        return bil.getQty() - returnBill;
     }
 
 }

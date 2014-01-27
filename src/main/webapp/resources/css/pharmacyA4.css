@@ -52,12 +52,12 @@ root {
 .institutionName{
     text-align: center!important;
     font-weight: bold!important;
-    font-size: 150%!important;
+    font-size: 200%!important;
 
 }
 .institutionContact{
     text-align: center!important;   
-
+    
 }
 
 
@@ -75,6 +75,7 @@ root {
     font-size: 11px!important;
     font-family: sans-serif;
     min-width: 100%!important;
+    
 }
 
 .normalFont div *,

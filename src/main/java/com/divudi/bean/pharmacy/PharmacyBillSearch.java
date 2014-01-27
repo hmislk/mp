@@ -107,6 +107,15 @@ public class PharmacyBillSearch implements Serializable {
     SessionController sessionController;
     @Inject
     private WebUserController webUserController;
+    
+    public void editBill(){
+        getBillFacade().edit(getBill());        
+    }
+    
+    public void editBillItem(BillItem billItem){
+        getBillItemFacede().edit(billItem);
+        getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
+    }
 
     public void addToStock() {
         for (Bill b : getSelectedBills()) {

@@ -267,13 +267,7 @@ public class PharmacyIssueController implements Serializable {
 
     public void reAddToStock() {
 
-        for (BillItem bItem : getPreBill().getBillItems()) {
-            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getItemBatch(), Math.abs(bItem.getQty()), bItem.getBill().getDepartment());
-            bItem.setRetired(true);
-            getBillItemFacade().edit(bItem);
-        }
-        getPreBill().setRetired(true);
-        getBillFacade().edit(getPreBill());
+        getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
 
     }
 

@@ -249,7 +249,7 @@ public class PurchaseReturnController implements Serializable {
             tmp.copy(i);
             tmp.setBillItem(bi);
 
-            double rBilled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PurchaseReturn, new BilledBill());
+            double rBilled = getPharmacyBean().getTotalQty(i.getBillItem(), BillType.PurchaseReturn, new BilledBill());
 
             System.err.println("Billed Qty " + i.getQty());
             System.err.println("Return Qty " + rBilled);

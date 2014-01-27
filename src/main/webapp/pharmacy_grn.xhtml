@@ -26,15 +26,13 @@
                     </p:selectOneMenu>
                     <p:commandButton  value="Settle" action="#{grnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                     </p:commandButton>
-                    <p:commandButton  value="Get Last Edited" action="#{grnController.findLastEdited()}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
-                    </p:commandButton>
                     <p:commandButton value="Refresh" action="#{grnController.clear}" ajax="false"/>
                 </h:panelGrid>
 
 
 
-                <p:dataTable var="bi" styleClass="noBorder" value="#{grnController.grnBill.billItems}" scrollable="true" scrollHeight="250"
-                             id="itemList"  sortBy="#{ph.bill.id}">  
+                <p:dataTable var="bi" styleClass="noBorder" value="#{grnController.billItems}" scrollable="true" scrollHeight="250"
+                             id="itemList"  sortBy="#{bi.searialNo}">  
 
                     <f:facet name="header">  
                         Ordered Item 
@@ -47,13 +45,13 @@
                                     execute="@this" listener="#{grnController.onEditItem(bi)}" ></f:ajax>
                         </p:selectOneMenu>                     
                     </p:column>  
-                    
+
                     <p:column headerText="Ordered Qty" >                   
                         <h:outputLabel value="#{bi.referanceBillItem.pharmaceuticalBillItem.qty}"/>
                     </p:column>  
-                    
+
                     <p:column headerText="Receiving Qty"  >                   
-                        <p:inputText value="#{bi.pharmaceuticalBillItem.qty}" id="qty">
+                        <p:inputText value="#{bi.tmpQty}" id="qty">
                             <f:ajax event="blur" render="item @this freeQty purchase retail total :#{p:component('tot')}" 
                                     execute="item @this freeQty purchase retail" listener="#{grnController.onEdit(bi)}" ></f:ajax> 
                         </p:inputText>
@@ -127,7 +125,7 @@
 
                         <p:panelGrid columns="2" id="tot">
                             <p:outputLabel value="Gross Total"/>
-                            <p:outputLabel id="gro"  value="#{grnController.grossTotal}">
+                            <p:outputLabel id="gro"  value="#{grnController.grnBill.total}">
                                 <f:convertNumber pattern="#,##0.00" />
                             </p:outputLabel>
                             <p:outputLabel value="Tax"/>

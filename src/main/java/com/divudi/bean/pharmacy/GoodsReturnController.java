@@ -103,7 +103,7 @@ public class GoodsReturnController implements Serializable {
     public void onEdit(PharmacyItemData tmp) {
         //    PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
 
-        if (tmp.getBillItem().getQty() > getPharmacyRecieveBean().calQty(tmp.getPoBillItem().getPharmaceuticalBillItem())) {
+        if (tmp.getBillItem().getQty() > getPharmacyBean().calQty(tmp.getPoBillItem().getPharmaceuticalBillItem())) {
             tmp.getBillItem().setQty(0.0);
             UtilityController.addErrorMessage("You cant return over than ballanced Qty ");
         }
@@ -269,8 +269,8 @@ public class GoodsReturnController implements Serializable {
                 pid.setPoBillItem(i.getBillItem().getReferanceBillItem());
 
                 //tmp.setQty(getPharmacyRecieveBean().calQty(pid.getPoBillItem().getPharmaceuticalBillItem()));
-                double rBilled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyGrnReturn, new BilledBill());
-                double rCacnelled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyGrnReturn, new CancelledBill());
+                double rBilled = getPharmacyBean().getTotalQty(i.getBillItem(), BillType.PharmacyGrnReturn, new BilledBill());
+                double rCacnelled = getPharmacyBean().getTotalQty(i.getBillItem(), BillType.PharmacyGrnReturn, new CancelledBill());
 
                 double netQty=Math.abs(rBilled)-Math.abs(rCacnelled);
                         

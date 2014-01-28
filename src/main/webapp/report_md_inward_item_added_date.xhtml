@@ -21,29 +21,30 @@
                         <f:ajax event="dateSelect"   render="tbl" execute="@this fromDate" listener="#{mdInwardReportController.makeBillNull}"/>
                     </p:calendar>     
                     <p:commandButton ajax="false" value="Refresh" action="report_md_inward_item_added_date" style="float: right;"/>
+                   
                 </h:panelGrid>   
 
                 <p:dataTable id="tbl" value="#{mdInwardReportController.itemWithFees}" rowIndexVar="i" var="iwf" filteredValue="#{mdInwardReportController.fillterItemWithFees}"  sortBy="#{iwf.item.retired}">
                     <p:column headerText="No">
-                        #{i+1}
+                         <h:outputLabel value="#{i+1}"/>
                     </p:column>
                     <p:column headerText="Institution" filterBy="#{iwf.item.institution.name}" filterMatchMode="contains">
-                        #{iwf.item.institution.name}
+                         <h:outputLabel value="#{iwf.item.institution.name}"/>
                     </p:column>
                     <p:column headerText="Department" filterBy="#{iwf.item.department.name}" filterMatchMode="contains">
-                        #{iwf.item.department.name}
+                         <h:outputLabel value="#{iwf.item.department.name}"/>
                     </p:column>    
                     <p:column headerText="Parent Categoy" filterBy="#{iwf.item.category.parentCategory.name}" filterMatchMode="contains">
-                        #{iwf.item.category.parentCategory.name}
+                         <h:outputLabel value="#{iwf.item.category.parentCategory.name}"/>
                     </p:column>   
                     <p:column headerText="Categoy" filterBy="#{iwf.item.category.name}" filterMatchMode="contains">
-                        #{iwf.item.category.name}
+                         <h:outputLabel value="#{iwf.item.category.name}"/>
                     </p:column>   
                     <p:column headerText="Name" filterBy="#{iwf.item.name}" filterMatchMode="contains">
-                        #{iwf.item.name}
+                         <h:outputLabel value="#{iwf.item.name}"/>
                     </p:column>
                     <p:column headerText="Count">
-                        #{iwf.count}
+                         <h:outputLabel value="#{iwf.count}"/>
                     </p:column>
                     <p:column headerText="Hospital Fee">
                         <h:outputLabel value="#{iwf.hospitalFee}">
@@ -64,7 +65,7 @@
                         <p:row>
                             <p:column colspan="7" >                               
                                 <f:facet name="footer">
-                                    Total
+                                     <h:outputLabel value="Total"/>
                                 </f:facet>
                             </p:column>
                             <p:column>

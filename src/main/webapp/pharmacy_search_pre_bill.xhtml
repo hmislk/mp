@@ -25,7 +25,8 @@
                                 <p:inputText id="txtSearch" value="#{billSearch.txtSearch}"  style="width:500px;">
 
                                 </p:inputText>
-                                <p:commandButton ajax="false" value="Search" action="#{billSearch.createPreTable()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createPreTable()}"/>
+                            <p:defaultCommand target="btnSearch" />
                             </h:panelGrid>
                             <p:watermark value="Bill Id ,NetTotal,Paymentscheme,Paymentmethod" for="txtSearch" />
 

@@ -28,31 +28,31 @@
             <p:dataTable value="#{transferIssueController.requests}" var="p">
                 <p:column headerText="Request No">
                     <h:commandLink action="pharmacy_reprint_transfer_request">
-                        #{p.deptId} 
+                        <h:outputLabel value="#{p.deptId}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>
                 <p:column headerText="From Department">
                     <h:commandLink action="pharmacy_reprint_transfer_request">
-                        #{p.department.name}
+                        <h:outputLabel value="#{p.department.name}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 
                 <p:column headerText="Requested Persons">
                     <h:commandLink action="pharmacy_reprint_transfer_request">
-                        #{p.creater.webUserPerson.nameWithTitle}
+                        <h:outputLabel value="#{p.creater.webUserPerson.nameWithTitle}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>
                 <p:column headerText="Request At">
                     <h:commandLink action="pharmacy_reprint_transfer_request">
-                        #{p.createdAt}
+                        <h:outputLabel value="#{p.createdAt}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>     
                 <p:column headerText="Issued By">
                     <h:commandLink action="pharmacy_reprint_transfer_request">
-                        #{p.forwardReferenceBill.creater.webUserPerson.name}
+                        <h:outputLabel value="#{p.forwardReferenceBill.creater.webUserPerson.name}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 

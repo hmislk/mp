@@ -23,10 +23,10 @@
                                         size="30"  style="width: 400px;">
                             <p:ajax event="itemSelect" process="acPt" update="panSearch2"/>
                             <p:column>
-                                #{myItem.bhtNo}
+                                <h:outputLabel value="#{myItem.bhtNo}"/>
                             </p:column>
                             <p:column>
-                                #{myItem.patient.person.nameWithTitle}
+                                <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                             </p:column>
                         </p:autoComplete>   
 
@@ -67,7 +67,9 @@
                             <p:inputText value="#{inwardPaymentController.current.total}"/>
 
                         </h:panelGrid>
-                        <p:commandButton value="Pay" ajax="false" action="#{inwardPaymentController.pay}"/>
+                        <p:commandButton id="btnPay" value="Pay" ajax="false" action="#{inwardPaymentController.pay}"/>
+                        <p:defaultCommand target="btnPay"/>
+                        
                         <p:commandButton value="Clear" ajax="false" action="#{inwardPaymentController.makeNull}"/>
                     </p:panel>
 

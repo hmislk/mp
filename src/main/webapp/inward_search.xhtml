@@ -17,6 +17,7 @@
                         <p:outputLabel value="Admitted Patients"/>
                         <p:commandButton ajax="false" value="Cancel" action="#{dischargeController.cancel}" style="float: right;"/>
                     </f:facet>
+                    
                     <h:panelGrid id="gpSelectText" columns="4" >
                         <p:outputLabel value="Type Patinet Name or BHT"/>
                         <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 

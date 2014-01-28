@@ -41,8 +41,10 @@
                             <p:calendar id="slipDate"  value="#{pharmacyDealorBill.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
                             </p:calendar>
 
-                            <p:commandButton  value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
+                            <p:defaultCommand target="btnSettle"/>
+                            
                             <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
                             </p:commandButton>
 

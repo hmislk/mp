@@ -12,8 +12,11 @@
                 <f:facet name="header">
                     <h:outputLabel value="Good Recieve Note List"/>
                 </f:facet>
-                  <p:inputText id="txtSearch" value="#{grnController.txtSearch}" style="width:500px;"/>
-                <p:commandButton ajax="false" value="Refresh" actionListener="#{grnController.createGrnTable()}" />
+                <p:inputText id="txtSearch" value="#{grnController.txtSearch}" style="width:500px;"/>
+
+                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" actionListener="#{grnController.createGrnTable()}" />
+                <p:defaultCommand target="btnRefresh"/>
+
                 <h:outputLabel value="From Date"/>
                 <p:calendar id="frmDate" value="#{grnController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
                 </p:calendar>
@@ -21,7 +24,7 @@
                 <h:outputLabel value="To Date"/>
                 <p:calendar id="toDate" value="#{grnController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm"  >
                 </p:calendar>
-              
+
             </p:panelGrid>
             <p:watermark value="Bill Id ,Po Value,Po Number,GRN No,Dealor" for="txtSearch" />
             <p:dataTable value="#{grnController.searchBills}" var="p" lazy="true"
@@ -31,25 +34,25 @@
 
                 <p:column headerText="GRN No"  filterBy="#{p.deptId}" >                   
                     <h:commandLink action="pharmacy_reprint_grn"  >    
-                        #{p.deptId}
+                        <h:outputLabel  value="#{p.deptId}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 
                 <p:column headerText="Invoice No"  filterBy="#{p.invoiceNumber}" filterMatchMode="contains">                   
                     <h:commandLink action="pharmacy_reprint_grn"  >    
-                        #{p.invoiceNumber}
+                        <h:outputLabel  value="#{p.invoiceNumber}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 
                 <p:column headerText="PO No"  filterBy="#{p.referenceBill.deptId}" >                   
                     <h:commandLink action="pharmacy_reprint_grn"  >    
-                        #{p.referenceBill.deptId}
+                        <h:outputLabel  value="#{p.referenceBill.deptId}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 
                 <p:column headerText="Distributor" filterBy="#{p.fromInstitution.name}" >
                     <h:commandLink action="pharmacy_reprint_grn" >
-                        #{p.fromInstitution.name}
+                        <h:outputLabel  value="#{p.fromInstitution.name}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>
@@ -99,7 +102,7 @@
                     <p:dataTable var="b" value="#{p.listOfBill}">
                         <p:column  >
                             <h:commandLink action="pharmacy_reprint_grn_return"  >                                
-                                #{b.deptId}
+                                <h:outputLabel  value="#{b.deptId}"/>
                                 <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>
@@ -116,7 +119,6 @@
                                 <h:outputLabel value="#{b.netTotal}">
                                     <f:convertNumber pattern="#,##0.00" />
                                 </h:outputLabel>
-
                                 <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>

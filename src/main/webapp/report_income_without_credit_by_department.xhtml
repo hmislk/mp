@@ -26,7 +26,8 @@
                         <h:outputLabel styleClass="noPrintButton" value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
                         <p:autoComplete styleClass="noPrintButton"  value="#{labReportSearchByDepartmentController.department}"  style="text-align: left; margin: 5px; padding: 5px;"  completeMethod="#{departmentController.completeDept}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" forceSelection="true" rendered="true" requiredMessage="You must select a department" >
                         </p:autoComplete>
-                        <p:commandButton styleClass="noPrintButton" value="Refresh" ajax="false" />
+                        <p:commandButton id="btnRerfresh" styleClass="noPrintButton" value="Refresh" ajax="false" />
+                        <p:defaultCommand target="btnRefresh"/>
                         <br/>
 
                         <p:commandButton styleClass="noPrintButton" value="Print" ajax="false" >

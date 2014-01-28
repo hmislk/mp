@@ -22,8 +22,9 @@
                                 <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
                                 <p:inputText id="txtSearch" value="#{billSearch.txtSearch}" style="width:500px;"/>
-                                <p:commandButton ajax="false" value="Search" action="#{billSearch.createDealorPaymentTable()}"/>
-
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createDealorPaymentTable()}"/>
+                                <p:defaultCommand target="btnSearch"/>
+                                
                             </h:panelGrid>                                
                             <p:watermark value="Bill Id ,NetTotal,Paymentscheme,Paymentmethod,Patient Name or Phone Number" for="txtSearch" />
                         </f:facet>                               

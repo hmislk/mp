@@ -58,13 +58,13 @@
                                     </h:panelGrid>
                                 </p:panel>
 
-
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <h:commandButton id="btnSave" value="Save"  action="#{medicalPackageNameController.saveSelected()}" styleClass="buttons">
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>
-                                    <p:defaultCommand target="btnAdd"/>
+                                    <p:defaultCommand target="btnSave"/>
+                                    
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

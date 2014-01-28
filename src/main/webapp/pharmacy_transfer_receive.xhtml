@@ -24,7 +24,7 @@
                     </f:facet>
                 </p:panel>
 
-                <p:dataTable styleClass="noBorder" var="ph" value="#{transferReceiveController.receivedBill.billItems}" 
+                <p:dataTable styleClass="noBorder" var="ph" value="#{transferReceiveController.billItems}" 
                              id="itemList" scrollable="true" scrollHeight="250" sortBy="#{ph.searialNo}">  
 
                     <f:facet name="header">  
@@ -42,7 +42,7 @@
 
 
                     <p:column headerText="Qty" style="width:25px!important;">                      
-                        <p:inputText id="qty" value="#{ph.pharmaceuticalBillItem.qty}" >  
+                        <p:inputText id="qty" value="#{ph.tmpQty}" >  
                             <f:ajax event="blur" render="@this"  execute="@this item" listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
                             <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferReceiveController.onFocus(ph)}"/>
                         </p:inputText>

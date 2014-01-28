@@ -71,14 +71,11 @@ public class TransferIssueController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private PharmacyCalculation pharmacyRecieveBean;
+    private List<BillItem> billItems;
+    int serialNo;
 
     public void remove(BillItem billItem) {
-        getIssuedBill().getBillItems().remove(billItem);
-        getBillFacade().edit(getIssuedBill());
-
-        billItem.setBill(null);
-        getBillItemFacade().edit(billItem);
-
+        getBillItems().remove(billItem.getSearialNo());
     }
 
     public void makeNull() {
@@ -87,6 +84,7 @@ public class TransferIssueController implements Serializable {
         printPreview = false;
         fromDate = null;
         toDate = null;
+        billItems = null;
     }
 
     public List<Bill> getRequests() {
@@ -117,6 +115,7 @@ public class TransferIssueController implements Serializable {
     public Bill getRequestedBill() {
         if (requestedBill == null) {
             requestedBill = new BilledBill();
+
         }
         return requestedBill;
     }
@@ -125,7 +124,7 @@ public class TransferIssueController implements Serializable {
         makeNull();
         this.requestedBill = requestedBill;
         issuedBill = null;
-        create();
+        generateBillComponent();
     }
 
     private List<Item> getSuggession(Item item) {
@@ -144,14 +143,9 @@ public class TransferIssueController implements Serializable {
         return suggessions;
     }
 
-    public void saveBillComponent() {
-        HashMap hm = new HashMap();
-        String sql = "Select p from PharmaceuticalBillItem p where "
-                + " p.billItem.bill=:bill order by p.billItem.searialNo ";
-        hm.put("bill", getRequestedBill());
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql, hm);
+    public void generateBillComponent() {
 
-        for (PharmaceuticalBillItem i : tmp) {
+        for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
 
             List<StockQty> stockQtys = getPharmacyBean().getStockByQty(i.getBillItem().getItem(), i.getQtyInUnit(), getSessionController().getDepartment());
 
@@ -162,14 +156,11 @@ public class TransferIssueController implements Serializable {
                 System.err.println("Stock " + sq.getStock());
                 System.err.println("QTY " + sq.getQty());
                 BillItem bItem = new BillItem();
-                bItem.setBill(getIssuedBill());
-                bItem.setSearialNo(getIssuedBill().getBillItems().size() + 1);
+                bItem.setSearialNo(serialNo++);
                 bItem.setItem(i.getBillItem().getItem());
                 bItem.setReferanceBillItem(i.getBillItem());
-                bItem.setQty(sq.getQty());
+                bItem.setTmpQty(sq.getQty());
                 System.err.println("Bill Item QTY " + bItem.getQty());
-
-                getBillItemFacade().create(bItem);
 
                 bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
                 //     System.err.println("List "+bItem.getTmpSuggession());
@@ -184,18 +175,14 @@ public class TransferIssueController implements Serializable {
                 phItem.setStock(sq.getStock());
                 phItem.setDoe(sq.getStock().getItemBatch().getDateOfExpire());
                 phItem.setItemBatch(sq.getStock().getItemBatch());
-                getPharmaceuticalBillItemFacade().create(phItem);
-
                 bItem.setPharmaceuticalBillItem(phItem);
-                getBillItemFacade().edit(bItem);
 
-                getIssuedBill().getBillItems().add(bItem);
+                getBillItems().add(bItem);
 
             }
 
         }
 
-        getBillFacade().edit(getIssuedBill());
     }
 
     public void settle() {
@@ -204,21 +191,27 @@ public class TransferIssueController implements Serializable {
             return;
         }
 
-        for (BillItem i : getIssuedBill().getBillItems()) {
+        saveBill();
+
+        for (BillItem i : getBillItems()) {
 
             i.getPharmaceuticalBillItem().setQtyInUnit(0 - i.getPharmaceuticalBillItem().getQtyInUnit());
 
             if (i.getQty() == 0.0 || i.getItem() instanceof Vmpp || i.getItem() instanceof Vmp) {
-                i.setBill(null);
-                ///getPharmaceuticalBillItemFacade().remove(i.getPharmaceuticalBillItem());
-//                getIssuedBill().getBillItems().remove(i);
-                getBillItemFacade().edit(i);
                 continue;
             }
 
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
             i.setPharmaceuticalBillItem(i.getPharmaceuticalBillItem());
+
+            PharmaceuticalBillItem tmpPh = i.getPharmaceuticalBillItem();
+            i.setPharmaceuticalBillItem(null);
+            getBillItemFacade().create(i);
+            
+            getPharmaceuticalBillItemFacade().create(tmpPh);
+            
+            i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
 
             //Remove Department Stock
@@ -226,7 +219,7 @@ public class TransferIssueController implements Serializable {
                     Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             //Addinng Staff
-            Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem().getStock().getItemBatch(),
+            Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(),
                     Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), getIssuedBill().getToStaff());
 
             i.getPharmaceuticalBillItem().setStaffStock(staffStock);
@@ -298,8 +291,7 @@ public class TransferIssueController implements Serializable {
         getPharmacyController().setPharmacyItem(tmp.getItem());
     }
 
-    public void saveBill() {
-        getIssuedBill().setBillType(BillType.PharmacyTransferIssue);
+    private void saveBill() {
         getIssuedBill().setReferenceBill(getRequestedBill());
         getIssuedBill().setToInstitution(getRequestedBill().getInstitution());
         getIssuedBill().setToDepartment(getRequestedBill().getDepartment());
@@ -307,16 +299,10 @@ public class TransferIssueController implements Serializable {
         getBillFacade().create(getIssuedBill());
     }
 
-    public void create() {
-        saveBill();
-        saveBillComponent();
-
-        //Update Requested Bill Reference   
-    }
-
     public Bill getIssuedBill() {
         if (issuedBill == null) {
             issuedBill = new BilledBill();
+            issuedBill.setBillType(BillType.PharmacyTransferIssue);
         }
         return issuedBill;
     }
@@ -425,6 +411,18 @@ public class TransferIssueController implements Serializable {
 
     public void setPharmacyRecieveBean(PharmacyCalculation pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
+    }
+
+    public List<BillItem> getBillItems() {
+        if (billItems == null) {
+            serialNo = 1;
+            billItems = new ArrayList<>();
+        }
+        return billItems;
+    }
+
+    public void setBillItems(List<BillItem> billItems) {
+        this.billItems = billItems;
     }
 
 }

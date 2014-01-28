@@ -11,7 +11,7 @@ import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -72,7 +72,7 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private CommonFunctions commonFunctions;
     @EJB
-    private PharmacyRecieveBean pharmacyRecieveBean;
+    private PharmacyCalculation pharmacyRecieveBean;
 
     public void onFocus(BillItem tmp) {
         getPharmacyController().setPharmacyItem(tmp.getItem());
@@ -429,11 +429,11 @@ public class TransferReceiveController implements Serializable {
         this.stockFacade = stockFacade;
     }
 
-    public PharmacyRecieveBean getPharmacyRecieveBean() {
+    public PharmacyCalculation getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }
 
-    public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
+    public void setPharmacyRecieveBean(PharmacyCalculation pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 

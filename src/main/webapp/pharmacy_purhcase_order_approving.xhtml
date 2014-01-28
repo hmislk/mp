@@ -48,7 +48,7 @@
 
                         <p:column headerText="Purchse Price" style="width:25px!important;" >  
                             <h:panelGroup id="price">
-                                <p:inputText value="#{bi.getPharmaceuticalBillItem.purchaseRate}">   
+                                <p:inputText value="#{bi.pharmaceuticalBillItem.purchaseRate}">   
                                     <f:convertNumber pattern="#00.00"/>
                                     <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this qty" listener="#{purchaseOrderController.onEdit(bi)}" ></f:ajax>
                                     <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
@@ -59,7 +59,7 @@
 
                         <p:column headerText="Last Sale Price" style="width:25px!important;text-align: right;">  
                             <h:panelGroup >
-                                <h:outputText value="#{bi.getPharmaceuticalBillItem.retailRate}">
+                                <h:outputText value="#{bi.pharmaceuticalBillItem.retailRate}">
                                     <f:convertNumber pattern="#00.00"/>
                                 </h:outputText>
                             </h:panelGroup>
@@ -67,7 +67,7 @@
 
                         <p:column headerText="Total" style="width:25px!important;text-align: right;">  
                             <h:panelGroup id="total">
-                                <h:outputText value="#{bi.getPharmaceuticalBillItem.purchaseRate*bi.getPharmaceuticalBillItem.qty}" >
+                                <h:outputText value="#{bi.pharmaceuticalBillItem.purchaseRate*bi.pharmaceuticalBillItem.qty}" >
                                     <f:convertNumber pattern="#,000.00"/>
                                 </h:outputText>
                             </h:panelGroup>

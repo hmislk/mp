@@ -11,7 +11,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.PharmacyItemData;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -94,12 +94,12 @@ public class SaleReturnController implements Serializable {
     }
 
     @EJB
-    private PharmacyRecieveBean pharmacyRecieveBean;
+    private PharmacyCalculation pharmacyRecieveBean;
 
     public void onEdit(PharmacyItemData tmp) {
         //    PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
 
-        if (tmp.getBillItem().getQty() > getPharmacyBean().calQty2(tmp.getBillItem().getReferanceBillItem())) {
+        if (tmp.getBillItem().getQty() > getPharmacyRecieveBean().calQty2(tmp.getBillItem().getReferanceBillItem())) {
             tmp.getBillItem().setQty(0.0);
             UtilityController.addErrorMessage("You cant return over than ballanced Qty ");
         }
@@ -312,7 +312,7 @@ public class SaleReturnController implements Serializable {
                 pid.setPoBillItem(i.getBillItem().getReferanceBillItem());
 
                 //tmp.setQty(getPharmacyRecieveBean().calQty(pid.getPoBillItem().getPharmaceuticalBillItem()));
-                double rFund = getPharmacyBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre, new RefundBill());
+                double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre, new RefundBill());
                 //  double rCacnelled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacySale, new CancelledBill());
 
                 System.err.println("Refund " + rFund);
@@ -406,11 +406,11 @@ public class SaleReturnController implements Serializable {
         this.billItemFacade = billItemFacade;
     }
 
-    public PharmacyRecieveBean getPharmacyRecieveBean() {
+    public PharmacyCalculation getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }
 
-    public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
+    public void setPharmacyRecieveBean(PharmacyCalculation pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 

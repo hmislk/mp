@@ -10,7 +10,7 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -58,7 +58,7 @@ public class TransferRequestController implements Serializable {
     //   private boolean printPreview;
     //   private double netTotal;
     @EJB
-    private PharmacyRecieveBean pharmacyBillBean;
+    private PharmacyCalculation pharmacyBillBean;
 
     public void recreate() {
         bill = null;
@@ -257,11 +257,11 @@ public class TransferRequestController implements Serializable {
         this.itemsDistributorsFacade = itemsDistributorsFacade;
     }
 
-    public PharmacyRecieveBean getPharmacyBillBean() {
+    public PharmacyCalculation getPharmacyBillBean() {
         return pharmacyBillBean;
     }
 
-    public void setPharmacyBillBean(PharmacyRecieveBean pharmacyBillBean) {
+    public void setPharmacyBillBean(PharmacyCalculation pharmacyBillBean) {
         this.pharmacyBillBean = pharmacyBillBean;
     }
 

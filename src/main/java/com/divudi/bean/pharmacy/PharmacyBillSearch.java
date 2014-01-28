@@ -706,26 +706,7 @@ public class PharmacyBillSearch implements Serializable {
         return cb;
     }
 
-    private CancelledBill pharmacyCreateCancelBill2() {
-        CancelledBill cb = new CancelledBill();
-
-        cb.setBilledBill(getBill());
-        cb.copy(getBill());
-        cb.setReferenceBill(getBill());
-        cb.invertValue(getBill());
-
-        cb.setPaymentScheme(getBill().getPaymentScheme());
-        cb.setBalance(0.0);
-        cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        cb.setCreater(getSessionController().getLoggedUser());
-
-        cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
-        cb.setInstitution(getSessionController().getInstitution());
-
-        cb.setComments(getBill().getComments());
-
-        return cb;
-    }
+  
 
     private RefundBill pharmacyCreateRefundCancelBill() {
         RefundBill cb = new RefundBill();

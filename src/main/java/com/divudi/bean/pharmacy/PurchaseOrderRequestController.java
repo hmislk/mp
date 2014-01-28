@@ -11,7 +11,7 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -62,7 +62,7 @@ public class PurchaseOrderRequestController implements Serializable {
     private List<BillItem> billItems;
     //private List<PharmaceuticalBillItem> pharmaceuticalBillItems;   
     @EJB
-    PharmacyRecieveBean pharmacyBillBean;
+    PharmacyCalculation pharmacyBillBean;
     private int serialNo;
 
     public void removeSelected() {
@@ -76,11 +76,11 @@ public class PurchaseOrderRequestController implements Serializable {
 
     }
 
-    public PharmacyRecieveBean getPharmacyBillBean() {
+    public PharmacyCalculation getPharmacyBillBean() {
         return pharmacyBillBean;
     }
 
-    public void setPharmacyBillBean(PharmacyRecieveBean pharmacyBillBean) {
+    public void setPharmacyBillBean(PharmacyCalculation pharmacyBillBean) {
         this.pharmacyBillBean = pharmacyBillBean;
     }
 

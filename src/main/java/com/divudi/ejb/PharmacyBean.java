@@ -303,16 +303,17 @@ public class PharmacyBean {
             s.setDepartment(department);
             s.setItemBatch(pharmaceuticalBillItem.getItemBatch());
         }
-        s.setStock(s.getStock() + qty);
-//        System.err.println("Stock 1 : " + s.getStock());
-//        System.err.println("Stock 2 : " + qty);
-//        System.err.println("Stock 3 : " + s);
-//        System.err.println("Stock 4 : " + s.getId());
-        if (s.getId() == null || s.getId() == 0) {
-            //  Stock ss = new Stock();
+
+        if (s.getId() == null || s.getId() == 0) {     
+             System.err.println("Initial Stock Before Updation" + s.getStock());
+            s.setStock(s.getStock() + qty);
+            System.err.println("Initial Stock After Updation" + s.getStock());
             getStockFacade().create(s);
         } else {
-            addToStockHistory(pharmaceuticalBillItem,s, department);
+            addToStockHistory(pharmaceuticalBillItem, s, department);
+            System.err.println("Before Stock Updation " + s.getStock());
+            s.setStock(s.getStock() + qty);
+            System.err.println("After Stock Updation " + s.getStock());
             getStockFacade().edit(s);
         }
         return s;
@@ -466,7 +467,7 @@ public class PharmacyBean {
             return false;
         }
 
-        addToStockHistory(pbi,stock, d);
+        addToStockHistory(pbi, stock, d);
 
         stock = getStockFacade().find(stock.getId());
 
@@ -487,7 +488,7 @@ public class PharmacyBean {
             return false;
         }
 
-     //   addToStockHistory(pbi, d);
+        //   addToStockHistory(pbi, d);
         stock = getStockFacade().find(stock.getId());
 
         System.err.println("Before Update " + stock.getStock());
@@ -545,8 +546,8 @@ public class PharmacyBean {
 
         phItem.setStockHistory(sh);
         getPharmaceuticalBillItemFacade().edit(phItem);
-        
-        System.err.println("Histry Saved "+sh.getStockQty());
+
+        System.err.println("Histry Saved " + sh.getStockQty());
 
     }
 
@@ -563,7 +564,7 @@ public class PharmacyBean {
             return false;
         }
 
-        addToStockHistory(pbi,stock, d);
+        addToStockHistory(pbi, stock, d);
 
         stock = getStockFacade().find(stock.getId());
 

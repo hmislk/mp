@@ -112,6 +112,7 @@ public class BillItem implements Serializable {
         Rate = billItem.getRate();
         netRate = billItem.getNetRate();
         searialNo = billItem.getSearialNo();
+        tmpQty = billItem.tmpQty;
         //  referanceBillItem=billItem.getReferanceBillItem();
     }
 

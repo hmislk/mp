@@ -8,20 +8,16 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
-import com.divudi.data.dataStructure.PharmacyItemData;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.LazyBill;
-import com.divudi.entity.RefundBill;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.ItemBatch;
@@ -40,7 +36,6 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,7 +46,6 @@ import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
-import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -83,7 +77,7 @@ public class GrnController implements Serializable {
     @EJB
     private AmpFacade ampFacade;
     @EJB
-    private PharmacyRecieveBean pharmacyBillBean;
+    private PharmacyCalculation pharmacyBillBean;
     @EJB
     private CommonFunctions commonFunctions;
     /////////////////
@@ -99,17 +93,13 @@ public class GrnController implements Serializable {
     private List<Bill> pos;
     List<Bill> grns;
     private List<Bill> filteredValue;
-    //   private List<BillItem> billItems;
+    private List<BillItem> billItems;
 
     public void removeItem(BillItem bi) {
-        getGrnBill().getBillItems().remove(bi);
-        getBillFacade().edit(getGrnBill());
-
-        bi.setBill(null);
-        getBillItemFacade().edit(bi);
+        getBillItems().remove(bi.getSearialNo());
 
         calGrossTotal();
-        //  getNetTotal();
+
     }
 
     public void clearList() {
@@ -154,7 +144,7 @@ public class GrnController implements Serializable {
     }
 
     public void settle() {
-        String msg = getPharmacyBillBean().errorCheck(getGrnBill());
+        String msg = getPharmacyBillBean().errorCheck(getGrnBill(), billItems);
         if (!msg.isEmpty()) {
             UtilityController.addErrorMessage(msg);
             return;
@@ -164,14 +154,29 @@ public class GrnController implements Serializable {
             getGrnBill().setInvoiceDate(getApproveBill().getCreatedAt());
         }
 
-        for (BillItem i : getGrnBill().getBillItems()) {
+        saveBill();
+
+        for (BillItem i : getBillItems()) {
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
-                i.setRetired(true);
-                getBillItemFacade().edit(i);
                 continue;
             }
 
+            PharmaceuticalBillItem ph = i.getPharmaceuticalBillItem();
+            i.setPharmaceuticalBillItem(null);
+
+            i.setCreatedAt(new Date());
+            i.setCreater(getSessionController().getLoggedUser());
+            i.setBill(getGrnBill());
+            getBillItemFacade().create(i);
+
+            getPharmaceuticalBillItemFacade().create(ph);
+            
+            i.setPharmaceuticalBillItem(ph);
+            getBillItemFacade().edit(i);
+            
+
             //     updatePoItemQty(i);
+            System.err.println("1 " + i);
             ItemBatch itemBatch = getPharmacyBillBean().saveItemBatch(i);
             // getPharmacyBillBean().preCalForAddToStock(i, itemBatch, getSessionController().getDepartment());
 
@@ -181,15 +186,12 @@ public class GrnController implements Serializable {
 
             Stock stock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(), Math.abs(addingQty), getSessionController().getDepartment());
 
-            getPharmacyBean().setPurchaseRate(itemBatch, getSessionController().getDepartment());
-            getPharmacyBean().setRetailRate(itemBatch, getSessionController().getDepartment());
             i.getPharmaceuticalBillItem().setStock(stock);
 
             getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
             getPharmacyBillBean().editBillItem(i.getPharmaceuticalBillItem(), getSessionController().getLoggedUser());
 
-            //For Printing
-            //   getGrnBill().getBillItems().add(i.getPharmaceuticalBillItem().getBillItem());
+            getGrnBill().getBillItems().add(i);
         }
 
         getGrnBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getGrnBill(), BillType.PharmacyGrnBill, BillNumberSuffix.GRN));
@@ -217,21 +219,6 @@ public class GrnController implements Serializable {
         return "pharmacy_purchase_order_list_for_recieve";
     }
 
-//    private void updatePoItemQty(PharmacyItemData i) {
-//        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.id=" + i.getPharmaceuticalBillItem().getBillItem().getReferanceBillItem().getId();
-//        PharmaceuticalBillItem po = getPharmaceuticalBillItemFacade().findFirstBySQL(sql);
-//        ///  ph.setRemainingQty(ph.get);
-//        double remainingQty = po.getRemainingQty();
-//        if (remainingQty > 0) {
-//            po.setRemainingQty(remainingQty - i.getPharmaceuticalBillItem().getQty());
-//        } else {
-//            po.setRemainingQty(po.getQty() - i.getPharmaceuticalBillItem().getQty());
-//        }
-//        System.err.println("PO QTY  : " + po.getQty());
-//        getPharmaceuticalBillItemFacade().edit(po);
-//        System.err.println("PO QTY 2 : " + po.getQty());
-//        System.err.println("Update QTY : " + po.getRemainingQty());
-//    }
     public GrnController() {
     }
 
@@ -367,20 +354,6 @@ public class GrnController implements Serializable {
         return getBillFacade().findBySQL(sql, hm);
     }
 
-//    public List<Bill> getGrns() {
-//        String sql = "Select b From Bill b where b.retired=false and b.createdAt between :frmDate and :toDate"
-//                + " and b.cancelled=false and b.billType=:btp ";
-//        HashMap hm = new HashMap();
-//         hm.put("ref", b);
-//        hm.put("frmDate", getFromDate());
-//        hm.put("toDate", getToDate());
-//        hm.put("btp", BillType.PharmacyGrnBill);
-//        
-//        
-//        
-//        return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-//    }
-//    
     public List<Bill> getGrns() {
         if (grns == null) {
             String sql;
@@ -424,8 +397,6 @@ public class GrnController implements Serializable {
     }
 
     public void saveBill() {
-        //     System.err.println("Save New Bill ");
-        getGrnBill().setBillType(BillType.PharmacyGrnBill);
         getGrnBill().setPaymentMethod(getApproveBill().getPaymentMethod());
         getGrnBill().setReferenceBill(getApproveBill());
         getGrnBill().setFromInstitution(getApproveBill().getToInstitution());
@@ -436,47 +407,11 @@ public class GrnController implements Serializable {
         getBillFacade().create(getGrnBill());
     }
 
-    private List<PharmaceuticalBillItem> getPharmaceuticalBillItem() {
-        String sql = "Select p from PharmaceuticalBillItem p where "
-                + " p.billItem.bill.id=" + getApproveBill().getId();
-        return getPharmaceuticalBillItemFacade().findBySQL(sql);
-    }
+    int serialNo;
 
-//    private double getGrnQty4Po(PharmaceuticalBillItem ph) {
-//        String sql = "Select sum(p.qty) from PharmaceuticalBillItem p where  type(p.billItem.bill)=:class and"
-//                + " p.billItem.referanceBillItem=:bt";
-//
-//        HashMap hm = new HashMap();
-//        hm.put("bt", ph.getBillItem());
-//        hm.put("class", BilledBill.class);
-//        double billed = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-//
-//        sql = "Select sum(p.qty) from PharmaceuticalBillItem p where  type(p.billItem.bill)=:class and"
-//                + " p.billItem.referanceBillItem=:bt";
-//
-//        hm = new HashMap();
-//        hm.put("bt", ph.getBillItem());
-//        hm.put("class", CancelledBill.class);
-//        double cancelled = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-//
-//        sql = "Select sum(p.qty) from PharmaceuticalBillItem p where  type(p.billItem.bill)=:class and"
-//                + " p.billItem.referanceBillItem=:bt";
-//
-//        hm = new HashMap();
-//        hm.put("bt", ph.getBillItem());
-//        hm.put("class", RefundBill.class);
-//        double returned = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
-//        
-//        System.err.println("BILLED "+billed);
-//        System.err.println("Cancelled "+cancelled);
-//        System.err.println("Refunded "+returned);
-//
-//        return billed - (cancelled + returned);
-//    }
-    public void saveBillComponent() {
-        // System.err.println("Saving Bill Component ");
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItem();
-        for (PharmaceuticalBillItem i : tmp) {
+    public void generateBillComponent() {
+
+        for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getApproveBill())) {
             System.err.println("Qty Unit : " + i.getQtyInUnit());
 //            System.err.println("Remaining Qty : " + i.getRemainingQty());
             double remains = getPharmacyBillBean().calQtyInTwoSql(i);
@@ -484,12 +419,11 @@ public class GrnController implements Serializable {
             System.err.println("QTY : " + i.getQtyInUnit());
             if (i.getQtyInUnit() >= remains && (i.getQtyInUnit() - remains) != 0) {
                 BillItem bi = new BillItem();
-                bi.setBill(getGrnBill());
+                bi.setSearialNo(serialNo++);
                 bi.setItem(i.getBillItem().getItem());
                 bi.setReferanceBillItem(i.getBillItem());
                 bi.setQty(i.getQtyInUnit() - remains);
-                getBillItemFacade().create(bi);
-
+                bi.setTmpQty(i.getQtyInUnit() - remains);
                 //Set Suggession
                 bi.setTmpSuggession(getSuggession(bi.getItem()));
 
@@ -500,69 +434,19 @@ public class GrnController implements Serializable {
                 ph.setRetailRate(i.getRetailRate());
                 ph.setLastPurchaseRate(getPharmacyBean().getLastPurchaseRate(bi.getItem(), getSessionController().getDepartment()));
 
-                getPharmaceuticalBillItemFacade().create(ph);
-
                 bi.setPharmaceuticalBillItem(ph);
-                getBillItemFacade().edit(bi);
 
-                getGrnBill().getBillItems().add(bi);
+                getBillItems().add(bi);
             }
 
-            getBillFacade().edit(getGrnBill());
         }
     }
 
     public void createGrn() {
-//        String sql = "Select b From BilledBill b where b.creater is null and  b.retired=false and b.billType= :bTp "
-//                + " and b.referenceBill.id=" + getApproveBill().getId();
-//        HashMap tmp = new HashMap();
-//        tmp.put("bTp", BillType.PharmacyGrnBill);
-//        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-//
-//        if (!bil.isEmpty()) {
-//            setGrnBill(bil.get(0));
-//
-//        } else {
-        saveBill();
-        saveBillComponent();
-//        }
+        getGrnBill().setPaymentMethod(getApproveBill().getPaymentMethod());
+        getGrnBill().setFromInstitution(getApproveBill().getToInstitution());
+        generateBillComponent();
         calGrossTotal();
-
-    }
-
-    public void findLastEdited() {
-        String sql = "Select b From BilledBill b where b.creater is null and  b.retired=false and b.billType= :bTp "
-                + " and b.referenceBill.id=" + getApproveBill().getId();
-        HashMap tmp = new HashMap();
-        tmp.put("bTp", BillType.PharmacyGrnBill);
-        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        if (!bil.isEmpty()) {
-            setGrnBill(bil.get(0));
-        }
-
-    }
-
-    public void clear() {
-        String sql = "Select b From BilledBill b where b.creater is null and  b.retired=false and b.billType= :bTp "
-                + " and b.referenceBill.id=" + getApproveBill().getId();
-        HashMap tmp = new HashMap();
-        tmp.put("bTp", BillType.PharmacyGrnBill);
-        Bill bil = getBillFacade().findFirstBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        if (bil != null) {
-            for (BillItem bi : bil.getBillItems()) {
-                bi.setRetired(true);
-                getBillItemFacade().edit(bi);
-            }
-
-            bil.setRetired(true);
-            getBillFacade().edit(bil);
-        }
-        grnBill = null;
-//        pharmacyItems = null;
-        saveBill();
-        saveBillComponent();
     }
 
     private double getRetailPrice(BillItem billItem) {
@@ -587,7 +471,7 @@ public class GrnController implements Serializable {
 
         double remains = getPharmacyBillBean().getRemainingQty(tmp.getPharmaceuticalBillItem());
         if (remains < tmp.getPharmaceuticalBillItem().getQtyInUnit()) {
-            tmp.getPharmaceuticalBillItem().setQtyInUnit(remains);
+            tmp.setTmpQty(remains);
             UtilityController.addErrorMessage("You cant Change Qty than Remaining qty");
         }
 
@@ -603,9 +487,6 @@ public class GrnController implements Serializable {
                 //    return;
             }
         }
-
-        getBillItemFacade().edit(tmp);
-        getPharmaceuticalBillItemFacade().edit(tmp.getPharmaceuticalBillItem());
 
         calGrossTotal();
     }
@@ -635,21 +516,19 @@ public class GrnController implements Serializable {
     }
 
     private void calGrossTotal() {
-        grossTotal = 0.0;
+        double tmp = 0.0;
 
-        for (BillItem p : getGrnBill().getBillItems()) {
-            grossTotal += p.getPharmaceuticalBillItem().getPurchaseRate() * p.getPharmaceuticalBillItem().getQty();
+        for (BillItem p : getBillItems()) {
+            tmp += p.getPharmaceuticalBillItem().getPurchaseRate() * p.getPharmaceuticalBillItem().getQty();
         }
 
-        getGrnBill().setTotal(0 - grossTotal);
+        getGrnBill().setTotal(0 - tmp);
 
     }
 
-    private double grossTotal;
-
     public double getNetTotal() {
 
-        double tmp = getGrossTotal() + getGrnBill().getTax() - getGrnBill().getDiscount();
+        double tmp = getGrnBill().getTotal() + getGrnBill().getTax() - getGrnBill().getDiscount();
         getGrnBill().setNetTotal(0 - tmp);
 
         return tmp;
@@ -658,20 +537,17 @@ public class GrnController implements Serializable {
     public void setApproveBill(Bill approveBill) {
         this.approveBill = approveBill;
         grnBill = null;
-        //   pharmacyItems = null;
-        //    cashPaid = 0.0;
         dealor = null;
         pos = null;
         printPreview = false;
-        grossTotal = 0;
-//        billItems = null;
-        //    System.err.println("Setting Approve Bill " + getPharmaceuticalBillItem().size());
+        billItems = null;
         createGrn();
     }
 
     public Bill getGrnBill() {
         if (grnBill == null) {
             grnBill = new BilledBill();
+            grnBill.setBillType(BillType.PharmacyGrnBill);
         }
         return grnBill;
     }
@@ -752,11 +628,11 @@ public class GrnController implements Serializable {
         this.ampFacade = ampFacade;
     }
 
-    public PharmacyRecieveBean getPharmacyBillBean() {
+    public PharmacyCalculation getPharmacyBillBean() {
         return pharmacyBillBean;
     }
 
-    public void setPharmacyBillBean(PharmacyRecieveBean pharmacyBillBean) {
+    public void setPharmacyBillBean(PharmacyCalculation pharmacyBillBean) {
         this.pharmacyBillBean = pharmacyBillBean;
     }
 
@@ -826,11 +702,15 @@ public class GrnController implements Serializable {
         this.txtSearch = txtSearch;
     }
 
-    public double getGrossTotal() {
-        return grossTotal;
+    public List<BillItem> getBillItems() {
+        if (billItems == null) {
+            billItems = new ArrayList<>();
+            serialNo = 1;
+        }
+        return billItems;
     }
 
-    public void setGrossTotal(double grossTotal) {
-        this.grossTotal = grossTotal;
+    public void setBillItems(List<BillItem> billItems) {
+        this.billItems = billItems;
     }
 }

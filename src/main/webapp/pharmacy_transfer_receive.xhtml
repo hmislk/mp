@@ -15,7 +15,7 @@
 
                     <f:facet name="header" >                                  
                         <h:panelGrid columns="4"  >                        
-                            <p:outputLabel value="Staff :#{transferReceiveController.receivedBill.fromStaff.person.nameWithTitle}" />
+                            <p:outputLabel value="Staff :#{transferReceiveController.issuedBill.toStaff.person.nameWithTitle}" />
 
                             <p:commandButton  value="Recieve" action="#{transferReceiveController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>

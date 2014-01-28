@@ -166,7 +166,7 @@ public class TransferReceiveController implements Serializable {
             BillItem bItem = new BillItem();
             bItem.setReferanceBillItem(i.getBillItem());
             bItem.copy(i.getBillItem());
-            bItem.setQty(i.getQtyInUnit());
+            bItem.setTmpQty(i.getQtyInUnit());
             bItem.setSearialNo(serialNo++);
 
             bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
@@ -189,45 +189,15 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private StockFacade stockFacade;
 
-//    public Stock addToStock(ItemBatch batch, double qty, Department department) {
-//        System.err.println("Adding Stock : ");
-//
-//        String sql;
-//        HashMap hm = new HashMap();
-//        sql = "Select s from Stock s where s.itemBatch=:bch and s.department=:dep";
-//        hm.put("bch", batch);
-//        hm.put("dep", department);
-//        Stock s = getStockFacade().findFirstBySQL(sql, hm);
-//        System.err.println("ss" + s);
-//        if (s == null) {
-//            s = new Stock();
-//            s.setDepartment(department);
-//            s.setItemBatch(batch);
-//        }
-//        s.setStock(s.getStock() + qty);
-//        System.err.println("Stock 1 : " + s.getStock());
-//        System.err.println("Stock 2 : " + qty);
-//        System.err.println("Stock 3 : " + s);
-//        System.err.println("Stock 4 : " + s.getId());
-//        if (s.getId() == null || s.getId() == 0) {
-//            //  Stock ss = new Stock();
-//            getStockFacade().create(s);
-//        } else {
-//            getStockFacade().edit(s);
-//        }
-//        return s;
-//    }
     public void settle() {
 
         saveBill();
 
-        for (BillItem i : getReceivedBill().getBillItems()) {
+        for (BillItem i : getBillItems()) {
 
             i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
 
             if (i.getPharmaceuticalBillItem().getQtyInUnit() == 0.0 || i.getItem() instanceof Vmpp || i.getItem() instanceof Vmp) {
-                getPharmaceuticalBillItemFacade().remove(i.getPharmaceuticalBillItem());
-                getBillItemFacade().remove(i);
                 continue;
             }
 
@@ -243,24 +213,20 @@ public class TransferReceiveController implements Serializable {
             getPharmaceuticalBillItemFacade().create(tmpPh);
             i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
-
-            Stock staffStock = i.getPharmaceuticalBillItem().getStaffStock();
+        
+            tmpPh.setItemBatch(tmpPh.getStaffStock().getItemBatch());
+          
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
+            
             //Deduct Staff Stock
+            getPharmacyBean().deductFromStock(tmpPh, Math.abs(qty), getIssuedBill().getToStaff());
+            
+            //Add Stock To Department
+            Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
 
-            getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem(), Math.abs(qty), getIssuedBill().getToStaff());
+            tmpPh.setStock(addedStock);         
 
-            //Add To Stock
-//            System.err.println("Stock " + stock);
-//            System.err.println("item Batch " + stock.getItemBatch());
-            i.getPharmaceuticalBillItem().setItemBatch(staffStock.getItemBatch());
-
-            Stock addedStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(), Math.abs(qty), getSessionController().getDepartment());
-
-            i.getPharmaceuticalBillItem().setStock(addedStock);
-            i.getPharmaceuticalBillItem().setStaffStock(staffStock);
-
-            getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
+            getPharmaceuticalBillItemFacade().edit(tmpPh);
 
             getReceivedBill().getBillItems().add(i);
         }
@@ -291,7 +257,7 @@ public class TransferReceiveController implements Serializable {
 
     private double calTotal() {
         double value = 0;
-        for (BillItem b : getReceivedBill().getBillItems()) {
+        for (BillItem b : getBillItems()) {
             value += (b.getPharmaceuticalBillItem().getPurchaseRate() * b.getPharmaceuticalBillItem().getQty());
 
         }

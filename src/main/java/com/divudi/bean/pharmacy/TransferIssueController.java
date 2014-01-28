@@ -201,6 +201,7 @@ public class TransferIssueController implements Serializable {
                 continue;
             }
 
+            i.setBill(getIssuedBill());
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
             i.setPharmaceuticalBillItem(i.getPharmaceuticalBillItem());
@@ -225,6 +226,8 @@ public class TransferIssueController implements Serializable {
             i.getPharmaceuticalBillItem().setStaffStock(staffStock);
 
             getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
+            
+            getIssuedBill().getBillItems().add(i);
         }
 
         getIssuedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getIssuedBill(), BillType.PharmacyTransferIssue, BillNumberSuffix.PHTI));

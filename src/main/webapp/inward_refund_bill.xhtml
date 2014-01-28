@@ -7,7 +7,6 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui">
 
-
     <ui:define name="content">
 
         <h:panelGroup >
@@ -15,7 +14,9 @@
                 <p:panel >
                     <f:facet name="header">
                         <p:outputLabel value="Inward Refund Payment"/>
-                        <p:commandButton ajax="false" value="Refund" action="#{inwardRefundController.pay}"/>
+                        <p:commandButton id="btnRefund" ajax="false" value="Refund" action="#{inwardRefundController.pay}"/>
+                        <p:defaultCommand target="btnRefund"/>
+                                       
                         <p:commandButton ajax="false" value="Clear" action="#{inwardRefundController.makeNull}"/>
                     </f:facet>
                     <p:panel header="BHT">

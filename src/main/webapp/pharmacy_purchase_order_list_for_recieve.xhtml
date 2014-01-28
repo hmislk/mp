@@ -48,13 +48,13 @@
                 </p:column>              
                 <p:column headerText="Distributor" filterBy="#{p.toInstitution.name}" filterMatchMode="contains">
                     <h:commandLink action="pharmacy_reprint_po" >
-                        #{p.toInstitution.name}
+                        <h:outputLabel  value="#{p.toInstitution.name}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>
                 <p:column headerText="Po Number"  filterBy="#{p.deptId}" filterMatchMode="contains">                   
                     <h:commandLink action="pharmacy_reprint_po"  >    
-                        #{p.deptId}
+                        <h:outputLabel  value="#{p.deptId}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>              
@@ -72,7 +72,7 @@
                     <p:dataTable var="b" value="#{p.listOfBill}">
                         <p:column  >
                             <h:commandLink action="pharmacy_reprint_grn"  >                                
-                                #{b.deptId}
+                                <h:outputLabel  value="#{b.deptId}"/>
                                 <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>
@@ -86,7 +86,7 @@
                         </p:column>
                         <p:column >
                             <h:commandLink action="pharmacy_reprint_grn"  >   
-                                #{b.invoiceNumber}
+                                <h:outputLabel  value="#{b.invoiceNumber}"/>
                                 <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>

@@ -18,31 +18,32 @@
                 <h:outputLabel value="To Date"/>
                 <p:calendar id="toDate" value="#{transferReceiveController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm"  >
                 </p:calendar>
-                <p:commandButton ajax="false" value="Refresh" />
+                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" />
+                <p:defaultCommand target="btnRefresh"/>
             </p:panelGrid>
 
             <p:dataTable value="#{transferReceiveController.issued}" var="p">                       
                 <p:column headerText="Issue No">
                     <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        #{p.deptId}
+                        <h:outputLabel value="#{p.deptId}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>
                 <p:column headerText="From Department">
                     <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        #{p.fromDepartment.name}
+                        <h:outputLabel value="#{p.fromDepartment.name}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>      
                 <p:column headerText="Staff">
                     <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        #{p.toStaff.person.nameWithTitle}
+                        <h:outputLabel value="#{p.toStaff.person.nameWithTitle}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column> 
                 <p:column headerText="Issued At">
                     <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        #{p.createdAt}
+                        <h:outputLabel value="#{p.createdAt}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
                     </h:commandLink>
                 </p:column>

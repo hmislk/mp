@@ -23,7 +23,8 @@
                                 <p:inputText id="txtSearch" value="#{billSearch.txtSearch}"  style="width:500px;">
                                     
                                 </p:inputText>
-                                <p:commandButton ajax="false" value="Search" action="#{billSearch.createPharmacyTable()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createPharmacyTable()}"/>
+                                <p:defaultCommand target="btnSearch"/>
 
                             </h:panelGrid>
                             <p:watermark value="Bill Id ,NetTotal,Paymentscheme,Paymentmethod,Patient Name or Phone Number" for="txtSearch" />

@@ -19,14 +19,22 @@
                                 <h:outputLabel value="Department :" />
                                 <p:autoComplete value="#{inwardPriceAdjustmntController.department}" completeMethod="#{departmentController.completeDept}" 
                                                 var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
-                                    <p:column>#{dep.name}</p:column>
-                                    <p:column>#{dep.institution.name}</p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{dep.name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{dep.institution.name}"/>
+                                    </p:column>
                                 </p:autoComplete>
                                 <h:outputLabel value="Category/Subcategory" ></h:outputLabel>
                                 <p:autoComplete value="#{inwardPriceAdjustmntController.category}" completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
-                                    <p:column>#{cat.name}</p:column>
-                                    <p:column>#{cat.parentCategory}</p:column> 
+                                    <p:column>
+                                        <h:outputLabel value="#{cat.name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{cat.parentCategory}"/>
+                                    </p:column> 
 
                                 </p:autoComplete>
                

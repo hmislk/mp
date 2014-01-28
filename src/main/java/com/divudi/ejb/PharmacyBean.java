@@ -354,31 +354,37 @@ public class PharmacyBean {
     }
 
     public boolean deductFromStock(PharmaceuticalBillItem pharmaceuticalBillItem, double qty, Staff staff) {
+        System.err.println("Diduct From Staff ");
         String sql;
         HashMap hm = new HashMap();
         sql = "Select s from Stock s where s.itemBatch=:batch "
                 + "and s.staff=:stf";
+        System.err.println("1 "+pharmaceuticalBillItem);
+        System.err.println("2 "+pharmaceuticalBillItem.getItemBatch());
+        System.err.println("3 "+staff);
         hm.put("batch", pharmaceuticalBillItem.getItemBatch());
         hm.put("stf", staff);
         Stock s = getStockFacade().findFirstBySQL(sql, hm);
+        System.err.println("4");
         if (s == null) {
             s = new Stock();
             s.setStaff(staff);
             s.setItemBatch(pharmaceuticalBillItem.getItemBatch());
         }
-        if (s.getStock() < qty) {
-            return false;
-        }
-        s.setStock(s.getStock() - qty);
+        System.err.println("5");
+//        if (s.getStock() < qty) {
+//            return false;
+//        }
+
         if (s.getId() == null || s.getId() == 0) {
             System.err.println("Initial Stock Before Updation" + s.getStock());
-            s.setStock(s.getStock() + qty);
+            s.setStock(s.getStock() - qty);
             System.err.println("Initial Stock After Updation" + s.getStock());
             getStockFacade().create(s);
         } else {
             addToStockHistory(pharmaceuticalBillItem, s, staff);
             System.err.println("Before Stock Updation " + s.getStock());
-            s.setStock(s.getStock() + qty);
+            s.setStock(s.getStock() - qty);
             System.err.println("After Stock Updation " + s.getStock());
             getStockFacade().edit(s);
         }
@@ -514,7 +520,6 @@ public class PharmacyBean {
 //
 //        return true;
 //    }
-
     public void addToStockHistory(PharmaceuticalBillItem phItem, Stock stock, Department d) {
         if (phItem == null) {
             return;
@@ -669,7 +674,6 @@ public class PharmacyBean {
 //        }
 //        return dl;
 //    }
-
 //    public double getRetailRate(Item item, Department department) {
 //
 //        System.out.println("getting Retail rate");

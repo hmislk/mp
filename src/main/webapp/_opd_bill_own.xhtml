@@ -148,10 +148,10 @@
                                         <p:focus  context="acIx"/>
                                         <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{billController.currentBillItem.item}" completeMethod="#{itemController.completeItemWithoutPackOwn}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                             <p:column>
-                                                #{ix.name}
+                                                <h:outputLabel value="#{ix.name}"/>
                                             </p:column>
                                             <p:column>
-                                                #{ix.total}
+                                                <h:outputLabel value="#{ix.total}"/>
                                             </p:column>
 
                                         </p:autoComplete>
@@ -231,19 +231,19 @@
 
                                                 <p:column>
                                                     <f:facet name="header">No</f:facet>
-                                                        #{rowIndex+1}
+                                                        <h:outputLabel value="#{rowIndex+1}"/>
                                                 </p:column>
                                                 <p:column>
                                                     <f:facet name="header">Item</f:facet>
-                                                        #{bi.billItem.item.name}
+                                                        <h:outputLabel value="#{bi.billItem.item.name}"/>
                                                 </p:column>
                                                 <p:column>
                                                     <f:facet name="header">Fee</f:facet>
-                                                        #{bi.billItem.netValue}
+                                                        <h:outputLabel value="#{bi.billItem.netValue}"/>
                                                 </p:column>
                                                 <p:column>
                                                     <f:facet name="header">Department</f:facet>
-                                                        #{bi.billItem.item.department.name}
+                                                        <h:outputLabel value="#{bi.billItem.item.department.name}"/>
                                                 </p:column>
 
                                                 <p:column>
@@ -258,11 +258,11 @@
                                             <p:dataTable rowIndexVar="rowIndex" value="#{billController.lstBillComponents}" var="bix" >
                                                 <p:column>
                                                     <f:facet name="header">No</f:facet>
-                                                        #{rowIndex+1}
+                                                        <h:outputLabel value="#{rowIndex+1}"/>
                                                 </p:column>
                                                 <p:column>
                                                     <f:facet name="header">Name</f:facet>
-                                                        #{bix.item.name}
+                                                        <h:outputLabel value="#{bix.item.name}"/>
                                                 </p:column>
 
                                             </p:dataTable>
@@ -271,7 +271,7 @@
                                             <p:dataTable rowIndexVar="rowIndex" value="#{billController.lstBillFees}" var="bif" >
                                                 <p:column>
                                                     <f:facet name="header">No</f:facet>
-                                                        #{rowIndex+1}
+                                                        <h:outputLabel value="#{rowIndex+1}"/>
                                                 </p:column>
                                                 <p:column>
                                                     <f:facet name="header">Fee</f:facet>

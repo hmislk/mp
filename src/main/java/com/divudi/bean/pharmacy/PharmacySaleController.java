@@ -359,6 +359,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void reAddToStock() {
+        
         String msg = getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
         if (msg.trim() == "") {
         } else {

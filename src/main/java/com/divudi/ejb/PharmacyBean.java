@@ -87,6 +87,9 @@ public class PharmacyBean {
     StockHistoryFacade stockHistoryFacade;
 
     public String reAddToStock(Bill bill, WebUser user, Department department) {
+        if(bill.getTransActiveBillItem().size()==0){
+            return "There is no item to Re Add";
+        }
 
         if (bill.getDepartment().getId() != department.getId()) {
             return "Sorry You cant add Another Department Stock";

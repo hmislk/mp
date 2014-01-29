@@ -50,10 +50,10 @@
 
                         <p:autoComplete  styleClass="noPrintButton" id="acNewPtArea" converter="webUs" completeMethod="#{webUserController.completeUser}"  var="pta"   itemLabel="#{pta.webUserPerson.name}" itemValue="#{pta}" forceSelection="true" value="#{commonReport.webUser}" >
                             <p:column >
-                                #{pta.code}
+                                <h:outputLabel value="#{pta.code}"/>
                             </p:column>
                             <p:column >
-                                #{pta.webUserPerson.name}
+                                <h:outputLabel value="#{pta.webUserPerson.name}"/>
                             </p:column>
                         </p:autoComplete>
 
@@ -66,7 +66,7 @@
                     <p:dataTable rowStyleClass="noDisplayRow" id="report" value="#{commonReport.userBills.bills}" var="bb"  sortBy="#{bb.billType}" style=" text-align: right;" >
 
                         <p:column headerText="Lab Bill" style=" " >
-                            Total:
+                            <h:outputLabel value="Total:"/>
                         </p:column>
                         <p:column headerText="Cash" style="text-align: right; ">
                             <h:outputLabel value="#{commonReport.userBills.cash}">
@@ -97,7 +97,7 @@
 
                         <p:summaryRow  >
                             <p:column headerText="" >
-                                Total:
+                                <h:outputLabel value="Total:"/>
                             </p:column>
                             <p:column headerText="Cash" style="text-align: right; ">
                                 <h:outputLabel value="#{commonReport.userBills.cash}">

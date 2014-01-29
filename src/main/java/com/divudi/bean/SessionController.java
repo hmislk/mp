@@ -7,6 +7,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.bean.pharmacy.PharmacySaleController;
 import com.divudi.data.Privileges;
 import com.divudi.ejb.ApplicationEjb;
 import com.divudi.ejb.WebUserBean;
@@ -374,6 +375,9 @@ public class SessionController implements Serializable, HttpSessionListener {
     public void setApplicationController(ApplicationController applicationController) {
         this.applicationController = applicationController;
     }
+    
+    @Inject
+    private PharmacySaleController pharmacySaleController;
 
     public void logout() {
         userPrivilages = null;
@@ -382,8 +386,11 @@ public class SessionController implements Serializable, HttpSessionListener {
         getWebUserBean().setLoggedUser(null);
         setLogged(false);
         setActivated(false);
+        getPharmacySaleController().makeNull();
 
     }
+    
+    
 
     public WebUser getCurrent() {
         if (current == null) {
@@ -697,5 +704,13 @@ public class SessionController implements Serializable, HttpSessionListener {
     public void sessionDestroyed(HttpSessionEvent se) {
         System.out.println("recording logout as session is distroid");
         recordLogout();
+    }
+
+    public PharmacySaleController getPharmacySaleController() {
+        return pharmacySaleController;
+    }
+
+    public void setPharmacySaleController(PharmacySaleController pharmacySaleController) {
+        this.pharmacySaleController = pharmacySaleController;
     }
 }

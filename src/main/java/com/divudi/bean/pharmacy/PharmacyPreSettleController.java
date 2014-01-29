@@ -451,9 +451,10 @@ public class PharmacyPreSettleController implements Serializable {
     }
 
     private void saveSaleBillItems() {
-         for (BillItem tbi : getPreBill().getBillItems()) {
+         for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
             BillItem newBil = new BillItem();
             newBil.copy(tbi);
+            newBil.setBill(getSaleBill());
             newBil.setInwardChargeType(InwardChargeType.Medicine);
             //      newBil.setBill(getSaleBill());
             newBil.setCreatedAt(Calendar.getInstance().getTime());
@@ -472,34 +473,11 @@ public class PharmacyPreSettleController implements Serializable {
             getSaleBill().getBillItems().add(newBil);
         }
         getBillFacade().edit(getSaleBill());
-        
-        
-//        for (BillItem tbi : getPreBill().getBillItems()) {
-//
-//            BillItem sbi = new BillItem();
-//
-//            sbi.copy(tbi);
-//
-//            sbi.setBill(getSaleBill());
-//            sbi.setReferanceBillItem(tbi);
-//            sbi.setCreatedAt(Calendar.getInstance().getTime());
-//            sbi.setCreater(getSessionController().getLoggedUser());
-//
-//            getBillItemFacade().create(sbi);
-//
-//            PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
-//            ph.copy(tbi.getPharmaceuticalBillItem());
-//            ph.setBillItem(sbi);
-//            getPharmaceuticalBillItemFacade().create(ph);
-//
-//            //    getPharmacyBean().deductFromStock(tbi.getItem(), tbi.getQty(), tbi.getBill().getDepartment());
-//            getSaleBill().getBillItems().add(sbi);
-//        }
-//        getBillFacade().edit(getSaleBill());
+
     }
 
     private void saveSaleReturnBillItems() {
-        for (BillItem tbi : getPreBill().getBillItems()) {
+        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
 
             BillItem sbi = new BillItem();
 
@@ -694,6 +672,7 @@ public class PharmacyPreSettleController implements Serializable {
         this.preBill = preBill;
         System.err.println("Setting Bill " + preBill);
         billPreview = false;
+       
     }
 
     public Bill getSaleBill() {

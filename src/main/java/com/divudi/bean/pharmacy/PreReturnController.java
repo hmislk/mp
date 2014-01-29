@@ -43,7 +43,7 @@ public class PreReturnController implements Serializable {
     private boolean printPreview;
     ////////
 
-    private List<PharmacyItemData> pharmacyItemDatas;
+    private List<BillItem> billItems;
     ///////
     @EJB
     private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
@@ -69,6 +69,7 @@ public class PreReturnController implements Serializable {
     public void setBill(Bill bill) {
         makeNull();
         this.bill = bill;
+        generateBillComponent();
     }
 
     public Bill getReturnBill() {
@@ -96,16 +97,14 @@ public class PreReturnController implements Serializable {
     @EJB
     private PharmacyCalculation pharmacyRecieveBean;
 
-    public void onEdit(PharmacyItemData tmp) {
+    public void onEdit(BillItem tmp) {
         //    PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
 
-        if (tmp.getBillItem().getQty() > getPharmacyRecieveBean().calQty3(tmp.getBillItem().getReferanceBillItem())) {
-            tmp.getBillItem().setQty(0.0);
+        if (tmp.getQty() > getPharmacyRecieveBean().calQty3(tmp.getReferanceBillItem())) {
+            tmp.setQty(0.0);
             UtilityController.addErrorMessage("You cant return over than ballanced Qty ");
         }
 
-        //  getBillItemFacade().edit(tmp.getBillItem());
-        //  getPharmaceuticalBillItemFacade().edit(tmp);
         calTotal();
         //   getPharmacyController().setPharmacyItem(tmp.getPharmaceuticalBillItem().getBillItem().getItem());
     }
@@ -114,7 +113,7 @@ public class PreReturnController implements Serializable {
         bill = null;
         returnBill = null;
         printPreview = false;
-        pharmacyItemDatas = null;
+        billItems = null;
 
     }
 
@@ -144,29 +143,30 @@ public class PreReturnController implements Serializable {
     }
 
     private void saveComponent() {
-        for (PharmacyItemData i : getPharmacyItemData()) {
-            i.getPharmaceuticalBillItem().setQty(i.getBillItem().getQty());
+        for (BillItem i : getBillItems()) {
+            i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
 
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
             }
 
-            i.getBillItem().setCreatedAt(Calendar.getInstance().getTime());
-            i.getBillItem().setCreater(getSessionController().getLoggedUser());
-            i.getBillItem().setQty(i.getPharmaceuticalBillItem().getQty());
-            double value = i.getBillItem().getNetRate() * i.getBillItem().getQty();
-            i.getBillItem().setGrossValue(0 - value);
-            i.getBillItem().setNetValue(0 - value);
+            i.setBill(getReturnBill());
+            i.setCreatedAt(Calendar.getInstance().getTime());
+            i.setCreater(getSessionController().getLoggedUser());
+            i.setQty(i.getPharmaceuticalBillItem().getQty());
 
-            getBillItemFacade().create(i.getBillItem());
+            double value = i.getNetRate() * i.getQty();
+            i.setGrossValue(0 - value);
+            i.setNetValue(0 - value);
 
-            i.getPharmaceuticalBillItem().setBillItem(i.getBillItem());
+            PharmaceuticalBillItem tmpPh = i.getPharmaceuticalBillItem();
+            i.setPharmaceuticalBillItem(null);
+            getBillItemFacade().create(i);
 
-            //    i.getPharmaceuticalBillItem().setQtyInUnit(i.getPharmaceuticalBillItem().getQtyInUnit());
-            getPharmaceuticalBillItemFacade().create(i.getPharmaceuticalBillItem());
+            getPharmaceuticalBillItemFacade().create(tmpPh);
 
-            i.getBillItem().setPharmaceuticalBillItem(i.getPharmaceuticalBillItem());
-            getBillItemFacade().edit(i.getBillItem());
+            i.setPharmaceuticalBillItem(tmpPh);
+            getBillItemFacade().edit(i);
 
             //   getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
             System.err.println("STOCK " + i.getPharmaceuticalBillItem().getStock());
@@ -175,50 +175,29 @@ public class PreReturnController implements Serializable {
             //   i.getBillItem().getTmpReferenceBillItem().getPharmaceuticalBillItem().setRemainingQty(i.getRemainingQty() - i.getQty());
             //   getPharmaceuticalBillItemFacade().edit(i.getBillItem().getTmpReferenceBillItem().getPharmaceuticalBillItem());
             //      updateRemainingQty(i);
-            getReturnBill().getBillItems().add(i.getBillItem());
+            getReturnBill().getBillItems().add(i);
         }
 
     }
 
-//    private void updateRemainingQty(PharmacyItemData pharmacyItemData) {
-//        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.id=" + pharmacyItemData.getPoBillItem().getId();
-//        PharmaceuticalBillItem po = getPharmaceuticalBillItemFacade().findFirstBySQL(sql);
-//        po.setRemainingQty(po.getRemainingQty() + pharmacyItemData.getPharmaceuticalBillItem().getQty());
-//
-//        System.err.println("Added Remaini Qty " + pharmacyItemData.getPharmaceuticalBillItem().getQty());
-//        System.err.println("Final Remaini Qty " + po.getRemainingQty());
-//        getPharmaceuticalBillItemFacade().edit(po);
-//
-//    }
     public void settle() {
         saveReturnBill();
         saveComponent();
 
         getBillFacade().edit(getReturnBill());
 
-       /// setOnlyReturnValue();
+        /// setOnlyReturnValue();
         printPreview = true;
         UtilityController.addSuccessMessage("Successfully Returned");
 
         //   return "pharmacy_good_receive_note_list";
     }
 
-//    private void setOnlyReturnValue(){
-//        for(BillItem b:getReturnBill().getBillItems() ){
-//            if(b.getReferanceBillItem().getItem().getId()==b.getItem().getId()){
-//                
-//            
-//            }
-//        
-//        }
-//    
-//    }
-//    
     private void calTotal() {
         double grossTotal = 0.0;
 
-        for (PharmacyItemData p : getPharmacyItemData()) {
-            grossTotal += p.getBillItem().getNetRate() * p.getBillItem().getQty();
+        for (BillItem p : getBillItems()) {
+            grossTotal += p.getNetRate() * p.getQty();
 
         }
 
@@ -228,46 +207,31 @@ public class PreReturnController implements Serializable {
         //  return grossTotal;
     }
 
-    public List<PharmacyItemData> getPharmacyItemData() {
-        if (pharmacyItemDatas == null) {
-            pharmacyItemDatas = new ArrayList<>();
-            String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getBill().getId();
-            List<PharmaceuticalBillItem> tmp2 = getPharmaceuticalBillItemFacade().findBySQL(sql);
+    public void generateBillComponent() {
 
-            for (PharmaceuticalBillItem i : tmp2) {
-                PharmacyItemData pid = new PharmacyItemData();
-                BillItem bi = new BillItem();
-                bi.setBill(getReturnBill());
-                bi.setReferenceBill(getBill());
-                bi.setReferanceBillItem(i.getBillItem());
-                bi.copy(i.getBillItem());
-                bi.setQty(0.0);
+        for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getBill())) {
+            BillItem bi = new BillItem();
+            bi.setBill(getReturnBill());
+            bi.setReferenceBill(getBill());
+            bi.setReferanceBillItem(i.getBillItem());
+            bi.copy(i.getBillItem());
+            bi.setQty(0.0);
 
-                //   bi.setTmpReferenceBillItem(i.getBillItem());
-                pid.setBillItem(bi);
+            PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
+            tmp.setBillItem(bi);
+            tmp.copy(i);
 
-                PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
-                tmp.setBillItem(bi);
-                tmp.copy(i);
+            double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre);
 
-                // getPharmaceuticalBillItemFacade().create(tmp);
-                pid.setGrnBillItem(i.getBillItem());
-                pid.setPoBillItem(i.getBillItem().getReferanceBillItem());
+            System.err.println("Refund " + rFund);
 
-                //tmp.setQty(getPharmacyRecieveBean().calQty(pid.getPoBillItem().getPharmaceuticalBillItem()));
-                double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre);
-                //  double rCanelled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacySale, new CancelledBill());
+            tmp.setQtyInUnit(Math.abs(i.getQtyInUnit()) - Math.abs(rFund));
 
-                System.err.println("Refund " + rFund);
+            bi.setPharmaceuticalBillItem(tmp);
 
-                tmp.setQtyInUnit(Math.abs(i.getQtyInUnit()) - Math.abs(rFund));
-
-                pid.setPharmaceuticalBillItem(tmp);
-
-                pharmacyItemDatas.add(pid);
-            }
+            getBillItems().add(bi);
         }
-        return pharmacyItemDatas;
+
     }
 
 //    private double calRemainingQty(PharmaceuticalBillItem i) {
@@ -355,12 +319,26 @@ public class PreReturnController implements Serializable {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 
-    public List<PharmacyItemData> getPharmacyItemDatas() {
-        return pharmacyItemDatas;
+    private int serialNo;
+
+    public List<BillItem> getBillItems() {
+        if (billItems == null) {
+            serialNo = 1;
+            billItems = new ArrayList<>();
+        }
+        return billItems;
     }
 
-    public void setPharmacyItemDatas(List<PharmacyItemData> pharmacyItemDatas) {
-        this.pharmacyItemDatas = pharmacyItemDatas;
+    public void setBillItems(List<BillItem> billItems) {
+        this.billItems = billItems;
+    }
+
+    public int getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(int serialNo) {
+        this.serialNo = serialNo;
     }
 
 }

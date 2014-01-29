@@ -88,15 +88,19 @@ public class PharmacyBean {
 
     public String reAddToStock(Bill bill, WebUser user, Department department) {
 
-        if (bill.getDepartment().getId() != department.getId()) {
-            return "Sorry You cant add Another Department Stock";
-
+        if (bill.getTransActiveBillItem().size() == 0) {
+            return "There is no item to re Add";
         }
+
+//        if (bill.getDepartment().getId() != department.getId()) {
+//            return "Sorry You cant add Another Department Stock";
+//        }
 
         String msg = "";
 
         Bill newPre = new PreBill();
         newPre.copy(bill);
+        newPre.setDepartment(department);
         newPre.invertValue(bill);
         newPre.setCreatedAt(new Date());
         newPre.setCreater(user);
@@ -104,19 +108,25 @@ public class PharmacyBean {
         newPre.setBackwardReferenceBill(bill);
         getBillFacade().create(newPre);
 
-        for (BillItem bItem : bill.getBillItems()) {
+        for (BillItem bItem : bill.getTransActiveBillItem()) {
 
             BillItem newBillItem = new BillItem();
             newBillItem.copy(bItem);
             newBillItem.invertValue(bItem);
             newBillItem.setBill(newPre);
             newBillItem.setReferanceBillItem(bItem);
+            newBillItem.setCreatedAt(new Date());
+            newBillItem.setCreater(user);
             getBillItemFacade().create(newBillItem);
 
             PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
             ph.copy(bItem.getPharmaceuticalBillItem());
+            ph.invertValue(bItem.getPharmaceuticalBillItem());
             ph.setBillItem(newBillItem);
             getPharmaceuticalBillItemFacade().create(ph);
+            
+            newBillItem.setPharmaceuticalBillItem(ph);
+            getBillItemFacade().edit(newBillItem);
 
             System.err.println("QTY " + bItem.getQty());
             if (!addToStock(ph.getStock(), Math.abs(bItem.getQty()), ph, department)) {
@@ -359,9 +369,9 @@ public class PharmacyBean {
         HashMap hm = new HashMap();
         sql = "Select s from Stock s where s.itemBatch=:batch "
                 + "and s.staff=:stf";
-        System.err.println("1 "+pharmaceuticalBillItem);
-        System.err.println("2 "+pharmaceuticalBillItem.getItemBatch());
-        System.err.println("3 "+staff);
+        System.err.println("1 " + pharmaceuticalBillItem);
+        System.err.println("2 " + pharmaceuticalBillItem.getItemBatch());
+        System.err.println("3 " + staff);
         hm.put("batch", pharmaceuticalBillItem.getItemBatch());
         hm.put("stf", staff);
         Stock s = getStockFacade().findFirstBySQL(sql, hm);

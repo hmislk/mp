@@ -144,8 +144,8 @@ public class BillSearch implements Serializable {
                     + " or upper(bi.bill.netTotal) like :str "
                     + " or upper(bi.bill.total) like :str or upper(bi.item.name) like :str ) "
                     + " and bi.createdAt between :fromDate and :toDate order by bi.id desc";
-       
-        m.put("str","% "+ txtSearch.toUpperCase()+" %");
+
+            m.put("str", "% " + txtSearch.toUpperCase() + " %");
         }
 
         List<BillItem> tmp = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
@@ -549,18 +549,19 @@ public class BillSearch implements Serializable {
         if (txtSearch == null || txtSearch.trim().equals("")) {
             sql = "select b from PreBill b where  b.billType = :billType and b.institution=:ins"
                     + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-        } else {
+                    + " and b.deptId is not null order by b.id desc  ";
+        } else { 
             sql = "select b from PreBill b where  b.billType = :billType and b.institution=:ins"
-                    + " and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.department.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
+                    + " and  (upper(b.insId) like :str "
+                    + " or upper(b.department.name) like :str "
+                    + " or upper(b.paymentScheme.paymentMethod) like :str "
+                    + " or upper(b.paymentScheme.name) like :str"
+                    + " or upper(b.netTotal) like :str "
+                    + " or upper(b.total) like :str )  and"
                     + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
+                    + " and b.deptId is not null order by b.id desc  ";
 
+            temMap.put("str", "% " + txtSearch.toUpperCase() + " %");
         }
 
         temMap.put("billType", BillType.PharmacyPre);

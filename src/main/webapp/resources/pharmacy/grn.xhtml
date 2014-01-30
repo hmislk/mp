@@ -105,12 +105,8 @@
                         </h:outputLabel>
                     </p:column>                                  
                     <p:column>
-                        <f:facet name="header">
-                            <h:outputLabel value="Ord" style="font-weight: bold!important;" />
-                            <br/>
-                            <h:outputLabel value="QTY" style="font-weight: bold!important;" />
-                        </f:facet>
-                        <h:outputLabel value="#{bip.referanceBillItem.pharmaceuticalBillItem.qty}"/>
+                        <f:facet name="header">Ord QTY</f:facet>
+                            #{bip.referanceBillItem.pharmaceuticalBillItem.qty}
                     </p:column>
                     <p:column>
                         <f:facet name="header">
@@ -233,7 +229,7 @@
                 <h4 style="color: #000000; text-align: center " >
                     <h:outputLabel value="Payment Voucher"/>
                 </h4>
-                <div style="position: absolute; left: 70%; top: 52%;" >
+                <div style="position: absolute; left: 70%; top: 52%!important;" >
                     <h:outputLabel value="Date :"/>
                     <br></br>
                     <br></br>

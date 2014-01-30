@@ -508,7 +508,7 @@ public class BillSearch implements Serializable {
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
             sql = "select b from Bill b where (type(b)=:class1 or type(b)=:class2) and b.department=:dep and b.billType = :billType "
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
+                    + " and b.createdAt between :fromDate and :toDate "
                     + "order by b.id desc  ";
         } else {
             sql = "select b from Bill b where  (type(b)=:class1 or type(b)=:class2) and b.department=:dep  and b.billType = :billType "
@@ -522,7 +522,7 @@ public class BillSearch implements Serializable {
                     + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
+                    + " b.createdAt between :fromDate and :toDate "
                     + "order by b.id desc  ";
 
         }

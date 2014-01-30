@@ -11,7 +11,7 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:panel>
+                    <p:panel id="gpBillPreview">
                         <f:facet name="header" >
                             <h:outputLabel value="PHARMACY BILL SEARCH "/>
                             <h:panelGrid columns="7">     
@@ -30,6 +30,10 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
+
+                                <p:commandButton value="Reprint" ajax="false" >
+                                    <p:printer target="gpBillPreview" ></p:printer>
+                                </p:commandButton>
 
                             </h:panelGrid>                                
                             <p:watermark value="Type Keyword You want to Search" for="txtSearch" />

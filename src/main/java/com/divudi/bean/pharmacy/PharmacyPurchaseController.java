@@ -440,7 +440,7 @@ public class PharmacyPurchaseController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            serialNo = 1;
+            serialNo = 0;
             billItems = new ArrayList<>();
         }
         return billItems;

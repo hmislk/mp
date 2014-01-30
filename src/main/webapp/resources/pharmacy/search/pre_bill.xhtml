@@ -15,7 +15,7 @@
         <p:dataTable rowIndexVar="i" id="tblBills" value="#{billSearch.searchBills}" var="bill" 
                      paginator="true" rows="20"  lazy="true"
                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                     rowsPerPageTemplate="5,10,15" style="min-width: 100%;"  >
+                     rowsPerPageTemplate="5,10,15,100,200" style="min-width: 100%;"  >
             <f:facet name="header">
                 <h:outputLabel value="PRE BILL SEARCH"/>
             </f:facet>

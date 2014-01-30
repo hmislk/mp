@@ -283,7 +283,7 @@ public class TransferRequestController implements Serializable {
     public List<BillItem> getBillItems() {
         if (billItems == null) {
             billItems = new ArrayList<>();
-            serialNo = 1;
+            serialNo = 0;
         }
         return billItems;
     }

@@ -102,7 +102,7 @@ public class GoodsReturnController implements Serializable {
     public void onEdit(BillItem tmp) {
         //    PharmaceuticalBillItem tmp = (PharmaceuticalBillItem) event.getObject();
 
-        if (tmp.getPharmaceuticalBillItem().getQtyInUnit()> getPharmacyRecieveBean().calQty(tmp.getReferanceBillItem().getReferanceBillItem().getPharmaceuticalBillItem())) {
+        if (tmp.getPharmaceuticalBillItem().getQtyInUnit() > getPharmacyRecieveBean().calQty(tmp.getReferanceBillItem().getReferanceBillItem().getPharmaceuticalBillItem())) {
             tmp.setTmpQty(0.0);
             UtilityController.addErrorMessage("You cant return over than ballanced Qty ");
         }
@@ -165,9 +165,9 @@ public class GoodsReturnController implements Serializable {
             getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(), Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             getReturnBill().getBillItems().add(i);
-        
+
         }
-        
+
         getBillFacade().edit(getReturnBill());
 
     }
@@ -183,7 +183,7 @@ public class GoodsReturnController implements Serializable {
     }
 
     private boolean checkGrnItems() {
-        for (BillItem bi : getBillItems()) {         
+        for (BillItem bi : getBillItems()) {
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
             }
@@ -211,10 +211,10 @@ public class GoodsReturnController implements Serializable {
 
     private void calTotal() {
         double grossTotal = 0.0;
-
+        int serialNo = 0;
         for (BillItem p : getBillItems()) {
             grossTotal += p.getPharmaceuticalBillItem().getPurchaseRate() * p.getPharmaceuticalBillItem().getQty();
-
+            p.setSearialNo(serialNo++);
         }
 
         getReturnBill().setTotal(grossTotal);
@@ -230,7 +230,7 @@ public class GoodsReturnController implements Serializable {
             bi.setItem(grnPh.getBillItem().getItem());
             //Grns BillItem
             bi.setReferanceBillItem(grnPh.getBillItem());
-
+            bi.setSearialNo(getBillItems().size());
             PharmaceuticalBillItem retPh = new PharmaceuticalBillItem();
             retPh.copy(grnPh);
             retPh.setBillItem(bi);
@@ -276,7 +276,6 @@ public class GoodsReturnController implements Serializable {
 //
 //        // onEdit(tmp);
 //    }
-
     public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
         return pharmaceuticalBillItemFacade;
     }
@@ -349,11 +348,8 @@ public class GoodsReturnController implements Serializable {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 
-    int serialNo;
-
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            serialNo = 0;
             billItems = new ArrayList<>();
         }
         return billItems;

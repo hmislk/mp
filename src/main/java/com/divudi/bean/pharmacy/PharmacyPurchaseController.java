@@ -232,7 +232,7 @@ public class PharmacyPurchaseController implements Serializable {
 //        pharmacyItemDatas = null;
 //    }
 
-    private int serialNo;
+  
     private List<BillItem> billItems;
 
     public void addItem() {
@@ -266,7 +266,7 @@ public class PharmacyPurchaseController implements Serializable {
             return;
         }
 
-        getCurrentBillItem().setSearialNo(serialNo++);
+        getCurrentBillItem().setSearialNo(getBillItems().size());
         getBillItems().add(currentBillItem);
 
         currentBillItem = null;
@@ -322,11 +322,11 @@ public class PharmacyPurchaseController implements Serializable {
 
     public void calTotal() {
         double tot = 0.0;
-
+        int serialNo=0;
         for (BillItem p : getBillItems()) {
             p.setQty(p.getPharmaceuticalBillItem().getQtyInUnit());
             p.setRate(p.getPharmaceuticalBillItem().getPurchaseRateInUnit());
-
+            p.setSearialNo(serialNo++);
             double netValue = p.getQty() * p.getRate();
 
             p.setNetValue(0 - netValue);
@@ -430,17 +430,10 @@ public class PharmacyPurchaseController implements Serializable {
         this.currentBillItem = currentBillItem;
     }
 
-    public int getSerialNo() {
-        return serialNo;
-    }
-
-    public void setSerialNo(int serialNo) {
-        this.serialNo = serialNo;
-    }
+  
 
     public List<BillItem> getBillItems() {
-        if (billItems == null) {
-            serialNo = 0;
+        if (billItems == null) {          
             billItems = new ArrayList<>();
         }
         return billItems;

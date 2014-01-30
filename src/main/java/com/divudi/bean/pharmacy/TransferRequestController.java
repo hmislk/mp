@@ -61,7 +61,6 @@ public class TransferRequestController implements Serializable {
     private List<BillItem> billItems;
     @EJB
     private PharmacyCalculation pharmacyBillBean;
-    int serialNo;
 
     public void recreate() {
         bill = null;
@@ -77,7 +76,7 @@ public class TransferRequestController implements Serializable {
             return;
         }
 
-        getCurrentBillItem().setSearialNo(serialNo++);
+        getCurrentBillItem().setSearialNo(getBillItems().size());
 
         getCurrentBillItem().getPharmaceuticalBillItem().setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(getCurrentBillItem().getItem(), getSessionController().getDepartment()));
         getCurrentBillItem().getPharmaceuticalBillItem().setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentBillItem().getItem(), getSessionController().getDepartment()));
@@ -152,6 +151,10 @@ public class TransferRequestController implements Serializable {
 
     public void remove(BillItem billItem) {
         getBillItems().remove(billItem.getSearialNo());
+        int serialNo = 0;
+        for (BillItem bi : getBillItems()) {
+            bi.setSearialNo(serialNo++);
+        }
 
     }
 
@@ -283,7 +286,6 @@ public class TransferRequestController implements Serializable {
     public List<BillItem> getBillItems() {
         if (billItems == null) {
             billItems = new ArrayList<>();
-            serialNo = 0;
         }
         return billItems;
     }

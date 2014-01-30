@@ -72,10 +72,13 @@ public class TransferIssueController implements Serializable {
     @EJB
     private PharmacyCalculation pharmacyRecieveBean;
     private List<BillItem> billItems;
-    int serialNo;
 
     public void remove(BillItem billItem) {
         getBillItems().remove(billItem.getSearialNo());
+        int serialNo = 0;
+        for (BillItem b : getBillItems()) {
+            b.setSearialNo(serialNo++);
+        }
     }
 
     public void makeNull() {
@@ -156,7 +159,7 @@ public class TransferIssueController implements Serializable {
                 System.err.println("Stock " + sq.getStock());
                 System.err.println("QTY " + sq.getQty());
                 BillItem bItem = new BillItem();
-                bItem.setSearialNo(serialNo++);
+                bItem.setSearialNo(getBillItems().size());
                 bItem.setItem(i.getBillItem().getItem());
                 bItem.setReferanceBillItem(i.getBillItem());
                 bItem.setTmpQty(sq.getQty());
@@ -209,9 +212,9 @@ public class TransferIssueController implements Serializable {
             PharmaceuticalBillItem tmpPh = i.getPharmaceuticalBillItem();
             i.setPharmaceuticalBillItem(null);
             getBillItemFacade().create(i);
-            
+
             getPharmaceuticalBillItemFacade().create(tmpPh);
-            
+
             i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
 
@@ -226,7 +229,7 @@ public class TransferIssueController implements Serializable {
             i.getPharmaceuticalBillItem().setStaffStock(staffStock);
 
             getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
-            
+
             getIssuedBill().getBillItems().add(i);
         }
 
@@ -262,9 +265,10 @@ public class TransferIssueController implements Serializable {
 
     private double calTotal() {
         double value = 0;
+        int serialNo = 0;
         for (BillItem b : getIssuedBill().getBillItems()) {
             value += (b.getPharmaceuticalBillItem().getPurchaseRate() * b.getPharmaceuticalBillItem().getQty());
-
+            b.setSearialNo(serialNo++);
         }
 
         return value;
@@ -418,7 +422,7 @@ public class TransferIssueController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            serialNo = 0;
+
             billItems = new ArrayList<>();
         }
         return billItems;

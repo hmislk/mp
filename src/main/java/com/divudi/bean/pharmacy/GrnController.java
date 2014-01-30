@@ -95,13 +95,30 @@ public class GrnController implements Serializable {
     List<Bill> grns;
     private List<Bill> filteredValue;
     private List<BillItem> billItems;
+    private List<BillItem> selectedBillItems;
 
     public void removeItem(BillItem bi) {
-        System.err.println("Index " + bi.getSearialNo());
-        System.err.println("Removing Ite " + getBillItems().remove(bi.getSearialNo()).getItem().getName());
+        getBillItems().remove(bi.getSearialNo());
 
         calGrossTotal();
 
+    }
+
+    public void removeSelected() {
+        //  System.err.println("1");
+        if (selectedBillItems == null) {
+            //   System.err.println("2");
+            return;
+        }
+
+        //   System.err.println("3");
+        for (BillItem b : selectedBillItems) {
+            //  System.err.println("4");
+            getBillItems().remove(b.getSearialNo());
+            calGrossTotal();
+        }
+
+        selectedBillItems = null;
     }
 
     public void clearList() {
@@ -408,10 +425,8 @@ public class GrnController implements Serializable {
         getBillFacade().create(getGrnBill());
     }
 
-    int serialNo;
-
     public void generateBillComponent() {
-        serialNo=0;
+
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getApproveBill())) {
             System.err.println("Qty Unit : " + i.getQtyInUnit());
 //            System.err.println("Remaining Qty : " + i.getRemainingQty());
@@ -420,7 +435,7 @@ public class GrnController implements Serializable {
             System.err.println("QTY : " + i.getQtyInUnit());
             if (i.getQtyInUnit() >= remains && (i.getQtyInUnit() - remains) != 0) {
                 BillItem bi = new BillItem();
-                bi.setSearialNo(serialNo++);
+                bi.setSearialNo(getBillItems().size());
                 bi.setItem(i.getBillItem().getItem());
                 bi.setReferanceBillItem(i.getBillItem());
                 bi.setQty(i.getQtyInUnit() - remains);
@@ -437,8 +452,8 @@ public class GrnController implements Serializable {
 
                 bi.setPharmaceuticalBillItem(ph);
 
-                getBillItems().add(serialNo-1, bi);
-              //  getBillItems().r
+                getBillItems().add(bi);
+                //  getBillItems().r
             }
 
         }
@@ -519,9 +534,10 @@ public class GrnController implements Serializable {
 
     private void calGrossTotal() {
         double tmp = 0.0;
-
+        int serialNo = 0;
         for (BillItem p : getBillItems()) {
             tmp += p.getPharmaceuticalBillItem().getPurchaseRate() * p.getPharmaceuticalBillItem().getQty();
+            p.setSearialNo(serialNo++);
         }
 
         getGrnBill().setTotal(0 - tmp);
@@ -707,7 +723,7 @@ public class GrnController implements Serializable {
     public List<BillItem> getBillItems() {
         if (billItems == null) {
             billItems = new LinkedList<>();
-           // serialNo = 0;
+            // serialNo = 0;
         }
         return billItems;
     }
@@ -715,4 +731,14 @@ public class GrnController implements Serializable {
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
     }
+
+    public List<BillItem> getSelectedBillItems() {
+        return selectedBillItems;
+    }
+
+    public void setSelectedBillItems(List<BillItem> selectedBillItems) {
+        this.selectedBillItems = selectedBillItems;
+    }
+
+   
 }

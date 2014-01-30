@@ -9,7 +9,7 @@
 
     <ui:define name="content">
         <h:form>
-           
+
             <h:panelGroup rendered="#{!webUserController.hasPrivilege('PharmacyOrderApproval')}" >
                 You are NOT authorized
             </h:panelGroup>
@@ -28,11 +28,20 @@
                     </f:facet>
                     <p:dataTable scrollable="true" styleClass="noBorder" scrollHeight="250"
                                  var="bi" value="#{purchaseOrderController.billItems}"
-                                 id="itemList" sortBy="#{bi.searialNo}">  
+                                 id="itemList" sortBy="#{bi.searialNo}"  rowKey="#{bi.searialNo}"
+                                 selection="#{purchaseOrderController.selectedItems}">  
 
                         <f:facet name="header">  
-                           Bill Item 
+                            <h:outputLabel  value="Pharmacy Bill Item"/>
+                            <p:commandButton ajax="false" value="Remove All" action="#{purchaseOrderController.removeSelected()}"/>                            
                         </f:facet>  
+
+                        <p:column selectionMode="multiple" style="width: 10px;"></p:column>
+
+
+                        <p:column headerText="No" style="width: 25px;">
+                            #{bi.searialNo}
+                        </p:column>
 
                         <p:column headerText="Item Name" style="width:50px;">  
                             #{bi.item.name} 
@@ -42,7 +51,7 @@
                             <p:inputText id="qty" value="#{bi.tmpQty}" style="width:100%" label="Qty">
                                 <f:convertNumber pattern="#00.00"/>
                                 <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this price" listener="#{purchaseOrderController.onEdit(bi)}" ></f:ajax>
-                                <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
+                                <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderController.onFocus(bi)}" />
                             </p:inputText>
                         </p:column>  
 
@@ -51,7 +60,7 @@
                                 <p:inputText value="#{bi.pharmaceuticalBillItem.purchaseRate}">   
                                     <f:convertNumber pattern="#00.00"/>
                                     <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this qty" listener="#{purchaseOrderController.onEdit(bi)}" ></f:ajax>
-                                    <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
+                                    <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderController.onFocus(bi)}" />
                                 </p:inputText>
                             </h:panelGroup>
                         </p:column>  
@@ -72,9 +81,9 @@
                                 </h:outputText>
                             </h:panelGroup>
                         </p:column>  
-                        
+
                         <p:column style="width:10px!important;">
-                             <p:commandButton value="Remove" ajax="false" action="#{purchaseOrderController.removeItem(bi)}"/>
+                            <p:commandButton value="Remove" ajax="false" action="#{purchaseOrderController.removeItem(bi)}"/>
                         </p:column>
                     </p:dataTable>  
 

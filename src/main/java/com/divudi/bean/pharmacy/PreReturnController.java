@@ -319,11 +319,11 @@ public class PreReturnController implements Serializable {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 
-    private int serialNo;
+  
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            serialNo = 0;
+          
             billItems = new ArrayList<>();
         }
         return billItems;
@@ -333,12 +333,6 @@ public class PreReturnController implements Serializable {
         this.billItems = billItems;
     }
 
-    public int getSerialNo() {
-        return serialNo;
-    }
-
-    public void setSerialNo(int serialNo) {
-        this.serialNo = serialNo;
-    }
+   
 
 }

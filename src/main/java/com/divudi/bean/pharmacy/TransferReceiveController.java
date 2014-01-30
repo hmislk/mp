@@ -74,7 +74,7 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private PharmacyCalculation pharmacyRecieveBean;
     private List<BillItem> billItems;
-    int serialNo;
+   
 
     public void onFocus(BillItem tmp) {
         getPharmacyController().setPharmacyItem(tmp.getItem());
@@ -167,7 +167,7 @@ public class TransferReceiveController implements Serializable {
             bItem.setReferanceBillItem(i.getBillItem());
             bItem.copy(i.getBillItem());
             bItem.setTmpQty(i.getQtyInUnit());
-            bItem.setSearialNo(serialNo++);
+            bItem.setSearialNo(getBillItems().size());
 
             bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
 
@@ -257,9 +257,10 @@ public class TransferReceiveController implements Serializable {
 
     private double calTotal() {
         double value = 0;
+        int serialNo=0;
         for (BillItem b : getBillItems()) {
             value += (b.getPharmaceuticalBillItem().getPurchaseRate() * b.getPharmaceuticalBillItem().getQty());
-
+            b.setSearialNo(serialNo++);
         }
 
         return value;
@@ -409,8 +410,7 @@ public class TransferReceiveController implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if (billItems == null) {
-            serialNo = 0;
+        if (billItems == null) {           
             billItems = new ArrayList<>();
         }
         return billItems;

@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -63,21 +64,23 @@ public class PurchaseOrderRequestController implements Serializable {
     //private List<PharmaceuticalBillItem> pharmaceuticalBillItems;   
     @EJB
     PharmacyCalculation pharmacyBillBean;
-    private int serialNo;
 
     public void removeSelected() {
-        System.err.println("1");
+        //  System.err.println("1");
         if (selectedBillItems == null) {
-            System.err.println("2");
+            //   System.err.println("2");
             return;
         }
 
-        System.err.println("3");
         for (BillItem b : selectedBillItems) {
-            System.err.println("4");
-            removeItem(b);
+            System.err.println("SerialNO " + b.getSearialNo());
+            System.err.println("Item " + b.getItem().getName());
+            BillItem tmp = getBillItems().remove(b.getSearialNo());
+            System.err.println("Removed Item " + tmp.getItem().getName());
+            calTotal();
         }
 
+        selectedBillItems = null;
     }
 
     public PharmacyCalculation getPharmacyBillBean() {
@@ -100,7 +103,7 @@ public class PurchaseOrderRequestController implements Serializable {
             return;
         }
 
-        getCurrentBillItem().setSearialNo(serialNo++);
+        getCurrentBillItem().setSearialNo(getBillItems().size());
         getCurrentBillItem().getPharmaceuticalBillItem().
                 setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(getCurrentBillItem().getItem(), getSessionController().getDepartment()));
         getCurrentBillItem().getPharmaceuticalBillItem().setRetailRateInUnit(getPharmacyBean().getLastRetailRate(getCurrentBillItem().getItem(), getSessionController().getDepartment()));
@@ -113,11 +116,12 @@ public class PurchaseOrderRequestController implements Serializable {
     }
 
     public void removeItem(BillItem bi) {
-        System.err.println("5 "+bi.getItem().getName());
-        System.err.println("6 "+bi.getSearialNo());
+        System.err.println("5 " + bi.getItem().getName());
+        System.err.println("6 " + bi.getSearialNo());
         getBillItems().remove(bi.getSearialNo());
 
         calTotal();
+
         currentBillItem = null;
 
     }
@@ -157,11 +161,12 @@ public class PurchaseOrderRequestController implements Serializable {
     }
 
     public void generateBillComponent() {
+       // int serialNo = 0;
+        setBillItems(new ArrayList<BillItem>());
         for (Item i : getPharmacyBillBean().getItemsForDealor(getCurrentBill().getToInstitution())) {
             BillItem bi = new BillItem();
             bi.setItem(i);
-            bi.setSearialNo(serialNo++);
-
+       
             PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
             tmp.setBillItem(bi);
             tmp.setQty(getPharmacyBean().getOrderingQty(bi.getItem(), getSessionController().getDepartment()));
@@ -231,8 +236,10 @@ public class PurchaseOrderRequestController implements Serializable {
 
     public void calTotal() {
         double tmp = 0;
+        int serialNo = 0;
         for (BillItem b : getBillItems()) {
             tmp += b.getPharmaceuticalBillItem().getQty() * b.getPharmaceuticalBillItem().getPurchaseRate();
+            b.setSearialNo(serialNo++);
         }
 
         getCurrentBill().setTotal(tmp);
@@ -285,8 +292,7 @@ public class PurchaseOrderRequestController implements Serializable {
     public Bill getCurrentBill() {
         if (currentBill == null) {
             currentBill = new BilledBill();
-            currentBill.setBillType(BillType.PharmacyOrder);
-            serialNo = 0;
+            currentBill.setBillType(BillType.PharmacyOrder);           
         }
         return currentBill;
     }
@@ -366,8 +372,8 @@ public class PurchaseOrderRequestController implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if (billItems == null) {            
-            billItems = new ArrayList<>();
+        if (billItems == null) {
+            billItems = new ArrayList<>();       
         }
         return billItems;
     }
@@ -376,11 +382,5 @@ public class PurchaseOrderRequestController implements Serializable {
         this.billItems = billItems;
     }
 
-    public int getSerialNo() {
-        return serialNo;
-    }
-
-    public void setSerialNo(int serialNo) {
-        this.serialNo = serialNo;
-    }
+  
 }

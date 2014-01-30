@@ -64,6 +64,7 @@ public class PurchaseOrderController implements Serializable {
 //    private List<PharmaceuticalBillItem> pharmaceuticalBillItems;
     private List<PharmaceuticalBillItem> filteredValue;
     private List<BillItem> billItems;
+    private List<BillItem> selectedItems;
     private List<Bill> billsToApprove;
     // private List<BillItem> billItems;
     // List<PharmaceuticalBillItem> pharmaceuticalBillItems;
@@ -72,9 +73,25 @@ public class PurchaseOrderController implements Serializable {
     private CommonFunctions commonFunctions;
     private LazyDataModel<Bill> searchBills;
 
-    public void removeItem(BillItem bi) {
-        getBillItems().remove(bi.getSearialNo());
+    public void removeSelected() {
+        //  System.err.println("1");
+        if (selectedItems == null) {
+            //   System.err.println("2");
+            return;
+        }
 
+        System.err.println("3");
+        for (BillItem b : selectedItems) {
+            //  System.err.println("4");
+            getBillItems().remove(b.getSearialNo());
+            calTotal();
+        }
+
+        selectedItems = null;
+    }
+
+    public void removeItem(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
         calTotal();
     }
 
@@ -283,7 +300,7 @@ public class PurchaseOrderController implements Serializable {
 
         getAprovedBill().setPaymentMethod(getRequestedBill().getPaymentMethod());
         getAprovedBill().setFromDepartment(getRequestedBill().getDepartment());
-        getAprovedBill().setFromInstitution(getRequestedBill().getInstitution());        
+        getAprovedBill().setFromInstitution(getRequestedBill().getInstitution());
         getAprovedBill().setReferenceBill(getRequestedBill());
         getAprovedBill().setBackwardReferenceBill(getRequestedBill());
 
@@ -324,10 +341,10 @@ public class PurchaseOrderController implements Serializable {
     }
 
     public void generateBillComponent() {
+
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
             BillItem bi = new BillItem();
             bi.copy(i.getBillItem());
-            bi.setSearialNo(serialNo++);
 
             PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
             ph.setBillItem(bi);
@@ -405,8 +422,10 @@ public class PurchaseOrderController implements Serializable {
 
     public void calTotal() {
         double tmp = 0;
+        int serialNo = 0;
         for (BillItem bi : getBillItems()) {
             tmp += bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+            bi.setSearialNo(serialNo++);
         }
         getAprovedBill().setTotal(tmp);
         getAprovedBill().setNetTotal(tmp);
@@ -485,11 +504,8 @@ public class PurchaseOrderController implements Serializable {
         this.txtSearch = txtSearch;
     }
 
-    private int serialNo;
-
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            serialNo = 0;
             billItems = new ArrayList<>();
         }
         return billItems;
@@ -499,11 +515,11 @@ public class PurchaseOrderController implements Serializable {
         this.billItems = billItems;
     }
 
-    public int getSerialNo() {
-        return serialNo;
+    public List<BillItem> getSelectedItems() {
+        return selectedItems;
     }
 
-    public void setSerialNo(int serialNo) {
-        this.serialNo = serialNo;
+    public void setSelectedItems(List<BillItem> selectedItems) {
+        this.selectedItems = selectedItems;
     }
 }

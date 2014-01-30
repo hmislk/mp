@@ -31,16 +31,19 @@
 
 
                 <p:dataTable var="bi" styleClass="noBorder" value="#{grnController.billItems}" scrollable="true" scrollHeight="250"
-                             id="itemList"  sortBy="#{bi.searialNo}">  
+                             id="itemList"  sortBy="#{bi.searialNo}" selection="#{grnController.selectedBillItems}"  rowKey="#{bi.searialNo}">  
 
                     <f:facet name="header">  
-                        Ordered Item 
+                        <h:outputLabel  value="Ordered Bill Item"/>
+                        <p:commandButton ajax="false" value="Remove All" action="#{grnController.removeSelected()}"/>                            
                     </f:facet>  
 
-                     <p:column headerText="Ordered Qty" >                   
-                         <h:outputLabel value="#{bi.searialNo}"/>
+                    <p:column selectionMode="multiple" style="width: 10px;"></p:column>
+
+                    <p:column headerText="No" >                   
+                        <h:outputLabel value="#{bi.searialNo}"/>
                     </p:column>  
-                    
+
                     <p:column headerText="Item Name" style="width: 250px!important;"  >                                                
                         <p:selectOneMenu id="item"  value="#{bi.item}" >
                             <f:selectItems value="#{bi.tmpSuggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>

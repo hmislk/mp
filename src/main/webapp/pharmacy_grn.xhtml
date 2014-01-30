@@ -37,6 +37,10 @@
                         Ordered Item 
                     </f:facet>  
 
+                     <p:column headerText="Ordered Qty" >                   
+                         <h:outputLabel value="#{bi.searialNo}"/>
+                    </p:column>  
+                    
                     <p:column headerText="Item Name" style="width: 250px!important;"  >                                                
                         <p:selectOneMenu id="item"  value="#{bi.item}" >
                             <f:selectItems value="#{bi.tmpSuggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>

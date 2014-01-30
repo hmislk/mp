@@ -105,8 +105,10 @@
                         </h:outputLabel>
                     </p:column>                                  
                     <p:column>
-                        <f:facet name="header">Ord QTY</f:facet>
-                            #{bip.referanceBillItem.pharmaceuticalBillItem.qty}
+                        <f:facet name="header">
+                            <h:outputLabel value="Ord QTY"/>
+                        </f:facet>
+                            <h:outputLabel value="#{bip.referanceBillItem.pharmaceuticalBillItem.qty}"/>
                     </p:column>
                     <p:column>
                         <f:facet name="header">

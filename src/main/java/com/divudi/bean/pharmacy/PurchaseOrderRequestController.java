@@ -66,11 +66,15 @@ public class PurchaseOrderRequestController implements Serializable {
     private int serialNo;
 
     public void removeSelected() {
+        System.err.println("1");
         if (selectedBillItems == null) {
+            System.err.println("2");
             return;
         }
 
+        System.err.println("3");
         for (BillItem b : selectedBillItems) {
+            System.err.println("4");
             removeItem(b);
         }
 
@@ -109,6 +113,8 @@ public class PurchaseOrderRequestController implements Serializable {
     }
 
     public void removeItem(BillItem bi) {
+        System.err.println("5 "+bi.getItem().getName());
+        System.err.println("6 "+bi.getSearialNo());
         getBillItems().remove(bi.getSearialNo());
 
         calTotal();
@@ -166,9 +172,8 @@ public class PurchaseOrderRequestController implements Serializable {
 
             getBillItems().add(bi);
 
-            
         }
-        
+
         calTotal();
 
     }
@@ -361,6 +366,7 @@ public class PurchaseOrderRequestController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
+            serialNo=1;
             billItems = new ArrayList<>();
         }
         return billItems;

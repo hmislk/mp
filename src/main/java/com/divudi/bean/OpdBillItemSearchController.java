@@ -164,6 +164,35 @@ public class OpdBillItemSearchController implements Serializable {
 
     }
 
+    public void createTableByKeyword() {
+        searchBillItems = null;
+        String sql;
+        Map m = new HashMap();
+        m.put("toDate", toDate);
+        m.put("fromDate", fromDate);
+        m.put("bType", BillType.OpdBill);
+        m.put("ins", getSessionController().getInstitution());
+        m.put("str", "%" + txtSearch.toUpperCase() + "%");
+
+        if (txtSearch == null || txtSearch.trim().equals("")) {
+            UtilityController.addErrorMessage("Please enter Patient name,Phone No,Bill No,Bill Total");
+            return;
+        }
+        sql = "select bi from BillItem bi join bi.bill b join b.patient.person"
+                + " p where b.institution=:ins and b.billType=:bType and"
+                + "  (upper(b.patient.person.name) like :str "
+                + " or upper(b.patient.person.phone) like :str "
+                + "  or upper(b.insId) like :str or "         
+                + " or upper(b.netTotal) like :str "
+                + " or upper(b.total) like :str ) "
+                + " and b.createdAt between :fromDate and :toDate order by bi.id desc";
+
+        List<BillItem> tmp = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
+
+        searchBillItems = new LazyBillItem(tmp);
+
+    }
+
     public List<BillItem> getBillItemsOwn() {
         if (billItemsAll == null) {
             String sql;

@@ -22,10 +22,10 @@
                                 </p:calendar>
                                 <p:inputText id="txtSearch" value="#{opdBillItemSearchController.txtSearch}" style="width:500px;"/>                                
 
-                                <p:commandButton id="btn_Search" ajax="false" value="Search" action="#{opdBillItemSearchController.createTable()}"/>
+                                <p:commandButton id="btn_Search" ajax="false" value="Search" action="#{opdBillItemSearchController.createTableByKeyword()}"/>
                                 <p:defaultCommand target="btnSearch"/>
                             </h:panelGrid>                                
-                            <p:watermark value="Bill Id ,NetTotal,Paymentscheme,Paymentmethod,Patient Name or Phone Number" for="txtSearch" />
+                            <p:watermark value="Bill Id ,NetTotal,Patient Name or Phone Number" for="txtSearch" />
                         </f:facet>
 
 

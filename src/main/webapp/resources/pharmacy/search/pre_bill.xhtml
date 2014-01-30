@@ -26,6 +26,13 @@
                     <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
             </p:column>    
+            
+              <p:column headerText="Retired "  filterBy="#{bill.deptId}">
+                  <h:commandLink action="pharmacy_reprint_bill_pre" value="#{bill.retired}">
+                    <h:outputLabel  ></h:outputLabel>
+                    <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
+                </h:commandLink>
+            </p:column>    
           
             <p:column headerText="Billed Date" filterBy="#{bill.createdAt}"  >
                 <h:commandLink action="pharmacy_reprint_bill_pre" >

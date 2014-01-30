@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
@@ -96,7 +97,8 @@ public class GrnController implements Serializable {
     private List<BillItem> billItems;
 
     public void removeItem(BillItem bi) {
-        getBillItems().remove(bi.getSearialNo());
+        System.err.println("Index " + bi.getSearialNo());
+        System.err.println("Removing Ite " + getBillItems().remove(bi.getSearialNo()).getItem().getName());
 
         calGrossTotal();
 
@@ -170,10 +172,9 @@ public class GrnController implements Serializable {
             getBillItemFacade().create(i);
 
             getPharmaceuticalBillItemFacade().create(ph);
-            
+
             i.setPharmaceuticalBillItem(ph);
             getBillItemFacade().edit(i);
-            
 
             //     updatePoItemQty(i);
             System.err.println("1 " + i);
@@ -410,7 +411,7 @@ public class GrnController implements Serializable {
     int serialNo;
 
     public void generateBillComponent() {
-
+        serialNo=0;
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getApproveBill())) {
             System.err.println("Qty Unit : " + i.getQtyInUnit());
 //            System.err.println("Remaining Qty : " + i.getRemainingQty());
@@ -436,7 +437,8 @@ public class GrnController implements Serializable {
 
                 bi.setPharmaceuticalBillItem(ph);
 
-                getBillItems().add(bi);
+                getBillItems().add(serialNo-1, bi);
+              //  getBillItems().r
             }
 
         }
@@ -704,8 +706,8 @@ public class GrnController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            billItems = new ArrayList<>();
-            serialNo = 1;
+            billItems = new LinkedList<>();
+           // serialNo = 0;
         }
         return billItems;
     }

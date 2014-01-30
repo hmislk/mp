@@ -160,6 +160,7 @@ public class PurchaseOrderRequestController implements Serializable {
         for (Item i : getPharmacyBillBean().getItemsForDealor(getCurrentBill().getToInstitution())) {
             BillItem bi = new BillItem();
             bi.setItem(i);
+            bi.setSearialNo(serialNo++);
 
             PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
             tmp.setBillItem(bi);
@@ -285,7 +286,7 @@ public class PurchaseOrderRequestController implements Serializable {
         if (currentBill == null) {
             currentBill = new BilledBill();
             currentBill.setBillType(BillType.PharmacyOrder);
-            serialNo = 1;
+            serialNo = 0;
         }
         return currentBill;
     }
@@ -365,8 +366,7 @@ public class PurchaseOrderRequestController implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if (billItems == null) {
-            serialNo=1;
+        if (billItems == null) {            
             billItems = new ArrayList<>();
         }
         return billItems;

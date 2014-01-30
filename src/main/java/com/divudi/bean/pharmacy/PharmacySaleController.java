@@ -135,6 +135,42 @@ public class PharmacySaleController implements Serializable {
     Double editingQty;
     String cashPaidStr;
 
+    public void makeNull() {
+        selectedAlternative = null;
+        preBill = null;
+        saleBill = null;
+        printBill = null;
+        bill = null;
+        billItem = null;
+        editingBillItem = null;
+        qty = null;
+        stock = null;
+        paymentScheme = null;
+        activeIndex = 0;
+        newPatient = null;
+        searchedPatient = null;
+        yearMonthDay = null;
+        patientTabId = "tabNewPt";
+        strTenderedValue = "";
+        billPreview = false;
+        replaceableStocks = null;
+        itemsWithoutStocks = null;
+        creditCardRefNo = null;
+        creditBank = null;
+        chequeRefNo = null;
+        chequeBank = null;
+        chequeDate = null;
+        comment = null;
+        slipBank = null;
+        slipDate = null;
+        creditCompany = null;
+        cashPaid = 0;
+        netTotal = 0;
+        balance = 0;
+        editingQty = null;
+        cashPaidStr = null;
+    }
+
     public String getCashPaidStr() {
         if (cashPaid == 0.0) {
             cashPaidStr = "";
@@ -263,7 +299,7 @@ public class PharmacySaleController implements Serializable {
         }
 
         bi.setQty(editingQty);
-        bi.getPharmaceuticalBillItem().setQtyInUnit(0-editingQty);
+        bi.getPharmaceuticalBillItem().setQtyInUnit(0 - editingQty);
         calculateBillItemForEditing(bi);
 
         calTotal();
@@ -359,7 +395,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void reAddToStock() {
-        
+
         String msg = getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
         if (msg.trim() == "") {
         } else {
@@ -375,8 +411,7 @@ public class PharmacySaleController implements Serializable {
         billPreview = false;
         return "pharmacy_retail_sale";
     }
-    
-    
+
     public String newSaleBillWithoutReduceStockForCashier() {
         //  reAddToStock();
         clearBill();
@@ -406,11 +441,17 @@ public class PharmacySaleController implements Serializable {
         List<Item> items;
         String sql;
         sql = "select i from Item i where i.retired=false and upper(i.name) like :n and type(i)=:t and i.id not in(select ibs.id from Stock ibs where ibs.stock >:s and ibs.department=:d and upper(ibs.itemBatch.item.name) like :n ) order by i.name ";
-        m.put("t", Amp.class);
-        m.put("d", getSessionController().getLoggedUser().getDepartment());
-        m.put("n", "%" + qry + "%");
+        m
+                .put("t", Amp.class
+                );
+        m.put(
+                "d", getSessionController().getLoggedUser().getDepartment());
+        m.put(
+                "n", "%" + qry + "%");
         double s = 0.0;
-        m.put("s", s);
+
+        m.put(
+                "s", s);
         items = getItemFacade().findBySQL(sql, m, 10);
         return items;
     }
@@ -437,6 +478,7 @@ public class PharmacySaleController implements Serializable {
         if (billItem.getPharmaceuticalBillItem() == null) {
             PharmaceuticalBillItem pbi = new PharmaceuticalBillItem();
             pbi.setBillItem(billItem);
+            billItem.setPharmaceuticalBillItem(pbi);
         }
         return billItem;
     }
@@ -453,58 +495,57 @@ public class PharmacySaleController implements Serializable {
         return false;
     }
 
-    private boolean checkPaymentScheme(PaymentScheme paymentScheme) {
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getSaleBill().getBank() == null || getSaleBill().getChequeRefNo() == null || getSaleBill().getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSaleBill().getBank() == null || getSaleBill().getComments() == null || getSaleBill().getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
-                return true;
-            }
-
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Card) {
-            if (getSaleBill().getBank() == null || getSaleBill().getCreditCardRefNo() == null) {
-                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
-                return true;
-            }
-
-//            if (getCreditCardRefNo().trim().length() < 16) {
-//                UtilityController.addErrorMessage("Enter 16 Digit");
+//    private boolean checkPaymentScheme(PaymentScheme paymentScheme) {
+//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cheque) {
+//            if (getSaleBill().getBank() == null || getSaleBill().getChequeRefNo() == null || getSaleBill().getChequeDate() == null) {
+//                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
 //                return true;
 //            }
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Credit) {
-            if (getSaleBill().getCreditCompany() == null) {
-                UtilityController.addErrorMessage("Please Select Credit Company");
-                return true;
-            }
-
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cash) {
-            if (getPreBill().getCashPaid() == 0.0) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
-                return true;
-            }
-            if (getPreBill().getCashPaid() < getPreBill().getNetTotal()) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
+//
+//        }
+//
+//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Slip) {
+//            if (getSaleBill().getBank() == null || getSaleBill().getComments() == null || getSaleBill().getChequeDate() == null) {
+//                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
+//                return true;
+//            }
+//
+//        }
+//
+//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Card) {
+//            if (getSaleBill().getBank() == null || getSaleBill().getCreditCardRefNo() == null) {
+//                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
+//                return true;
+//            }
+//
+////            if (getCreditCardRefNo().trim().length() < 16) {
+////                UtilityController.addErrorMessage("Enter 16 Digit");
+////                return true;
+////            }
+//        }
+//
+//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Credit) {
+//            if (getSaleBill().getCreditCompany() == null) {
+//                UtilityController.addErrorMessage("Please Select Credit Company");
+//                return true;
+//            }
+//
+//        }
+//
+//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cash) {
+//            if (getPreBill().getCashPaid() == 0.0) {
+//                UtilityController.addErrorMessage("Please select tendered amount correctly");
+//                return true;
+//            }
+//            if (getPreBill().getCashPaid() < getPreBill().getNetTotal()) {
+//                UtilityController.addErrorMessage("Please select tendered amount correctly");
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//
+//    }
     private boolean errorCheckForSaleBill() {
 //        if (checkPaymentScheme(getSaleBill().getPaymentScheme())) {
 //            return true;
@@ -541,14 +582,8 @@ public class PharmacySaleController implements Serializable {
     private void savePreBill(Patient pt) {
         getPreBill().setPatient(pt);
 
-        getPreBill().setBillDate(Calendar.getInstance().getTime());
-        getPreBill().setBillTime(Calendar.getInstance().getTime());
-        getPreBill().setCreatedAt(Calendar.getInstance().getTime());
-        getPreBill().setCreater(getSessionController().getLoggedUser());
         getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
         getPreBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
-        getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
-        getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
         getPreBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
@@ -563,7 +598,14 @@ public class PharmacySaleController implements Serializable {
 
     private void savePreBill() {
         calculateAllRates();
-        getPreBill().setDepartment(getSessionController().getDepartment());
+        getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
+        getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
+
+        getPreBill().setBillDate(Calendar.getInstance().getTime());
+        getPreBill().setBillTime(Calendar.getInstance().getTime());
+        getPreBill().setCreatedAt(Calendar.getInstance().getTime());
+        getPreBill().setCreater(getSessionController().getLoggedUser());
+
         getBillFacade().create(getPreBill());
 
     }
@@ -635,7 +677,7 @@ public class PharmacySaleController implements Serializable {
             BillItem newBil = new BillItem();
 
             newBil.copy(tbi);
-
+            newBil.setReferanceBillItem(tbi);
             newBil.setBill(getSaleBill());
             newBil.setInwardChargeType(InwardChargeType.Medicine);
             //      newBil.setBill(getSaleBill());
@@ -653,6 +695,9 @@ public class PharmacySaleController implements Serializable {
 
             //   getPharmacyBean().deductFromStock(tbi.getItem(), tbi.getQty(), tbi.getBill().getDepartment());
             getSaleBill().getBillItems().add(newBil);
+
+            tbi.setReferanceBillItem(newBil);
+            getBillItemFacade().edit(tbi);
         }
         getBillFacade().edit(getSaleBill());
     }
@@ -808,6 +853,8 @@ public class PharmacySaleController implements Serializable {
         getPreBill().setGrantTotal(grossTot);
         getPreBill().setDiscount(discount);
         setNetTotal(getPreBill().getNetTotal());
+
+        getBillFacade().edit(getPreBill());
     }
 
     @EJB
@@ -818,11 +865,15 @@ public class PharmacySaleController implements Serializable {
 //testing
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
+        
         b.setRetired(true);
         b.setRetiredAt(new Date());
         b.setRetireComments("Remove From Bill ");
         b.setRetirer(getSessionController().getLoggedUser());
         getBillItemFacade().edit(b);
+        
+        b.getPharmaceuticalBillItem().setQtyInUnit(0);
+        getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
 
         b.getPharmaceuticalBillItem().getStockHistory().setRetired(true);
         b.getPharmaceuticalBillItem().getStockHistory().setRetiredAt(new Date());

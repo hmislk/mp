@@ -141,6 +141,8 @@ public class PharmacyBean {
 
         return msg;
     }
+    
+    
 
     public PharmaceuticalItemCategoryFacade getPharmaceuticalItemCategoryFacade() {
         return PharmaceuticalItemCategoryFacade;

@@ -65,7 +65,7 @@
                             <p:column headerText="Billed By"  >
                                 <h:outputLabel value="#{bill.creater.webUserPerson.name}" ></h:outputLabel>
                             </p:column>                                                      
-                            <p:column headerText="Net Value" filterBy="#{bill.netTotal}">
+                            <p:column headerText="Net Value" >
 
                                 <h:outputLabel value="#{bill.netTotal}" >
                                     <f:convertNumber pattern="#,000.00"/>

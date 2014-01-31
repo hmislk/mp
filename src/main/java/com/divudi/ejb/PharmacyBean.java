@@ -95,7 +95,6 @@ public class PharmacyBean {
 //        if (bill.getDepartment().getId() != department.getId()) {
 //            return "Sorry You cant add Another Department Stock";
 //        }
-
         String msg = "";
 
         Bill newPre = new PreBill();
@@ -124,7 +123,7 @@ public class PharmacyBean {
             ph.invertValue(bItem.getPharmaceuticalBillItem());
             ph.setBillItem(newBillItem);
             getPharmaceuticalBillItemFacade().create(ph);
-            
+
             newBillItem.setPharmaceuticalBillItem(ph);
             getBillItemFacade().edit(newBillItem);
 
@@ -265,12 +264,14 @@ public class PharmacyBean {
         return getItemBatchFacade().findDoubleByJpql(sql, m);
     }
 
-    public boolean resetStock(Stock stock, double qty) {
+    public boolean resetStock(PharmaceuticalBillItem ph, Stock stock, double qty, Department department) {
         if (stock.getId() == null) {
             return false;
         }
 
         stock = getStockFacade().find(stock.getId());
+
+        addToStockHistory(ph, stock, department);
 
         stock.setStock(qty);
         getStockFacade().edit(stock);

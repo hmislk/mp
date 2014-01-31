@@ -345,13 +345,16 @@ public class PurchaseOrderController implements Serializable {
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
             BillItem bi = new BillItem();
             bi.copy(i.getBillItem());
+            
 
             PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
-            ph.setBillItem(bi);
+            ph.setBillItem(bi);           
             ph.setQtyInUnit(i.getQtyInUnit());
             ph.setPurchaseRateInUnit(i.getPurchaseRateInUnit());
             ph.setRetailRateInUnit(i.getRetailRateInUnit());
             bi.setPharmaceuticalBillItem(ph);
+            
+            bi.setTmpQty(ph.getQtyInUnit());
 
             getBillItems().add(bi);
         }

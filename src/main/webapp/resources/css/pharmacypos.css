@@ -1,7 +1,7 @@
 @media print{
     .posbill{
         position: relative!important;  
-        margin-top: -2cm!important; 
+        margin-top: -2cm!important;       
         width: 100%;
         padding: 0px!important;
         margin: 0px!important;
@@ -30,16 +30,16 @@
 @media screen{
     .posbill{
         position: relative!important;
-        padding-left: 5%!important;
+        /*padding-left: 0%!important;*/
         width:400px!important; 
-        overflow:hidden!important; 
+        /*overflow:hidden!important;*/ 
         font-family: monospace!important; 
         margin: auto!important; 
         background-size: 100% auto!important; 
         border: 1px solid!important;
         font-size: 100%;
         /*font-family: sans-serif!important;*/ 
-        font-size: 12px!important; 
+        font-size: 11px!important; 
        
     }
 

@@ -72,7 +72,10 @@
                             <f:convertDateTime pattern="hh mm a"/>
                         </h:outputLabel>
                     </h:panelGroup>
-                    <p:inputText value="Invoice No : #{cc.attrs.bill.invoiceNumber}"/>
+                    <h:panelGroup>
+                        <h:outputLabel value="Invoice No : "/>
+                        <p:inputText value="#{cc.attrs.bill.invoiceNumber}"/>
+                    </h:panelGroup>
                     <h:outputLabel value="P.O.Approve By : #{cc.attrs.bill.referenceBill.creater.staff.code}"/>
                     <h:outputLabel value="Supplier : #{cc.attrs.bill.fromInstitution.name}"/>
                     <h:outputLabel value="Location : #{cc.attrs.bill.referenceBill.creater.department.name}"/>

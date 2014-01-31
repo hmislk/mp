@@ -116,6 +116,10 @@ public class PharmacyBillSearch implements Serializable {
         getBillFacade().edit(getBill());        
     }
     
+    public void editBill(Bill bill){
+        getBillFacade().edit(bill);        
+    }
+    
     public void editBillItem(BillItem billItem){
         getBillItemFacede().edit(billItem);
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());

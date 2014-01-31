@@ -192,7 +192,9 @@ public class PharmacyAdjustmentController implements Serializable {
         if (billItem.getPharmaceuticalBillItem() == null) {
             PharmaceuticalBillItem pbi = new PharmaceuticalBillItem();
             pbi.setBillItem(billItem);
+            billItem.setPharmaceuticalBillItem(pbi);
         }
+
         return billItem;
     }
 
@@ -233,7 +235,7 @@ public class PharmacyAdjustmentController implements Serializable {
         }
     }
 
-    private void saveDeptAdjustmentBillItems() {
+    private PharmaceuticalBillItem saveDeptAdjustmentBillItems() {
         billItem = null;
         BillItem tbi = getBillItem();
 
@@ -262,22 +264,23 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
-        
+
         ph.setBillItem(null);
         getPharmaceuticalBillItemFacade().create(ph);
-        
+
         tbi.setPharmaceuticalBillItem(ph);
-        
+
         getBillItemFacade().create(tbi);
-        
-        
+
         ph.setBillItem(tbi);
         getPharmaceuticalBillItemFacade().edit(ph);
 
         getDeptAdjustmentPreBill().getBillItems().add(tbi);
-        
+
         getBillFacade().edit(getDeptAdjustmentPreBill());
         
+        return ph;
+
     }
 
     private void savePrAdjustmentBillItems() {
@@ -306,7 +309,7 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setPharmaceuticalBillItem(ph);
 
         getBillItemFacade().create(tbi);
-        
+
         ph.setBillItem(tbi);
         getPharmaceuticalBillItemFacade().edit(ph);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
@@ -338,9 +341,9 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setCreater(getSessionController().getLoggedUser());
         getPharmaceuticalBillItemFacade().create(ph);
         tbi.setPharmaceuticalBillItem(ph);
-        
+
         getBillItemFacade().create(tbi);
-        
+
         ph.setBillItem(tbi);
         getPharmaceuticalBillItemFacade().edit(ph);
 //        getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
@@ -350,9 +353,9 @@ public class PharmacyAdjustmentController implements Serializable {
 
     public void adjustDepartmentStock() {
         saveDeptAdjustmentBill();
-        saveDeptAdjustmentBillItems();
+       PharmaceuticalBillItem ph= saveDeptAdjustmentBillItems();
         setBill(getBillFacade().find(getDeptAdjustmentPreBill().getId()));
-        getPharmacyBean().resetStock(stock, qty);
+        getPharmacyBean().resetStock(ph,stock, qty,getSessionController().getDepartment());
         clearBill();
         clearBillItem();
     }

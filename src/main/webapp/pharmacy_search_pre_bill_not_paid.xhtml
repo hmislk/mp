@@ -27,6 +27,9 @@
 
                             <p:column selectionMode="multiple" ></p:column>
                            
+                               <p:column headerText="ID">
+                                <h:outputLabel value="#{bill.id}"  ></h:outputLabel>
+                            </p:column>   
                             <p:column headerText="Pre Bill No">
                                 <h:outputLabel value="#{bill.deptId}"  ></h:outputLabel>
                             </p:column>     
@@ -58,7 +61,8 @@
                                     <f:setPropertyActionListener  value="#{bill}" target="#{pharmacyPreSettleController.preBill}" />
                                 </p:commandButton>
                             </p:column>
-
+                            
+                           
                         </p:dataTable>
 
 

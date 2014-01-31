@@ -8,6 +8,7 @@ import com.divudi.bean.pharmacy.PharmacyPreSettleController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.entity.LazyBill;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -108,6 +109,7 @@ public class BillSearch implements Serializable {
     private WebUserController webUserController;
     @Inject
     private PharmacyPreSettleController pharmacyPreSettleController;
+    private SearchKeyword searchKeyword;
 
     public BillSearch() {
     }
@@ -272,6 +274,7 @@ public class BillSearch implements Serializable {
         billFees = null;
         tempbillItems = null;
         lazyBills = null;
+        searchKeyword = null;
     }
 
     public void update() {
@@ -399,7 +402,7 @@ public class BillSearch implements Serializable {
         return lazyBills;
     }
 
-    public void createTableByKeyword() {
+    public void createTableByKeyword2() {
         lazyBills = null;
         String sql;
         Map temMap = new HashMap();
@@ -428,6 +431,55 @@ public class BillSearch implements Serializable {
         System.err.println("SIZE : " + lst.size());
 
         lazyBills = new LazyBill(lst);
+    }
+
+    public void createTableByKeyword() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+//        if (!searchKeyword.checkKeyword()) {
+//            UtilityController.addErrorMessage("Please Enter Any Key word");
+//            return;
+//        }
+        sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate and b.retired=false ";
+
+        if (searchKeyword.getPatientName() != null && !searchKeyword.getPatientName().trim().equals("")) {
+            sql += " and  (upper(b.patient.person.name) like :patientName )";
+            temMap.put("patientName", "%" + searchKeyword.getPatientName().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getPatientPhone() != null && !searchKeyword.getPatientPhone().trim().equals("")) {
+            sql += " and  (upper(b.patient.person.phone) like :patientPhone )";
+            temMap.put("patientPhone", "%" + searchKeyword.getPatientPhone().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getBillNo() != null && !searchKeyword.getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + searchKeyword.getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getNetTotal() != null && !searchKeyword.getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            temMap.put("netTotal", "%" + searchKeyword.getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getTotal() != null && !searchKeyword.getTotal().trim().equals("")) {
+            sql += " and  (upper(b.total) like :total )";
+            temMap.put("total", "%" + searchKeyword.getTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
+//    
+        temMap.put("billType", BillType.OpdBill);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+
+        System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
     }
 
     public void createCreditTable() {
@@ -538,37 +590,51 @@ public class BillSearch implements Serializable {
     }
 
     public void createPreTable() {
-        System.err.println("CREATE PRE");
-        lazyBills = null;
+        bills = null;
         String sql;
         Map temMap = new HashMap();
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from PreBill b where  b.billType = :billType and b.institution=:ins"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + " and b.deptId is not null order by b.id desc  ";
-        } else {
-            sql = "select b from PreBill b where  b.billType = :billType and b.institution=:ins"
-                    + " and  (upper(b.insId) like :str "
-                    + " or upper(b.department.name) like :str "
-                    + " or upper(b.paymentScheme.paymentMethod) like :str "
-                    + " or upper(b.paymentScheme.name) like :str"
-                    + " or upper(b.netTotal) like :str "
-                    + " or upper(b.total) like :str )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + " and b.deptId is not null order by b.id desc  ";
 
-            temMap.put("str", "% " + txtSearch.toUpperCase() + " %");
+        sql = "select b from PreBill b where b.billType = :billType "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate"
+                + " and b.retired=false and b.deptId is not null ";
+
+        if (searchKeyword.getPatientName() != null && !searchKeyword.getPatientName().trim().equals("")) {
+            sql += " and  (upper(b.patient.person.name) like :patientName )";
+            temMap.put("patientName", "%" + searchKeyword.getPatientName().trim().toUpperCase() + "%");
         }
 
+        if (searchKeyword.getPatientPhone() != null && !searchKeyword.getPatientPhone().trim().equals("")) {
+            sql += " and  (upper(b.patient.person.phone) like :patientPhone )";
+            temMap.put("patientPhone", "%" + searchKeyword.getPatientPhone().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getBillNo() != null && !searchKeyword.getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.deptId) like :billNo )";
+            temMap.put("billNo", "%" + searchKeyword.getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getNetTotal() != null && !searchKeyword.getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            temMap.put("netTotal", "%" + searchKeyword.getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        if (searchKeyword.getTotal() != null && !searchKeyword.getTotal().trim().equals("")) {
+            sql += " and  (upper(b.total) like :total )";
+            temMap.put("total", "%" + searchKeyword.getTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
+//    
         temMap.put("billType", BillType.PharmacyPre);
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //     System.err.println("SIZE : " + lst.size());
 
-        lazyBills = new LazyBill(lst);
+        System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+ 
     }
 
     public void createPreRefundTable() {
@@ -643,7 +709,7 @@ public class BillSearch implements Serializable {
         lazyBills = new LazyBill(lst);
     }
 
-   public void createPaymentTable() {
+    public void createPaymentTable() {
         HashMap temMap = new HashMap();
 //        String sql = "SELECT b FROM BilledBill b WHERE b.retired=false and b.id "
 //                + "in(Select bt.bill.id From BillItem bt Where bt.referenceBill.billType=:refType)"
@@ -664,7 +730,7 @@ public class BillSearch implements Serializable {
         lazyBills = null;
         lazyBills = new LazyBill(lst);
     }
-   
+
     public List<BillItem> getRefundingItems() {
         return refundingItems;
     }
@@ -1966,5 +2032,16 @@ public class BillSearch implements Serializable {
 
     public void setBillItemFacade(BillItemFacade billItemFacade) {
         this.billItemFacade = billItemFacade;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 }

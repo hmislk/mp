@@ -17,6 +17,8 @@ public class SearchKeyword {
     private String total;
     private String netTotal;
     private String itemName;
+    private String speciality;
+    private String staffName;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -89,5 +91,21 @@ public class SearchKeyword {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+
+    public String getSpeciality() {
+        return speciality;
+    }
+
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 }

@@ -42,10 +42,11 @@
 
 
                         <p:dataTable id="tblBills" value="#{billSearch.bills}" var="bill"   >
-                            <h:commandLink action="credit_company_bill_reprint" value="#{bill.insId}">
-                                <h:outputLabel  ></h:outputLabel>
-                                <f:setPropertyActionListener value="#{bill}" target="#{creditCompanyBillSearch.bill}"/>
-                            </h:commandLink>
+                            <p:column>
+                                <h:commandLink action="credit_company_bill_reprint" value="#{bill.insId}">
+                                    <h:outputLabel  ></h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{creditCompanyBillSearch.bill}"/>
+                                </h:commandLink>
                             </p:column>
                             <p:column headerText="Credit Company"   >
                                 <h:commandLink action="credit_company_bill_reprint" >
@@ -90,7 +91,7 @@
                                 <h:panelGroup rendered="#{bill.refunded}" >
                                     <h:outputLabel style="color: red;" value="Refunded at " />
                                     <h:outputLabel style="color: red;" rendered="#{bill.refunded}" value="#{bill.refundedBill.creater.webUserPerson.name}" >
-                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                                      
                                     </h:outputLabel>
                                 </h:panelGroup>
                             </p:column>    

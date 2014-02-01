@@ -12,44 +12,47 @@
                 <h:form>
                     <p:panel>
                         <f:facet name="header" >
-                            <h:outputLabel value="SEARCH PHARMACY BILL ITEM "/>
-                            <h:panelGrid columns="6"> 
-
-                                <p:inputText id="txtSearch" value="#{billSearch.txtSearch}" style="width:500px;"/>                                
-                                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" action="#{billSearch.createPharmacyBillItemTable()}"/>
-                                <p:defaultCommand target="btnRefresh"/>
-                                
+                            <h:outputLabel value="SEARCH PHARMACY BILL ITEM "/>                                                          
+                            <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createPharmacyBillItemTable}"/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
-                            </h:panelGrid>                                
-                            <p:watermark value="Bill Id ,NetTotal,Paymentscheme,Paymentmethod,Patient Name or Phone Number" for="txtSearch" />
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="Item Name"/>    
+                                <h:outputLabel value="Item Value"/>   
+                                <h:outputLabel value="Patient"/>           
+                                <h:outputLabel />
+                                <p:inputText  value="#{billSearch.searchKeyword.billNo}" />
+                                <p:inputText value="#{billSearch.searchKeyword.itemName}" />
+                                <p:inputText  value="#{billSearch.searchKeyword.total}" />
+                                <p:inputText  value="#{billSearch.searchKeyword.patientName}" />
+                                <h:outputLabel />
+                            </h:panelGrid>
                         </f:facet>
 
 
 
 
-                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{billSearch.searchBillItems}" var="pi" 
-                                     paginator="true" rows="20"  lazy="true"
-                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                                     rowsPerPageTemplate="5,10,15" >
+                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{billSearch.billItems}" var="pi" >
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
-                            <p:column headerText="Bill No" styleClass="alignTop" filterBy="#{pi.bill.deptId}" >
+                            <p:column headerText="Bill No" styleClass="alignTop"  >
                                 <h:commandLink action="pharmacy_reprint_bill_sale" value="#{pi.bill.deptId}">
                                     <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>                                     
                                 </h:commandLink>   
                             </p:column>
-                            <p:column headerText="Item Name"  styleClass="alignTop" filterBy="#{pi.item.name}" >
+                            <p:column headerText="Item Name"  styleClass="alignTop" >
                                 <h:outputLabel value="#{pi.item.name}" >
                                 </h:outputLabel>                             
                             </p:column>
-                            <p:column headerText="Billed At" filterBy="#{pi.bill.createdAt}"  >
+                            <p:column headerText="Billed At"  >
                                 <h:outputLabel value="Billed at " />
                                 <h:outputLabel value="#{pi.bill.createdAt}" >
                                     <f:convertDateTime pattern="dd MM yy hh mm a"/>
@@ -68,25 +71,16 @@
                                     </h:outputLabel>
                                 </h:panelGroup>
                             </p:column>     
-                            <p:column headerText="Qty" filterBy="#{pi.qty}"  >
+                            <p:column headerText="Qty" >
                                 <h:commandLink action="pharmacy_reprint_bill_sale" >
                                     <h:outputLabel value="#{pi.qty}" >
                                         <f:convertNumber pattern="#0.00"/>
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
                                 </h:commandLink>
-                            </p:column>                          
+                            </p:column>   
 
-                              <p:column headerText="Qty2" filterBy="#{pi.qty}"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{pi.pharmaceuticalBillItem.qtyInUnit}" >
-                                        <f:convertNumber pattern="#0.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
-                            </p:column>                          
-
-                            <p:column headerText="Bill item Value" filterBy="#{pi.netValue}"  >
+                            <p:column headerText="Bill item Value"   >
                                 <h:commandLink action="pharmacy_reprint_bill_sale" >
                                     <h:outputLabel value="#{pi.netValue}" >
                                         <f:convertNumber pattern="#,000.00"/>
@@ -95,17 +89,7 @@
                                 </h:commandLink>
                             </p:column>
 
-                            <p:column headerText="Bills Net Total" filterBy="#{pi.bill.netTotal}"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{pi.bill.netTotal}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
-                            </p:column>
-
-
-                            <p:column headerText="Patient"  styleClass="alignTop" filterBy="#{pi.bill.patient.person.nameWithTitle}" >
+                            <p:column headerText="Patient"  styleClass="alignTop" >
                                 <h:outputLabel value="#{pi.bill.patient.person.nameWithTitle}" >
                                 </h:outputLabel>                             
                             </p:column>

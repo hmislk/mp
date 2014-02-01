@@ -251,19 +251,20 @@ public class GrnController implements Serializable {
         this.dealor = dealor;
     }
 
-    private LazyDataModel<Bill> searchBills;
+    
     private String txtSearch;
 
     public void makeListNull() {
-        searchBills = null;
+       
 //        pharmacyItems = null;
         pos = null;
         grns = null;
         filteredValue = null;
+        bills = null;
     }
 
     public void createPoTable() {
-        searchBills = null;
+        bills = null;
         String sql;
         HashMap tmp = new HashMap();
 
@@ -292,13 +293,11 @@ public class GrnController implements Serializable {
         tmp.put("fromDate", getFromDate());
         tmp.put("ins", getSessionController().getInstitution());
         tmp.put("bTp", BillType.PharmacyOrderApprove);
-        pos = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
+        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
 
-        for (Bill b : pos) {
+        for (Bill b : bills) {
             b.setListOfBill(getGrns(b));
         }
-
-        searchBills = new LazyBill(pos);
 
     }
 
@@ -394,7 +393,7 @@ public class GrnController implements Serializable {
 
     private List<Bill> getReturnBill(Bill b) {
         String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
-                + " and b.cancelled=false and b.billType=:btp and "
+                + " and  b.billType=:btp and "
                 + " b.referenceBill=:ref";
         HashMap hm = new HashMap();
         hm.put("ref", b);
@@ -734,13 +733,7 @@ public class GrnController implements Serializable {
 //    public void setBillItems(List<BillItem> billItems) {
 //        this.billItems = billItems;
 //    }
-    public LazyDataModel<Bill> getSearchBills() {
-        return searchBills;
-    }
-
-    public void setSearchBills(LazyDataModel<Bill> searchBills) {
-        this.searchBills = searchBills;
-    }
+  
 
     public String getTxtSearch() {
         return txtSearch;

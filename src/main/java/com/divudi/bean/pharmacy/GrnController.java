@@ -8,6 +8,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
@@ -96,6 +97,8 @@ public class GrnController implements Serializable {
     private List<Bill> filteredValue;
     private List<BillItem> billItems;
     private List<BillItem> selectedBillItems;
+    private SearchKeyword searchKeyword;
+    private List<Bill> bills;
 
     public void removeItem(BillItem bi) {
         getBillItems().remove(bi.getSearialNo());
@@ -263,20 +266,28 @@ public class GrnController implements Serializable {
         searchBills = null;
         String sql;
         HashMap tmp = new HashMap();
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp"
-                    + " and b.cancelled=false and b.referenceBill.institution=:ins and "
-                    + " b.createdAt between :fromDate and :toDate order by b.id desc  ";
-        } else {
-            sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp"
-                    + " and b.cancelled=false  and b.referenceBill.institution=:ins "
-                    + " and  (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + " b.createdAt between :fromDate and :toDate order by b.id desc ";
-            // tmp.put("del", getDealor());
+
+        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp"
+                + " and  b.referenceBill.institution=:ins and "
+                + " b.createdAt between :fromDate and :toDate ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.deptId) like :billNo )";
+            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
+
+        if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
+            sql += " and  (upper(b.toInstitution.name) like :toIns )";
+            tmp.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            tmp.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
+
         tmp.put("toDate", getToDate());
         tmp.put("fromDate", getFromDate());
         tmp.put("ins", getSessionController().getInstitution());
@@ -292,36 +303,55 @@ public class GrnController implements Serializable {
     }
 
     public void createGrnTable() {
-        searchBills = null;
+        bills = null;
         String sql;
         HashMap tmp = new HashMap();
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp "
-                    + " and b.cancelled=false and b.institution=:ins and"
-                    + " b.createdAt between :fromDate and :toDate order by b.id desc  ";
-        } else {
-            sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp and"
-                    + " b.cancelled=false and b.institution=:ins "
-                    + " and (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.referenceBill.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + " and b.createdAt between :fromDate and :toDate order by b.id desc ";
-            // tmp.put("del", getDealor());
+
+        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp "
+                + " and b.institution=:ins and"
+                + " b.createdAt between :fromDate and :toDate ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.deptId) like :billNo )";
+            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
+
+        if (getSearchKeyword().getNumber() != null && !getSearchKeyword().getNumber().trim().equals("")) {
+            sql += " and  (upper(b.invoiceNumber) like :invoice )";
+            tmp.put("invoice", "%" + getSearchKeyword().getNumber().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {
+            sql += " and  (upper(b.referenceBill.deptId) like :refNo )";
+            tmp.put("refNo", "%" + getSearchKeyword().getRefBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getFromInstitution() != null && !getSearchKeyword().getFromInstitution().trim().equals("")) {
+            sql += " and  (upper(b.fromInstiution.name) like :frmIns )";
+            tmp.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getTotal() != null && !getSearchKeyword().getTotal().trim().equals("")) {
+            sql += " and  (upper(b.referenceBill.netTotal) like :total )";
+            tmp.put("total", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            tmp.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
+
         tmp.put("toDate", getToDate());
         tmp.put("fromDate", getFromDate());
         tmp.put("ins", getSessionController().getInstitution());
         tmp.put("bTp", BillType.PharmacyGrnBill);
-        grns = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
+        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
 
-        for (Bill b : grns) {
+        for (Bill b : bills) {
             b.setListOfBill(getReturnBill(b));
         }
-
-        searchBills = new LazyBill(grns);
 
     }
 
@@ -740,5 +770,23 @@ public class GrnController implements Serializable {
         this.selectedBillItems = selectedBillItems;
     }
 
-   
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
 }

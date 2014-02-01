@@ -8,6 +8,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
@@ -74,7 +75,8 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private PharmacyCalculation pharmacyRecieveBean;
     private List<BillItem> billItems;
-   
+    private List<Bill> bills;
+    private SearchKeyword searchKeyword;
 
     public void onFocus(BillItem tmp) {
         getPharmacyController().setPharmacyItem(tmp.getItem());
@@ -113,6 +115,45 @@ public class TransferReceiveController implements Serializable {
         }
 
         return bil;
+    }
+
+    public void createIssueTable() {
+        String sql;
+        HashMap tmp = new HashMap();
+        tmp.put("toDate", getToDate());
+        tmp.put("fromDate", getFromDate());
+        tmp.put("dep", getSessionController().getDepartment());
+        tmp.put("bTp", BillType.PharmacyTransferIssue);
+        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
+                + " b.toDepartment=:dep and b.billType= :bTp "
+                + " and b.createdAt between :fromDate and :toDate ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.deptId) like :billNo )";
+            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getStaffName()!= null && !getSearchKeyword().getStaffName().trim().equals("")) {
+            sql += " and  (upper(b.toStaff.person.name) like :stf )";
+            tmp.put("stf", "%" + getSearchKeyword().getStaffName().trim().toUpperCase() + "%");
+        }
+        
+        if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
+            sql += " and  (upper(b.department.name) like :fDep )";
+            tmp.put("fDep", "%" + getSearchKeyword().getDepartment().trim().toUpperCase() + "%");
+        }
+        
+        
+
+        sql += " order by b.id desc  ";
+
+        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
+
+        for (Bill b : bills) {
+            b.setTmpRefBill(getRefBill(b));
+
+        }
+
     }
 
     private Bill getRefBill(Bill b) {
@@ -213,18 +254,18 @@ public class TransferReceiveController implements Serializable {
             getPharmaceuticalBillItemFacade().create(tmpPh);
             i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
-        
+
             tmpPh.setItemBatch(tmpPh.getStaffStock().getItemBatch());
-          
+
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
-            
+
             //Deduct Staff Stock
             getPharmacyBean().deductFromStock(tmpPh, Math.abs(qty), getIssuedBill().getToStaff());
-            
+
             //Add Stock To Department
             Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
 
-            tmpPh.setStock(addedStock);         
+            tmpPh.setStock(addedStock);
 
             getPharmaceuticalBillItemFacade().edit(tmpPh);
 
@@ -257,7 +298,7 @@ public class TransferReceiveController implements Serializable {
 
     private double calTotal() {
         double value = 0;
-        int serialNo=0;
+        int serialNo = 0;
         for (BillItem b : getBillItems()) {
             value += (b.getPharmaceuticalBillItem().getPurchaseRate() * b.getPharmaceuticalBillItem().getQty());
             b.setSearialNo(serialNo++);
@@ -410,7 +451,7 @@ public class TransferReceiveController implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if (billItems == null) {           
+        if (billItems == null) {
             billItems = new ArrayList<>();
         }
         return billItems;
@@ -418,6 +459,25 @@ public class TransferReceiveController implements Serializable {
 
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 
 }

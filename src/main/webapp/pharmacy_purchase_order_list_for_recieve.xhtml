@@ -116,13 +116,48 @@
                             </h:commandLink>
                         </p:column>
                         <p:column >
-                            <h:commandLink action="pharmacy_reprint_grn"  >   
-                                <h:outputLabel value="#{b.createdAt}">
-                                    <f:convertDateTime pattern="dd MM yyyy"/>
+                            <h:commandLink action="pharmacy_reprint_grn" >
+                                <h:outputLabel value="#{b.createdAt}" >
+                                    <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                 </h:outputLabel>
-                                <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
+                                <f:setPropertyActionListener value="#{b}" target="#{pharmacyBillSearch.bill}"/>
                             </h:commandLink>
-                        </p:column>
+                            <br/>
+                            <h:panelGroup rendered="#{b.cancelled}" >
+                                <h:outputLabel style="color: red;" value="Cancelled at " />
+                                <h:outputLabel style="color: red;" rendered="#{b.cancelled}"
+                                               value="#{b.cancelledBill.createdAt}" >
+                                    <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                                </h:outputLabel>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{b.refunded}" >
+                                <h:outputLabel style="color: red;" value="Refunded at " />
+                                <h:outputLabel style="color: red;" rendered="#{b.refunded}" 
+                                               value="#{b.refundedBill.createdAt}" >
+                                    <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                                </h:outputLabel>
+                            </h:panelGroup>
+                        </p:column> 
+
+                        <p:column >
+                            <h:commandLink action="pharmacy_reprint_grn" >
+                                <h:outputLabel value="#{b.creater.webUserPerson.name}" >                                      
+                                </h:outputLabel>
+                                <f:setPropertyActionListener value="#{b}" target="#{billSearch.bill}"/>
+                            </h:commandLink>
+                            <br/>
+                            <h:panelGroup rendered="#{b.cancelled}" >
+                                <h:outputLabel style="color: red;" value="Cancelled by " />
+                                <h:outputLabel style="color: red;" rendered="#{p.cancelled}" value="#{p.cancelledBill.creater.webUserPerson.name}" >                                       
+                                </h:outputLabel>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{b.refunded}" >
+                                <h:outputLabel style="color: red;" value="Refunded by " />
+                                <h:outputLabel style="color: red;" rendered="#{b.refunded}"
+                                               value="#{b.refundedBill.creater.webUserPerson.name}" >                         
+                                </h:outputLabel>
+                            </h:panelGroup>
+                        </p:column> 
                         <p:column >
                             <h:commandLink action="pharmacy_reprint_grn"  >   
                                 <h:outputLabel  value="#{b.invoiceNumber}"/>
@@ -137,9 +172,7 @@
                                 <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>
-                        <p:column>
-                            <h:outputLabel value="CANCELLED" rendered="#{b.cancelled eq true}"/>
-                        </p:column>
+
 
                     </p:dataTable>
                 </p:column>

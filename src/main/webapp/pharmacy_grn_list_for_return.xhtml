@@ -11,28 +11,38 @@
             <p:panelGrid columns="7" style="min-width: 100%;"> 
                 <f:facet name="header">
                     <h:outputLabel value="Good Recieve Note List"/>
+
+                    <h:panelGrid columns="5" >
+                        <h:outputLabel value="From Date"/>
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{grnController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        </p:calendar>
+                        <h:outputLabel value="To Date"/>
+                        <p:calendar id="toDate" value="#{grnController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        </p:calendar>
+                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{grnController.createGrnTable}"/>
+                        <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+
+                        <h:outputLabel value="Grn No"/>
+                        <h:outputLabel value="Invoice Number"/>
+                        <h:outputLabel value="Po Number"/>
+                        <h:outputLabel value="Distributor"/>
+                        <h:outputLabel value="Po Value"/>
+                        <h:outputLabel value="Grn Value"/>
+                        <p:inputText  value="#{grnController.searchKeyword.billNo}" />
+                        <p:inputText value="#{grnController.searchKeyword.number}" />
+                        <p:inputText  value="#{grnController.searchKeyword.refBillNo}" />
+                        <p:inputText  value="#{grnController.searchKeyword.fromInstitution}" />
+                        <p:inputText value="#{grnController.searchKeyword.total}"/>
+                        <p:inputText value="#{grnController.searchKeyword.netTotal}"/>
+                    </h:panelGrid>
+
                 </f:facet>
-                <p:inputText id="txtSearch" value="#{grnController.txtSearch}" style="width:500px;"/>
-
-                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" actionListener="#{grnController.createGrnTable()}" />
-                <p:defaultCommand target="btnRefresh"/>
-
-                <h:outputLabel value="From Date"/>
-                <p:calendar id="frmDate" value="#{grnController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
-                </p:calendar>
-
-                <h:outputLabel value="To Date"/>
-                <p:calendar id="toDate" value="#{grnController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm"  >
-                </p:calendar>
 
             </p:panelGrid>
-            <p:watermark value="Bill Id ,Po Value,Po Number,GRN No,Dealor" for="txtSearch" />
-            <p:dataTable value="#{grnController.searchBills}" var="p" lazy="true"
-                         paginator="true" rows="20"  
-                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                         rowsPerPageTemplate="5,10,15">
 
-                <p:column headerText="GRN No"  filterBy="#{p.deptId}" >                   
+            <p:dataTable value="#{grnController.bills}" var="p" >
+
+                <p:column headerText="GRN No"  >                   
                     <h:commandLink action="pharmacy_reprint_grn"  >    
                         <h:outputLabel  value="#{p.deptId}"/>
                         <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
@@ -57,22 +67,49 @@
                     </h:commandLink>
                 </p:column>
 
-                <p:column headerText="Date">
-                    <h:commandLink action="pharmacy_reprint_grn">
-                        <h:outputLabel  value="#{p.createdAt}">
-                            <f:convertDateTime pattern="dd MM yyyy"/>
+                <p:column headerText="Billed at"  >
+                    <h:commandLink action="pharmacy_reprint_grn" >
+                        <h:outputLabel value="#{p.createdAt}" >
+                            <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                         </h:outputLabel>
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
+                        <f:setPropertyActionListener value="#{p}" target="#{pharmacyBillSearch.bill}"/>
                     </h:commandLink>
-                </p:column>
-                <p:column headerText="Time">
-                    <h:commandLink action="pharmacy_reprint_grn">
-                        <h:outputLabel  value="#{p.createdAt}">
-                            <f:convertDateTime pattern="HH:mm a"/>
+                    <br/>
+                    <h:panelGroup rendered="#{p.cancelled}" >
+                        <h:outputLabel style="color: red;" value="Cancelled at " />
+                        <h:outputLabel style="color: red;" rendered="#{p.cancelled}"
+                                       value="#{p.cancelledBill.createdAt}" >
+                            <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
                         </h:outputLabel>
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{p.refunded}" >
+                        <h:outputLabel style="color: red;" value="Refunded at " />
+                        <h:outputLabel style="color: red;" rendered="#{p.refunded}" 
+                                       value="#{p.refundedBill.createdAt}" >
+                            <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                        </h:outputLabel>
+                    </h:panelGroup>
+                </p:column> 
+
+                <p:column headerText="Billed by" >
+                    <h:commandLink action="pharmacy_reprint_grn" >
+                        <h:outputLabel value="#{p.creater.webUserPerson.name}" >                                      
+                        </h:outputLabel>
+                        <f:setPropertyActionListener value="#{p}" target="#{billSearch.bill}"/>
                     </h:commandLink>
-                </p:column>              
+                    <br/>
+                    <h:panelGroup rendered="#{p.cancelled}" >
+                        <h:outputLabel style="color: red;" value="Cancelled by " />
+                        <h:outputLabel style="color: red;" rendered="#{p.cancelled}" value="#{p.cancelledBill.creater.webUserPerson.name}" >                                       
+                        </h:outputLabel>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{p.refunded}" >
+                        <h:outputLabel style="color: red;" value="Refunded by " />
+                        <h:outputLabel style="color: red;" rendered="#{p.refunded}"
+                                       value="#{p.refundedBill.creater.webUserPerson.name}" >                         
+                        </h:outputLabel>
+                    </h:panelGroup>
+                </p:column>    
 
                 <p:column headerText="PO Value" filterBy="#{p.referenceBill.netTotal}">
                     <h:commandLink action="pharmacy_reprint_grn"  >    
@@ -93,7 +130,7 @@
                     </h:commandLink>
                 </p:column>
                 <p:column>
-                    <p:commandButton ajax="false" value="Return" action="pharmacy_return_good">
+                    <p:commandButton ajax="false" value="Return" action="pharmacy_return_good" disabled="#{p.cancelled}">
                         <f:setPropertyActionListener target="#{goodsReturnController.bill}" value="#{p}"/>
                     </p:commandButton>
                 </p:column>

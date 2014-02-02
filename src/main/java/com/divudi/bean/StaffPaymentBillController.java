@@ -101,6 +101,7 @@ public class StaffPaymentBillController implements Serializable {
         return billComponents;
     }
     private List<BillFee> billFees;
+    private List<BillFee> tblBillFees;
 
     public List<BillFee> getBillFees() {
         if (getCurrent() != null) {
@@ -560,7 +561,7 @@ public class StaffPaymentBillController implements Serializable {
     private LazyDataModel<BillFee> dueBillFee;
 
     public void createDueFeeTable() {
-        billFees = null;
+        tblBillFees = null;
         String sql;
         Map temMap = new HashMap();
 
@@ -607,7 +608,7 @@ public class StaffPaymentBillController implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("btp", BillType.OpdBill);
 
-        billFees = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        tblBillFees = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
 
@@ -709,6 +710,14 @@ public class StaffPaymentBillController implements Serializable {
 
     public void setSearchKeyword(SearchKeyword searchKeyword) {
         this.searchKeyword = searchKeyword;
+    }
+
+    public List<BillFee> getTblBillFees() {
+        return tblBillFees;
+    }
+
+    public void setTblBillFees(List<BillFee> tblBillFees) {
+        this.tblBillFees = tblBillFees;
     }
 
     /**

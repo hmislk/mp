@@ -7,6 +7,7 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
@@ -41,8 +42,6 @@ import javax.inject.Named;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
-
 /**
  *
  * @author Buddhika
@@ -61,8 +60,8 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     List<BillComponent> billComponents;
     List<BillFee> billFees;
     PaymentMethod paymentMethod;
-   
-    List<Bill> bills;
+
+    private List<Bill> bills;
     @EJB
     private CommonFunctions commonFunctions;
     @EJB
@@ -138,6 +137,49 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         return bills;
     }
 
+    private SearchKeyword searchKeyword;
+
+    public void createAgentPaymentTable() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where b.billType = :billType "
+                + " and b.institution=:ins and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            temMap.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getFromInstitution() != null && !getSearchKeyword().getFromInstitution().trim().equals("")) {
+            sql += " and  (upper(b.fromInstitution.name) like :frmIns )";
+            temMap.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNumber() != null && !getSearchKeyword().getNumber().trim().equals("")) {
+            sql += " and  (upper(b.fromInstitution.institutionCode) like :num )";
+            temMap.put("num", "%" + getSearchKeyword().getNumber().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
+//    
+        temMap.put("billType", BillType.AgentPaymentReceiveBill);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+
+        System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
+    }
+
     public BillFeeFacade getBillFeeFacade() {
         return billFeeFacade;
     }
@@ -182,8 +224,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         this.cancelledBillFacade = cancelledBillFacade;
     }
 
-   
-
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
@@ -194,7 +234,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     public void recreateModel() {
 
-
         billFees = null;
 //        billFees
         billComponents = null;
@@ -204,6 +243,8 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         tempbillItems = null;
         comment = null;
     }
+    
+    
 
     private void cancelBillComponents(CancelledBill can, BillItem bt) {
         for (BillComponent nB : getBillComponents()) {
@@ -226,7 +267,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
             bC.setCreater(getSessionController().getLoggedUser());
             getBillCommponentFacade().create(bC);
         }
-
 
     }
 
@@ -261,8 +301,8 @@ public class AgentPaymentReceiveSearchController implements Serializable {
             cb.setFromDepartment(getBill().getFromDepartment());
             cb.setFromInstitution(getBill().getFromInstitution());
 
-            cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.AgentPaymentReceiveBill,BillNumberSuffix.AGNCAN));
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),cb,BillType.AgentPaymentReceiveBill,BillNumberSuffix.AGNCAN));
+            cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.AgentPaymentReceiveBill, BillNumberSuffix.AGNCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, BillType.AgentPaymentReceiveBill, BillNumberSuffix.AGNCAN));
 
             cb.setDiscount(0 - getBill().getDiscount());
             cb.setDiscountPercent(getBill().getDiscountPercent());
@@ -276,7 +316,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         cb.setCreater(getSessionController().getLoggedUser());
         cb.setPaymentScheme(getBill().getPaymentScheme());
-        
+
         cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
         cb.setInstitution(getSessionController().getInstitution());
         cb.setInstitution(getSessionController().getLoggedUser().getInstitution());
@@ -300,7 +340,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
             UtilityController.addErrorMessage("Doctor Payment Already Paid So Cant Cancel Bill");
             return true;
         }
-       
+
         if (getComment() == null || getComment().trim().equals("")) {
             UtilityController.addErrorMessage("Please enter a comment");
             return true;
@@ -687,5 +727,20 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
     }
 }

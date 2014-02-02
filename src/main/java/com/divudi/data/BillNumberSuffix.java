@@ -25,6 +25,7 @@ public enum BillNumberSuffix {
     PO,//Purchase Order
     POCAN,//PO Cancel
     POR,//Purchase Order Request
+    PORCAN,//Purchase Order Request Cancell
     PHCAN,//Pharmacy Cancel    
     PHPUR,//Purchase  
     PURRET,//Purchase Return

@@ -12,6 +12,7 @@ package com.divudi.data.dataStructure;
 public class SearchKeyword {
 
     private String billNo;
+    private String refBillNo;
     private String patientName;
     private String patientPhone;
     private String total;
@@ -19,6 +20,13 @@ public class SearchKeyword {
     private String itemName;
     private String speciality;
     private String staffName;
+    private String personName;
+    private String fromInstitution;
+    private String toInstitution;
+    private String creator;
+    private String bank;
+    private String number;
+    private String department;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -107,5 +115,69 @@ public class SearchKeyword {
 
     public void setStaffName(String staffName) {
         this.staffName = staffName;
+    }
+
+    public String getFromInstitution() {
+        return fromInstitution;
+    }
+
+    public void setFromInstitution(String fromInstitution) {
+        this.fromInstitution = fromInstitution;
+    }
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(String bank) {
+        this.bank = bank;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
+    }
+
+    public String getRefBillNo() {
+        return refBillNo;
+    }
+
+    public void setRefBillNo(String refBillNo) {
+        this.refBillNo = refBillNo;
+    }
+
+    public String getToInstitution() {
+        return toInstitution;
+    }
+
+    public void setToInstitution(String toInstitution) {
+        this.toInstitution = toInstitution;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 }

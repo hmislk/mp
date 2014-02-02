@@ -10,10 +10,9 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:panel>
-                        <f:facet name="header" >
-                            <h:outputLabel value="SEARCH BILL FOR RETURN ITEM"/>      
-                           
+                    <p:panel header="Search Purchase Orders" >
+                        <f:facet name="header" >                            
+                            <h:outputLabel value="SEARCH RETURN BILLS"/>   
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
@@ -21,7 +20,7 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createPreBillsForReturn}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createCashReturnBills}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>                               
@@ -31,13 +30,13 @@
                                 <p:inputText value="#{billSearch.searchKeyword.netTotal}"/>                               
                                 <h:outputLabel/><h:outputLabel/><h:outputLabel/>
                             </h:panelGrid>
-
                         </f:facet>
-                        <p:dataTable id="tblBills" value="#{billSearch.bills}" var="bill"  >
 
-                            <p:column headerText="Pre Bill No" >
-                                <h:outputLabel value="#{bill.deptId}"  ></h:outputLabel>
-                            </p:column>     
+
+                        <p:dataTable id="tblBills" value="#{billSearch.bills}" var="bill" >
+                            <p:column headerText="Bill No" >                              
+                                <h:outputLabel value="#{bill.deptId}" ></h:outputLabel>
+                            </p:column>  
                             <p:column headerText="Billed at"  >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{bill.createdAt}" >
@@ -77,25 +76,27 @@
 
                                     </h:outputLabel>
                                 </h:panelGroup>
-                            </p:column>                                                    
-                            <p:column headerText="Net Value" >
+                            </p:column>          
+
+                            <p:column headerText="Net Value">
 
                                 <h:outputLabel value="#{bill.netTotal}" >
                                     <f:convertNumber pattern="#,000.00"/>
                                 </h:outputLabel>
 
                             </p:column>
-
                             <p:column>
-                                <p:commandButton ajax="false" value="Return Item Only " action="pharmacy_return_bill_pre"   disabled="#{bill.cancelled eq true}">                                
-                                    <f:setPropertyActionListener value="#{bill}" target="#{preReturnController.bill}"  />
-                                </p:commandButton>
+                                <p:commandButton ajax="false"  value="Cancel Bill" action="pharmacy_reprint_bill_return_cash">
+                                    <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
+                                </p:commandButton>                                
                             </p:column>
 
-                            <p:column>
-                                <p:commandButton ajax="false" value="Return Item and Cash" action="pharmacy_return_bill_retail" disabled="#{bill.cancelled eq true}">
-                                    <f:setPropertyActionListener value="#{bill}" target="#{saleReturnController.bill}"/>
-                                </p:commandButton>
+
+                            <p:column headerText="Comments" >
+                                <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
+                                </h:outputLabel>
+                                <h:outputLabel  rendered="#{bill.cancelledBill ne null}" value="#{bill.cancelledBill.comments}" >
+                                </h:outputLabel>
                             </p:column>
 
                         </p:dataTable>

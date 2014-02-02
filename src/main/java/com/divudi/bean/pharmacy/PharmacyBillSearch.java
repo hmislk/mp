@@ -49,10 +49,6 @@ import javax.persistence.TemporalType;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.LazyDataModel;
 
-
-
-
-
 /**
  *
  * @author Buddhika
@@ -111,16 +107,16 @@ public class PharmacyBillSearch implements Serializable {
     SessionController sessionController;
     @Inject
     private WebUserController webUserController;
-    
-    public void editBill(){
-        getBillFacade().edit(getBill());        
+
+    public void editBill() {
+        getBillFacade().edit(getBill());
     }
-    
-    public void editBill(Bill bill){
-        getBillFacade().edit(bill);        
+
+    public void editBill(Bill bill) {
+        getBillFacade().edit(bill);
     }
-    
-    public void editBillItem(BillItem billItem){
+
+    public void editBillItem(BillItem billItem) {
         getBillItemFacede().edit(billItem);
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
     }
@@ -723,8 +719,6 @@ public class PharmacyBillSearch implements Serializable {
         return cb;
     }
 
-  
-
     private RefundBill pharmacyCreateRefundCancelBill() {
         RefundBill cb = new RefundBill();
 
@@ -762,7 +756,7 @@ public class PharmacyBillSearch implements Serializable {
             b.setBill(can);
             b.copy(nB);
             b.invertValue(nB);
-   
+
             if (can.getBillType() == BillType.PharmacyGrnBill || can.getBillType() == BillType.PharmacyGrnReturn) {
                 b.setReferanceBillItem(nB.getReferanceBillItem());
             } else {
@@ -991,8 +985,8 @@ public class PharmacyBillSearch implements Serializable {
 
         getBillFacade().edit(can);
     }
-    
-     private void pharmacyCancelReturnBillItemsWithReducingStock(Bill can) {
+
+    private void pharmacyCancelReturnBillItemsWithReducingStock(Bill can) {
         for (PharmaceuticalBillItem nB : getPharmacyBillItems()) {
             BillItem b = new BillItem();
             b.setBill(can);
@@ -1060,7 +1054,6 @@ public class PharmacyBillSearch implements Serializable {
 //
 //        getBillFacade().edit(can);
 //    }
-
     @EJB
     private ItemBatchFacade itemBatchFacade;
 
@@ -1102,7 +1095,7 @@ public class PharmacyBillSearch implements Serializable {
             if (pharmacyErrorCheck()) {
                 return;
             }
-            
+
             getPharmacyBean().reAddToStock(getBill().getReferenceBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
 
             CancelledBill cb = pharmacyCreateCancelBill();
@@ -1210,6 +1203,34 @@ public class PharmacyBillSearch implements Serializable {
             getBillFacade().edit(getBill().getReferenceBill());
 
             getBill().setReferenceBill(null);
+
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit(getBill());
+            UtilityController.addSuccessMessage("Cancelled");
+
+            //       System.err.println("Bill : "+getBill().getBillType());
+//            System.err.println("Reference Bill : "+getBill().getReferenceBill().getBillType());
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+    }
+
+    public void pharmacyPoRequestCancel() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+            if (getBill().getReferenceBill() != null && !getBill().getReferenceBill().isCancelled()) {
+                UtilityController.addErrorMessage("Sorry You cant Cancell Approved Bill");
+                return;
+            }
+
+            CancelledBill cb = pharmacyCreateCancelBill();
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.PORCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.PORCAN));
+
+            getBillFacade().create(cb);
+            pharmacyCancelBillItems(cb);
 
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
@@ -1416,8 +1437,6 @@ public class PharmacyBillSearch implements Serializable {
             if (pharmacyErrorCheck()) {
                 return;
             }
-            
-            
 
             CancelledBill cb = pharmacyCreateCancelBill();
             cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.GRNRETCAN));

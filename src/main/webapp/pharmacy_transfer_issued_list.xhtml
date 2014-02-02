@@ -8,58 +8,69 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panelGrid columns="5" style="min-width: 100%;">
+            <p:panel>
                 <f:facet name="header">
                     <p:outputLabel value="Select Request For Department : #{sessionController.department.name}"/>                   
-                </f:facet>
-                <h:outputLabel value="From Date"/>
-                <p:calendar id="frmDate" value="#{transferReceiveController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
-                </p:calendar>
-                <h:outputLabel value="To Date"/>
-                <p:calendar id="toDate" value="#{transferReceiveController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm"  >
-                </p:calendar>
-                <p:commandButton id="btnRefresh" ajax="false" value="Refresh" />
-                <p:defaultCommand target="btnRefresh"/>
-            </p:panelGrid>
+                    <h:panelGrid columns="5" >
+                        <h:outputLabel value="From Date"/>
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{transferReceiveController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        </p:calendar>
+                        <h:outputLabel value="To Date"/>
+                        <p:calendar id="toDate" value="#{transferReceiveController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        </p:calendar>
+                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{transferReceiveController.createIssueTable()}"/>
+                        <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
-            <p:dataTable value="#{transferReceiveController.issued}" var="p">                       
-                <p:column headerText="Issue No">
-                    <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        <h:outputLabel value="#{p.deptId}"/>
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
-                    </h:commandLink>
-                </p:column>
-                <p:column headerText="From Department">
-                    <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        <h:outputLabel value="#{p.fromDepartment.name}"/>
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
-                    </h:commandLink>
-                </p:column>      
-                <p:column headerText="Staff">
-                    <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        <h:outputLabel value="#{p.toStaff.person.nameWithTitle}"/>
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
-                    </h:commandLink>
-                </p:column> 
-                <p:column headerText="Issued At">
-                    <h:commandLink action="pharmacy_reprint_transfer_isssue">
-                        <h:outputLabel value="#{p.createdAt}"/>
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
-                    </h:commandLink>
-                </p:column>
+                        <h:outputLabel value="Request No"/>   
+                        <h:outputLabel value="From Deprtment"/> 
+                        <h:outputLabel value="Staff "/> 
+                        <h:outputLabel/><h:outputLabel/>
+                        <p:inputText  value="#{transferReceiveController.searchKeyword.billNo}" />   
+                        <p:inputText  value="#{transferReceiveController.searchKeyword.department}" />   
+                        <p:inputText  value="#{transferReceiveController.searchKeyword.staffName}" /> 
+                        <h:outputLabel/><h:outputLabel/>
+                    </h:panelGrid>
+                </f:facet>              
 
-                <p:column>
-                    <p:commandButton ajax="false" value="Recieve" action="pharmacy_transfer_receive"
-                                     disabled="#{p.forwardReferenceBill.creater ne null and p.forwardReferenceBill.cancelled eq false}">
-                        <f:setPropertyActionListener target="#{transferReceiveController.issuedBill}" value="#{p}"/>
-                    </p:commandButton>
-                    <p:commandButton ajax="false" value="View Recieve Note" action="pharmacy_reprint_transfer_receive" 
-                                     disabled="#{p.forwardReferenceBill.creater eq null}">
-                        <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p.forwardReferenceBill}"/>
-                    </p:commandButton>
-                </p:column>
-            </p:dataTable>
-            
+
+                <p:dataTable value="#{transferReceiveController.bills}" var="p">                       
+                    <p:column headerText="Issue No">
+                        <h:commandLink action="pharmacy_reprint_transfer_isssue">
+                            <h:outputLabel value="#{p.deptId}"/>
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
+                        </h:commandLink>
+                    </p:column>
+                    <p:column headerText="From Department">
+                        <h:commandLink action="pharmacy_reprint_transfer_isssue">
+                            <h:outputLabel value="#{p.department.name}"/>
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
+                        </h:commandLink>
+                    </p:column>      
+                    <p:column headerText="Staff">
+                        <h:commandLink action="pharmacy_reprint_transfer_isssue">
+                            <h:outputLabel value="#{p.toStaff.person.nameWithTitle}"/>
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
+                        </h:commandLink>
+                    </p:column> 
+                    <p:column headerText="Issued At">
+                        <h:commandLink action="pharmacy_reprint_transfer_isssue">
+                            <h:outputLabel value="#{p.createdAt}"/>
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p}"/>
+                        </h:commandLink>
+                    </p:column>
+
+                    <p:column>
+                        <p:commandButton ajax="false" value="Recieve" action="pharmacy_transfer_receive"
+                                         disabled="#{p.forwardReferenceBill.creater ne null and p.forwardReferenceBill.cancelled eq false}">
+                            <f:setPropertyActionListener target="#{transferReceiveController.issuedBill}" value="#{p}"/>
+                        </p:commandButton>
+                        <p:commandButton ajax="false" value="View Recieve Note" action="pharmacy_reprint_transfer_receive" 
+                                         disabled="#{p.forwardReferenceBill.creater eq null}">
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{p.forwardReferenceBill}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
         </h:form>
     </ui:define>  
 

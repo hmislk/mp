@@ -106,7 +106,7 @@
                                         <p:menuitem  ajax="false" action="pharmacy_search_sale_bill_item"  value="Search Sale Bill Items" rendered="#{webUserController.hasPrivilege('Pharmacy')}" actionListener="#{billSearch.recreateModel2}" ></p:menuitem>                                        
                                         <p:submenu label="Return">
                                             <p:menuitem  ajax="false" action="pharmacy_search_pre_bill_for_return_item" actionListener="#{billSearch.recreateModel2()}"  value="Return Item" rendered="#{webUserController.hasPrivilege('Pharmacy')}"></p:menuitem>                                                                                    
-                                            <p:menuitem ajax="false" action="pharmacy_search_return_bill" actionListener="#{billSearch.recreateModel2()}" value="Search Return Bill" ></p:menuitem>
+                                            <p:menuitem ajax="false" action="pharmacy_search_return_bill_pre" actionListener="#{billSearch.recreateModel2()}" value="Search Return Bill (Item)" ></p:menuitem>
                                         </p:submenu>
                                         <p:menuitem  ajax="false" action="pharmacy_search_pre_bill_not_paid" actionListener="#{pharmacyBillSearch.makeNull()}"  value="Add To Stock" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                     </p:submenu>

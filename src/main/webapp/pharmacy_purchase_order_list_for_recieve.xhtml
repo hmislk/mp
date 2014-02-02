@@ -52,34 +52,21 @@
                                        value="#{p.cancelledBill.createdAt}" >
                             <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
                         </h:outputLabel>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{p.refunded}" >
-                        <h:outputLabel style="color: red;" value="Refunded at " />
-                        <h:outputLabel style="color: red;" rendered="#{p.refunded}" 
-                                       value="#{p.refundedBill.createdAt}" >
-                            <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
-                        </h:outputLabel>
-                    </h:panelGroup>
+                    </h:panelGroup>                   
                 </p:column> 
 
                 <p:column headerText="Approve by" >
                     <h:commandLink action="pharmacy_reprint_po" >
                         <h:outputLabel value="#{p.creater.webUserPerson.name}" >                                      
                         </h:outputLabel>
-                        <f:setPropertyActionListener value="#{p}" target="#{billSearch.bill}"/>
+                        <f:setPropertyActionListener value="#{p}" target="#{pharmacyBillSearch.bill}"/>
                     </h:commandLink>
                     <br/>
                     <h:panelGroup rendered="#{p.cancelled}" >
                         <h:outputLabel style="color: red;" value="Cancelled by " />
                         <h:outputLabel style="color: red;" rendered="#{p.cancelled}" value="#{p.cancelledBill.creater.webUserPerson.name}" >                                       
                         </h:outputLabel>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{p.refunded}" >
-                        <h:outputLabel style="color: red;" value="Refunded at " />
-                        <h:outputLabel style="color: red;" rendered="#{p.refunded}"
-                                       value="#{p.refundedBill.creater.webUserPerson.name}" >                           
-                        </h:outputLabel>
-                    </h:panelGroup>
+                    </h:panelGroup>                  
                 </p:column>    
 
                 <p:column headerText="Distributor">
@@ -143,12 +130,13 @@
                             <h:commandLink action="pharmacy_reprint_grn" >
                                 <h:outputLabel value="#{b.creater.webUserPerson.name}" >                                      
                                 </h:outputLabel>
-                                <f:setPropertyActionListener value="#{b}" target="#{billSearch.bill}"/>
+                                <f:setPropertyActionListener value="#{b}" target="#{pharmacyBillSearch.bill}"/>
                             </h:commandLink>
                             <br/>
                             <h:panelGroup rendered="#{b.cancelled}" >
                                 <h:outputLabel style="color: red;" value="Cancelled by " />
-                                <h:outputLabel style="color: red;" rendered="#{p.cancelled}" value="#{p.cancelledBill.creater.webUserPerson.name}" >                                       
+                                <h:outputLabel style="color: red;" rendered="#{b.cancelled}"
+                                               value="#{b.cancelledBill.creater.webUserPerson.name}" >                                       
                                 </h:outputLabel>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{b.refunded}" >

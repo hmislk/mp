@@ -33,7 +33,7 @@ import javax.persistence.Transient;
 @Entity
 public class StaffSalary implements Serializable {
 
-    @OneToMany(mappedBy = "staffSalary", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffSalary", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffSalaryComponant> staffSalaryComponants = new ArrayList<>();
    
     private static final long serialVersionUID = 1L;

@@ -33,7 +33,7 @@ public class PharmaceuticalBillItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     BillItem billItem;
     @Temporal(javax.persistence.TemporalType.DATE)
     Date doe;

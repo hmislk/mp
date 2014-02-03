@@ -35,7 +35,7 @@ import org.hamcrest.Matchers;
 @Entity
 public class PatientReport implements Serializable {
 
-    @OneToMany(mappedBy = "patientReport", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "patientReport", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<PatientReportItemValue> patientReportItemValues;
 
     @Transient

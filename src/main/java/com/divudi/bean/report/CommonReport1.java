@@ -6,7 +6,6 @@ package com.divudi.bean.report;
 
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.BillsTotals;
 import com.divudi.data.table.String1Value1;
 import com.divudi.ejb.CommonFunctions;
@@ -38,7 +37,7 @@ import javax.persistence.TemporalType;
  */
 @Named
 @SessionScoped
-public class CommonReport implements Serializable {
+public class CommonReport1 implements Serializable {
 
     @Inject
     SessionController sessionController;
@@ -82,7 +81,7 @@ public class CommonReport implements Serializable {
     /**
      * Creates a new instance of CommonReport
      */
-    public CommonReport() {
+    public CommonReport1() {
     }
 
     public CommonFunctions getCommonFunctions() {
@@ -409,8 +408,8 @@ public class CommonReport implements Serializable {
         if (refundedBillsPh == null) {
             getRefundedBillsPh().setBills(userPharmacyBillsOwn(new RefundBill(), BillType.PharmacySale, getWebUser()));
         }
-
-        if (refundedBillsPh2 == null) {
+        
+         if (refundedBillsPh2 == null) {
             getRefundedBillsPh2().setBills(userPharmacyBillsOther(new RefundBill(), BillType.PharmacySale, getWebUser()));
         }
         // calTot(getRefundedBills());
@@ -437,8 +436,8 @@ public class CommonReport implements Serializable {
         if (cancellededBillsPh == null) {
             getCancellededBillsPh().setBills(userPharmacyBillsOwn(new CancelledBill(), BillType.PharmacySale, getWebUser()));
         }
-
-        if (cancellededBillsPh2 == null) {
+        
+         if (cancellededBillsPh2 == null) {
             getCancellededBillsPh2().setBills(userPharmacyBillsOther(new CancelledBill(), BillType.PharmacySale, getWebUser()));
         }
         //   calTot(getCancellededBills());
@@ -478,8 +477,9 @@ public class CommonReport implements Serializable {
         temMap.put("btp", billType);
         temMap.put("web", webUser);
         temMap.put("ins", getSessionController().getInstitution());
-
+        
 //        checkOtherInstiution
+
         return getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
@@ -497,8 +497,8 @@ public class CommonReport implements Serializable {
 
         Bill b = getBillFacade().findFirstBySQL(sql, temMap, TemporalType.DATE);
 
-        if (b != null && institution == null) {
-            System.err.println("SYS " + b.getInstitution().getName());
+        if (b != null && institution==null) {
+            System.err.println("SYS "+b.getInstitution().getName());
             institution = b.getInstitution();
         }
 
@@ -555,12 +555,12 @@ public class CommonReport implements Serializable {
             getBilledBillsPh().setBills(userPharmacyBillsOwn(new BilledBill(), BillType.PharmacySale, getWebUser()));
             //   calTot(getBilledBills());
         }
-
-        if (billedBillsPh2 == null) {
+        
+         if (billedBillsPh2 == null) {
             getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
             //   calTot(getBilledBills());
         }
-
+         
         return billedBillsPh;
     }
 
@@ -883,25 +883,6 @@ public class CommonReport implements Serializable {
 
     }
 
-    private double calValue(Bill billClass, BillType billType, PaymentMethod paymentMethod) {
-        String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
-                + " type(b)=:bill and b.retired=false and "
-                + " b.billType=:btp "
-                + " and (b.paymentMethod=:pm or b.paymentScheme.paymentMethod=:pm)"
-                + "  and b.institution=:ins"
-                + " and b.createdAt between :fromDate and :toDate";
-        Map temMap = new HashMap();
-        temMap.put("fromDate", getFromDate());
-        temMap.put("toDate", getToDate());
-        temMap.put("btp", billType);
-        temMap.put("pm", paymentMethod);
-        temMap.put("ins", getSessionController().getInstitution());
-        temMap.put("bill", billClass.getClass());
-
-        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
-
-    }
-
     public BillsTotals getInstitutionBilledBillsOwn() {
         if (billedBills == null) {
             List<Bill> tmp = billsOwn(new BilledBill(), BillType.OpdBill);
@@ -946,34 +927,6 @@ public class CommonReport implements Serializable {
         return tmp;
     }
 
-    public void createTableByBillType() {
-        billedBills = null;
-        cancellededBills = null;
-        refundedBills = null;
-        List<Bill> list = null;
-        getBilledBills().setBills(billsOwn(new BilledBill(), billType));
-        getBilledBills().setCard(calValue(new BilledBill(), billType, PaymentMethod.Card));
-        getBilledBills().setCash(calValue(new BilledBill(), billType, PaymentMethod.Cash));
-        getBilledBills().setCheque(calValue(new BilledBill(), billType, PaymentMethod.Cheque));
-        getBilledBills().setCredit(calValue(new BilledBill(), billType, PaymentMethod.Credit));
-        getBilledBills().setSlip(calValue(new BilledBill(), billType, PaymentMethod.Slip));
-        ////////////
-        getCancellededBills().setBills(billsOwn(new CancelledBill(), billType));
-        getCancellededBills().setCard(calValue(new CancelledBill(), billType, PaymentMethod.Card));
-        getCancellededBills().setCash(calValue(new CancelledBill(), billType, PaymentMethod.Cash));
-        getCancellededBills().setCheque(calValue(new CancelledBill(), billType, PaymentMethod.Cheque));
-        getCancellededBills().setCredit(calValue(new CancelledBill(), billType, PaymentMethod.Credit));
-        getCancellededBills().setSlip(calValue(new CancelledBill(), billType, PaymentMethod.Slip));
-        /////////////
-        getRefundedBills().setBills(billsOwn(new RefundBill(), billType));
-        getRefundedBills().setCard(calValue(new RefundBill(), billType, PaymentMethod.Card));
-        getRefundedBills().setCash(calValue(new RefundBill(), billType, PaymentMethod.Cash));
-        getRefundedBills().setCheque(calValue(new RefundBill(), billType, PaymentMethod.Cheque));
-        getRefundedBills().setCredit(calValue(new RefundBill(), billType, PaymentMethod.Credit));
-        getRefundedBills().setSlip(calValue(new RefundBill(), billType, PaymentMethod.Slip));
-
-    }
-
     public void recreteModal() {
         collectingIns = null;
         billedBills = null;
@@ -996,7 +949,7 @@ public class CommonReport implements Serializable {
         inwardPayments = null;
         inwardPaymentCancel = null;
         dataTableData = null;
-        institution = null;
+        institution=null;
 
     }
 
@@ -1238,12 +1191,12 @@ public class CommonReport implements Serializable {
 
         return list;
     }
-
-    public List<String1Value1> getCreditSlipSum2() {
-        List<BillsTotals> list2 = new ArrayList<>();
+    
+     public List<String1Value1> getCreditSlipSum2() {
+        List<BillsTotals> list2 = new ArrayList<>();      
         list2.add(billedBillsPh2);
         list2.add(cancellededBillsPh2);
-        list2.add(refundedBillsPh2);
+        list2.add(refundedBillsPh2);      
 
         List<String1Value1> list = new ArrayList<>();
         String1Value1 tmp1 = new String1Value1();
@@ -1377,43 +1330,6 @@ public class CommonReport implements Serializable {
         return data;
     }
 
-    public List<String1Value1> getDataTableDataByType2() {
-        List<BillsTotals> list = new ArrayList<>();
-
-        list.add(getBilledBills());
-        list.add(getCancellededBills());
-        list.add(getRefundedBills());
-
-        List< String1Value1> data = new ArrayList<>();
-        String1Value1 tmp1 = new String1Value1();
-        tmp1.setString("Final Credit Total");
-        tmp1.setValue(getFinalCreditTotal(list));
-
-        String1Value1 tmp2 = new String1Value1();
-        tmp2.setString("Final Credit Card Total");
-        tmp2.setValue(getFinalCreditCardTotal(list));
-
-        String1Value1 tmp3 = new String1Value1();
-        tmp3.setString("Final Cheque Total");
-        tmp3.setValue(getFinalChequeTot(list));
-
-        String1Value1 tmp4 = new String1Value1();
-        tmp4.setString("Final Slip Total");
-        tmp4.setValue(getFinalSlipTot(list));
-
-        String1Value1 tmp5 = new String1Value1();
-        tmp5.setString("Final Cash Total");
-        tmp5.setValue(getFinalCashTotal(list));
-
-        data.add(tmp1);
-        data.add(tmp2);
-        data.add(tmp3);
-        data.add(tmp4);
-        data.add(tmp5);
-
-        return data;
-    }
-
     public List<String1Value1> getCashChequeSum() {
         List<BillsTotals> list2 = new ArrayList<>();
         list2.add(billedBills);
@@ -1457,12 +1373,12 @@ public class CommonReport implements Serializable {
         list.add(tmp4);
         return list;
     }
-
-    public List<String1Value1> getCashChequeSum2() {
-        List<BillsTotals> list2 = new ArrayList<>();
+    
+      public List<String1Value1> getCashChequeSum2() {
+        List<BillsTotals> list2 = new ArrayList<>();        
         list2.add(billedBillsPh2);
         list2.add(cancellededBillsPh2);
-        list2.add(refundedBillsPh2);
+        list2.add(refundedBillsPh2);        
 
         List<String1Value1> list = new ArrayList<>();
 
@@ -1551,8 +1467,8 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getBilledBillsPh2() {
-        if (billedBillsPh2 == null) {
-            billedBillsPh2 = new BillsTotals();
+        if(billedBillsPh2==null){
+            billedBillsPh2=new BillsTotals();
         }
         return billedBillsPh2;
     }
@@ -1562,8 +1478,8 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getCancellededBillsPh2() {
-        if (cancellededBillsPh2 == null) {
-            cancellededBillsPh2 = new BillsTotals();
+         if(cancellededBillsPh2==null){
+            cancellededBillsPh2=new BillsTotals();
         }
         return cancellededBillsPh2;
     }
@@ -1573,8 +1489,8 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getRefundedBillsPh2() {
-        if (refundedBillsPh2 == null) {
-            refundedBillsPh2 = new BillsTotals();
+        if(refundedBillsPh2==null){
+            refundedBillsPh2=new BillsTotals();
         }
         return refundedBillsPh2;
     }

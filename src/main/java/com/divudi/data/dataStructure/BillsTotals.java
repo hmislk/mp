@@ -30,7 +30,7 @@ public class BillsTotals {
 
     public void setBills(List<Bill> bills) {
         this.bills = bills;
-        calTot();
+       // calTot();
     }
 
     private void calTot() {

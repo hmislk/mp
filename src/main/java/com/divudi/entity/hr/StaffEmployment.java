@@ -33,17 +33,17 @@ import javax.persistence.Temporal;
 @Entity
 public class StaffEmployment implements Serializable {
 
-    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffBasics> staffBasics= new ArrayList<>();
-    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffEmployeeStatus> staffEmployeeStatuss = new ArrayList<>();
-    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffWorkingDepartment> staffWorkingDepartments = new ArrayList<>();
-    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffStaffCategory> staffStaffCategorys = new ArrayList<>();
-    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffGrade> staffGrades = new ArrayList<>();
-    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staffEmployment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffDesignation> staffDesignations = new ArrayList<>();
     @OneToOne
     private Staff staff;

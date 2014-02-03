@@ -63,7 +63,7 @@ public class HrmVariables implements Serializable {
     private double payeeCompanyRate;
     private double payeeLimit;  
 
-    @OneToMany(mappedBy = "hrmVariables",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "hrmVariables",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<PayeeTaxRange> taxRanges=new ArrayList<>();
 
     @Override

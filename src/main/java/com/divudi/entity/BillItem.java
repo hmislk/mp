@@ -31,10 +31,10 @@ import javax.persistence.Transient;
 @Entity
 public class BillItem implements Serializable {
 
-    @OneToOne(mappedBy = "billItem", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "billItem", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     BillSession billSession;
 
-    @OneToOne(mappedBy = "billItem", fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @OneToOne(mappedBy = "billItem", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     PharmaceuticalBillItem pharmaceuticalBillItem;
     static final long serialVersionUID = 1L;
     @Id

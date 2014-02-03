@@ -39,9 +39,9 @@ public class Roster implements Serializable {
     private Department department;
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date startingTime;
-    @OneToMany(mappedBy = "roster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "roster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Staff> staffList=new ArrayList<>() ;
-    @OneToMany(mappedBy = "roster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "roster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Shift> shiftList = new ArrayList<>();
     //Created Properties
     @ManyToOne

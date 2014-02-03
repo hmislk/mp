@@ -52,7 +52,7 @@ public class BillSession implements Serializable {
     String sessionId;
     @ManyToOne
     Bill bill;
-    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     BillItem billItem;
     @ManyToOne
     Institution institution;

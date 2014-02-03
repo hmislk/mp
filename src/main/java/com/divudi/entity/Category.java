@@ -50,7 +50,7 @@ public class Category implements Serializable {
     @OneToMany(mappedBy = "category")
      List<Item> items;
      String code;
-    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
      List<Category> childCategories;
     @Enumerated
      SymanticHyrachi symanticType;

@@ -88,8 +88,7 @@
 
             <div >
                 <p:spacer height="15px"/>
-                <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip" style=" text-align: center;">
-
+                <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip" style=" text-align: center;">                                     
                     <p:column style="text-align: left!important;"  >
                         <f:facet name="header">
                             <h:outputLabel value="Item" style="font-weight: bold!important; " />
@@ -106,7 +105,7 @@
                     </p:column>                                  
                     <p:column style="text-align: right!important;">
                         <f:facet name="header">
-                            <h:outputLabel value="Ord QTY" />
+                            <h:outputLabel value="Ord QTY" style="font-weight: bold!important;" />
                         </f:facet>
                         <h:outputLabel value="#{bip.referanceBillItem.pharmaceuticalBillItem.qty}">
                             <f:convertNumber integerOnly="true"/>
@@ -175,11 +174,11 @@
 
                     <p:columnGroup type="footer">
                         <p:row>
-                            <p:column colspan="7" footerText="Total"/>
+                            <p:column colspan="7" footerText="Total" style="font-weight: bold!important;"/>
                             <p:column style="text-align: right;" footerText="#{0-cc.attrs.bill.total}">
                                 <f:facet name="footer">
                                     <br></br>
-                                    <h:outputLabel value="#{0-cc.attrs.bill.total}" style="font-weight: bold!important;">
+                                    <h:outputLabel value="#{0-cc.attrs.bill.total}">
                                         <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </f:facet>
@@ -200,7 +199,7 @@
                             <p:column colspan="7" footerText="Discount"/>
                             <p:column style="text-align: right;" footerText="#{0-cc.attrs.bill.discount}">
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{0-cc.attrs.bill.discount}">
+                                    <h:outputLabel value="#{0-cc.attrs.bill.discount}" style="text-decoration: underline;">
                                         <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </f:facet>
@@ -208,10 +207,10 @@
 
                         </p:row>
                         <p:row >
-                            <p:column colspan="7" footerText="Net Total" style="font-weight: bold;"/>
+                            <p:column colspan="7" footerText="Net Total" style="font-weight: bold!important;"/>
                             <p:column style="text-align: right;" footerText="#{cc.attrs.bill.netTotal}">
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{cc.attrs.bill.netTotal}">
+                                    <h:outputLabel value="#{cc.attrs.bill.netTotal}" style="font-weight: bold!important; text-decoration: underline;">
                                         <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </f:facet>
@@ -235,7 +234,7 @@
             <div >
 
                 <h4 style="color: #000000; text-align: center " >
-                    <h:outputLabel value="Payment Voucher"/>
+                    <h:outputLabel value="Payment Voucher" style="text-decoration: underline;"/>
                 </h4>
 
 
@@ -246,24 +245,24 @@
                 </div>
                 <div>
                     <br></br>
-                    <h:outputLabel value="Prepaired By : " style="text-align: right!important;"/>                   
+                    <h:outputLabel value="Prepaired By :" /> 
+                    <h:outputLabel value="................................................................."/>
+                    <br></br>                
+                    <br></br>         
+                    <h:outputLabel value="Approved By :"/>
+                    <h:outputLabel value="................................................................."/>
+                    <br></br>                                      
                     <br></br>
-                    <br></br>
-                    <!--<h:outputLabel value="........................."/>-->
-                    <h:outputLabel value="Approved By : "/>
-                    <!--<h:outputLabel value="........................."/>-->
-                    <br></br>
-                    <br></br>
-                    <h:outputLabel value="Authorized By : "/>
-                    <!--<h:outputLabel value="........................."/>-->
+                    <h:outputLabel value="Authorized By :"/>
+                    <h:outputLabel value="................................................................"/>
                     <br></br>
                     <br></br>
 
                     <h:outputLabel value="Cheque No :"/>
-                    <h:outputLabel value="Amount : Rs. " style="position: relative; left: 64%;"/>
+                    <h:outputLabel value="...................................................................."/>
+                    <h:outputLabel value="Amount : Rs. ................" style="position: absolute; left: 70%;"/>
                     <br></br>
-                    <br></br>
-                    <!--<h:outputLabel value="........................."/>-->
+                    <br></br>                    
                     <h:outputLabel value="Received with thanks sum of Rupees  .................................................................................................................................................. Ruhunu Pharmaceuticals &amp; Services (Pvt) Ltd : "/>
                     <br></br>
 

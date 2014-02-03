@@ -21,7 +21,7 @@
                         <p:printer target="panelPrint" />
                     </p:commandButton>
 
-                    <p:commandButton value="Excel" ajax="false" style="float: right;">
+                    <p:commandButton value="Excel2" ajax="false" style="float: right;">
                         <pe:exporter type="xlsx" target="opd" fileName="Service_Summery"  />
                     </p:commandButton>
 
@@ -51,7 +51,7 @@
             </p:panel>
             <p:spacer height="30"/>
 
-            <p:dataTable id="opd" rowIndexVar="i"  value="#{serviceSummery.serviceSummery}" var="d">                   
+            <p:dataTable id="opd" rowIndexVar="i" rowStyleClass="#{d.billItem.bill.cancelled or d.billItem.bill.billedBill ne null?'crossLine':''}" value="#{serviceSummery.serviceSummery}" var="d">                   
 
                 <f:facet name="header">
                     <h:outputLabel value="#{serviceSummery.service.name}"/>
@@ -72,6 +72,11 @@
                 <p:column headerText="Bill No">
                     <p:outputLabel value="#{d.billItem.bill.insId}" />
                 </p:column>
+                
+                 <p:column headerText="Billed Bill No">
+                     <p:outputLabel value="#{d.billItem.bill.billedBill.insId}" />
+                </p:column>
+                
 
                 <p:column headerText="Date">
                     <h:outputLabel value="#{d.billItem.createdAt}">
@@ -98,7 +103,7 @@
 
 
 
-                        <p:column colspan="2" footerText="COUNT  (#{serviceSummery.countTotal})">
+                        <p:column colspan="3" footerText="COUNT  (#{serviceSummery.countTotal})">
                             <f:facet name="footer">
                                 <h:outputLabel value="COUNT  (#{serviceSummery.countTotal})">                                   
                                 </h:outputLabel>

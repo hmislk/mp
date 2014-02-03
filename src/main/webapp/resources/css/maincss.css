@@ -694,3 +694,10 @@ a:hover {
     text-align: right;
     color: red;
 }
+
+
+
+.crossLine{
+   text-decoration: line-through; 
+    
+}

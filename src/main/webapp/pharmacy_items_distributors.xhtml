@@ -26,7 +26,7 @@
                         <p:panel header="Items suply current Distributor">
                             <h:panelGroup id="gpDetail" >
                                 <h:selectOneListbox size="10" id="packageItem"  value="#{itemsDistributorsController.current}" >
-                                    <f:selectItems value="#{itemsDistributorsController.items}" var="myPis"  itemLabel="#{myPis.item.name}" itemValue="#{myPis}"  />
+                                    <f:selectItems value="#{itemsDistributorsController.items}" var="myPis"  itemLabel="#{myPis.item.name} - #{myPis.item.code}" itemValue="#{myPis}"  />
                                 </h:selectOneListbox>
                             </h:panelGroup>
                         </p:panel>
@@ -34,14 +34,21 @@
                             <h:panelGroup >
                                 <h:commandButton id="btnAdd" value="Add" action="#{itemsDistributorsController.addToPackage()}">
                                 </h:commandButton>
-                                
+
                                 <h:commandButton value="Remove" action="#{itemsDistributorsController.removeFromPackage()}">
                                 </h:commandButton>
-                                 <p:defaultCommand target="btnAdd"/>
+                                <p:defaultCommand target="btnAdd"/>
                             </h:panelGroup> 
                         </p:panel>
                         <p:panel header="Select Item For Distributor">
-                            <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                            <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" 
+                                            completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                <p:column headerText="Name" >
+                                    <h:outputLabel value="#{vt.name}" ></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Code" >
+                                    <h:outputLabel value="#{vt.code}" ></h:outputLabel>
+                                </p:column>
                             </p:autoComplete>                                    
                         </p:panel>                       
                     </h:panelGrid>

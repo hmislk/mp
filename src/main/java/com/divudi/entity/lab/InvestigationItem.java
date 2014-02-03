@@ -27,7 +27,7 @@ public class InvestigationItem extends ReportItem implements Serializable {
     private static final long serialVersionUID = 1L;
     
     
-    @OneToMany(mappedBy = "investigationItem", cascade= CascadeType.ALL, fetch= FetchType.EAGER)
+    @OneToMany(mappedBy = "investigationItem", cascade= CascadeType.ALL, fetch= FetchType.LAZY)
     List<InvestigationItemValue> investigationItemValues;
 
     public List<InvestigationItemValue> getInvestigationItemValues() {

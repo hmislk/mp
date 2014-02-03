@@ -582,8 +582,8 @@ public class PharmacySaleController implements Serializable {
     private void savePreBill(Patient pt) {
         getPreBill().setPatient(pt);
 
-        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
-        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
+        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
+        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
         getPreBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());

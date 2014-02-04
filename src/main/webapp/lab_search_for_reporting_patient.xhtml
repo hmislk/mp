@@ -12,33 +12,17 @@
                 <h:form>
                     <p:panel header="Search Bills" >
                         <f:facet name="header">
-                            <h:panelGrid columns="6" >
-                                <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
-                                </p:calendar>
-                                <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
-                                </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPatientInvestigationsTable()}"/>
-                                <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{search.createPatientInvestigationsTableAll()}"/>
-                                <p:spacer height="30"/><h:outputLabel/>
-                                <h:outputLabel/><h:outputLabel/>
-                                <h:outputLabel/> <h:outputLabel/>
-
+                            <h:panelGrid columns="4" >
                                 <h:outputLabel value="Bill No"/>
                                 <h:outputLabel value="Patient Name"/>
                                 <h:outputLabel value="Patient Phone"/>                               
-                                <h:outputLabel value="Investigation Value"/>
-                                <h:outputLabel/><h:outputLabel/>
+                                <h:outputLabel value="Investigation Name"/>
                                 <p:inputText  value="#{search.searchKeyword.billNo}" />
                                 <p:inputText value="#{search.searchKeyword.patientName}" />
                                 <p:inputText  value="#{search.searchKeyword.patientPhone}" />
                                 <p:inputText value="#{search.searchKeyword.itemName}"/>
-
                             </h:panelGrid>
                         </f:facet>
-                        <p:defaultCommand target="btnSearch" />
-
                         <p:dataTable  id="tblBills" value="#{search.patientInvestigations}" var="pi"  >
 
                             <p:column headerText="Billing" styleClass="alignTop" >
@@ -51,7 +35,7 @@
                                     <f:setPropertyActionListener value="#{pi.billItem.bill.patient}" target="#{patientController.current}"/>
                                 </h:commandLink>
                                 <br/>
-                                <h:outputLabel value="Age : #{pi.billItem.bill.patient.age},&nbsp;#{pi.billItem.bill.patient.person.sex}," >
+                                <h:outputLabel value="Age : #{pi.billItem.bill.patient.person.dob} #{pi.billItem.bill.patient.age},&nbsp;#{pi.billItem.bill.patient.person.sex}," >
                                 </h:outputLabel>
                                 <br/>
                                 <h:outputLabel value="Phone : #{pi.billItem.bill.patient.person.phone}" >
@@ -149,6 +133,7 @@
                                 </p:dataTable>
                             </p:column>
                         </p:dataTable>
+
                     </p:panel>
 
                 </h:form>

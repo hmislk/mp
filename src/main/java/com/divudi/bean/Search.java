@@ -796,10 +796,10 @@ public class Search implements Serializable {
         Map temMap = new HashMap();
         sql += " order by pi.id desc  ";
         temMap.put("pt", getTransferController().getPatient());
-        System.out.println("temMap = " + temMap);
-        System.out.println("sql = " + sql);
-        patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-        System.out.println("patientInvestigations.size() = " + patientInvestigations.size());
+//        System.out.println("temMap = " + temMap);
+//        System.out.println("sql = " + sql);
+        patientInvestigationsSigle = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+//        System.out.println("patientInvestigations.size() = " + patientInvestigations.size());
     }
 
     public void createPatientInvestigationsTableAll() {

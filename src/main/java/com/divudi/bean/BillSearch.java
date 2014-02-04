@@ -23,7 +23,6 @@ import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.PaymentScheme;
-import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
@@ -42,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Temporal;
@@ -55,7 +54,7 @@ import org.primefaces.model.LazyDataModel;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class BillSearch implements Serializable {
 
     private boolean printPreview = false;

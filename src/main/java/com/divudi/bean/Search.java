@@ -45,7 +45,7 @@ public class Search implements Serializable {
     private SearchKeyword searchKeyword;
     Date fromDate;
     Date toDate;
-    private int maxResult;
+    private int maxResult=50;
     private BillType billType;
     ////////////
     private List<Bill> bills;
@@ -770,7 +770,7 @@ public class Search implements Serializable {
         }
 
         if (getSearchKeyword().getItemName() != null && !getSearchKeyword().getItemName().trim().equals("")) {
-            sql += " and  (upper(i.phone) like :itm )";
+            sql += " and  (upper(i.name) like :itm )";
             temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
 
@@ -1478,6 +1478,7 @@ public class Search implements Serializable {
     }
 
     public int getMaxResult() {
+        
         return maxResult;
     }
 

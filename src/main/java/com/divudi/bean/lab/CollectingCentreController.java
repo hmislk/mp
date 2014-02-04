@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.TimeZone;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named; import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 /**
@@ -23,7 +24,7 @@ import javax.inject.Inject;
  * @author www.divudi.com
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class CollectingCentreController implements Serializable{
 
     /**

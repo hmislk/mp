@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
@@ -44,7 +45,7 @@ import org.primefaces.event.FlowEvent;
  * Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class WebUserController implements Serializable {
 
     @Inject

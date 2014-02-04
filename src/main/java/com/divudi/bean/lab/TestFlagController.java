@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
@@ -43,7 +44,7 @@ import org.primefaces.event.RowEditEvent;
  * Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class TestFlagController implements Serializable {
 
     private static final long serialVersionUID = 1L;

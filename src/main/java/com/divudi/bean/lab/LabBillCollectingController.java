@@ -64,7 +64,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class LabBillCollectingController implements Serializable {
 
     BilledBill current;

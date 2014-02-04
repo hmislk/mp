@@ -20,6 +20,7 @@ import java.io.Serializable;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.faces.context.FacesContext;
 import org.apache.commons.io.IOUtils;
@@ -123,6 +124,7 @@ public class StaffImageController implements Serializable {
         } else {
             // So, browser is requesting the image. Get ID value from actual request param.
             String id = context.getExternalContext().getRequestParameterMap().get("id");
+            System.err.println("Staff Id " + id);
             Long l;
             try {
                 l = Long.valueOf(id);
@@ -131,6 +133,7 @@ public class StaffImageController implements Serializable {
             }
             Staff temImg = getStaffFacade().find(l);
             if (temImg != null) {
+                System.err.println("Img " + temImg);
                 return new DefaultStreamedContent(new ByteArrayInputStream(temImg.getBaImage()), temImg.getFileType());
             } else {
                 return new DefaultStreamedContent();

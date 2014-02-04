@@ -54,6 +54,7 @@ public class Search implements Serializable {
     private List<BillFee> billFees;
     private List<BillItem> billItems;
     private List<PatientInvestigation> patientInvestigations;
+    private List<PatientInvestigation> patientInvestigationsSigle;
     ////////////
     @EJB
     private CommonFunctions commonFunctions;
@@ -794,8 +795,11 @@ public class Search implements Serializable {
                 + " p=:pt ";
         Map temMap = new HashMap();
         sql += " order by pi.id desc  ";
-        temMap.put("pt", getTransferController().patient);
+        temMap.put("pt", getTransferController().getPatient());
+        System.out.println("temMap = " + temMap);
+        System.out.println("sql = " + sql);
         patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        System.out.println("patientInvestigations.size() = " + patientInvestigations.size());
     }
 
     public void createPatientInvestigationsTableAll() {
@@ -1529,6 +1533,17 @@ public class Search implements Serializable {
 
     public void setTransferController(TransferController transferController) {
         this.transferController = transferController;
+    }
+
+    public List<PatientInvestigation> getPatientInvestigationsSigle() {
+        if(patientInvestigationsSigle==null){
+            createPatientInvestigationsTableSingle();
+        }
+        return patientInvestigationsSigle;
+    }
+
+    public void setPatientInvestigationsSigle(List<PatientInvestigation> patientInvestigationsSigle) {
+        this.patientInvestigationsSigle = patientInvestigationsSigle;
     }
 
 

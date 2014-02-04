@@ -26,9 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
+import javax.faces.view.ViewScoped;
+;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 
@@ -36,8 +37,10 @@ import javax.persistence.TemporalType;
  *
  * @author www.divudi.com
  */
+
+
 @Named
-@SessionScoped
+@ViewScoped
 public class CommonReport implements Serializable {
 
     @Inject
@@ -291,18 +294,12 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getUserPaymentBillsOwn() {
-        if (paymentBills == null) {
-            getPaymentBills().setBills(userBillsOwn(new BilledBill(), BillType.PaymentBill, getWebUser()));
-        }
-        //   calTot(getPaymentBills());
+
         return paymentBills;
     }
 
     public BillsTotals getUserInwardPaymentBillsOwn() {
-        if (inwardPayments == null) {
-            getInwardPayments().setBills(userBillsOwn(new BilledBill(), BillType.InwardPaymentBill, getWebUser()));
-        }
-        //  calTot(getInwardPayments());
+
         return inwardPayments;
     }
 
@@ -398,22 +395,12 @@ public class CommonReport implements Serializable {
     private double total;
 
     public BillsTotals getUserRefundedBillsOwn() {
-        if (refundedBills == null) {
-            getRefundedBills().setBills(userBillsOwn(new RefundBill(), BillType.OpdBill, getWebUser()));
-        }
-        // calTot(getRefundedBills());
+
         return refundedBills;
     }
 
     public BillsTotals getUserRefundedBillsOwnPh() {
-        if (refundedBillsPh == null) {
-            getRefundedBillsPh().setBills(userPharmacyBillsOwn(new RefundBill(), BillType.PharmacySale, getWebUser()));
-        }
 
-        if (refundedBillsPh2 == null) {
-            getRefundedBillsPh2().setBills(userPharmacyBillsOther(new RefundBill(), BillType.PharmacySale, getWebUser()));
-        }
-        // calTot(getRefundedBills());
         return refundedBillsPh;
     }
 
@@ -426,30 +413,17 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getUserCancelledBillsOwn() {
-        if (cancellededBills == null) {
-            getCancellededBills().setBills(userBillsOwn(new CancelledBill(), BillType.OpdBill, getWebUser()));
-        }
-        //   calTot(getCancellededBills());
+
         return cancellededBills;
     }
 
     public BillsTotals getUserCancelledBillsOwnPh() {
-        if (cancellededBillsPh == null) {
-            getCancellededBillsPh().setBills(userPharmacyBillsOwn(new CancelledBill(), BillType.PharmacySale, getWebUser()));
-        }
 
-        if (cancellededBillsPh2 == null) {
-            getCancellededBillsPh2().setBills(userPharmacyBillsOther(new CancelledBill(), BillType.PharmacySale, getWebUser()));
-        }
-        //   calTot(getCancellededBills());
         return cancellededBillsPh;
     }
 
     public BillsTotals getUserCancelledBillsPhOther() {
-        if (cancellededBillsPh2 == null) {
-            getCancellededBillsPh2().setBills(userPharmacyBillsOther(new CancelledBill(), BillType.PharmacySale, getWebUser()));
-        }
-        //   calTot(getCancellededBills());
+
         return cancellededBillsPh2;
     }
 
@@ -486,7 +460,8 @@ public class CommonReport implements Serializable {
 
     private List<Bill> userPharmacyBillsOther(Bill billClass, BillType billType, WebUser webUser) {
         String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and b.billType = :btp"
-                + " and b.creater=:web and b.referenceBill.institution!=:ins and b.createdAt between :fromDate and :toDate ";
+                + " and b.creater=:web and b.referenceBill.institution!=:ins and b.createdAt between :fromDate"
+                + " and :toDate ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
@@ -543,32 +518,16 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getUserBillsOwn() {
-        if (billedBills == null) {
-            getBilledBills().setBills(userBillsOwn(new BilledBill(), BillType.OpdBill, getWebUser()));
-            //   calTot(getBilledBills());
-        }
+
         return billedBills;
     }
 
     public BillsTotals getUserBillsOwnPh() {
-        if (billedBillsPh == null) {
-            getBilledBillsPh().setBills(userPharmacyBillsOwn(new BilledBill(), BillType.PharmacySale, getWebUser()));
-            //   calTot(getBilledBills());
-        }
-
-        if (billedBillsPh2 == null) {
-            getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
-            //   calTot(getBilledBills());
-        }
 
         return billedBillsPh;
     }
 
     public BillsTotals getUserBillsPhOther() {
-        if (billedBillsPh2 == null) {
-            getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
-            //   calTot(getBilledBills());
-        }
         return billedBillsPh2;
     }
 
@@ -613,69 +572,42 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getUserAgentRecieveBills() {
-        if (agentRecieves == null) {
-            getAgentRecieves().setBills(userBillsOwn(new BilledBill(), BillType.AgentPaymentReceiveBill, getWebUser()));
-            //  calTot(getAgentRecieves());
-        }
+
         return agentRecieves;
     }
 
     public BillsTotals getUserCashRecieveBills() {
-        if (cashRecieves == null) {
-            getCashRecieves().setBills(userBillsOwn(new BilledBill(), BillType.CashRecieveBill, getWebUser()));
-        }
-        // calTot(getCashRecieves());
+
         return cashRecieves;
     }
 
     public BillsTotals getUserAgentRecieveBillCancel() {
-        if (agentCancelBill == null) {
-            getAgentCancelBill().setBills(userBillsOwn(new CancelledBill(), BillType.AgentPaymentReceiveBill, getWebUser()));
-            //  calTot(getAgentCancelBill());
-        }
+
         return agentCancelBill;
     }
 
     public BillsTotals getUserCashRecieveBillCancel() {
-        if (cashRecieveCancel == null) {
-            getCashRecieveCancel().setBills(userBillsOwn(new CancelledBill(), BillType.CashRecieveBill, getWebUser()));
-            // calTot(getCashRecieveCancel());
-        }
+
         return cashRecieveCancel;
     }
 
     public BillsTotals getUserPettyPaymentBills() {
-        if (pettyPayments == null) {
-            getPettyPayments().setBills(userBillsOwn(new BilledBill(), BillType.PettyCash, getWebUser()));
-            // calTot(getPettyPayments());
-        }
+
         return pettyPayments;
     }
 
     public BillsTotals getUserPettyPaymentCancelBills() {
-        if (pettyPaymentsCancel == null) {
-            List<Bill> tmp = userBillsOwn(new CancelledBill(), BillType.PettyCash, getWebUser());
-            getPettyPaymentsCancel().setBills(tmp);
-            //  calTot(getPettyPaymentsCancel());
-        }
+
         return pettyPaymentsCancel;
     }
 
     public BillsTotals getUserPaymentCancelBillsOwn() {
-        if (paymentCancelBills == null) {
-            List<Bill> tmp = userBillsOwn(new CancelledBill(), BillType.PaymentBill, getWebUser());
-            getPaymentCancelBills().setBills(tmp);
-        }
-        //   calTot(getPaymentCancelBills());
+
         return paymentCancelBills;
     }
 
     public BillsTotals getUserInwardPaymentCancelBillsOwn() {
-        if (inwardPaymentCancel == null) {
-            List<Bill> tmp = userBillsOwn(new CancelledBill(), BillType.InwardPaymentBill, getWebUser());
-            getInwardPaymentCancel().setBills(tmp);
-        }
-        //      calTot(getInwardPaymentCancel());
+
         return inwardPaymentCancel;
     }
 
@@ -902,6 +834,46 @@ public class CommonReport implements Serializable {
 
     }
 
+    private double calValue(Bill billClass, BillType billType, PaymentMethod paymentMethod, WebUser wUser) {
+        String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
+                + " type(b)=:bill and b.retired=false and "
+                + " b.billType=:btp and b.creater=:w "
+                + " and (b.paymentMethod=:pm or b.paymentScheme.paymentMethod=:pm)"
+                + "  and b.institution=:ins"
+                + " and b.createdAt between :fromDate and :toDate";
+        Map temMap = new HashMap();
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+        temMap.put("btp", billType);
+        temMap.put("pm", paymentMethod);
+        temMap.put("w", wUser);
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("bill", billClass.getClass());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calValueOther(Bill billClass, BillType billType, PaymentMethod paymentMethod, WebUser wUser) {
+        String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
+                + " type(b)=:bill and b.retired=false and "
+                + " b.billType=:btp and b.creater=:w "
+                + " and (b.paymentMethod=:pm or b.paymentScheme.paymentMethod=:pm)"
+                + "  and b.institution!=:ins"
+                + " and b.createdAt between :fromDate and :toDate";
+        Map temMap = new HashMap();
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+        temMap.put("btp", billType);
+        temMap.put("pm", paymentMethod);
+        temMap.put("w", wUser);
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("bill", billClass.getClass());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
     public BillsTotals getInstitutionBilledBillsOwn() {
         if (billedBills == null) {
             List<Bill> tmp = billsOwn(new BilledBill(), BillType.OpdBill);
@@ -971,6 +943,162 @@ public class CommonReport implements Serializable {
         getRefundedBills().setCheque(calValue(new RefundBill(), billType, PaymentMethod.Cheque));
         getRefundedBills().setCredit(calValue(new RefundBill(), billType, PaymentMethod.Credit));
         getRefundedBills().setSlip(calValue(new RefundBill(), billType, PaymentMethod.Slip));
+
+    }
+
+    public void createCashierTableByUser() {
+        recreteModal();
+        //Opd Billed Bills
+        getBilledBills().setBills(userBillsOwn(new BilledBill(), BillType.OpdBill, getWebUser()));
+        getBilledBills().setCard(calValue(new BilledBill(), BillType.OpdBill, PaymentMethod.Card, getWebUser()));
+        getBilledBills().setCash(calValue(new BilledBill(), BillType.OpdBill, PaymentMethod.Cash, getWebUser()));
+        getBilledBills().setCheque(calValue(new BilledBill(), BillType.OpdBill, PaymentMethod.Cheque, getWebUser()));
+        getBilledBills().setCredit(calValue(new BilledBill(), BillType.OpdBill, PaymentMethod.Credit, getWebUser()));
+        getBilledBills().setSlip(calValue(new BilledBill(), BillType.OpdBill, PaymentMethod.Slip, getWebUser()));
+
+        //Opd Cancelled Bill
+        getCancellededBills().setBills(userBillsOwn(new CancelledBill(), BillType.OpdBill, getWebUser()));
+        getCancellededBills().setCard(calValue(new CancelledBill(), BillType.OpdBill, PaymentMethod.Card, getWebUser()));
+        getCancellededBills().setCash(calValue(new CancelledBill(), BillType.OpdBill, PaymentMethod.Cash, getWebUser()));
+        getCancellededBills().setCheque(calValue(new CancelledBill(), BillType.OpdBill, PaymentMethod.Cheque, getWebUser()));
+        getCancellededBills().setCredit(calValue(new CancelledBill(), BillType.OpdBill, PaymentMethod.Credit, getWebUser()));
+        getCancellededBills().setSlip(calValue(new CancelledBill(), BillType.OpdBill, PaymentMethod.Slip, getWebUser()));
+
+        //Opd Refunded Bill
+        getRefundedBills().setBills(userBillsOwn(new RefundBill(), BillType.OpdBill, getWebUser()));
+        getRefundedBills().setCard(calValue(new RefundBill(), BillType.OpdBill, PaymentMethod.Card, getWebUser()));
+        getRefundedBills().setCash(calValue(new RefundBill(), BillType.OpdBill, PaymentMethod.Cash, getWebUser()));
+        getRefundedBills().setCheque(calValue(new RefundBill(), BillType.OpdBill, PaymentMethod.Cheque, getWebUser()));
+        getRefundedBills().setCredit(calValue(new RefundBill(), BillType.OpdBill, PaymentMethod.Credit, getWebUser()));
+        getRefundedBills().setSlip(calValue(new RefundBill(), BillType.OpdBill, PaymentMethod.Slip, getWebUser()));
+
+        //Pharmacy Billed
+        getBilledBillsPh().setBills(userPharmacyBillsOwn(new BilledBill(), BillType.PharmacySale, getWebUser()));
+        getBilledBillsPh().setCard(calValue(new BilledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
+        getBilledBillsPh().setCash(calValue(new BilledBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
+        getBilledBillsPh().setCheque(calValue(new BilledBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
+        getBilledBillsPh().setCredit(calValue(new BilledBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
+        getBilledBillsPh().setSlip(calValue(new BilledBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
+
+        //Pharmacy Cancelled       
+        getCancellededBillsPh().setBills(userPharmacyBillsOwn(new CancelledBill(), BillType.PharmacySale, getWebUser()));
+        getCancellededBillsPh().setCard(calValue(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
+        getCancellededBillsPh().setCash(calValue(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
+        getCancellededBillsPh().setCheque(calValue(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
+        getCancellededBillsPh().setCredit(calValue(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
+        getCancellededBillsPh().setSlip(calValue(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
+
+        //Pharmacy Refunded      
+        getRefundedBillsPh().setBills(userPharmacyBillsOwn(new RefundBill(), BillType.PharmacySale, getWebUser()));
+        getRefundedBillsPh().setCard(calValue(new RefundBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
+        getRefundedBillsPh().setCash(calValue(new RefundBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
+        getRefundedBillsPh().setCheque(calValue(new RefundBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
+        getRefundedBillsPh().setCredit(calValue(new RefundBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
+        getRefundedBillsPh().setSlip(calValue(new RefundBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
+
+        //Payment Billed Bill
+        getPaymentBills().setBills(userBillsOwn(new BilledBill(), BillType.PaymentBill, getWebUser()));
+        getPaymentBills().setCard(calValue(new BilledBill(), BillType.PaymentBill, PaymentMethod.Card, getWebUser()));
+        getPaymentBills().setCash(calValue(new BilledBill(), BillType.PaymentBill, PaymentMethod.Cash, getWebUser()));
+        getPaymentBills().setCheque(calValue(new BilledBill(), BillType.PaymentBill, PaymentMethod.Cheque, getWebUser()));
+        getPaymentBills().setCredit(calValue(new BilledBill(), BillType.PaymentBill, PaymentMethod.Credit, getWebUser()));
+        getPaymentBills().setSlip(calValue(new BilledBill(), BillType.PaymentBill, PaymentMethod.Slip, getWebUser()));
+
+        //Payment Cancelled Bill
+        getPaymentCancelBills().setBills(userBillsOwn(new CancelledBill(), BillType.PaymentBill, getWebUser()));
+        getPaymentCancelBills().setCard(calValue(new CancelledBill(), BillType.PaymentBill, PaymentMethod.Card, getWebUser()));
+        getPaymentCancelBills().setCash(calValue(new CancelledBill(), BillType.PaymentBill, PaymentMethod.Cash, getWebUser()));
+        getPaymentCancelBills().setCheque(calValue(new CancelledBill(), BillType.PaymentBill, PaymentMethod.Cheque, getWebUser()));
+        getPaymentCancelBills().setCredit(calValue(new CancelledBill(), BillType.PaymentBill, PaymentMethod.Credit, getWebUser()));
+        getPaymentCancelBills().setSlip(calValue(new CancelledBill(), BillType.PaymentBill, PaymentMethod.Slip, getWebUser()));
+
+        //Petty Cash Paymennt       
+        getPettyPayments().setBills(userBillsOwn(new BilledBill(), BillType.PettyCash, getWebUser()));
+        getPettyPayments().setCard(calValue(new BilledBill(), BillType.PettyCash, PaymentMethod.Card, getWebUser()));
+        getPettyPayments().setCash(calValue(new BilledBill(), BillType.PettyCash, PaymentMethod.Cash, getWebUser()));
+        getPettyPayments().setCheque(calValue(new BilledBill(), BillType.PettyCash, PaymentMethod.Cheque, getWebUser()));
+        getPettyPayments().setCredit(calValue(new BilledBill(), BillType.PettyCash, PaymentMethod.Credit, getWebUser()));
+        getPettyPayments().setSlip(calValue(new BilledBill(), BillType.PettyCash, PaymentMethod.Slip, getWebUser()));
+
+        //Petty Cash Paymennt Cancell       
+        getPettyPaymentsCancel().setBills(userBillsOwn(new CancelledBill(), BillType.PettyCash, getWebUser()));
+        getPettyPaymentsCancel().setCard(calValue(new CancelledBill(), BillType.PettyCash, PaymentMethod.Card, getWebUser()));
+        getPettyPaymentsCancel().setCash(calValue(new CancelledBill(), BillType.PettyCash, PaymentMethod.Cash, getWebUser()));
+        getPettyPaymentsCancel().setCheque(calValue(new CancelledBill(), BillType.PettyCash, PaymentMethod.Cheque, getWebUser()));
+        getPettyPaymentsCancel().setCredit(calValue(new CancelledBill(), BillType.PettyCash, PaymentMethod.Credit, getWebUser()));
+        getPettyPaymentsCancel().setSlip(calValue(new CancelledBill(), BillType.PettyCash, PaymentMethod.Slip, getWebUser()));
+
+        //Cash Receive Bill       
+        getCashRecieves().setBills(userBillsOwn(new BilledBill(), BillType.CashRecieveBill, getWebUser()));
+        getCashRecieves().setCard(calValue(new BilledBill(), BillType.CashRecieveBill, PaymentMethod.Card, getWebUser()));
+        getCashRecieves().setCash(calValue(new BilledBill(), BillType.CashRecieveBill, PaymentMethod.Cash, getWebUser()));
+        getCashRecieves().setCheque(calValue(new BilledBill(), BillType.CashRecieveBill, PaymentMethod.Cheque, getWebUser()));
+        getCashRecieves().setCredit(calValue(new BilledBill(), BillType.CashRecieveBill, PaymentMethod.Credit, getWebUser()));
+        getCashRecieves().setSlip(calValue(new BilledBill(), BillType.CashRecieveBill, PaymentMethod.Slip, getWebUser()));
+
+        //Cash Recieve Cancel      
+        getCashRecieveCancel().setBills(userBillsOwn(new CancelledBill(), BillType.CashRecieveBill, getWebUser()));
+        getCashRecieveCancel().setCard(calValue(new CancelledBill(), BillType.CashRecieveBill, PaymentMethod.Card, getWebUser()));
+        getCashRecieveCancel().setCash(calValue(new CancelledBill(), BillType.CashRecieveBill, PaymentMethod.Cash, getWebUser()));
+        getCashRecieveCancel().setCheque(calValue(new CancelledBill(), BillType.CashRecieveBill, PaymentMethod.Cheque, getWebUser()));
+        getCashRecieveCancel().setCredit(calValue(new CancelledBill(), BillType.CashRecieveBill, PaymentMethod.Credit, getWebUser()));
+        getCashRecieveCancel().setSlip(calValue(new CancelledBill(), BillType.CashRecieveBill, PaymentMethod.Slip, getWebUser()));
+
+        //Agent Recieve
+        getAgentRecieves().setBills(userBillsOwn(new BilledBill(), BillType.AgentPaymentReceiveBill, getWebUser()));
+        getAgentRecieves().setCard(calValue(new BilledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Card, getWebUser()));
+        getAgentRecieves().setCash(calValue(new BilledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Cash, getWebUser()));
+        getAgentRecieves().setCheque(calValue(new BilledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Cheque, getWebUser()));
+        getAgentRecieves().setCredit(calValue(new BilledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Credit, getWebUser()));
+        getAgentRecieves().setSlip(calValue(new BilledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Slip, getWebUser()));
+
+        //Agent Receive Cancel
+        getAgentCancelBill().setBills(userBillsOwn(new CancelledBill(), BillType.AgentPaymentReceiveBill, getWebUser()));
+        getAgentCancelBill().setCard(calValue(new CancelledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Card, getWebUser()));
+        getAgentCancelBill().setCash(calValue(new CancelledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Cash, getWebUser()));
+        getAgentCancelBill().setCheque(calValue(new CancelledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Cheque, getWebUser()));
+        getAgentCancelBill().setCredit(calValue(new CancelledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Credit, getWebUser()));
+        getAgentCancelBill().setSlip(calValue(new CancelledBill(), BillType.AgentPaymentReceiveBill, PaymentMethod.Slip, getWebUser()));
+
+        //Inward Payment
+        getInwardPayments().setBills(userBillsOwn(new BilledBill(), BillType.InwardPaymentBill, getWebUser()));
+        getInwardPayments().setCard(calValue(new BilledBill(), BillType.InwardPaymentBill, PaymentMethod.Card, getWebUser()));
+        getInwardPayments().setCash(calValue(new BilledBill(), BillType.InwardPaymentBill, PaymentMethod.Cash, getWebUser()));
+        getInwardPayments().setCheque(calValue(new BilledBill(), BillType.InwardPaymentBill, PaymentMethod.Cheque, getWebUser()));
+        getInwardPayments().setCredit(calValue(new BilledBill(), BillType.InwardPaymentBill, PaymentMethod.Credit, getWebUser()));
+        getInwardPayments().setSlip(calValue(new BilledBill(), BillType.InwardPaymentBill, PaymentMethod.Slip, getWebUser()));
+
+        //Inward Payment Cancel
+        getInwardPaymentCancel().setBills(userBillsOwn(new CancelledBill(), BillType.InwardPaymentBill, getWebUser()));
+        getInwardPaymentCancel().setCard(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Card, getWebUser()));
+        getInwardPaymentCancel().setCash(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Cash, getWebUser()));
+        getInwardPaymentCancel().setCheque(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Cheque, getWebUser()));
+        getInwardPaymentCancel().setCredit(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Credit, getWebUser()));
+        getInwardPaymentCancel().setSlip(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Slip, getWebUser()));
+
+        //Phrmacy Bill Other
+        getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
+        getBilledBillsPh2().setCard(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
+        getBilledBillsPh2().setCash(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
+        getBilledBillsPh2().setCheque(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
+        getBilledBillsPh2().setCredit(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
+        getBilledBillsPh2().setSlip(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
+
+        //Pharmacy Cancell Other
+        getCancellededBillsPh2().setBills(userPharmacyBillsOther(new CancelledBill(), BillType.PharmacySale, getWebUser()));
+        getCancellededBillsPh2().setCard(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
+        getCancellededBillsPh2().setCash(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
+        getCancellededBillsPh2().setCheque(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
+        getCancellededBillsPh2().setCredit(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
+        getCancellededBillsPh2().setSlip(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
+
+        //Pharmacy Refunded Other
+        getRefundedBillsPh2().setBills(userPharmacyBillsOther(new RefundBill(), BillType.PharmacySale, getWebUser()));
+        getRefundedBillsPh2().setCard(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
+        getRefundedBillsPh2().setCash(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
+        getRefundedBillsPh2().setCheque(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
+        getRefundedBillsPh2().setCredit(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
+        getRefundedBillsPh2().setSlip(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
 
     }
 

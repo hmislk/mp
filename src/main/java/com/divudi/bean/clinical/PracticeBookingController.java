@@ -34,7 +34,7 @@ import com.divudi.facade.PersonFacade;
 import com.divudi.facade.ServiceSessionFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 

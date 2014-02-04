@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -33,7 +33,7 @@ import javax.inject.Inject;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InwardTimedItemController implements Serializable {
 
     private static final long serialVersionUID = 1L;

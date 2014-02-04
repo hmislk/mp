@@ -16,7 +16,7 @@ import com.divudi.facade.FeeFacade;
 import com.divudi.facade.ServiceSessionFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +30,7 @@ import javax.inject.Inject;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class SheduleController implements Serializable {
 
     @EJB
@@ -193,7 +193,7 @@ public class SheduleController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

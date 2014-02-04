@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named; import javax.ejb.EJB;
 import javax.persistence.TemporalType;
 
@@ -29,7 +29,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class ServiceMonthSummeryController implements Serializable {
 
     @EJB

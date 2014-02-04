@@ -7,10 +7,8 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -30,17 +28,12 @@ import com.divudi.facade.RefundBillFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -52,8 +45,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     private boolean printPreview = false;
     @EJB
-    BillFeeFacade billFeeFacade;
-    String txtSearch;
+    private BillFeeFacade billFeeFacade;
     BilledBill bill;
     List<BillEntry> billEntrys;
     List<BillItem> billItems;
@@ -61,9 +53,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     List<BillFee> billFees;
     PaymentMethod paymentMethod;
 
-    private List<Bill> bills;
-    @EJB
-    private CommonFunctions commonFunctions;
     @EJB
     private BillNumberBean billNumberBean;
     @EJB
@@ -76,6 +65,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     private BillComponentFacade billCommponentFacade;
     @EJB
     private RefundBillFacade refundBillFacade;
+
     @Inject
     SessionController sessionController;
     @Inject
@@ -83,10 +73,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     @EJB
     EjbApplication ejbApplication;
     private List<BillItem> tempbillItems;
-    @Temporal(TemporalType.TIME)
-    private Date fromDate;
-    @Temporal(TemporalType.TIME)
-    private Date toDate;
     private String comment;
     WebUser user;
 
@@ -106,82 +92,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     public void setEjbApplication(EjbApplication ejbApplication) {
         this.ejbApplication = ejbApplication;
-    }
-
-    public List<Bill> getUserBillsOwn() {
-        List<Bill> userBills;
-        if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
-            System.out.println("user is null");
-        } else {
-            userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
-            System.out.println("user ok");
-        }
-        if (userBills == null) {
-            userBills = new ArrayList<Bill>();
-        }
-        return userBills;
-    }
-
-    public List<Bill> getBillsOwn() {
-        if (bills == null) {
-            if (txtSearch == null || txtSearch.trim().equals("")) {
-                bills = getBillBean().billsForTheDay(getFromDate(), getToDate(), getSessionController().getInstitution(), BillType.AgentPaymentReceiveBill);
-            } else {
-                bills = getBillBean().billsFromSearch(txtSearch, getFromDate(), getToDate(), getSessionController().getInstitution(), BillType.AgentPaymentReceiveBill);
-            }
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
-
-    private SearchKeyword searchKeyword;
-
-    public void createAgentPaymentTable() {
-        bills = null;
-        String sql;
-        Map temMap = new HashMap();
-
-        sql = "select b from BilledBill b where b.billType = :billType "
-                + " and b.institution=:ins and b.createdAt between :fromDate and :toDate "
-                + " and b.retired=false ";
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.insId) like :billNo )";
-            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :netTotal )";
-            temMap.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getFromInstitution() != null && !getSearchKeyword().getFromInstitution().trim().equals("")) {
-            sql += " and  (upper(b.fromInstitution.name) like :frmIns )";
-            temMap.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNumber() != null && !getSearchKeyword().getNumber().trim().equals("")) {
-            sql += " and  (upper(b.fromInstitution.institutionCode) like :num )";
-            temMap.put("num", "%" + getSearchKeyword().getNumber().trim().toUpperCase() + "%");
-        }
-
-        sql += " order by b.id desc  ";
-//    
-        temMap.put("billType", BillType.AgentPaymentReceiveBill);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("ins", getSessionController().getInstitution());
-
-        System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-
-    }
-
-    public BillFeeFacade getBillFeeFacade() {
-        return billFeeFacade;
     }
 
     public void setBillFeeFacade(BillFeeFacade billFeeFacade) {
@@ -235,16 +145,12 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     public void recreateModel() {
 
         billFees = null;
-//        billFees
         billComponents = null;
         billItems = null;
-        bills = null;
         printPreview = false;
         tempbillItems = null;
         comment = null;
     }
-    
-    
 
     private void cancelBillComponents(CancelledBill can, BillItem bt) {
         for (BillComponent nB : getBillComponents()) {
@@ -448,76 +354,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     @EJB
     private BillFacade billFacade;
 
-    public List<Bill> getInstitutionPaymentBills() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            if (bills == null) {
-                if (txtSearch == null || txtSearch.trim().equals("")) {
-                    sql = "SELECT b FROM BilledBill b WHERE b.retired=false and b.billType=:type and b.createdAt between :fromDate and :toDate order by b.id";
-                    temMap.put("toDate", getToDate());
-                    temMap.put("fromDate", getFromDate());
-                    temMap.put("type", BillType.PaymentBill);
-                    bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 100);
-
-                } else {
-                    sql = "select b from BilledBill b where b.retired=false and b.billType=:type and b.createdAt between :fromDate and :toDate and (upper(b.staff.person.name) like '%" + txtSearch.toUpperCase() + "%'  or upper(b.staff.person.phone) like '%" + txtSearch.toUpperCase() + "%'  or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%') order by b.id desc  ";
-                    temMap.put("toDate", getToDate());
-                    temMap.put("fromDate", getFromDate());
-                    temMap.put("type", BillType.PaymentBill);
-                    bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 100);
-                }
-                if (bills == null) {
-                    bills = new ArrayList<Bill>();
-                }
-            }
-        }
-        return bills;
-
-    }
-
-    public List<Bill> getUserBills() {
-        List<Bill> userBills;
-        System.out.println("getting user bills");
-        if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
-            System.out.println("user is null");
-        } else {
-            userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), BillType.OpdBill);
-            System.out.println("user ok");
-        }
-        if (userBills == null) {
-            userBills = new ArrayList<Bill>();
-        }
-        return userBills;
-    }
-
-    public List<Bill> getOpdBills() {
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            bills = getBillBean().billsForTheDay(fromDate, toDate, BillType.OpdBill);
-        } else {
-            bills = getBillBean().billsFromSearch(txtSearch, fromDate, toDate, BillType.OpdBill);
-        }
-
-        if (bills == null) {
-            bills = new ArrayList<Bill>();
-        }
-        return bills;
-    }
-
-    public void setBills(List<Bill> bills) {
-        this.bills = bills;
-    }
-
-    public String getTxtSearch() {
-        return txtSearch;
-    }
-
-    public void setTxtSearch(String txtSearch) {
-        this.txtSearch = txtSearch;
-        recreateModel();
-    }
-
     public BilledBill getBill() {
         //recreateModel();
         return bill;
@@ -673,38 +509,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         recreateModel();
     }
 
-    public Date getToDate() {
-        if (toDate == null) {
-            toDate = getCommonFunctions().getEndOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        }
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-        resetLists();
-    }
-
-    public Date getFromDate() {
-        if (fromDate == null) {
-            fromDate = getCommonFunctions().getStartOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        }
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-        resetLists();
-    }
-
-    public CommonFunctions getCommonFunctions() {
-        return commonFunctions;
-    }
-
-    public void setCommonFunctions(CommonFunctions commonFunctions) {
-        this.commonFunctions = commonFunctions;
-    }
-
     public String getComment() {
         return comment;
     }
@@ -729,18 +533,8 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         this.billFacade = billFacade;
     }
 
-    public SearchKeyword getSearchKeyword() {
-        if (searchKeyword == null) {
-            searchKeyword = new SearchKeyword();
-        }
-        return searchKeyword;
+    public BillFeeFacade getBillFeeFacade() {
+        return billFeeFacade;
     }
 
-    public void setSearchKeyword(SearchKeyword searchKeyword) {
-        this.searchKeyword = searchKeyword;
-    }
-
-    public List<Bill> getBills() {
-        return bills;
-    }
 }

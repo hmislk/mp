@@ -28,7 +28,7 @@ import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 
@@ -91,80 +92,7 @@ public class TransferReceiveController implements Serializable {
         billItems = null;
     }
 
-    public List<Bill> getIssued() {
-        String sql;
-        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
-                + " b.toDepartment=:dep and b.billType= :bTp "
-                + " and b.createdAt between :fromDate and :toDate ";
-
-        HashMap tmp = new HashMap();
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("dep", getSessionController().getDepartment());
-        tmp.put("bTp", BillType.PharmacyTransferIssue);
-        //   tmp.put("bTp2", BillType.PharmacyTransferReceive);
-        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        for (Bill b : bil) {
-            b.setTmpRefBill(getRefBill(b));
-
-        }
-
-        if (bil == null) {
-            return new ArrayList<>();
-        }
-
-        return bil;
-    }
-
-    public void createIssueTable() {
-        String sql;
-        HashMap tmp = new HashMap();
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("dep", getSessionController().getDepartment());
-        tmp.put("bTp", BillType.PharmacyTransferIssue);
-        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
-                + " b.toDepartment=:dep and b.billType= :bTp "
-                + " and b.createdAt between :fromDate and :toDate ";
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.deptId) like :billNo )";
-            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getStaffName()!= null && !getSearchKeyword().getStaffName().trim().equals("")) {
-            sql += " and  (upper(b.toStaff.person.name) like :stf )";
-            tmp.put("stf", "%" + getSearchKeyword().getStaffName().trim().toUpperCase() + "%");
-        }
-        
-        if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
-            sql += " and  (upper(b.department.name) like :fDep )";
-            tmp.put("fDep", "%" + getSearchKeyword().getDepartment().trim().toUpperCase() + "%");
-        }
-        
-        
-
-        sql += " order by b.id desc  ";
-
-        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
-
-        for (Bill b : bills) {
-            b.setTmpRefBill(getRefBill(b));
-
-        }
-
-    }
-
-    private Bill getRefBill(Bill b) {
-        String sql = "Select b From Bill b where b.retired=false "
-                + " and b.cancelled=false and b.billType=:btp and "
-                + " b.referenceBill=:ref";
-        HashMap hm = new HashMap();
-        hm.put("ref", b);
-        hm.put("btp", BillType.PharmacyTransferReceive);
-        return getBillFacade().findFirstBySQL(sql, hm);
-    }
+   
 
     public TransferReceiveController() {
     }

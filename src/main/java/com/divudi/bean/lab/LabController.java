@@ -70,7 +70,7 @@ public class LabController {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -115,7 +115,7 @@ public class LabController {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

@@ -13,21 +13,21 @@
                     <h:outputLabel value="Purchase Order List"/>
                     <h:panelGrid columns="5" >
                         <h:outputLabel value="From Date"/>
-                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{grnController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{grnController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                         </p:calendar>
-                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{grnController.createPoTable}"/>
+                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPoTable}"/>
                         <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                         <h:outputLabel value="Distributor"/>
                         <h:outputLabel value="Po Number"/>
                         <h:outputLabel value="Po Value"/>
                         <h:outputLabel/><h:outputLabel/>
-                        <p:inputText  value="#{grnController.searchKeyword.toInstitution}" />
-                        <p:inputText  value="#{grnController.searchKeyword.billNo}" />
-                        <p:inputText  value="#{grnController.searchKeyword.netTotal}" />
+                        <p:inputText  value="#{search.searchKeyword.toInstitution}" />
+                        <p:inputText  value="#{search.searchKeyword.billNo}" />
+                        <p:inputText  value="#{search.searchKeyword.netTotal}" />
                         <h:outputLabel/><h:outputLabel/>
                     </h:panelGrid>
                 </f:facet>               
@@ -37,7 +37,7 @@
 
 
 
-            <p:dataTable value="#{grnController.bills}" var="p">
+            <p:dataTable value="#{search.bills}" var="p">
                 <p:column headerText="Approve at"  >
                     <h:commandLink action="pharmacy_reprint_po" >
                         <h:outputLabel value="#{p.createdAt}" >

@@ -13,26 +13,26 @@
                     <p:outputLabel value="Select Request For Department : #{sessionController.department.name}"/>      
                     <h:panelGrid columns="5" >
                         <h:outputLabel value="From Date"/>
-                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{transferIssueController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{transferIssueController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                         </p:calendar>
-                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{transferIssueController.createRequestTable()}"/>
+                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createRequestTable()}"/>
                         <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                         <h:outputLabel value="Request No"/>   
                         <h:outputLabel value="From Deprtment"/> 
                         <h:outputLabel/><h:outputLabel/><h:outputLabel/>
-                        <p:inputText  value="#{transferIssueController.searchKeyword.billNo}" />   
-                        <p:inputText  value="#{transferIssueController.searchKeyword.department}" />                                                
+                        <p:inputText  value="#{search.searchKeyword.billNo}" />   
+                        <p:inputText  value="#{search.searchKeyword.department}" />                                                
                         <h:outputLabel/><h:outputLabel/>
                     </h:panelGrid>
                 </f:facet>
 
 
 
-                <p:dataTable value="#{transferIssueController.bills}" var="p">
+                <p:dataTable value="#{search.bills}" var="p">
                     <p:column headerText="Request No">
                         <h:commandLink action="pharmacy_reprint_transfer_request">
                             <h:outputLabel value="#{p.deptId}"/>

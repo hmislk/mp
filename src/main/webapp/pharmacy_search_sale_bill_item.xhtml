@@ -15,12 +15,12 @@
                             <h:outputLabel value="SEARCH PHARMACY BILL ITEM "/>                                                          
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createPharmacyBillItemTable}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPharmacyBillItemTable}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
@@ -28,10 +28,10 @@
                                 <h:outputLabel value="Item Value"/>   
                                 <h:outputLabel value="Patient"/>           
                                 <h:outputLabel />
-                                <p:inputText  value="#{billSearch.searchKeyword.billNo}" />
-                                <p:inputText value="#{billSearch.searchKeyword.itemName}" />
-                                <p:inputText  value="#{billSearch.searchKeyword.total}" />
-                                <p:inputText  value="#{billSearch.searchKeyword.patientName}" />
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText value="#{search.searchKeyword.itemName}" />
+                                <p:inputText  value="#{search.searchKeyword.total}" />
+                                <p:inputText  value="#{search.searchKeyword.patientName}" />
                                 <h:outputLabel />
                             </h:panelGrid>
                         </f:facet>
@@ -39,7 +39,7 @@
 
 
 
-                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{billSearch.billItems}" var="pi" >
+                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.billItems}" var="pi" >
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>

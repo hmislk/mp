@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Named; import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -19,7 +19,7 @@ import javax.faces.event.ValueChangeEvent;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class LanguageController implements Serializable {
 
     /**

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 
@@ -28,7 +28,7 @@ import javax.ejb.EJB;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PatientHistoryController implements Serializable {
 
     private Patient searchedPatient;

@@ -12,7 +12,6 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.DepartmentType;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.data.dataStructure.YearMonthDay;
@@ -30,7 +29,6 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Patient;
-import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
@@ -49,12 +47,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -67,7 +64,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class LabBillCollectingController implements Serializable {
 
     BilledBill current;
@@ -342,7 +339,7 @@ public class LabBillCollectingController implements Serializable {
             UtilityController.addErrorMessage("Under administration, add a Department for this investigation " + e.getBillItem().getItem().getName());
         } else if (e.getBillItem().getItem().getDepartment().getInstitution() == null) {
             UtilityController.addErrorMessage("Under administration, add an Institution for the department " + e.getBillItem().getItem().getDepartment());
-        } else if (e.getBillItem().getItem().getDepartment().getInstitution() != sessionController.getLoggedUser().getInstitution()) {
+        } else if (e.getBillItem().getItem().getDepartment().getInstitution() != getSessionController().getLoggedUser().getInstitution()) {
             ptIx.setOutsourcedInstitution(e.getBillItem().getItem().getInstitution());
         }
 
@@ -430,7 +427,7 @@ public class LabBillCollectingController implements Serializable {
         temp.setPaymentScheme(getPaymentScheme());
 
         temp.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        temp.setCreater(sessionController.getLoggedUser());
+        temp.setCreater(getSessionController().getLoggedUser());
         getFacade().create(temp);
         return temp;
 
@@ -481,8 +478,8 @@ public class LabBillCollectingController implements Serializable {
             return;
         }
 
-//        getCurrent().setDepartment(sessionController.getLoggedUser().getDepartment());
-//        getCurrent().setInstitution(sessionController.getLoggedUser().getInstitution());
+//        getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
+//        getCurrent().setInstitution(getSessionController().getLoggedUser().getInstitution());
 //        getCurrentBillItem().setBill(getCurrent());
         BillEntry addingEntry = new BillEntry();
         addingEntry.setBillItem(getCurrentBillItem());

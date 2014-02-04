@@ -18,7 +18,6 @@ import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
-import com.divudi.entity.LazyBill;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.ItemBatch;
@@ -34,7 +33,6 @@ import com.divudi.facade.ItemBatchFacade;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,9 +44,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.persistence.TemporalType;
-import org.primefaces.model.LazyDataModel;
 
 /**
  *
@@ -261,171 +258,6 @@ public class GrnController implements Serializable {
         grns = null;
         filteredValue = null;
         bills = null;
-    }
-
-    public void createPoTable() {
-        bills = null;
-        String sql;
-        HashMap tmp = new HashMap();
-
-        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp"
-                + " and  b.referenceBill.institution=:ins and "
-                + " b.createdAt between :fromDate and :toDate ";
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.deptId) like :billNo )";
-            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
-            sql += " and  (upper(b.toInstitution.name) like :toIns )";
-            tmp.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :netTotal )";
-            tmp.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
-        sql += " order by b.id desc  ";
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("ins", getSessionController().getInstitution());
-        tmp.put("bTp", BillType.PharmacyOrderApprove);
-        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
-
-        for (Bill b : bills) {
-            b.setListOfBill(getGrns(b));
-        }
-
-    }
-
-    public void createGrnTable() {
-        bills = null;
-        String sql;
-        HashMap tmp = new HashMap();
-
-        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp "
-                + " and b.institution=:ins and"
-                + " b.createdAt between :fromDate and :toDate ";
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.deptId) like :billNo )";
-            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNumber() != null && !getSearchKeyword().getNumber().trim().equals("")) {
-            sql += " and  (upper(b.invoiceNumber) like :invoice )";
-            tmp.put("invoice", "%" + getSearchKeyword().getNumber().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.deptId) like :refNo )";
-            tmp.put("refNo", "%" + getSearchKeyword().getRefBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getFromInstitution() != null && !getSearchKeyword().getFromInstitution().trim().equals("")) {
-            sql += " and  (upper(b.fromInstiution.name) like :frmIns )";
-            tmp.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getTotal() != null && !getSearchKeyword().getTotal().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.netTotal) like :total )";
-            tmp.put("total", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :netTotal )";
-            tmp.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
-        sql += " order by b.id desc  ";
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("ins", getSessionController().getInstitution());
-        tmp.put("bTp", BillType.PharmacyGrnBill);
-        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
-
-        for (Bill b : bills) {
-            b.setListOfBill(getReturnBill(b));
-        }
-
-    }
-
-    public List<Bill> getPo() {
-        if (pos == null) {
-            String sql;
-            HashMap tmp = new HashMap();
-            if (getDealor() == null) {
-                sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp and b.cancelled=false and "
-                        + "b.createdAt is not null and b.createdAt between :fromDate and :toDate order by b.id desc  ";
-            } else {
-                sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp and b.cancelled=false and b.toInstitution=:del and "
-                        + "b.createdAt is not null and b.createdAt between :fromDate and :toDate order by b.id desc ";
-                tmp.put("del", getDealor());
-            }
-            tmp.put("toDate", getToDate());
-            tmp.put("fromDate", getFromDate());
-            tmp.put("bTp", BillType.PharmacyOrderApprove);
-            pos = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-            if (pos == null) {
-                return new ArrayList<>();
-            }
-            for (Bill b : pos) {
-                b.setListOfBill(getGrns(b));
-            }
-        }
-
-        return pos;
-    }
-
-    private List<Bill> getGrns(Bill b) {
-        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
-                + " and b.billType=:btp and "
-                + " b.referenceBill=:ref";
-        HashMap hm = new HashMap();
-        hm.put("ref", b);
-        hm.put("btp", BillType.PharmacyGrnBill);
-        return getBillFacade().findBySQL(sql, hm);
-    }
-
-    private List<Bill> getReturnBill(Bill b) {
-        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
-                + " and  b.billType=:btp and "
-                + " b.referenceBill=:ref";
-        HashMap hm = new HashMap();
-        hm.put("ref", b);
-        hm.put("btp", BillType.PharmacyGrnReturn);
-        return getBillFacade().findBySQL(sql, hm);
-    }
-
-    public List<Bill> getGrns() {
-        if (grns == null) {
-            String sql;
-            HashMap tmp = new HashMap();
-            if (getDealor() == null) {
-                sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp and b.cancelled=false and "
-                        + "b.createdAt is not null and b.createdAt between :fromDate and :toDate order by b.deptId desc  ";
-            } else {
-                sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp and b.cancelled=false and b.toInstitution=:del and "
-                        + "b.createdAt is not null and b.createdAt between :fromDate and :toDate  order by b.deptId desc ";
-                tmp.put("del", getDealor());
-            }
-            tmp.put("toDate", getToDate());
-            tmp.put("fromDate", getFromDate());
-            tmp.put("bTp", BillType.PharmacyGrnBill);
-            grns = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-            if (grns == null) {
-                return new ArrayList<>();
-            }
-            for (Bill b : grns) {
-                b.setListOfBill(getReturnBill(b));
-            }
-        }
-
-        return grns;
     }
 
     public BillFacade getBillFacade() {

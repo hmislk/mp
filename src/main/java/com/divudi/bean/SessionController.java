@@ -20,7 +20,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import com.divudi.entity.Person;
 import com.divudi.entity.WebUserPrivilege;
 import com.divudi.entity.WebUserRole;
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
@@ -45,7 +46,7 @@ import javax.servlet.http.HttpSessionListener;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class SessionController implements Serializable, HttpSessionListener {
 
     @EJB

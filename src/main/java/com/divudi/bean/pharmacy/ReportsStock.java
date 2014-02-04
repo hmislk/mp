@@ -15,7 +15,7 @@ import com.divudi.entity.Staff;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +31,7 @@ import javax.inject.Inject;
  * @author Buddhika
  */
 @Named(value = "reportsStock")
-@SessionScoped
+@ViewScoped
 public class ReportsStock implements Serializable {
 
     /**

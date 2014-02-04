@@ -14,6 +14,7 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.Patient;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillFacade;
@@ -45,7 +46,7 @@ public class Search implements Serializable {
     private SearchKeyword searchKeyword;
     Date fromDate;
     Date toDate;
-    private int maxResult=50;
+    private int maxResult = 50;
     private BillType billType;
     ////////////
     private List<Bill> bills;
@@ -71,6 +72,8 @@ public class Search implements Serializable {
     //////////
     @Inject
     private SessionController sessionController;
+    @Inject
+    TransferController transferController;
 
     public void createPreRefundTable() {
 
@@ -247,8 +250,8 @@ public class Search implements Serializable {
         hm.put("btp", BillType.PharmacyTransferReceive);
         return getBillFacade().findFirstBySQL(sql, hm);
     }
-    
-     public void createTableByBillType() {       
+
+    public void createTableByBillType() {
         String sql;
         Map temMap = new HashMap();
 
@@ -783,6 +786,16 @@ public class Search implements Serializable {
         System.err.println("Sql " + sql);
         patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
+    }
+
+    public void createPatientInvestigationsTableSingle() {
+        String sql = "select pi from PatientInvestigation pi join pi.investigation  "
+                + " i join pi.billItem.bill b join b.patient p where "
+                + " p=:pt ";
+        Map temMap = new HashMap();
+        sql += " order by pi.id desc  ";
+        temMap.put("pt", getTransferController().patient);
+        patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
     }
 
     public void createPatientInvestigationsTableAll() {
@@ -1478,7 +1491,7 @@ public class Search implements Serializable {
     }
 
     public int getMaxResult() {
-        
+
         return maxResult;
     }
 
@@ -1509,5 +1522,15 @@ public class Search implements Serializable {
     public void setBillType(BillType billType) {
         this.billType = billType;
     }
+
+    public TransferController getTransferController() {
+        return transferController;
+    }
+
+    public void setTransferController(TransferController transferController) {
+        this.transferController = transferController;
+    }
+
+
 
 }

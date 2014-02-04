@@ -10,6 +10,7 @@ package com.divudi.bean.lab;
 
 import com.divudi.bean.ItemForItemController;
 import com.divudi.bean.SessionController;
+import com.divudi.bean.TransferController;
 import com.divudi.bean.UtilityController;
 import com.divudi.bean.hr.StaffController;
 import com.divudi.data.CalculationType;
@@ -62,6 +63,8 @@ public class PatientReportController implements Serializable {
     SessionController sessionController;
     @Inject
     StaffController staffController;
+    @Inject
+    TransferController transferController;
     @EJB
     private PatientReportFacade ejbFacade;
     @EJB
@@ -93,6 +96,14 @@ public class PatientReportController implements Serializable {
     List<PatientReportItemValue> patientReportItemValuesFlags;
     List<PatientReportItemValue> patientReportItemValuesDynamicLabels;
     List<PatientReportItemValue> patientReportItemValuesCalculations;
+
+    public String patientReportSearch() {
+        if (currentPatientReport == null || currentPatientReport.getPatientInvestigation() == null || currentPatientReport.getPatientInvestigation().getPatient() == null) {
+            return "";
+        }
+        getTransferController().setPatient(currentPatientReport.getPatientInvestigation().getPatient());
+        return "lab_search_for_reporting_patient";
+    }
 
     public String lastPatientReport(PatientInvestigation pi) {
         System.out.println("last pt rpt");
@@ -606,6 +617,7 @@ public class PatientReportController implements Serializable {
         currentPatientReport.setApproveUser(getSessionController().getLoggedUser());
         getFacade().edit(currentPatientReport);
         getStaffController().setCurrent(getSessionController().getLoggedUser().getStaff());
+        getTransferController().setStaff(getSessionController().getLoggedUser().getStaff());
         UtilityController.addSuccessMessage("Approved");
     }
 
@@ -781,7 +793,7 @@ public class PatientReportController implements Serializable {
         this.currentPatientReport = currentPatientReport;
         if (currentPatientReport != null) {
             getCommonReportItemController().setCategory(currentPatientReport.getItem().getReportFormat());
-            currentPtIx=currentPatientReport.getPatientInvestigation();
+            currentPtIx = currentPatientReport.getPatientInvestigation();
         }
     }
 
@@ -793,6 +805,18 @@ public class PatientReportController implements Serializable {
         this.testFlagFacade = testFlagFacade;
     }
 
+    public TransferController getTransferController() {
+        return transferController;
+    }
+
+    public void setTransferController(TransferController transferController) {
+        this.transferController = transferController;
+    }
+
+    
+    
+    
+    
     @FacesConverter(forClass = PatientReport.class)
     public static class PatientReportControllerConverter implements Converter {
 

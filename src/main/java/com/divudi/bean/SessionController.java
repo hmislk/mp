@@ -46,7 +46,7 @@ import javax.servlet.http.HttpSessionListener;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class SessionController implements Serializable, HttpSessionListener {
 
     @EJB

@@ -10,21 +10,8 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:panel header="Search Bills" >
-                        <f:facet name="header">
-                            <h:panelGrid columns="4" >
-                                <h:outputLabel value="Bill No"/>
-                                <h:outputLabel value="Patient Name"/>
-                                <h:outputLabel value="Patient Phone"/>                               
-                                <h:outputLabel value="Investigation Name"/>
-                                <p:inputText  value="#{search.searchKeyword.billNo}" />
-                                <p:inputText value="#{search.searchKeyword.patientName}" />
-                                <p:inputText  value="#{search.searchKeyword.patientPhone}" />
-                                <p:inputText value="#{search.searchKeyword.itemName}"/>
-                            </h:panelGrid>
-                        </f:facet>
-                        <p:dataTable  id="tblBills" value="#{search.patientInvestigations}" var="pi"  >
-
+                    <p:panel header="Search Patient Investigations" >
+                        <p:dataTable  id="tblBills" value="#{search.patientInvestigationsSigle}" var="pi"  >
                             <p:column headerText="Billing" styleClass="alignTop" >
                                 <h:outputLabel value="Bill No : #{pi.billItem.bill.insId}" ></h:outputLabel>
                                 <br/>

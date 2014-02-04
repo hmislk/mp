@@ -42,7 +42,7 @@
                             <p:column headerText="Bill No" >
                                 <h:commandLink action="agent_bill_reprint" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceivesearch.bill}"/>
                                 </h:commandLink>
                             </p:column>                                            
                             <p:column headerText="Billed at"  >
@@ -50,7 +50,7 @@
                                     <h:outputLabel value="#{bill.createdAt}" >
                                         <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceivesearch.bill}"/>
                                 </h:commandLink>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >
@@ -65,7 +65,7 @@
                                 <h:commandLink action="agent_bill_reprint" >
                                     <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceivesearch.bill}"/>
                                 </h:commandLink>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >
@@ -77,14 +77,14 @@
                             <p:column headerText="Agent Code" >
                                 <h:commandLink action="agent_bill_reprint" >
                                     <h:outputLabel value="#{bill.fromInstitution.institutionCode}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceivesearch.bill}"/>
                                 </h:commandLink>
                             </p:column>  
 
                             <p:column headerText="Agent Name" >
                                 <h:commandLink action="agent_bill_reprint" >
                                     <h:outputLabel value="#{bill.fromInstitution.name}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceivesearch.bill}"/>
                                 </h:commandLink>
                             </p:column>  
 
@@ -93,7 +93,7 @@
                                     <h:outputLabel value="#{bill.netTotal}" >
                                         <f:convertNumber pattern="#,000.00"/>
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceivesearch.bill}"/>
                                 </h:commandLink>
                             </p:column>                          
                             <p:column headerText="Comments" >

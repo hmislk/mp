@@ -38,8 +38,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -569,9 +570,9 @@ public class PatientReportController implements Serializable {
         currentPtIx.setDataEntryDepartment(getSessionController().getDepartment());
         currentPatientReport.setDataEntered(Boolean.TRUE);
         currentPatientReport.setDataEntryAt(Calendar.getInstance().getTime());
-        currentPatientReport.setDataEntryDepartment(sessionController.getLoggedUser().getDepartment());
-        currentPatientReport.setDataEntryInstitution(sessionController.getLoggedUser().getInstitution());
-        currentPatientReport.setDataEntryUser(sessionController.getLoggedUser());
+        currentPatientReport.setDataEntryDepartment(getSessionController().getLoggedUser().getDepartment());
+        currentPatientReport.setDataEntryInstitution(getSessionController().getLoggedUser().getInstitution());
+        currentPatientReport.setDataEntryUser(getSessionController().getLoggedUser());
 
         getFacade().edit(currentPatientReport);
         getPiFacade().edit(currentPtIx);
@@ -600,8 +601,8 @@ public class PatientReportController implements Serializable {
         currentPatientReport.setApproved(Boolean.FALSE);
         currentPatientReport.setApproved(Boolean.TRUE);
         currentPatientReport.setApproveAt(Calendar.getInstance().getTime());
-        currentPatientReport.setApproveDepartment(sessionController.getLoggedUser().getDepartment());
-        currentPatientReport.setApproveInstitution(sessionController.getLoggedUser().getInstitution());
+        currentPatientReport.setApproveDepartment(getSessionController().getLoggedUser().getDepartment());
+        currentPatientReport.setApproveInstitution(getSessionController().getLoggedUser().getInstitution());
         currentPatientReport.setApproveUser(getSessionController().getLoggedUser());
         getFacade().edit(currentPatientReport);
         getStaffController().setCurrent(getSessionController().getLoggedUser().getStaff());
@@ -623,9 +624,9 @@ public class PatientReportController implements Serializable {
 
         currentPatientReport.setPrinted(Boolean.TRUE);
         currentPatientReport.setPrintingAt(Calendar.getInstance().getTime());
-        currentPatientReport.setPrintingDepartment(sessionController.getLoggedUser().getDepartment());
-        currentPatientReport.setPrintingInstitution(sessionController.getLoggedUser().getInstitution());
-        currentPatientReport.setPrintingUser(sessionController.getLoggedUser());
+        currentPatientReport.setPrintingDepartment(getSessionController().getLoggedUser().getDepartment());
+        currentPatientReport.setPrintingInstitution(getSessionController().getLoggedUser().getInstitution());
+        currentPatientReport.setPrintingUser(getSessionController().getLoggedUser());
         getFacade().edit(currentPatientReport);
 
     }

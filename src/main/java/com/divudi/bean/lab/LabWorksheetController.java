@@ -11,7 +11,7 @@ import com.divudi.entity.lab.WorksheetItem;
 import com.divudi.facade.InvestigationFacade;
 import com.divudi.facade.WorksheetItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
 
@@ -20,7 +20,7 @@ import javax.ejb.EJB;
  * @author Buddhika
  */
 @Named(value = "labWorksheetController")
-@SessionScoped
+@ViewScoped
 public class LabWorksheetController implements Serializable {
 
     /**

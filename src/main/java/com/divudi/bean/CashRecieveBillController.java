@@ -15,7 +15,7 @@ import com.divudi.entity.Institution;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +31,7 @@ import org.primefaces.event.TabChangeEvent;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class CashRecieveBillController implements Serializable {
 
     private Bill current;

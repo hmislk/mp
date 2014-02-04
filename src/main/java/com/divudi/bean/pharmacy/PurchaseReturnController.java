@@ -11,7 +11,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.PharmacyItemData;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -23,13 +23,14 @@ import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 /**
@@ -96,7 +97,7 @@ public class PurchaseReturnController implements Serializable {
     }
 
     @EJB
-    private PharmacyRecieveBean pharmacyRecieveBean;
+    private PharmacyCalculation pharmacyRecieveBean;
 
     private double getRemainingQty(BillItem bilItem) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
@@ -348,11 +349,11 @@ public class PurchaseReturnController implements Serializable {
         this.billItemFacade = billItemFacade;
     }
 
-    public PharmacyRecieveBean getPharmacyRecieveBean() {
+    public PharmacyCalculation getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }
 
-    public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
+    public void setPharmacyRecieveBean(PharmacyCalculation pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 

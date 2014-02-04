@@ -36,69 +36,111 @@
             </div>
 
             <div class="headingBill">
-                <h:outputLabel value="Transfer Recieve Note"   />                           
+                <h:outputLabel value="Transfer Recieve Note" style="text-decoration: underline;"/>                           
             </div>
 
 
             <div >
-                <h:panelGrid columns="2" class="poDetail" >
+                <!--                <h:panelGrid columns="2" class="poDetail" >-->
+                <div>
                     <h:outputLabel value="Location From : #{cc.attrs.bill.fromDepartment.name}"/>
-                    <h:outputLabel value="Location To : #{cc.attrs.bill.department.name}"/>
+                    <h:outputLabel value="Location To : #{cc.attrs.bill.department.name}" style="position: absolute; left: 65%;"/>
+                </div>
 
+                <div>
                     <h:outputLabel value="Recieved Person : #{cc.attrs.bill.creater.staff.code}"/>
-                    <h:outputLabel value="Issued Person : #{cc.attrs.bill.backwardReferenceBill.creater.staff.code}"/>
+                    <h:outputLabel value="Issued Person : #{cc.attrs.bill.backwardReferenceBill.creater.staff.code}" style="position: absolute; left: 65%;"/>
+                </div>
 
+                <div>
                     <h:outputLabel value="Recieve No : #{cc.attrs.bill.deptId}"/>
-                    <h:outputLabel value="Issue No : #{cc.attrs.bill.backwardReferenceBill.deptId}"/>
+                    <h:outputLabel value="Issue No : #{cc.attrs.bill.backwardReferenceBill.deptId}" style="position: absolute; left: 65%;"/>
+                </div>
 
+                <div>
                     <h:outputLabel value="Recieved Time : #{cc.attrs.bill.createdAt}"/>
-                    <h:outputLabel value="Issue Time : #{cc.attrs.bill.backwardReferenceBill.createdAt}"/>
+                    <h:outputLabel value="Issue Time : #{cc.attrs.bill.backwardReferenceBill.createdAt}" style="position: absolute; left: 65%;"/>
+                </div>
+                
+                <h:outputLabel value="Transporter : #{cc.attrs.bill.fromStaff.person.nameWithTitle}"/>
 
-                    <h:outputLabel value="Transporter : #{cc.attrs.bill.fromStaff.person.nameWithTitle}"/>
-
-                </h:panelGrid>
+                <!--                </h:panelGrid>-->
             </div>
 
             <div >
                 <p:dataTable styleClass="noBorder normalFont" rowIndexVar="rowIndex"  value="#{cc.attrs.bill.transBillItems}" var="bip" >
                     <p:column>
-                        <f:facet name="header">No</f:facet>
-                            #{rowIndex+1}
+                        <f:facet name="header">
+                            <h:outputLabel value="No"/>
+                        </f:facet>
+                        <h:outputLabel value="#{rowIndex+1}"/>
                     </p:column>
+
                     <p:column>
-                        <f:facet name="header">Code</f:facet>
-                            #{bip.item.code}
-                    </p:column>                                                         
+                        <f:facet name="header">
+                            <h:outputLabel value="Code"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.item.code}"/>
+                    </p:column>    
+
                     <p:column>
-                        <f:facet name="header">Item</f:facet>
-                            #{bip.item.name}
+                        <f:facet name="header">
+                            <h:outputLabel value="Item"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.item.name}"/>
                     </p:column>
-                     <p:column>
-                        <f:facet name="header">D O E</f:facet>
-                            #{bip.pharmaceuticalBillItem.doe}
-                    </p:column>
+
                     <p:column>
-                        <f:facet name="header">QTY</f:facet>
-                            #{bip.pharmaceuticalBillItem.qty}
+                        <f:facet name="header">
+                            <h:outputLabel value="D O E"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.doe}"/>
                     </p:column>
+
                     <p:column>
-                        <f:facet name="header">Purchase Rate</f:facet>
-                            #{bip.pharmaceuticalBillItem.purchaseRate}
+                        <f:facet name="header">
+                            <h:outputLabel value="QTY"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.qty}"/>
                     </p:column>
+
                     <p:column>
-                        <f:facet name="header">Purchase Value</f:facet>
-                            #{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}
+                        <f:facet name="header">
+                            <h:outputLabel value="Purchase Rate"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
                     </p:column>
+
                     <p:column>
-                        <f:facet name="header">Retail Rate</f:facet>
-                            #{bip.pharmaceuticalBillItem.retailRate}
+                        <f:facet name="header">
+                            <h:outputLabel value="Purchase Value"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
+
                     </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputLabel value="Retail Rate"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.retailRate}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
+                    </p:column>
+
                     <p:columnGroup type="footer">
                         <p:row>
                             <p:column footerText="Total" colspan="6"/>
-                            <p:column footerText="#{cc.attrs.bill.netTotal}"/>
+                            <p:column footerText="#{cc.attrs.bill.netTotal}">
+                                    
+                            </p:column>
                         </p:row>
                     </p:columnGroup>
+
                 </p:dataTable>
             </div>
 

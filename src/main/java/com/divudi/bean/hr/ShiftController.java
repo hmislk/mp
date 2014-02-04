@@ -15,7 +15,7 @@ import com.divudi.facade.DayShiftFacade;
 import com.divudi.facade.RosterFacade;
 import com.divudi.facade.ShiftFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class ShiftController implements Serializable {
 
     private Shift current;
@@ -209,7 +209,7 @@ public class ShiftController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -237,7 +237,7 @@ public class ShiftController implements Serializable {
 //            // removeAll();
 //            current.setRetired(true);
 //            current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//            current.setRetirer(sessionController.getLoggedUser());
+//            current.setRetirer(getSessionController().getLoggedUser());
 
             getFacade().remove(current);
             getCurrentRoster().getShiftList().remove(getCurrent());

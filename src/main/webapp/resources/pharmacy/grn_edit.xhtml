@@ -14,7 +14,8 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <h:outputStylesheet library="css" name="pharmacyA4.css"/>
-        <div class="posbill noBorder summeryBorder">
+        <p:commandButton ajax="false" value="update" action="#{pharmacyBillSearch.editBill}"/>
+        <div >
 
             <div class="institutionName">
                 <h:outputLabel value="#{cc.attrs.bill.creater.department.printingName}"/>
@@ -24,16 +25,16 @@
                     <h:outputLabel value="#{cc.attrs.bill.creater.department.address}"/>
                 </div>
                 <div >
-                    <h:outputLabel value="Tel : "/>
+                    <h:outputLabel value="Tel : 0912234059 - 60 , "/>
                     <h:outputLabel value="#{cc.attrs.bill.creater.department.telephone1} "/>
                     <h:outputLabel value="#{cc.attrs.bill.creater.department.telephone2}"/>
                 </div>
                 <div >
-                    <h:outputLabel value="Fax : "/>
+                    <h:outputLabel value="Fax : 0912234061 "/>
                     <h:outputLabel value="#{cc.attrs.bill.creater.department.fax}"/>                                                 
                 </div>
                 <div >
-                    <h:outputLabel value="Email : "/>
+                    <h:outputLabel value="Email : ruhunuhos@sltnet.lk "/>
                     <h:outputLabel value="#{cc.attrs.bill.creater.department.email}"/>                                                 
                 </div>
             </div>
@@ -71,7 +72,10 @@
                             <f:convertDateTime pattern="hh mm a"/>
                         </h:outputLabel>
                     </h:panelGroup>
-                    <h:outputLabel value="Invoice No : #{cc.attrs.bill.invoiceNumber}"/>
+                    <h:panelGroup>
+                        <h:outputLabel value="Invoice No : "/>
+                        <p:inputText value="#{cc.attrs.bill.invoiceNumber}"/>
+                    </h:panelGroup>
                     <h:outputLabel value="P.O.Approve By : #{cc.attrs.bill.referenceBill.creater.staff.code}"/>
                     <h:outputLabel value="Supplier : #{cc.attrs.bill.fromInstitution.name}"/>
                     <h:outputLabel value="Location : #{cc.attrs.bill.referenceBill.creater.department.name}"/>
@@ -81,10 +85,10 @@
 
             <div >
                 <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip" >
-<!--                    <p:column>
-                        <f:facet name="header">No</f:facet>
-                            #{rowIndex+1}
-                    </p:column>-->
+                    <!--                    <p:column>
+                                            <f:facet name="header">No</f:facet>
+                    #{rowIndex+1}
+            </p:column>-->
                     <p:column>
                         <f:facet name="header">Item</f:facet>
                             #{bip.item.name}
@@ -101,21 +105,22 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Rcv QTY</f:facet>
-                            #{bip.pharmaceuticalBillItem.qty}
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.qty}"/>
                     </p:column>
-<!--                    <p:column>
-                        <f:facet name="header">Remaining QTY</f:facet>
-                            #{bip.remainingQty}
-                    </p:column>-->
+                    <!--                    <p:column>
+                                            <f:facet name="header">Remaining QTY</f:facet>
+                    #{bip.remainingQty}
+            </p:column>-->
                     <p:column>
                         <f:facet name="header">Fr QTY</f:facet>
-                            #{bip.pharmaceuticalBillItem.freeQty}
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.freeQty}"/>
+
                     </p:column>
                     <p:column>
                         <f:facet name="header">Cur Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}">
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.purchaseRate}">
                             <f:convertNumber pattern="#,##0.00" />
-                        </h:outputLabel>
+                        </p:inputText>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Last Price</f:facet>
@@ -131,18 +136,21 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Sale Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.retailRate}">
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.retailRate}">
                             <f:convertNumber pattern="#,##0.00" />
-                        </h:outputLabel>
+                        </p:inputText>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton ajax="false" value="Save Bill Item" action="#{pharmacyBillSearch.editBillItem(bip)}"/>
                     </p:column>
                     <p:columnGroup type="footer">
                         <p:row>
                             <p:column colspan="7" footerText="Total"/>
                             <p:column footerText="#{0-cc.attrs.bill.total}">
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{0-cc.attrs.bill.total}">
+                                    <p:inputText value="#{cc.attrs.bill.total}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputLabel>
+                                    </p:inputText>
                                 </f:facet>
                             </p:column>
 
@@ -151,9 +159,9 @@
                             <p:column colspan="9" footerText="Tax"/>
                             <p:column footerText="#{cc.attrs.bill.tax}">
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{cc.attrs.bill.tax}">
+                                    <p:inputText value="#{cc.attrs.bill.tax}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputLabel>
+                                    </p:inputText>                                  
                                 </f:facet>
                             </p:column>
 
@@ -162,9 +170,9 @@
                             <p:column colspan="9" footerText="Discount"/>
                             <p:column footerText="#{0-cc.attrs.bill.discount}">
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{0-cc.attrs.bill.discount}">
+                                    <p:inputText value="#{0-cc.attrs.bill.discount}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputLabel>
+                                    </p:inputText>   
                                 </f:facet>
                             </p:column>
 
@@ -172,10 +180,10 @@
                         <p:row rendered="#{cc.attrs.bill.total!=cc.attrs.bill.netTotal}">
                             <p:column colspan="9" footerText="Net Total"/>
                             <p:column footerText="#{0-cc.attrs.bill.netTotal}">
-                                <f:facet name="footer">
-                                    <h:outputLabel value="#{0-cc.attrs.bill.netTotal}">
+                                <f:facet name="footer">                                 
+                                    <p:inputText value="#{cc.attrs.bill.netTotal}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputLabel>
+                                    </p:inputText>  
                                 </f:facet>
                             </p:column>
 
@@ -196,7 +204,7 @@
             <hr/>
             <div>
 
-                <h4 style="color: #000000;">
+                <h4 style="color: #000000; text-align: center " >
                     Payment Voucher
                 </h4>
 
@@ -204,7 +212,7 @@
                     <h:outputLabel value="Payee : "/>
                     <h:outputLabel value="#{cc.attrs.bill.fromInstitution.name}"/>
                     <h:outputLabel value="Prepaired By : "/>
-                    <h:outputLabel value="........................."/>
+                    <!--<h:outputLabel value="........................."/>-->
                     <h:outputLabel value="Approved By : "/>
                     <!--<h:outputLabel value="........................."/>-->
                     <h:outputLabel value="Authorized By : "/>
@@ -214,7 +222,7 @@
                     <h:outputLabel value="Received with thanks sum of Rupees  : "/>
                     <br></br>
                     <h:outputLabel value="................................................................................................................................................................................................................................................................."/>
-                    
+
                 </h:panelGrid>
 
 

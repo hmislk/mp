@@ -11,7 +11,7 @@ import com.divudi.entity.hr.Roster;
 import com.divudi.facade.RosterFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
 
@@ -20,7 +20,7 @@ import javax.ejb.EJB;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class RosterStaffController implements Serializable {
 
     private Roster currentRoster;

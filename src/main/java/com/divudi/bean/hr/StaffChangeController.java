@@ -26,7 +26,7 @@ import com.divudi.facade.StaffPaysheetComponentFacade;
 import com.divudi.facade.StaffStaffCategoryFacade;
 import com.divudi.facade.StaffWorkingDepartmentFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +41,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class StaffChangeController implements Serializable {
 
     private Staff staff;

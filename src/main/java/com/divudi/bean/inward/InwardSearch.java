@@ -40,8 +40,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -259,7 +260,7 @@ public class InwardSearch implements Serializable {
             rb.setCollectingCentre(getBill().getCollectingCentre());
             rb.setCreatedAt(bd);
             rb.setComments(comment);
-            rb.setCreater(sessionController.getLoggedUser());
+            rb.setCreater(getSessionController().getLoggedUser());
             rb.setCreditCompany(getBill().getCreditCompany());
             rb.setDepartment(getSessionController().getLoggedUser().getDepartment());
             rb.setDiscount(0.00);
@@ -336,7 +337,7 @@ public class InwardSearch implements Serializable {
             BillItem rbi = new BillItem();
             rbi.setBill(rb);
             rbi.setCreatedAt(Calendar.getInstance().getTime());
-            rbi.setCreater(sessionController.getLoggedUser());
+            rbi.setCreater(getSessionController().getLoggedUser());
             rbi.setDiscount(0 - bi.getDiscount());
             rbi.setGrossValue(0 - bi.getGrossValue());
             rbi.setItem(bi.getItem());
@@ -360,9 +361,9 @@ public class InwardSearch implements Serializable {
                 rbc.setBillItem(rbi);
                 rbc.setCatId(bc.getCatId());
                 rbc.setCreatedAt(Calendar.getInstance().getTime());
-                rbc.setCreater(sessionController.getLoggedUser());
-                rbc.setDepartment(sessionController.getLoggedUser().getDepartment());
-                rbc.setInstitution(sessionController.getLoggedUser().getInstitution());
+                rbc.setCreater(getSessionController().getLoggedUser());
+                rbc.setDepartment(getSessionController().getLoggedUser().getDepartment());
+                rbc.setInstitution(getSessionController().getLoggedUser().getInstitution());
                 rbc.setItem(bc.getItem());
                 rbc.setPackege(bc.getPackege());
                 rbc.setSpeciality(bc.getSpeciality());
@@ -376,9 +377,9 @@ public class InwardSearch implements Serializable {
                 rbc.setBill(rb);
                 rbc.setBillItem(rbi);
                 rbc.setCreatedAt(Calendar.getInstance().getTime());
-                rbc.setCreater(sessionController.getLoggedUser());
-                rbc.setDepartment(sessionController.getLoggedUser().getDepartment());
-                rbc.setInstitution(sessionController.getLoggedUser().getInstitution());
+                rbc.setCreater(getSessionController().getLoggedUser());
+                rbc.setDepartment(getSessionController().getLoggedUser().getDepartment());
+                rbc.setInstitution(getSessionController().getLoggedUser().getInstitution());
                 rbc.setSpeciality(bf.getSpeciality());
                 rbc.setFee(bf.getFee());
                 rbc.setFeeValue(0 - bf.getFeeValue());
@@ -669,131 +670,16 @@ public class InwardSearch implements Serializable {
         }
     }
 
-    public List<Bill> getBills() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=false and "
-                    + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is not null)"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.insId desc  ";
+   
 
-            temMap.put("billType", BillType.InwardBill);
-            temMap.put("toDate", toDate);
-            temMap.put("fromDate", fromDate);
+   
 
-            bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+   
+    
 
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
+   
 
-    public List<Bill> getBillsDis() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=true and "
-                    + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is not null)"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.insId desc  ";
-
-            temMap.put("billType", BillType.InwardBill);
-            temMap.put("toDate", toDate);
-            temMap.put("fromDate", fromDate);
-
-            bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
-
-    public List<Bill> getProBills() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=false and "
-                    + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is null)"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.insId desc  ";
-
-            temMap.put("billType", BillType.InwardBill);
-            temMap.put("toDate", toDate);
-            temMap.put("fromDate", fromDate);
-
-            bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
-
-    public List<Bill> getProBillsDis() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=true and "
-                    + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is null)"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.insId desc  ";
-
-            temMap.put("billType", BillType.InwardBill);
-            temMap.put("toDate", toDate);
-            temMap.put("fromDate", fromDate);
-
-            bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
-
-    public List<Bill> getPaymentBills() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            sql = "select b from BilledBill b where b.createdAt is not null and b.patientEncounter.discharged=false and"
-                    + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false order by b.insId desc  ";
-
-            temMap.put("billType", BillType.InwardPaymentBill);
-            temMap.put("toDate", toDate);
-            temMap.put("fromDate", fromDate);
-
-            bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
-
-    public List<Bill> getPaymentBillsDis() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            sql = "select b from BilledBill b where b.createdAt is not null and b.patientEncounter.discharged=true and"
-                    + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false order by b.insId desc  ";
-
-            temMap.put("billType", BillType.InwardPaymentBill);
-            temMap.put("toDate", toDate);
-            temMap.put("fromDate", fromDate);
-
-            bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
+   
 
     public void setBills(List<Bill> bills) {
         this.bills = bills;

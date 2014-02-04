@@ -9,7 +9,7 @@
 
     <ui:define name="content">
         <h:form>
-            <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+         
             <p:panel rendered="#{!transferIssueController.printPreview}">
 
                 <f:facet name="header" >                                  
@@ -27,7 +27,7 @@
 
 
                 <p:dataTable styleClass="noBorder" var="bItm" scrollable="true" scrollHeight="250" 
-                             value="#{transferIssueController.issuedBill.billItems}" 
+                             value="#{transferIssueController.billItems}" 
                              id="itemList" sortBy="#{bItm.searialNo}">  
 
                     <f:facet name="header">  
@@ -51,7 +51,7 @@
                     </p:column>  
 
                     <p:column headerText="Qty" style="width:25px!important;">  
-                        <p:inputText id="qty" value="#{bItm.pharmaceuticalBillItem.qty}" >
+                        <p:inputText id="qty" value="#{bItm.tmpQty}" >
                             <f:ajax event="blur" render="@this"   execute="@this" listener="#{transferIssueController.onEdit(bItm)}" ></f:ajax>
                             <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferIssueController.onFocus(bItm)}"/>
                         </p:inputText>

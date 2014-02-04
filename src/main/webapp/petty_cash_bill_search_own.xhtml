@@ -11,87 +11,104 @@
             <ui:define name="content">
                 <h:form>
                     <p:panel header="Search Bills" >
-                        <f:facet name="header" >
-                            <h:panelGroup>
-                                <h:panelGrid columns="4" style="min-width: 100%;" >
-                                    <h:outputLabel value="From Date"/>
-                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{pettyCashBillSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                                        <f:ajax event="dateSelect" execute="tblBills"  render="toDate fromDate" listener="#{pettyCashBillSearch.createTable()}"/>
-                                    </p:calendar>
-                                    <h:outputLabel value="To Date"/>
-                                    <p:calendar id="toDate" value="#{pettyCashBillSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                                        <f:ajax event="dateSelect" execute="tblBills"  render="toDate fromDate" listener="#{pettyCashBillSearch.createTable()}"/>
-                                    </p:calendar>
-                                </h:panelGrid>
-                            </h:panelGroup>
+                        <f:facet name="header" >                            
+                            <h:panelGrid columns="5" >
+                                <h:outputLabel value="From Date"/>
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                </p:calendar>
+                                <h:outputLabel value="To Date"/>
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                </p:calendar>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPettyTable()}"/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="Invoice Number"/>
+                                <h:outputLabel value="Paid To (Staff)"/>
+                                <h:outputLabel value="Paid To (Person)"/>
+                                <h:outputLabel value="Value"/>
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText value="#{search.searchKeyword.number}"/>
+                                <p:inputText value="#{search.searchKeyword.staffName}" />
+                                <p:inputText value="#{search.searchKeyword.personName}" />
+                                <p:inputText  value="#{search.searchKeyword.netTotal}" />
+                            </h:panelGrid>
+
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{pettyCashBillSearch.searchBills}" 
-                                     paginator="true" rows="20"  lazy="true"
-                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                                     rowsPerPageTemplate="5,10,15" var="bill"  >
-                            <p:column headerText="Bill No" filterBy="#{bill.insId}" >
+                        <p:dataTable id="tblBills" value="#{search.bills}"     var="bill"  >
+                            <p:column headerText="Bill No" >
                                 <h:commandLink action="petty_cash_bill_reprint" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Invoice No" filterBy="#{bill.invoiceNumber}" >
+                            <p:column headerText="Invoice No" >
                                 <h:commandLink action="petty_cash_bill_reprint" value="#{bill.invoiceNumber}">
                                     <h:outputLabel  ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Bill Date" >
-                                <h:commandLink action="petty_cash_bill_reprint" >
-                                    <h:outputLabel value="#{bill.billDate}" >
-                                        <f:convertDateTime pattern="dd MM yyyy"/>
+                            <p:column headerText="Billed at"  >
+                                <h:commandLink action="bill_reprint" >
+                                    <h:outputLabel value="#{bill.createdAt}" >
+                                        <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
-                            </p:column>
-                            <p:column headerText="Bill Time" >
-                                <h:commandLink action="petty_cash_bill_reprint" >
-                                    <h:outputLabel value="#{bill.billTime}" >
-                                        <f:convertDateTime pattern="hh:mm a"/>
+                                <br/>
+                                <h:panelGroup rendered="#{bill.cancelled}" >
+                                    <h:outputLabel style="color: red;" value="Cancelled at " />
+                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.createdAt}" >
+                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{bill.refunded}" >
+                                    <h:outputLabel style="color: red;" value="Refunded at " />
+                                    <h:outputLabel style="color: red;" rendered="#{bill.refunded}" value="#{bill.refundedBill.createdAt}" >
+                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                                    </h:outputLabel>
+                                </h:panelGroup>
+                            </p:column>  
+                            <p:column headerText="Billed by" >
+                                <h:commandLink action="bill_reprint" >
+                                    <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
+                                    </h:outputLabel>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
-                            </p:column>
-                            <p:column headerText="Staff" filterBy="#{bill.staff.person.name}" >
+                                <br/>
+                                <h:panelGroup rendered="#{bill.cancelled}" >
+                                    <h:outputLabel style="color: red;" value="Cancelled at " />
+                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" >                                       
+                                    </h:outputLabel>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{bill.refunded}" >
+                                    <h:outputLabel style="color: red;" value="Refunded at " />
+                                    <h:outputLabel style="color: red;" rendered="#{bill.refunded}" value="#{bill.refundedBill.creater.webUserPerson.name}" >
+                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                                    </h:outputLabel>
+                                </h:panelGroup>
+                            </p:column>  
+                            <p:column headerText="Paid To(Staff)"  >
                                 <h:commandLink action="petty_cash_bill_reprint" >
                                     <h:outputLabel value="#{bill.staff.person.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
                                 </h:commandLink>
-                            </p:column>                            
-                            <p:column headerText="Billed By" filterBy="#{bill.creater.webUserPerson.name}" >
+                            </p:column>  
+                            <p:column headerText="Paid To(Person)"  >
                                 <h:commandLink action="petty_cash_bill_reprint" >
-                                    <h:outputLabel value="#{bill.creater.webUserPerson.name}" ></h:outputLabel>
+                                    <h:outputLabel value="#{bill.person.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
                                 </h:commandLink>
-                            </p:column>                           
-                            <p:column headerText="Net Value" filterBy="#{bill.netTotal}" >
+                            </p:column> 
+                            <p:column headerText="Net Value" >
                                 <h:commandLink action="petty_cash_bill_reprint" >
                                     <h:outputLabel value="#{bill.netTotal}" >
                                         <f:convertNumber pattern="#,000.00"/>
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
                                 </h:commandLink>
-                            </p:column>
-                            <p:column headerText="Cancelled User" filterBy="#{bill.cancelledBill.creater.webUserPerson.name}" >
-                                <h:commandLink action="petty_cash_bill_reprint" >
-                                    <h:outputLabel rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
-                                </h:commandLink>
-                            </p:column>
-                            <p:column headerText="Cancelled Date and Time" >
-                                <h:commandLink action="petty_cash_bill_reprint" >
-                                    <h:outputLabel rendered="#{bill.cancelled}" value="#{bill.cancelledBill.createdAt}" >
-                                        <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{pettyCashBillSearch.bill}"/>
-                                </h:commandLink>
-                            </p:column>
+                            </p:column>                         
                             <p:column headerText="Comments" >
                                 <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
                                 </h:outputLabel>

@@ -50,7 +50,7 @@
                     </f:facet>
                 </p:panel>
 
-                <p:dataTable var="ph" value="#{goodsReturnController.pharmacyItemData}"
+                <p:dataTable var="ph" value="#{goodsReturnController.billItems}"
                              scrollable="true" scrollHeight="250"
                              id="itemList" >  
 
@@ -59,10 +59,10 @@
                     </f:facet>  
 
                     <p:column headerText="Item Name"  style="width:50px;" >                                                
-                        <p:selectOneMenu id="item"  value="#{ph.billItem.item}">
-                            <f:selectItems value="#{ph.suggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>
-                            <f:ajax event="change" render="qty purchase :#{p:component('total')} :#{p:component('tab')}" 
-                                    execute="@this" listener="#{goodsReturnController.onEditItem(ph)}" ></f:ajax>
+                        <p:selectOneMenu id="item"  value="#{ph.item}">
+                            <f:selectItems value="#{ph.tmpSuggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>
+                            <f:ajax event="change" render="qty purchase" 
+                                    execute="@this"></f:ajax>
                         </p:selectOneMenu>                     
                     </p:column>  
 
@@ -75,7 +75,7 @@
                             <h:outputText  value="#{ph.pharmaceuticalBillItem.purchaseRate}"  >
                                   <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
-                            <h:outputText value="perPack" rendered="#{ph.billItem.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}" />    
+                            <h:outputText value="perPack" rendered="#{ph.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}" />    
                         </h:panelGroup>
                     </p:column>                 
 
@@ -90,7 +90,7 @@
 
 
                     <p:column headerText="Returning Qty in Unit" style="width:25px!important;">                     
-                        <p:inputText value="#{ph.billItem.qty}" >
+                        <p:inputText value="#{ph.tmpQty}" >
                             <f:ajax event="blur" render="@this :#{p:component('total')} :#{p:component('tab')}"  listener="#{goodsReturnController.onEdit(ph)}" ></f:ajax>
                         </p:inputText>
                     </p:column>  

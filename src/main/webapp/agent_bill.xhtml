@@ -41,8 +41,11 @@
                             </h:selectOneMenu>
                             <p:calendar id="slipDate"  value="#{agentPaymentRecieveBillController.slipDate}" pattern="dd MMMM yyyy" style="display: #{agentPaymentRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
                             </p:calendar>
-                            <p:commandButton  value="Settle" action="#{agentPaymentRecieveBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
-                            </p:commandButton>                          
+                            
+                            <p:commandButton id="btnSettle" value="Settle" action="#{agentPaymentRecieveBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            </p:commandButton> 
+                            <p:defaultCommand target="btnSettle"/>
+                            
                             <p:commandButton value="New Bill" ajax="false" action="#{agentPaymentRecieveBillController.prepareNewBill()}" >
                             </p:commandButton>
                         </h:panelGrid>

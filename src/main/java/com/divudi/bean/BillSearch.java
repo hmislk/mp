@@ -8,6 +8,7 @@ import com.divudi.bean.pharmacy.PharmacyPreSettleController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.entity.LazyBill;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -21,9 +22,7 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
-import com.divudi.entity.LazyBillItem;
 import com.divudi.entity.PaymentScheme;
-import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
@@ -108,6 +107,7 @@ public class BillSearch implements Serializable {
     private WebUserController webUserController;
     @Inject
     private PharmacyPreSettleController pharmacyPreSettleController;
+    private SearchKeyword searchKeyword;
 
     public BillSearch() {
     }
@@ -116,75 +116,12 @@ public class BillSearch implements Serializable {
     @EJB
     private BillItemFacade billItemFacade;
 
-    public void createPharmacyBillItemTable() {
-        //  searchBillItems = null;
-        String sql;
-        Map m = new HashMap();
-        m.put("toDate", toDate);
-        m.put("fromDate", fromDate);
-        m.put("bType", BillType.PharmacyPre);
-        m.put("rBType", BillType.PharmacySale);
-        m.put("ins", getSessionController().getInstitution());
-        m.put("class", PreBill.class);
-        m.put("rClass", BilledBill.class);
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select bi from BillItem bi"
-                    + " where  type(bi.bill)=:class and type(bi.bill.referenceBill)=:rClass and bi.bill.institution=:ins"
-                    + " and bi.bill.billType=:bType and bi.bill.referenceBill.billType=:rBType "
-                    + " and bi.createdAt between :fromDate and :toDate order by bi.id desc";
-        } else {
-            sql = "select bi from BillItem bi where bi.bill.referenceBill.billType=:rBType "
-                    + " and type(bi.bill.referenceBill)=:rClass and bi.bill.institution=:ins "
-                    + " and   type(bi.bill)=:class and  bi.bill.billType=:bType and"
-                    + "  (upper(bi.bill.patient.person.name) like :str "
-                    + " or upper(bi.bill.patient.person.phone) like :str "
-                    + "  or upper(bi.bill.deptId) like :str or "
-                    + " upper(bi.bill.paymentScheme.paymentMethod) like :str "
-                    + " or upper(bi.bill.paymentScheme.name) like :str "
-                    + " or upper(bi.bill.netTotal) like :str "
-                    + " or upper(bi.bill.total) like :str or upper(bi.item.name) like :str ) "
-                    + " and bi.createdAt between :fromDate and :toDate order by bi.id desc";
-       
-        m.put("str","% "+ txtSearch.toUpperCase()+" %");
-        }
+   
 
-        List<BillItem> tmp = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-
-        searchBillItems = new LazyBillItem(tmp);
-
-    }
-
-    public void createReturnSaleBills() {
-        lazyBills = null;
-        Map m = new HashMap();
-        m.put("bt", BillType.PharmacyPre);
-        m.put("fd", getFromDate());
-        m.put("td", getToDate());
-        m.put("ins", getSessionController().getInstitution());
-        String sql;
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b from RefundBill b where  b.retired=false and b.institution=:ins and"
-                    + " b.createdAt between :fd and :td and b.billType=:bt "
-                    + " order by b.id desc ";
-        } else {
-            sql = "select b from RefundBill b where b.billType = :bt and b.institution=:ins "
-                    + "  and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fd and :td and b.retired=false "
-                    + "order by b.id desc  ";
-        }
-
-        List<Bill> lst = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-        lazyBills = new LazyBill(lst);
-
-    }
+  
 
     public void createCashReturnBills() {
-        lazyBills = null;
+        bills = null;
         Map m = new HashMap();
         m.put("bt", BillType.PharmacySale);
         m.put("fd", getFromDate());
@@ -192,60 +129,26 @@ public class BillSearch implements Serializable {
         m.put("ins", getSessionController().getInstitution());
         String sql;
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b from RefundBill b where  b.retired=false and b.institution=:ins and"
-                    + " b.createdAt between :fd and :td and b.billType=:bt"
-                    + " order by b.id desc ";
-        } else {
-            sql = "select b from RefundBill b where  b.institution=:ins and  b.billType = :bt  "
-                    + "  and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fd and :td and b.retired=false "
-                    + "order by b.id desc  ";
+        sql = "Select b from RefundBill b where  b.retired=false and b.institution=:ins and"
+                + " b.createdAt between :fd and :td and b.billType=:bt ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.deptId) like :billNo )";
+            m.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
 
-        List<Bill> lst = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-        lazyBills = new LazyBill(lst);
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            m.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
+
+        bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
 
-    public void createPreBillsForReturn() {
-        lazyBills = null;
-        String sql;
-        Map temMap = new HashMap();
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from PreBill b where b.billType = :billType and b.institution=:ins and"
-                    + " b.referenceBill.billType=:refBillType "
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + " order by b.id desc ";
-        } else {
-            sql = "select b from PreBill b where b.billType = :billType and "
-                    + " b.referenceBill.billType=:refBillType and b.institution=:ins"
-                    + "  and  (upper(b.insId) like :q "
-                    + " or upper(b.paymentScheme.paymentMethod) like :q "
-                    + " or upper(b.paymentScheme.name) like :q "
-                    + " or upper(b.netTotal) like :q "
-                    + " or upper(b.total) like :q )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-
-            temMap.put("q", "%" + txtSearch.toUpperCase() + "%");
-
-        }
-        temMap.put("billType", BillType.PharmacyPre);
-        temMap.put("refBillType", BillType.PharmacySale);
-        temMap.put("toDate", toDate);
-        temMap.put("fromDate", fromDate);
-        temMap.put("ins", getSessionController().getInstitution());
-
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        lazyBills = new LazyBill(lst);
-
-    }
+   
 
     public String preSettle(String b) {
         System.err.println("Bill " + b);
@@ -272,6 +175,7 @@ public class BillSearch implements Serializable {
         billFees = null;
         tempbillItems = null;
         lazyBills = null;
+        searchKeyword = null;
     }
 
     public void update() {
@@ -399,273 +303,98 @@ public class BillSearch implements Serializable {
         return lazyBills;
     }
 
-    public void createTable() {
+    public void createTableByKeyword2() {
         lazyBills = null;
         String sql;
         Map temMap = new HashMap();
 
         if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-        } else {
-            sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                    + " and  (upper(b.patient.person.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.patient.person.phone) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-
+            UtilityController.addErrorMessage("Please Enter Bill Id ,Billed Value,Patient Name or Phone Number & Search");
+            return;
         }
+
+        sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins "
+                + " and  (upper(b.patient.person.name) like :str "
+                + " or upper(b.patient.person.phone) like :str "
+                + "  or upper(b.insId) like :str "
+                + " or upper(b.netTotal) like :str "
+                + " or upper(b.total) like :str )  and"
+                + " b.createdAt between :fromDate and :toDate and b.retired=false "
+                + " order by b.id desc  ";
+
+        temMap.put("str", "%" + txtSearch.toUpperCase() + "%");
 
         temMap.put("billType", BillType.OpdBill);
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
         List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //     System.err.println("SIZE : " + lst.size());
+        System.err.println("SIZE : " + lst.size());
 
         lazyBills = new LazyBill(lst);
     }
 
-    public void createCreditTable() {
-        lazyBills = null;
-        String sql;
-        Map temMap = new HashMap();
+  
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-        } else {
-            sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                    + " and  (upper(b.patient.person.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.patient.person.phone) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-
-        }
-
-        temMap.put("billType", BillType.CashRecieveBill);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("ins", getSessionController().getInstitution());
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //     System.err.println("SIZE : " + lst.size());
-
-        lazyBills = new LazyBill(lst);
-    }
+    
 
     public void createDealorPaymentTable() {
-        lazyBills = null;
+        bills = null;
         String sql;
         Map temMap = new HashMap();
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-        } else {
-            sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                    + " and  (upper(b.patient.person.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.patient.person.phone) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.deptId) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
+        sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
+                + " and b.createdAt between :fromDate and :toDate and b.retired=false ";
 
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
+
+        if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
+            sql += " and  (upper(b.toInstitution.name) like :ins )";
+            temMap.put("ins", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            temMap.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBank() != null && !getSearchKeyword().getBank().trim().equals("")) {
+            sql += " and  (upper(b.bank.name) like :bnk )";
+            temMap.put("bnk", "%" + getSearchKeyword().getBank().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNumber() != null && !getSearchKeyword().getNumber().trim().equals("")) {
+            sql += " and  (upper(b.chequeRefNo) like :chck )";
+            temMap.put("chck", "%" + getSearchKeyword().getNumber().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.id desc  ";
 
         temMap.put("billType", BillType.GrnPayment);
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("dept", getSessionController().getInstitution());
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
         //     System.err.println("SIZE : " + lst.size());
 
-        lazyBills = new LazyBill(lst);
     }
 
-    public void createTableByBillType() {
-        lazyBills = null;
-        String sql;
-        Map temMap = new HashMap();
+   
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from Bill b where (type(b)=:class1 or type(b)=:class2) and b.department=:dep and b.billType = :billType "
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-        } else {
-            sql = "select b from Bill b where  (type(b)=:class1 or type(b)=:class2) and b.department=:dep  and b.billType = :billType "
-                    + " and  (upper(b.deptId) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.fromInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.referenceBill.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.referenceBill.fromInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-
-        }
-
-        temMap.put("class1", BilledBill.class);
-        temMap.put("class2", PreBill.class);
-        temMap.put("billType", billType);
-        temMap.put("dep", getSessionController().getDepartment());
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        //temMap.put("dep", getSessionController().getDepartment());
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //     System.err.println("SIZE : " + lst.size());
-
-        lazyBills = new LazyBill(lst);
+    public void makeKeywodNull() {
+        searchKeyword = null;
     }
 
-    public void createPreTable() {
-        System.err.println("CREATE PRE");
-        lazyBills = null;
-        String sql;
-        Map temMap = new HashMap();
+   
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from PreBill b where  b.billType = :billType and b.institution=:ins"
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-        } else {
-            sql = "select b from PreBill b where  b.billType = :billType and b.institution=:ins"
-                    + " and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.department.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
+   
 
-        }
+   
 
-        temMap.put("billType", BillType.PharmacyPre);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("ins", getSessionController().getInstitution());
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //     System.err.println("SIZE : " + lst.size());
-
-        lazyBills = new LazyBill(lst);
-    }
-
-    public void createPreRefundTable() {
-
-        System.err.println("CREATE PRE");
-        lazyBills = null;
-        String sql;
-        Map temMap = new HashMap();
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "select b from RefundBill b where  b.cancelled=false "
-                    + "  and b.billType = :billType and b.institution=:ins "
-                    + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.id desc ";
-
-        } else {
-            sql = "select b from RefundBill b where   b.cancelled=false "
-                    + "  and  b.billType = :billType and b.institution=:ins  "
-                    + " and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.department.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fromDate and :toDate and b.retired=false "
-                    + "order by b.id desc  ";
-
-        }
-
-        temMap.put("billType", BillType.PharmacyPre);
-        temMap.put("ins", getSessionController().getInstitution());
-        // temMap.put("refBillType", BillType.PharmacySale);
-        temMap.put("toDate", toDate);
-        temMap.put("fromDate", fromDate);
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //     System.err.println("SIZE : " + lst.size());
-
-        lazyBills = new LazyBill(lst);
-    }
-
-    public void createPharmacyTable() {
-        lazyBills = null;
-        Map m = new HashMap();
-        m.put("bt", BillType.PharmacyPre);
-        m.put("rBt", BillType.PharmacySale);
-        m.put("class", PreBill.class);
-        m.put("rClass", BilledBill.class);
-        m.put("fd", getFromDate());
-        m.put("td", getToDate());
-        m.put("ins", getSessionController().getInstitution());
-        String sql;
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b from Bill b where b.retired=false and b.createdAt  "
-                    + " between :fd and :td and b.billType=:bt and b.institution=:ins and"
-                    + " b.referenceBill.billType=:rBt and type(b)=:class and type(b.referenceBill)=:rClass"
-                    + "  order by b.id desc";
-        } else {
-            sql = "select b from Bill b where b.billType = :bt and b.institution=:ins and"
-                    + " b.referenceBill.billType=:rBt and type(b)=:class and type(b.referenceBill)=:rClass "
-                    + " and  (upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.department.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' )  and"
-                    + " b.createdAt between :fd and :td and b.retired=false "
-                    + "order by b.id desc  ";
-
-        }
-        //     System.out.println("sql = " + sql);
-        List<Bill> lst = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-        lazyBills = new LazyBill(lst);
-    }
-
-    public void createPaymentTable() {
-        HashMap temMap = new HashMap();
-//        String sql = "SELECT b FROM BilledBill b WHERE b.retired=false and b.id "
-//                + "in(Select bt.bill.id From BillItem bt Where bt.referenceBill.billType=:refType)"
-//                + " and b.billType=:bType"
-//                + " and b.createdAt between :fromDate and :toDate order by b.id";
-
-        String sql = "Select b.bill FROM BillItem b where b.retired=false and b.bill.billType=:bType "
-                + "and b.referenceBill.billType=:refType and b.createdAt between :fromDate and :toDate"
-                + "  order by b.bill.id";
-
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("bType", BillType.PaymentBill);
-        temMap.put("refType", BillType.OpdBill);
-
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        System.err.println("SIZE " + lst.size());
-        lazyBills = null;
-        lazyBills = new LazyBill(lst);
-    }
+    
 
     public List<BillItem> getRefundingItems() {
         return refundingItems;
@@ -780,7 +509,7 @@ public class BillSearch implements Serializable {
         rb.setCollectingCentre(getBill().getCollectingCentre());
         rb.setCreatedAt(bd);
         rb.setComments(comment);
-        rb.setCreater(sessionController.getLoggedUser());
+        rb.setCreater(getSessionController().getLoggedUser());
         rb.setCreditCompany(getBill().getCreditCompany());
         rb.setDepartment(getSessionController().getLoggedUser().getDepartment());
         rb.setDiscount(0.00);
@@ -863,7 +592,7 @@ public class BillSearch implements Serializable {
         rb.setBilledBill(getBill());
         rb.setCreatedAt(bd);
         rb.setComments(comment);
-        rb.setCreater(sessionController.getLoggedUser());
+        rb.setCreater(getSessionController().getLoggedUser());
         rb.setCreditCompany(getBill().getCreditCompany());
         rb.setDepartment(getSessionController().getLoggedUser().getDepartment());
 
@@ -922,7 +651,7 @@ public class BillSearch implements Serializable {
             BillItem rbi = new BillItem();
             rbi.setBill(rb);
             rbi.setCreatedAt(Calendar.getInstance().getTime());
-            rbi.setCreater(sessionController.getLoggedUser());
+            rbi.setCreater(getSessionController().getLoggedUser());
             rbi.setItem(bi.getItem());
             rbi.setNetValue(0 - bi.getNetValue());
             rbi.setRefunded(Boolean.TRUE);
@@ -1409,20 +1138,7 @@ public class BillSearch implements Serializable {
         return bills;
     }
 
-    public List<Bill> getColBills() {
-        if (bills == null) {
-            if (txtSearch == null || txtSearch.trim().equals("")) {
-                bills = getBillBean().billsForTheDay(getFromDate(), getToDate(), BillType.LabBill);
-            } else {
-                bills = getBillBean().billsFromSearch(txtSearch, getFromDate(), getToDate(), BillType.LabBill);
-            }
-            if (bills == null) {
-                bills = new ArrayList<>();
-            }
-        }
-        showAllBills = false;
-        return bills;
-    }
+  
 
     public List<Bill> getPos() {
         if (bills == null) {
@@ -1511,31 +1227,7 @@ public class BillSearch implements Serializable {
 
     }
 
-    public List<Bill> getChannelPaymentBills() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            if (bills == null) {
-                sql = "SELECT b FROM BilledBill b WHERE b.retired=false and b.id in"
-                        + "(Select bt.bill.id From BillItem bt Where bt.referenceBill.billType=:btp"
-                        + " or bt.referenceBill.billType=:btp2) and b.billType=:type and b.createdAt "
-                        + "between :fromDate and :toDate order by b.id";
-
-                temMap.put("toDate", getToDate());
-                temMap.put("fromDate", getFromDate());
-                temMap.put("type", BillType.PaymentBill);
-                temMap.put("btp", BillType.ChannelPaid);
-                temMap.put("btp2", BillType.ChannelCredit);
-                bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 100);
-
-                if (bills == null) {
-                    bills = new ArrayList<>();
-                }
-            }
-        }
-        return bills;
-
-    }
+    
 
     public List<Bill> getUserBills() {
         List<Bill> userBills;
@@ -1968,5 +1660,16 @@ public class BillSearch implements Serializable {
 
     public void setBillItemFacade(BillItemFacade billItemFacade) {
         this.billItemFacade = billItemFacade;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 }

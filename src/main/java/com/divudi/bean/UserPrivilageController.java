@@ -28,7 +28,7 @@ import javax.faces.convert.FacesConverter;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.persistence.TemporalType;
 
@@ -42,7 +42,7 @@ import org.primefaces.model.TreeNode;
  * Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class UserPrivilageController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -298,7 +298,7 @@ public class UserPrivilageController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

@@ -41,7 +41,7 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.persistence.TemporalType;
 
 /**
@@ -50,7 +50,7 @@ import javax.persistence.TemporalType;
  * Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PharmacyController implements Serializable {
 
     private static final long serialVersionUID = 1L;

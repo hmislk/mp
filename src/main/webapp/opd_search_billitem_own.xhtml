@@ -15,23 +15,23 @@
                             <h:outputLabel value="OPD BILL ITEM "/>                                                         
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{opdBillItemSearchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{opdBillItemSearchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{opdBillItemSearchController.createTableByKeyword}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createBillItemTableByKeyword()}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
-                                 <h:outputLabel value="Item Name"/>
+                                <h:outputLabel value="Item Name"/>
                                 <h:outputLabel value="Patient Name"/>
                                 <h:outputLabel value="Patient Phone"/>
                                 <h:outputLabel/>
-                                <p:inputText  value="#{opdBillItemSearchController.searchKeyword.billNo}" />
-                                <p:inputText  value="#{opdBillItemSearchController.searchKeyword.itemName}" />
-                                <p:inputText value="#{opdBillItemSearchController.searchKeyword.patientName}" />
-                                <p:inputText  value="#{opdBillItemSearchController.searchKeyword.patientPhone}" />
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText  value="#{search.searchKeyword.itemName}" />
+                                <p:inputText value="#{search.searchKeyword.patientName}" />
+                                <p:inputText  value="#{search.searchKeyword.patientPhone}" />
                                 <h:outputLabel/>
                             </h:panelGrid>
 
@@ -40,8 +40,7 @@
 
 
 
-                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{opdBillItemSearchController.billItemsOwn}" var="pi" 
-                                     >
+                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.billItems}" var="pi" >
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>

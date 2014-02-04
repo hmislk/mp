@@ -15,23 +15,20 @@ import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.LazyBill;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.persistence.TemporalType;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -100,182 +97,7 @@ public class PurchaseOrderController implements Serializable {
 
     private int maxResult = 50;
 
-    public void createAll() {
-        bills = null;
-        String sql = "";
-        HashMap tmp = new HashMap();
-
-        sql = "Select b From BilledBill b where "
-                + " b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false and b.billType= :bTp  ";
-
-        if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
-            sql += " and  (upper(b.toInstitution.name) like :toIns )";
-            tmp.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getCreator() != null && !getSearchKeyword().getCreator().trim().equals("")) {
-            sql += " and  (upper(b.creater.webUserPerson.name) like :crt )";
-            tmp.put("crt", "%" + getSearchKeyword().getCreator().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
-            sql += " and  (upper(b.department.name) like :crt )";
-            tmp.put("crt", "%" + getSearchKeyword().getDepartment().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.deptId) like :billNo )";
-            tmp.put("billNo", "%" + getSearchKeyword().getRefBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getTotal() != null && !getSearchKeyword().getTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :reqTotal )";
-            tmp.put("reqTotal", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.netTotal) like :appTotal )";
-            tmp.put("appTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
-        sql += " order by b.id desc  ";
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("bTp", BillType.PharmacyOrder);
-        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, maxResult);
-
-    }
-
-    private String createKeySql(HashMap tmp) {
-        String sql = "";
-        if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
-            sql += " and  (upper(b.toInstitution.name) like :toIns )";
-            tmp.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getCreator() != null && !getSearchKeyword().getCreator().trim().equals("")) {
-            sql += " and  (upper(b.creater.webUserPerson.name) like :crt )";
-            tmp.put("crt", "%" + getSearchKeyword().getCreator().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
-            sql += " and  (upper(b.department.name) like :crt )";
-            tmp.put("crt", "%" + getSearchKeyword().getDepartment().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.deptId) like :billNo )";
-            tmp.put("billNo", "%" + getSearchKeyword().getRefBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getTotal() != null && !getSearchKeyword().getTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :reqTotal )";
-            tmp.put("reqTotal", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.netTotal) like :appTotal )";
-            tmp.put("appTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
-        return sql;
-
-    }
-
-    public void createNotApproved() {
-        bills = null;
-        String sql = "";
-        HashMap tmp = new HashMap();
-
-        sql = "Select b From BilledBill b where  b.referenceBill is null  "
-                + " and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false and b.billType= :bTp ";
-
-        sql += createKeySql(tmp);
-        sql += " order by b.id desc  ";
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("bTp", BillType.PharmacyOrder);
-        List<Bill> lst1 = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP,maxResult);
-
-        sql = "Select b From BilledBill b where "
-                + " b.referenceBill.creater is null "
-                + " and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false and b.billType= :bTp  ";
-
-        sql += createKeySql(tmp);
-        sql += " order by b.id desc  ";
-
-        List<Bill> lst2 = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, maxResult);
-
-        sql = "Select b From BilledBill b where "
-                + "  b.referenceBill.creater is not null and b.referenceBill.cancelled=true "
-                + " and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false and b.billType= :bTp ";
-
-        sql += createKeySql(tmp);
-        sql += " order by b.id desc  ";
-
-        List<Bill> lst3 = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, maxResult);
-
-        lst1.addAll(lst2);
-        lst1.addAll(lst3);
-
-        bills = lst1;
-
-    }
-
-    public void createApproved() {
-        bills = null;
-        String sql = "";
-        HashMap tmp = new HashMap();
-
-        sql = "Select b From BilledBill b where"
-                + " b.referenceBill.creater is not null and b.referenceBill.cancelled=false "
-                + " and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false and b.billType= :bTp  ";
-
-        if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
-            sql += " and  (upper(b.toInstitution.name) like :toIns )";
-            tmp.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getCreator() != null && !getSearchKeyword().getCreator().trim().equals("")) {
-            sql += " and  (upper(b.creater.webUserPerson.name) like :crt )";
-            tmp.put("crt", "%" + getSearchKeyword().getCreator().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
-            sql += " and  (upper(b.department.name) like :crt )";
-            tmp.put("crt", "%" + getSearchKeyword().getDepartment().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.deptId) like :billNo )";
-            tmp.put("billNo", "%" + getSearchKeyword().getRefBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getTotal() != null && !getSearchKeyword().getTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :reqTotal )";
-            tmp.put("reqTotal", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.referenceBill.netTotal) like :appTotal )";
-            tmp.put("appTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
-        sql += " order by b.id desc  ";
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("bTp", BillType.PharmacyOrder);
-        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, maxResult);
-
-    }
+   
 
     public void clearList() {
         filteredValue = null;

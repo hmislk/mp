@@ -12,17 +12,17 @@
                 <f:facet name="header">
                     <p:outputLabel value="Purchase Order To Approve"/>      
                     <h:panelGroup style="float: right;">
-                        <p:inputText value="#{purchaseOrderController.maxResult}"/>
-                        <p:commandButton value="All Request" action="#{purchaseOrderController.createAll()}" ajax="false" ></p:commandButton>
-                        <p:commandButton value="Approved Only" action="#{purchaseOrderController.createApproved()}" ajax="false" ></p:commandButton>
-                        <p:commandButton value="Not Approved" action="#{purchaseOrderController.createNotApproved()}" ajax="false" ></p:commandButton>
+                        <p:inputText value="#{search.maxResult}"/>
+                        <p:commandButton value="All Request" action="#{search.createPoRequestedAndApproved()}" ajax="false" ></p:commandButton>
+                        <p:commandButton value="Approved Only" action="#{search.createApproved()}" ajax="false" ></p:commandButton>
+                        <p:commandButton value="Not Approved" action="#{search.createNotApproved()}" ajax="false" ></p:commandButton>
                     </h:panelGroup>
                     <h:panelGrid columns="6" >
                         <h:outputLabel value="From Date"/>
-                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{purchaseOrderController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{purchaseOrderController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                         </p:calendar>
                         <h:outputLabel /><h:outputLabel/>
                         <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
@@ -33,17 +33,17 @@
                         <h:outputLabel value="Po Number"/>
                         <h:outputLabel value="Requsted Value"/>    
                         <h:outputLabel value="Approved Value"/>
-                        <p:inputText  value="#{purchaseOrderController.searchKeyword.toInstitution}" />
-                        <p:inputText value="#{purchaseOrderController.searchKeyword.creator}" />
-                        <p:inputText  value="#{purchaseOrderController.searchKeyword.department}" />
-                        <p:inputText  value="#{purchaseOrderController.searchKeyword.refBillNo}" />
-                        <p:inputText value="#{purchaseOrderController.searchKeyword.total}"/>
-                        <p:inputText value="#{purchaseOrderController.searchKeyword.netTotal}"/>
+                        <p:inputText  value="#{search.searchKeyword.toInstitution}" />
+                        <p:inputText value="#{search.searchKeyword.creator}" />
+                        <p:inputText  value="#{search.searchKeyword.department}" />
+                        <p:inputText  value="#{search.searchKeyword.refBillNo}" />
+                        <p:inputText value="#{search.searchKeyword.total}"/>
+                        <p:inputText value="#{search.searchKeyword.netTotal}"/>
                     </h:panelGrid>
                 </f:facet>
 
 
-                <p:dataTable id="tbl" value="#{purchaseOrderController.bills}" var="b">
+                <p:dataTable id="tbl" value="#{search.bills}" var="b">
                     <p:column headerText="Requested at"  >
                         <h:commandLink action="pharmacy_reprint_order_request" >
                             <h:outputLabel value="#{b.createdAt}" >

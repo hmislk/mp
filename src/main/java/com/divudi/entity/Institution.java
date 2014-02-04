@@ -4,7 +4,6 @@
  */
 package com.divudi.entity;
 
-import com.divudi.bean.hr.BankAccount;
 import com.divudi.data.InstitutionType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 /**

@@ -16,12 +16,12 @@
                             <h:outputLabel value="GRN DEALOR PAYMENT BILL SEARCH "/>                                                      
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createTableByKeyword}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createTableByKeyword}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
                                 
                                 <h:outputLabel value="Bill No"/>
@@ -40,7 +40,7 @@
 
 
 
-                        <p:dataTable id="tblBills" value="#{billSearch.bills}" var="bill"  >
+                        <p:dataTable id="tblBills" value="#{search.bills}" var="bill"  >
                             <p:column headerText="Bill No" >
                                 <h:commandLink action="pharmacy_reprint_bill_dealor" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>
@@ -59,7 +59,7 @@
                                     <h:outputLabel value="#{bill.createdAt}" >
                                         <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
                                 </h:commandLink>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >
@@ -79,7 +79,7 @@
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
                                 </h:commandLink>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >

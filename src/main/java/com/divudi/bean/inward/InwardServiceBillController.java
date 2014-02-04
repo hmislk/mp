@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -60,7 +60,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InwardServiceBillController implements Serializable {
 //    UID
 
@@ -409,8 +409,8 @@ public class InwardServiceBillController implements Serializable {
             return;
         }
 
-        getCurrent().setDepartment(sessionController.getLoggedUser().getDepartment());
-        getCurrent().setInstitution(sessionController.getLoggedUser().getInstitution());
+        getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
+        getCurrent().setInstitution(getSessionController().getLoggedUser().getInstitution());
         getCurrentBillItem().setBill(getCurrent());
         BillEntry addingEntry = new BillEntry();
         addingEntry.setBillItem(getCurrentBillItem());
@@ -526,7 +526,7 @@ public class InwardServiceBillController implements Serializable {
 
 
         getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().setCreater(sessionController.getLoggedUser());
+        getCurrent().setCreater(getSessionController().getLoggedUser());
 
         getFacade().create(getCurrent());
 
@@ -639,8 +639,8 @@ public class InwardServiceBillController implements Serializable {
         if (current == null) {
             current = new BilledBill();
             //current.setBillType(BillType.OpdBill);
-            current.setDepartment(sessionController.getLoggedUser().getDepartment());
-            current.setInstitution(sessionController.getLoggedUser().getInstitution());
+            current.setDepartment(getSessionController().getLoggedUser().getDepartment());
+            current.setInstitution(getSessionController().getLoggedUser().getInstitution());
         }
         return current;
     }

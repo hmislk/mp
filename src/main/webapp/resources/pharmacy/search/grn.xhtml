@@ -18,15 +18,15 @@
             <h:outputLabel value="Invoice No"/> 
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
-            <p:inputText  value="#{billSearch.searchKeyword.billNo}" />
-            <p:inputText value="#{billSearch.searchKeyword.refBillNo}"/>
-            <p:inputText value="#{billSearch.searchKeyword.number}"/>
-            <p:inputText value="#{billSearch.searchKeyword.fromInstitution}"/>
-            <p:inputText value="#{billSearch.searchKeyword.netTotal}"/>
+            <p:inputText  value="#{search.searchKeyword.billNo}" />
+            <p:inputText value="#{search.searchKeyword.refBillNo}"/>
+            <p:inputText value="#{search.searchKeyword.number}"/>
+            <p:inputText value="#{search.searchKeyword.fromInstitution}"/>
+            <p:inputText value="#{search.searchKeyword.netTotal}"/>
         </h:panelGrid>
 
         <p:spacer height="30"/>
-        <p:dataTable rowIndexVar="i" id="tblBills" value="#{billSearch.bills}" var="bill" >
+        <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.bills}" var="bill" >
             <f:facet name="header">
                 <h:outputLabel value="GOOD RECEIVE NOTE"/>
             </f:facet>
@@ -69,7 +69,7 @@
                     <h:outputLabel value="#{bill.createdAt}" >
                         <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                     </h:outputLabel>
-                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                    <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
                 <br/>
                 <h:panelGroup rendered="#{bill.cancelled}" >
@@ -89,7 +89,7 @@
                 <h:commandLink action="pharmacy_reprint_grn" >
                     <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
                     </h:outputLabel>
-                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                    <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
                 <br/>
                 <h:panelGroup rendered="#{bill.cancelled}" >

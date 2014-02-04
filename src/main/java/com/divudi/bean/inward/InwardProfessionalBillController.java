@@ -8,7 +8,6 @@
  */
 package com.divudi.bean.inward;
 
-import com.divudi.bean.BillController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -39,16 +38,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
 import javax.faces.event.AjaxBehaviorEvent;
 import org.primefaces.event.TabChangeEvent;
 
@@ -58,7 +51,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InwardProfessionalBillController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -302,8 +295,8 @@ public class InwardProfessionalBillController implements Serializable {
             return;
         }
 
-        getCurrent().setDepartment(sessionController.getLoggedUser().getDepartment());
-        getCurrent().setInstitution(sessionController.getLoggedUser().getInstitution());
+        getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
+        getCurrent().setInstitution(getSessionController().getLoggedUser().getInstitution());
         lstBillFees.add(getCurrentBillFee());
         calTotals();
         //    clearBillItemValues();
@@ -363,7 +356,7 @@ public class InwardProfessionalBillController implements Serializable {
         bill.setPatient(getCurrent().getPatientEncounter().getPatient());
 
         bill.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        bill.setCreater(sessionController.getLoggedUser());
+        bill.setCreater(getSessionController().getLoggedUser());
 
         getFacade().create(bill);
         return bill;
@@ -454,8 +447,8 @@ public class InwardProfessionalBillController implements Serializable {
         if (current == null) {
             current = new BilledBill();
             //current.setBillType(BillType.OpdBill);
-            current.setDepartment(sessionController.getLoggedUser().getDepartment());
-            current.setInstitution(sessionController.getLoggedUser().getInstitution());
+            current.setDepartment(getSessionController().getLoggedUser().getDepartment());
+            current.setInstitution(getSessionController().getLoggedUser().getInstitution());
         }
         return current;
     }

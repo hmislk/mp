@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 import jxl.Cell;
@@ -47,7 +47,7 @@ import org.primefaces.model.UploadedFile;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AttendanceUploadController implements Serializable {
 
     /**

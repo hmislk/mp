@@ -31,7 +31,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -44,7 +44,7 @@ import org.primefaces.event.FlowEvent;
  * Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class WebUserController implements Serializable {
 
     @Inject
@@ -354,12 +354,12 @@ public class WebUserController implements Serializable {
         Staff staff = new Staff();
         getCurrent().setActivated(true);
         getCurrent().setActivatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().setActivator(sessionController.getLoggedUser());
+        getCurrent().setActivator(getSessionController().getLoggedUser());
 
         System.out.println("Start");
         //Save Person
         getCurrent().getWebUserPerson().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().getWebUserPerson().setCreater(sessionController.getLoggedUser());
+        getCurrent().getWebUserPerson().setCreater(getSessionController().getLoggedUser());
         getPersonFacade().create(getCurrent().getWebUserPerson());
         System.out.println("Person Saved");
         //Save Staff

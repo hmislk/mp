@@ -4,7 +4,6 @@
  */
 package com.divudi.bean.channel;
 
-import com.divudi.bean.channel.BookingController;
 import com.divudi.entity.BillSession;
 import com.divudi.facade.BillSessionFacade;
 import java.io.Serializable;
@@ -12,8 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 

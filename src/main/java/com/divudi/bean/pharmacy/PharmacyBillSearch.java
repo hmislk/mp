@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Temporal;
@@ -121,17 +122,7 @@ public class PharmacyBillSearch implements Serializable {
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
     }
 
-    public void addToStock() {
-        for (Bill b : getSelectedBills()) {
-            String msg = getPharmacyBean().reAddToStock(b, getSessionController().getLoggedUser(), getSessionController().getDepartment());
-            if (!msg.isEmpty()) {
-                UtilityController.addErrorMessage(msg);
-            }
-        }
-
-        recreateModel();
-    }
-
+   
     public WebUser getUser() {
         return user;
     }
@@ -363,7 +354,7 @@ public class PharmacyBillSearch implements Serializable {
         rb.setCollectingCentre(getBill().getCollectingCentre());
         rb.setCreatedAt(bd);
         rb.setComments(getBill().getComments());
-        rb.setCreater(sessionController.getLoggedUser());
+        rb.setCreater(getSessionController().getLoggedUser());
         rb.setCreditCompany(getBill().getCreditCompany());
         rb.setDepartment(getSessionController().getLoggedUser().getDepartment());
         rb.setDiscount(0.00);
@@ -446,7 +437,7 @@ public class PharmacyBillSearch implements Serializable {
         rb.setBilledBill(getBill());
         rb.setCreatedAt(bd);
         rb.setComments(getBill().getComments());
-        rb.setCreater(sessionController.getLoggedUser());
+        rb.setCreater(getSessionController().getLoggedUser());
         rb.setCreditCompany(getBill().getCreditCompany());
         rb.setDepartment(getSessionController().getLoggedUser().getDepartment());
 
@@ -505,7 +496,7 @@ public class PharmacyBillSearch implements Serializable {
             BillItem rbi = new BillItem();
             rbi.setBill(rb);
             rbi.setCreatedAt(Calendar.getInstance().getTime());
-            rbi.setCreater(sessionController.getLoggedUser());
+            rbi.setCreater(getSessionController().getLoggedUser());
             rbi.setItem(bi.getItem());
             rbi.setNetValue(0 - bi.getNetValue());
             rbi.setRefunded(Boolean.TRUE);
@@ -1593,19 +1584,7 @@ public class PharmacyBillSearch implements Serializable {
 
     }
 
-    public List<Bill> getPreBillsNotPaid() {
-        if (bills == null) {
-//            if (txtSearch == null || txtSearch.trim().equals("")) {
-            bills = getBillBean().billsForTheDayNotPaid(BillType.PharmacyPre, getSessionController().getDepartment());
-//            } else {
-//                bills = getBillBean().billsFromSearch2(txtSearch, getFromDate(), getToDate(), BillType.PharmacySale);
-//            }
-//            if (bills == null) {
-//                bills = new ArrayList<>();
-//            }
-        }
-        return bills;
-    }
+    
 
     public void makeNull() {
         refundAmount = 0;

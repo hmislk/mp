@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -38,7 +38,7 @@ import javax.faces.convert.FacesConverter;
  * Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class CommonReportItemController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,7 +74,7 @@ public class CommonReportItemController implements Serializable {
 
     public void removeItem() {
         current.setRetired(true);
-        current.setRetirer(sessionController.getLoggedUser());
+        current.setRetirer(getSessionController().getLoggedUser());
         current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getEjbFacade().edit(getCurrent());
         getItems().remove(getCurrent());
@@ -113,7 +113,7 @@ public class CommonReportItemController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrent().setCreater(sessionController.getLoggedUser());
+            getCurrent().setCreater(getSessionController().getLoggedUser());
             getFacade().create(getCurrent());
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }

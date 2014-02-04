@@ -29,8 +29,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -481,7 +482,7 @@ public class ChannelStaffPaymentBillController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {
@@ -562,7 +563,7 @@ public class ChannelStaffPaymentBillController implements Serializable {
         System.out.println(dueBillFeeReport.size());
 
         if (dueBillFeeReport == null) {
-            dueBillFeeReport = new ArrayList<BillFee>();
+            dueBillFeeReport = new ArrayList<>();
         }
 
         return dueBillFeeReport;
@@ -572,30 +573,7 @@ public class ChannelStaffPaymentBillController implements Serializable {
 //                    + "and b.bill.id in(Select bs.bill.id From BillSession bs where bs.retired=false and bs.serviceSession.id=" + getSelectedServiceSession().getId() + " and bs.sessionDate= :ssDate) "
 //                    + "and b.bill.cancelled=false and b.bill.refunded=false  and (b.feeValue - b.paidValue) > 0 and b.staff.id = " + currentStaff.getId();
 
-    public List<BillFee> getDueBillFeeReportAll() {
-
-        String sql;
-        Map temMap = new HashMap();
-
-        sql = "select b from BillFee b where b.retired=false and (b.bill.billType=:btp or b.bill.billType=:btp2) "
-                + " and b.bill.id in(Select bs.bill.id From BillSession bs where bs.retired=false ) "
-                + "and b.bill.cancelled=false and (b.feeValue - b.paidValue) > 0 and  "
-                + "b.bill.createdAt between :fromDate and :toDate order by b.staff.id  ";
-
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("btp", BillType.ChannelPaid);
-        temMap.put("btp2", BillType.ChannelCredit);
-
-        dueBillFeeReport = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        System.out.println(dueBillFeeReport.size());
-
-        if (dueBillFeeReport == null) {
-            dueBillFeeReport = new ArrayList<BillFee>();
-        }
-
-        return dueBillFeeReport;
-    }
+   
 
     public void setDueBillFeeReport(List<BillFee> dueBillFeeReport) {
         this.dueBillFeeReport = dueBillFeeReport;

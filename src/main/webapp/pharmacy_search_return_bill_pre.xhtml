@@ -16,28 +16,28 @@
 
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{billSearch.createReturnSaleBills}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createReturnSaleBills}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Sale Bill No"/>   
                                 <h:outputLabel value="Return Bill No"/> 
                                 <h:outputLabel value="Net Total"/>
                                 <h:outputLabel/><h:outputLabel/>
-                                <p:inputText  value="#{billSearch.searchKeyword.refBillNo}" />   
-                                <p:inputText  value="#{billSearch.searchKeyword.billNo}" />
-                                <p:inputText value="#{billSearch.searchKeyword.netTotal}"/>                               
+                                <p:inputText  value="#{search.searchKeyword.refBillNo}" />   
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText value="#{search.searchKeyword.netTotal}"/>                               
                                 <h:outputLabel/><h:outputLabel/>
                             </h:panelGrid>
 
                         </f:facet>
 
 
-                        <p:dataTable id="tblBills" value="#{billSearch.bills}" var="bill"  >
+                        <p:dataTable id="tblBills" value="#{search.bills}" var="bill"  >
                             <p:column headerText="Sale Bill No" >                              
                                 <h:outputLabel value="#{bill.billedBill.deptId}" ></h:outputLabel>
                             </p:column>  

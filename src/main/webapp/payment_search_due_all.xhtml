@@ -14,12 +14,12 @@
                         <f:facet name="header">
                             <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{staffPaymentBillController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{staffPaymentBillController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{staffPaymentBillController.createDueFeeTable}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createDueFeeTable}"/>
                                 <h:outputLabel/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/>
                                 <h:outputLabel/><h:outputLabel/> <h:outputLabel/>
@@ -29,23 +29,25 @@
                                 <h:outputLabel value="Doctor Name"/>      
                                 <h:outputLabel value="Service Name"/>  
                                 <h:outputLabel value="Charges"/>
-                                <p:inputText  value="#{staffPaymentBillController.searchKeyword.billNo}" />
-                                <p:inputText value="#{staffPaymentBillController.searchKeyword.patientName}" />
-                                <p:inputText  value="#{staffPaymentBillController.searchKeyword.speciality}" />
-                                <p:inputText  value="#{staffPaymentBillController.searchKeyword.staffName}" />
-                                <p:inputText  value="#{staffPaymentBillController.searchKeyword.itemName}" />
-                                <p:inputText value="#{staffPaymentBillController.searchKeyword.total}"/>
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText value="#{search.searchKeyword.patientName}" />
+                                <p:inputText  value="#{search.searchKeyword.speciality}" />
+                                <p:inputText  value="#{search.searchKeyword.staffName}" />
+                                <p:inputText  value="#{search.searchKeyword.itemName}" />
+                                <p:inputText value="#{search.searchKeyword.total}"/>
 
                             </h:panelGrid>
 
                         </f:facet>
                         <br/><br/>
 
-                        <p:dataTable rowIndexVar="i"  id="tblFee" value="#{staffPaymentBillController.tblBillFees}" var="bf"   >
-                             <p:column headerText="No" styleClass="alignTop">
+                        <p:defaultCommand target="btnSearch" />
+
+                        <p:dataTable rowIndexVar="i"  id="tblFee" value="#{search.billFees}" var="bf"   >
+                            <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
-                            
+
                             <p:column headerText="Speciality">
                                 <h:commandLink action="payment_staff_bill" >
                                     <h:outputLabel value="#{bf.staff.speciality.name}">

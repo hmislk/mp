@@ -276,13 +276,6 @@
                                             <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
                                         </p:graphicImage>
 
-                                        <h:panelGroup rendered="#{myCli.reportItemType eq 'AutherizedSignature' and myCli.retired eq false }"     style="width: #{myCli.cssWidth}; max-height: 50px!important;"  >
-                                            <h1></h1>
-                                            
-                                            <h1>#{patientReportController.currentPatientReport.approveUser.staff}</h1>
-                                        </h:panelGroup>
-                                        
-
                                     </div>
                                 </ui:repeat>
 

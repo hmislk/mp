@@ -14,13 +14,14 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 
 /**
  *
  * @author Buddhika
  */
-@Named(value = "labWorksheetController")
-@ViewScoped
+@Named
+@SessionScoped
 public class LabWorksheetController implements Serializable {
 
     /**

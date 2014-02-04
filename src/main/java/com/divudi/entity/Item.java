@@ -6,9 +6,9 @@
 package com.divudi.entity;
 
 import com.divudi.data.BillType;
-import com.divudi.data.inward.InwardChargeType;
 import com.divudi.data.SessionNumberType;
 import com.divudi.data.SymanticType;
+import com.divudi.data.inward.InwardChargeType;
 import com.divudi.entity.lab.InvestigationItem;
 import com.divudi.entity.lab.ReportItem;
 import com.divudi.entity.lab.WorksheetItem;
@@ -31,6 +31,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+
+
 
 /**
  *

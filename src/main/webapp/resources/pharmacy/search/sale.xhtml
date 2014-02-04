@@ -16,7 +16,7 @@
             <h:outputLabel value="Bill No"/>
             <h:outputLabel value="Net Total"/>
 
-            <p:inputText  value="#{search.searchKeyword.billNo}" />
+            <p:inputText  value="#{searchController.searchKeyword.billNo}" />
             <p:inputText value="#{search.searchKeyword.netTotal}"/>
         </h:panelGrid>
         <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.bills}" var="bill"  >

@@ -18,7 +18,7 @@ import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +29,7 @@ import javax.ejb.EJB;
  * @author ruhunu
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PharmacyErrorChecking implements Serializable {
 
     @EJB

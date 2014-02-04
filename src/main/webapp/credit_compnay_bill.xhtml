@@ -41,8 +41,9 @@
                             <p:calendar id="slipDate"  value="#{cashRecieveBillController.slipDate}" pattern="dd MMMM yyyy" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
                             </p:calendar>
 
-                            <p:commandButton  value="Settle" action="#{cashRecieveBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
+                            <p:defaultCommand target="btnSettle"/>
                             <p:commandButton value="New Bill" ajax="false" action="#{cashRecieveBillController.prepareNewBill()}" >
                             </p:commandButton>
 
@@ -54,10 +55,10 @@
                             <p:tab id="tabOpd" title="For Opd Bill"  >
                                 <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{cashRecieveBillController.currentBillItem.referenceBill}" completeMethod="#{billController.completeOpdCreditBill}" var="ix" itemLabel="#{ix.patient.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                     <p:column>
-                                        #{ix.patient.person.name}
+                                        <h:outputLabel value="#{ix.patient.person.name}"/>
                                     </p:column>                                  
                                     <p:column>
-                                        #{ix.creditCompany.name}
+                                        <h:outputLabel value="#{ix.creditCompany.name}"/>
                                     </p:column>
                                     <p:column>
                                         <h:outputLabel value="#{ix.createdAt}">
@@ -88,8 +89,12 @@
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">
                                     <p:ajax event="itemSelect" process="acPt2" update="due"/>
 
-                                    <p:column>#{apt2.patient.person.name}</p:column>
-                                    <p:column>#{apt2.bhtNo}</p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{apt2.patient.person.name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{apt2.bhtNo}"/>
+                                    </p:column>
                                 </p:autoComplete>   
 
                                 <p:panelGrid columns="3">
@@ -104,11 +109,11 @@
                         </p:tabView>
                         <p:dataTable value="#{cashRecieveBillController.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
                             <f:facet name="header">
-                                Items For Billing
+                                <h:outputLabel value="Items For Billing"/>
                             </f:facet>
                             <p:column>
                                 <f:facet name="header">No</f:facet>
-                                    #{rowIndex+1}
+                                    <h:outputLabel value="#{rowIndex+1}"/>
                             </p:column>
                             <p:column >  
                                 <f:facet name="header">

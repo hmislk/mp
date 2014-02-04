@@ -11,62 +11,59 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:panel>
+                    <p:panel id="gpBillPreview">
                         <f:facet name="header" >
-                            <h:outputLabel value="PHARMACY BILL SEARCH "/>
-                            <h:panelGrid columns="7">     
-
-                                <p:inputText id="txtSearch" value="#{billSearch.txtSearch}" style="width:500px;"/>
-                                <p:selectOneMenu value="#{billSearch.billType}">
-                                    <f:selectItem itemLabel="Select Bill Type"/>
-                                    <f:selectItems value="#{enumController.pharmacyBillTypes}" var="i" itemLabel="#{i.label}" itemValue="#{i}" />
-                                </p:selectOneMenu>
-                                <p:commandButton ajax="false" id="btnRefresh" value="Search" action="#{billSearch.createTableByBillType()}"/>
-                                <p:defaultCommand target="btnRefresh"/>
-
+                            <h:outputLabel value="PHARMACY BILL SEARCH "/>                                 
+                            <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
+                                <p:selectOneMenu value="#{search.billType}">
+                                    <f:selectItem itemLabel="Select Bill Type"/>
+                                    <f:selectItems value="#{enumController.pharmacyBillTypes}" var="i" itemLabel="#{i.label}" itemValue="#{i}" />
+                                    <f:ajax  event="change" execute="@this" render="detail" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createTableByBillType}"/>
 
-                            </h:panelGrid>                                
-                            <p:watermark value="Type Keyword You want to Search" for="txtSearch" />
+                            </h:panelGrid>
+
                         </f:facet>
+                        <h:panelGroup id="detail">
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyGrnBill'}" >
+                                <se:grn/>
+                            </h:panelGroup>
 
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyGrnBill'}" >
-                            <se:grn/>
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyGrnReturn'}" >
+                                <se:grn_return />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyOrder'}" >
+                                <se:po_request />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyOrderApprove'}" >
+                                <se:po_approve />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyPre'}" >
+                                <se:pre_bill />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyPurchaseBill'}" >
+                                <se:purchase />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacySale'}" >
+                                <se:sale />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{search.billType eq 'PharmacyAdjustment'}" >
+                                <se:pre_bill />
+                            </h:panelGroup>
                         </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyGrnReturn'}" >
-                            <se:grn_return />
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyOrder'}" >
-                            <se:po_request />
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyOrderApprove'}" >
-                            <se:po_approve />
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyPre'}" >
-                            <se:pre_bill />
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyPurchaseBill'}" >
-                            <se:purchase />
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacySale'}" >
-                            <se:sale />
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{billSearch.billType eq 'PharmacyAdjustment'}" >
-                            <se:pre_bill />
-                        </h:panelGroup>
-
                     </p:panel>
 
                 </h:form>

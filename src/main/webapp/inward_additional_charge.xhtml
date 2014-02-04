@@ -15,7 +15,9 @@
                 <p:panel>
                     <f:facet name="header">
                         <p:outputLabel value="Inward Additional Charge"/>
-                        <p:commandButton value="Add" ajax="false" action="#{inwardAdditionalChargeController.addCharge}"/>
+                        <p:commandButton id="btnAdd" value="Add" ajax="false" action="#{inwardAdditionalChargeController.addCharge}"/>
+                        <p:defaultCommand target="btnAdd"/>
+                        
                         <p:commandButton value="Clear" ajax="false" action="#{inwardAdditionalChargeController.makeNull}"/>
                     </f:facet>
                     

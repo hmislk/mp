@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -35,7 +35,7 @@ import javax.inject.Inject;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InwardRefundController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -95,7 +95,7 @@ public class InwardRefundController implements Serializable {
         getCurrent().setTotal(0 - getCurrent().getTotal());
         getCurrent().setNetTotal(getCurrent().getTotal());
         getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().setCreater(sessionController.getLoggedUser());
+        getCurrent().setCreater(getSessionController().getLoggedUser());
         getBillFacade().create(getCurrent());
     }
 

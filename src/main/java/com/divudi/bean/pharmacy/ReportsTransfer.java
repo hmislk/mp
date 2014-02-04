@@ -18,7 +18,7 @@ import com.divudi.entity.pharmacy.Stock;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +32,7 @@ import javax.ejb.EJB;
  * @author Buddhika
  */
 @Named(value = "reportsTransfer")
-@SessionScoped
+@ViewScoped
 public class ReportsTransfer implements Serializable {
 
     /**

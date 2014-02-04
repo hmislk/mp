@@ -13,7 +13,7 @@ import com.divudi.entity.hr.Grade;
 import com.divudi.entity.hr.StaffLeave;
 import com.divudi.facade.StaffLeaveFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +32,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class StaffLeaveController implements Serializable {
 
     private StaffLeave current;

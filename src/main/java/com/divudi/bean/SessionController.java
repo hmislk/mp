@@ -7,6 +7,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.bean.pharmacy.PharmacySaleController;
 import com.divudi.data.Privileges;
 import com.divudi.ejb.ApplicationEjb;
 import com.divudi.ejb.WebUserBean;
@@ -19,7 +20,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import com.divudi.entity.Person;
 import com.divudi.entity.WebUserPrivilege;
 import com.divudi.entity.WebUserRole;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
@@ -374,6 +376,9 @@ public class SessionController implements Serializable, HttpSessionListener {
     public void setApplicationController(ApplicationController applicationController) {
         this.applicationController = applicationController;
     }
+    
+    @Inject
+    private PharmacySaleController pharmacySaleController;
 
     public void logout() {
         userPrivilages = null;
@@ -382,8 +387,11 @@ public class SessionController implements Serializable, HttpSessionListener {
         getWebUserBean().setLoggedUser(null);
         setLogged(false);
         setActivated(false);
+        getPharmacySaleController().makeNull();
 
     }
+    
+    
 
     public WebUser getCurrent() {
         if (current == null) {
@@ -697,5 +705,13 @@ public class SessionController implements Serializable, HttpSessionListener {
     public void sessionDestroyed(HttpSessionEvent se) {
         System.out.println("recording logout as session is distroid");
         recordLogout();
+    }
+
+    public PharmacySaleController getPharmacySaleController() {
+        return pharmacySaleController;
+    }
+
+    public void setPharmacySaleController(PharmacySaleController pharmacySaleController) {
+        this.pharmacySaleController = pharmacySaleController;
     }
 }

@@ -31,7 +31,7 @@ import javax.persistence.Transient;
 @Entity
 public class DayShift implements Serializable {
 
-    @OneToMany(mappedBy = "dayShift", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dayShift", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StaffShift> staffShifts = new ArrayList<>();
     @ManyToOne
     private Shift shift;

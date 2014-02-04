@@ -37,7 +37,7 @@ public class Shift implements Serializable {
     private Roster roster;   
     @OneToOne
     private ShiftPreference shiftPreference;
-    @OneToMany(mappedBy = "shift",fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shift",fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
     private List<DayShift> dayShifts=new ArrayList<>();
     private int shiftOrder;
     //Created Properties

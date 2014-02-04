@@ -92,7 +92,7 @@ public class Staff implements Serializable {
      String retireComments;
      String staffCode;
     @Lob
-    @Basic(fetch = FetchType.EAGER)
+    @Basic(fetch = FetchType.LAZY)
     byte[] baImage;
      String fileName;
      String fileType;

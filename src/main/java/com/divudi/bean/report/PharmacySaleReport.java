@@ -23,7 +23,7 @@ import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +41,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PharmacySaleReport implements Serializable {
 
     private Date fromDate;

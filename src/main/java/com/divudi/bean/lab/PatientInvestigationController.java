@@ -32,8 +32,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -283,7 +284,7 @@ public class PatientInvestigationController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -392,7 +393,7 @@ public class PatientInvestigationController implements Serializable {
         }
         if (getCurrent().getId() != null || getCurrent().getId() != 0) {
             getCurrent().setCollected(Boolean.TRUE);
-            getCurrent().setSampleCollecter(sessionController.getLoggedUser());
+            getCurrent().setSampleCollecter(getSessionController().getLoggedUser());
             getEjbFacade().edit(getCurrent());
             UtilityController.addSuccessMessage("Marked as Sampled");
         } else {
@@ -507,7 +508,7 @@ public class PatientInvestigationController implements Serializable {
         if (getCurrent().getId() != null || getCurrent().getId() != 0) {
             getCurrent().setReceived(Boolean.TRUE);
             getCurrent().setReceivedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrent().setReceivedCollecter(sessionController.getLoggedUser());
+            getCurrent().setReceivedCollecter(getSessionController().getLoggedUser());
             getEjbFacade().edit(getCurrent());
         }
     }
@@ -517,7 +518,7 @@ public class PatientInvestigationController implements Serializable {
         for (PatientInvestigation pi : getSelectedToReceive()) {
             pi.setReceived(Boolean.TRUE);
             pi.setReceivedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            pi.setReceivedCollecter(sessionController.getLoggedUser());
+            pi.setReceivedCollecter(getSessionController().getLoggedUser());
             getEjbFacade().edit(pi);
         }
         selectedToReceive = new ArrayList<>();
@@ -554,7 +555,7 @@ public class PatientInvestigationController implements Serializable {
         if (getCurrent().getId() != null || getCurrent().getId() != 0) {
             getCurrent().setDataEntered(Boolean.TRUE);
             getCurrent().setDataEntryAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrent().setDataEntryUser(sessionController.getLoggedUser());
+            getCurrent().setDataEntryUser(getSessionController().getLoggedUser());
             getEjbFacade().edit(getCurrent());
         }
     }
@@ -585,7 +586,7 @@ public class PatientInvestigationController implements Serializable {
     public void markAsApproved() {
         if (getCurrent().getId() != null || getCurrent().getId() != 0) {
             getCurrent().setApproved(Boolean.TRUE);
-            getCurrent().setApproveUser(sessionController.getLoggedUser());
+            getCurrent().setApproveUser(getSessionController().getLoggedUser());
             getCurrent().setApproveAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getEjbFacade().edit(getCurrent());
         }
@@ -611,7 +612,7 @@ public class PatientInvestigationController implements Serializable {
     public void markAsPrinted() {
         if (getCurrent().getId() != null || getCurrent().getId() != 0) {
             getCurrent().setPrinted(Boolean.TRUE);
-            getCurrent().setPrintingUser(sessionController.getLoggedUser());
+            getCurrent().setPrintingUser(getSessionController().getLoggedUser());
             getCurrent().setPrintingAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getEjbFacade().edit(getCurrent());
         }
@@ -622,7 +623,7 @@ public class PatientInvestigationController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

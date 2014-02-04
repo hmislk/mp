@@ -7,7 +7,7 @@ package com.divudi.bean.pharmacy;
 import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.facade.PharmaceuticalItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import javax.faces.convert.FacesConverter;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PharmaceuticalItemController implements Serializable {
 
     @EJB

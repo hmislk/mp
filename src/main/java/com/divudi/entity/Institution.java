@@ -4,7 +4,6 @@
  */
 package com.divudi.entity;
 
-import com.divudi.bean.hr.BankAccount;
 import com.divudi.data.InstitutionType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 /**
@@ -30,7 +28,7 @@ import javax.persistence.Temporal;
  */
 @Entity
 public class Institution implements Serializable {
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
      Institution institution;
     
     static final long serialVersionUID = 1L;
@@ -75,7 +73,7 @@ public class Institution implements Serializable {
     double inwardDiscount;
      double ballance;
      double allowedCredit;
-    @OneToMany(mappedBy = "institution",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "institution",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
      List<Institution> branch=new ArrayList<>();
 
     public double getLabBillDiscount() {

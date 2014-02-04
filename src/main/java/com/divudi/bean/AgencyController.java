@@ -8,30 +8,30 @@
  */
 package com.divudi.bean;
 
-import java.util.TimeZone;
 import com.divudi.data.InstitutionType;
-import com.divudi.facade.InstitutionFacade;
 import com.divudi.entity.Institution;
+import com.divudi.facade.InstitutionFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Named;
+import java.util.TimeZone;
 import javax.ejb.EJB;
-
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
 
 /**
- *
- * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
- */
+         *
+         * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for
+         * MSc(Biomedical Informatics)
+         */
+
 @Named
-@SessionScoped
+@ViewScoped
 public class AgencyController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,7 +88,7 @@ public class AgencyController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -132,7 +132,7 @@ public class AgencyController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {
@@ -159,10 +159,10 @@ public class AgencyController implements Serializable {
         return items;
     }
     /**
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
      *
      */
 }

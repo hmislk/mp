@@ -12,85 +12,107 @@
                 <f:facet name="header">
                     <p:outputLabel value="Purchase Order To Approve"/>      
                     <h:panelGroup style="float: right;">
-                        <p:commandButton value="All Request" action="#{purchaseOrderController.createAll()}" ajax="false" ></p:commandButton>
-                        <p:commandButton value="Approved Only" action="#{purchaseOrderController.createApproved()}" ajax="false" ></p:commandButton>
-                        <p:commandButton value="Not Approved" action="#{purchaseOrderController.createNotApproved()}" ajax="false" ></p:commandButton>
+                        <p:inputText value="#{search.maxResult}"/>
+                        <p:commandButton value="All Request" action="#{search.createPoRequestedAndApproved()}" ajax="false" ></p:commandButton>
+                        <p:commandButton value="Approved Only" action="#{search.createApproved()}" ajax="false" ></p:commandButton>
+                        <p:commandButton value="Not Approved" action="#{search.createNotApproved()}" ajax="false" ></p:commandButton>
                     </h:panelGroup>
+                    <h:panelGrid columns="6" >
+                        <h:outputLabel value="From Date"/>
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        </p:calendar>
+                        <h:outputLabel value="To Date"/>
+                        <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        </p:calendar>
+                        <h:outputLabel /><h:outputLabel/>
+                        <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+
+                        <h:outputLabel value="Distributor"/>
+                        <h:outputLabel value="Requested User"/>
+                        <h:outputLabel value="Requested Department"/>
+                        <h:outputLabel value="Po Number"/>
+                        <h:outputLabel value="Requsted Value"/>    
+                        <h:outputLabel value="Approved Value"/>
+                        <p:inputText  value="#{search.searchKeyword.toInstitution}" />
+                        <p:inputText value="#{search.searchKeyword.creator}" />
+                        <p:inputText  value="#{search.searchKeyword.department}" />
+                        <p:inputText  value="#{search.searchKeyword.refBillNo}" />
+                        <p:inputText value="#{search.searchKeyword.total}"/>
+                        <p:inputText value="#{search.searchKeyword.netTotal}"/>
+                    </h:panelGrid>
                 </f:facet>
-                <h:panelGrid columns="5" >
-                    <h:outputLabel value="From Date"/>
-                    <p:calendar id="frmDate" value="#{purchaseOrderController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
-                    </p:calendar>
 
-                    <h:outputLabel value="To Date"/>
-                    <p:calendar id="toDate" value="#{purchaseOrderController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm"  >
-                    </p:calendar>   
-                    <p:inputText id="txtSearch" value="#{purchaseOrderController.txtSearch}" style="width:500px;"/>
-                </h:panelGrid>   
-                <p:watermark value="Type Keyword" for="txtSearch" />
-                <p:spacer height="20"/>
 
-                <p:dataTable id="tbl" value="#{purchaseOrderController.searchBills}"
-                             paginator="true" rows="20"  lazy="true"
-                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                             rowsPerPageTemplate="5,10,15" var="b">
-                    <p:column headerText="Date">
-                        <h:commandLink action="pharmacy_reprint_order_request">
-                            <h:outputLabel  value="#{b.createdAt}">
-                                <f:convertDateTime pattern="dd MM yyyy"/>
+                <p:dataTable id="tbl" value="#{search.bills}" var="b">
+                    <p:column headerText="Requested at"  >
+                        <h:commandLink action="pharmacy_reprint_order_request" >
+                            <h:outputLabel value="#{b.createdAt}" >
+                                <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                             </h:outputLabel>
-
-                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
+                            <f:setPropertyActionListener value="#{b}" target="#{pharmacyBillSearch.bill}"/>
                         </h:commandLink>
-                    </p:column>
-
-                    <p:column headerText="Time">
-                        <h:commandLink action="pharmacy_reprint_order_request">
-                            <h:outputLabel  value="#{b.createdAt}">
-                                <f:convertDateTime pattern="HH:mm a"/>
+                        <br/>
+                        <h:panelGroup rendered="#{b.cancelled}" >
+                            <h:outputLabel style="color: red;" value="Cancelled at " />
+                            <h:outputLabel style="color: red;" rendered="#{b.cancelled}"
+                                           value="#{b.cancelledBill.createdAt}" >
+                                <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
                             </h:outputLabel>
-                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
-                        </h:commandLink>
-                    </p:column>
+                        </h:panelGroup>                       
+                    </p:column> 
 
-                    <p:column headerText="Distributor" filterBy="#{b.toInstitution.name}" >
+                    <p:column headerText="Requested by" >
+                        <h:commandLink action="pharmacy_reprint_order_request" >
+                            <h:outputLabel value="#{b.creater.webUserPerson.name}" >                                      
+                            </h:outputLabel>
+                            <f:setPropertyActionListener value="#{b}" target="#{billSearch.bill}"/>
+                        </h:commandLink>
+                        <br/>
+                        <h:panelGroup rendered="#{b.cancelled}" >
+                            <h:outputLabel style="color: red;" value="Cancelled by " />
+                            <h:outputLabel style="color: red;" rendered="#{b.cancelled}"
+                                           value="#{b.cancelledBill.creater.webUserPerson.name}" >                                       
+                            </h:outputLabel>
+                        </h:panelGroup>
+                    </p:column>    
+
+                    <p:column headerText="Distributor" >
                         <h:commandLink action="pharmacy_reprint_order_request" >
                             #{b.toInstitution.name}
                             <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                         </h:commandLink>
                     </p:column>
 
-                    <p:column headerText="Requested Deprtment" filterBy="#{b.department.name}">
+                    <p:column headerText="Requested Deprtment" >
                         <h:commandLink action="pharmacy_reprint_order_request" >
                             #{b.department.name}
                             <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                         </h:commandLink>
                     </p:column> 
 
-                    <p:column headerText="Requested Person" filterBy="#{b.creater.webUserPerson.nameWithTitle}">
-                        <h:commandLink action="pharmacy_reprint_order_request" >
-                            #{b.creater.webUserPerson.nameWithTitle}
-                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
-                        </h:commandLink>
+                    <p:column headerText="Requested Value" >
+                        <h:outputLabel  value="#{b.netTotal}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
                     </p:column>
 
-
-                    <p:column headerText="Approved Person" filterBy="#{b.referenceBill.creater.webUserPerson.nameWithTitle}" >
+                    <p:column headerText="Approved Person"  >
                         <h:commandLink action="pharmacy_reprint_order_request" 
                                        value="#{b.referenceBill.creater.webUserPerson.nameWithTitle}"  rendered="#{b.referenceBill.cancelled eq false}" >                        
                             <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
                         </h:commandLink>
                     </p:column>
 
-                    <p:column headerText="PO Number" filterBy="#{b.referenceBill.deptId}" >                       
+                    <p:column headerText="PO Number" >                       
                         <h:outputLabel  value="#{b.referenceBill.deptId}" rendered="#{b.referenceBill.cancelled eq false}"/>                         
                     </p:column>
-
-                    <p:column headerText="Value" >
-                        <h:outputLabel  value="#{b.netTotal}">
+                    <p:column headerText="Approved Value" >
+                        <h:outputLabel  value="#{b.referenceBill.netTotal}">
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
+
+
                     <p:column headerText="Approve">
                         <p:commandButton ajax="false" value="Approve" 
                                          action="pharmacy_purhcase_order_approving"

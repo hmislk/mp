@@ -6,6 +6,7 @@ package com.divudi.bean;
 
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
@@ -26,12 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.faces.bean.ViewScoped;
 import javax.persistence.TemporalType;
 import org.primefaces.model.LazyDataModel;
 
@@ -40,7 +40,7 @@ import org.primefaces.model.LazyDataModel;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class OpdBillItemSearchController implements Serializable {
 
     String txtSearch;
@@ -82,6 +82,7 @@ public class OpdBillItemSearchController implements Serializable {
     BillItemFacade billItemFacade;
     @Inject
     SessionController sessionController;
+    private SearchKeyword searchKeyword;
 
     public BillItemFacade getBillItemFacade() {
         return billItemFacade;
@@ -164,35 +165,39 @@ public class OpdBillItemSearchController implements Serializable {
 
     }
 
-    public List<BillItem> getBillItemsOwn() {
-        if (billItemsAll == null) {
-            String sql;
-            Map m = new HashMap();
-            m.put("toDate", toDate);
-            m.put("fromDate", fromDate);
-            m.put("bType", BillType.OpdBill);
-            m.put("ins", getSessionController().getInstitution());
-            if (txtSearch == null || txtSearch.trim().equals("")) {
-                sql = "select bi from BillItem bi join bi.bill b join b.patient.person"
-                        + " p where b.institution=:ins and b.billType=:bType "
-                        + " and b.createdAt between :fromDate and :toDate order by bi.id desc";
+    public void createTableByKeyword2() {
+        searchBillItems = null;
+        String sql;
+        Map m = new HashMap();
+        m.put("toDate", toDate);
+        m.put("fromDate", fromDate);
+        m.put("bType", BillType.OpdBill);
+        m.put("ins", getSessionController().getInstitution());
+        m.put("str", "%" + txtSearch.toUpperCase() + "%");
 
-                billItemsAll = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 100);
-            } else {
-                sql = "select bi from BillItem bi join bi.bill b "
-                        + " join b.patient.person p where b.billType=:bType "
-                        + " and b.institution=:ins "
-                        + " and  (upper(p.name) like '%" + txtSearch.toUpperCase()
-                        + "%' or upper(b.insId) like '%" + txtSearch.toUpperCase()
-                        + "%' or p.phone like '%" + txtSearch + "%' or upper(bi.item.name) like '%"
-                        + txtSearch.toUpperCase() + "%' ) and b.createdAt between :fromDate "
-                        + " and :toDate order by bi.id desc";
-
-                billItemsAll = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-            }
-
+        if (txtSearch == null || txtSearch.trim().equals("")) {
+            UtilityController.addErrorMessage("Please enter Patient name,Phone No,Bill No,Bill Total");
+            return;
         }
-        return billItemsAll;
+        sql = "select bi from BillItem bi join bi.bill b join b.patient.person"
+                + " p where b.institution=:ins and b.billType=:bType and"
+                + "  (upper(b.patient.person.name) like :str "
+                + " or upper(b.patient.person.phone) like :str "
+                + "  or upper(b.insId) like :str or "
+                + " or upper(b.netTotal) like :str "
+                + " or upper(b.total) like :str ) "
+                + " and b.createdAt between :fromDate and :toDate order by bi.id desc";
+
+        List<BillItem> tmp = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
+
+        searchBillItems = new LazyBillItem(tmp);
+
+    }
+
+   
+
+    public List<BillItem> getBillItemsOwn() {
+        return billItemsOwn;
     }
 
     public void setBillItemsAll(List<BillItem> billItemsAll) {
@@ -970,5 +975,16 @@ public class OpdBillItemSearchController implements Serializable {
 
     public void setSearchBillItems(LazyDataModel<BillItem> searchBillItems) {
         this.searchBillItems = searchBillItems;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 }

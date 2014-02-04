@@ -19,7 +19,7 @@ import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillSessionFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class ChannelReportController implements Serializable {
 
     private ServiceSession serviceSession;

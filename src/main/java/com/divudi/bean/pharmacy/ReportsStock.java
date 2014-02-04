@@ -15,7 +15,7 @@ import com.divudi.entity.Staff;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +31,7 @@ import javax.inject.Inject;
  * @author Buddhika
  */
 @Named(value = "reportsStock")
-@SessionScoped
+@ViewScoped
 public class ReportsStock implements Serializable {
 
     /**
@@ -73,6 +73,25 @@ public class ReportsStock implements Serializable {
         Map m = new HashMap();
         String sql;
         sql = "select s from Stock s where s.department=:d order by s.itemBatch.item.name";
+        m.put("d", department);
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+        for (Stock ts : stocks) {
+            stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
+            stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
+        }
+    }
+    
+    
+     public void fillDepartmentStocksMinus() {
+        if (department == null) {
+            UtilityController.addErrorMessage("Please select a department");
+            return;
+        }
+        Map m = new HashMap();
+        String sql;
+        sql = "select s from Stock s where s.stock<0 and s.department=:d order by s.itemBatch.item.name";
         m.put("d", department);
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;

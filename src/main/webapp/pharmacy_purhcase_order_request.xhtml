@@ -24,15 +24,18 @@
                         <f:facet name="header">
                             Distributor
                         </f:facet>
-                        <p:autoComplete converter="deal" value="#{purchaseOrderRequestController.dealor}" completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
-                        <h:panelGroup>
-                            <p:commandButton ajax="false" value="Create" action="#{purchaseOrderRequestController.createOrder}" disabled="#{purchaseOrderRequestController.currentBill.id ne null}"/>
+                        <p:autoComplete converter="deal" value="#{purchaseOrderRequestController.currentBill.toInstitution}"  
+                                        completeMethod="#{dealerController.completeDealor}"
+                                        var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                            <f:ajax event="itemSelect" execute="@this" render="itemList" listener="#{purchaseOrderRequestController.setInsListener}"/>
+                        </p:autoComplete>
+                        <h:panelGroup>                            
                             <p:commandButton ajax="false" value="Fill with Item" action="#{purchaseOrderRequestController.createOrderWithItems}" disabled="#{purchaseOrderRequestController.currentBill.id ne null}"/>
                         </h:panelGroup>
                     </h:panelGrid>
-                    
-                     <p:panel header="Add Dealors Item ">
-                        <p:autoComplete id="exDItem" value="#{purchaseOrderRequestController.currentItem}"
+
+                    <p:panel header="Add Dealors Item ">
+                        <p:autoComplete id="exDItem" value="#{purchaseOrderRequestController.currentBillItem.item}"
                                         completeMethod="#{itemController.completeDealorItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>
@@ -50,7 +53,7 @@
                     </p:panel>
 
                     <p:panel header="Add Extra Item ">
-                        <p:autoComplete id="exItem" value="#{purchaseOrderRequestController.currentItem}"
+                        <p:autoComplete id="exItem" value="#{purchaseOrderRequestController.currentBillItem.item}"
                                         completeMethod="#{itemController.completeAmpAndAmppItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>
@@ -67,44 +70,45 @@
 
                     </p:panel>
                     <h:panelGrid columns="1" style="min-width: 100%;">
-                       
+
                         <p:selectOneMenu   id="cmbPs" value="#{purchaseOrderRequestController.currentBill.paymentMethod}">    
                             <f:selectItem itemLabel="SelectPayment method"/>
                             <f:selectItems value="#{enumController.paymentMethodsForPo}"/>
                         </p:selectOneMenu>
-                        <p:outputLabel id="tot" style="font-weight: bold;" value="#{purchaseOrderRequestController.netTotal}">
+                        <p:outputLabel id="tot" style="font-weight: bold;" value="#{purchaseOrderRequestController.currentBill.netTotal}">
                             <f:convertNumber pattern="#,000.00"/>
                         </p:outputLabel>
                     </h:panelGrid>
 
 
                 </h:panelGrid>
-                <p:dataTable styleClass="noBorder" rowIndexVar="i" var="bi" scrollable="true" rowKey="#{bi.id}"
-                             scrollHeight="250" value="#{purchaseOrderRequestController.currentBill.billItems}" 
-                             id="itemList" selection="#{purchaseOrderRequestController.selectedBillItems}" >  
+                <p:dataTable styleClass="noBorder" rowIndexVar="i" var="bi" scrollable="true" rowKey="#{bi.searialNo}"
+                             scrollHeight="250" value="#{purchaseOrderRequestController.billItems}" 
+                             selection="#{purchaseOrderRequestController.selectedBillItems}"
+                             id="itemList" >  
 
                     <f:facet name="header">  
                         <h:outputLabel  value="Pharmacy Bill Item"/>
                         <p:commandButton ajax="false" value="Remove All" action="#{purchaseOrderRequestController.removeSelected()}"/>
                     </f:facet>  
+                    
                     <p:column selectionMode="multiple" style="width: 10px;"></p:column>
-
-                    <p:column headerText="No" style="width: 10px;">
-                        #{i+1}
+                    
+             
+                    <p:column headerText="No" style="width: 25px;">
+                       #{bi.searialNo}
                     </p:column>
 
                     <p:column headerText="Item Name"  style="width:30%">  
                         #{bi.item.name} 
                     </p:column>  
 
-                    <p:column headerText="Qty" style="width:20%">                         
-
-                        <p:inputText  id="qty" value="#{bi.pharmaceuticalBillItem.qty}" style="width:100%" label="Qty">  
+                    <p:column headerText="Qty" style="width:20%"> 
+                        <p:inputText  id="qty" value="#{bi.tmpQty}" style="width:100%" label="Qty">  
                             <f:convertNumber pattern="#00.00"/>
                             <f:ajax event="blur" render="total :#{p:component('tot')} "  execute="@this price" listener="#{purchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
                             <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
                         </p:inputText>
-
                     </p:column>  
                     <p:column headerText="Purchase Price" style="width:20%">  
                         <h:panelGroup id="price">

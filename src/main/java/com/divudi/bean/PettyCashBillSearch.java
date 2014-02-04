@@ -7,6 +7,7 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
@@ -38,8 +39,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.primefaces.model.LazyDataModel;
@@ -63,7 +65,7 @@ public class PettyCashBillSearch implements Serializable {
     List<BillFee> billFees;
     PaymentMethod paymentMethod;
     PaymentScheme paymentScheme;
-    List<Bill> bills;
+    private List<Bill> bills;
     private List<Bill> fillteredBill;
     @EJB
     private CommonFunctions commonFunctions;
@@ -92,6 +94,7 @@ public class PettyCashBillSearch implements Serializable {
     private Date toDate;
     private String comment;
     WebUser user;
+    private SearchKeyword searchKeyword;
 
     public WebUser getUser() {
         return user;
@@ -132,27 +135,12 @@ public class PettyCashBillSearch implements Serializable {
         }
         return bills;
     }
-    
+
     private LazyDataModel<Bill> searchBills;
+
+ 
     
-     public void createTable() {
-        String sql;
-        searchBills = null;
-        Map temMap = new HashMap();
-
-        sql = "select b from BilledBill b where b.billType = :billType and b.institution=:ins"
-                + " and b.createdAt between :fromDate and :toDate and b.retired=false "
-                + "order by b.id desc  ";
-
-        temMap.put("billType", BillType.PettyCash);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("ins", getSessionController().getInstitution());
-        List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        System.err.println("SIZE : " + lst.size());
-        
-        searchBills = new LazyBill(lst);
-    }
+    
 
     public BillFeeFacade getBillFeeFacade() {
         return billFeeFacade;
@@ -215,7 +203,7 @@ public class PettyCashBillSearch implements Serializable {
     }
 
     public void recreateModel() {
-        fillteredBill=null;
+        fillteredBill = null;
         billFees = null;
 //        billFees
         billComponents = null;
@@ -282,7 +270,7 @@ public class PettyCashBillSearch implements Serializable {
             cb.setFromInstitution(getBill().getFromInstitution());
 
             cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.PettyCash, BillNumberSuffix.PTYCAN));
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),cb, BillType.PettyCash, BillNumberSuffix.PTYCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, BillType.PettyCash, BillNumberSuffix.PTYCAN));
 
             cb.setDiscount(0 - getBill().getDiscount());
             cb.setDiscountPercent(getBill().getDiscountPercent());
@@ -727,5 +715,20 @@ public class PettyCashBillSearch implements Serializable {
 
     public void setSearchBills(LazyDataModel<Bill> searchBills) {
         this.searchBills = searchBills;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
     }
 }

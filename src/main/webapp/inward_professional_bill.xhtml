@@ -18,8 +18,10 @@
                     <f:facet name="header" >
                         <h:panelGrid columns="10"  >
                             <h:outputLabel value="Inward Professional Bill" />
-                            <p:commandButton  value="Save" action="#{inwardProfessionalBillController.save}" ajax="false"  >
+                            <p:commandButton id="btnSave" value="Save" action="#{inwardProfessionalBillController.save}" ajax="false"  >
                             </p:commandButton>
+                            <p:defaultCommand target="btnSave"/>
+                            
                             <p:commandButton value="New Bill" ajax="false" action="#{inwardProfessionalBillController.prepareNewBill()}" style="float: right;">
                             </p:commandButton>
                         </h:panelGrid>
@@ -37,10 +39,10 @@
                                                     itemValue="#{apt2}" size="30"  style="width: 400px;">
                                         <p:ajax event="itemSelect" process="acPt2" update="panSearch2"/>
                                         <p:column >
-                                            #{apt2.bhtNo} 
+                                            <h:outputLabel value="#{apt2.bhtNo}"/>
                                         </p:column>
                                         <p:column >
-                                            #{apt2.patient.person.name} 
+                                            <h:outputLabel value="#{apt2.patient.person.name}"/>
                                         </p:column>
                                     </p:autoComplete>  
 
@@ -152,10 +154,10 @@
                                     <p:tab title="Collecting Centre" >
                                         <p:autoComplete forceSelection="true" value="#{inwardProfessionalBillController.current.collectingCentre}" completeMethod="#{collectingCentreController.completeCollecting}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                             <p:column>
-                                                #{ix.name}
+                                                <h:outputLabel value="#{ix.name}"/>
                                             </p:column>
                                             <p:column>
-                                                #{ix.institutionCode}
+                                                <h:outputLabel value="#{ix.institutionCode}"/>
                                             </p:column>
                                         </p:autoComplete>
                                     </p:tab>
@@ -171,11 +173,11 @@
                             <h:panelGroup id="panelBillItems" >
                                 <p:dataTable rowIndexVar="rowIndex" id="bFee" value="#{inwardProfessionalBillController.lstBillFees}" var="bif" >
                                     <f:facet name="header">
-                                        Bill Professional Fees
+                                        <h:outputLabel value="Bill Professional Fees"/>
                                     </f:facet>
                                     <p:column>
                                         <f:facet name="header">No</f:facet>
-                                        #{rowIndex+1}
+                                        <h:outputLabel value="#{rowIndex+1}"/>
                                     </p:column>
                                     <p:column>
                                         <f:facet name="header">Fee</f:facet>

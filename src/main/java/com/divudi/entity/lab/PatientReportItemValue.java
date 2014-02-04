@@ -31,7 +31,7 @@ public class PatientReportItemValue implements Serializable {
     Patient patient;
     @ManyToOne
     PatientEncounter patientEncounter;
-    @ManyToOne(cascade= CascadeType.ALL,fetch= FetchType.EAGER)
+    @ManyToOne(cascade= CascadeType.ALL,fetch= FetchType.LAZY)
     InvestigationItem investigationItem;
     @ManyToOne
     PatientReport patientReport;

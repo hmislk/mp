@@ -12,44 +12,50 @@
                 <h:form>
                     <p:panel  >
                         <f:facet name="header" >
-                            <h:outputLabel value="OPD BILL ITEM "/>
-                            <h:panelGrid columns="6">                                   
+                            <h:outputLabel value="OPD BILL ITEM "/>                                                         
+                            <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{opdBillItemSearchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{opdBillItemSearchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:inputText id="txtSearch" value="#{opdBillItemSearchController.txtSearch}" style="width:500px;"/>                                
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createBillItemTableByKeyword()}"/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
-                                <p:commandButton id="btn_Search" ajax="false" value="Search" action="#{opdBillItemSearchController.createTable()}"/>
-                                <p:defaultCommand target="btnSearch"/>
-                            </h:panelGrid>                                
-                            <p:watermark value="Bill Id ,NetTotal,Paymentscheme,Paymentmethod,Patient Name or Phone Number" for="txtSearch" />
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="Item Name"/>
+                                <h:outputLabel value="Patient Name"/>
+                                <h:outputLabel value="Patient Phone"/>
+                                <h:outputLabel/>
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText  value="#{search.searchKeyword.itemName}" />
+                                <p:inputText value="#{search.searchKeyword.patientName}" />
+                                <p:inputText  value="#{search.searchKeyword.patientPhone}" />
+                                <h:outputLabel/>
+                            </h:panelGrid>
+
                         </f:facet>
 
 
 
 
-                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{opdBillItemSearchController.searchBillItems}" var="pi" 
-                                     paginator="true" rows="20"  lazy="true"
-                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                                     rowsPerPageTemplate="5,10,15" >
+                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.billItems}" var="pi" >
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
-                            <p:column headerText="Bill No" styleClass="alignTop" filterBy="#{pi.bill.insId}" >
+                            <p:column headerText="Bill No" styleClass="alignTop" >
                                 <h:commandLink action="bill_reprint" value="#{pi.bill.insId}">
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>   
                             </p:column>
-                            <p:column headerText="Institution Name" styleClass="alignTop" filterBy="#{pi.bill.institution.name}" >
+                            <p:column headerText="Institution Name" styleClass="alignTop"  >
                                 <h:commandLink action="bill_reprint" value="#{pi.bill.institution.name}">
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
 
-                            <p:column headerText="Patient"  styleClass="alignTop" filterBy="#{pi.bill.patient.person.nameWithTitle}" >
+                            <p:column headerText="Patient"  styleClass="alignTop"  >
                                 <h:outputLabel value="#{pi.bill.patient.person.nameWithTitle}" >
                                 </h:outputLabel>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -67,7 +73,7 @@
                                 </h:outputLabel>
                             </p:column>
 
-                            <p:column headerText="Investigation/Service"  styleClass="alignTop" filterBy="#{pi.item.name}" >
+                            <p:column headerText="Investigation/Service"  styleClass="alignTop"  >
                                 <h:outputLabel value="#{pi.item.name}" >
                                 </h:outputLabel>
                                 <br/>
@@ -91,19 +97,19 @@
                                 </h:panelGroup>
                                 <br/>
                             </p:column>
-                            <p:column headerText="Paymentmethod" filterBy="#{pi.bill.paymentScheme.paymentMethod}"  >
+                            <p:column headerText="Paymentmethod"   >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.paymentScheme.paymentMethod}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Paymentscheme" filterBy="#{pi.bill.paymentScheme.name}">
+                            <p:column headerText="Paymentscheme" >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.paymentScheme.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Gross Value" filterBy="#{pi.bill.total}"  >
+                            <p:column headerText="Gross Value"   >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.total}" >
                                         <f:convertNumber pattern="#,000.00"/>
@@ -111,7 +117,7 @@
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Discount" filterBy="#{pi.bill.discount}"  >
+                            <p:column headerText="Discount"   >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.discount}" >
                                         <f:convertNumber pattern="#,000.00"/>
@@ -119,7 +125,7 @@
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Net Value" filterBy="#{pi.bill.netTotal}"  >
+                            <p:column headerText="Net Value"  >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.netTotal}" >
                                         <f:convertNumber pattern="#,000.00"/>

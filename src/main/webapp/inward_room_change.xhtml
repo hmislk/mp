@@ -22,10 +22,10 @@
                                         size="30"  style="width: 400px;" required="true"> 
                             <f:ajax execute="acPt" render="gpDetail" event="itemSelect" />
                             <p:column>
-                                #{myItem.bhtNo}
+                                <h:outputLabel value="#{myItem.bhtNo}"/>
                             </p:column>
                             <p:column>
-                                #{myItem.patient.person.nameWithTitle}
+                                <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                             </p:column>
                         </p:autoComplete>   
 
@@ -81,22 +81,21 @@
                                     <p:autoComplete converter="fac" forceSelection="true" id="cmbDoc" value="#{roomChangeController.newRoomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoomChange}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;" required="true">
                                     </p:autoComplete>
 
-                                     <h:outputLabel value="Change at"/>
-                                     <p:calendar styleClass="dateTimePicker" id="changeAt" value="#{roomChangeController.changeAt}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                    <h:outputLabel value="Change at"/>
+                                    <p:calendar styleClass="dateTimePicker" id="changeAt" value="#{roomChangeController.changeAt}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect"  render="changeAt"/>
                                     </p:calendar>
-                                     
-                                     <h:outputLabel value="Additional Linen Charge"/>
-                                     <h:inputText value="#{roomChangeController.addLinenCharge}"/>
+
+                                    <h:outputLabel value="Additional Linen Charge"/>
+                                    <h:inputText value="#{roomChangeController.addLinenCharge}"/>
 
                                 </p:panelGrid>                                    
                             </p:panel>                                    
                         </p:panelGrid>
 
-                        <p:commandButton id="btnSave" value="Change"  action="#{roomChangeController.change()}" ajax="false" styleClass="buttons">
-                            
+                        <p:commandButton id="btnChange" value="Change"  action="#{roomChangeController.change()}" ajax="false" styleClass="buttons">
                         </p:commandButton>
-
+                        <p:defaultCommand target="btnChange"/>
                     </p:panel>
                 </p:panel>
             </p:panel>

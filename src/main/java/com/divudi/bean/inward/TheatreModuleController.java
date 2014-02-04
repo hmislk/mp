@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 
 /**
@@ -32,7 +32,7 @@ import javax.inject.Inject;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class TheatreModuleController implements Serializable {
 
     /**
@@ -151,7 +151,7 @@ public class TheatreModuleController implements Serializable {
 
         }
         encounterComponent.setCreatedAt(Calendar.getInstance().getTime());
-        encounterComponent.setCreater(sessionController.getLoggedUser());
+        encounterComponent.setCreater(getSessionController().getLoggedUser());
         encounterComponent.setPatientEncounter(procedure);
         encounterComponent.setStaff(staff);
         getEcFacade().edit(encounterComponent);

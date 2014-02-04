@@ -20,28 +20,29 @@
                     <p:calendar id="toDate" value="#{mdInwardReportController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                         <f:ajax event="dateSelect"   render="tbl" execute="@this fromDate" listener="#{mdInwardReportController.makeBillNull}"/>
                     </p:calendar>
-                    <p:commandButton ajax="false" value="Refresh"  style="float: right;"/>
+                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh"  style="float: right;"/>
+                    <p:defaultCommand target="btnRefresh"/>
                 </h:panelGrid>   
 
                 <p:dataTable id="tbl" value="#{mdInwardReportController.billsDischarged}" rowIndexVar="i" var="bill" filteredValue="#{mdInwardReportController.fillterBill}" sortBy="#{bill.institution.id}">
                     <p:column headerText="Serial No">
-                        #{i+1}
+                         <h:outputLabel value="#{i+1}"/>
                     </p:column>
                     <p:column headerText="Institution" filterBy="#{bill.toInstitution.name}" filterMatchMode="contains">
-                        #{bill.toInstitution.name}
+                         <h:outputLabel value="#{bill.toInstitution.name}"?>
                     </p:column>
                     <p:column headerText="Department" filterBy="#{bill.toDepartment.name}" filterMatchMode="contains">
-                        #{bill.toDepartment.name}
+                         <h:outputLabel value="#{bill.toDepartment.name}"/>
                     </p:column>                   
                     <p:column headerText="Cancelled/Refunded" filterBy="#{bill.class}" filterMatchMode="contains" >                        
                         <p:outputLabel value="Refunded" rendered="#{bill.class eq 'class com.divudi.entity.RefundBill'}"/>
                         <p:outputLabel value="Cancelled" rendered="#{bill.class eq 'class com.divudi.entity.CancelledBill'}"/>
                     </p:column>
                     <p:column headerText="Bill No" filterBy="#{bill.insId}" filterMatchMode="contains" >                        
-                        #{bill.insId}
+                         <h:outputLabel value="#{bill.insId}"/>
                     </p:column>
                     <p:column headerText="Name" filterBy="#{bill.patient.person.name}" filterMatchMode="contains">
-                        #{bill.patient.person.name}
+                         <h:outputLabel value="#{bill.patient.person.name}"/>
                     </p:column>
                     <p:column headerText="Hospital Fee">
                         <h:outputLabel value="#{bill.hospitalFee}">
@@ -62,7 +63,7 @@
                         <p:row>
                             <p:column colspan="6">
                                 <f:facet name="footer">
-                                    Total
+                                     <h:outputLabel value="Total"/>
                                 </f:facet>
                             </p:column>
                             <p:column>

@@ -24,36 +24,36 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     //Main Properties
-     String name;
-     String tName;
-     String sName;
-     String description;
-     int orderNo;
+    String name;
+    String tName;
+    String sName;
+    String description;
+    int orderNo;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
-     Double dblValue;
-     Long longValue;
+    Date retiredAt;
+    String retireComments;
+    Double dblValue;
+    Long longValue;
     @ManyToOne
-     Category parentCategory;
-     Double saleMargin = 0.0;
-     Double wholeSaleMargin = 0.0;
+    Category parentCategory;
+    Double saleMargin = 0.0;
+    Double wholeSaleMargin = 0.0;
     @OneToMany(mappedBy = "category")
-     List<Item> items;
-     String code;
-    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-     List<Category> childCategories;
+    List<Item> items;
+    String code;
+    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    List<Category> childCategories;
     @Enumerated
-     SymanticHyrachi symanticType;
+    SymanticHyrachi symanticType;
     @Transient
     private String entityClass;
 
@@ -255,7 +255,7 @@ public class Category implements Serializable {
     }
 
     public String getEntityClass() {
-        entityClass=this.getClass().toString();
+        entityClass = this.getClass().toString();
         return entityClass;
     }
 

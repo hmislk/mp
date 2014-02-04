@@ -12,28 +12,38 @@
                 <h:form>
                     <p:panel header="Search Bills" >
                         <f:facet name="header" >
-                            <h:panelGroup>
-                                <p:panelGrid columns="6">
-                                    <h:inputText id="txtSearch" value="#{billSearch.txtSearch}" style="width: 600px;" >
-                                        <f:ajax render="tblBills" execute="txtSearch" event="keyup" />
-                                    </h:inputText>
-                                    <p:commandButton value="Show All Bills" action="#{billSearch.allBills()}" ajax="false" ></p:commandButton>
+                            <h:panelGrid columns="6" >
+                                <h:outputLabel value="From Date"/>
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                </p:calendar>
+                                <h:outputLabel value="To Date"/>
+                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                </p:calendar>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createCollectingTable()}"/>
+                                <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{search.createCollectingTableAll()}"/>
+                                <p:spacer height="30"/><h:outputLabel/>
+                                <h:outputLabel/><h:outputLabel/>
+                                <h:outputLabel/> <h:outputLabel/>
 
-                                    <h:outputLabel value="From Date"/>
-                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                                        <f:ajax event="dateSelect" execute="tblBills"  render="tblBills toDate fromDate"/>
-                                    </p:calendar>
-                                    <h:outputLabel value="To Date"/>
-                                    <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                                        <f:ajax event="dateSelect" execute="tblBills"  render="tblBills toDate fromDate"/>
-                                    </p:calendar>
-                                    
-                                </p:panelGrid>
-                                <p:watermark value="Search by Bill Id (with or without letters), Patient Name or Phone Number" for="txtSearch" />
-                            </h:panelGroup>
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="Patient Name"/>
+                                <h:outputLabel value="Patient Phone"/>
+                                <h:outputLabel value="Total"/>
+                                <h:outputLabel value="Net Total"/>
+                                <h:outputLabel/>
+                                <p:inputText  value="#{search.searchKeyword.billNo}" />
+                                <p:inputText value="#{search.searchKeyword.patientName}" />
+                                <p:inputText  value="#{search.searchKeyword.patientPhone}" />
+                                <p:inputText  value="#{search.searchKeyword.total}" />
+                                <p:inputText value="#{search.searchKeyword.netTotal}"/>
+                                <h:outputLabel/>
+                            </h:panelGrid>
+
+                            <p:defaultCommand target="btnSearch" />
+
                         </f:facet>
-                        
-                        <p:dataTable id="tblBills" value="#{billSearch.colBills}" var="bill"  >
+
+                        <p:dataTable id="tblBills" value="#{search.bills}" var="bill"  >
                             <p:column headerText="Bill No" >
                                 <h:commandLink action="lab_bill_collecting_centre_reprint" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>

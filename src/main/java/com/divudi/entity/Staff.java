@@ -46,80 +46,80 @@ import javax.persistence.Transient;
 public class Staff implements Serializable {
 
     @ManyToOne
-     Roster roster;
+    Roster roster;
 
     @OneToOne(mappedBy = "staff")
-     StaffEmployment staffEmployment;
+    StaffEmployment staffEmployment;
     @OneToOne(mappedBy = "staff")
-     PaysheetComponent paysheetComponent;
+    PaysheetComponent paysheetComponent;
     @ManyToOne
-     Designation designation;
+    Designation designation;
     @ManyToOne
-     Grade grade;
+    Grade grade;
     @ManyToOne
-     StaffCategory staffCategory;
-     int orderNo;
+    StaffCategory staffCategory;
+    int orderNo;
     @OneToOne(mappedBy = "staff")
-     ShiftPreference shiftPreference;
+    ShiftPreference shiftPreference;
     static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     //Main Properties
     Long id;
-     String registration;
+    String registration;
     @Lob
-     String qualification;
-     String code;
+    String qualification;
+    String code;
     @ManyToOne
-     Person person;
+    Person person;
     @ManyToOne
-     Speciality speciality;
+    Speciality speciality;
     @ManyToOne
-     Institution institution;
+    Institution institution;
     @ManyToOne
-     Department department;
+    Department department;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
-     String staffCode;
+    Date retiredAt;
+    String retireComments;
+    String staffCode;
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    byte[] baImage;
-     String fileName;
-     String fileType;
+    byte[] baImage = new byte[1];
+    String fileName;
+    String fileType;
     //////////////////
     @OneToOne
-     Department workingDepartment;
+    Department workingDepartment;
     @Enumerated(EnumType.STRING)
-     EmployeeLeavingStatus employeeLeavingStatus;
+    EmployeeLeavingStatus employeeLeavingStatus;
     @Enumerated(EnumType.STRING)
-     EmployeeStatus employeeStatus;
+    EmployeeStatus employeeStatus;
     @Enumerated(EnumType.STRING)
-     SalaryPaymentFrequency payingMethod;
+    SalaryPaymentFrequency payingMethod;
     @Enumerated(EnumType.STRING)
-     SalaryPaymentMethod salaryPaymentMethod;
+    SalaryPaymentMethod salaryPaymentMethod;
     @Temporal(javax.persistence.TemporalType.DATE)
-     Date dateJoined;
+    Date dateJoined;
     @Temporal(javax.persistence.TemporalType.DATE)
-     Date dateLeft;
+    Date dateLeft;
     @Transient
-     double basic;
+    double basic;
     @OneToOne(cascade = CascadeType.ALL)
-     BankAccount bankAccount;
-     String epfNo;
+    BankAccount bankAccount;
+    String epfNo;
 
-     String acNo;
+    String acNo;
 
-     double workingHour;
+    double workingHour;
 
 //    public double getBasic() {
 //        double tmp2=0.0;
@@ -309,7 +309,7 @@ public class Staff implements Serializable {
         this.shiftPreference = shiftPreference;
     }
     @Transient
-     Shift shift;
+    Shift shift;
 
     public Shift getShift() {
         return shift;
@@ -321,7 +321,7 @@ public class Staff implements Serializable {
         }
     }
     @Transient
-     int repeatedDay;
+    int repeatedDay;
 
     public int getRepeatedDay() {
         return repeatedDay;
@@ -336,7 +336,7 @@ public class Staff implements Serializable {
 
     }
     @Transient
-     boolean dayOff;
+    boolean dayOff;
 
     public boolean isDayOff() {
         return dayOff;
@@ -436,7 +436,7 @@ public class Staff implements Serializable {
         this.paysheetComponent = paysheetComponent;
     }
     @Transient
-     boolean tmp;
+    boolean tmp;
 
     public boolean isTmp() {
         return tmp;

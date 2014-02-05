@@ -61,9 +61,9 @@ public class DealerController implements Serializable {
             suggestions = new ArrayList<>();
         } else {
             sql = "select c from Institution c where c.retired=false and c.institutionType =:t and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getEjbFacade().findBySQL(sql,m);
-            System.out.println("suggestions = " + suggestions);
+            //System.out.println("suggestions = " + suggestions);
         }
         return suggestions;
     }

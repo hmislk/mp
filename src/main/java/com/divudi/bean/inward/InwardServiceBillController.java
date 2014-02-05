@@ -296,7 +296,7 @@ public class InwardServiceBillController implements Serializable {
             f = new BillFee();
             f.setFee(i);
             f.setFeeValue(i.getFee());
-            ///   System.out.println("Fee Value is " + f.getFeeValue());
+            ///   //System.out.println("Fee Value is " + f.getFeeValue());
             f.setBillItem(billItem);
 
             f.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -383,10 +383,10 @@ public class InwardServiceBillController implements Serializable {
 
         matrix.setFee(is.get(0).getMargin());
 
-        //System.out.println("Margin : " + is.get(0).getMargin());
+        ////System.out.println("Margin : " + is.get(0).getMargin());
         f.setInstitution(i.getItem().getDepartment().getInstitution());
         f.setFeeValue(matrix.getFee());
-        //System.out.println("Margin : " + is.get(0).getMargin());
+        ////System.out.println("Margin : " + is.get(0).getMargin());
 
         if (matrix.getId() == null) {
             getFeeFacade().create(matrix);
@@ -450,10 +450,10 @@ public class InwardServiceBillController implements Serializable {
 
             for (BillFee bf : be.getLstBillFees()) {
                 if (bf.getBillItem().getItem().isUserChangable() && bf.getBillItem().getItem().isDiscountAllowed() != true) {
-                    System.out.println("Total is " + tot);
-                    System.out.println("Bill Fee value is " + bf.getFeeValue());
+                    //System.out.println("Total is " + tot);
+                    //System.out.println("Bill Fee value is " + bf.getFeeValue());
                     tot += bf.getFeeValue();
-                    System.out.println("After addition is " + tot);
+                    //System.out.println("After addition is " + tot);
                     bf.getBillItem().setNetValue(bf.getBillItem().getNetValue() + bf.getFeeValue());
                     bf.getBillItem().setGrossValue(bf.getBillItem().getGrossValue() + bf.getFeeValue());
 
@@ -475,7 +475,7 @@ public class InwardServiceBillController implements Serializable {
                         bf.getBillItem().setNetValue(bf.getBillItem().getNetValue() + bf.getFee().getFee());
                     }
                 } else {
-                    System.out.println("12");
+                    //System.out.println("12");
                     if (bf.getBillItem().getItem().isDiscountAllowed() != null && bf.getBillItem().getItem().isDiscountAllowed() == true) {
 
                         bf.setFeeValue(bf.getFee().getFee());
@@ -487,7 +487,7 @@ public class InwardServiceBillController implements Serializable {
 
                         bf.getBillItem().setNetValue(bf.getBillItem().getNetValue() + bf.getBillItem().getGrossValue() - bf.getBillItem().getDiscount());
                     } else {
-                        System.out.println("13");
+                        //System.out.println("13");
                         tot = tot + bf.getFeeValue();
                         bf.setFeeValue(bf.getFee().getFee());
                         bf.getBillItem().setGrossValue(bf.getBillItem().getGrossValue() + bf.getFee().getFee());
@@ -680,19 +680,19 @@ public class InwardServiceBillController implements Serializable {
 
     public void removeBillItem() {
         //TODO: Need to add Logic
-        System.out.println(getIndex());
+        //System.out.println(getIndex());
         if (getIndex() != null) {
             boolean remove;
             BillEntry temp = getLstBillEntries().get(getIndex());
-            System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
+            //System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
             recreateList(temp);
             // remove = getLstBillEntries().remove(getIndex());
 
             //  getLstBillEntries().remove(index);
-            //System.out.println("Is Removed:" + remove);
+            ////System.out.println("Is Removed:" + remove);
 
             calTotals();
-            System.out.println(getCurrent().getNetTotal());
+            //System.out.println(getCurrent().getNetTotal());
         }
     }
 
@@ -701,7 +701,7 @@ public class InwardServiceBillController implements Serializable {
         for (BillEntry b : getLstBillEntries()) {
             if (b.getBillItem().getItem() != r.getBillItem().getItem()) {
                 temp.add(b);
-                System.out.println(b.getBillItem().getNetValue());
+                //System.out.println(b.getBillItem().getNetValue());
             }
         }
         lstBillEntries = temp;

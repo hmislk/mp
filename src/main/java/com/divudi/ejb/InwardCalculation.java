@@ -277,8 +277,8 @@ public class InwardCalculation {
 
             while (adm < dis) {
                 totalLinen += pr.getRoomFacilityCharge().getLinenCharge();
-                System.out.println("adm : " + adm + " dis : " + dis);
-                System.out.println("Linen :" + totalLinen);
+                //System.out.println("adm : " + adm + " dis : " + dis);
+                //System.out.println("Linen :" + totalLinen);
                 adm++;
             }
 

@@ -104,7 +104,7 @@ public class BillFee implements Serializable {
         } else {
             feeValue = getFee().getFee();
         }
-        //    System.out.println("Setting fee value as " + feeValue);
+        //    //System.out.println("Setting fee value as " + feeValue);
     }
 
     public void setFeeValue(boolean foriegn, double discountPercent) {

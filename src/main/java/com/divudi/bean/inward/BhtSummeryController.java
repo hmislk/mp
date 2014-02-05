@@ -556,7 +556,7 @@ public class BhtSummeryController implements Serializable {
 
         TimedItemFee timedFee = p.getRoomFacilityCharge().getTimedItemFee();
         double roomCharge = p.getRoomFacilityCharge().getRoomCharge();
-     //  System.out.println("ssssssssssssssssssssss " + roomCharge);
+     //  //System.out.println("ssssssssssssssssssssss " + roomCharge);
         rcd.setPatientRoom(p);
 
         if (p.getDischargedAt() != null) {
@@ -689,7 +689,7 @@ public class BhtSummeryController implements Serializable {
             hm.put("pe", getPatientEncounter());
 
             profesionallFee = getBillFeeFacade().findBySQL(sql, hm, TemporalType.TIME);
-            //System.out.println("Size : " + profesionallFee.size());
+            ////System.out.println("Size : " + profesionallFee.size());
 
             if (profesionallFee == null) {
                 profesionallFee = new ArrayList<>();
@@ -907,7 +907,7 @@ public class BhtSummeryController implements Serializable {
             }
         }
 
-        System.out.println("nursing : " + totalNursing);
+        //System.out.println("nursing : " + totalNursing);
         return totalNursing;
     }
 

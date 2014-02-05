@@ -400,7 +400,7 @@ public class BillNumberBean {
         }
         String sql = "SELECT count(b) FROM CancelledBill b where "
                 + " b.retired=false AND b.department=:dp AND b.billType= :btp";
-        System.out.println("sql");
+        //System.out.println("sql");
         String result;
         HashMap h = new HashMap();
         h.put("btp", type);
@@ -424,7 +424,7 @@ public class BillNumberBean {
         }
         String sql = "SELECT count(b) FROM CancelledBill b where b.retired=false "
                 + " AND b.department=:dep AND b.toDepartment=:tDep";
-        System.out.println("sql");
+        //System.out.println("sql");
         String result;
         HashMap hm = new HashMap();
         hm.put("dep", dep);
@@ -465,7 +465,7 @@ public class BillNumberBean {
 
         String sql = "SELECT count(b) FROM RefundBill b where b.retired=false "
                 + " AND b.department=:dep AND b.toDepartment=:tDep";
-        System.out.println("sql");
+        //System.out.println("sql");
         String result;
         HashMap hm = new HashMap();
         hm.put("dep", dep);

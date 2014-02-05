@@ -72,7 +72,7 @@ public class SheduleController implements Serializable {
             } else {
                 sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
             }
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getStaffFacade().findBySQL(sql);
         }
         return suggestions;
@@ -87,7 +87,7 @@ public class SheduleController implements Serializable {
         } else {
             sql = "select p from Staff p where p.retired=false order by p.person.name";
         }
-        System.out.println(sql);
+        //System.out.println(sql);
         suggestions = getStaffFacade().findBySQL(sql);
 
         return suggestions;
@@ -278,11 +278,11 @@ public class SheduleController implements Serializable {
 
         saveFee();
 
-        System.out.println("After saving");
-        System.out.println("df :" + getCurrent().getStaffFee());
-        System.out.println("dff :" + getCurrent().getStaffForiegnFee());
-        System.out.println("hf :" + getCurrent().getHospitalFee());
-        System.out.println("hff :" + getCurrent().getHospitalForiegnFee());
+        //System.out.println("After saving");
+        //System.out.println("df :" + getCurrent().getStaffFee());
+        //System.out.println("dff :" + getCurrent().getStaffForiegnFee());
+        //System.out.println("hf :" + getCurrent().getHospitalFee());
+        //System.out.println("hff :" + getCurrent().getHospitalForiegnFee());
 
         prepareAdd();
         getItems();

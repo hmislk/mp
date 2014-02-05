@@ -179,23 +179,23 @@ public  class InvestigationItemController implements Serializable {
     }
 
     public void removeInvestigationItemValue() {
-        System.out.println("1");
+        //System.out.println("1");
         if (current == null) {
             UtilityController.addErrorMessage("Nothing to Remove");
             return;
         }
-        System.out.println("1");
+        //System.out.println("1");
         if (removingItem == null) {
             UtilityController.addErrorMessage("Nothing to Remove");
             return;
         }
-        System.out.println("3");
+        //System.out.println("3");
         getIivFacade().remove(removingItem);
-        System.out.println("4");
+        //System.out.println("4");
         current.getInvestigationItemValues().remove(removingItem);
-        System.out.println("5");
+        //System.out.println("5");
         getEjbFacade().edit(current);
-        System.out.println("6");
+        //System.out.println("6");
 
         UtilityController.addSuccessMessage("Removed");
     }

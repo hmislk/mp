@@ -72,12 +72,12 @@ public class Patient implements Serializable {
 
     public Long getAgeInDays() {
         if (person == null) {
-            System.out.println("patient is null");
+            //System.out.println("patient is null");
             age = "";
             return 0l;
         }
         if (person.getDob() == null) {
-            System.out.println("dob is null");
+            //System.out.println("dob is null");
             age = "";
             return 0l;
         }

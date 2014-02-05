@@ -336,7 +336,7 @@ public class PracticeBookingController implements Serializable {
             } else {
                 sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
             }
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getStaffFacade().findBySQL(sql);
         }
         return suggestions;
@@ -351,7 +351,7 @@ public class PracticeBookingController implements Serializable {
         } else {
             sql = "select p from Doctor p where p.retired=false order by p.person.name";
         }
-        System.out.println(sql);
+        //System.out.println(sql);
         suggestions = getStaffFacade().findBySQL(sql);
 
         return suggestions;
@@ -394,7 +394,7 @@ public class PracticeBookingController implements Serializable {
     }
 
     public List<ServiceSession> getServiceSessions() {
-        System.out.println("gettint service sessions");
+        //System.out.println("gettint service sessions");
 
         if (serviceSessions == null) {
             serviceSessions = new ArrayList<>();
@@ -402,15 +402,15 @@ public class PracticeBookingController implements Serializable {
 
             if (staff != null) {
                 try {
-                    System.out.println("staff is " + staff);
+                    //System.out.println("staff is " + staff);
                     sql = "Select s From ServiceSession s where s.retired=false and s.staff.id=" + getStaff().getId() + " order by s.sessionWeekday";
                     List<ServiceSession> tmp = getServiceSessionFacade().findBySQL(sql);
-                    System.out.println("tmp is " + tmp.size());
+                    //System.out.println("tmp is " + tmp.size());
                     if (!tmp.isEmpty()) {
                         serviceSessions = getChannelBean().setSessionAt(tmp);
                     }
                 } catch (Exception e) {
-                    System.out.println("error 11 + " + e.getMessage());
+                    //System.out.println("error 11 + " + e.getMessage());
                 }
             }
         }

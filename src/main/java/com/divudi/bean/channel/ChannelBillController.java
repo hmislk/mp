@@ -487,7 +487,7 @@ public class ChannelBillController implements Serializable {
     }
 
     public void onTabChange(TabChangeEvent event) {
-        System.out.println("event : " + event.getTab().getId());
+        //System.out.println("event : " + event.getTab().getId());
         setPatientTabId(event.getTab().getId());
     }
 
@@ -996,13 +996,13 @@ public class ChannelBillController implements Serializable {
     }
 
     public String getPatientTabId() {
-        System.out.println("Getting Tab Id : " + patientTabId);
+        //System.out.println("Getting Tab Id : " + patientTabId);
         return patientTabId;
     }
 
     public void setPatientTabId(String patientTabId) {
         this.patientTabId = patientTabId;
-        System.out.println("Setting Tab Id : " + patientTabId);
+        //System.out.println("Setting Tab Id : " + patientTabId);
     }
 
     public boolean isForiegn() {

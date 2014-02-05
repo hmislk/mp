@@ -226,7 +226,7 @@ public class ReportsStock implements Serializable {
         records = new ArrayList<>();
         List<Institution> dealers = getDealerController().getItems();
         for (Institution i : dealers) {
-            System.out.println("i = " + i);
+            //System.out.println("i = " + i);
             m = new HashMap();
             m.put("ins", i);
             sql = "select sum(s.stock),sum(s.stock * s.itemBatch.purcahseRate),sum(s.stock * s.itemBatch.retailsaleRate)"
@@ -234,7 +234,7 @@ public class ReportsStock implements Serializable {
             Object[] objs = getStockFacade().findSingleAggregate(sql, m);
             if (objs[0] != null && (Double) objs[0] > 0) {
                 StockReportRecord r = new StockReportRecord();
-                System.out.println("objs = " + objs);
+                //System.out.println("objs = " + objs);
                 r.setInstitution(i);
                 r.setQty((Double) objs[0]);
                 r.setPurchaseValue((Double) objs[1]);

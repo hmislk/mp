@@ -86,7 +86,7 @@ public class PatientEncounterController implements Serializable {
         } else {
             Map m = new HashMap();
             sql = "select p from PatientEncounter p where p.retired=false and p.institutionType=:it and ((upper(p.name) like '%" + query.toUpperCase() + "%') or (upper(p.institutionCode) like '%" + query.toUpperCase() + "%') ) order by p.name";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql, m);
         }
         return suggestions;

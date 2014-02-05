@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -59,8 +60,8 @@ public class PharmacyErrorCheckingEjb {
         System.err.println(billType + " : " + value);
         return value;
     }
-    
-     public List<BillItem> getTotalBillItems(Department department, Item item) {
+
+    public List<BillItem> getTotalBillItems(Department department, Item item) {
         String sql = "Select p from BillItem p where"
                 + "  type(p.bill)!=:class and p.bill.createdAt is not null  and "
                 + " p.item=:itm and p.bill.billType!=:btp and p.bill.department=:dep ";
@@ -74,9 +75,7 @@ public class PharmacyErrorCheckingEjb {
         return getBillItemFacade().findBySQL(sql, hm);
 
     }
-    
-     
-     
+
     public double getTotalQtyByBillItem(BillType billType, Bill bill, Department department, Item item) {
         String sql = "Select abs(sum(p.qty)) from BillItem p where"
                 + "  type(p.bill)=:class and p.bill.createdAt is not null  and "
@@ -93,8 +92,7 @@ public class PharmacyErrorCheckingEjb {
         System.err.println(billType + " : " + value);
         return value;
     }
-    
-      
+
     public List<BillItem> getPreSaleBillItems(BillType billType, Bill bill, Department department, Item item) {
 //      String   sql = "select i  "
 //                + " from BillItem i where i.bill.department=:dep"
@@ -102,65 +100,61 @@ public class PharmacyErrorCheckingEjb {
 //                 + "  and i.bill.referenceBill.billType=:refType and "
 //                 + " i.bill.referenceBill.cancelled=false"
 //                + " and i.item=:itm and i.bill.billType=:btp ";        
-        
-                String sql = "Select p from BillItem p where"
+
+        String sql = "Select p from BillItem p where"
                 + "  type(p.bill)=:class and  "
                 + " p.item=:itm and p.bill.retired=false "
                 + " and p.bill.billType=:btp "
                 + " and p.bill.department=:dep ";
 
-
         HashMap hm = new HashMap();
         hm.put("itm", item);
-        hm.put("btp", billType);        
+        hm.put("btp", billType);
         hm.put("dep", department);
         hm.put("class", bill.getClass());
 
         //newly Added
-      //  hm.put("refType", BillType.PharmacySale);
-        List<BillItem> list=getBillItemFacade().findBySQL(sql, hm);
-        
-        if(list==null){
+        //  hm.put("refType", BillType.PharmacySale);
+        List<BillItem> list = getBillItemFacade().findBySQL(sql, hm);
+
+        if (list == null) {
             list = new ArrayList<>();
         }
-        
-        return list ;
+
+        return list;
 
     }
-    
-    
+
     public double getTotalQtyPreDiduction(BillType billType, Bill bill, Department department, Item item) {
 //        String sql = "Select abs(sum(p.qty)) from BillItem p where"
 //                + "  type(p.bill)=:class and  "
 //                + " p.item=:itm and (p.bill.retired!=false or p.retired!=false ) "
 //                + " and p.bill.billType=:btp "
 //                + " and p.bill.department=:dep ";
-        
-      String   sql = "select abs(sum(i.qty))  "
+
+        String sql = "select abs(sum(i.qty))  "
                 + " from BillItem i where i.bill.department=:dep"
                 + " and type(i.bill)=:class"
-                 + "  and i.bill.referenceBill.billType=:refType and "
-                 + " i.bill.referenceBill.cancelled=false"
-                + " and i.item=:itm and i.bill.billType=:btp ";                       
-
+                + "  and i.bill.referenceBill.billType=:refType and "
+                + " i.bill.referenceBill.cancelled=false"
+                + " and i.item=:itm and i.bill.billType=:btp ";
 
         HashMap hm = new HashMap();
         hm.put("itm", item);
-        hm.put("btp", billType);        
+        hm.put("btp", billType);
         hm.put("dep", department);
         hm.put("class", bill.getClass());
 
         //newly Added
         hm.put("refType", BillType.PharmacySale);
-        
-        
+
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
         System.err.println(billType + " : Sale Duduction " + value);
         return value;
     }
-    
-     public double getTotalQtyPreAdd(BillType billType, Bill bill, Department department, Item item) {
+
+    public double getTotalQtyPreAdd(BillType billType, Bill bill, Department department, Item item) {
         String sql = "Select abs(sum(p.pharmaceuticalBillItem.qty)) from BillItem p where"
                 + "  type(p.bill)=:class and p.qty!=0.0 and"
                 + " p.item=:itm and (p.bill.retired=true or p.retired=true  ) "
@@ -178,7 +172,6 @@ public class PharmacyErrorCheckingEjb {
         return value;
     }
 
-
     public List<BillItem> allBillItems(Item item, Department department) {
         String sql;
         Map m = new HashMap();
@@ -186,6 +179,18 @@ public class PharmacyErrorCheckingEjb {
         m.put("i", item);
         sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d";
         return getBillItemFacade().findBySQL(sql, m);
+    }
+
+    public List<BillItem> allBillItemsByDate(Item item, Department department, Date fromDate, Date toDate) {
+        String sql;
+        Map m = new HashMap();
+        m.put("d", department);
+        m.put("i", item);
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d "
+                + " and bi.createdAt between :fd and :td ";
+        return getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
     }
 
     public List<BillItem> allBillItems2(Item item, Department department) {

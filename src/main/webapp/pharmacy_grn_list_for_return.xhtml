@@ -19,7 +19,10 @@
                         <h:outputLabel value="To Date"/>
                         <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                         </p:calendar>
-                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createGrnTable}"/>
+                        <h:panelGroup>
+                            <p:commandButton id="btnSearch" ajax="false" value="Logged Institution Search" action="#{search.createGrnTable}"/>
+                            <p:commandButton id="btnSearch2" ajax="false" value="All Search" action="#{search.createGrnTableAllIns()}"/>
+                        </h:panelGroup>
                         <h:outputLabel/>
                         <p:spacer height="30"/><h:outputLabel/><h:outputLabel/>
                         <h:outputLabel/><h:outputLabel/><h:outputLabel/>

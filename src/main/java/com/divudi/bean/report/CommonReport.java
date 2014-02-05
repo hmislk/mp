@@ -429,7 +429,8 @@ public class CommonReport implements Serializable {
 
     private List<Bill> userBillsOwn(Bill billClass, BillType billType, WebUser webUser) {
         String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and b.billType = :btp"
-                + " and b.creater=:web and b.institution=:ins and b.createdAt between :fromDate and :toDate ";
+                + " and b.creater=:web and b.institution=:ins and b.createdAt between :fromDate and"
+                + " :toDate order by b.insId ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
@@ -443,8 +444,10 @@ public class CommonReport implements Serializable {
     }
 
     private List<Bill> userPharmacyBillsOwn(Bill billClass, BillType billType, WebUser webUser) {
-        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and b.billType = :btp"
-                + " and b.creater=:web and b.referenceBill.institution=:ins and b.createdAt between :fromDate and :toDate ";
+        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false "
+                + " and b.billType = :btp"
+                + " and b.creater=:web and b.referenceBill.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate order by b.deptId ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
@@ -459,9 +462,11 @@ public class CommonReport implements Serializable {
     }
 
     private List<Bill> userPharmacyBillsOther(Bill billClass, BillType billType, WebUser webUser) {
-        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and b.billType = :btp"
-                + " and b.creater=:web and b.referenceBill.institution!=:ins and b.createdAt between :fromDate"
-                + " and :toDate ";
+        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and "
+                + "  b.billType = :btp"
+                + " and b.creater=:web and b.referenceBill.institution!=:ins "
+                + " and b.createdAt between :fromDate"
+                + " and :toDate order by b.deptId ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());

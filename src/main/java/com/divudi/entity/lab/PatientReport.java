@@ -128,7 +128,8 @@ public class PatientReport implements Serializable {
 
     public List<PatientReportItemValue> getPatientReportItemOfValueType() {
         if (patientReportItemOfValueType == null) {
-            patientReportItemOfValueType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.Value)), getPatientReportItemValues());
+            patientReportItemOfValueType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), 
+                    Matchers.equalTo(InvestigationItemType.Value)), getPatientReportItemValues());
         }
         return patientReportItemOfValueType;
     }

@@ -12,4 +12,7 @@
     </jdbc-connection-pool>
     <jdbc-resource enabled="true" jndi-name="dsHmis12" object-type="user" pool-name="mysql_hmis_rootPool"/>
     <jdbc-resource enabled="true" jndi-name="ds12" object-type="user" pool-name="mysql_hmis_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="dsHmis11" object-type="user" pool-name="mysql_hmis_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="ff" object-type="user" pool-name="mysql_hmis_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="te" object-type="user" pool-name="mysql_hmis_rootPool"/>
 </resources>

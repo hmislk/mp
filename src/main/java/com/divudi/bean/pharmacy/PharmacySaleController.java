@@ -49,7 +49,8 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.view.ViewScoped;;
+import javax.faces.view.ViewScoped;
+;
 import javax.inject.Inject;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
@@ -58,6 +59,8 @@ import org.primefaces.event.TabChangeEvent;
  *
  * @author Buddhika
  */
+
+
 @Named
 @ViewScoped
 public class PharmacySaleController implements Serializable {
@@ -601,8 +604,6 @@ public class PharmacySaleController implements Serializable {
         getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        getPreBill().setBillDate(Calendar.getInstance().getTime());
-        getPreBill().setBillTime(Calendar.getInstance().getTime());
         getPreBill().setCreatedAt(Calendar.getInstance().getTime());
         getPreBill().setCreater(getSessionController().getLoggedUser());
 
@@ -865,13 +866,12 @@ public class PharmacySaleController implements Serializable {
 //testing
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
-        
         b.setRetired(true);
         b.setRetiredAt(new Date());
         b.setRetireComments("Remove From Bill ");
         b.setRetirer(getSessionController().getLoggedUser());
         getBillItemFacade().edit(b);
-        
+
         b.getPharmaceuticalBillItem().setQtyInUnit(0);
         getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
 

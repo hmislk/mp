@@ -113,7 +113,7 @@ public class BillNumberBean {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
                 + " b.institution=:ins AND b.billType=:btp and"
-                + " b.createdAt is not null and b.paymentScheme is not null";
+                + " b.createdAt is not null and b.billTime is not null";
         String result = "";
         HashMap hm = new HashMap();
         hm.put("ins", ins);
@@ -208,7 +208,7 @@ public class BillNumberBean {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
                 + " b.department=:dep and b.createdAt is not null AND b.billType=:btp "
-                + " and b.paymentScheme is not null";
+                + " and b.billDate is not null";
         String result = "";
         HashMap hm = new HashMap();
         hm.put("dep", dep);

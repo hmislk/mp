@@ -49,7 +49,8 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.view.ViewScoped;;
+import javax.faces.view.ViewScoped;
+;
 import javax.inject.Inject;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
@@ -58,6 +59,8 @@ import org.primefaces.event.TabChangeEvent;
  *
  * @author Buddhika
  */
+
+
 @Named
 @ViewScoped
 public class PharmacySaleController implements Serializable {
@@ -579,13 +582,15 @@ public class PharmacySaleController implements Serializable {
         return false;
     }
 
-    private void savePreBill(Patient pt) {
+    private void savePreBillFinally(Patient pt) {
         getPreBill().setPatient(pt);
 
-        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
-        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHSAL));
+        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
+        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
+        getPreBill().setBillDate(new Date());
+        getPreBill().setBillTime(new Date());
         getPreBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
         getPreBill().setPaymentMethod(paymentScheme.getPaymentMethod());
@@ -596,13 +601,11 @@ public class PharmacySaleController implements Serializable {
         getBillFacade().edit(getPreBill());
     }
 
-    private void savePreBill() {
+    private void savePreBillInitially() {
         calculateAllRates();
         getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        getPreBill().setBillDate(Calendar.getInstance().getTime());
-        getPreBill().setBillTime(Calendar.getInstance().getTime());
         getPreBill().setCreatedAt(Calendar.getInstance().getTime());
         getPreBill().setCreater(getSessionController().getLoggedUser());
 
@@ -735,7 +738,7 @@ public class PharmacySaleController implements Serializable {
             return;
         }
         Patient pt = savePatient();
-        savePreBill(pt);
+        savePreBillFinally(pt);
 //        savePreBillItems();
 
         setPrintBill(getBillFacade().find(getPreBill().getId()));
@@ -753,7 +756,7 @@ public class PharmacySaleController implements Serializable {
         }
         Patient pt = savePatient();
         getPreBill().setPaidAmount(getPreBill().getTotal());
-        savePreBill(pt);
+        savePreBillFinally(pt);
 
         saveSaleBill(pt);
         saveSaleBillItems();
@@ -821,7 +824,7 @@ public class PharmacySaleController implements Serializable {
         billItem.setBill(getPreBill());
 
         if (getPreBill().getId() == null) {
-            savePreBill();
+            savePreBillInitially();
         }
 
         savePreBillItems(billItem);
@@ -865,13 +868,12 @@ public class PharmacySaleController implements Serializable {
 //testing
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
-        
         b.setRetired(true);
         b.setRetiredAt(new Date());
         b.setRetireComments("Remove From Bill ");
         b.setRetirer(getSessionController().getLoggedUser());
         getBillItemFacade().edit(b);
-        
+
         b.getPharmaceuticalBillItem().setQtyInUnit(0);
         getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
 

@@ -59,8 +59,8 @@
                                 </p:panel>
 
                                 <p:panel header="Values"  rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType ne 'Microbiology'}" >
-                                    <p:dataTable id="tblVals" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pv" rowStyleClass="#{pv.investigationItem.ixItemType eq 'Value' ? 'displayRow' : 'hideRow'}"   >
-                                        <p:column   >
+                                    <p:dataTable id="tblVals" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pv" rowStyleClass="#{pv.investigationItem.ixItemType eq 'Value' ? 'displayRow' : 'hideRow'}" emptyMessage="No values added in the report format."   >
+                                        <p:column style="min-width: 200px!important;"   >
                                             <h:outputLabel value="#{pv.investigationItem.name}" rendered="#{pv.investigationItem.ixItemType eq 'Value'}"></h:outputLabel>
                                         </p:column>
                                         <p:column >
@@ -118,9 +118,10 @@
                                         </p:column>
                                     </p:dataTable>
                                 </p:panel>
-                                <h:panelGroup  rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType ne 'Microbiology'}" >
+                                <h:panelGroup  rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType ne 'Microbiology'}"   >
                                     <p:panel header="Calculations" >
-                                        <p:dataTable emptyMessage="No Calculations"  value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvc"  rowStyleClass="#{pv.investigationItem.ixItemType eq 'Calculation' ? 'displayRow' : 'hideRow'}"   >
+                                        <p:dataTable  value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvc"  rowStyleClass="#{pvc.investigationItem.ixItemType eq 'Calculation' ? 'displayRow' : 'hideRow'}"   emptyMessage="No Calculations for this report."  >
+                                            
                                             <p:column >
                                                 <h:outputLabel value="#{pvc.investigationItem.name}" ></h:outputLabel>
                                             </p:column>
@@ -142,7 +143,7 @@
                                         </p:dataTable>
                                     </p:panel>
                                     <p:panel header="Flags" >
-                                        <p:dataTable emptyMessage="No Flags" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvf" rowStyleClass="#{pv.investigationItem.ixItemType eq 'Flag' ? 'displayRow' : 'hideRow'}"  >
+                                        <p:dataTable  value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvf" rowStyleClass="#{pvf.investigationItem.ixItemType eq 'Flag' ? 'displayRow' : 'hideRow'}"  emptyMessage="No Flags for this report."  >
                                             <p:column >
                                                 <h:outputLabel value="#{pvf.investigationItem.name}" ></h:outputLabel>
                                             </p:column>
@@ -159,7 +160,7 @@
                                     </p:panel>
 
                                     <p:panel header="Dynamic Labels" >
-                                        <p:dataTable emptyMessage="No Dynamic Labels" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvd"  rowStyleClass="#{pv.investigationItem.ixItemType eq 'DynamicLabel' ? 'displayRow' : 'hideRow'}"  >
+                                        <p:dataTable  value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvd"  rowStyleClass="#{pvd.investigationItem.ixItemType eq 'DynamicLabel' ? 'displayRow' : 'hideRow'}" emptyMessage="No Dynamic Labels for this report."   >
                                             <p:column >
                                                 <h:outputLabel value="#{pvd.investigationItem.name}" ></h:outputLabel>
                                             </p:column>

@@ -31,9 +31,15 @@
                                     </p:commandButton>
                                     <p:commandButton styleClass="nonPrintBlock"  id="btnApprove"  disabled ="#{!(webUserController.hasPrivilege('LabAutherizing') eq true and patientReportController.currentPatientReport.dataEntered eq true )}"   value="Approve" action="#{patientReportController.approvePatientReport()}" ajax="false" >
                                     </p:commandButton>
+                                    <p:commandButton styleClass="nonPrintBlock"  ajax="false" value="Print" onclick="window.print();" actionListener="#{patientReportController.printPatientReport()}" />
+                                    
+                                    <p:separator></p:separator>
+                                    
+                                    <p:commandButton  styleClass="nonPrintBlock"  value="Patient Report Search" action="#{patientReportController.patientReportSearch}" ajax="false" >
+                                    </p:commandButton>
                                     <p:commandButton  styleClass="nonPrintBlock"  value="Report Search" action="lab_search_for_reporting" ajax="false" >
                                     </p:commandButton>
-                                    <p:commandButton styleClass="nonPrintBlock"  ajax="false" value="Print" onclick="window.print();" actionListener="#{patientReportController.printPatientReport()}" />
+                                    
                                 </h:panelGrid>
                             </f:facet>
 
@@ -41,7 +47,6 @@
 
                                 <p:panel header="Patient Details" styleClass="alignTop" >
                                     <p:panelGrid columns="2" >
-
                                         <h:outputLabel value="Name" ></h:outputLabel>
                                         <h:outputLabel value="#{patientReportController.currentPatientReport.patientInvestigation.patient.person.nameWithTitle}" ></h:outputLabel>
                                         <h:outputLabel value="Age" ></h:outputLabel>
@@ -50,9 +55,6 @@
                                         <h:outputLabel value="#{patientReportController.currentPatientReport.patientInvestigation.patient.person.sex}" ></h:outputLabel>
                                         <h:outputLabel value="Investigation" ></h:outputLabel>
                                         <h:outputLabel value="#{patientReportController.currentPatientReport.item.name}" ></h:outputLabel>
-
-
-
                                     </p:panelGrid>
                                 </p:panel>
 
@@ -274,7 +276,6 @@
                                             <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
                                         </p:graphicImage>
 
-
                                     </div>
                                 </ui:repeat>
 
@@ -369,6 +370,8 @@
                                             <p:graphicImage rendered="#{myCli.reportItemType eq 'AutherizedSignature' and myCli.retired eq false }"    value="#{staffImageController.signatureById}" style="width: #{myCli.cssWidth}; max-height: 50px!important;"  >
                                                 <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
                                             </p:graphicImage>
+                                            
+                                            
                                         </h:panelGroup>
 
                                     </div>

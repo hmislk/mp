@@ -68,7 +68,7 @@
             </div>
 
             <div >
-                <p:dataTable styleClass="noBorder normalFont" rowIndexVar="rowIndex"  value="#{cc.attrs.bill.transBillItems}" var="bip" >
+                <p:dataTable styleClass="noBorder normalFont" rowIndexVar="rowIndex"  value="#{cc.attrs.bill.billItems}" sortBy="#{bip.searialNo}" var="bip" >
                     <p:column>
                         <f:facet name="header">
                             <h:outputLabel value="No"/>

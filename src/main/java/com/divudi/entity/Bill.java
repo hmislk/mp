@@ -25,7 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
@@ -49,6 +49,7 @@ public class Bill implements Serializable {
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<BillFee> billFees = new ArrayList<>();
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("searialNo")
     List<BillItem> billItems;
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<BillComponent> billComponents = new ArrayList<>();
@@ -77,6 +78,7 @@ public class Bill implements Serializable {
             transBillItems = new ArrayList<>();
         }
         return transBillItems;
+
     }
 
     public void invertValue(Bill bill) {

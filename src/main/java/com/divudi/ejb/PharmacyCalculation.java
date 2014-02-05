@@ -136,7 +136,7 @@ public class PharmacyCalculation {
 
         double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println("GETTING TOTAL QTY " + value);
+        //System.err.println("GETTING TOTAL QTY " + value);
         return value;
     }
 
@@ -151,7 +151,7 @@ public class PharmacyCalculation {
 
         double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println("GETTING TOTAL QTY " + value);
+        //System.err.println("GETTING TOTAL QTY " + value);
         return value;
     }
 
@@ -218,13 +218,13 @@ public class PharmacyCalculation {
 
         double recieveNet = Math.abs(billed) - Math.abs(cancelled);
         double retuernedNet = Math.abs(returnedB) - Math.abs(returnedC);
-        System.err.println("BILLED " + billed);
-        System.err.println("Cancelled " + cancelled);
-        System.err.println("recieveNet " + recieveNet);
-        System.err.println("Refunded Bill " + returnedB);
-        System.err.println("Refunded Cancelld " + returnedC);
-        System.err.println("retuernedNet " + retuernedNet);
-        System.err.println("Cal Qty " + (Math.abs(recieveNet) - Math.abs(retuernedNet)));
+        //System.err.println("BILLED " + billed);
+        //System.err.println("Cancelled " + cancelled);
+        //System.err.println("recieveNet " + recieveNet);
+        //System.err.println("Refunded Bill " + returnedB);
+        //System.err.println("Refunded Cancelld " + returnedC);
+        //System.err.println("retuernedNet " + retuernedNet);
+        //System.err.println("Cal Qty " + (Math.abs(recieveNet) - Math.abs(retuernedNet)));
 
         return (Math.abs(recieveNet) - Math.abs(retuernedNet));
     }
@@ -236,9 +236,9 @@ public class PharmacyCalculation {
 
         double netQty = grns - grnReturn;
 
-        System.err.println("GRN " + grns);
-        System.err.println("GRN Return " + grnReturn);
-        System.err.println("Net " + netQty);
+        //System.err.println("GRN " + grns);
+        //System.err.println("GRN Return " + grnReturn);
+        //System.err.println("Net " + netQty);
 
         return netQty;
     }
@@ -247,7 +247,7 @@ public class PharmacyCalculation {
 
         double returnBill = getTotalQty(bil, BillType.PharmacySale, new RefundBill());
 
-        System.err.println("RETURN " + returnBill);
+        //System.err.println("RETURN " + returnBill);
 
         return bil.getQty() - returnBill;
     }
@@ -256,7 +256,7 @@ public class PharmacyCalculation {
 
         double returnBill = getTotalQty(bil, BillType.PharmacyPre, new RefundBill());
 
-        System.err.println("RETURN " + returnBill);
+        //System.err.println("RETURN " + returnBill);
 
         return bil.getQty() - returnBill;
     }
@@ -267,10 +267,10 @@ public class PharmacyCalculation {
 //        double cancelled = getTotalQty(po.getBillItem(),BillType.PharmacyGrnBill,new CancelledBill());;
 //        double returned = getTotalQty(po.getBillItem(),BillType.PharmacyGrnReturn,new BilledBill());
 //
-//        System.err.println("BILLED " + billed);
-//        System.err.println("Cancelled " + cancelled);
-//        System.err.println("Refunded " + returned);
-//        System.err.println("Cal Qty " + (billed - (cancelled + returned)));
+//        //System.err.println("BILLED " + billed);
+//        //System.err.println("Cancelled " + cancelled);
+//        //System.err.println("Refunded " + returned);
+//        //System.err.println("Cal Qty " + (billed - (cancelled + returned)));
 //
 //        return billed - (cancelled + returned);
 //    }
@@ -332,9 +332,9 @@ public class PharmacyCalculation {
         remains = poQty - calQty(po);
         grnQty = ph.getQtyInUnit();
 
-        System.err.println("poQty : " + poQty);
-        System.err.println("grnQty : " + grnQty);
-        System.err.println("remain : " + remains);
+        //System.err.println("poQty : " + poQty);
+        //System.err.println("grnQty : " + grnQty);
+        //System.err.println("remain : " + remains);
 
         return remains;
 
@@ -352,9 +352,9 @@ public class PharmacyCalculation {
         remains = Math.abs(poQty) - calQty(po);
         grnQty = Math.abs(ph.getQtyInUnit());
 
-        System.err.println("poQty : " + poQty);
-        System.err.println("grnQty : " + grnQty);
-        System.err.println("remain : " + remains);
+        //System.err.println("poQty : " + poQty);
+        //System.err.println("grnQty : " + grnQty);
+        //System.err.println("remain : " + remains);
 
         if (remains < grnQty) {
             return true;
@@ -374,9 +374,9 @@ public class PharmacyCalculation {
         newPrice = i.getPurchaseRate();
 
         double max = oldPrice + (oldPrice * (getPharmacyBean().getMaximumPurchasePriceChange() / 100.0));
-        System.err.println("Old Pur Price : " + oldPrice);
-        System.err.println("New Pur Price : " + newPrice);
-        System.err.println("MAX Price : " + max);
+        //System.err.println("Old Pur Price : " + oldPrice);
+        //System.err.println("New Pur Price : " + newPrice);
+        //System.err.println("MAX Price : " + max);
 
         if (max < newPrice) {
             return true;
@@ -394,13 +394,13 @@ public class PharmacyCalculation {
 //        oldPrice = tmp.getRetailRate();
 //        newPrice = i.getRetailRate();
 //
-////        System.err.println("Old Ret Price : " + oldPrice);
-////        System.err.println("New Ret Price : " + newPrice);
+////        //System.err.println("Old Ret Price : " + oldPrice);
+////        //System.err.println("New Ret Price : " + newPrice);
 //        double max = oldPrice + (oldPrice * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
 //
-//        System.err.println("Old Ret Price : " + oldPrice);
-//        System.err.println("New Ret Price : " + newPrice);
-//        System.err.println("MAX Price : " + max);
+//        //System.err.println("Old Ret Price : " + oldPrice);
+//        //System.err.println("New Ret Price : " + newPrice);
+//        //System.err.println("MAX Price : " + max);
 //
 //        if (max < newPrice) {
 //            return true;
@@ -412,9 +412,9 @@ public class PharmacyCalculation {
 
         double max = i.getPurchaseRate() + (i.getPurchaseRate() * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
 
-        System.err.println("Purchase Price : " + i.getPurchaseRate());
-        System.err.println("Retail Price : " + i.getRetailRate());
-        System.err.println("MAX Price : " + max);
+        //System.err.println("Purchase Price : " + i.getPurchaseRate());
+        //System.err.println("Retail Price : " + i.getRetailRate());
+        //System.err.println("MAX Price : " + max);
 
         if (max < i.getRetailRate()) {
             return true;
@@ -424,7 +424,7 @@ public class PharmacyCalculation {
     }
 
     public ItemBatch saveItemBatch(BillItem tmp) {
-        System.err.println("Save Item Batch");
+        //System.err.println("Save Item Batch");
         ItemBatch itemBatch = new ItemBatch();
         Item itm = tmp.getItem();
 
@@ -435,8 +435,8 @@ public class PharmacyCalculation {
         double purchase = tmp.getPharmaceuticalBillItem().getPurchaseRateInUnit();
         double retail = tmp.getPharmaceuticalBillItem().getRetailRateInUnit();
 
-        System.err.println("Puchase :  " + purchase);
-        System.err.println("Puchase :  " + retail);
+        //System.err.println("Puchase :  " + purchase);
+        //System.err.println("Puchase :  " + retail);
 
         itemBatch.setDateOfExpire(tmp.getPharmaceuticalBillItem().getDoe());
         itemBatch.setBatchNo(tmp.getPharmaceuticalBillItem().getStringValue());
@@ -456,18 +456,18 @@ public class PharmacyCalculation {
         hash.put("ret", itemBatch.getRetailsaleRate());
         hash.put("pur", itemBatch.getPurcahseRate());
         List<ItemBatch> i = getItemBatchFacade().findBySQL(sql, hash, TemporalType.TIMESTAMP);
-        System.err.println("Size " + i.size());
+        //System.err.println("Size " + i.size());
         if (i.size() > 0) {
-//            System.err.println("Edit");
+//            //System.err.println("Edit");
 //            i.get(0).setBatchNo(i.get(0).getBatchNo());
 //            i.get(0).setDateOfExpire(i.get(0).getDateOfExpire());
             return i.get(0);
         } else {
-            System.err.println("Create");
+            //System.err.println("Create");
             getItemBatchFacade().create(itemBatch);
         }
 
-        System.err.println("ItemBatc Id " + itemBatch.getId());
+        //System.err.println("ItemBatc Id " + itemBatch.getId());
         return itemBatch;
     }
 

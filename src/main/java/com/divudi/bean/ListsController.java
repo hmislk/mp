@@ -5,7 +5,7 @@
  */
 package com.divudi.bean;
 
-import ch.lambdaj.Lambda;
+//import ch.lambdaj.Lambda;
 import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
@@ -21,7 +21,7 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TemporalType;
-import org.hamcrest.Matchers;
+//import org.hamcrest.Matchers;
 
 /**
  *
@@ -76,10 +76,6 @@ public class ListsController {
         this.items = items;
     }
 
-    public List<PharmaceuticalItem> completeAmpsAndAmpps(String query) {
-        return Lambda.filter(Lambda.having(Lambda.on(Item.class).getName().toUpperCase(), Matchers.containsString(query.toUpperCase())), getAmpsAndAmpp());
-    }
-
     
 
     List<Item> pharmacyItems;
@@ -97,10 +93,6 @@ public class ListsController {
             pharmacyItems = getItemFacade().findBySQL(sql, tmpMap);
         }
         return pharmacyItems;
-    }
-
-    public List<Item> completePharmacyItem(String query) {
-        return Lambda.filter(Lambda.having(Lambda.on(Item.class).getName().toUpperCase(), Matchers.containsString(query.toUpperCase())), getPharmacyItem());
     }
 
     

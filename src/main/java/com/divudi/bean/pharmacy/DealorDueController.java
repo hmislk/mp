@@ -155,16 +155,16 @@ public class DealorDueController implements Serializable {
     }
 
     public List<InstitutionBills> getItems() {
-        System.err.println("GET ITEMS");
+        //System.err.println("GET ITEMS");
         Set<Institution> setIns = new HashSet<>();
 
         for (Institution ins : getGrnDealors()) {
-            System.err.println("Ins Nme " + ins.getName());
+            //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 
         for (Institution ins : getGrnReturnDealors()) {
-            System.err.println("Ins Nme " + ins.getName());
+            //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 
@@ -177,7 +177,7 @@ public class DealorDueController implements Serializable {
             newIns.setBills(lst);
 
             for (Bill b : lst) {
-                System.err.println("Bill " + b.getId());
+                //System.err.println("Bill " + b.getId());
                 newIns.setTotal(newIns.getTotal() + b.getNetTotal());
                 newIns.setPaidTotal(newIns.getPaidTotal() + b.getPaidAmount());
             }
@@ -193,12 +193,12 @@ public class DealorDueController implements Serializable {
         Set<Institution> setIns = new HashSet<>();
 
         for (Institution ins : getGrnDealors()) {
-            //   System.err.println("Ins Nme " + ins.getName());
+            //   //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 
         for (Institution ins : getGrnReturnDealors()) {
-            // System.err.println("Ins Nme " + ins.getName());
+            // //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 

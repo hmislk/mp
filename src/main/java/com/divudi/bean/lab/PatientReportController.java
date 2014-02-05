@@ -149,58 +149,58 @@ public class PatientReportController implements Serializable {
         return "lab_patient_report";
     }
 
-    public List<PatientReportItemValue> getPatientReportItemValuesValues() {
-        if (currentPatientReport != null) {
-            patientReportItemValuesValues = currentPatientReport.getPatientReportItemOfValueType();
-        } else {
-            patientReportItemValuesValues = new ArrayList<>();
-        }
-        return patientReportItemValuesValues;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemValuesValues() {
+//        if (currentPatientReport != null) {
+//            patientReportItemValuesValues = currentPatientReport.getPatientReportItemOfValueType();
+//        } else {
+//            patientReportItemValuesValues = new ArrayList<>();
+//        }
+//        return patientReportItemValuesValues;
+//    }
 
-    public void setPatientReportItemValuesValues(List<PatientReportItemValue> patientReportItemValuesValues) {
-        this.patientReportItemValuesValues = patientReportItemValuesValues;
-    }
+//    public void setPatientReportItemValuesValues(List<PatientReportItemValue> patientReportItemValuesValues) {
+//        this.patientReportItemValuesValues = patientReportItemValuesValues;
+//    }
+//
+//    public List<PatientReportItemValue> getPatientReportItemValuesFlags() {
+//        if (currentPatientReport != null) {
+//            patientReportItemValuesFlags = currentPatientReport.getPatientReportItemOfFlagType();
+//        } else {
+//            patientReportItemValuesFlags = new ArrayList<>();
+//        }
+//
+//        return patientReportItemValuesFlags;
+//    }
 
-    public List<PatientReportItemValue> getPatientReportItemValuesFlags() {
-        if (currentPatientReport != null) {
-            patientReportItemValuesFlags = currentPatientReport.getPatientReportItemOfFlagType();
-        } else {
-            patientReportItemValuesFlags = new ArrayList<>();
-        }
+//    public void setPatientReportItemValuesFlags(List<PatientReportItemValue> patientReportItemValuesFlags) {
+//        this.patientReportItemValuesFlags = patientReportItemValuesFlags;
+//    }
 
-        return patientReportItemValuesFlags;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemValuesDynamicLabels() {
+//        if (currentPatientReport != null) {
+//            patientReportItemValuesDynamicLabels = currentPatientReport.getPatientReportItemOfDynamicLabelType();
+//        } else {
+//            patientReportItemValuesDynamicLabels = new ArrayList<>();
+//        }
+//        return patientReportItemValuesDynamicLabels;
+//    }
+//
+//    public void setPatientReportItemValuesDynamicLabels(List<PatientReportItemValue> patientReportItemValuesDynamicLabels) {
+//        this.patientReportItemValuesDynamicLabels = patientReportItemValuesDynamicLabels;
+//    }
 
-    public void setPatientReportItemValuesFlags(List<PatientReportItemValue> patientReportItemValuesFlags) {
-        this.patientReportItemValuesFlags = patientReportItemValuesFlags;
-    }
-
-    public List<PatientReportItemValue> getPatientReportItemValuesDynamicLabels() {
-        if (currentPatientReport != null) {
-            patientReportItemValuesDynamicLabels = currentPatientReport.getPatientReportItemOfDynamicLabelType();
-        } else {
-            patientReportItemValuesDynamicLabels = new ArrayList<>();
-        }
-        return patientReportItemValuesDynamicLabels;
-    }
-
-    public void setPatientReportItemValuesDynamicLabels(List<PatientReportItemValue> patientReportItemValuesDynamicLabels) {
-        this.patientReportItemValuesDynamicLabels = patientReportItemValuesDynamicLabels;
-    }
-
-    public List<PatientReportItemValue> getPatientReportItemValuesCalculations() {
-        if (currentPatientReport != null) {
-            patientReportItemValuesCalculations = currentPatientReport.getPatientReportItemOfCalculationType();
-        } else {
-            patientReportItemValuesCalculations = new ArrayList<>();
-        }
-        return patientReportItemValuesCalculations;
-    }
-
-    public void setPatientReportItemValuesCalculations(List<PatientReportItemValue> patientReportItemValuesCalculations) {
-        this.patientReportItemValuesCalculations = patientReportItemValuesCalculations;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemValuesCalculations() {
+//        if (currentPatientReport != null) {
+//            patientReportItemValuesCalculations = currentPatientReport.getPatientReportItemOfCalculationType();
+//        } else {
+//            patientReportItemValuesCalculations = new ArrayList<>();
+//        }
+//        return patientReportItemValuesCalculations;
+//    }
+//
+//    public void setPatientReportItemValuesCalculations(List<PatientReportItemValue> patientReportItemValuesCalculations) {
+//        this.patientReportItemValuesCalculations = patientReportItemValuesCalculations;
+//    }
 
     public String getStrEnterVal() {
         System.out.println("strEnterVal = " + strEnterVal);
@@ -444,9 +444,9 @@ public class PatientReportController implements Serializable {
         for (TestFlag f : fs) {
 
             Long a = v.getPatient().getAgeInDays();
-            System.err.println("Age is a" + a);
-            System.err.println("From Age is " + f.getFromAge());
-            System.err.println("To Age is " + f.getToAge());
+            //System.err.println("Age is a" + a);
+            //System.err.println("From Age is " + f.getFromAge());
+            //System.err.println("To Age is " + f.getToAge());
 
             System.out.println("flah low message " + f.getLowMessage());
 
@@ -684,7 +684,7 @@ public class PatientReportController implements Serializable {
     }
 
     public PatientReport createNewPatientReport(PatientInvestigation pi, Investigation ix) {
-        System.err.println("creating a new patient report");
+        //System.err.println("creating a new patient report");
         PatientReport r = null;
         if (pi != null && pi.getId() != null && ix != null) {
             r = new PatientReport();
@@ -707,7 +707,7 @@ public class PatientReportController implements Serializable {
     }
 
     public PatientReport createNewMicrobiologyReport(PatientInvestigation pi, Investigation ix) {
-        System.err.println("creating a new microbiology report");
+        //System.err.println("creating a new microbiology report");
         PatientReport r = null;
         if (pi != null && pi.getId() != null && ix != null) {
             r = new PatientReport();

@@ -280,7 +280,7 @@ public class BillBean {
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
         lstBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        System.err.println("Search : " + sql);
+        //System.err.println("Search : " + sql);
         if (lstBills == null) {
             lstBills = new ArrayList<>();
         }

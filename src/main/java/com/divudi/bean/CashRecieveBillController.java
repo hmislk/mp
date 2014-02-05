@@ -325,13 +325,13 @@ public class CashRecieveBillController implements Serializable {
     private void updateReferenceBill(BillItem tmp) {
         double ballance, refBallance = 0;
 
-        System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
-        System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
-        System.err.println("Net Value " + tmp.getNetValue());
+        //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
+        //System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
+        //System.err.println("Net Value " + tmp.getNetValue());
 
         refBallance = tmp.getReferenceBill().getNetTotal() - tmp.getReferenceBill().getPaidAmount();
 
-        System.err.println("refBallance " + refBallance);
+        //System.err.println("refBallance " + refBallance);
 
         //   ballance=refBallance-tmp.getNetValue();
         if (refBallance > tmp.getNetValue()) {
@@ -339,7 +339,7 @@ public class CashRecieveBillController implements Serializable {
         } else {
             tmp.getReferenceBill().setPaidAmount(refBallance - tmp.getNetValue());
         }
-        System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
+        //System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
 
 //        if (tmp.getReferenceBill().getPaidAmount() != 0.0) {
 //            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());

@@ -108,10 +108,10 @@ public class CashSummeryController implements Serializable {
 
         countTotal = billed - (refunded + cancelled);
 
-        //  System.err.println("Billed : " + billed);
-        //   System.err.println("Cancelled : " + cancelled);
-        //   System.err.println("Refunded : " + refunded);
-        //   System.err.println("Gross Tot : " + countTotal);
+        //  //System.err.println("Billed : " + billed);
+        //   //System.err.println("Cancelled : " + cancelled);
+        //   //System.err.println("Refunded : " + refunded);
+        //   //System.err.println("Gross Tot : " + countTotal);
         return countTotal;
     }
 
@@ -351,11 +351,11 @@ public class CashSummeryController implements Serializable {
     private double pharmacyTotal;
 
     public List<DailyCash> getPharmacySale() {
-        System.err.println("GETTING PHARMACY SALE");
+        //System.err.println("GETTING PHARMACY SALE");
         List<DailyCash> list = new ArrayList<>();
         pharmacyTotal = 0;
         for (Department d : getDepartmentOfInstitution()) {
-            System.err.println("DEP " + d.getName());
+            //System.err.println("DEP " + d.getName());
             String sql = "Select sum(b.netTotal) from Bill b where b.retired=false and  b.billType=:bType and b.referenceBill.department=:dep "
                     + " and b.createdAt between :fromDate and :toDate and (b.paymentScheme.paymentMethod = :pm1 or  b.paymentScheme.paymentMethod = :pm2 or "
                     + " b.paymentScheme.paymentMethod = :pm3 or  b.paymentScheme.paymentMethod = :pm4)";
@@ -371,7 +371,7 @@ public class CashSummeryController implements Serializable {
             double netTotal = getBillFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
 
             if (netTotal != 0) {
-                System.err.println("NET " + netTotal);
+                //System.err.println("NET " + netTotal);
                 pharmacyTotal += netTotal;
                 DailyCash dl = new DailyCash();
                 dl.setDepartment(d);

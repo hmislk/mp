@@ -64,10 +64,10 @@ public class EnumController implements Serializable {
 
     public boolean checkPaymentScheme(PaymentScheme scheme, String paymentMathod) {
         if (scheme != null && scheme.getPaymentMethod() != null) {
-            System.err.println("Payment Scheme : " + scheme.getPaymentMethod());
-            System.err.println("Payment Method : " + PaymentMethod.valueOf(paymentMathod));
+            //System.err.println("Payment Scheme : " + scheme.getPaymentMethod());
+            //System.err.println("Payment Method : " + PaymentMethod.valueOf(paymentMathod));
             if (scheme.getPaymentMethod().equals(PaymentMethod.valueOf(paymentMathod))) {
-                System.err.println("Returning True");
+                //System.err.println("Returning True");
                 return true;
             } else {
                 return false;
@@ -80,10 +80,10 @@ public class EnumController implements Serializable {
     
     public boolean checkPaymentScheme(String paymentMathod) {
         if (getPaymentScheme() != null && getPaymentScheme().getPaymentMethod() != null) {
-            System.err.println("Payment Scheme : " +getPaymentScheme().getPaymentMethod());
-            System.err.println("Payment Method : " + PaymentMethod.valueOf(paymentMathod));
+            //System.err.println("Payment Scheme : " +getPaymentScheme().getPaymentMethod());
+            //System.err.println("Payment Method : " + PaymentMethod.valueOf(paymentMathod));
             if (getPaymentScheme().getPaymentMethod().equals(PaymentMethod.valueOf(paymentMathod))) {
-                System.err.println("Returning True");
+                //System.err.println("Returning True");
                 return true;
             } else {
                 return false;
@@ -96,10 +96,10 @@ public class EnumController implements Serializable {
 
     public boolean checkPaymentMethod(PaymentMethod paymentMethod, String paymentMathodStr) {
         if (paymentMethod != null) {
-            System.err.println("Payment method : " + paymentMethod);
-            System.err.println("Payment Method String : " + PaymentMethod.valueOf(paymentMathodStr));
+            //System.err.println("Payment method : " + paymentMethod);
+            //System.err.println("Payment Method String : " + PaymentMethod.valueOf(paymentMathodStr));
             if (paymentMethod.equals(PaymentMethod.valueOf(paymentMathodStr))) {
-                System.err.println("Returning True");
+                //System.err.println("Returning True");
                 return true;
             } else {
                 return false;

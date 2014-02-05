@@ -119,7 +119,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -300,7 +300,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         //temMap.put("dep", getSessionController().getDepartment());
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-        //     System.err.println("SIZE : " + lst.size());
+        //     //System.err.println("SIZE : " + lst.size());
 
     }
 
@@ -774,7 +774,7 @@ public class Search implements Serializable {
         }
 
         sql += " order by bi.id desc  ";
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
 
         billItems = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
@@ -815,7 +815,7 @@ public class Search implements Serializable {
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -867,7 +867,7 @@ public class Search implements Serializable {
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
@@ -969,7 +969,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -1014,7 +1014,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -1059,7 +1059,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
 //        temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -1104,7 +1104,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
 //        temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
@@ -1149,7 +1149,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -1235,7 +1235,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
@@ -1377,7 +1377,7 @@ public class Search implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
 
-        System.err.println("Sql " + sql);
+        //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }

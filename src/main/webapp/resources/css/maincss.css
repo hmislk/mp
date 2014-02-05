@@ -701,3 +701,11 @@ a:hover {
    text-decoration: line-through; 
     
 }
+
+.displayRow{
+    display: block;
+}
+
+.hideRow{
+    display: none;
+}

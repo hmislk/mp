@@ -123,7 +123,7 @@ public class TransferReceiveController implements Serializable {
             suggessions.add(amp);
         }
 
-        System.err.println("Sugg" + suggessions);
+        //System.err.println("Sugg" + suggessions);
 
         return suggessions;
     }

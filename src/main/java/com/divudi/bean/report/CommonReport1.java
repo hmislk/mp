@@ -498,7 +498,7 @@ public class CommonReport1 implements Serializable {
         Bill b = getBillFacade().findFirstBySQL(sql, temMap, TemporalType.DATE);
 
         if (b != null && institution==null) {
-            System.err.println("SYS "+b.getInstitution().getName());
+            //System.err.println("SYS "+b.getInstitution().getName());
             institution = b.getInstitution();
         }
 

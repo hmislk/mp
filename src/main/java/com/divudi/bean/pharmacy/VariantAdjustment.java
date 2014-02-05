@@ -208,7 +208,7 @@ public class VariantAdjustment implements Serializable {
         hm.put("bil", getReportedBill());
 
         List<StockVarientBillItem> tmp = getStockVarientBillItemFacade().findBySQL(sql, hm);
-        System.err.println("Size "+tmp.size());
+        //System.err.println("Size "+tmp.size());
         for (StockVarientBillItem i : tmp) {
             StockVarientBillItem bi = new StockVarientBillItem();
             bi.clone(i);

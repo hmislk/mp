@@ -326,11 +326,11 @@ public class PharmacyPreSettleController implements Serializable {
 
         getSaleBill().setCreditCompany(creditCompany);
 
-        System.err.println(getPreBill());
-        System.err.println(getPreBill().getGrantTotal());
-        System.err.println(getPreBill().getDiscount());
-        System.err.println(getPreBill().getNetTotal());
-        System.err.println(getPreBill().getTotal());
+        //System.err.println(getPreBill());
+        //System.err.println(getPreBill().getGrantTotal());
+        //System.err.println(getPreBill().getDiscount());
+        //System.err.println(getPreBill().getNetTotal());
+        //System.err.println(getPreBill().getTotal());
 
         getSaleBill().setGrantTotal(getPreBill().getGrantTotal());
         getSaleBill().setDiscount(getPreBill().getDiscount());
@@ -671,7 +671,7 @@ public class PharmacyPreSettleController implements Serializable {
     public void setPreBill(Bill preBill) {
         makeNull();
         this.preBill = preBill;
-        System.err.println("Setting Bill " + preBill);
+        //System.err.println("Setting Bill " + preBill);
         billPreview = false;
        
     }

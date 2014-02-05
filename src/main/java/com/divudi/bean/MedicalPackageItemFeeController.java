@@ -167,7 +167,7 @@ public class MedicalPackageItemFeeController implements Serializable {
             }
         }
 
-      //  System.err.println("total : " + total);
+      //  //System.err.println("total : " + total);
         currentPackege.setTotal(total);
         getFacade().edit(currentPackege);
     }

@@ -57,7 +57,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println(billType + " : " + value);
+        //System.err.println(billType + " : " + value);
         return value;
     }
 
@@ -89,7 +89,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println(billType + " : " + value);
+        //System.err.println(billType + " : " + value);
         return value;
     }
 
@@ -150,7 +150,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println(billType + " : Sale Duduction " + value);
+        //System.err.println(billType + " : Sale Duduction " + value);
         return value;
     }
 
@@ -168,7 +168,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        System.err.println(billType + " : Re Add To Stock " + value);
+        //System.err.println(billType + " : Re Add To Stock " + value);
         return value;
     }
 
@@ -252,7 +252,7 @@ public class PharmacyErrorCheckingEjb {
                         System.out.println("bi = " + bi);
                         if (bi.isRetired() != false) {
                             System.out.println("bi is NOT retired ");
-                            System.err.println("err1");
+                            //System.err.println("err1");
                             err1 = true;
                         }
                     }
@@ -263,7 +263,7 @@ public class PharmacyErrorCheckingEjb {
                         System.out.println("bb.getBillItems().size() = " + bb.getNetTotal());
                         System.out.println("pb.getBillItems().size() = " + pb.getNetTotal());
                         err1 = true;
-                        System.err.println("err 2");
+                        //System.err.println("err 2");
                     }
                 }
             }

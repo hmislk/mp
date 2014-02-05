@@ -499,15 +499,8 @@ public class Search implements Serializable {
 
     }
 
-    public void createGrnTable() {
-        bills = null;
-        String sql;
-        HashMap tmp = new HashMap();
-
-        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp "
-                + " and b.institution=:ins and"
-                + " b.createdAt between :fromDate and :toDate ";
-
+    private String keysForGrnReturn(HashMap tmp) {
+        String sql = "";
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.deptId) like :billNo )";
             tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
@@ -538,11 +531,49 @@ public class Search implements Serializable {
             tmp.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
         }
 
+        return sql;
+    }
+
+    public void createGrnTable() {
+        bills = null;
+        String sql;
+        HashMap tmp = new HashMap();
+
+        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp "
+                + " and b.institution=:ins and"
+                + " b.createdAt between :fromDate and :toDate ";
+
+        sql += keysForGrnReturn(tmp);
+
         sql += " order by b.id desc  ";
 
         tmp.put("toDate", getToDate());
         tmp.put("fromDate", getFromDate());
         tmp.put("ins", getSessionController().getInstitution());
+        tmp.put("bTp", BillType.PharmacyGrnBill);
+        bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
+
+        for (Bill b : bills) {
+            b.setListOfBill(getReturnBill(b));
+        }
+
+    }
+
+    public void createGrnTableAllIns() {
+        bills = null;
+        String sql;
+        HashMap tmp = new HashMap();
+
+        sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp "
+                + " and b.createdAt between :fromDate and :toDate ";
+
+        sql += keysForGrnReturn(tmp);
+
+        sql += " order by b.id desc  ";
+
+        tmp.put("toDate", getToDate());
+        tmp.put("fromDate", getFromDate());
+        // tmp.put("ins", getSessionController().getInstitution());
         tmp.put("bTp", BillType.PharmacyGrnBill);
         bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
 
@@ -1536,7 +1567,7 @@ public class Search implements Serializable {
     }
 
     public List<PatientInvestigation> getPatientInvestigationsSigle() {
-        if(patientInvestigationsSigle==null){
+        if (patientInvestigationsSigle == null) {
             createPatientInvestigationsTableSingle();
         }
         return patientInvestigationsSigle;
@@ -1545,7 +1576,5 @@ public class Search implements Serializable {
     public void setPatientInvestigationsSigle(List<PatientInvestigation> patientInvestigationsSigle) {
         this.patientInvestigationsSigle = patientInvestigationsSigle;
     }
-
-
 
 }

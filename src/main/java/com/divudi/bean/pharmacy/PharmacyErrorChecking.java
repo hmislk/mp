@@ -34,6 +34,7 @@ public class PharmacyErrorChecking implements Serializable {
 
     @EJB
     PharmacyErrorCheckingEjb ejb;
+    
 
     List<BillItem> billItems;
     Date fromDate;
@@ -63,6 +64,11 @@ public class PharmacyErrorChecking implements Serializable {
     public void listPharmacyMovement() {
         billItems = getEjb().allBillItems(item, department);
         calculateTotals4();
+    }
+    
+     public void listPharmacyMovementByDateRange() {
+        billItems = getEjb().allBillItemsByDate(item, department,fromDate,toDate);
+      //  calculateTotals4();
     }
 
     public void listPharmacyMovementNew() {

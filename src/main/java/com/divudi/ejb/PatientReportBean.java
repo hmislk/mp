@@ -232,10 +232,10 @@ public class PatientReportBean {
 
             if (val != null) {
                 ptReport.getPatientReportItemValues().add(val);
-                System.err.println("sss: " + val);
+                //System.err.println("sss: " + val);
             }
         }
-        System.err.println("items :" + ptReport.getPatientReportItemValues());
+        //System.err.println("items :" + ptReport.getPatientReportItemValues());
     }
 
     public void addMicrobiologyReportItemValuesForReport(PatientReport ptReport) {
@@ -273,7 +273,7 @@ public class PatientReportBean {
             if (val != null) {
                 if (ii.getIxItemValueType() == InvestigationItemValueType.Memo) {
                     ptReport.getPatientReportItemValues().add(val);
-                    System.err.println("sss: " + val);
+                    //System.err.println("sss: " + val);
                 }
             }
         }
@@ -301,7 +301,7 @@ public class PatientReportBean {
                 ptReport.getPatientReportItemValues().add(val);
             }
         }
-        System.err.println("items :" + ptReport.getPatientReportItemValues());
+        //System.err.println("items :" + ptReport.getPatientReportItemValues());
     }
 
     @EJB

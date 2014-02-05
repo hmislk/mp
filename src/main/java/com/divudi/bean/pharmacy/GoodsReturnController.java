@@ -241,9 +241,9 @@ public class GoodsReturnController implements Serializable {
 
             double netQty = Math.abs(rBilled) - Math.abs(rCacnelled);
 
-            System.err.println("Billed " + rBilled);
-            System.err.println("Cancelled " + rCacnelled);
-            System.err.println("Net " + netQty);
+            //System.err.println("Billed " + rBilled);
+            //System.err.println("Cancelled " + rCacnelled);
+            //System.err.println("Net " + netQty);
 
             retPh.setQtyInUnit(grnPh.getQtyInUnit() - netQty);
 

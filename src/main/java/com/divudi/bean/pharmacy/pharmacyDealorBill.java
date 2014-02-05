@@ -220,14 +220,14 @@ public class pharmacyDealorBill implements Serializable {
     private boolean checkPaidAmount(BillItem tmp) {
         double ballance, refBallance = 0;
 
-        System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
-        System.err.println("GRN Value " + tmp.getReferenceBill().getNetTotal());
-        System.err.println("GRN Return Value " + tmp.getReferenceBill().getTmpReturnTotal());
-        System.err.println("Entered Amount " + tmp.getNetValue());
+        //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
+        //System.err.println("GRN Value " + tmp.getReferenceBill().getNetTotal());
+        //System.err.println("GRN Return Value " + tmp.getReferenceBill().getTmpReturnTotal());
+        //System.err.println("Entered Amount " + tmp.getNetValue());
 
         refBallance = tmp.getReferenceBill().getTmpReturnTotal() + tmp.getReferenceBill().getNetTotal() + tmp.getReferenceBill().getPaidAmount();
 
-        System.err.println("refBallance " + refBallance);
+        //System.err.println("refBallance " + refBallance);
 
         //   ballance=refBallance-tmp.getNetValue();
         if (refBallance <= (0 - tmp.getNetValue())) {
@@ -241,7 +241,7 @@ public class pharmacyDealorBill implements Serializable {
 
         tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() - tmp.getNetValue());
 
-        System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
+        //System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
 
 //        if (tmp.getReferenceBill().getPaidAmount() != 0.0) {
 //            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());

@@ -254,7 +254,7 @@ public class BillPackageMedicalController implements Serializable {
 
         temp.setStaff(staff);
         temp.setReferredBy(referredBy);
-        System.err.println("aaaa : " + getCreditCompany());
+        //System.err.println("aaaa : " + getCreditCompany());
         temp.setCreditCompany(getCreditCompany());
 
         if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Cheque)) {

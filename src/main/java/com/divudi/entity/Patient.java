@@ -86,7 +86,7 @@ public class Patient implements Serializable {
         Years ageInYears;
         Days ageDays;
         ageDays = Days.daysBetween(birthdate, now);
-        System.err.println("Days : " + (long) ageDays.getDays());
+        //System.err.println("Days : " + (long) ageDays.getDays());
         return (long) ageDays.getDays();
     }
 

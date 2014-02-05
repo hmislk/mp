@@ -32,14 +32,14 @@
                                     <p:commandButton styleClass="nonPrintBlock"  id="btnApprove"  disabled ="#{!(webUserController.hasPrivilege('LabAutherizing') eq true and patientReportController.currentPatientReport.dataEntered eq true )}"   value="Approve" action="#{patientReportController.approvePatientReport()}" ajax="false" >
                                     </p:commandButton>
                                     <p:commandButton styleClass="nonPrintBlock"  ajax="false" value="Print" onclick="window.print();" actionListener="#{patientReportController.printPatientReport()}" />
-                                    
+
                                     <p:separator></p:separator>
-                                    
+
                                     <p:commandButton  styleClass="nonPrintBlock"  value="Patient Report Search" action="#{patientReportController.patientReportSearch}" ajax="false" >
                                     </p:commandButton>
                                     <p:commandButton  styleClass="nonPrintBlock"  value="Report Search" action="lab_search_for_reporting" ajax="false" >
                                     </p:commandButton>
-                                    
+
                                 </h:panelGrid>
                             </f:facet>
 
@@ -59,8 +59,8 @@
                                 </p:panel>
 
                                 <p:panel header="Values"  rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType ne 'Microbiology'}" >
-                                    <p:dataTable id="tblVals" value="#{patientReportController.currentPatientReport.patientReportItemOfValueType}"  var="pv"  >
-                                        <p:column >
+                                    <p:dataTable id="tblVals" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pv" rowStyleClass="#{pv.investigationItem.ixItemType eq 'Value' ? 'displayRow' : 'hideRow'}"   >
+                                        <p:column   >
                                             <h:outputLabel value="#{pv.investigationItem.name}" rendered="#{pv.investigationItem.ixItemType eq 'Value'}"></h:outputLabel>
                                         </p:column>
                                         <p:column >
@@ -120,7 +120,7 @@
                                 </p:panel>
                                 <h:panelGroup  rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType ne 'Microbiology'}" >
                                     <p:panel header="Calculations" >
-                                        <p:dataTable emptyMessage="No Calculations"  value="#{patientReportController.currentPatientReport.patientReportItemOfCalculationType}"  var="pvc"  >
+                                        <p:dataTable emptyMessage="No Calculations"  value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvc"  rowStyleClass="#{pv.investigationItem.ixItemType eq 'Calculation' ? 'displayRow' : 'hideRow'}"   >
                                             <p:column >
                                                 <h:outputLabel value="#{pvc.investigationItem.name}" ></h:outputLabel>
                                             </p:column>
@@ -142,7 +142,7 @@
                                         </p:dataTable>
                                     </p:panel>
                                     <p:panel header="Flags" >
-                                        <p:dataTable emptyMessage="No Flags" value="#{patientReportController.currentPatientReport.patientReportItemOfFlagType}"  var="pvf" >
+                                        <p:dataTable emptyMessage="No Flags" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvf" rowStyleClass="#{pv.investigationItem.ixItemType eq 'Flag' ? 'displayRow' : 'hideRow'}"  >
                                             <p:column >
                                                 <h:outputLabel value="#{pvf.investigationItem.name}" ></h:outputLabel>
                                             </p:column>
@@ -159,7 +159,7 @@
                                     </p:panel>
 
                                     <p:panel header="Dynamic Labels" >
-                                        <p:dataTable emptyMessage="No Dynamic Labels" value="#{patientReportController.currentPatientReport.patientReportItemOfDynamicLabelType}"  var="pvd">
+                                        <p:dataTable emptyMessage="No Dynamic Labels" value="#{patientReportController.currentPatientReport.patientReportItemValues}"  var="pvd"  rowStyleClass="#{pv.investigationItem.ixItemType eq 'DynamicLabel' ? 'displayRow' : 'hideRow'}"  >
                                             <p:column >
                                                 <h:outputLabel value="#{pvd.investigationItem.name}" ></h:outputLabel>
                                             </p:column>
@@ -178,7 +178,7 @@
 
                                     <f:view contentType="text/html">
 
-                                        <p:dataTable id="tblMicVals" value="#{patientReportController.currentPatientReport.patientReportItemOfValueType}"  var="pv"  >
+                                        <p:dataTable id="tblMicVals" value="#{patientReportController.currentPatientReport.patientReportItemValues }"  var="pv"   rowStyleClass="#{pv.investigationItem.ixItemType eq 'Value' ? 'displayRow' : 'hideRow'}"   >
 
                                             <p:column >
                                                 <h:outputLabel value="#{pv.investigationItem.name}" rendered="#{pv.investigationItem.ixItemType eq 'Value'}"></h:outputLabel>
@@ -370,8 +370,8 @@
                                             <p:graphicImage rendered="#{myCli.reportItemType eq 'AutherizedSignature' and myCli.retired eq false }"    value="#{staffImageController.signatureById}" style="width: #{myCli.cssWidth}; max-height: 50px!important;"  >
                                                 <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
                                             </p:graphicImage>
-                                            
-                                            
+
+
                                         </h:panelGroup>
 
                                     </div>

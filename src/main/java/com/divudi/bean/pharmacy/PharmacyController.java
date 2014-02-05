@@ -205,7 +205,7 @@ public class PharmacyController implements Serializable {
     private List<InstitutionStock> institutionStocks;
 
     public List<Object[]> calDepartmentStock(Institution institution) {
-        //   System.err.println("Cal Department Stock");
+        //   //System.err.println("Cal Department Stock");
         Item item;
 
         if (pharmacyItem instanceof Ampp) {
@@ -308,7 +308,7 @@ public class PharmacyController implements Serializable {
     }
 
     public void createInstitutionStock() {
-        //   System.err.println("Institution Stock");
+        //   //System.err.println("Institution Stock");
         List<Institution> insList = getCompany();
 
         institutionStocks = new ArrayList<>();
@@ -491,7 +491,7 @@ public class PharmacyController implements Serializable {
 
     public void createGrnTable() {
 
-        // System.err.println("Getting GRNS : ");
+        // //System.err.println("Getting GRNS : ");
         String sql = "Select b From BillItem b where type(b.bill)=:class and b.bill.creater is not null "
                 + " and b.bill.cancelled=false and b.retired=false and b.item=:i "
                 + " and b.bill.billType=:btp and b.createdAt between :frm and :to order by b.id desc ";
@@ -508,7 +508,7 @@ public class PharmacyController implements Serializable {
 
     public void createDirectPurchaseTable() {
 
-        // System.err.println("Getting GRNS : ");
+        // //System.err.println("Getting GRNS : ");
         String sql = "Select b From BillItem b where type(b.bill)=:class and b.bill.creater is not null "
                 + " and b.bill.cancelled=false and b.retired=false and b.item=:i "
                 + " and b.bill.billType=:btp and b.createdAt between :frm and :to order by b.id desc ";
@@ -528,7 +528,7 @@ public class PharmacyController implements Serializable {
 
     public void createPoTable() {
 
-        // System.err.println("Getting POS : ");
+        // //System.err.println("Getting POS : ");
         String sql = "Select b From BillItem b where type(b.bill)=:class and b.bill.creater is not null "
                 + " and b.bill.cancelled=false and b.retired=false and b.item=:i "
                 + " and b.bill.billType=:btp and b.createdAt between :frm and :to order by b.id desc";

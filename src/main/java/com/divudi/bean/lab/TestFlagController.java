@@ -85,7 +85,7 @@ public class TestFlagController implements Serializable {
     public void saveFlags() {
         for (TestFlag f : getItems()) {
             getFacade().edit(f);
-            System.err.println("sss " + f.getNormalMessage());
+            //System.err.println("sss " + f.getNormalMessage());
         }
     }
 

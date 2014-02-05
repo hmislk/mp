@@ -164,8 +164,8 @@ public class PharmacyIssueController implements Serializable {
         double oldQty = getOldQty(tmp);
         double newQty = tmp.getQty();
 
-        System.err.println("old " + oldQty);
-        System.err.println("new " + newQty);
+        //System.err.println("old " + oldQty);
+        //System.err.println("new " + newQty);
 
         if (newQty > getStockByBillItem(tmp)) {
             tmp.setQty(oldQty);
@@ -176,11 +176,11 @@ public class PharmacyIssueController implements Serializable {
 
         if (oldQty > newQty) {
             double max = oldQty - newQty;
-            System.err.println("Max " + max);
+            //System.err.println("Max " + max);
             getPharmacyBean().addToStock(tmp.getPharmaceuticalBillItem().getStock(), Math.abs(max), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         } else {
             double min = newQty - oldQty;
-            System.err.println("Min " + min);
+            //System.err.println("Min " + min);
             getPharmacyBean().deductFromStock(tmp.getPharmaceuticalBillItem().getStock(), Math.abs(min), tmp.getPharmaceuticalBillItem(), getSessionController().getDepartment());
         }
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
@@ -965,12 +965,12 @@ public class PharmacyIssueController implements Serializable {
     }
 
     public PaymentScheme getPaymentScheme() {
-        System.err.println("GEtting Paymen");
+        //System.err.println("GEtting Paymen");
         return paymentScheme;
     }
 
     public void setPaymentScheme(PaymentScheme paymentScheme) {
-        System.err.println("Setting Pay");
+        //System.err.println("Setting Pay");
         this.paymentScheme = paymentScheme;
     }
 

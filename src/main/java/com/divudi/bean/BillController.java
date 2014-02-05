@@ -143,8 +143,8 @@ public class BillController implements Serializable {
      public boolean findByFilter(String property, String value) {
         String sql = "Select b From Bill b where b.retired=false and upper(b." + property + ") like '%" + value.toUpperCase() + " %'";
         Bill b = getBillFacade().findFirstBySQL(sql);
-        System.err.println("SQL " + sql);
-        System.err.println("Bill " + b);
+        //System.err.println("SQL " + sql);
+        //System.err.println("Bill " + b);
         if (b != null) {
             return true;
         } else {
@@ -463,7 +463,7 @@ public class BillController implements Serializable {
             boolean checkAge = false;
             for (BillEntry be : getLstBillEntries()) {
                 if (be.getBillItem().getItem().getDepartment().getDepartmentType() == DepartmentType.Lab) {
-                    //  System.err.println("ttttt");
+                    //  //System.err.println("ttttt");
                     checkAge = true;
                     break;
                 }

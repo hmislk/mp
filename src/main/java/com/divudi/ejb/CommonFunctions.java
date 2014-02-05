@@ -54,8 +54,8 @@ public class CommonFunctions {
         dateRange.setFromDate(from);
         dateRange.setToDate(to);
 
-        System.err.println("From " + dateRange.getFromDate());
-        System.err.println("To " + dateRange.getToDate());
+        //System.err.println("From " + dateRange.getFromDate());
+        //System.err.println("To " + dateRange.getToDate());
 
         return dateRange;
     }
@@ -81,7 +81,7 @@ public class CommonFunctions {
         cal2.setTime(date);
 
         Long inDays = (cal1.getTimeInMillis() - cal2.getTimeInMillis()) / (1000 * 60 * 60 * 24);
-        System.err.println("INDAYS "+inDays);
+        //System.err.println("INDAYS "+inDays);
         return inDays;
 
     }
@@ -262,10 +262,10 @@ public class CommonFunctions {
 //            calendar.set(year, month + 1, 1, 0, 0, 0);
 //        }
         calendar.set(year, month, 1, 0, 0, 0);
-        System.err.println("DDDD " + calendar.getTime());
+        //System.err.println("DDDD " + calendar.getTime());
         calendar.add(Calendar.MONTH, 1);
         calendar.add(Calendar.MINUTE, -1);
-        System.err.println("FFFF " + calendar.getTime());
+        //System.err.println("FFFF " + calendar.getTime());
         return calendar.getTime();
     }
 

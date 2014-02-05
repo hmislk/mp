@@ -4,7 +4,7 @@
  */
 package com.divudi.entity;
 
-import ch.lambdaj.Lambda;
+//import ch.lambdaj.Lambda;
 import com.divudi.data.inward.PatientEncounterType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.SymanticType;
@@ -28,7 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import org.hamcrest.Matchers;
+//import org.hamcrest.Matchers;
 
 /**
  *
@@ -123,7 +123,7 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
-            diagnosis = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Disease_or_Syndrome)), getClinicalFindingValues());
+//            diagnosis = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Disease_or_Syndrome)), getClinicalFindingValues());
         }
         return diagnosis;
     }
@@ -134,7 +134,7 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getInvestigations() {
         if (investigations == null) {
-            investigations = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Laboratory_Procedure)), getClinicalFindingValues());
+//            investigations = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Laboratory_Procedure)), getClinicalFindingValues());
         }
         return investigations;
     }
@@ -145,7 +145,7 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getSymptoms() {
         if (symptoms == null) {
-            symptoms = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Symptom)), getClinicalFindingValues());
+//            symptoms = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Symptom)), getClinicalFindingValues());
         }
         return symptoms;
     }
@@ -156,7 +156,7 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getSigns() {
         if (signs == null) {
-            signs = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Sign)), getClinicalFindingValues());
+//            signs = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Sign)), getClinicalFindingValues());
         }
         return signs;
     }
@@ -167,7 +167,7 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getProcedures() {
         if (procedures == null) {
-            procedures = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Therapeutic_Procedure)), getClinicalFindingValues());
+//            procedures = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Therapeutic_Procedure)), getClinicalFindingValues());
         }
         return procedures;
     }
@@ -178,7 +178,7 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getPlans() {
         if (plans == null) {
-            plans = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Preventive_Procedure)), getClinicalFindingValues());
+//            plans = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Preventive_Procedure)), getClinicalFindingValues());
         }
         return plans;
     }

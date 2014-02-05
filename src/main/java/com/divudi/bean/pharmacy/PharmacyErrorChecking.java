@@ -150,13 +150,13 @@ public class PharmacyErrorChecking implements Serializable {
                     if (bi.getBill() instanceof BilledBill) {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("1 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("2 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("1 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("2 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     } else if (bi.getBill() instanceof CancelledBill || bi.getBill() instanceof RefundBill) {
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("3 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("4 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("3 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("4 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     }
                     break;
                 case PharmacyGrnReturn:
@@ -165,13 +165,13 @@ public class PharmacyErrorChecking implements Serializable {
                     if (bi.getBill() instanceof BilledBill) {
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("5 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("6 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("5 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("6 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     } else if (bi.getBill() instanceof CancelledBill || bi.getBill() instanceof RefundBill) {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("7 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("8 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("7 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("8 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     }
                     break;
                 case PharmacySale:
@@ -180,19 +180,19 @@ public class PharmacyErrorChecking implements Serializable {
                             break;
                         }
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
-                        System.err.println("9 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("9 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
 
                     } else if (bi.getBill() instanceof CancelledBill || bi.getBill() instanceof RefundBill) {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
 
-                        System.err.println("10 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("10 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
 
                     }
                     break;
                 default:
-                    System.err.println("Default  " + bi.getBill().getBillType());
-                    System.err.println("Default  " + bi.getBill().getClass());
-                    System.err.println("Default  " + bi.getQty());
+                    //System.err.println("Default  " + bi.getBill().getBillType());
+                    //System.err.println("Default  " + bi.getBill().getClass());
+                    //System.err.println("Default  " + bi.getQty());
 
             }
 
@@ -205,7 +205,7 @@ public class PharmacyErrorChecking implements Serializable {
         
         }
 
-//        System.err.println("Befor " + calculatedStock);
+//        //System.err.println("Befor " + calculatedStock);
 //        double saleQty = 0;
 //        for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
 //
@@ -216,7 +216,7 @@ public class PharmacyErrorChecking implements Serializable {
 //
 //        }
 //        // calculatedStock -= saleQty;
-//        System.err.println("SaleQty " + saleQty);
+//        //System.err.println("SaleQty " + saleQty);
 //
 //        calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
     }
@@ -237,13 +237,13 @@ public class PharmacyErrorChecking implements Serializable {
                     if (bi.getBill() instanceof BilledBill) {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("1 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("2 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("1 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("2 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     } else {
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("3 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("4 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("3 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("4 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     }
                     break;
                 case PharmacyGrnReturn:
@@ -252,19 +252,19 @@ public class PharmacyErrorChecking implements Serializable {
                     if (bi.getBill() instanceof BilledBill) {
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("5 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("6 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("5 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("6 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     } else {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
-                        System.err.println("7 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-                        System.err.println("8 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                        //System.err.println("7 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        //System.err.println("8 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
                     }
                     break;
             }
         }
 
-        System.err.println("Befor " + calculatedStock);
+        //System.err.println("Befor " + calculatedStock);
         double saleQty = 0;
         for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
 
@@ -276,7 +276,7 @@ public class PharmacyErrorChecking implements Serializable {
         }
 
         // calculatedStock -= saleQty;
-        System.err.println("SaleQty " + saleQty);
+        //System.err.println("SaleQty " + saleQty);
 
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
 

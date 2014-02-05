@@ -4,7 +4,7 @@
  */
 package com.divudi.entity.lab;
 
-import ch.lambdaj.Lambda;
+//import ch.lambdaj.Lambda;
 import com.divudi.data.InvestigationItemType;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
@@ -26,7 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import org.hamcrest.Matchers;
+//import org.hamcrest.Matchers;
 
 /**
  *
@@ -38,17 +38,17 @@ public class PatientReport implements Serializable {
     @OneToMany(mappedBy = "patientReport", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<PatientReportItemValue> patientReportItemValues;
 
-    @Transient
-    private List<PatientReportItemValue> patientReportItemOfValueType;
-
-    @Transient
-    private List<PatientReportItemValue> patientReportItemOfFlagType;
-
-    @Transient
-    private List<PatientReportItemValue> patientReportItemOfCalculationType;
-
-    @Transient
-    private List<PatientReportItemValue> patientReportItemOfDynamicLabelType;
+//    @Transient
+//    private List<PatientReportItemValue> patientReportItemOfValueType;
+//
+//    @Transient
+//    private List<PatientReportItemValue> patientReportItemOfFlagType;
+//
+//    @Transient
+//    private List<PatientReportItemValue> patientReportItemOfCalculationType;
+//
+//    @Transient
+//    private List<PatientReportItemValue> patientReportItemOfDynamicLabelType;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -126,34 +126,34 @@ public class PatientReport implements Serializable {
     @ManyToOne
     private Institution returnInstitution;
 
-    public List<PatientReportItemValue> getPatientReportItemOfValueType() {
-        if (patientReportItemOfValueType == null) {
-            patientReportItemOfValueType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), 
-                    Matchers.equalTo(InvestigationItemType.Value)), getPatientReportItemValues());
-        }
-        return patientReportItemOfValueType;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemOfValueType() {
+//        if (patientReportItemOfValueType == null) {
+//            patientReportItemOfValueType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), 
+//                    Matchers.equalTo(InvestigationItemType.Value)), getPatientReportItemValues());
+//        }
+//        return patientReportItemOfValueType;
+//    }
 
-    public List<PatientReportItemValue> getPatientReportItemOfFlagType() {
-        if (patientReportItemOfFlagType == null) {
-            patientReportItemOfFlagType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.Flag)), getPatientReportItemValues());
-        }
-        return patientReportItemOfFlagType;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemOfFlagType() {
+//        if (patientReportItemOfFlagType == null) {
+//            patientReportItemOfFlagType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.Flag)), getPatientReportItemValues());
+//        }
+//        return patientReportItemOfFlagType;
+//    }
 
-    public List<PatientReportItemValue> getPatientReportItemOfCalculationType() {
-        if (patientReportItemOfCalculationType == null) {
-            patientReportItemOfCalculationType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.Calculation)), getPatientReportItemValues());
-        }
-        return patientReportItemOfCalculationType;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemOfCalculationType() {
+//        if (patientReportItemOfCalculationType == null) {
+//            patientReportItemOfCalculationType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.Calculation)), getPatientReportItemValues());
+//        }
+//        return patientReportItemOfCalculationType;
+//    }
 
-    public List<PatientReportItemValue> getPatientReportItemOfDynamicLabelType() {
-        if (patientReportItemOfDynamicLabelType == null) {
-            patientReportItemOfDynamicLabelType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.DynamicLabel)), getPatientReportItemValues());
-        }
-        return patientReportItemOfDynamicLabelType;
-    }
+//    public List<PatientReportItemValue> getPatientReportItemOfDynamicLabelType() {
+//        if (patientReportItemOfDynamicLabelType == null) {
+//            patientReportItemOfDynamicLabelType = Lambda.filter(Lambda.having(Lambda.on(PatientReportItemValue.class).getInvestigationItem().getIxItemType(), Matchers.equalTo(InvestigationItemType.DynamicLabel)), getPatientReportItemValues());
+//        }
+//        return patientReportItemOfDynamicLabelType;
+//    }
 
     @Transient
     boolean filteredAndSorted = false;
@@ -161,10 +161,10 @@ public class PatientReport implements Serializable {
     public void sortValues() {
         if (patientReportItemValues != null) {
             Collections.sort(patientReportItemValues, new PatientReportItemValueComparator());
-            patientReportItemOfCalculationType = null;
-            patientReportItemOfDynamicLabelType = null;
-            patientReportItemOfFlagType = null;
-            patientReportItemOfValueType = null;
+//            patientReportItemOfCalculationType = null;
+//            patientReportItemOfDynamicLabelType = null;
+//            patientReportItemOfFlagType = null;
+//            patientReportItemOfValueType = null;
             filteredAndSorted = true;
         }
     }
@@ -173,10 +173,10 @@ public class PatientReport implements Serializable {
         if (patientReportItemValues != null) {
             if (filteredAndSorted == false) {
                 Collections.sort(patientReportItemValues, new PatientReportItemValueComparator());
-                patientReportItemOfCalculationType = null;
-                patientReportItemOfDynamicLabelType = null;
-                patientReportItemOfFlagType = null;
-                patientReportItemOfValueType = null;
+//                patientReportItemOfCalculationType = null;
+//                patientReportItemOfDynamicLabelType = null;
+//                patientReportItemOfFlagType = null;
+//                patientReportItemOfValueType = null;
                 filteredAndSorted = true;
             }
         } else {

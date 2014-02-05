@@ -4,8 +4,8 @@
  */
 package com.divudi.entity;
 
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sort;
+//import static ch.lambdaj.Lambda.on;
+//import static ch.lambdaj.Lambda.sort;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import java.io.Serializable;
@@ -64,22 +64,22 @@ public class Bill implements Serializable {
     @ManyToOne
     private Bill backwardReferenceBill;
 
-    public List<BillItem> getTransBillItems() {
-        if (billItems != null) {
-            transBillItems = new ArrayList<>();
-            for (BillItem b : billItems) {
-                if (!b.isRetired()) {
-                    transBillItems.add(b);
-                }
-            }
-
-            transBillItems = sort(transBillItems, on(BillItem.class).getSearialNo());
-        } else {
-            transBillItems = new ArrayList<>();
-        }
-        return transBillItems;
-
-    }
+//    public List<BillItem> getTransBillItems() {
+//        if (billItems != null) {
+//            transBillItems = new ArrayList<>();
+//            for (BillItem b : billItems) {
+//                if (!b.isRetired()) {
+//                    transBillItems.add(b);
+//                }
+//            }
+//
+//            transBillItems = sort(transBillItems, on(BillItem.class).getSearialNo());
+//        } else {
+//            transBillItems = new ArrayList<>();
+//        }
+//        return transBillItems;
+//
+//    }
 
     public void invertValue(Bill bill) {
         staffFee = 0 - bill.getStaffFee();
@@ -248,16 +248,16 @@ public class Bill implements Serializable {
 
     public Field getField(String name) {
         try {
-            System.err.println("ss : " + name);
+            //System.err.println("ss : " + name);
             for (Field f : this.getClass().getFields()) {
-                System.err.println(f.getName());
+                //System.err.println(f.getName());
             }
             return this.getClass().getField(name);
         } catch (NoSuchFieldException e) {
-            System.err.println("Ex no " + e.getMessage());
+            //System.err.println("Ex no " + e.getMessage());
             return null;
         } catch (SecurityException e) {
-            System.err.println("Ex " + e.getMessage());
+            //System.err.println("Ex " + e.getMessage());
             return null;
         }
     }

@@ -242,7 +242,7 @@ public class ShiftTableController implements Serializable {
                 max = sst.getDayShift().getShift().getShiftOrder();
             }
         }
-        System.err.println("max " + max);
+        //System.err.println("max " + max);
         return max;
 
     }
@@ -367,20 +367,20 @@ public class ShiftTableController implements Serializable {
         Calendar c = Calendar.getInstance();
         c.setTime(startTime);
         c.add(Calendar.MINUTE, -(60 * 6));
-        System.err.println("min : " + c.getTime());
+        //System.err.println("min : " + c.getTime());
         Date startMinTime = c.getTime();
         c.add(Calendar.MINUTE, (12 * 60));
-        System.err.println("max : " + c.getTime());
+        //System.err.println("max : " + c.getTime());
         Date startMaxTime = c.getTime();
         /////////////////
         Date endTime = sst.getShiftEndTime();
         c = Calendar.getInstance();
         c.setTime(endTime);
         c.add(Calendar.MINUTE, -(60 * 6));
-        System.err.println("min : " + c.getTime());
+        //System.err.println("min : " + c.getTime());
         Date endMinTime = c.getTime();
         c.add(Calendar.MINUTE, (12 * 60));
-        System.err.println("max : " + c.getTime());
+        //System.err.println("max : " + c.getTime());
         Date endMaxTime = c.getTime();
         ////////////////
         String sql = "Select fpr from FingerPrintRecord fpr where fpr.fingerPrintRecordType=:tp "

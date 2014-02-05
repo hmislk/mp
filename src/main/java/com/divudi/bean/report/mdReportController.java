@@ -101,7 +101,7 @@ public class mdReportController implements Serializable {
             }
         }
 
-        System.err.println("Hos : " + tmp);
+        //System.err.println("Hos : " + tmp);
 
         return tmp;
     }
@@ -155,7 +155,7 @@ public class mdReportController implements Serializable {
                 tmp += b.getProfessionalFee();
             }
         }
-        System.err.println("Pro : " + tmp);
+        //System.err.println("Pro : " + tmp);
         return tmp;
     }
 

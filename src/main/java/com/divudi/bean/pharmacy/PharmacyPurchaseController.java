@@ -138,7 +138,7 @@ public class PharmacyPurchaseController implements Serializable {
         DateFormat df = new SimpleDateFormat("ddMMyyyy");
         String reportDate = df.format(date);
 // Print what date is today!
-        //       System.err.println("Report Date: " + reportDate);
+        //       //System.err.println("Report Date: " + reportDate);
         pid.getPharmaceuticalBillItem().setStringValue(reportDate);
 
         onEdit(pid);
@@ -149,7 +149,7 @@ public class PharmacyPurchaseController implements Serializable {
         DateFormat df = new SimpleDateFormat("ddMMyyyy");
         String reportDate = df.format(date);
 // Print what date is today!
-        //       System.err.println("Report Date: " + reportDate);
+        //       //System.err.println("Report Date: " + reportDate);
         getCurrentBillItem().getPharmaceuticalBillItem().setStringValue(reportDate);
 
         //     onEdit(pid);

@@ -736,8 +736,8 @@ public class PharmacyBillSearch implements Serializable {
 //        PharmaceuticalBillItem po = getPharmaceuticalBillItemFacade().findFirstBySQL(sql);
 //        po.setRemainingQty(po.getRemainingQty() + nB.getQty());
 //
-//        System.err.println("Added Remaini Qty " + nB.getQty());
-//        System.err.println("Final Remaini Qty " + po.getRemainingQty());
+//        //System.err.println("Added Remaini Qty " + nB.getQty());
+//        //System.err.println("Final Remaini Qty " + po.getRemainingQty());
 //        getPharmaceuticalBillItemFacade().edit(po);
 //
 //    }
@@ -772,7 +772,7 @@ public class PharmacyBillSearch implements Serializable {
             //    updateRemainingQty(nB);
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
-            System.err.println("Updating QTY " + qty);
+            //System.err.println("Updating QTY " + qty);
             getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
@@ -814,7 +814,7 @@ public class PharmacyBillSearch implements Serializable {
             //    updateRemainingQty(nB);
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
-            System.err.println("Updating QTY " + qty);
+            //System.err.println("Updating QTY " + qty);
             getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
@@ -852,7 +852,7 @@ public class PharmacyBillSearch implements Serializable {
             //    updateRemainingQty(nB);
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
-            System.err.println("Updating QTY " + qty);
+            //System.err.println("Updating QTY " + qty);
             getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
             getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
@@ -891,7 +891,7 @@ public class PharmacyBillSearch implements Serializable {
             //    updateRemainingQty(nB);
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
-            System.err.println("Updating QTY " + qty);
+            //System.err.println("Updating QTY " + qty);
             getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
             getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
@@ -962,7 +962,7 @@ public class PharmacyBillSearch implements Serializable {
             ph.setBillItem(b);
             getPharmaceuticalBillItemFacade().edit(ph);
 
-//            System.err.println("Updating QTY " + ph.getQtyInUnit());
+//            //System.err.println("Updating QTY " + ph.getQtyInUnit());
 //            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
 //
 //            //    updateRemainingQty(nB);
@@ -1000,7 +1000,7 @@ public class PharmacyBillSearch implements Serializable {
             ph.setBillItem(b);
             getPharmaceuticalBillItemFacade().edit(ph);
 
-            System.err.println("Updating QTY " + ph.getQtyInUnit());
+            //System.err.println("Updating QTY " + ph.getQtyInUnit());
             getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
 //
 //            //    updateRemainingQty(nB);
@@ -1200,8 +1200,8 @@ public class PharmacyBillSearch implements Serializable {
             getBillFacade().edit(getBill());
             UtilityController.addSuccessMessage("Cancelled");
 
-            //       System.err.println("Bill : "+getBill().getBillType());
-//            System.err.println("Reference Bill : "+getBill().getReferenceBill().getBillType());
+            //       //System.err.println("Bill : "+getBill().getBillType());
+//            //System.err.println("Reference Bill : "+getBill().getReferenceBill().getBillType());
             printPreview = true;
 
         } else {
@@ -1228,8 +1228,8 @@ public class PharmacyBillSearch implements Serializable {
             getBillFacade().edit(getBill());
             UtilityController.addSuccessMessage("Cancelled");
 
-            //       System.err.println("Bill : "+getBill().getBillType());
-//            System.err.println("Reference Bill : "+getBill().getReferenceBill().getBillType());
+            //       //System.err.println("Bill : "+getBill().getBillType());
+//            //System.err.println("Reference Bill : "+getBill().getReferenceBill().getBillType());
             printPreview = true;
 
         } else {
@@ -1238,10 +1238,10 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkStock(PharmaceuticalBillItem pharmaceuticalBillItem) {
-        System.err.println("Batch " + pharmaceuticalBillItem.getItemBatch());
+        //System.err.println("Batch " + pharmaceuticalBillItem.getItemBatch());
         double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getBill().getDepartment());
-        System.err.println("Stock Qty" + stockQty);
-        System.err.println("Ph Qty" + pharmaceuticalBillItem.getQtyInUnit());
+        //System.err.println("Stock Qty" + stockQty);
+        //System.err.println("Ph Qty" + pharmaceuticalBillItem.getQtyInUnit());
         if (Math.abs(pharmaceuticalBillItem.getQtyInUnit()) > stockQty) {
             return true;
         } else {
@@ -1250,7 +1250,7 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     private boolean checkBillItemStock() {
-        System.err.println("Checking Item Stock");
+        //System.err.println("Checking Item Stock");
         for (BillItem bi : getBill().getBillItems()) {
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
@@ -1765,7 +1765,7 @@ public class PharmacyBillSearch implements Serializable {
     public void setBill(Bill bill) {
         recreateModel();
         this.bill = bill;
-        System.err.println("Setting BIll " + bill);
+        //System.err.println("Setting BIll " + bill);
         System.out.println("bill.getBillItems() = " + bill.getBillItems());
         bill = getBillFacade().find(bill.getId());
         System.out.println("bill.getBillItems() = " + bill.getBillItems());
@@ -1774,7 +1774,7 @@ public class PharmacyBillSearch implements Serializable {
             for (BillItem b : bill.getBillItems()) {
                 tmp += (b.getPharmaceuticalBillItem().getStock().getItemBatch().getPurcahseRate() * b.getPharmaceuticalBillItem().getQtyInUnit());
             }
-            System.err.println("Inside" + tmp);
+            //System.err.println("Inside" + tmp);
             if (bill.getNetTotal() == 0) {
                 bill.setNetTotal(tmp);
                 getBillFacade().edit(bill);

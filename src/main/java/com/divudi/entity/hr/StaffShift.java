@@ -284,7 +284,7 @@ public class StaffShift implements Serializable {
     }
 
     public void setShiftEndTime(Date shiftEndTime) {
-        //  System.err.println("setting End Time");
+        //  //System.err.println("setting End Time");
         if (getId() == null) {
             this.shiftEndTime = shiftEndTime;
         }

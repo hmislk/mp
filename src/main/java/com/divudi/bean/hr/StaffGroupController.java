@@ -11,7 +11,7 @@ import com.divudi.entity.Staff;
 import com.divudi.facade.RosterFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class StaffGroupController implements Serializable {
    
     private Staff currentStaff;   
@@ -92,7 +92,7 @@ public class StaffGroupController implements Serializable {
 //            UtilityController.addSuccessMessage("savedOldSuccessfully");
 //        } else {
 //            current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//            current.setCreater(sessionController.getLoggedUser());
+//            current.setCreater(getSessionController().getLoggedUser());
 //            getFacade().create(current);
 //            UtilityController.addSuccessMessage("savedNewSuccessfully");
 //        }
@@ -113,7 +113,7 @@ public class StaffGroupController implements Serializable {
 //            removeAll();
 //            current.setRetired(true);
 //            current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//            current.setRetirer(sessionController.getLoggedUser());
+//            current.setRetirer(getSessionController().getLoggedUser());
 //            getFacade().edit(current);
 //            UtilityController.addSuccessMessage("DeleteSuccessfull");
 //        } else {

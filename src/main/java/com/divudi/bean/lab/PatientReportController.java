@@ -10,6 +10,7 @@ package com.divudi.bean.lab;
 
 import com.divudi.bean.ItemForItemController;
 import com.divudi.bean.SessionController;
+import com.divudi.bean.TransferController;
 import com.divudi.bean.UtilityController;
 import com.divudi.bean.hr.StaffController;
 import com.divudi.data.CalculationType;
@@ -38,8 +39,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -61,6 +63,8 @@ public class PatientReportController implements Serializable {
     SessionController sessionController;
     @Inject
     StaffController staffController;
+    @Inject
+    TransferController transferController;
     @EJB
     private PatientReportFacade ejbFacade;
     @EJB
@@ -92,6 +96,14 @@ public class PatientReportController implements Serializable {
     List<PatientReportItemValue> patientReportItemValuesFlags;
     List<PatientReportItemValue> patientReportItemValuesDynamicLabels;
     List<PatientReportItemValue> patientReportItemValuesCalculations;
+
+    public String patientReportSearch() {
+        if (currentPatientReport == null || currentPatientReport.getPatientInvestigation() == null || currentPatientReport.getPatientInvestigation().getPatient() == null) {
+            return "";
+        }
+        getTransferController().setPatient(currentPatientReport.getPatientInvestigation().getPatient());
+        return "lab_search_for_reporting_patient";
+    }
 
     public String lastPatientReport(PatientInvestigation pi) {
         System.out.println("last pt rpt");
@@ -569,9 +581,9 @@ public class PatientReportController implements Serializable {
         currentPtIx.setDataEntryDepartment(getSessionController().getDepartment());
         currentPatientReport.setDataEntered(Boolean.TRUE);
         currentPatientReport.setDataEntryAt(Calendar.getInstance().getTime());
-        currentPatientReport.setDataEntryDepartment(sessionController.getLoggedUser().getDepartment());
-        currentPatientReport.setDataEntryInstitution(sessionController.getLoggedUser().getInstitution());
-        currentPatientReport.setDataEntryUser(sessionController.getLoggedUser());
+        currentPatientReport.setDataEntryDepartment(getSessionController().getLoggedUser().getDepartment());
+        currentPatientReport.setDataEntryInstitution(getSessionController().getLoggedUser().getInstitution());
+        currentPatientReport.setDataEntryUser(getSessionController().getLoggedUser());
 
         getFacade().edit(currentPatientReport);
         getPiFacade().edit(currentPtIx);
@@ -600,11 +612,12 @@ public class PatientReportController implements Serializable {
         currentPatientReport.setApproved(Boolean.FALSE);
         currentPatientReport.setApproved(Boolean.TRUE);
         currentPatientReport.setApproveAt(Calendar.getInstance().getTime());
-        currentPatientReport.setApproveDepartment(sessionController.getLoggedUser().getDepartment());
-        currentPatientReport.setApproveInstitution(sessionController.getLoggedUser().getInstitution());
+        currentPatientReport.setApproveDepartment(getSessionController().getLoggedUser().getDepartment());
+        currentPatientReport.setApproveInstitution(getSessionController().getLoggedUser().getInstitution());
         currentPatientReport.setApproveUser(getSessionController().getLoggedUser());
         getFacade().edit(currentPatientReport);
         getStaffController().setCurrent(getSessionController().getLoggedUser().getStaff());
+        getTransferController().setStaff(getSessionController().getLoggedUser().getStaff());
         UtilityController.addSuccessMessage("Approved");
     }
 
@@ -623,9 +636,9 @@ public class PatientReportController implements Serializable {
 
         currentPatientReport.setPrinted(Boolean.TRUE);
         currentPatientReport.setPrintingAt(Calendar.getInstance().getTime());
-        currentPatientReport.setPrintingDepartment(sessionController.getLoggedUser().getDepartment());
-        currentPatientReport.setPrintingInstitution(sessionController.getLoggedUser().getInstitution());
-        currentPatientReport.setPrintingUser(sessionController.getLoggedUser());
+        currentPatientReport.setPrintingDepartment(getSessionController().getLoggedUser().getDepartment());
+        currentPatientReport.setPrintingInstitution(getSessionController().getLoggedUser().getInstitution());
+        currentPatientReport.setPrintingUser(getSessionController().getLoggedUser());
         getFacade().edit(currentPatientReport);
 
     }
@@ -780,6 +793,7 @@ public class PatientReportController implements Serializable {
         this.currentPatientReport = currentPatientReport;
         if (currentPatientReport != null) {
             getCommonReportItemController().setCategory(currentPatientReport.getItem().getReportFormat());
+            currentPtIx = currentPatientReport.getPatientInvestigation();
         }
     }
 
@@ -791,6 +805,18 @@ public class PatientReportController implements Serializable {
         this.testFlagFacade = testFlagFacade;
     }
 
+    public TransferController getTransferController() {
+        return transferController;
+    }
+
+    public void setTransferController(TransferController transferController) {
+        this.transferController = transferController;
+    }
+
+    
+    
+    
+    
     @FacesConverter(forClass = PatientReport.class)
     public static class PatientReportControllerConverter implements Converter {
 

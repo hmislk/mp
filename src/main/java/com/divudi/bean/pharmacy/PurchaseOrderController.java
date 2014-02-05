@@ -8,29 +8,27 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.LazyBill;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.persistence.TemporalType;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -56,7 +54,6 @@ public class PurchaseOrderController implements Serializable {
     ///////////////
     private Bill requestedBill;
     private Bill aprovedBill;
-    private double netTotal;
     private Date fromDate;
     Date toDate;
     private boolean printPreview;
@@ -64,7 +61,11 @@ public class PurchaseOrderController implements Serializable {
     /////////////
 //    private List<PharmaceuticalBillItem> pharmaceuticalBillItems;
     private List<PharmaceuticalBillItem> filteredValue;
+    private List<BillItem> billItems;
+    private List<BillItem> selectedItems;
     private List<Bill> billsToApprove;
+    private List<Bill> bills;
+    private SearchKeyword searchKeyword;
     // private List<BillItem> billItems;
     // List<PharmaceuticalBillItem> pharmaceuticalBillItems;
     //////////
@@ -72,145 +73,39 @@ public class PurchaseOrderController implements Serializable {
     private CommonFunctions commonFunctions;
     private LazyDataModel<Bill> searchBills;
 
-    public void removeItem(BillItem bi) {
-        getAprovedBill().getBillItems().remove(bi);
-        getBillFacade().edit(getAprovedBill());
+    public void removeSelected() {
+        //  System.err.println("1");
+        if (selectedItems == null) {
+            //   System.err.println("2");
+            return;
+        }
 
-        bi.setBill(null);
-        getBillItemFacade().edit(bi);
+        System.err.println("3");
+        for (BillItem b : selectedItems) {
+            //  System.err.println("4");
+            getBillItems().remove(b.getSearialNo());
+            calTotal();
+        }
 
-        getNetTotal();
+        selectedItems = null;
     }
 
-    public void createAll() {
-        searchBills = null;
-        String sql = "";
-        HashMap tmp = new HashMap();
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where b.cancelledBill is null  "
-                    + " and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        } else {
-            sql = "Select b From BilledBill b where b.cancelledBill is null  "
-                    + " and b.createdAt between :fromDate and :toDate and"
-                    + " (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.referenceBill.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        }
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("bTp", BillType.PharmacyOrder);
-        List<Bill> lst = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        searchBills = new LazyBill(lst);
-
+    public void removeItem(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
+        calTotal();
     }
 
-    public void createNotApproved() {
-        searchBills = null;
-        String sql = "";
-        HashMap tmp = new HashMap();
+    private int maxResult = 50;
 
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and b.referenceBill is null  "
-                    + " and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        } else {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and b.referenceBill is null "
-                    + " and b.createdAt between :fromDate and :toDate and"
-                    + " (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.referenceBill.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        }
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("bTp", BillType.PharmacyOrder);
-        List<Bill> lst1 = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and  b.referenceBill.creater is null "
-                    + " and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        } else {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and  b.referenceBill.creater is null "
-                    + " and b.createdAt between :fromDate and :toDate and"
-                    + " (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.referenceBill.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        }
-
-        List<Bill> lst2 = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and  b.referenceBill.creater is not null and b.referenceBill.cancelled=true "
-                    + " and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        } else {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and  b.referenceBill.creater is not null and b.referenceBill.cancelled=true "
-                    + " and b.createdAt between :fromDate and :toDate and"
-                    + " (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.referenceBill.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        }
-
-        List<Bill> lst3 = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        lst1.addAll(lst2);
-        lst1.addAll(lst3);
-
-        searchBills = new LazyBill(lst1);
-
-    }
-
-    public void createApproved() {
-        searchBills = null;
-        String sql = "";
-        HashMap tmp = new HashMap();
-
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and b.referenceBill.creater is not null and b.referenceBill.cancelled=false "
-                    + " and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        } else {
-            sql = "Select b From BilledBill b where b.cancelledBill is null and b.referenceBill.creater is not null and b.referenceBill.cancelled=false  "
-                    + " and b.createdAt between :fromDate and :toDate and"
-                    + " (upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + "  or upper(b.referenceBill.creater.webUserPerson.name) like '%" + txtSearch.toUpperCase() + "%' or "
-                    + " upper(b.referenceBill.deptId) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' ) "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-        }
-
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("bTp", BillType.PharmacyOrder);
-        List<Bill> lst = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        searchBills = new LazyBill(lst);
-
-    }
+   
 
     public void clearList() {
         filteredValue = null;
         billsToApprove = null;
         printPreview = false;
-//        billItems = null;
+        billItems = null;
+        aprovedBill = null;
+        requestedBill = null;
     }
 
     public Date getToDate() {
@@ -233,22 +128,16 @@ public class PurchaseOrderController implements Serializable {
             return "";
         }
 
-        for (BillItem bi : getAprovedBill().getBillItems()) {
-            bi.setCreatedAt(Calendar.getInstance().getTime());
-            bi.setCreater(getSessionController().getLoggedUser());
-            bi.setNetValue(bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate());
+        calTotal();
 
-            getBillItemFacade().edit(bi);
-
-            //  getAprovedBill().getBillItems().add(bi);
-        }
-
-        getNetTotal();
-        editBill();
+        saveBill();
+        saveBillComponent();
 
         //Update Requested Bill Reference
         getRequestedBill().setReferenceBill(getAprovedBill());
         getBillFacade().edit(getRequestedBill());
+
+        clearList();
 
         return viewRequestedList();
         //   printPreview = true;
@@ -260,67 +149,16 @@ public class PurchaseOrderController implements Serializable {
         return "pharmacy_purhcase_order_list_to_approve";
     }
 
-    public void editBillItem(PharmaceuticalBillItem i) {
-
-    }
-
-    private void editBill() {
-        getAprovedBill().setTotal(getNetTotal());
-        getAprovedBill().setNetTotal(getNetTotal());
-
-        getAprovedBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getRequestedBill().getDepartment(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
-        getAprovedBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getRequestedBill().getInstitution(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
-
-        getAprovedBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
-        getAprovedBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
-
-        getAprovedBill().setCreater(getSessionController().getLoggedUser());
-        getAprovedBill().setCreatedAt(Calendar.getInstance().getTime());
-
-        getBillFacade().edit(getAprovedBill());
-    }
-
     @Inject
     private PharmacyController pharmacyController;
 
     public void onEdit(BillItem tmp) {
         tmp.setNetValue(tmp.getPharmaceuticalBillItem().getQty() * tmp.getPharmaceuticalBillItem().getPurchaseRate());
-
-        getPharmaceuticalBillItemFacade().edit(tmp.getPharmaceuticalBillItem());
-        getBillItemFacade().edit(tmp);
-        //   UtilityController.addSuccessMessage("Item Updated " + tmp.getQty());
-        //   getPharmacyController().setPharmacyItem(tmp.getBillItem().getItem());
+        calTotal();
     }
 
     public void onFocus(PharmaceuticalBillItem ph) {
         getPharmacyController().setPharmacyItem(ph.getBillItem().getItem());
-    }
-
-    public List<Bill> getBillToAprove() {
-//        String sql = "Select b From BilledBill b where b.cancelledBill is null and b.createdAt between :fromDate and :toDate "
-//                + "and b.retired=false and b.billType= :bTp and "
-//                + "(b.id not in (Select bo.referenceBill.id from BilledBill bo  where bo.cancelledBill is null and bo.billType= :bTp2)"
-//                    + "or b.id in(Select bo1.referenceBill.id from BilledBill bo1  where bo1.cancelledBill is null and bo1.createdAt is null and bo1.billType= :bTp2))";
-//        
-        if (billsToApprove == null) {
-            String sql = "Select b From BilledBill b where b.cancelledBill is null  "
-                    + " and b.createdAt between :fromDate and :toDate "
-                    + "and b.retired=false and b.billType= :bTp order by b.id desc ";
-
-            HashMap tmp = new HashMap();
-            tmp.put("toDate", getToDate());
-            tmp.put("fromDate", getFromDate());
-            tmp.put("bTp", BillType.PharmacyOrder);
-            //   tmp.put("bTp2", BillType.PharmacyOrderApprove);
-            billsToApprove = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-            if (billsToApprove == null) {
-                billsToApprove = new ArrayList<>();
-            }
-
-        }
-
-        return billsToApprove;
     }
 
     public BillFacade getBillFacade() {
@@ -339,88 +177,83 @@ public class PurchaseOrderController implements Serializable {
     }
 
     public void saveBill() {
-        getAprovedBill().setBillType(BillType.PharmacyOrderApprove);
+
         getAprovedBill().setPaymentMethod(getRequestedBill().getPaymentMethod());
         getAprovedBill().setFromDepartment(getRequestedBill().getDepartment());
         getAprovedBill().setFromInstitution(getRequestedBill().getInstitution());
-        getAprovedBill().setToInstitution(getRequestedBill().getToInstitution());
         getAprovedBill().setReferenceBill(getRequestedBill());
+        getAprovedBill().setBackwardReferenceBill(getRequestedBill());
+
+        getAprovedBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getRequestedBill().getDepartment(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
+        getAprovedBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorWithReference(getRequestedBill().getInstitution(), getAprovedBill(), BillType.PharmacyOrder, BillNumberSuffix.PO));
+
+        getAprovedBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
+        getAprovedBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
+
+        getAprovedBill().setCreater(getSessionController().getLoggedUser());
+        getAprovedBill().setCreatedAt(Calendar.getInstance().getTime());
 
         getBillFacade().create(getAprovedBill());
 
     }
 
-    public BillItem saveBillItem(PharmaceuticalBillItem i) {
-        BillItem tmp = new BillItem();
-        tmp.setBill(getAprovedBill());
-        tmp.setItem(i.getBillItem().getItem());
-        tmp.setNetValue(i.getBillItem().getNetValue());
-        getBillItemFacade().create(tmp);
-
-        return tmp;
-    }
-
-    public void savePharmacyBillItem(BillItem b, PharmaceuticalBillItem i) {
-        PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
-        tmp.setBillItem(b);
-        tmp.setQty(i.getQty());
-        tmp.setPurchaseRate(i.getPurchaseRate());
-        tmp.setRetailRate(i.getRetailRate());
-        getPharmaceuticalBillItemFacade().create(tmp);
-    }
-
     public void saveBillComponent() {
-        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getRequestedBill().getId();
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql);
+        for (BillItem i : getBillItems()) {
+            i.setBill(getAprovedBill());
+            i.setCreatedAt(Calendar.getInstance().getTime());
+            i.setCreater(getSessionController().getLoggedUser());
+            i.setNetValue(i.getPharmaceuticalBillItem().getQty() * i.getPharmaceuticalBillItem().getPurchaseRate());
 
-        for (PharmaceuticalBillItem i : tmp) {
+            PharmaceuticalBillItem phItem = i.getPharmaceuticalBillItem();
+            i.setPharmaceuticalBillItem(null);
+            getBillItemFacade().create(i);
+
+            phItem.setBillItem(i);
+            getPharmaceuticalBillItemFacade().create(phItem);
+
+            i.setPharmaceuticalBillItem(phItem);
+            getBillItemFacade().edit(i);
+
+            getAprovedBill().getBillItems().add(i);
+        }
+
+        getBillFacade().edit(getAprovedBill());
+    }
+
+    public void generateBillComponent() {
+
+        for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
             BillItem bi = new BillItem();
-            bi.setBill(getAprovedBill());
-            bi.setItem(i.getBillItem().getItem());
-            bi.setNetValue(i.getBillItem().getNetValue());
-            getBillItemFacade().create(bi);
+            bi.copy(i.getBillItem());
 
             PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
             ph.setBillItem(bi);
             ph.setQtyInUnit(i.getQtyInUnit());
             ph.setPurchaseRateInUnit(i.getPurchaseRateInUnit());
             ph.setRetailRateInUnit(i.getRetailRateInUnit());
-            getPharmaceuticalBillItemFacade().create(ph);
-
             bi.setPharmaceuticalBillItem(ph);
-            getBillItemFacade().edit(bi);
 
-            getAprovedBill().getBillItems().add(bi);
+            bi.setTmpQty(ph.getQtyInUnit());
+
+            getBillItems().add(bi);
         }
 
-        getBillFacade().edit(getAprovedBill());
-    }
-
-    public void createOrder() {
-        String sql = "Select b From BilledBill b where  b.retired=false and b.billType= :bTp and b.cancelledBill is null and b.referenceBill.id=" + getRequestedBill().getId();
-        HashMap tmp = new HashMap();
-        tmp.put("bTp", BillType.PharmacyOrderApprove);
-        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        if (!bil.isEmpty()) {
-            setAprovedBill(bil.get(0));
-        } else {
-            saveBill();
-            saveBillComponent();
-        }
+        calTotal();
 
     }
 
     public void setRequestedBill(Bill requestedBill) {
+        clearList();
         this.requestedBill = requestedBill;
-        aprovedBill = null;
-        printPreview = false;
-        createOrder();
+        getAprovedBill().setPaymentMethod(getRequestedBill().getPaymentMethod());
+        getAprovedBill().setToInstitution(getRequestedBill().getToInstitution());
+        generateBillComponent();
     }
 
     public Bill getAprovedBill() {
         if (aprovedBill == null) {
             aprovedBill = new BilledBill();
+            aprovedBill.setBillType(BillType.PharmacyOrderApprove);
         }
         return aprovedBill;
     }
@@ -469,28 +302,15 @@ public class PurchaseOrderController implements Serializable {
         this.pharmacyBean = pharmacyBean;
     }
 
-    public double getNetTotal() {
-        netTotal = 0.0;
-//        if (getAprovedBill().getId() == null) {
-//            return 0.0;
-//        }
-//
-//        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.bill.id=" + getAprovedBill().getId();
-//        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql);
-//
-//        for (PharmaceuticalBillItem ph : tmp) {
-//            netTotal += ph.getQty() * ph.getPurchaseRate();
-//        }
-
-        netTotal = 0.0;
-        for (BillItem bi : getAprovedBill().getBillItems()) {
-            netTotal += bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+    public void calTotal() {
+        double tmp = 0;
+        int serialNo = 0;
+        for (BillItem bi : getBillItems()) {
+            tmp += bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+            bi.setSearialNo(serialNo++);
         }
-        return netTotal;
-    }
-
-    public void setNetTotal(double netTotal) {
-        this.netTotal = netTotal;
+        getAprovedBill().setTotal(tmp);
+        getAprovedBill().setNetTotal(tmp);
     }
 
     public void setToDate(Date toDate) {
@@ -541,21 +361,14 @@ public class PurchaseOrderController implements Serializable {
         this.printPreview = printPreview;
     }
 
-//    public List<BillItem> getBillItems() {
-//        if (billItems == null) {
-//            billItems = new ArrayList<>();
-//        }
-//        return billItems;
-//    }
-//
-//    public void setBillItems(List<BillItem> billItems) {
-//        this.billItems = billItems;
-//    }
     public void makeListNull() {
 //        pharmaceuticalBillItems = null;
         filteredValue = null;
         billsToApprove = null;
         searchBills = null;
+        billItems = null;
+        bills = null;
+        maxResult = 50;
 
     }
 
@@ -573,5 +386,51 @@ public class PurchaseOrderController implements Serializable {
 
     public void setTxtSearch(String txtSearch) {
         this.txtSearch = txtSearch;
+    }
+
+    public List<BillItem> getBillItems() {
+        if (billItems == null) {
+            billItems = new ArrayList<>();
+        }
+        return billItems;
+    }
+
+    public void setBillItems(List<BillItem> billItems) {
+        this.billItems = billItems;
+    }
+
+    public List<BillItem> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public void setSelectedItems(List<BillItem> selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
+    }
+
+    public int getMaxResult() {
+        return maxResult;
+    }
+
+    public void setMaxResult(int maxResult) {
+        this.maxResult = maxResult;
     }
 }

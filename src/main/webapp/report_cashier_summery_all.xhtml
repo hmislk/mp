@@ -16,10 +16,13 @@
                 <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="All Cashier Summery">
                     <f:facet name="header">
 
-                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{cashierReportController.calCashierData()}" />  
+                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{cashierReportController.calCashierData()}" />  
+                        <p:defaultCommand target="btnRefresh"/>
+                        
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint" />
                         </p:commandButton>  
+                        
                         <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                             <pe:exporter type="xlsx" target="tbl" fileName="Cashier_Report" subTable="true"  />
                         </p:commandButton>  

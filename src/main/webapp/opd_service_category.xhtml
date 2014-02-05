@@ -53,12 +53,13 @@
 
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
+                                    
                                     <h:commandButton id="btnSave" value="Save"  action="#{serviceCategoryController.saveSelected()}" styleClass="buttons">
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
-                                    </h:commandButton>
-                                    
+                                    </h:commandButton>                                    
                                     <p:defaultCommand target="btnSave"/>
+                                    
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

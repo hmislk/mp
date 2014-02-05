@@ -586,6 +586,14 @@ a:hover {
     display: none;
 }
 
+.redText{    
+    color: red;
+}
+
+.greenText{    
+    color: green;
+}
+
 .noBackround{
     background: white   !important ;
     background-color: red !important ;
@@ -685,4 +693,11 @@ a:hover {
     margin: 5px;
     text-align: right;
     color: red;
+}
+
+
+
+.crossLine{
+   text-decoration: line-through; 
+    
 }

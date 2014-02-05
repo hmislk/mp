@@ -24,9 +24,12 @@
                             <p:autoComplete forceSelection="true" converter="stfcon"  value="#{staffController.current}" completeMethod="#{staffController.completeStaff}" var="ix2" itemLabel="#{ix2.person.name}" itemValue="#{ix2}" size="30"  style="width: 400px;">
                             </p:autoComplete>                           
                             <h:commandButton value="Refresh" />
-
+                            
                             <p:fileUpload value="#{staffImageController.file}" mode="simple"/>
-                            <h:commandButton value="Save" action="#{staffImageController.saveSignature()}"/>
+                            
+                            <h:commandButton id="btnSave" value="Save" action="#{staffImageController.saveSignature()}"/>
+                            <p:defaultCommand target="btnSave"/>
+                            
                             <p:graphicImage  value="#{staffImageController.signatureById}" >
                                     <f:param name="id" value="#{staffController.current.id}" />
                                 </p:graphicImage>

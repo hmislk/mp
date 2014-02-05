@@ -32,8 +32,6 @@ import com.divudi.entity.Patient;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
-import com.divudi.entity.lab.Investigation;
-import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -49,17 +47,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.swing.text.Utilities;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -68,7 +63,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class BillPackageController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -290,7 +285,7 @@ public class BillPackageController implements Serializable {
         temp.setPaymentScheme(getPaymentScheme());
 
         temp.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        temp.setCreater(sessionController.getLoggedUser());
+        temp.setCreater(getSessionController().getLoggedUser());
         getFacade().create(temp);
         return temp;
 

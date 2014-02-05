@@ -31,9 +31,15 @@
                                     </p:commandButton>
                                     <p:commandButton styleClass="nonPrintBlock"  id="btnApprove"  disabled ="#{!(webUserController.hasPrivilege('LabAutherizing') eq true and patientReportController.currentPatientReport.dataEntered eq true )}"   value="Approve" action="#{patientReportController.approvePatientReport()}" ajax="false" >
                                     </p:commandButton>
+                                    <p:commandButton styleClass="nonPrintBlock"  ajax="false" value="Print" onclick="window.print();" actionListener="#{patientReportController.printPatientReport()}" />
+                                    
+                                    <p:separator></p:separator>
+                                    
+                                    <p:commandButton  styleClass="nonPrintBlock"  value="Patient Report Search" action="#{patientReportController.patientReportSearch}" ajax="false" >
+                                    </p:commandButton>
                                     <p:commandButton  styleClass="nonPrintBlock"  value="Report Search" action="lab_search_for_reporting" ajax="false" >
                                     </p:commandButton>
-                                    <p:commandButton styleClass="nonPrintBlock"  ajax="false" value="Print" onclick="window.print();" actionListener="#{patientReportController.printPatientReport()}" />
+                                    
                                 </h:panelGrid>
                             </f:facet>
 
@@ -41,7 +47,6 @@
 
                                 <p:panel header="Patient Details" styleClass="alignTop" >
                                     <p:panelGrid columns="2" >
-
                                         <h:outputLabel value="Name" ></h:outputLabel>
                                         <h:outputLabel value="#{patientReportController.currentPatientReport.patientInvestigation.patient.person.nameWithTitle}" ></h:outputLabel>
                                         <h:outputLabel value="Age" ></h:outputLabel>
@@ -50,9 +55,6 @@
                                         <h:outputLabel value="#{patientReportController.currentPatientReport.patientInvestigation.patient.person.sex}" ></h:outputLabel>
                                         <h:outputLabel value="Investigation" ></h:outputLabel>
                                         <h:outputLabel value="#{patientReportController.currentPatientReport.item.name}" ></h:outputLabel>
-
-
-
                                     </p:panelGrid>
                                 </p:panel>
 
@@ -174,39 +176,45 @@
 
                                 <p:panel header="Microbiology"    rendered="#{patientReportController.currentPatientReport.patientInvestigation.investigation.reportType eq 'Microbiology'}" >
 
-                                    <p:dataTable id="tblMicVals" value="#{patientReportController.currentPatientReport.patientReportItemOfValueType}"  var="pv"  >
+                                    <f:view contentType="text/html">
 
-                                        <p:column >
-                                            <h:outputLabel value="#{pv.investigationItem.name}" rendered="#{pv.investigationItem.ixItemType eq 'Value'}"></h:outputLabel>
-                                        </p:column>
+                                        <p:dataTable id="tblMicVals" value="#{patientReportController.currentPatientReport.patientReportItemOfValueType}"  var="pv"  >
 
-                                        <p:column >
-                                            <h:panelGroup rendered="#{pv.investigationItem.ixItemType eq 'Value'}">
-                                                <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Memo'}" >
-                                                    <p:inputTextarea id="txtMicMemoVal"   style="min-width: 200px;" completeMethod="#{investigationItemValueController.completeValues}"  >
-                                                    </p:inputTextarea>
-                                                    <p:watermark  value="#{pv.lobValue}" for="txtMicMemoVal" />
+                                            <p:column >
+                                                <h:outputLabel value="#{pv.investigationItem.name}" rendered="#{pv.investigationItem.ixItemType eq 'Value'}"></h:outputLabel>
+                                            </p:column>
+
+                                            <p:column >
+                                                <h:panelGroup rendered="#{pv.investigationItem.ixItemType eq 'Value'}">
+                                                    <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Memo'}" >
+                                                        <p:inputTextarea id="txtMicMemoVal"   minQueryLength="1"  style="min-width: 200px;" completeMethod="#{investigationItemValueController.completeValues}" value="#{patientReportController.memoEnterVal}" >
+                                                            <f:ajax event="itemSelect"  execute="@this" listener="#{patientReportController.saveMemoVal(pv.id) }" ></f:ajax>
+                                                        </p:inputTextarea>
+                                                        <p:watermark  value="#{pv.lobValue}" for="txtMicMemoVal" />
+                                                    </h:panelGroup>
+                                                    <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Varchar'}">
+                                                        <p:selectOneMenu id="cmbMicStrVal" value="#{patientReportController.strEnterVal}" editable="true"  style="min-width: 300px!important;" >
+                                                            <f:selectItem itemLabel="SENSITIVE" itemValue="SENSITIVE" ></f:selectItem>
+                                                            <f:selectItem itemLabel="Resistant" itemValue="Resistant" ></f:selectItem>
+                                                            <f:selectItem itemLabel="Intermediate" itemValue="Intermediate" ></f:selectItem>
+                                                            <f:ajax event="change"  execute="@this" listener="#{patientReportController.saveStrVal(pv.id) }" ></f:ajax>
+                                                        </p:selectOneMenu>
+                                                        <p:watermark  value="#{pv.strValue}" for="cmbMicStrVal" />
+                                                    </h:panelGroup>
+
+
                                                 </h:panelGroup>
-                                                <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Varchar'}">
-                                                    <p:selectOneMenu id="cmbMicStrVal" value="#{patientReportController.strEnterVal}" editable="true"  style="min-width: 300px!important;" >
-                                                        <f:selectItem itemLabel="SENSITIVE" itemValue="SENSITIVE" ></f:selectItem>
-                                                        <f:selectItem itemLabel="Resistant" itemValue="Resistant" ></f:selectItem>
-                                                        <f:selectItem itemLabel="Intermediate" itemValue="Intermediate" ></f:selectItem>
-                                                        <f:ajax event="change"  execute="@this" listener="#{patientReportController.saveStrVal(pv.id) }" ></f:ajax>
-                                                    </p:selectOneMenu>
-                                                    <p:watermark  value="#{pv.strValue}" for="cmbMicStrVal" />
-                                                </h:panelGroup>
-
-
-                                            </h:panelGroup>
 
 
 
 
 
 
-                                        </p:column>
-                                    </p:dataTable>
+                                            </p:column>
+                                        </p:dataTable>
+
+                                    </f:view>
+
                                 </p:panel>
 
 
@@ -267,7 +275,6 @@
                                         <p:graphicImage rendered="#{myCli.reportItemType eq 'AutherizedSignature' and myCli.retired eq false }"    value="#{staffImageController.signatureById}" style="width: #{myCli.cssWidth}; max-height: 50px!important;"  >
                                             <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
                                         </p:graphicImage>
-
 
                                     </div>
                                 </ui:repeat>
@@ -359,10 +366,13 @@
                                         </h:outputText>
                                         <h:outputText rendered="#{myCli.ixItemType ne 'Label' and myCli.reportItemType eq 'ReferringDoctor' and myCli.retired eq false }"  value="#{patientReportController.currentPatientReport.patientInvestigation.billItem.bill.referredBy.person.nameWithTitle}" style="color: #{myCli.cssColor}" escape="false" ></h:outputText>
 
-                                        <p:graphicImage rendered="#{myCli.reportItemType eq 'AutherizedSignature' and myCli.retired eq false }"    value="#{staffImageController.signatureById}" style="width: #{myCli.cssWidth}; max-height: 50px!important;"  >
-                                            <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
-                                        </p:graphicImage>
-
+                                        <h:panelGroup rendered="#{patientReportController.currentPatientReport.approveUser.staff.baImage ne null}">
+                                            <p:graphicImage rendered="#{myCli.reportItemType eq 'AutherizedSignature' and myCli.retired eq false }"    value="#{staffImageController.signatureById}" style="width: #{myCli.cssWidth}; max-height: 50px!important;"  >
+                                                <f:param name="id" value="#{patientReportController.currentPatientReport.approveUser.staff.id}" />
+                                            </p:graphicImage>
+                                            
+                                            
+                                        </h:panelGroup>
 
                                     </div>
                                 </ui:repeat>
@@ -370,33 +380,30 @@
                                 <table id="micro" style="position: absolute; top: 38%; left:10%; font-size: 12px!important;" >
                                     <tr>
                                         <td id="micromemos">
-                                            <table>
+                                            <table  style="width: 100%!important;">                 
                                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
-                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.cssTop lt 50 }" >
-
+                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.transCssTop  lt 50 }" >
                                                         <tr>
-                                                            <td>
+                                                            <td style="min-width: 300px;padding: 5px;padding-left: 1px; padding-right: 1px;">
                                                                 <h:outputLabel value="#{prv.investigationItem.name}"  escape="false" />
                                                             </td>
-                                                            <td>
+                                                            <td  style="padding: 5px;margin-left: 90px;">
                                                                 <h:outputLabel value="#{prv.lobValue}"  escape="false" />
                                                             </td>
                                                         </tr>
-
                                                     </h:panelGroup>
-
                                                 </ui:repeat>
                                             </table>
                                         </td>
                                     </tr>
-
+                                    <br/><br/>
                                     <tr>
                                         <td id="ablist">
                                             <table>
                                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
                                                     <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Varchar' and prv.investigationItem.retired eq false and prv.strValue ne '' and prv.strValue ne null  }" >
                                                         <tr>
-                                                            <td>
+                                                            <td style="min-width: 300px;padding: 1px;">
                                                                 <h:outputLabel value="#{prv.investigationItem.name}"  escape="false" />
                                                             </td>
                                                             <td>
@@ -409,15 +416,15 @@
 
                                         </td>
                                     </tr>
-
+                                    <br/><br/>
                                     <tr>
                                         <td id="miccomments">
                                             <table>
                                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
-                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.cssTop > 50 }" >
+                                                    <h:panelGroup rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Memo' and prv.investigationItem.retired eq false and prv.lobValue ne '' and prv.lobValue ne null and prv.investigationItem.transCssTop gt 50 }" >
 
                                                         <tr>
-                                                            <td>
+                                                            <td style="min-width: 300px;padding: 5px;padding-left: 1px; padding-right: 1px;">
                                                                 <h:outputLabel value="#{prv.investigationItem.name}"  escape="false" />
                                                             </td>
                                                             <td>

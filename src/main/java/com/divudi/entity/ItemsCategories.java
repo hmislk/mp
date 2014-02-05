@@ -19,31 +19,29 @@ import javax.persistence.Temporal;
  */
 @Entity
 public class ItemsCategories implements Serializable {
-     static final long serialVersionUID = 1L;
+
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-     Long id;
- //Created Properties
+    Long id;
+    //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
+    Date retiredAt;
+    String retireComments;
     //Main Properties
     @ManyToOne
-     Item item;    
+    Item item;
     @ManyToOne
-     Category category;
-    
-    
-    
-    
+    Category category;
+
     public Long getId() {
         return id;
     }
@@ -61,7 +59,7 @@ public class ItemsCategories implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof ItemsCategories)) {
             return false;
         }
@@ -140,5 +138,5 @@ public class ItemsCategories implements Serializable {
     public void setRetireComments(String retireComments) {
         this.retireComments = retireComments;
     }
-    
+
 }

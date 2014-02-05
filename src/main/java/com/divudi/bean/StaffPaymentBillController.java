@@ -2,6 +2,7 @@ package com.divudi.bean;
 
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
@@ -30,8 +31,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -43,7 +45,7 @@ import org.primefaces.model.LazyDataModel;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -87,6 +89,7 @@ public class StaffPaymentBillController implements Serializable {
     Speciality speciality;
     @EJB
     StaffFacade staffFacade;
+    private SearchKeyword searchKeyword;
 
     public List<BillComponent> getBillComponents() {
         if (getCurrent() != null) {
@@ -99,6 +102,7 @@ public class StaffPaymentBillController implements Serializable {
         return billComponents;
     }
     private List<BillFee> billFees;
+    private List<BillFee> tblBillFees;
 
     public List<BillFee> getBillFees() {
         if (getCurrent() != null) {
@@ -142,7 +146,7 @@ public class StaffPaymentBillController implements Serializable {
         printPreview = false;
         paymentScheme = null;
         speciality = null;
-       
+
     }
 
     public StaffFacade getStaffFacade() {
@@ -468,7 +472,7 @@ public class StaffPaymentBillController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {
@@ -554,24 +558,10 @@ public class StaffPaymentBillController implements Serializable {
 
         return dueBillFeeReport;
     }
-    
-    
-     private LazyDataModel<BillFee> dueBillFee;
 
-    public void createDueFeeTable() {
-        dueBillFee=null;
-        HashMap temMap = new HashMap();
-        String sql = "select b from BillFee b where b.retired=false and "
-                + " b.bill.billType=:btp "
-                + " and b.bill.cancelled=false and (b.feeValue - b.paidValue) > 0 and"
-                + "  b.bill.billDate between :fromDate and :toDate order by b.staff.id  ";
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("btp", BillType.OpdBill);
+    private LazyDataModel<BillFee> dueBillFee;
 
-        List<BillFee> tmp = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        dueBillFee=new LazyBillFee(tmp);
-    }
+  
 
     public List<BillFee> getDueBillFeeReportAll() {
 
@@ -660,6 +650,25 @@ public class StaffPaymentBillController implements Serializable {
 
     public void setDueBillFee(LazyDataModel<BillFee> dueBillFee) {
         this.dueBillFee = dueBillFee;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
+    }
+
+    public List<BillFee> getTblBillFees() {
+        return tblBillFees;
+    }
+
+    public void setTblBillFees(List<BillFee> tblBillFees) {
+        this.tblBillFees = tblBillFees;
     }
 
     /**

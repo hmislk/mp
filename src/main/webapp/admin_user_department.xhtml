@@ -12,7 +12,7 @@
     <ui:define name="content">
 
         <h:panelGroup rendered="#{!webUserController.hasPrivilege('AdminManagingUsers')}" >
-            You are NOT authorized
+            <h:outputLabel value="You are NOT authorized"/>
         </h:panelGroup>
 
         <h:panelGroup  >
@@ -28,10 +28,10 @@
                         <p:panel header="Departments allowed for this user are">
                             <p:dataTable  value="#{userDepartmentController.items}" var="i">
                                 <p:column headerText="Department Name">
-                                    #{i.department.name}                              
+                                    <h:outputLabel value="#{i.department.name}"/>                              
                                 </p:column>
                                  <p:column headerText="Institution Name">
-                                    #{i.department.institution.name}                              
+                                    <h:outputLabel value="#{i.department.institution.name}"/>                              
                                 </p:column>
                                 <p:column >
                                     <p:commandButton ajax="false" value="Remove" action="#{userDepartmentController.delete()}">
@@ -60,7 +60,8 @@
                                 <f:selectItems value="#{userDepartmentController.currentInsDepartments}" var="d" itemLabel="#{d.name}" itemValue="#{d}" />
                             </p:selectOneMenu>
                         </p:panel>
-                        <h:commandButton value="Add Departments" action="#{userDepartmentController.addDepartmentForUser()}"/>
+                        <h:commandButton id="btnAddDepartments" value="Add Departments" action="#{userDepartmentController.addDepartmentForUser()}"/>
+                        <p:defaultCommand target="btnAddDepartments"/>
                     </p:panelGrid>
 
                 </p:panel>

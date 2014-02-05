@@ -9,7 +9,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.PaymentScheme;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import javax.inject.Inject;
 
@@ -18,7 +18,7 @@ import javax.inject.Inject;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class EnumController implements Serializable {
     
   private PaymentScheme paymentScheme;
@@ -45,7 +45,8 @@ public class EnumController implements Serializable {
             BillType.PharmacyOrderApprove,
             BillType.PharmacyPre,
             BillType.PharmacyPurchaseBill,
-            BillType.PharmacySale,          
+            BillType.PharmacySale,   
+            BillType.PharmacyAdjustment,
         };
         
         return b;    

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.Temporal;
@@ -42,7 +42,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class CashierReportController implements Serializable {
 
     @Inject

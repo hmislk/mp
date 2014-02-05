@@ -18,6 +18,7 @@
 
 
                 <p:panel header="Manage Staff" >
+
                     <h:panelGrid id ="gpVeda" columns="2" >
 
                         <h:panelGrid id="gpSelect" columns="1"  >
@@ -40,6 +41,7 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
                                         </f:ajax>
                                     </p:commandButton>
+                                    
                                     <p:commandButton id="btnDelete" ajax="false" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{staffController.delete()}"  value="Delete"  >
                                     </p:commandButton>
@@ -146,7 +148,6 @@
                                     </p:tab>
 
                                 </p:tabView>
-
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <p:commandButton id="btnSave" ajax="false" value="Save"  action="#{staffController.saveSelected()}" styleClass="buttons">
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >

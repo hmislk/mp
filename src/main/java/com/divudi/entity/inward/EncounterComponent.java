@@ -38,7 +38,7 @@ public class EncounterComponent implements Serializable {
     private Long id;
 
    
-    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.LAZY)
     PatientEncounter patientEncounter;
     @ManyToOne
     PatientEncounter childEncounter;

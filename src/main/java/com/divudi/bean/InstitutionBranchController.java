@@ -20,11 +20,11 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.view.ViewScoped;
 import javax.persistence.TemporalType;
 
 /**
@@ -33,7 +33,7 @@ import javax.persistence.TemporalType;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InstitutionBranchController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -155,7 +155,7 @@ public class InstitutionBranchController implements Serializable {
 //                }
 //            }
 //            getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//            getCurrent().setCreater(sessionController.getLoggedUser());
+//            getCurrent().setCreater(getSessionController().getLoggedUser());
 //            getFacade().create(getCurrent());
 //            UtilityController.addSuccessMessage("savedNewSuccessfully");
 //        }
@@ -204,7 +204,7 @@ public class InstitutionBranchController implements Serializable {
         if (getCurrent() != null) {
             getCurrent().setRetired(true);
             getCurrent().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrent().setRetirer(sessionController.getLoggedUser());
+            getCurrent().setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(getCurrent());
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

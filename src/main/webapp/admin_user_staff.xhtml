@@ -12,7 +12,7 @@
     <ui:define name="content">
 
         <h:panelGroup rendered="#{!webUserController.hasPrivilege('AdminManagingUsers')}" >
-            You are NOT authorized
+            <h:outputLabel value="You are NOT authorized"/>
         </h:panelGroup>
 
         <h:panelGroup rendered="#{webUserController.hasPrivilege('AdminManagingUsers')}" >
@@ -32,7 +32,8 @@
                             </h:selectOneMenu>                        
                         </p:panel>
                     </h:panelGrid>
-                    <p:commandButton ajax="false" value="Save" action="#{webUserController.saveUser()}" />
+                    <p:commandButton id="btnSave" ajax="false" value="Save" action="#{webUserController.saveUser()}" />
+                    <p:defaultCommand target="btnSave"/>
                 </p:panel>
 
             </h:form>

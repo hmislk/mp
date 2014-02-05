@@ -9,7 +9,6 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -29,19 +28,12 @@ import com.divudi.facade.RefundBillFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-
 
 /**
  *
@@ -53,18 +45,14 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     private boolean printPreview = false;
     @EJB
-    BillFeeFacade billFeeFacade;
-    String txtSearch;
+    private BillFeeFacade billFeeFacade;
     BilledBill bill;
     List<BillEntry> billEntrys;
     List<BillItem> billItems;
     List<BillComponent> billComponents;
     List<BillFee> billFees;
     PaymentMethod paymentMethod;
-   
-    List<Bill> bills;
-    @EJB
-    private CommonFunctions commonFunctions;
+
     @EJB
     private BillNumberBean billNumberBean;
     @EJB
@@ -77,6 +65,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     private BillComponentFacade billCommponentFacade;
     @EJB
     private RefundBillFacade refundBillFacade;
+
     @Inject
     SessionController sessionController;
     @Inject
@@ -84,10 +73,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     @EJB
     EjbApplication ejbApplication;
     private List<BillItem> tempbillItems;
-    @Temporal(TemporalType.TIME)
-    private Date fromDate;
-    @Temporal(TemporalType.TIME)
-    private Date toDate;
     private String comment;
     WebUser user;
 
@@ -107,39 +92,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     public void setEjbApplication(EjbApplication ejbApplication) {
         this.ejbApplication = ejbApplication;
-    }
-
-    public List<Bill> getUserBillsOwn() {
-        List<Bill> userBills;
-        if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
-            System.out.println("user is null");
-        } else {
-            userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
-            System.out.println("user ok");
-        }
-        if (userBills == null) {
-            userBills = new ArrayList<Bill>();
-        }
-        return userBills;
-    }
-
-    public List<Bill> getBillsOwn() {
-        if (bills == null) {
-            if (txtSearch == null || txtSearch.trim().equals("")) {
-                bills = getBillBean().billsForTheDay(getFromDate(), getToDate(), getSessionController().getInstitution(), BillType.AgentPaymentReceiveBill);
-            } else {
-                bills = getBillBean().billsFromSearch(txtSearch, getFromDate(), getToDate(), getSessionController().getInstitution(), BillType.AgentPaymentReceiveBill);
-            }
-            if (bills == null) {
-                bills = new ArrayList<Bill>();
-            }
-        }
-        return bills;
-    }
-
-    public BillFeeFacade getBillFeeFacade() {
-        return billFeeFacade;
     }
 
     public void setBillFeeFacade(BillFeeFacade billFeeFacade) {
@@ -182,8 +134,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         this.cancelledBillFacade = cancelledBillFacade;
     }
 
-   
-
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
@@ -194,12 +144,9 @@ public class AgentPaymentReceiveSearchController implements Serializable {
 
     public void recreateModel() {
 
-
         billFees = null;
-//        billFees
         billComponents = null;
         billItems = null;
-        bills = null;
         printPreview = false;
         tempbillItems = null;
         comment = null;
@@ -226,7 +173,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
             bC.setCreater(getSessionController().getLoggedUser());
             getBillCommponentFacade().create(bC);
         }
-
 
     }
 
@@ -261,8 +207,8 @@ public class AgentPaymentReceiveSearchController implements Serializable {
             cb.setFromDepartment(getBill().getFromDepartment());
             cb.setFromInstitution(getBill().getFromInstitution());
 
-            cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.AgentPaymentReceiveBill,BillNumberSuffix.AGNCAN));
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),cb,BillType.AgentPaymentReceiveBill,BillNumberSuffix.AGNCAN));
+            cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.AgentPaymentReceiveBill, BillNumberSuffix.AGNCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, BillType.AgentPaymentReceiveBill, BillNumberSuffix.AGNCAN));
 
             cb.setDiscount(0 - getBill().getDiscount());
             cb.setDiscountPercent(getBill().getDiscountPercent());
@@ -276,7 +222,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         cb.setCreater(getSessionController().getLoggedUser());
         cb.setPaymentScheme(getBill().getPaymentScheme());
-        
+
         cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
         cb.setInstitution(getSessionController().getInstitution());
         cb.setInstitution(getSessionController().getLoggedUser().getInstitution());
@@ -300,7 +246,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
             UtilityController.addErrorMessage("Doctor Payment Already Paid So Cant Cancel Bill");
             return true;
         }
-       
+
         if (getComment() == null || getComment().trim().equals("")) {
             UtilityController.addErrorMessage("Please enter a comment");
             return true;
@@ -407,76 +353,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     private BillBean billBean;
     @EJB
     private BillFacade billFacade;
-
-    public List<Bill> getInstitutionPaymentBills() {
-        if (bills == null) {
-            String sql;
-            Map temMap = new HashMap();
-            if (bills == null) {
-                if (txtSearch == null || txtSearch.trim().equals("")) {
-                    sql = "SELECT b FROM BilledBill b WHERE b.retired=false and b.billType=:type and b.createdAt between :fromDate and :toDate order by b.id";
-                    temMap.put("toDate", getToDate());
-                    temMap.put("fromDate", getFromDate());
-                    temMap.put("type", BillType.PaymentBill);
-                    bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 100);
-
-                } else {
-                    sql = "select b from BilledBill b where b.retired=false and b.billType=:type and b.createdAt between :fromDate and :toDate and (upper(b.staff.person.name) like '%" + txtSearch.toUpperCase() + "%'  or upper(b.staff.person.phone) like '%" + txtSearch.toUpperCase() + "%'  or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%') order by b.id desc  ";
-                    temMap.put("toDate", getToDate());
-                    temMap.put("fromDate", getFromDate());
-                    temMap.put("type", BillType.PaymentBill);
-                    bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 100);
-                }
-                if (bills == null) {
-                    bills = new ArrayList<Bill>();
-                }
-            }
-        }
-        return bills;
-
-    }
-
-    public List<Bill> getUserBills() {
-        List<Bill> userBills;
-        System.out.println("getting user bills");
-        if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
-            System.out.println("user is null");
-        } else {
-            userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), BillType.OpdBill);
-            System.out.println("user ok");
-        }
-        if (userBills == null) {
-            userBills = new ArrayList<Bill>();
-        }
-        return userBills;
-    }
-
-    public List<Bill> getOpdBills() {
-        if (txtSearch == null || txtSearch.trim().equals("")) {
-            bills = getBillBean().billsForTheDay(fromDate, toDate, BillType.OpdBill);
-        } else {
-            bills = getBillBean().billsFromSearch(txtSearch, fromDate, toDate, BillType.OpdBill);
-        }
-
-        if (bills == null) {
-            bills = new ArrayList<Bill>();
-        }
-        return bills;
-    }
-
-    public void setBills(List<Bill> bills) {
-        this.bills = bills;
-    }
-
-    public String getTxtSearch() {
-        return txtSearch;
-    }
-
-    public void setTxtSearch(String txtSearch) {
-        this.txtSearch = txtSearch;
-        recreateModel();
-    }
 
     public BilledBill getBill() {
         //recreateModel();
@@ -633,38 +509,6 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         recreateModel();
     }
 
-    public Date getToDate() {
-        if (toDate == null) {
-            toDate = getCommonFunctions().getEndOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        }
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-        resetLists();
-    }
-
-    public Date getFromDate() {
-        if (fromDate == null) {
-            fromDate = getCommonFunctions().getStartOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        }
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-        resetLists();
-    }
-
-    public CommonFunctions getCommonFunctions() {
-        return commonFunctions;
-    }
-
-    public void setCommonFunctions(CommonFunctions commonFunctions) {
-        this.commonFunctions = commonFunctions;
-    }
-
     public String getComment() {
         return comment;
     }
@@ -688,4 +532,9 @@ public class AgentPaymentReceiveSearchController implements Serializable {
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
     }
+
+    public BillFeeFacade getBillFeeFacade() {
+        return billFeeFacade;
+    }
+
 }

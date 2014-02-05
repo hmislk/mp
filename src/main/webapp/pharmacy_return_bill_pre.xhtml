@@ -25,7 +25,7 @@
                     </f:facet>
                 </p:panel>
 
-                <p:dataTable var="ph" value="#{preReturnController.pharmacyItemData}"
+                <p:dataTable var="ph" value="#{preReturnController.billItems}"
                              scrollable="true" scrollHeight="250"
                              id="itemList" >  
 
@@ -35,7 +35,7 @@
 
 
                     <p:column headerText="Item Name" style="width:50px!important;">  
-                        <h:outputText value=" #{ph.billItem.item.name}"  />                     
+                        <h:outputText value=" #{ph.item.name}"  />                     
 
                     </p:column>  
 
@@ -44,7 +44,7 @@
                     </p:column>  
 
                     <p:column headerText="Purchase Rate" style="width:25px!important;"> 
-                        <h:outputText value="#{ph.billItem.rate}"  />                        
+                        <h:outputText value="#{ph.rate}"  />                        
                     </p:column>                 
 
 
@@ -58,7 +58,7 @@
 
 
                     <p:column headerText="Returning Qty in Unit" style="width:25px!important;">                     
-                        <p:inputText value="#{ph.billItem.qty}" >
+                        <p:inputText value="#{ph.qty}" >
                             <f:ajax event="blur" render="@this :#{p:component('total')}"  execute="@this" listener="#{preReturnController.onEdit(ph)}" ></f:ajax>
                         </p:inputText>
                     </p:column>  

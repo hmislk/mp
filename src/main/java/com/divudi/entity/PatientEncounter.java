@@ -36,10 +36,10 @@ import org.hamcrest.Matchers;
  */
 @Entity
 public class PatientEncounter implements Serializable {
-//    @OneToMany(mappedBy = "patientEncounter",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    @OneToMany(mappedBy = "patientEncounter",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 //     List<PatientRoom> patientRooms;
 
-    @OneToMany(mappedBy = "patientEncounter", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "patientEncounter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
      List<EncounterComponent> encounterComponents;
 
     static final long serialVersionUID = 1L;
@@ -94,7 +94,7 @@ public class PatientEncounter implements Serializable {
     PatientEncounterType patientEncounterType;
     @OneToMany(mappedBy = "parentEncounter")
      List<PatientEncounter> childEncounters;
-    @OneToMany(mappedBy = "encounter", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "encounter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
      List<ClinicalFindingValue> clinicalFindingValues;
     String name;
     @Temporal(javax.persistence.TemporalType.DATE)

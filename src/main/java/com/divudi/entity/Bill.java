@@ -44,17 +44,20 @@ public class Bill implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     ////////////////////////////////////////////////////
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Payment> payments = new ArrayList<>();
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<BillFee> billFees = new ArrayList<>();
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    List<BillItem> billItems ;
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<BillItem> billItems;
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<BillComponent> billComponents = new ArrayList<>();
 
     @Transient
     List<BillItem> transBillItems;
+
+    @Transient
+    private List<BillItem> transActiveBillItem;
     @ManyToOne
     private Bill forwardReferenceBill;
     @ManyToOne
@@ -62,7 +65,14 @@ public class Bill implements Serializable {
 
     public List<BillItem> getTransBillItems() {
         if (billItems != null) {
-            transBillItems = sort(billItems, on(BillItem.class).getSearialNo());
+            transBillItems = new ArrayList<>();
+            for (BillItem b : billItems) {
+                if (!b.isRetired()) {
+                    transBillItems.add(b);
+                }
+            }
+
+            transBillItems = sort(transBillItems, on(BillItem.class).getSearialNo());
         } else {
             transBillItems = new ArrayList<>();
         }
@@ -94,7 +104,7 @@ public class Bill implements Serializable {
         patientEncounter = bill.getPatientEncounter();
         referredBy = bill.getReferredBy();
         referringDepartment = bill.getReferringDepartment();
-  //      referenceBill=bill.getReferenceBill();
+        //      referenceBill=bill.getReferenceBill();
         //  paymentScheme=bill.getPaymentScheme();
         //   paymentMethod=bill.getPaymentMethod();
         comments = bill.getComments();
@@ -364,9 +374,10 @@ public class Bill implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if(billItems==null){
+        if (billItems == null) {
             billItems = new ArrayList<>();
         }
+
         return billItems;
     }
 
@@ -962,6 +973,22 @@ public class Bill implements Serializable {
         this.backwardReferenceBill = backwardReferenceBill;
     }
 
-    
+    public List<BillItem> getTransActiveBillItem() {
+        if (billItems != null) {
+            transActiveBillItem = new ArrayList<>();
+            for (BillItem b : billItems) {
+                if (!b.isRetired()) {
+                    transActiveBillItem.add(b);
+                }
+            }
+        } else {
+            transActiveBillItem = new ArrayList<>();
+        }
+        return transActiveBillItem;
+    }
+
+    public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
+        this.transActiveBillItem = transActiveBillItem;
+    }
 
 }

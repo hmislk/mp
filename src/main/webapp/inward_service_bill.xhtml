@@ -14,8 +14,10 @@
 
         <h:panelGroup rendered="true" styleClass="opdPanel" >
             <h:form id="form">     
-                <p:commandButton  value="Save" action="#{billBhtController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                <p:commandButton id="btnSave" value="Save" action="#{billBhtController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                 </p:commandButton>
+                <p:defaultCommand target="btnSave"/>
+                
                 <p:commandButton action="#{billBhtController.makeNull}" ajax="false" value="New Bill"/>
 
                 <h:panelGrid columns="2" >

@@ -16,7 +16,9 @@
                     <f:facet name="header" >
                         <h:panelGrid columns="10"  >
                             <h:outputLabel value="Inward Timed Service Bill" />
-                            <p:commandButton ajax="false" value="Add Service" action="#{inwardTimedItemController.save}" />
+                            <p:commandButton id="btnAddService" ajax="false" value="Add Service" action="#{inwardTimedItemController.save}" />
+                            <p:defaultCommand target="btnAddService"/>
+                            
                             <p:commandButton ajax="false" value="Clear" action="#{inwardTimedItemController.makeNull}" />
                         </h:panelGrid>
                     </f:facet>

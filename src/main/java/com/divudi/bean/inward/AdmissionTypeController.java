@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -31,7 +31,7 @@ import javax.inject.Inject;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AdmissionTypeController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,7 +72,7 @@ public class AdmissionTypeController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -119,7 +119,7 @@ public class AdmissionTypeController implements Serializable {
         if (getCurrent() != null) {
             getCurrent().setRetired(true);
             getCurrent().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrent().setRetirer(sessionController.getLoggedUser());
+            getCurrent().setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(getCurrent());
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

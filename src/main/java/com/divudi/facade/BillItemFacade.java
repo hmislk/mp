@@ -4,7 +4,10 @@
  */
 package com.divudi.facade;
 
+import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
+import java.util.HashMap;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +18,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class BillItemFacade extends AbstractFacade<BillItem> {
+
     @PersistenceContext(unitName = "hmisPU")
     private EntityManager em;
 
@@ -26,5 +30,6 @@ public class BillItemFacade extends AbstractFacade<BillItem> {
     public BillItemFacade() {
         super(BillItem.class);
     }
-    
+
+   
 }

@@ -36,7 +36,7 @@ import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.ServiceSessionFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +52,7 @@ import org.primefaces.event.TabChangeEvent;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class ChannelBillController implements Serializable {
 
     private BillSession billSession;
@@ -395,7 +395,7 @@ public class ChannelBillController implements Serializable {
         BillItem rbi = new BillItem();
         rbi.setBill(rb);
         rbi.setCreatedAt(Calendar.getInstance().getTime());
-        rbi.setCreater(sessionController.getLoggedUser());
+        rbi.setCreater(getSessionController().getLoggedUser());
         rbi.setItem(bi.getItem());
 
         double netValue = getRefundedTotalFee();

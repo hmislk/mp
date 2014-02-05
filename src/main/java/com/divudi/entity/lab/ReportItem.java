@@ -58,7 +58,7 @@ public class ReportItem implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date retiredAt;
     String retireComments;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Item item;
     @Enumerated(EnumType.STRING)
     InvestigationItemType ixItemType;
@@ -107,6 +107,24 @@ public class ReportItem implements Serializable {
     @ManyToOne
     private Category referringCategory;
 
+    @Transient
+    double transCssTop;
+
+    public double getTransCssTop() {
+        try{
+            transCssTop= Double.parseDouble(cssTop);
+        }catch(Exception e){
+            transCssTop = 0;
+        }
+        return transCssTop;
+    }
+
+    public void setTransCssTop(double transCssTop) {
+        this.transCssTop = transCssTop;
+    }
+    
+    
+    
     public int getPageNo() {
         return pageNo;
     }

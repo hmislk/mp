@@ -22,10 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named; import javax.ejb.EJB;
-import javax.faces.bean.RequestScoped;
-import javax.faces.bean.ViewScoped;
 import javax.persistence.TemporalType;
 
 /**
@@ -33,7 +31,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InvestigationMonthSummeryController implements Serializable {
 
     @Inject

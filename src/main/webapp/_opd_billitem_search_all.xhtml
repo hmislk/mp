@@ -14,17 +14,17 @@
                         <h:panelGrid columns="1" >
                             <h:panelGroup >
                                 <p:panelGrid columns="6" >
-                                    <h:inputText style="width: 600px;" id="txtSearch" value="#{opdBillItemSearchController.txtSearch}" >
+                                    <h:inputText style="width: 600px;" id="txtSearch" value="#{opdBillItemsearch.txtSearch}" >
                                         <f:ajax render="tblBills" execute="txtSearch fromDate toDate" event="keyup" />
                                     </h:inputText>
 
                                     <h:outputLabel value="From Date"/>
-                                    <p:calendar  id="fromDate" value="#{opdBillItemSearchController.fromDate}"  pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar  id="fromDate" value="#{opdBillItemsearch.fromDate}"  pattern="dd MMMM yyyy hh mm a" >
                                         <p:ajax event="dateSelect" process="fromDate"  update="tblBills"/>
                                     </p:calendar>
 
                                     <h:outputLabel value="To Date"/>
-                                    <p:calendar id="toDate" value="#{opdBillItemSearchController.toDate}" navigator="true" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar id="toDate" value="#{opdBillItemsearch.toDate}" navigator="true" pattern="dd MMMM yyyy hh mm a" >
                                         <p:ajax event="dateSelect" process="toDate"  update="tblBills"/>
                                     </p:calendar>
 
@@ -33,7 +33,7 @@
 
                                 </p:panelGrid>
 
-                                <p:dataTable  id="tblBills" rowIndexVar="i" value="#{opdBillItemSearchController.billItemsAll}" var="pi"  >
+                                <p:dataTable  id="tblBills" rowIndexVar="i" value="#{opdBillItemsearch.billItemsAll}" var="pi"  >
                                     <p:column headerText="No" styleClass="alignTop">
                                         <h:outputLabel value="#{i+1}"/>
                                     </p:column>

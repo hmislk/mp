@@ -29,7 +29,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -42,7 +42,7 @@ import javax.persistence.TemporalType;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class MedicalPackageItemController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -103,7 +103,7 @@ public class MedicalPackageItemController implements Serializable {
             f.setItem(getCurrent().getItem());
             if (f.getId() == null || f.getId() == 0) {
                 f.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-                f.setCreater(sessionController.getLoggedUser());
+                f.setCreater(getSessionController().getLoggedUser());
                 getMedicalPackageFeeFacade().create(f);
             } else {
                 getMedicalPackageFeeFacade().edit(f);
@@ -131,7 +131,7 @@ public class MedicalPackageItemController implements Serializable {
                 //and mark them as retired
                 getCurrentFee().getId();
                 getCurrentFee().setRetired(true);
-                getCurrentFee().setRetirer(sessionController.getLoggedUser());
+                getCurrentFee().setRetirer(getSessionController().getLoggedUser());
                 getCurrentFee().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
                 getMedicalPackageFeeFacade().edit(getCurrentFee()); // Flag as retired, so that will never appearing when calling from database
                 getCharges().remove(getCurrentFee());
@@ -200,7 +200,7 @@ public class MedicalPackageItemController implements Serializable {
         }
 
         getCurrent().setRetired(true);
-        getCurrent().setRetirer(sessionController.getLoggedUser());
+        getCurrent().setRetirer(getSessionController().getLoggedUser());
         getCurrent().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getFacade().edit(getCurrent());
         UtilityController.addSuccessMessage("Item Removed");
@@ -318,7 +318,7 @@ public class MedicalPackageItemController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -336,7 +336,7 @@ public class MedicalPackageItemController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {
@@ -406,7 +406,7 @@ public class MedicalPackageItemController implements Serializable {
         }
         if (getCurrentFee().getId() == null || getCurrentFee().getId() == 0) {
             getCurrentFee().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrentFee().setCreater(sessionController.getLoggedUser());
+            getCurrentFee().setCreater(getSessionController().getLoggedUser());
             getMedicalPackageFeeFacade().create(getCurrentFee());
         } else {
             getMedicalPackageFeeFacade().edit(getCurrentFee());

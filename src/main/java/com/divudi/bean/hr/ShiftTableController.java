@@ -28,7 +28,7 @@ import com.divudi.facade.StaffFacade;
 import com.divudi.facade.StaffShiftFacade;
 import com.divudi.facade.StaffWorkDayFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,7 +46,7 @@ import org.primefaces.event.RowEditEvent;
  * @author safrin
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class ShiftTableController implements Serializable {
 
     private List<ShiftTable> shiftTables;

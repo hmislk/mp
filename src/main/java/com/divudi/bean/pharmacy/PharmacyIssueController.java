@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
@@ -59,7 +59,7 @@ import org.primefaces.event.TabChangeEvent;
  * @author Buddhika
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PharmacyIssueController implements Serializable {
 
     /**
@@ -265,24 +265,7 @@ public class PharmacyIssueController implements Serializable {
         this.itemsWithoutStocks = itemsWithoutStocks;
     }
 
-    public void reAddToStock() {
-
-        for (BillItem bItem : getPreBill().getBillItems()) {
-            getPharmacyBean().addToStock(bItem.getPharmaceuticalBillItem().getItemBatch(), Math.abs(bItem.getQty()), bItem.getBill().getDepartment());
-            bItem.setRetired(true);
-            getBillItemFacade().edit(bItem);
-        }
-        getPreBill().setRetired(true);
-        getBillFacade().edit(getPreBill());
-
-    }
-
-    public String newSaleBill() {
-        clearBill();
-        clearBillItem();
-        billPreview = false;
-        return "pharmacy_retail_sale";
-    }
+   
 
     public List<Item> completeRetailSaleItems(String qry) {
         Map m = new HashMap<>();

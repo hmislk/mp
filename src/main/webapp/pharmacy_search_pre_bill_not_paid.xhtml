@@ -14,18 +14,22 @@
                         <f:facet name="header" >
 
                             <h:panelGrid columns="5" style="min-width: 100%;" >
-                                <p:commandButton ajax="false" value="Refresh" actionListener="#{pharmacyBillSearch.recreateModel()}"/>
-                                <p:commandButton ajax="false" value="Add To Stock" action="#{pharmacyBillSearch.addToStock()}"/>
+                                <p:commandButton ajax="false" value="Refresh" actionListener="#{search.createPreBillsNotPaid()}"/>
+                                <p:commandButton ajax="false" value="Add To Stock" action="#{search.addToStock}" 
+                                                 disabled="#{!webUserController.hasPrivilege('PharmacyReAddToStock')}"/>
                             </h:panelGrid>
 
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{pharmacyBillSearch.preBillsNotPaid}"                                 
+                        <p:dataTable id="tblBills" value="#{search.bills}"                                 
                                      var="bill" rowKey="#{bill.id}"
-                                     selection="#{pharmacyBillSearch.selectedBills}">
+                                     selection="#{search.selectedBills}">
 
                             <p:column selectionMode="multiple" ></p:column>
                            
+                               <p:column headerText="ID">
+                                <h:outputLabel value="#{bill.id}"  ></h:outputLabel>
+                            </p:column>   
                             <p:column headerText="Pre Bill No">
                                 <h:outputLabel value="#{bill.deptId}"  ></h:outputLabel>
                             </p:column>     
@@ -57,7 +61,8 @@
                                     <f:setPropertyActionListener  value="#{bill}" target="#{pharmacyPreSettleController.preBill}" />
                                 </p:commandButton>
                             </p:column>
-
+                            
+                           
                         </p:dataTable>
 
 

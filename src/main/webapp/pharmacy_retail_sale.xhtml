@@ -18,7 +18,7 @@
                 <h:form id="bill" >
 
                     <p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>
-                    <p:defaultCommand  target="nullButton2" />  
+                    <p:defaultCommand  target="btnAdd" />  
 
 
 
@@ -28,17 +28,12 @@
                                 <f:facet name="header" >
                                     <h:outputLabel value="Pharmacy Retail Bill" />
                                 </f:facet>
-
                                 <h:panelGrid columns="1" >
-
                                     <h:panelGrid columns="6" >
-
                                         <h:panelGrid columns="1" >
                                             <p:outputLabel value="Medicines/Devices" ></p:outputLabel>
-
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
-
-                                            <p:autoComplete   forceSelection="true"  id="acStock" 
+                                            <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
                                                               value="#{pharmacySaleController.stock}" 
                                                               converter="stockCon" 
                                                               completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
@@ -72,7 +67,7 @@
                                         </h:panelGrid>
                                         <h:panelGrid columns="1" >
                                             <p:outputLabel value="Quentity" ></p:outputLabel>
-                                            <p:inputText   autocomplete="off" id="txtQty" value="#{pharmacySaleController.qty}" style="width: 50px!important;"   >
+                                            <p:inputText  accesskey="q"  autocomplete="off" id="txtQty" value="#{pharmacySaleController.qty}" style="width: 50px!important;"   >
                                                 <p:ajax event="keyup"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
                                                 <p:ajax event="blur"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
                                             </p:inputText>
@@ -89,7 +84,7 @@
                                                 <f:convertNumber pattern="#,##0.00" />
                                             </p:outputLabel>
                                         </h:panelGrid>
-                                        <p:commandButton  id="btnAdd" value="Add" 
+                                        <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
                                                           action="#{pharmacySaleController.addBillItem}" process="@this acStock txtQty :#{p:component('cmbPs')}" update=":#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem tabI" ></p:commandButton>
 
                                         <p:focus id="focusQty" for="txtQty" ></p:focus>
@@ -118,7 +113,7 @@
                                         <p:tab title="Bill Items" >
                                             <h:panelGrid columns="1">
                                                 <p:panel header="Bill Items" id="pBis">
-                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.billItems}" var="bi" rowIndexVar="s" editable="true" editMode="cell" >
+                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.transBillItems}" var="bi" rowIndexVar="s" editable="true" editMode="cell" >
 
                                                         <p:column headerText="Item">
                                                             <h:outputLabel value="#{bi.pharmaceuticalBillItem.itemBatch.item.name}" ></h:outputLabel>
@@ -207,17 +202,15 @@
 
                                         <p:calendar id="slipDate"  value="#{pharmacySaleController.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
                                         </p:calendar>
-
-                                        <p:commandButton ajax= "false" value="For Cashier" action="#{pharmacySaleController.settlePreBill()}" update="tblBillItem txtRate txtQty acStock" process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}" ></p:commandButton>
-
-
-                                        <p:commandButton ajax= "false"  value="Settle" action="#{pharmacySaleController.settleBillWithPay}" update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}"></p:commandButton>
-                                        <p:commandButton value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBill}"  ></p:commandButton>
-
+                                        <p:commandButton ajax= "false" accesskey="s" value="Settle" action="#{pharmacySaleController.settleBillWithPay}" update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}">
+                                            <f:facet name="title" >
+                                                <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
+                                                <h:outputLabel value="ettle"  ></h:outputLabel>
+                                            </f:facet>
+                                        </p:commandButton>
+                                        <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBill}"  ></p:commandButton>
                                         <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
                                         <p:watermark id="wsd" value="Slip Date" for="slipDate"/>
-
-
                                     </h:panelGrid>
 
 
@@ -240,8 +233,8 @@
                                         <h:outputLabel id="netTotal" value="#{pharmacySaleController.preBill.netTotal}" >
                                             <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
-                                        <h:outputLabel value="Tendered" ></h:outputLabel>
-                                        <p:inputText autocomplete="off" id="paid" value="#{pharmacySaleController.cashPaid}" >
+                                        <h:outputLabel  value="Tendered" ></h:outputLabel>
+                                        <p:inputText accesskey="t" autocomplete="off" id="paid" value="#{pharmacySaleController.cashPaid}" >
                                             <p:ajax process="total dis netTotal paid" update="balance netTotal" event="blur"/>
                                         </p:inputText>
                                         <h:outputLabel  value="Balance " ></h:outputLabel>
@@ -273,6 +266,12 @@
                         </h:panelGrid>
                     </p:panel>
 
+
+                </h:form>
+
+                <h:form>
+
+
                     <p:panel  rendered="#{pharmacySaleController.billPreview}" >
 
 
@@ -282,10 +281,10 @@
                         <p:defaultCommand  target="btnPrint" />  
 
                         <div class="nonPrintBlock" >
-                            <p:commandButton id="btnPrint" value="Print" ajax="false" action="#" >
+                            <p:commandButton accesskey="p" id="btnPrint" value="Print" ajax="false" action="#" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBillWithoutReduceStock()}" ></p:commandButton>
+                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBillWithoutReduceStock()}" ></p:commandButton>
 
                         </div>
                         <div >
@@ -301,8 +300,6 @@
 
 
                 </h:form>
-
-
 
             </ui:define>
 

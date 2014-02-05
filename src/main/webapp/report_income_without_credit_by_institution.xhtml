@@ -29,7 +29,8 @@
                                 <f:selectItem itemLabel="Select Institution"/>
                                 <f:selectItems value="#{institutionController.company}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" />
                             </p:selectOneMenu>
-                            <p:commandButton styleClass="noPrintButton" value="Refresh" ajax="false" />
+                            <p:commandButton id="btnRefresh" styleClass="noPrintButton" value="Refresh" ajax="false" />
+                            <p:defaultCommand target="btnRefresh"/>
 
                             <p:commandButton styleClass="noPrintButton" value="Print" ajax="false" >
                                 <p:printer target="panelReport" />

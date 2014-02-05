@@ -43,15 +43,15 @@
                             <p:dataTable rowIndexVar="rowIndex" value="#{pharmacyBillSearch.billItems}" var="bip" >
                                 <p:column>
                                     <f:facet name="header">No</f:facet>
-                                        #{rowIndex+1}
+                                        <h:outputLabel value="#{rowIndex+1}"/>
                                 </p:column>
                                 <p:column>
                                     <f:facet name="header">Item</f:facet>
-                                        #{bip.item.name}
+                                        <h:outputLabel value="#{bip.item.name}"/>
                                 </p:column>
                                 <p:column>
                                     <f:facet name="header">Value</f:facet>
-                                        #{bip.netValue}
+                                        <h:outputLabel value="#{bip.netValue}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>

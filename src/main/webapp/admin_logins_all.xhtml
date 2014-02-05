@@ -20,10 +20,14 @@
                             <p:calendar styleClass="noPrintButton" value="#{loginController.toDate}" pattern="dd MMMM yyyy hh:mm a" >
                             </p:calendar>
 
-                            <p:commandButton styleClass="noPrintButton" value="Refresh" ajax="false" ></p:commandButton>
+                            <p:commandButton id="btnRefresh" styleClass="noPrintButton" value="Refresh" ajax="false" >                               
+                            </p:commandButton>
+                            <p:defaultCommand target="btnRefresh"/>
+                            
                             <p:commandButton styleClass="noPrintButton" value="Print" ajax="false" >
                                 <p:printer target="panelReport" />
                             </p:commandButton>
+                            
                         </f:facet>
 
 

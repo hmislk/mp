@@ -15,21 +15,21 @@
                             <h:panelGroup>
                                 <h:panelGrid columns="4">
                                     <h:outputLabel value="From Date"/>
-                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{billSearch.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect" execute="tblBills"  render="tblBills toDate fromDate"/>
                                     </p:calendar>
                                     <h:outputLabel value="To Date"/>
-                                    <p:calendar id="toDate" value="#{billSearch.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect" execute="tblBills"  render="tblBills toDate fromDate"/>
                                     </p:calendar>
                                 </h:panelGrid>                        
                             </h:panelGroup>
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{billSearch.channelPaymentBills}" var="bill"  
-                                     filteredValue="#{billSearch.filteredBill}" sortBy="#{bf.billClass}">
+                        <p:dataTable id="tblBills" value="#{search.channelPaymentBills}" var="bill"  
+                              sortBy="#{bf.billClass}">
 
-                            <p:column headerText="Bill No" filterBy="#{bill.insId}" filterMatchMode="contains">
+                            <p:column headerText="Bill No" >
                                 <h:commandLink action="payment_bill_reprint" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
@@ -54,21 +54,21 @@
                                 </h:commandLink>
                             </p:column>
                             
-                            <p:column headerText="Consultant" filterBy="#{bill.staff.person.nameWithTitle}" filterMatchMode="contains" >
+                            <p:column headerText="Consultant" >
                                 <h:commandLink action="payment_bill_reprint" >
                                     <h:outputLabel value="#{bill.staff.person.nameWithTitle}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
                             
-                            <p:column headerText="Doctor Phone No" filterBy="#{bill.staff.person.phone}" filterMatchMode="contains" >
+                            <p:column headerText="Doctor Phone No"  >
                                 <h:commandLink action="payment_bill_reprint" >
                                     <h:outputLabel value="#{bill.staff.person.phone}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
                             
-                            <p:column headerText="Billed By" filterBy="#{bill.creater.webUserPerson.nameWithTitle}" filterMatchMode="contains" >
+                            <p:column headerText="Billed By" >
                                 <h:commandLink action="payment_bill_reprint" >
                                     <h:outputLabel value="#{bill.creater.webUserPerson.nameWithTitle}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>

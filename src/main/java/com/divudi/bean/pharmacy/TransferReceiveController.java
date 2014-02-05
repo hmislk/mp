@@ -8,10 +8,11 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.ejb.PharmacyRecieveBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -27,7 +28,7 @@ import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 
@@ -72,7 +74,10 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private CommonFunctions commonFunctions;
     @EJB
-    private PharmacyRecieveBean pharmacyRecieveBean;
+    private PharmacyCalculation pharmacyRecieveBean;
+    private List<BillItem> billItems;
+    private List<Bill> bills;
+    private SearchKeyword searchKeyword;
 
     public void onFocus(BillItem tmp) {
         getPharmacyController().setPharmacyItem(tmp.getItem());
@@ -84,43 +89,10 @@ public class TransferReceiveController implements Serializable {
         printPreview = false;
         fromDate = null;
         toDate = null;
+        billItems = null;
     }
 
-    public List<Bill> getIssued() {
-        String sql;
-        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
-                + " b.toDepartment=:dep and b.billType= :bTp "
-                + " and b.createdAt between :fromDate and :toDate ";
-
-        HashMap tmp = new HashMap();
-        tmp.put("toDate", getToDate());
-        tmp.put("fromDate", getFromDate());
-        tmp.put("dep", getSessionController().getDepartment());
-        tmp.put("bTp", BillType.PharmacyTransferIssue);
-        //   tmp.put("bTp2", BillType.PharmacyTransferReceive);
-        List<Bill> bil = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
-
-        for (Bill b : bil) {
-            b.setTmpRefBill(getRefBill(b));
-
-        }
-
-        if (bil == null) {
-            return new ArrayList<>();
-        }
-
-        return bil;
-    }
-
-    private Bill getRefBill(Bill b) {
-        String sql = "Select b From Bill b where b.retired=false "
-                + " and b.cancelled=false and b.billType=:btp and "
-                + " b.referenceBill=:ref";
-        HashMap hm = new HashMap();
-        hm.put("ref", b);
-        hm.put("btp", BillType.PharmacyTransferReceive);
-        return getBillFacade().findFirstBySQL(sql, hm);
-    }
+   
 
     public TransferReceiveController() {
     }
@@ -136,7 +108,7 @@ public class TransferReceiveController implements Serializable {
         makeNull();
         this.issuedBill = issuedBill;
         receivedBill = null;
-        create();
+        generateBillComponent();
     }
 
     private List<Item> getSuggession(Item item) {
@@ -156,22 +128,15 @@ public class TransferReceiveController implements Serializable {
         return suggessions;
     }
 
-    public void saveBillComponent() {
-        HashMap hm = new HashMap();
-        String sql = "Select p from PharmaceuticalBillItem p where "
-                + " p.billItem.bill=:bill order by p.billItem.searialNo ";
-        hm.put("bill", getIssuedBill());
-        List<PharmaceuticalBillItem> tmp = getPharmaceuticalBillItemFacade().findBySQL(sql, hm);
+    public void generateBillComponent() {
 
-        for (PharmaceuticalBillItem i : tmp) {
+        for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getIssuedBill())) {
 
             BillItem bItem = new BillItem();
-            bItem.setBill(getReceivedBill());
             bItem.setReferanceBillItem(i.getBillItem());
             bItem.copy(i.getBillItem());
-            bItem.setQty(i.getQtyInUnit());
-            bItem.setSearialNo(getReceivedBill().getBillItems().size() + 1);
-            getBillItemFacade().create(bItem);
+            bItem.setTmpQty(i.getQtyInUnit());
+            bItem.setSearialNo(getBillItems().size());
 
             bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
 
@@ -181,84 +146,58 @@ public class TransferReceiveController implements Serializable {
             phItem.setStock(null);
             phItem.setItemBatch(null);
             phItem.invertValue(i);
-            getPharmaceuticalBillItemFacade().create(phItem);
 
             bItem.setPharmaceuticalBillItem(phItem);
-            getBillItemFacade().edit(bItem);
 
-            getReceivedBill().getBillItems().add(bItem);
+            getBillItems().add(bItem);
 
         }
 
-        getBillFacade().edit(getReceivedBill());
     }
 
     @EJB
     private StockFacade stockFacade;
 
-//    public Stock addToStock(ItemBatch batch, double qty, Department department) {
-//        System.err.println("Adding Stock : ");
-//
-//        String sql;
-//        HashMap hm = new HashMap();
-//        sql = "Select s from Stock s where s.itemBatch=:bch and s.department=:dep";
-//        hm.put("bch", batch);
-//        hm.put("dep", department);
-//        Stock s = getStockFacade().findFirstBySQL(sql, hm);
-//        System.err.println("ss" + s);
-//        if (s == null) {
-//            s = new Stock();
-//            s.setDepartment(department);
-//            s.setItemBatch(batch);
-//        }
-//        s.setStock(s.getStock() + qty);
-//        System.err.println("Stock 1 : " + s.getStock());
-//        System.err.println("Stock 2 : " + qty);
-//        System.err.println("Stock 3 : " + s);
-//        System.err.println("Stock 4 : " + s.getId());
-//        if (s.getId() == null || s.getId() == 0) {
-//            //  Stock ss = new Stock();
-//            getStockFacade().create(s);
-//        } else {
-//            getStockFacade().edit(s);
-//        }
-//        return s;
-//    }
     public void settle() {
 
-        for (BillItem i : getReceivedBill().getBillItems()) {
+        saveBill();
+
+        for (BillItem i : getBillItems()) {
 
             i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
 
             if (i.getPharmaceuticalBillItem().getQtyInUnit() == 0.0 || i.getItem() instanceof Vmpp || i.getItem() instanceof Vmp) {
-                getPharmaceuticalBillItemFacade().remove(i.getPharmaceuticalBillItem());
-                getBillItemFacade().remove(i);
                 continue;
             }
 
+            i.setBill(getReceivedBill());
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
             i.setPharmaceuticalBillItem(i.getPharmaceuticalBillItem());
+
+            PharmaceuticalBillItem tmpPh = i.getPharmaceuticalBillItem();
+            i.setPharmaceuticalBillItem(null);
+            getBillItemFacade().create(i);
+
+            getPharmaceuticalBillItemFacade().create(tmpPh);
+            i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
 
-            Stock staffStock = i.getPharmaceuticalBillItem().getStaffStock();
+            tmpPh.setItemBatch(tmpPh.getStaffStock().getItemBatch());
+
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
-            //Deduc Staff Stock
 
-            getPharmacyBean().deductFromStock(staffStock, Math.abs(qty), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+            //Deduct Staff Stock
+            getPharmacyBean().deductFromStock(tmpPh, Math.abs(qty), getIssuedBill().getToStaff());
 
-            //Add To Stock
-//            System.err.println("Stock " + stock);
-//            System.err.println("item Batch " + stock.getItemBatch());
-            Stock addedStock = getPharmacyBean().addToStock(staffStock.getItemBatch(), Math.abs(qty), getSessionController().getDepartment());
+            //Add Stock To Department
+            Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
 
-            i.getPharmaceuticalBillItem().setItemBatch(addedStock.getItemBatch());
-            i.getPharmaceuticalBillItem().setStock(addedStock);
-            i.getPharmaceuticalBillItem().setStaffStock(staffStock);
+            tmpPh.setStock(addedStock);
 
-            getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
+            getPharmaceuticalBillItemFacade().edit(tmpPh);
 
-//            getReceivedBill().getBillItems().add(i);
+            getReceivedBill().getBillItems().add(i);
         }
 
         getReceivedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getReceivedBill(), BillType.PharmacyTransferReceive, BillNumberSuffix.PHTI));
@@ -278,15 +217,19 @@ public class TransferReceiveController implements Serializable {
         getIssuedBill().setForwardReferenceBill(getReceivedBill());
         getBillFacade().edit(getIssuedBill());
 
+        getIssuedBill().setReferenceBill(getReceivedBill());
+        getBillFacade().edit(getIssuedBill());
+
         printPreview = true;
 
     }
 
     private double calTotal() {
         double value = 0;
-        for (BillItem b : getReceivedBill().getBillItems()) {
+        int serialNo = 0;
+        for (BillItem b : getBillItems()) {
             value += (b.getPharmaceuticalBillItem().getPurchaseRate() * b.getPharmaceuticalBillItem().getQty());
-
+            b.setSearialNo(serialNo++);
         }
 
         return value;
@@ -301,7 +244,7 @@ public class TransferReceiveController implements Serializable {
             UtilityController.addErrorMessage("You cant recieved over than Issued Qty setted Old Value");
         }
 
-     //   getPharmacyController().setPharmacyItem(tmp.getItem());
+        //   getPharmacyController().setPharmacyItem(tmp.getItem());
     }
 
     public void saveBill() {
@@ -312,15 +255,6 @@ public class TransferReceiveController implements Serializable {
         getReceivedBill().setFromDepartment(getIssuedBill().getDepartment());
 
         getBillFacade().create(getReceivedBill());
-    }
-
-    public void create() {
-        saveBill();
-        saveBillComponent();
-
-        //Update Requested Bill Reference   
-        getIssuedBill().setReferenceBill(getReceivedBill());
-        getBillFacade().edit(getIssuedBill());
     }
 
     public Bill getReceivedBill() {
@@ -428,11 +362,11 @@ public class TransferReceiveController implements Serializable {
         this.stockFacade = stockFacade;
     }
 
-    public PharmacyRecieveBean getPharmacyRecieveBean() {
+    public PharmacyCalculation getPharmacyRecieveBean() {
         return pharmacyRecieveBean;
     }
 
-    public void setPharmacyRecieveBean(PharmacyRecieveBean pharmacyRecieveBean) {
+    public void setPharmacyRecieveBean(PharmacyCalculation pharmacyRecieveBean) {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 
@@ -442,6 +376,36 @@ public class TransferReceiveController implements Serializable {
 
     public void setPharmacyController(PharmacyController pharmacyController) {
         this.pharmacyController = pharmacyController;
+    }
+
+    public List<BillItem> getBillItems() {
+        if (billItems == null) {
+            billItems = new ArrayList<>();
+        }
+        return billItems;
+    }
+
+    public void setBillItems(List<BillItem> billItems) {
+        this.billItems = billItems;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public SearchKeyword getSearchKeyword() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 
 }

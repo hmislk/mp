@@ -9,15 +9,16 @@ import com.divudi.bean.UtilityController;
 import com.divudi.entity.Bill;
 import com.divudi.facade.BillFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 
 /**
  *
  * @author Buddhika
  */
-@Named(value = "labBillEditController")
+@Named
 @SessionScoped
 public class LabBillEditController implements Serializable {
 

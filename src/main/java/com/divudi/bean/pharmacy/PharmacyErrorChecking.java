@@ -18,19 +18,18 @@ import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
-import org.apache.tools.ant.util.DateUtils;
 
 /**
  *
  * @author ruhunu
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PharmacyErrorChecking implements Serializable {
 
     @EJB
@@ -63,17 +62,20 @@ public class PharmacyErrorChecking implements Serializable {
 
     public void listPharmacyMovement() {
         billItems = getEjb().allBillItems(item, department);
+        calculateTotals4();
+    }
 
-        //  calculateTotals(getEjb().allBillItemsWithCreatedAt(item, department));
-        calculateTotals2();
+    public void listPharmacyMovementNew() {
+        billItems = getEjb().allBillItems(item, department);
+        calculateTotals4();
     }
 
     @EJB
     private BillFacade billFacade;
     @EJB
     private PharmacyBean pharmacyBean;
-    
-    public double getItemStock(){
+
+    public double getItemStock() {
         return getPharmacyBean().getStockQty(item, department);
     }
 
@@ -97,15 +99,180 @@ public class PharmacyErrorChecking implements Serializable {
         calculatedStock -= getEjb().getTotalQty(BillType.PurchaseReturn, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PurchaseReturn, new CancelledBill(), department, item);
 
-        calculatedStock -= getEjb().getTotalQty(BillType.PharmacyPre, new PreBill(), department, item);
-
+        calculatedStock -= getEjb().getTotalQtyPreDiduction(BillType.PharmacyPre, new PreBill(), department, item);
+        //Re Add to Stock of Pre Bill
+        //  calculatedStock += getEjb().getTotalQtyPreAdd(BillType.PharmacyPre, new PreBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
+        //    calculatedStock -= getEjb().getTotalQtyByBillItem(BillType.PharmacySale, new BilledBill(), department, item);
+        //    calculatedStock += getEjb().getTotalQtyByBillItem(BillType.PharmacySale, new CancelledBill(), department, item);
+        //    calculatedStock += getEjb().getTotalQtyByBillItem(BillType.PharmacySale, new RefundBill(), department, item);
 
         calculatedStock -= getEjb().getTotalQty(BillType.PharmacyTransferIssue, new BilledBill(), department, item);
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyTransferIssue, new CancelledBill(), department, item);
 
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyTransferReceive, new BilledBill(), department, item);
         calculatedStock -= getEjb().getTotalQty(BillType.PharmacyTransferReceive, new CancelledBill(), department, item);
+
+    }
+
+    public void calculateTotals4() {
+        calculatedStock = 0.0;
+        calculatedSaleValue = 0.0;
+        calculatedPurchaseValue = 0.0;
+        currentStock = 0.0;
+        currentSaleValue = 0.0;
+        currentPurchaseValue = 0.0;
+
+        for (BillItem bi : billItems) {
+
+            if (bi.getQty() != bi.getPharmaceuticalBillItem().getQty()) {
+                System.out.println("Error in qty " + bi);
+            }
+
+            if (bi.getBill().getCreatedAt() == null) {
+                if (bi.isRetired() == true && bi.getBill().isRetired() == true) {
+
+                } else {
+                    continue;
+                }
+            }
+
+            switch (bi.getBill().getBillType()) {
+                case PharmacyGrnBill:
+                case PharmacyPurchaseBill:
+                case PharmacyTransferReceive:
+                    if (bi.getBill() instanceof BilledBill) {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("1 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("2 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    } else if (bi.getBill() instanceof CancelledBill || bi.getBill() instanceof RefundBill) {
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("3 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("4 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    }
+                    break;
+                case PharmacyGrnReturn:
+                case PurchaseReturn:
+                case PharmacyTransferIssue:
+                    if (bi.getBill() instanceof BilledBill) {
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("5 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("6 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    } else if (bi.getBill() instanceof CancelledBill || bi.getBill() instanceof RefundBill) {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("7 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("8 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    }
+                    break;
+                case PharmacySale:
+                    if (bi.getBill() instanceof BilledBill) {
+                        if (bi.getBill().getReferenceBill() == null) {
+                            break;
+                        }
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        System.err.println("9 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+
+                    } else if (bi.getBill() instanceof CancelledBill || bi.getBill() instanceof RefundBill) {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+
+                        System.err.println("10 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+
+                    }
+                    break;
+                default:
+                    System.err.println("Default  " + bi.getBill().getBillType());
+                    System.err.println("Default  " + bi.getBill().getClass());
+                    System.err.println("Default  " + bi.getQty());
+
+            }
+
+            System.out.println("calculatedStock = " + calculatedStock + " " + bi.getBill().getBillType() + " " + bi.getBill().getClass() + " " + bi.getId());
+//
+            //
+            //
+            //
+            //
+        
+        }
+
+//        System.err.println("Befor " + calculatedStock);
+//        double saleQty = 0;
+//        for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
+//
+//            if (bi.getQty() != null) {
+//                calculatedStock -= Math.abs(bi.getQty());
+//                saleQty += Math.abs(bi.getQty());
+//            }
+//
+//        }
+//        // calculatedStock -= saleQty;
+//        System.err.println("SaleQty " + saleQty);
+//
+//        calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
+    }
+
+    public void calculateTotals3() {
+        calculatedStock = 0.0;
+        calculatedSaleValue = 0.0;
+        calculatedPurchaseValue = 0.0;
+        currentStock = 0.0;
+        currentSaleValue = 0.0;
+        currentPurchaseValue = 0.0;
+
+        for (BillItem bi : getEjb().getTotalBillItems(department, item)) {
+            switch (bi.getBill().getBillType()) {
+                case PharmacyGrnBill:
+                case PharmacyPurchaseBill:
+                case PharmacyTransferReceive:
+                    if (bi.getBill() instanceof BilledBill) {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("1 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("2 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    } else {
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("3 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("4 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    }
+                    break;
+                case PharmacyGrnReturn:
+                case PurchaseReturn:
+                case PharmacyTransferIssue:
+                    if (bi.getBill() instanceof BilledBill) {
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock -= Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("5 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("6 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    } else {
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
+                        calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit());
+                        System.err.println("7 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
+                        System.err.println("8 " + Math.abs(bi.getPharmaceuticalBillItem().getFreeQtyInUnit()));
+                    }
+                    break;
+            }
+        }
+
+        System.err.println("Befor " + calculatedStock);
+        double saleQty = 0;
+        for (BillItem bi : getEjb().getPreSaleBillItems(BillType.PharmacyPre, new PreBill(), department, item)) {
+
+            if (bi.getQty() != null) {
+                calculatedStock -= Math.abs(bi.getQty());
+                saleQty += Math.abs(bi.getQty());
+            }
+
+        }
+
+        // calculatedStock -= saleQty;
+        System.err.println("SaleQty " + saleQty);
+
+        calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
 
     }
 

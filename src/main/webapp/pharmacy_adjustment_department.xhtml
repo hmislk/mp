@@ -11,13 +11,19 @@
         <ui:composition template="./resources/template/template.xhtml">
 
             <ui:define name="content">
+                
+                
+                
+                
                 <h:form>
 
                     <p:panel header="Department Stock Adjustment : Quantity" >
                         <h:panelGrid columns="2" >
                             <h:panelGrid columns="2">
                                 <h:outputLabel value="Item" ></h:outputLabel>
-                                <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacyAdjustmentController.stock}" converter="stockCon" completeMethod="#{pharmacyAdjustmentController.completeAllStocks}" var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" >
+                                <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacyAdjustmentController.stock}" 
+                                                  converter="stockCon" 
+                                                  completeMethod="#{pharmacyAdjustmentController.completeAllStocks}" var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" >
                                     <p:column headerText="Item">
                                         <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
                                     </p:column>
@@ -43,11 +49,14 @@
                                 <h:outputLabel value="Comment" ></h:outputLabel>
                                 <p:inputTextarea value="#{pharmacyAdjustmentController.comment}" ></p:inputTextarea>
                                 <h:outputLabel value="" ></h:outputLabel>
-                                <p:commandButton value="Make Adjustment" ajax="false" action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
+                                <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
+                                <p:defaultCommand target="btnAdjust"/>
                             </h:panelGrid>
 
                             <h:panelGrid columns="2" id="det">
-                                <f:facet name="header">DETAIL</f:facet>
+                                <f:facet name="header">
+                                    <h:outputLabel value="DETAIL"/>
+                                </f:facet>
                                 <h:outputLabel value="Name"/>
                                 <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.item.name}" ></h:outputLabel>
                                 <h:outputLabel value="Retail Sale Rate"/>

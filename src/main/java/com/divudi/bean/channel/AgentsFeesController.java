@@ -24,7 +24,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -36,7 +36,7 @@ import javax.faces.convert.FacesConverter;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AgentsFeesController implements Serializable {
 
     private static final long serialVersionUID = 1L;

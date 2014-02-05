@@ -21,8 +21,12 @@
                 <p:column headerText="Valid Patient">#{bs.billCount+bs.billCount_c}</p:column>
                 <p:column headerText="Total">#{bs.billFee+bs.billFee_c}</p:column>
                 <p:summaryRow>
-                    <p:column colspan="2">Total</p:column>             
-                    <p:column >#{channelReportController.total}</p:column>                  
+                    <p:column colspan="2">
+                        <h:outputLabel value="Total"/>
+                    </p:column>             
+                    <p:column >
+                        <h:outputLabel value="#{channelReportController.total}"/>
+                    </p:column>                  
 
                 </p:summaryRow>
             </p:dataTable>

@@ -25,6 +25,7 @@ public enum BillNumberSuffix {
     PO,//Purchase Order
     POCAN,//PO Cancel
     POR,//Purchase Order Request
+    PORCAN,//Purchase Order Request Cancell
     PHCAN,//Pharmacy Cancel    
     PHPUR,//Purchase  
     PURRET,//Purchase Return
@@ -35,7 +36,8 @@ public enum BillNumberSuffix {
     PHTRCAN,//Transfer Receive Cancel
     PHTRQ,//Transfer Request
     //PHPRE,//Pre Bill
-    PHSAL,
+    PHSAL,//Before Error Sale
+    PHS,//After Error
     SALCAN,//Pharmacy Sale Cancel
     PHRET,
     RETCAN,//Sale Return Cancel
@@ -43,6 +45,8 @@ public enum BillNumberSuffix {
     // PHSAL,//Sale Bill
     //  PRERET,//Pre Return
     // SALRET,//Sal Return
+    MJADJ,//Major Adjustment
+    ADJ,//Adjustment
     //Inward
     INWPAY,//Payment Bill
     INWPRO,//Professional

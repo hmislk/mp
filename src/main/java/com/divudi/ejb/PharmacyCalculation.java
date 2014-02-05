@@ -4,7 +4,6 @@
  */
 package com.divudi.ejb;
 
-import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.Bill;
@@ -12,7 +11,6 @@ import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Category;
-import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.RefundBill;
@@ -46,7 +44,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Stateless
-public class PharmacyRecieveBean {
+public class PharmacyCalculation {
 
     @EJB
     private PharmacyBean pharmacyBean;
@@ -126,7 +124,6 @@ public class PharmacyRecieveBean {
         return retailPrice;
     }
 
-  
     public double getTotalQty(BillItem b, BillType billType, Bill bill) {
         String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
                 + "  type(p.bill)=:class and p.creater is not null and"
@@ -277,8 +274,6 @@ public class PharmacyRecieveBean {
 //
 //        return billed - (cancelled + returned);
 //    }
-   
-
 //    public double checkQty(PharmaceuticalBillItem ph) {
 //        if (ph.getQty() == 0.0) {
 //            return 0.0;
@@ -429,7 +424,7 @@ public class PharmacyRecieveBean {
     }
 
     public ItemBatch saveItemBatch(BillItem tmp) {
-        //   System.err.println("Save Item Batch");
+        System.err.println("Save Item Batch");
         ItemBatch itemBatch = new ItemBatch();
         Item itm = tmp.getItem();
 
@@ -452,11 +447,14 @@ public class PharmacyRecieveBean {
         String sql;
 
         itemBatch.setItem(itm);
-        sql = "Select p from ItemBatch p where  p.item.id=" + itemBatch.getItem().getId()
-                + " and p.dateOfExpire= :doe and p.retailsaleRate=" + itemBatch.getRetailsaleRate() + " and p.purcahseRate=" + itemBatch.getPurcahseRate();
+        sql = "Select p from ItemBatch p where  p.item=:itm "
+                + " and p.dateOfExpire= :doe and p.retailsaleRate=:ret "
+                + " and p.purcahseRate=:pur";
 
         hash.put("doe", itemBatch.getDateOfExpire());
-
+        hash.put("itm", itemBatch.getItem());
+        hash.put("ret", itemBatch.getRetailsaleRate());
+        hash.put("pur", itemBatch.getPurcahseRate());
         List<ItemBatch> i = getItemBatchFacade().findBySQL(sql, hash, TemporalType.TIMESTAMP);
         System.err.println("Size " + i.size());
         if (i.size() > 0) {
@@ -504,7 +502,6 @@ public class PharmacyRecieveBean {
 
     }
 
-   
     public List<Item> findItem(Ampp tmp, List<Item> items) {
 
         String sql;
@@ -580,8 +577,7 @@ public class PharmacyRecieveBean {
 //
 //        return tmp;
 //    }
-
-    public String errorCheck(Bill b) {
+    public String errorCheck(Bill b, List<BillItem> billItems) {
         String msg = "";
 
         if (b.getInvoiceNumber() == null || "".equals(b.getInvoiceNumber().trim())) {
@@ -600,11 +596,11 @@ public class PharmacyRecieveBean {
             }
         }
 
-        if (b.getBillItems().isEmpty()) {
+        if (billItems.isEmpty()) {
             msg = "There is no Item to receive";
         }
 
-        if (checkItemBatch(b.getBillItems())) {
+        if (checkItemBatch(billItems)) {
             msg = "Please Fill Batch deatail and Sale Price to All Item";
         }
 

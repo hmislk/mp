@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -37,7 +37,7 @@ import javax.inject.Named;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class ItemsCategoriesController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -105,7 +105,7 @@ public class ItemsCategoriesController implements Serializable {
         pi.setCategory(getCurrentCategory());
         pi.setItem(getCurrentItem());
         pi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        pi.setCreater(sessionController.loggedUser);
+        pi.setCreater(getSessionController().getLoggedUser());
         getFacade().create(pi);
         UtilityController.addSuccessMessage("Added");
         recreateModel();
@@ -122,7 +122,7 @@ public class ItemsCategoriesController implements Serializable {
         }
 
         getCurrent().setRetired(true);
-        getCurrent().setRetirer(sessionController.getLoggedUser());
+        getCurrent().setRetirer(getSessionController().getLoggedUser());
         getCurrent().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getFacade().edit(getCurrent());
         UtilityController.addSuccessMessage("Item Removed");
@@ -242,7 +242,7 @@ public class ItemsCategoriesController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(sessionController.getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
@@ -260,7 +260,7 @@ public class ItemsCategoriesController implements Serializable {
         if (current != null) {
             current.setRetired(true);
             current.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setRetirer(sessionController.getLoggedUser());
+            current.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(current);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

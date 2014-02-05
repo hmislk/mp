@@ -22,7 +22,7 @@ import com.divudi.facade.BilledBillFacade;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.TimeZone;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -33,7 +33,7 @@ import javax.inject.Inject;
  Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class InwardPaymentController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -93,7 +93,7 @@ public class InwardPaymentController implements Serializable {
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setNetTotal(getCurrent().getTotal());
         getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().setCreater(sessionController.getLoggedUser());
+        getCurrent().setCreater(getSessionController().getLoggedUser());
         getBilledBillFacade().create(getCurrent());
     }
 

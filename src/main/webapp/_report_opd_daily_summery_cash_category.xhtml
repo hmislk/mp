@@ -39,13 +39,13 @@
                             <p:outputLabel  value="#{s.category.name}(#{s.department.name} Department)" style="position: absolute; left: 5%;" />                               
                         </f:facet>
                         <p:column headerText="Item Name" style="width: 300px;">
-                            #{i.item.name}
+                            <h:outputLabel value="#{i.item.name}"/>
                         </p:column>
                         <p:column headerText="Item Code" style="width: 150px;">
-                            #{i.item.code}
+                            <h:outputLabel value="#{i.item.code}"/>
                         </p:column>
                         <p:column headerText="Count" style="width: 150px;">
-                            #{i.count}
+                            <h:outputLabel value="#{i.count}"/>
                         </p:column>
                         <p:column style="width: 100px;text-align: right;">
                             <f:facet name="header">

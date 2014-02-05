@@ -31,7 +31,7 @@ import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -43,7 +43,7 @@ import javax.faces.convert.FacesConverter;
  * Informatics)
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class PackageItemFeeController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -134,7 +134,7 @@ public class PackageItemFeeController implements Serializable {
         currentFee.setItem(currentIx);
         if (currentFee.getId() == null || currentFee.getId() == 0) {
             currentFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            currentFee.setCreater(sessionController.getLoggedUser());
+            currentFee.setCreater(getSessionController().getLoggedUser());
 
             getPackageFeeFacade().create(currentFee);
             UtilityController.addSuccessMessage("Fee Added");
@@ -197,7 +197,7 @@ public class PackageItemFeeController implements Serializable {
             return;
         } else {
             getRemovedPackageFee().setRetired(true);
-            getRemovedPackageFee().setRetirer(sessionController.getLoggedUser());
+            getRemovedPackageFee().setRetirer(getSessionController().getLoggedUser());
             getRemovedPackageFee().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getPackageFeeFacade().edit(getRemovedPackageFee()); // Flag as retired, so that will never appearing when calling from database
 
@@ -213,7 +213,7 @@ public class PackageItemFeeController implements Serializable {
         if (currentIx != null) {
             currentIx.setRetired(true);
             currentIx.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            currentIx.setRetirer(sessionController.getLoggedUser());
+            currentIx.setRetirer(getSessionController().getLoggedUser());
             getFacade().edit(currentIx);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {

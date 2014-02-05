@@ -53,7 +53,7 @@ public class StaffSalaryComponant implements Serializable {
     private String retireComments;
     @ManyToOne
     StaffPaysheetComponent staffPaysheetComponent;
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     StaffSalary staffSalary;
     //////////
     @Temporal(javax.persistence.TemporalType.DATE)

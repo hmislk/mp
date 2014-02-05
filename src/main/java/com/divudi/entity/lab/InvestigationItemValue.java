@@ -28,7 +28,7 @@ public class InvestigationItemValue implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     //Main Properties
     Long id;
-    @ManyToOne(cascade= CascadeType.ALL,fetch= FetchType.EAGER)
+    @ManyToOne(cascade= CascadeType.ALL,fetch= FetchType.LAZY)
     InvestigationItem investigationItem;
     String name;
     String code;

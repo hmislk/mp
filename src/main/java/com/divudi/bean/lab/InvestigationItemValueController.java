@@ -61,9 +61,9 @@ public class InvestigationItemValueController implements Serializable {
         InvestigationItem ii;
         //System.out.println("1");
         //System.out.println(context
-                .getApplication()
-                .evaluateExpressionGet(FacesContext.getCurrentInstance(),
-                        "#{pv}", PatientReportItemValue.class));
+//                .getApplication()
+//                .evaluateExpressionGet(FacesContext.getCurrentInstance(),
+//                        "#{pv}", PatientReportItemValue.class));
         //System.out.println("2");
         try {
             //System.out.println("3");

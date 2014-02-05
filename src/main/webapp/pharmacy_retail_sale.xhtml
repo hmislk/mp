@@ -113,7 +113,8 @@
                                         <p:tab title="Bill Items" >
                                             <h:panelGrid columns="1">
                                                 <p:panel header="Bill Items" id="pBis">
-                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.transBillItems}" var="bi" rowIndexVar="s" editable="true" editMode="cell" >
+                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.billItems}"
+                                                                 var="bi" rowIndexVar="s" editable="true" editMode="cell" sortBy="#{bi.searialNo}" >
 
                                                         <p:column headerText="Item">
                                                             <h:outputLabel value="#{bi.pharmaceuticalBillItem.itemBatch.item.name}" ></h:outputLabel>

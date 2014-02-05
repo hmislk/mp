@@ -94,7 +94,7 @@ public class PatientController implements Serializable {
     }
     
     public StreamedContent getPhoto(Patient p) {
-        System.out.println("p is " + p);
+        //System.out.println("p is " + p);
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getRenderResponse()) {
             return new DefaultStreamedContent();
@@ -102,7 +102,7 @@ public class PatientController implements Serializable {
             return new DefaultStreamedContent();
         } else {
             if (p.getId() != null && p.getBaImage() != null) {
-                System.out.println("giving image");
+                //System.out.println("giving image");
                 return new DefaultStreamedContent(new ByteArrayInputStream(p.getBaImage()), p.getFileType(), p.getFileName());
             } else {
                 return new DefaultStreamedContent();
@@ -112,7 +112,7 @@ public class PatientController implements Serializable {
     }
 
     public StreamedContent getPhotoByByte(byte[] p) {
-        System.out.println("p is " + p);
+        //System.out.println("p is " + p);
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getRenderResponse()) {
             return new DefaultStreamedContent();
@@ -120,7 +120,7 @@ public class PatientController implements Serializable {
             return new DefaultStreamedContent();
         } else {
             if (p != null) {
-                System.out.println("giving image");
+                //System.out.println("giving image");
                 return new DefaultStreamedContent(new ByteArrayInputStream(p), "image/png", "photo.");
             } else {
                 return new DefaultStreamedContent();
@@ -200,7 +200,7 @@ public class PatientController implements Serializable {
             suggestions = new ArrayList<Patient>();
         } else {
             sql = "select p from Patient p where p.retired=false and upper(p.person.name) like '%" + query.toUpperCase() + "%' order by p.person.name";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -211,22 +211,22 @@ public class PatientController implements Serializable {
             UtilityController.addErrorMessage("No Person. Not Saved");
             return;
         }
-        System.out.println("going to save patient");
+        //System.out.println("going to save patient");
         if (getCurrent().getId() != null && getCurrent().getId() != 0) {
-            System.out.println("id is " + getCurrent().getId());
-            System.out.println("save as old patient");
+            //System.out.println("id is " + getCurrent().getId());
+            //System.out.println("save as old patient");
             getFacade().edit(current);
             getPersonFacade().edit(getCurrent().getPerson());
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
-            System.out.println("save as new");
+            //System.out.println("save as new");
             if (getCurrent().getPerson().getId() == null || getCurrent().getPerson().getId() == 0) {
-                System.out.println("new person");
+                //System.out.println("new person");
                 getCurrent().getPerson().setCreatedAt(Calendar.getInstance().getTime());
                 getCurrent().getPerson().setCreater(getSessionController().getLoggedUser());
                 getPersonFacade().create(getCurrent().getPerson());
             } else {
-                System.out.println("old person");
+                //System.out.println("old person");
                 getPersonFacade().edit(getCurrent().getPerson());
             }
 
@@ -358,19 +358,19 @@ public class PatientController implements Serializable {
             }
             PatientController controller = (PatientController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "patientController");
-            System.out.println("value at converter getAsObject is " + value);
+            //System.out.println("value at converter getAsObject is " + value);
             return controller.getEjbFacade().find(getKey(value));
         }
 
         java.lang.Long getKey(String value) {
             java.lang.Long key;
-            System.out.println(value);
+            //System.out.println(value);
             if (value == null || value.equals("null") || value.trim().equals("")) {
                 key = 0l;
             } else {
                 key = Long.valueOf(value);
-                System.out.println(key);
-                System.out.println(value);
+                //System.out.println(key);
+                //System.out.println(value);
             }
             return key;
         }

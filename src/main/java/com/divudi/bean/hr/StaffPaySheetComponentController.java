@@ -126,8 +126,8 @@ public class StaffPaySheetComponentController implements Serializable {
     }
 
     public List<StaffPaysheetComponent> getItems() {
-        //   System.out.println("getting Lst ");
-        //   System.out.println("Staff  : " + getCurrent().getStaff());
+        //   //System.out.println("getting Lst ");
+        //   //System.out.println("Staff  : " + getCurrent().getStaff());
         if (items == null) {
 
             String sql = "Select s from StaffPaysheetComponent s"

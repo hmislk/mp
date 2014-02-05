@@ -148,7 +148,7 @@ public class CashRecieveBillController implements Serializable {
             n += b.getNetValue();
         }
         getCurrent().setNetTotal(n);
-        System.out.println("AAA : " + n);
+        //System.out.println("AAA : " + n);
     }
 
     public void onTabChange(TabChangeEvent event) {

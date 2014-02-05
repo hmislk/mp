@@ -56,7 +56,7 @@ public class DoctorController implements Serializable {
             suggestions = new ArrayList<Doctor>();
         } else {
             sql = "select p from Doctor p where p.retired=false and upper(p.person.name) like '%" + query.toUpperCase() + "%' order by p.person.name";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;

@@ -88,7 +88,7 @@ public class StaffController implements Serializable {
         } else {
             sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
 
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getEjbFacade().findBySQL(sql);
         }
         return suggestions;
@@ -114,7 +114,7 @@ public class StaffController implements Serializable {
 
     public List<Department> getInstitutionDepatrments() {
         List<Department> d;
-        System.out.println("gettin ins dep ");
+        //System.out.println("gettin ins dep ");
         if (getCurrent().getInstitution() == null) {
             return new ArrayList<>();
         } else {
@@ -132,7 +132,7 @@ public class StaffController implements Serializable {
             suggestions = new ArrayList<>();
         } else {
             sql = "select p from Staff p where p.retired=false  and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -145,7 +145,7 @@ public class StaffController implements Serializable {
             ss = new ArrayList<>();
         } else {
             sql = "select p from Staff p where p.retired=false and  p.speciality.id = " + speciality.getId() + " order by p.person.name";
-//            System.out.println(sql);
+//            //System.out.println(sql);
             ss = getFacade().findBySQL(sql);
         }
         return ss;
@@ -158,7 +158,7 @@ public class StaffController implements Serializable {
             suggestions = new ArrayList<>();
         } else {
             sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) and type(p) != Doctor order by p.person.name";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -177,8 +177,8 @@ public class StaffController implements Serializable {
             UtilityController.addErrorMessage("Please select staff member");
             return "";
         }
-        System.out.println("file name is not null");
-        System.out.println(file.getFileName());
+        //System.out.println("file name is not null");
+        //System.out.println(file.getFileName());
         try {
             in = getFile().getInputstream();
             getCurrent().setFileName(file.getFileName());
@@ -187,7 +187,7 @@ public class StaffController implements Serializable {
             getFacade().edit(getCurrent());
             return "";
         } catch (Exception e) {
-            System.out.println("Error " + e.getMessage());
+            //System.out.println("Error " + e.getMessage());
             return "";
         }
 
@@ -219,22 +219,22 @@ public class StaffController implements Serializable {
     public StreamedContent getSignature() {
 //        FacesContext context = FacesContext.getCurrentInstance();
 //        if (context.getRenderResponse()) {
-//            System.out.println("render response");
+//            //System.out.println("render response");
 //            return new DefaultStreamedContent();
 //        } else {
-        System.out.println("image resuest");
+        //System.out.println("image resuest");
 
         if (current == null) {
-            System.out.println("staff null");
+            //System.out.println("staff null");
             return new DefaultStreamedContent();
         }
-        System.out.println("staf is " + current);
+        //System.out.println("staf is " + current);
         if (current.getId() != null && current.getBaImage() != null) {
-            System.out.println(current.getFileType());
-            System.out.println(current.getFileName());
+            //System.out.println(current.getFileType());
+            //System.out.println(current.getFileName());
             return new DefaultStreamedContent(new ByteArrayInputStream(current.getBaImage()), current.getFileType(), current.getFileName());
         } else {
-            System.out.println("nulls");
+            //System.out.println("nulls");
             return new DefaultStreamedContent();
         }
 //        }
@@ -252,14 +252,14 @@ public class StaffController implements Serializable {
 
         Staff temStaff = getFacade().findFirstBySQL("select s from Staff s where s.baImage != null and s.id = " + stfId);
 
-        System.out.println("Printing");
+        //System.out.println("Printing");
 
         if (temStaff == null) {
             return new DefaultStreamedContent();
         } else {
             if (temStaff.getId() != null && temStaff.getBaImage() != null) {
-                System.out.println(temStaff.getFileType());
-                System.out.println(temStaff.getFileName());
+                //System.out.println(temStaff.getFileType());
+                //System.out.println(temStaff.getFileName());
                 return new DefaultStreamedContent(new ByteArrayInputStream(temStaff.getBaImage()), temStaff.getFileType(), temStaff.getFileName());
             } else {
                 return new DefaultStreamedContent();

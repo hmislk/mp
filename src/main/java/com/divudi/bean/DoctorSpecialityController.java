@@ -143,7 +143,7 @@ public  class DoctorSpecialityController implements Serializable {
 
     public List<DoctorSpeciality> getItems() {
         items = getFacade().findAll("name", true);
-        System.out.println("a");
+        //System.out.println("a");
         return items;
     }
 

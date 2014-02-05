@@ -168,7 +168,7 @@ public class RoomChangeController implements Serializable {
             suggestions = new ArrayList<Admission>();
         } else {
             sql = "select c from Admission c where c.retired=false and c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -182,7 +182,7 @@ public class RoomChangeController implements Serializable {
             suggestions = new ArrayList<Admission>();
         } else {
             sql = "select c from Admission c where c.retired=false and c.id not in(Select b.patientEncounter.id from Bill b where b.retired=false and  b.billType=:btp and b.grantTotal!=0) and(upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            System.out.println(sql);
+            //System.out.println(sql);
             h.put("btp", BillType.InwardPaymentBill);
             suggestions = getFacade().findBySQL(sql, h);
         }
@@ -196,7 +196,7 @@ public class RoomChangeController implements Serializable {
             suggestions = new ArrayList<Admission>();
         } else {
             sql = "select c from Admission c where c.retired=false and c.discharged=true and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;

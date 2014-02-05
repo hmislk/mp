@@ -158,7 +158,7 @@ public class PharmacyBillSearch implements Serializable {
         sql = "Select b from BilledBill b where b.retired=false and b.createdAt  "
                 + " between :fd and :td and b.billType=:bt order by b.id desc ";
 
-        //     System.out.println("sql = " + sql);
+        //     //System.out.println("sql = " + sql);
         List<Bill> lst = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
         lazyBills = new LazyBill(lst);
     }
@@ -216,10 +216,10 @@ public class PharmacyBillSearch implements Serializable {
         List<Bill> userBills;
         if (getUser() == null) {
             userBills = new ArrayList<>();
-            System.out.println("user is null");
+            //System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
-            System.out.println("user ok");
+            //System.out.println("user ok");
         }
         if (userBills == null) {
             userBills = new ArrayList<>();
@@ -1717,13 +1717,13 @@ public class PharmacyBillSearch implements Serializable {
 
     public List<Bill> getUserBills() {
         List<Bill> userBills;
-        System.out.println("getting user bills");
+        //System.out.println("getting user bills");
         if (getUser() == null) {
             userBills = new ArrayList<>();
-            System.out.println("user is null");
+            //System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), BillType.OpdBill);
-            System.out.println("user ok");
+            //System.out.println("user ok");
         }
         if (userBills == null) {
             userBills = new ArrayList<>();
@@ -1766,9 +1766,9 @@ public class PharmacyBillSearch implements Serializable {
         recreateModel();
         this.bill = bill;
         //System.err.println("Setting BIll " + bill);
-        System.out.println("bill.getBillItems() = " + bill.getBillItems());
+        //System.out.println("bill.getBillItems() = " + bill.getBillItems());
         bill = getBillFacade().find(bill.getId());
-        System.out.println("bill.getBillItems() = " + bill.getBillItems());
+        //System.out.println("bill.getBillItems() = " + bill.getBillItems());
         double tmp = 0;
         if (bill.getBillType() == BillType.PharmacyTransferIssue) {
             for (BillItem b : bill.getBillItems()) {
@@ -1800,8 +1800,8 @@ public class PharmacyBillSearch implements Serializable {
                 sql = "SELECT b FROM BillItem b WHERE b.retired=false and b.bill.id=" + getBill().getRefundedBill().getId();
             }
             billItems = getBillItemFacede().findBySQL(sql);
-            // System.out.println("sql for bill item search is " + sql);
-            // System.out.println("results for bill item search is " + billItems);
+            // //System.out.println("sql for bill item search is " + sql);
+            // //System.out.println("results for bill item search is " + billItems);
             if (billItems == null) {
                 billItems = new ArrayList<>();
             }
@@ -1964,7 +1964,7 @@ public class PharmacyBillSearch implements Serializable {
         }
         double tot = 0.0;
         for (BillFee f : getBillFees()) {
-            System.out.println("Tot" + f.getFeeValue());
+            //System.out.println("Tot" + f.getFeeValue());
             tot += f.getFeeValue();
         }
         getBillForRefund().setTotal(tot);

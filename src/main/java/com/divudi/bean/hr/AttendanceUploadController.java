@@ -160,9 +160,9 @@ public class AttendanceUploadController implements Serializable {
                     continue;
                 }
 
-                System.out.println("strings0 = " + strings[0]);
-                System.out.println("strings1 = " + strings[1]);
-                System.out.println("strings2 = " + strings[2]);
+                //System.out.println("strings0 = " + strings[0]);
+                //System.out.println("strings1 = " + strings[1]);
+                //System.out.println("strings2 = " + strings[2]);
                 
                 
                 String strCat = strings[0];
@@ -177,7 +177,7 @@ public class AttendanceUploadController implements Serializable {
                 
                 String str = strings[1] + " " + strings[2];
 
-                System.out.println("date in string is " + str);
+                //System.out.println("date in string is " + str);
                 if (s != null && !str.trim().equals("")) {
                     try {
                         FingerPrintRecord ffr = new FingerPrintRecord();
@@ -195,10 +195,10 @@ public class AttendanceUploadController implements Serializable {
                         //  //System.err.println("str :" + str);
 
                         try {
-                            System.out.println("str = " + str);
+                            //System.out.println("str = " + str);
                             date = formatter.parse(str);
                         } catch (ParseException e) {
-                            System.out.println("error in parsing");
+                            //System.out.println("error in parsing");
                             continue;
                         }
                         ffr.setRecordTimeStamp(date);
@@ -209,10 +209,10 @@ public class AttendanceUploadController implements Serializable {
                         m.put("t", date);
                         m.put("p", FingerPrintRecordType.Logged);
                         FingerPrintRecord rffr = getFingerPrintRecordFacade().findFirstBySQL(jpql, m);
-                        System.out.println("rffr = " + rffr);
+                        //System.out.println("rffr = " + rffr);
                         if (rffr == null) {
                             getFingerPrintRecordFacade().create(ffr);
-                            System.out.println("rfr = " + ffr);
+                            //System.out.println("rfr = " + ffr);
                             FingerPrintRecord ffrv = new FingerPrintRecord();
                             ffrv.setCreatedAt(Calendar.getInstance().getTime());
                             ffrv.setCreater(getSessionController().getLoggedUser());
@@ -228,7 +228,7 @@ public class AttendanceUploadController implements Serializable {
                             ffr.setVerifiedRecord(ffrv);
                             getFingerPrintRecordFacade().edit(ffr);
                             collectedRecords.add(ffrv);
-                            System.out.println("ffrv");
+                            //System.out.println("ffrv");
                         } else {
                             // rffr.setStaffShift(searchStaffShift(rffr));
                             rffr.getVerifiedRecord().setStaffShift(searchStaffShift(rffr.getVerifiedRecord()));

@@ -53,73 +53,6 @@ public class Bill implements Serializable {
     List<BillItem> billItems;
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<BillComponent> billComponents = new ArrayList<>();
-
-    @Transient
-    List<BillItem> transBillItems;
-
-    @Transient
-    private List<BillItem> transActiveBillItem;
-    @ManyToOne
-    private Bill forwardReferenceBill;
-    @ManyToOne
-    private Bill backwardReferenceBill;
-
-//    public List<BillItem> getTransBillItems() {
-//        if (billItems != null) {
-//            transBillItems = new ArrayList<>();
-//            for (BillItem b : billItems) {
-//                if (!b.isRetired()) {
-//                    transBillItems.add(b);
-//                }
-//            }
-//
-//            transBillItems = sort(transBillItems, on(BillItem.class).getSearialNo());
-//        } else {
-//            transBillItems = new ArrayList<>();
-//        }
-//        return transBillItems;
-//
-//    }
-
-    public void invertValue(Bill bill) {
-        staffFee = 0 - bill.getStaffFee();
-        performInstitutionFee = 0 - bill.getPerformInstitutionFee();
-        billerFee = 0 - bill.getBillerFee();
-        discount = 0 - bill.getDiscount();
-        netTotal = 0 - bill.getNetTotal();
-        total = 0 - bill.getTotal();
-
-    }
-
-    public void copy(Bill bill) {
-        billType = bill.getBillType();
-        collectingCentre = bill.getCollectingCentre();
-        catId = bill.getCatId();
-        creditCompany = bill.getCreditCompany();
-        staff = bill.getStaff();
-        toDepartment = bill.getToDepartment();
-        toInstitution = bill.getToInstitution();
-        fromDepartment = bill.getFromDepartment();
-        fromInstitution = bill.getFromInstitution();
-        discountPercent = bill.getDiscountPercent();
-        patient = bill.getPatient();
-        patientEncounter = bill.getPatientEncounter();
-        referredBy = bill.getReferredBy();
-        referringDepartment = bill.getReferringDepartment();
-        //      referenceBill=bill.getReferenceBill();
-        //  paymentScheme=bill.getPaymentScheme();
-        //   paymentMethod=bill.getPaymentMethod();
-        comments = bill.getComments();
-
-    }
-
-    public List<BillComponent> getBillComponents() {
-        return billComponents;
-    }
-
-    public void setBillComponents(List<BillComponent> billComponents) {
-        this.billComponents = billComponents;
-    }
     ////////////////////////////////////////////////   
     @Lob
     String comments;
@@ -246,6 +179,59 @@ public class Bill implements Serializable {
     @Transient
     List<Bill> listOfBill;
 
+    @Transient
+    private List<BillItem> transActiveBillItem;
+    @ManyToOne
+    private Bill forwardReferenceBill;
+    @ManyToOne
+    private Bill backwardReferenceBill;
+    @Transient
+    private double hospitalFee;
+    @Transient
+    private double professionalFee;
+    @Transient
+    private double tmpReturnTotal;
+
+    public void invertValue(Bill bill) {
+        staffFee = 0 - bill.getStaffFee();
+        performInstitutionFee = 0 - bill.getPerformInstitutionFee();
+        billerFee = 0 - bill.getBillerFee();
+        discount = 0 - bill.getDiscount();
+        netTotal = 0 - bill.getNetTotal();
+        total = 0 - bill.getTotal();
+
+    }
+
+    public void copy(Bill bill) {
+        billType = bill.getBillType();
+        collectingCentre = bill.getCollectingCentre();
+        catId = bill.getCatId();
+        creditCompany = bill.getCreditCompany();
+        staff = bill.getStaff();
+        toDepartment = bill.getToDepartment();
+        toInstitution = bill.getToInstitution();
+        fromDepartment = bill.getFromDepartment();
+        fromInstitution = bill.getFromInstitution();
+        discountPercent = bill.getDiscountPercent();
+        patient = bill.getPatient();
+        patientEncounter = bill.getPatientEncounter();
+        referredBy = bill.getReferredBy();
+        referringDepartment = bill.getReferringDepartment();
+        //      referenceBill=bill.getReferenceBill();
+        //  paymentScheme=bill.getPaymentScheme();
+        //   paymentMethod=bill.getPaymentMethod();
+        comments = bill.getComments();
+
+    }
+
+    public List<BillComponent> getBillComponents() {
+        return billComponents;
+    }
+
+    public void setBillComponents(List<BillComponent> billComponents) {
+        this.billComponents = billComponents;
+    }
+
     public Field getField(String name) {
         try {
             //System.err.println("ss : " + name);
@@ -253,11 +239,8 @@ public class Bill implements Serializable {
                 //System.err.println(f.getName());
             }
             return this.getClass().getField(name);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException | SecurityException e) {
             //System.err.println("Ex no " + e.getMessage());
-            return null;
-        } catch (SecurityException e) {
-            //System.err.println("Ex " + e.getMessage());
             return null;
         }
     }
@@ -893,12 +876,6 @@ public class Bill implements Serializable {
     public void setBillFees(List<BillFee> billFees) {
         this.billFees = billFees;
     }
-    @Transient
-    private double hospitalFee;
-    @Transient
-    private double professionalFee;
-    @Transient
-    private double tmpReturnTotal;
 
     public double getHospitalFee() {
         return hospitalFee;

@@ -270,7 +270,8 @@ public class PatientReportController implements Serializable {
     }
 
     public List<PatientReportItemValue> getPatientReportItemValues() {
-        String sql = "Select v from PatientReportItemValue v where v.patientReport=:r order by v.investigationItem.cssTop";
+        String sql = "Select v from PatientReportItemValue v where v.patientReport=:r "
+                + " order by v.investigationItem.cssTop";
         Map m = new HashMap();
         m.put("r", getCurrentPatientReport());
         patientReportItemValues = getPirivFacade().findBySQL(sql, m);

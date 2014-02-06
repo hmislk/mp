@@ -7,6 +7,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
 
+
     <ui:define name="content">
         <h:form>
             <h:outputStylesheet library="css" name="pharmacyA4.css"/>
@@ -73,7 +74,7 @@
                     <p:column headerText="Purchase Rate" style="width:25px!important;"> 
                         <h:panelGroup id="purchase" >
                             <h:outputText  value="#{ph.pharmaceuticalBillItem.purchaseRate}"  >
-                                  <f:convertNumber pattern="#,##0.00" />
+                                <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
                             <h:outputText value="perPack" rendered="#{ph.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}" />    
                         </h:panelGroup>

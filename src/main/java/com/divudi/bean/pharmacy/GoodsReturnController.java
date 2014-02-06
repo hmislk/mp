@@ -8,7 +8,6 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.dataStructure.PharmacyItemData;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.ejb.PharmacyCalculation;
@@ -20,13 +19,9 @@ import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
-import com.divudi.entity.pharmacy.Vmp;
-import com.divudi.entity.pharmacy.Vmpp;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +29,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  *
@@ -71,6 +67,7 @@ public class GoodsReturnController implements Serializable {
 
     public void setBill(Bill bill) {
         makeNull();
+        System.err.println("Bill "+bill);
         this.bill = bill;
         generateBillComponent();
     }
@@ -194,13 +191,17 @@ public class GoodsReturnController implements Serializable {
     }
 
     public void settle() {
+        System.err.println("1");
         if (checkGrnItems()) {
             UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't cancel ");
             return;
-
         }
+        
+        System.err.println("2");
         saveReturnBill();
+        System.err.println("3");
         saveComponent();
+        System.err.println("4");
 
         getBillFacade().edit(getReturnBill());
 
@@ -214,7 +215,7 @@ public class GoodsReturnController implements Serializable {
         double grossTotal = 0.0;
         int serialNo = 0;
         for (BillItem p : getBillItems()) {
-            grossTotal += p.getPharmaceuticalBillItem().getPurchaseRate() * p.getPharmaceuticalBillItem().getQty();
+            grossTotal += p.getPharmaceuticalBillItem().getPurchaseRate() * p.getTmpQty();
             p.setSearialNo(serialNo++);
         }
 
@@ -225,6 +226,7 @@ public class GoodsReturnController implements Serializable {
     }
 
     private void generateBillComponent() {
+        System.err.println("Generate ");
         billItems = null;
         for (PharmaceuticalBillItem grnPh : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getBill())) {
             BillItem bi = new BillItem();
@@ -258,8 +260,11 @@ public class GoodsReturnController implements Serializable {
                 suggessions.add(item);
             }
 
+            
             bi.setTmpSuggession(suggessions);
             bi.setPharmaceuticalBillItem(retPh);
+            
+            System.err.println("Add "+bi);
 
             getBillItems().add(bi);
 

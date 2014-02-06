@@ -120,7 +120,9 @@ public class BillItem implements Serializable {
     }
 
     public void invertValue(BillItem billItem) {
-        qty = 0 - billItem.getQty();
+        if (billItem.getQty() != null) {
+            qty = 0 - billItem.getQty();
+        }
         Rate = 0 - billItem.getRate();
         discount = 0 - billItem.getDiscount();
         netRate = 0 - billItem.getNetRate();

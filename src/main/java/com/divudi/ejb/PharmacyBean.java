@@ -128,7 +128,11 @@ public class PharmacyBean {
             getBillItemFacade().edit(newBillItem);
 
             //System.err.println("QTY " + bItem.getQty());
-            if (!addToStock(ph.getStock(), Math.abs(bItem.getQty()), ph, department)) {
+            double qty = 0;
+            if (bItem.getQty() != null) {
+                qty = Math.abs(bItem.getQty());
+            }
+            if (!addToStock(ph.getStock(), qty, ph, department)) {
 
                 msg = "Be Carefull Some Item Are Not Added To Stock.Contact Superior Person";
 
@@ -141,8 +145,6 @@ public class PharmacyBean {
 
         return msg;
     }
-    
-    
 
     public PharmaceuticalItemCategoryFacade getPharmaceuticalItemCategoryFacade() {
         return PharmaceuticalItemCategoryFacade;
@@ -582,7 +584,6 @@ public class PharmacyBean {
         getPharmaceuticalBillItemFacade().edit(phItem);
 
         //System.err.println("Histry Saved " + sh.getStockQty());
-
     }
 
     public void addToStockHistory(PharmaceuticalBillItem phItem, Stock stock, Staff staff) {
@@ -632,7 +633,6 @@ public class PharmacyBean {
         getPharmaceuticalBillItemFacade().edit(phItem);
 
         //System.err.println("Histry Saved " + sh.getStockQty());
-
     }
 
     //

@@ -34,7 +34,6 @@ public class PharmacyErrorChecking implements Serializable {
 
     @EJB
     PharmacyErrorCheckingEjb ejb;
-    
 
     List<BillItem> billItems;
     Date fromDate;
@@ -65,10 +64,13 @@ public class PharmacyErrorChecking implements Serializable {
         billItems = getEjb().allBillItems(item, department);
         calculateTotals4();
     }
-    
-     public void listPharmacyMovementByDateRange() {
-        billItems = getEjb().allBillItemsByDate(item, department,fromDate,toDate);
-      //  calculateTotals4();
+
+    public void listPharmacyMovementByDateRange() {
+        billItems = getEjb().allBillItemsByDate(item, department, fromDate, toDate);
+    }
+
+    public void listPharmacyMovementByDateRangeOnlyStockChange() {
+        billItems = getEjb().allBillItemsByDateOnlyStock(item, department, fromDate, toDate);
     }
 
     public void listPharmacyMovementNew() {
@@ -186,13 +188,12 @@ public class PharmacyErrorChecking implements Serializable {
                         calculatedStock += Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit());
 
                         //System.err.println("10 " + Math.abs(bi.getPharmaceuticalBillItem().getQtyInUnit()));
-
                     }
                     break;
                 default:
                     //System.err.println("Default  " + bi.getBill().getBillType());
-                    //System.err.println("Default  " + bi.getBill().getClass());
-                    //System.err.println("Default  " + bi.getQty());
+                //System.err.println("Default  " + bi.getBill().getClass());
+                //System.err.println("Default  " + bi.getQty());
 
             }
 
@@ -202,7 +203,6 @@ public class PharmacyErrorChecking implements Serializable {
             //
             //
             //
-        
         }
 
 //        //System.err.println("Befor " + calculatedStock);
@@ -277,7 +277,6 @@ public class PharmacyErrorChecking implements Serializable {
 
         // calculatedStock -= saleQty;
         //System.err.println("SaleQty " + saleQty);
-
         calculatedStock += getEjb().getTotalQty(BillType.PharmacyPre, new RefundBill(), department, item);
 
     }

@@ -113,7 +113,7 @@
                                         <p:tab title="Bill Items" >
                                             <h:panelGrid columns="1">
                                                 <p:panel header="Bill Items" id="pBis">
-                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.billItems}"
+                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.transActiveBillItem}"
                                                                  var="bi" rowIndexVar="s" editable="true" editMode="cell" sortBy="#{bi.searialNo}" >
 
                                                         <p:column headerText="Item">

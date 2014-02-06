@@ -251,12 +251,10 @@ public class PharmacySaleController implements Serializable {
 
         //System.err.println("old " + oldQty);
         //System.err.println("new " + newQty);
-
         double updationValue = newQty - oldQty;
 
         //System.err.println("Updation Qty " + updationValue);
         //System.err.println("Current Stock Qty " + currentStock);
-
         if (updationValue > currentStock.getStock()) {
             tmp.setQty(oldQty);
             tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - Math.abs(oldQty));
@@ -586,7 +584,7 @@ public class PharmacySaleController implements Serializable {
         getPreBill().setPatient(pt);
 
         getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
-        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
+
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
         getPreBill().setBillDate(new Date());
@@ -603,6 +601,8 @@ public class PharmacySaleController implements Serializable {
 
     private void savePreBillInitially() {
         calculateAllRates();
+        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
+
         getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
@@ -864,8 +864,11 @@ public class PharmacySaleController implements Serializable {
     private StockHistoryFacade stockHistoryFacade;
 
     public void removeBillItem(BillItem b) {
-        // Stock currentStock=
-//testing
+        if (b.isRetired()) {
+            UtilityController.addErrorMessage("This Item Already removed");
+            return;
+        }
+
         getPharmacyBean().addToStock(b.getPharmaceuticalBillItem().getStock(), Math.abs(b.getQty()), b.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
         b.setRetired(true);

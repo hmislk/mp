@@ -193,6 +193,31 @@ public class PharmacyErrorCheckingEjb {
         return getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
     }
 
+    public List<BillItem> allBillItemsByDateOnlyStock(Item item, Department department, Date fromDate, Date toDate) {
+        String sql;
+        Map m = new HashMap();
+        m.put("d", department);
+        m.put("i", item);
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        m.put("btp1", BillType.PharmacyPurchaseBill);
+        m.put("btp2", BillType.PharmacyGrnBill);
+        m.put("btp3", BillType.PharmacyGrnReturn);
+        m.put("btp4", BillType.PurchaseReturn);
+        m.put("btp5", BillType.PharmacyPre);
+        m.put("btp6", BillType.PharmacyTransferIssue);
+        m.put("btp7", BillType.PharmacyTransferReceive);
+
+        sql = "select bi from BillItem bi where bi.item=:i"
+                + " and bi.bill.department=:d "
+                + " and bi.createdAt between :fd and :td "
+                + " and (bi.bill.billType=:btp1 or bi.bill.billType=:btp2 or "
+                + " bi.bill.billType=:btp3 or bi.bill.billType=:btp4 or "
+                + " bi.bill.billType=:btp5 or bi.bill.billType=:btp6 or"
+                + " bi.bill.billType=:btp7  ) ";
+        return getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
+    }
+
     public List<BillItem> allBillItems2(Item item, Department department) {
         String sql;
         Map m = new HashMap();

@@ -954,6 +954,23 @@ public class LabReportSearchByInstitutionController implements Serializable {
         this.piFacade = piFacade;
     }
 
+    public List<PatientInvestigation> getPatientInvestigations() {
+        String sql;
+        if (patientInvestigations == null) {
+            Map m = new HashMap();
+            m.put("toDate", toDate);
+            m.put("fromDate", fromDate);
+            if (txtSearch == null || txtSearch.trim().equals("")) {
+//                sql = "select pi from PatientInvestigation pi join pi.investigation i join pi.billItem.bill b join b.patient.person p where b.createdAt between :fromDate and :toDate order by pi.id desc";
+                //               patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 100);
+                patientInvestigations = new ArrayList<>();
+            } else {
+                sql = "select pi from PatientInvestigation pi join pi.investigation i join pi.billItem.bill b join b.patient.person p where (upper(p.name) like '%" + txtSearch.toUpperCase() + "%' or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' or p.phone like '%" + txtSearch + "%' or upper(i.name) like '%" + txtSearch.toUpperCase() + "%' ) and b.createdAt between :fromDate and :toDate order by pi.id desc";
+                patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
+            }
+        }
+        return patientInvestigations;
+    }
    
 
     public void listAllPatientInvestigations() {

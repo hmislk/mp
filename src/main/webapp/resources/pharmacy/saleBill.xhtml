@@ -157,7 +157,7 @@
                         </td>
                     </tr>
 
-                    <ui:repeat value="#{cc.attrs.bill.billItems}" var="bip"   >
+                    <ui:repeat value="#{cc.attrs.bill.transActiveBillItem}" var="bip"   >
 
                         <tr>
                             <td colspan="4" style="overflow: visible;">
@@ -252,7 +252,7 @@
                             <h:outputLabel   value="Number of Items Count" />
                         </td>
                         <td  class="totalsBlock">
-                            <h:outputLabel   value="#{cc.attrs.bill.billItems.size()}">
+                            <h:outputLabel   value="#{cc.attrs.bill.transActiveBillItem.size()}">
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputLabel>
                         </td>

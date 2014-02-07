@@ -109,7 +109,7 @@
                                 </p:panel>
                             </p:panelGrid>
                             <p:panel header="Bill Item Detail">
-                                <p:dataTable rowIndexVar="rowIndex" value="#{pharmacyPreSettleController.preBill.billItems}" var="bip" >
+                                <p:dataTable rowIndexVar="rowIndex" value="#{pharmacyPreSettleController.preBill.transActiveBillItem}" var="bip" >
                                     <p:column>
                                         <f:facet name="header">No</f:facet>
                                             #{rowIndex+1}

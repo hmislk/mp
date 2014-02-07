@@ -14,14 +14,14 @@
 
                     <h:panelGrid columns="6" >
                         <h:outputLabel value="From Date"/>
-                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                         </p:calendar>
                         <h:panelGroup>
-                            <p:commandButton id="btnSearch" ajax="false" value="Logged Institution Search" action="#{search.createGrnTable}"/>
-                            <p:commandButton id="btnSearch2" ajax="false" value="All Search" action="#{search.createGrnTableAllIns()}"/>
+                            <p:commandButton id="btnSearch" ajax="false" value="Logged Institution Search" action="#{searchController.createGrnTable}"/>
+                            <p:commandButton id="btnSearch2" ajax="false" value="All Search" action="#{searchController.createGrnTableAllIns()}"/>
                         </h:panelGroup>
                         <h:outputLabel/>
                         <p:spacer height="30"/><h:outputLabel/><h:outputLabel/>
@@ -33,19 +33,19 @@
                         <h:outputLabel value="Distributor"/>
                         <h:outputLabel value="Po Value"/>
                         <h:outputLabel value="Grn Value"/>
-                        <p:inputText  value="#{search.searchKeyword.billNo}" />
-                        <p:inputText value="#{search.searchKeyword.number}" />
-                        <p:inputText  value="#{search.searchKeyword.refBillNo}" />
-                        <p:inputText  value="#{search.searchKeyword.fromInstitution}" />
-                        <p:inputText value="#{search.searchKeyword.total}"/>
-                        <p:inputText value="#{search.searchKeyword.netTotal}"/>
+                        <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                        <p:inputText value="#{searchController.searchKeyword.number}" />
+                        <p:inputText  value="#{searchController.searchKeyword.refBillNo}" />
+                        <p:inputText  value="#{searchController.searchKeyword.fromInstitution}" />
+                        <p:inputText value="#{searchController.searchKeyword.total}"/>
+                        <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
                     </h:panelGrid>
 
                 </f:facet>
 
 
 
-                <p:dataTable value="#{search.bills}" var="p" >
+                <p:dataTable value="#{searchController.bills}" var="p" >
 
                     <p:column headerText="GRN No"  >                   
                         <h:commandLink action="pharmacy_reprint_grn"  >    

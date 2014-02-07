@@ -46,10 +46,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 ;
 import javax.inject.Inject;
 import org.primefaces.event.SelectEvent;
@@ -62,7 +62,7 @@ import org.primefaces.event.TabChangeEvent;
 
 
 @Named
-@ViewScoped
+@SessionScoped
 public class PharmacySaleController implements Serializable {
 
     /**

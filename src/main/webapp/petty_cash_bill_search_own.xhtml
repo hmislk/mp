@@ -14,12 +14,12 @@
                         <f:facet name="header" >                            
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPettyTable()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPettyTable()}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
@@ -27,16 +27,16 @@
                                 <h:outputLabel value="Paid To (Staff)"/>
                                 <h:outputLabel value="Paid To (Person)"/>
                                 <h:outputLabel value="Value"/>
-                                <p:inputText  value="#{search.searchKeyword.billNo}" />
-                                <p:inputText value="#{search.searchKeyword.number}"/>
-                                <p:inputText value="#{search.searchKeyword.staffName}" />
-                                <p:inputText value="#{search.searchKeyword.personName}" />
-                                <p:inputText  value="#{search.searchKeyword.netTotal}" />
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.number}"/>
+                                <p:inputText value="#{searchController.searchKeyword.staffName}" />
+                                <p:inputText value="#{searchController.searchKeyword.personName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.netTotal}" />
                             </h:panelGrid>
 
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{search.bills}"     var="bill"  >
+                        <p:dataTable id="tblBills" value="#{searchController.bills}"     var="bill"  >
                             <p:column headerText="Bill No" >
                                 <h:commandLink action="petty_cash_bill_reprint" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>

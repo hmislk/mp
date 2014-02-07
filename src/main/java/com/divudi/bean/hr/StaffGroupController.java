@@ -11,7 +11,7 @@ import com.divudi.entity.Staff;
 import com.divudi.facade.RosterFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class StaffGroupController implements Serializable {
    
     private Staff currentStaff;   

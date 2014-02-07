@@ -14,13 +14,13 @@
                         <f:facet name="header" >
                             <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createCollectingTable()}"/>
-                                <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{search.createCollectingTableAll()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createCollectingTable()}"/>
+                                <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{searchController.createCollectingTableAll()}"/>
                                 <p:spacer height="30"/><h:outputLabel/>
                                 <h:outputLabel/><h:outputLabel/>
                                 <h:outputLabel/> <h:outputLabel/>
@@ -31,11 +31,11 @@
                                 <h:outputLabel value="Total"/>
                                 <h:outputLabel value="Net Total"/>
                                 <h:outputLabel/>
-                                <p:inputText  value="#{search.searchKeyword.billNo}" />
-                                <p:inputText value="#{search.searchKeyword.patientName}" />
-                                <p:inputText  value="#{search.searchKeyword.patientPhone}" />
-                                <p:inputText  value="#{search.searchKeyword.total}" />
-                                <p:inputText value="#{search.searchKeyword.netTotal}"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.patientName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.patientPhone}" />
+                                <p:inputText  value="#{searchController.searchKeyword.total}" />
+                                <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
                                 <h:outputLabel/>
                             </h:panelGrid>
 
@@ -43,7 +43,7 @@
 
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{search.bills}" var="bill"  >
+                        <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill"  >
                             <p:column headerText="Bill No" >
                                 <h:commandLink action="lab_bill_collecting_centre_reprint" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>

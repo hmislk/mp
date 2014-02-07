@@ -9,7 +9,7 @@ package com.divudi.bean;
 
 import java.io.Serializable;
 import javax.inject.Named; import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 
@@ -19,7 +19,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
  * Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class SecurityController implements Serializable {
 
     private static final long serialVersionUID = 1L;

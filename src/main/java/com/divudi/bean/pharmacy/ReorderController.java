@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import org.primefaces.event.RowEditEvent;
 
 @Named
-@ViewScoped
+@SessionScoped
 public class ReorderController implements Serializable {
 
     private Reorder current;

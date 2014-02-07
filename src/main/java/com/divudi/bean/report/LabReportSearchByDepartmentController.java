@@ -28,7 +28,8 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.persistence.TemporalType;
 
 /**
@@ -36,7 +37,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@RequestScoped
 public class LabReportSearchByDepartmentController implements Serializable {
 
     @Inject

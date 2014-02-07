@@ -19,7 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named; import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -31,7 +31,7 @@ import java.util.TimeZone;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public  class ConsultantController implements Serializable {
 
     private static final long serialVersionUID = 1L;

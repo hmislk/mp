@@ -11,7 +11,7 @@ import com.divudi.entity.lab.WorksheetItem;
 import com.divudi.facade.InvestigationFacade;
 import com.divudi.facade.WorksheetItemFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

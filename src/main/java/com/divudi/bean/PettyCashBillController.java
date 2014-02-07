@@ -19,7 +19,7 @@ import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PersonFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ import org.primefaces.event.TabChangeEvent;
  * @author safrin
  */
 @Named(value = "pettyCashBillController")
-@ViewScoped
+@SessionScoped
 public class PettyCashBillController implements Serializable {
 
     private Bill current;

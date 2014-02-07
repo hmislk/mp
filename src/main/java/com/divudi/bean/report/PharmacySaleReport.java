@@ -23,7 +23,7 @@ import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.TemporalType;
 
 /**
@@ -41,7 +42,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@ViewScoped
+@RequestScoped
 public class PharmacySaleReport implements Serializable {
 
     private Date fromDate;

@@ -20,7 +20,7 @@ import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,7 +38,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@ViewScoped
+@RequestScoped
 public class ServiceSummery implements Serializable {
 
     @Inject

@@ -16,7 +16,7 @@ import com.divudi.facade.FeeFacade;
 import com.divudi.facade.ServiceSessionFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +30,7 @@ import javax.inject.Inject;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class SheduleController implements Serializable {
 
     @EJB

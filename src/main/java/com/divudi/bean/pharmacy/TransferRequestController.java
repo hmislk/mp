@@ -22,7 +22,7 @@ import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemsDistributorsFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +36,7 @@ import javax.inject.Inject;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class TransferRequestController implements Serializable {
 
     @Inject

@@ -22,7 +22,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 
 /**
  *
@@ -30,7 +30,7 @@ import javax.faces.view.ViewScoped;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class XItemsDistributorsController implements Serializable {
 
     private static final long serialVersionUID = 1L;

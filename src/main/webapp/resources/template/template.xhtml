@@ -139,7 +139,7 @@
                                     </p:submenu>
                                     <p:menuitem  ajax="false" action="pharmacy_search"  value="Search" actionListener="#{billSearch.recreateModel}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                  
                                     <p:menuitem  ajax="false" action="pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false" action="report_pharmacy"  value="Summery" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                    
+                                    <p:menuitem  ajax="false" action="pharmacy_summery_index"  value="Summery" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                    
                                     <p:menuitem  ajax="false" action="pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="pharmacy_set_reorder"  value="Set Reorder Level" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
 

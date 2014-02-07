@@ -24,7 +24,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.persistence.TemporalType;
 
 /**
@@ -33,7 +33,7 @@ import javax.persistence.TemporalType;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class InstitutionBranchController implements Serializable {
 
     private static final long serialVersionUID = 1L;

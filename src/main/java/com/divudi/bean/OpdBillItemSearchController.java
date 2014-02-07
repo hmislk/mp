@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -40,7 +40,7 @@ import org.primefaces.model.LazyDataModel;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class OpdBillItemSearchController implements Serializable {
 
     String txtSearch;

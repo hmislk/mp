@@ -18,15 +18,15 @@
             <h:outputLabel value="Invoice No"/> 
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
-            <p:inputText  value="#{search.searchKeyword.billNo}" />
-            <p:inputText value="#{search.searchKeyword.refBillNo}"/>
-            <p:inputText value="#{search.searchKeyword.number}"/>
-            <p:inputText value="#{search.searchKeyword.fromInstitution}"/>
-            <p:inputText value="#{search.searchKeyword.netTotal}"/>
+            <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+            <p:inputText value="#{searchController.searchKeyword.refBillNo}"/>
+            <p:inputText value="#{searchController.searchKeyword.number}"/>
+            <p:inputText value="#{searchController.searchKeyword.fromInstitution}"/>
+            <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
         </h:panelGrid>
 
         <p:spacer height="30"/>
-        <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.bills}" var="bill" >
+        <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill" >
             <f:facet name="header">
                 <h:outputLabel value="GOOD RECEIVE NOTE"/>
             </f:facet>

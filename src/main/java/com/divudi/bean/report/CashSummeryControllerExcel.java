@@ -42,7 +42,7 @@ import com.divudi.facade.CategoryFacade;
 import com.divudi.facade.DepartmentFacade;
 import com.divudi.facade.ItemFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -63,7 +64,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@RequestScoped
 public class CashSummeryControllerExcel implements Serializable {
 
     private Institution institution;

@@ -14,7 +14,6 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.Patient;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillFacade;
@@ -30,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
@@ -40,8 +40,8 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@ViewScoped
-public class Search implements Serializable {
+@SessionScoped
+public class SearchController implements Serializable {
 
     private SearchKeyword searchKeyword;
     Date fromDate;
@@ -75,7 +75,8 @@ public class Search implements Serializable {
     private SessionController sessionController;
     @Inject
     TransferController transferController;
-
+    
+   
     public void createPreRefundTable() {
 
         bills = null;
@@ -1409,7 +1410,7 @@ public class Search implements Serializable {
 //        return bills;
 //
 //    }
-    public Search() {
+    public SearchController() {
     }
 
     public Date getToDate() {

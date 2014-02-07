@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -72,7 +72,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class BillController implements Serializable {
 
     private static final long serialVersionUID = 1L;

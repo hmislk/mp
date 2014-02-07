@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import jxl.Cell;
 import jxl.Sheet;
@@ -57,7 +57,7 @@ import org.primefaces.model.UploadedFile;
  * @author Buddhika
  */
 @Named(value = "pharmacyItemExcelManager")
-@ViewScoped
+@SessionScoped
 public class PharmacyItemExcelManager implements Serializable {
 
     /**

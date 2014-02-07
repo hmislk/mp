@@ -12,7 +12,7 @@ import com.lowagie.text.PageSize;
 import java.io.File;
 import java.io.IOException;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -22,7 +22,7 @@ import javax.servlet.ServletContext;
  * @author Buddhika
  */
 @Named(value = "exportController")
-@ViewScoped
+@SessionScoped
 public class ExportController implements Serializable {
 
     /**

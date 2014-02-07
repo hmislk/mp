@@ -36,7 +36,7 @@ import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.ServiceSessionFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +52,7 @@ import org.primefaces.event.TabChangeEvent;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class ChannelBillController implements Serializable {
 
     private BillSession billSession;

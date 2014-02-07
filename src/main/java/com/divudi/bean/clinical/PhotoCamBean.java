@@ -8,7 +8,7 @@ package com.divudi.bean.clinical;
 import com.divudi.bean.PatientController;
 import com.divudi.bean.UtilityController;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.io.File;
 import java.io.IOException;

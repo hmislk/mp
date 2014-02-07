@@ -49,7 +49,7 @@
                                     </p:submenu>
 
                                     <p:menuitem ajax="false" action="opd_search_bill_own" actionListener="#{billSearch.recreateModel2}" value="Bill Search" rendered="#{webUserController.hasPrivilege('OpdBillSearch')}" ></p:menuitem>
-                                    <p:menuitem ajax="false" action="opd_search_billitem_own" value="Billitem Search" actionListener="#{opdBillItemsearch.makeNull()}" rendered="#{webUserController.hasPrivilege('OpdBillItemSearch')}" ></p:menuitem>
+                                    <p:menuitem ajax="false" action="opd_search_billitem_own" value="Billitem Search" actionListener="#{searchController.makeListNull}" rendered="#{webUserController.hasPrivilege('OpdBillItemSearch')}" ></p:menuitem>
                                     <p:menuitem ajax="false" action="opd_bill_awaiting_cancellation" value="Bill Awaiting For Cancel" rendered="#{webUserController.hasPrivilege('OpdCancel')}" ></p:menuitem>
                                     <p:menuitem ajax="false" action="report_cashier" value="Summery" ></p:menuitem>
                                 </p:submenu>

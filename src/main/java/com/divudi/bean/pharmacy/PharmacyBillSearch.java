@@ -698,6 +698,7 @@ public class PharmacyBillSearch implements Serializable {
         cb.invertValue(getBill());
 
         cb.setPaymentScheme(getBill().getPaymentScheme());
+        cb.setPaymentMethod(getBill().getPaymentMethod());
         cb.setBalance(0.0);
         cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         cb.setCreater(getSessionController().getLoggedUser());

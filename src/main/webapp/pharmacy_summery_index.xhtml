@@ -42,6 +42,16 @@
                             <p:commandButton styleClass="linkButton" ajax="false" value="Sale Detail Report By Date" action="report_pharmacy_sale_by_date_detail_payment_method.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
 
                         </h:panelGrid>
+                        
+                         <h:panelGrid columns="1" >
+                            <f:facet name="header">
+                                <p:outputLabel value="GRN" />
+                            </f:facet>    
+                            <p:commandButton styleClass="linkButton" ajax="false" value="GRN Summery" action="report_grn_detail.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
+                            <p:commandButton styleClass="linkButton" ajax="false" value="GRN Summery By Supplier" action="report_grn_detail_by_supplier.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
+
+                        </h:panelGrid>
+
 
                     </h:panelGrid>
 

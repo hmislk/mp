@@ -209,14 +209,16 @@ public class BillController implements Serializable {
         if (qry != null) {
             sql = "select c from BilledBill c where c.paidAmount!=abs(c.netTotal) and c.billType= :btp "
                     + " and c.cancelledBill is null and "
-                    + " c.retired=false and ((upper(c.deptId) "
+                    + " c.retired=false and c.paymentMethod=:pm  and"
+                    + " ((upper(c.deptId) "
                     + " like :q ) or"
                     + " (upper(c.fromInstitution.name)  like :q ))"
                     + " order by c.fromInstitution.name";
             hash.put("btp", BillType.PharmacyGrnBill);
+            hash.put("pm", PaymentMethod.Credit);
             hash.put("q","%"+ qry.toUpperCase()+"%");
        //     hash.put("pm", PaymentMethod.Credit);
-            a = getFacade().findBySQL(sql, hash);
+            a = getFacade().findBySQL(sql, hash,10);
         }
         if (a == null) {
             a = new ArrayList<>();

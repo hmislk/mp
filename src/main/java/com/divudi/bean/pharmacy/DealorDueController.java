@@ -87,7 +87,7 @@ public class DealorDueController implements Serializable {
         hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());
-    //    hm.put("ins", getS)
+        //    hm.put("ins", getS)
         //  hm.put("pm", PaymentMethod.Credit);
         hm.put("tp", BillType.PharmacyGrnBill);
         return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
@@ -129,11 +129,13 @@ public class DealorDueController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         sql = "Select b From Bill b where b.retired=false and b.createdAt is not null and "
-                + " b.paidAmount!=abs(b.netTotal) and b.cancelled=false and "
+                + " b.paidAmount!=abs(b.netTotal) and b.paymentMethod=:pm and "
                 + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2)";      
+                + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3)";
         hm.put("ins", inst);
+        hm.put("pm", PaymentMethod.Credit);
         hm.put("tp1", BillType.PharmacyGrnBill);
+        hm.put("tp3", BillType.PharmacyPurchaseBill);
         hm.put("tp2", BillType.PharmacyGrnReturn);
         List<Bill> lst = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 

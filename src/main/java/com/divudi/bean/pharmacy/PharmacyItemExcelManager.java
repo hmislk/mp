@@ -7,8 +7,12 @@ package com.divudi.bean.pharmacy;
 import com.divudi.bean.InstitutionController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.data.BillType;
 import com.divudi.data.InstitutionType;
 import com.divudi.ejb.PharmacyBean;
+import com.divudi.entity.Bill;
+import com.divudi.entity.BilledBill;
+import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
@@ -24,6 +28,7 @@ import com.divudi.entity.pharmacy.VtmsVmps;
 import com.divudi.facade.AmpFacade;
 import com.divudi.facade.AmppFacade;
 import com.divudi.facade.AtmFacade;
+import com.divudi.facade.BillFacade;
 import com.divudi.facade.ItemsDistributorsFacade;
 import com.divudi.facade.MeasurementUnitFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
@@ -36,7 +41,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -193,6 +197,47 @@ public class PharmacyItemExcelManager implements Serializable {
                 }
             }
         }
+    }
+
+    @EJB
+    private BillFacade billFacade;
+
+    public void resetGrnValue() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b where (type(b)=:class) "
+                + " and b.billType = :billType ";
+
+        temMap.put("class", BilledBill.class);
+        temMap.put("billType", BillType.PharmacyGrnBill);
+        //temMap.put("dep", getSessionController().getDepartment());
+        List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
+
+        for (Bill b : bills) {
+            if (b.getNetTotal() > 0) {
+                b.setNetTotal(0 - b.getNetTotal());
+                b.setTotal(0 - b.getTotal());
+                getBillFacade().edit(b);
+            }
+        }
+
+        sql = "select b from Bill b where (type(b)=:class) "
+                + " and b.billType = :billType ";
+
+        temMap.put("class", CancelledBill.class);
+        temMap.put("billType", BillType.PharmacyGrnBill);
+        //temMap.put("dep", getSessionController().getDepartment());
+        bills = getBillFacade().findBySQL(sql, temMap);
+
+        for (Bill b : bills) {
+            if (b.getNetTotal() < 0) {
+                b.setNetTotal(0 - b.getNetTotal());
+                b.setTotal(0 - b.getTotal());
+                getBillFacade().edit(b);
+            }
+        }
+
     }
 
     public String importToExcel() {
@@ -413,12 +458,12 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public String importToExcelBarcode() {
         //System.out.println("importing to excel");
-        
+
         String strAmp;
         String strBarcode;
-        
+
         PharmaceuticalItemCategory cat;
-        
+
         Amp amp;
         File inputWorkbook;
         Workbook w;
@@ -468,19 +513,19 @@ public class PharmacyItemExcelManager implements Serializable {
                 if (amp == null) {
                     continue;
                 }
-                
+
                 //Code
                 cell = sheet.getCell(codeCol, i);
                 strBarcode = cell.getContents();
                 amp.setCode(strBarcode);
-                
+
                 //Barcode
                 cell = sheet.getCell(barcodeCol, i);
                 strBarcode = cell.getContents();
                 amp.setBarcode(strBarcode);
-                
+
                 getAmpFacade().edit(amp);
-                
+
             }
 
             UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
@@ -850,6 +895,14 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public void setBarcodeCol(int barcodeCol) {
         this.barcodeCol = barcodeCol;
+    }
+
+    public BillFacade getBillFacade() {
+        return billFacade;
+    }
+
+    public void setBillFacade(BillFacade billFacade) {
+        this.billFacade = billFacade;
     }
 
 }

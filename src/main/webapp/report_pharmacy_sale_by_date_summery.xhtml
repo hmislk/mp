@@ -43,80 +43,63 @@
                 </h:panelGrid>
 
 
-                <p:dataTable value="#{pharmacySaleReport.billedSummery.bills}" var="i">
-                    <f:facet name="header">                        
-                        <h:outputLabel value="BILLED"/>
-                    </f:facet>
+                <p:dataTable value="#{pharmacySaleReport.billedSummery.bills}" var="i">                  
                     <p:column headerText="Date">
                         #{i.string}
                     </p:column>
-                    <p:column headerText="Amount" style="text-align: right;">
-                        <h:outputLabel value="#{i.value}">
+                    <p:column headerText="Billed" style="text-align: right;">
+                        <h:outputLabel value="#{i.value1}">
+                            <f:convertNumber pattern="#,000.00" />
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Cancelled" style="text-align: right;">
+                        <h:outputLabel value="#{i.value2}">
+                            <f:convertNumber pattern="#,000.00" />
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Refunded" style="text-align: right;">
+                        <h:outputLabel value="#{i.value3}">
+                            <f:convertNumber pattern="#,000.00" />
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Net Value" style="text-align: right;">
+                        <h:outputLabel value="#{i.value1+i.value2+i.value3}">
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                     </p:column>
                     <p:columnGroup type="footer">
                         <p:row>
                             <p:column footerText="Total  "/>
-                            <p:column footerText="#{pharmacySaleReport.billedSummery.summeryTotal}" style="text-align: right;">
+                            <p:column footerText="#{pharmacySaleReport.billedSummery.billedTotal}" style="text-align: right;">
                                 <f:facet name="footer" >
-                                    <h:outputLabel value="#{pharmacySaleReport.billedSummery.summeryTotal}">
+                                    <h:outputLabel value="#{pharmacySaleReport.billedSummery.billedTotal}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </f:facet>
                             </p:column>
-                        </p:row>
-                    </p:columnGroup>
-                </p:dataTable>
+                            <p:column footerText="#{pharmacySaleReport.billedSummery.cancelledTotal}" style="text-align: right;">
+                                <f:facet name="footer" >
+                                    <h:outputLabel value="#{pharmacySaleReport.billedSummery.cancelledTotal}">
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </f:facet>
+                            </p:column>
+                            <p:column footerText="#{pharmacySaleReport.billedSummery.refundedTotal}" style="text-align: right;">
+                                <f:facet name="footer" >
+                                    <h:outputLabel value="#{pharmacySaleReport.billedSummery.refundedTotal}">
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </f:facet>
+                            </p:column>
 
-                <p:dataTable value="#{pharmacySaleReport.cancelledSummery.bills}" var="i">
-                    <f:facet name="header">                        
-                        <h:outputLabel value="CANCELLED"/>
-                    </f:facet>
-                    <p:column headerText="Date">
-                        #{i.string}
-                    </p:column>
-                    <p:column headerText="Amount" style="text-align: right;">
-                        <h:outputLabel value="#{i.value}">
-                            <f:convertNumber pattern="#,000.00" />
-                        </h:outputLabel>
-                    </p:column>
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column footerText="Total  "/>
-                            <p:column footerText="#{pharmacySaleReport.cancelledSummery.summeryTotal}" style="text-align: right;">
+                            <p:column footerText="#{pharmacySaleReport.billedSummery.billedTotal+pharmacySaleReport.billedSummery.cancelledTotal+pharmacySaleReport.billedSummery.refundedTotal}" style="text-align: right;">
                                 <f:facet name="footer" >
-                                    <h:outputLabel value="#{pharmacySaleReport.cancelledSummery.summeryTotal}">
+                                    <h:outputLabel value="#{pharmacySaleReport.billedSummery.billedTotal+pharmacySaleReport.billedSummery.cancelledTotal+pharmacySaleReport.billedSummery.refundedTotal}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </f:facet>
                             </p:column>
-                        </p:row>
-                    </p:columnGroup>
-                </p:dataTable>
 
-                <p:dataTable value="#{pharmacySaleReport.refundedSummery.bills}" var="i">
-                    <f:facet name="header">                        
-                        <h:outputLabel value="REFUNDED"/>
-                    </f:facet>
-                    <p:column headerText="Date">
-                        #{i.string}
-                    </p:column>
-                    <p:column headerText="Amount" style="text-align: right;">
-                        <h:outputLabel value="#{i.value}">
-                            <f:convertNumber pattern="#,000.00" />
-                        </h:outputLabel>
-                    </p:column>
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column footerText="Total  "/>
-                            <p:column footerText="#{pharmacySaleReport.refundedSummery.summeryTotal}" style="text-align: right;">
-                                <f:facet name="footer" >
-                                    <h:outputLabel value="#{pharmacySaleReport.refundedSummery.summeryTotal}">
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>
-                                </f:facet>
-                            </p:column>
                         </p:row>
                     </p:columnGroup>
                 </p:dataTable>

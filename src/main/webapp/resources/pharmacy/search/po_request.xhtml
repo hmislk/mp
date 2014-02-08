@@ -17,11 +17,11 @@
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
 
-            <p:inputText  value="#{search.searchKeyword.billNo}" />
-            <p:inputText value="#{search.searchKeyword.toInstitution}"/>
-            <p:inputText value="#{search.searchKeyword.netTotal}"/>
+            <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+            <p:inputText value="#{searchController.searchKeyword.toInstitution}"/>
+            <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
         </h:panelGrid>
-        <p:dataTable rowIndexVar="i" id="tblBills" value="#{search.bills}" var="bill" >
+        <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill" >
             <f:facet name="header">
                 <h:outputLabel value="PURCHASE ORDER REQUEST"/>
             </f:facet>

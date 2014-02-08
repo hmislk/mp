@@ -7,7 +7,7 @@ package com.divudi.bean;
 import com.divudi.facade.WebUserFacade;
 import java.io.Serializable;
 import javax.inject.Named; import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ import javax.inject.Inject;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class ThemeController implements Serializable {
 
     @EJB

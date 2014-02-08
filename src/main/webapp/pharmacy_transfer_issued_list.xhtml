@@ -13,27 +13,27 @@
                     <p:outputLabel value="Select Request For Department : #{sessionController.department.name}"/>                   
                     <h:panelGrid columns="5" >
                         <h:outputLabel value="From Date"/>
-                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                        <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                        <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                         </p:calendar>
-                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createIssueTable()}"/>
+                        <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createIssueTable()}"/>
                         <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                         <h:outputLabel value="Request No"/>   
                         <h:outputLabel value="From Deprtment"/> 
                         <h:outputLabel value="Staff "/> 
                         <h:outputLabel/><h:outputLabel/>
-                        <p:inputText  value="#{search.searchKeyword.billNo}" />   
-                        <p:inputText  value="#{search.searchKeyword.department}" />   
-                        <p:inputText  value="#{search.searchKeyword.staffName}" /> 
+                        <p:inputText  value="#{searchController.searchKeyword.billNo}" />   
+                        <p:inputText  value="#{searchController.searchKeyword.department}" />   
+                        <p:inputText  value="#{searchController.searchKeyword.staffName}" /> 
                         <h:outputLabel/><h:outputLabel/>
                     </h:panelGrid>
                 </f:facet>              
 
 
-                <p:dataTable value="#{search.bills}" var="p">                       
+                <p:dataTable value="#{searchController.bills}" var="p">                       
                     <p:column headerText="Issue No">
                         <h:commandLink action="pharmacy_reprint_transfer_isssue">
                             <h:outputLabel value="#{p.deptId}"/>

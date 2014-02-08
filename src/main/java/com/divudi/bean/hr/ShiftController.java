@@ -15,7 +15,7 @@ import com.divudi.facade.DayShiftFacade;
 import com.divudi.facade.RosterFacade;
 import com.divudi.facade.ShiftFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class ShiftController implements Serializable {
 
     private Shift current;

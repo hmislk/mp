@@ -20,7 +20,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import com.divudi.entity.Person;
 import com.divudi.entity.WebUserPrivilege;
 import com.divudi.entity.WebUserRole;

@@ -15,7 +15,7 @@
                             <h:outputLabel value="Reprint" ></h:outputLabel>
                             <hr/>
                             
-                            <p:commandButton ajax="false" value="Cancel" action="#{agentPaymentReceivesearch.toCancel}" disabled="#{agentPaymentReceivesearch.bill.cancelled}">                           
+                            <p:commandButton ajax="false" value="Cancel" action="#{agentPaymentReceiveSearchController.toCancel}" disabled="#{agentPaymentReceiveSearchController.bill.cancelled}">                           
                             </p:commandButton>
                             
                         </f:facet>
@@ -25,17 +25,17 @@
                                 <p:panel header="Person Detail">
                                     <p:panelGrid columns="2">
                                         <h:outputLabel value="From Institution Name:" ></h:outputLabel>
-                                        <h:outputLabel value="#{agentPaymentReceivesearch.bill.fromInstitution.name}" rendered="#{agentPaymentReceivesearch.bill.fromInstitution ne null}" ></h:outputLabel>                                        
+                                        <h:outputLabel value="#{agentPaymentReceiveSearchController.bill.fromInstitution.name}" rendered="#{agentPaymentReceiveSearchController.bill.fromInstitution ne null}" ></h:outputLabel>                                        
                                     </p:panelGrid>
                                 </p:panel>
                                 <p:panel header="Bill Detail">
                                     <p:panelGrid columns="2">
                                         <h:outputLabel value="Bill No :" ></h:outputLabel>
-                                        <h:outputLabel value="#{agentPaymentReceivesearch.bill.insId}" ></h:outputLabel>
+                                        <h:outputLabel value="#{agentPaymentReceiveSearchController.bill.insId}" ></h:outputLabel>
                                         <h:outputLabel value="Payment Type : " ></h:outputLabel>
-                                        <h:outputLabel value="#{agentPaymentReceivesearch.bill.paymentScheme.name}" ></h:outputLabel>                                        
+                                        <h:outputLabel value="#{agentPaymentReceiveSearchController.bill.paymentScheme.name}" ></h:outputLabel>                                        
                                         <h:outputLabel value="Paid Total :" ></h:outputLabel>
-                                        <h:outputLabel value="#{agentPaymentReceivesearch.bill.netTotal}" ></h:outputLabel>
+                                        <h:outputLabel value="#{agentPaymentReceiveSearchController.bill.netTotal}" ></h:outputLabel>
                                     </p:panelGrid>
                                 </p:panel>
                             </p:panelGrid>
@@ -44,7 +44,7 @@
                     </p:panel>
 
 
-                   <bi:agent billController ="#{agentPaymentReceivesearch}"  bill="#{agentPaymentReceivesearch.bill}" dup="true"/>  
+                   <bi:agent billController ="#{agentPaymentReceiveSearchController}"  bill="#{agentPaymentReceiveSearchController.bill}" dup="true"/>  
 
                 </h:form>
             </ui:define>

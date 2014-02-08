@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 ;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
@@ -40,7 +41,7 @@ import javax.persistence.TemporalType;
 
 
 @Named
-@ViewScoped
+@RequestScoped
 public class CommonReport implements Serializable {
 
     @Inject

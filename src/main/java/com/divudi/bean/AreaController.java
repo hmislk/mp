@@ -18,7 +18,7 @@ import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -30,7 +30,7 @@ import javax.faces.convert.FacesConverter;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class AreaController implements Serializable {
 
     private static final long serialVersionUID = 1L;

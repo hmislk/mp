@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 /**
@@ -32,7 +32,7 @@ import javax.inject.Inject;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class TheatreModuleController implements Serializable {
 
     /**

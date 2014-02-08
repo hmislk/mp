@@ -13,7 +13,7 @@ import com.divudi.entity.hr.StaffPaysheetComponent;
 import com.divudi.facade.PaysheetComponentFacade;
 import com.divudi.facade.StaffPaysheetComponentFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import org.primefaces.event.RowEditEvent;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class StaffPaySheetComponentController implements Serializable {
 
     private StaffPaysheetComponent current;

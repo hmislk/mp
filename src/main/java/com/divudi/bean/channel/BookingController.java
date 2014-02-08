@@ -25,7 +25,7 @@ import com.divudi.facade.PersonFacade;
 import com.divudi.facade.ServiceSessionFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

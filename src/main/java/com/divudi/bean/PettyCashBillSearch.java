@@ -41,7 +41,7 @@ import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.primefaces.model.LazyDataModel;

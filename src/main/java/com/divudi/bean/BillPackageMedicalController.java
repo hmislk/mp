@@ -47,7 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -63,7 +63,7 @@ import org.primefaces.event.TabChangeEvent;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class BillPackageMedicalController implements Serializable {
 
     private static final long serialVersionUID = 1L;

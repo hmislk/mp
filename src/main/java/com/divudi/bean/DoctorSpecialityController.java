@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -32,7 +32,7 @@ import javax.inject.Named;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public  class DoctorSpecialityController implements Serializable {
 
     private static final long serialVersionUID = 1L;

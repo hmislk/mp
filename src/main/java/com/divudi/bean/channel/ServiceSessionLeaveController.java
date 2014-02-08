@@ -13,7 +13,7 @@ import com.divudi.facade.ServiceSessionFacade;
 import com.divudi.facade.ServiceSessionLeaveFacade;
 import com.divudi.facade.StaffFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;

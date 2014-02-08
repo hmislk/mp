@@ -203,6 +203,7 @@ public class GoodsReturnController implements Serializable {
         saveComponent();
         System.err.println("4");
 
+        calTotal();
         getBillFacade().edit(getReturnBill());
 
         printPreview = true;

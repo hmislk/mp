@@ -248,11 +248,10 @@ public class GrnController implements Serializable {
         this.dealor = dealor;
     }
 
-    
     private String txtSearch;
 
     public void makeListNull() {
-       
+
 //        pharmacyItems = null;
         pos = null;
         grns = null;
@@ -402,13 +401,13 @@ public class GrnController implements Serializable {
         }
 
         getGrnBill().setTotal(0 - tmp);
-
+        getNetTotal();
     }
 
     public double getNetTotal() {
 
         double tmp = getGrnBill().getTotal() + getGrnBill().getTax() - getGrnBill().getDiscount();
-        getGrnBill().setNetTotal(0 - tmp);
+        getGrnBill().setNetTotal(tmp);
 
         return tmp;
     }
@@ -565,8 +564,6 @@ public class GrnController implements Serializable {
 //    public void setBillItems(List<BillItem> billItems) {
 //        this.billItems = billItems;
 //    }
-  
-
     public String getTxtSearch() {
         return txtSearch;
     }

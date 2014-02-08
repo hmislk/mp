@@ -109,7 +109,13 @@
 
                             <p:column headerText="Stock History" >
                                 <h:panelGrid columns="2">
-                                    <h:outputLabel value="Batch "/>
+                                    <h:outputLabel value="Stock Id "/>
+                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stock.id}" >
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Batch Id "/>
+                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.itemBatch.id}" >
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Batch No "/>
                                     <h:outputLabel value="#{pb.pharmaceuticalBillItem.itemBatch.batchNo}" >
                                     </h:outputLabel>
                                 </h:panelGrid>

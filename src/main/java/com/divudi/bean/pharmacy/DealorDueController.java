@@ -94,6 +94,22 @@ public class DealorDueController implements Serializable {
 
     }
 
+    private List<Institution> getPurchaseDealors() {
+        String sql;
+        HashMap hm;
+        sql = "Select b.fromInstitution From Bill b where b.retired=false and b.cancelled=false "
+                + " and b.paidAmount!=(0-b.netTotal) and b.createdAt between :frm and :to "
+                + " and b.billType=:tp order by b.fromInstitution.name  ";
+        hm = new HashMap();
+        hm.put("frm", getFromDate());
+        hm.put("to", getToDate());
+        //    hm.put("ins", getS)
+        //  hm.put("pm", PaymentMethod.Credit);
+        hm.put("tp", BillType.PharmacyPurchaseBill);
+        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+    }
+
     private List<Institution> getGrnReturnDealors() {
         String sql;
         HashMap hm;
@@ -105,6 +121,21 @@ public class DealorDueController implements Serializable {
         hm.put("to", getToDate());
         //  hm.put("pm", PaymentMethod.Credit);
         hm.put("tp", BillType.PharmacyGrnReturn);
+        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+    }
+
+    private List<Institution> getPurchaseReturnDealors() {
+        String sql;
+        HashMap hm;
+        sql = "Select b.toInstitution From Bill b where b.retired=false and b.cancelled=false "
+                + " and b.paidAmount!=(0-b.netTotal) and b.createdAt between :frm and :to "
+                + " and b.billType=:tp order by b.toInstitution.name  ";
+        hm = new HashMap();
+        hm.put("frm", getFromDate());
+        hm.put("to", getToDate());
+        //  hm.put("pm", PaymentMethod.Credit);
+        hm.put("tp", BillType.PurchaseReturn);
         return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
     }
@@ -121,6 +152,24 @@ public class DealorDueController implements Serializable {
         hm.put("ins", institution);
         hm.put("tp1", billType1);
         hm.put("tp2", billType2);
+        return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+    }
+
+    private List<Bill> getBills(BillType billType1, BillType billType2, BillType billType3, BillType billType4, Institution institution) {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "Select b From Bill b where b.retired=false and b.createdAt "
+                + "  between :frm and :to and b.paidAmount!=abs(b.netTotal) and "
+                + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
+                + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3 or b.billType=:tp4)";
+        hm.put("frm", getFromDate());
+        hm.put("to", getToDate());
+        hm.put("ins", institution);
+        hm.put("tp1", billType1);
+        hm.put("tp2", billType2);
+        hm.put("tp3", billType3);
+        hm.put("tp4", billType4);
         return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
     }
@@ -156,7 +205,7 @@ public class DealorDueController implements Serializable {
 
     }
 
-    public List<InstitutionBills> getItems() {
+    public void fillItems() {
         //System.err.println("GET ITEMS");
         Set<Institution> setIns = new HashSet<>();
 
@@ -170,23 +219,32 @@ public class DealorDueController implements Serializable {
             setIns.add(ins);
         }
 
+        for (Institution ins : getGrnDealors()) {
+            //System.err.println("Ins Nme " + ins.getName());
+            setIns.add(ins);
+        }
+
+        for (Institution ins : getPurchaseReturnDealors()) {
+            //System.err.println("Ins Nme " + ins.getName());
+            setIns.add(ins);
+        }
+
         items = new ArrayList<>();
         for (Institution ins : setIns) {
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
-            List<Bill> lst = getBills(BillType.PharmacyGrnBill, BillType.PharmacyGrnReturn, ins);
-
+            List<Bill> lst = getBills(BillType.PharmacyGrnBill, BillType.PharmacyGrnReturn, BillType.PharmacyPurchaseBill, BillType.PurchaseReturn, ins);
             newIns.setBills(lst);
-
             for (Bill b : lst) {
                 //System.err.println("Bill " + b.getId());
                 newIns.setTotal(newIns.getTotal() + b.getNetTotal());
                 newIns.setPaidTotal(newIns.getPaidTotal() + b.getPaidAmount());
             }
-
             items.add(newIns);
         }
+    }
 
+    public List<InstitutionBills> getItems() {
         return items;
     }
 

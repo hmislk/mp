@@ -15,12 +15,12 @@
                             <h:outputLabel value="SEARCH BILLS FOR REFUND"/>                           
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPreRefundTable}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPreRefundTable}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
@@ -28,16 +28,16 @@
                                 <h:outputLabel value="Total"/>
                                 <h:outputLabel value="Net Total"/>
                                 <h:outputLabel/>
-                                <p:inputText  value="#{search.searchKeyword.billNo}" />
-                                <p:inputText value="#{search.searchKeyword.patientName}" />
-                                <p:inputText  value="#{search.searchKeyword.total}" />
-                                <p:inputText value="#{search.searchKeyword.netTotal}"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.patientName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.total}" />
+                                <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
                                 <h:outputLabel/>
                             </h:panelGrid>
 
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{search.bills}"
+                        <p:dataTable id="tblBills" value="#{searchController.bills}"
                                    var="bill"  >
 
                             <p:column headerText="Pre Bill No"  >

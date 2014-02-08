@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -37,7 +37,7 @@ import javax.faces.convert.FacesConverter;
  Informatics)
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class TimedItemFeeController implements Serializable {
 
     private static final long serialVersionUID = 1L;

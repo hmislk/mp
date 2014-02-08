@@ -11,7 +11,7 @@
             <ui:define name="content">
                 <h:form>
                     <p:panel header="Search Patient Investigations" >
-                        <p:dataTable  id="tblBills" value="#{search.patientInvestigationsSigle}" var="pi"  >
+                        <p:dataTable  id="tblBills" value="#{searchController.patientInvestigationsSigle}" var="pi"  >
                             <p:column headerText="Billing" styleClass="alignTop" >
                                 <h:outputLabel value="Bill No : #{pi.billItem.bill.insId}" ></h:outputLabel>
                                 <br/>

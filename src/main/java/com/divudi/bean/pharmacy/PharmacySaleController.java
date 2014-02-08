@@ -46,10 +46,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 ;
 import javax.inject.Inject;
 import org.primefaces.event.SelectEvent;
@@ -62,7 +62,7 @@ import org.primefaces.event.TabChangeEvent;
 
 
 @Named
-@ViewScoped
+@SessionScoped
 public class PharmacySaleController implements Serializable {
 
     /**
@@ -583,7 +583,7 @@ public class PharmacySaleController implements Serializable {
     private void savePreBillFinally(Patient pt) {
         getPreBill().setPatient(pt);
 
-        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
+        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.SALE));
 
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
@@ -601,7 +601,7 @@ public class PharmacySaleController implements Serializable {
 
     private void savePreBillInitially() {
         calculateAllRates();
-        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.PHS));
+        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyPre, BillNumberSuffix.SALE));
 
         getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());

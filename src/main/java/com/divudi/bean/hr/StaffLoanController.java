@@ -13,7 +13,7 @@ import com.divudi.entity.hr.StaffPaysheetComponent;
 import com.divudi.facade.PaysheetComponentFacade;
 import com.divudi.facade.StaffPaysheetComponentFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +28,7 @@ import javax.persistence.TemporalType;
  * @author safrin
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class StaffLoanController implements Serializable {
 
     private StaffPaysheetComponent current;

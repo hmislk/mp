@@ -9,7 +9,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.entity.Bill;
 import com.divudi.facade.BillFacade;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

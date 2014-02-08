@@ -64,8 +64,10 @@
                 <!--</h:panelGrid>-->
             </div>
 
+            <p:spacer height="30"/>
+            
             <div >
-                <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip"  style="margin: 20px!important; padding: 20px!important; margin-right: 150px;">
+                <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip"  >
 
                     <p:column style="width: 50px!important; text-align: right!important; padding-right: 20px;">
                         <f:facet name="header">
@@ -79,13 +81,6 @@
                             <h:outputLabel value="Item Name"/>
                         </f:facet>
                         <h:outputLabel value="#{bip.item.name}"/>
-                    </p:column>
-
-                    <p:column style="text-align: left!important;">
-                        <f:facet name="header">
-                            <h:outputLabel value="Unit"/>
-                        </f:facet>
-                        <h:outputLabel value=""/>
                     </p:column>
 
                     <p:column  style="width: 300px!important; text-align: right!important; padding-right: 50px;">

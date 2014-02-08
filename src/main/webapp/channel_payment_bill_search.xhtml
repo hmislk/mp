@@ -15,18 +15,18 @@
                             <h:panelGroup>
                                 <h:panelGrid columns="4">
                                     <h:outputLabel value="From Date"/>
-                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect" execute="tblBills"  render="tblBills toDate fromDate"/>
                                     </p:calendar>
                                     <h:outputLabel value="To Date"/>
-                                    <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect" execute="tblBills"  render="tblBills toDate fromDate"/>
                                     </p:calendar>
                                 </h:panelGrid>                        
                             </h:panelGroup>
                         </f:facet>
 
-                        <p:dataTable id="tblBills" value="#{search.channelPaymentBills}" var="bill"  
+                        <p:dataTable id=searchControllerlls" value="#{searchController.channelPaymentBills}" var="bill"  
                               sortBy="#{bf.billClass}">
 
                             <p:column headerText="Bill No" >

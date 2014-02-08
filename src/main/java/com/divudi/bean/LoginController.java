@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 
@@ -23,7 +23,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named(value = "loginController")
-@ViewScoped
+@SessionScoped
 public class LoginController implements Serializable {
 
     Department department;

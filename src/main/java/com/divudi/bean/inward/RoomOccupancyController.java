@@ -7,7 +7,7 @@ package com.divudi.bean.inward;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.facade.PatientRoomFacade;
 import javax.inject.Named; import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import javax.inject.Named; import javax.ejb.EJB;
  * @author Buddhika
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class RoomOccupancyController implements Serializable {
 
     @EJB

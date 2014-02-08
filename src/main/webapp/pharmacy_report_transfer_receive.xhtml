@@ -38,16 +38,29 @@
                         </h:panelGrid>
 
                         <h:panelGroup id="gpBillPreview">
-                            <p:dataTable  value="#{reportsTransfer.transferItems}" var="i"  >
+                            <p:dataTable styleClass="noBorder normalFont"  value="#{reportsTransfer.transferItems}" var="i"  >
+
                                 <f:facet name="header">
-                                    <h:outputLabel value="#{reportsTransfer.fromDepartment.name} Stock"/>  
+                                    <h:outputLabel value="Transfer List  From "/>
+                                    <h:outputLabel value="#{reportsTransfer.fromDepartment.name}"/> 
+                                    <h:panelGrid columns="4">
+                                        <h:outputLabel value="From  "/>
+                                        <h:outputLabel value="#{reportsTransfer.fromDate}">
+                                            <f:convertDateTime pattern="dd/MM/yy &nbsp; hh:mm a" ></f:convertDateTime>
+                                        </h:outputLabel>
+                                        <h:outputLabel value="To  "/>
+                                        <h:outputLabel value="#{reportsTransfer.toDate}">
+                                            <f:convertDateTime pattern="dd/MM/yy &nbsp; hh:mm a" ></f:convertDateTime>
+                                        </h:outputLabel>
+                                    </h:panelGrid>
                                 </f:facet>
+
                                 <p:column headerText="Bill No"  >
                                     <h:outputLabel value="#{i.bill.deptId}" ></h:outputLabel>
                                 </p:column>
                                 <p:column headerText="Date">
                                     <h:outputLabel value="#{i.bill.createdAt}"  >
-                                        <f:convertDateTime pattern="yy MM dd hh mm a" ></f:convertDateTime>
+                                        <f:convertDateTime pattern="yy/MM/dd" ></f:convertDateTime>
                                     </h:outputLabel>
                                 </p:column>
                                 <p:column headerText="Item Descreption">

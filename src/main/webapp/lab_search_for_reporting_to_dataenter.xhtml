@@ -14,13 +14,13 @@
                         <f:facet name="header">
                             <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{search.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{search.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{search.createPatientInvestigationsTable()}"/>
-                                <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{search.createPatientInvestigationsTableAll()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPatientInvestigationsTable()}"/>
+                                <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{searchController.createPatientInvestigationsTableAll()}"/>
                                 <p:spacer height="30"/><h:outputLabel/>
                                 <h:outputLabel/><h:outputLabel/>
                                 <h:outputLabel/> <h:outputLabel/>
@@ -30,16 +30,16 @@
                                 <h:outputLabel value="Patient Phone"/>                               
                                 <h:outputLabel value="Investigation Value"/>
                                 <h:outputLabel/><h:outputLabel/>
-                                <p:inputText  value="#{search.searchKeyword.billNo}" />
-                                <p:inputText value="#{search.searchKeyword.patientName}" />
-                                <p:inputText  value="#{search.searchKeyword.patientPhone}" />
-                                <p:inputText value="#{search.searchKeyword.itemName}"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.patientName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.patientPhone}" />
+                                <p:inputText value="#{searchController.searchKeyword.itemName}"/>
 
                             </h:panelGrid>
                         </f:facet>
                         <p:defaultCommand target="btnSearch" />
 
-                        <p:dataTable  id="tblBills" value="#{search.patientInvestigations}" var="pi"  >
+                        <p:dataTable  id="tblBills" value="#{searchController.patientInvestigations}" var="pi"  >
 
                             <p:column headerText="Billing" styleClass="alignTop" >
                                 <h:outputLabel value="Bill No : #{pi.billItem.bill.insId}" ></h:outputLabel>

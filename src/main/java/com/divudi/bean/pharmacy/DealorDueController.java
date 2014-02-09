@@ -144,7 +144,7 @@ public class DealorDueController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and b.paidAmount!=abs(b.netTotal) and "
+                + "  between :frm and :to and "
                 + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
                 + " and (b.billType=:tp1 or b.billType=:tp2)";
         hm.put("frm", getFromDate());
@@ -160,7 +160,7 @@ public class DealorDueController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and b.paidAmount!=abs(b.netTotal) and "
+                + "  between :frm and :to and "
                 + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
                 + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3 or b.billType=:tp4)";
         hm.put("frm", getFromDate());
@@ -170,6 +170,8 @@ public class DealorDueController implements Serializable {
         hm.put("tp2", billType2);
         hm.put("tp3", billType3);
         hm.put("tp4", billType4);
+        System.out.println("hm = " + hm);
+        System.out.println("sql = " + sql);
         return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
     }
@@ -206,7 +208,7 @@ public class DealorDueController implements Serializable {
     }
 
     public void fillItems() {
-        //System.err.println("GET ITEMS");
+        System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
         for (Institution ins : getGrnDealors()) {
@@ -219,7 +221,7 @@ public class DealorDueController implements Serializable {
             setIns.add(ins);
         }
 
-        for (Institution ins : getGrnDealors()) {
+        for (Institution ins : getPurchaseDealors()) {
             //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }

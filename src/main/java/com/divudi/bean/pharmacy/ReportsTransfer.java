@@ -115,8 +115,8 @@ public class ReportsTransfer implements Serializable {
             StockReportRecord r = new StockReportRecord();
             r.setItem((Item) obj[0]);
             r.setQty((Double) obj[1]);
-            r.setPurchaseValue((Double) obj[3]);
-            r.setRetailsaleValue((Double) obj[2]);
+            r.setPurchaseValue((Double) obj[2]);
+            r.setRetailsaleValue((Double) obj[3]);
             r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem() , department));
             movementRecords.add(r);
         }

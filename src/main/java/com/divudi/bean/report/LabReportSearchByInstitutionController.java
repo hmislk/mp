@@ -27,7 +27,6 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.persistence.TemporalType;
 
@@ -36,7 +35,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@RequestScoped
+@SessionScoped
 public class LabReportSearchByInstitutionController implements Serializable {
 
     @Inject
@@ -955,24 +954,29 @@ public class LabReportSearchByInstitutionController implements Serializable {
         this.piFacade = piFacade;
     }
 
-    public List<PatientInvestigation> getPatientInvestigations() {
-        String sql;
-        if (patientInvestigations == null) {
-            Map m = new HashMap();
-            m.put("toDate", toDate);
-            m.put("fromDate", fromDate);
-            if (txtSearch == null || txtSearch.trim().equals("")) {
+    public void createPatientInvestigaationList() {
+
+        Map m = new HashMap();
+        m.put("toDate", toDate);
+        m.put("fromDate", fromDate);
+        if (txtSearch == null || txtSearch.trim().equals("")) {
 //                sql = "select pi from PatientInvestigation pi join pi.investigation i join pi.billItem.bill b join b.patient.person p where b.createdAt between :fromDate and :toDate order by pi.id desc";
-                //               patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 100);
-                patientInvestigations = new ArrayList<>();
-            } else {
-                sql = "select pi from PatientInvestigation pi join pi.investigation i join pi.billItem.bill b join b.patient.person p where (upper(p.name) like '%" + txtSearch.toUpperCase() + "%' or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' or p.phone like '%" + txtSearch + "%' or upper(i.name) like '%" + txtSearch.toUpperCase() + "%' ) and b.createdAt between :fromDate and :toDate order by pi.id desc";
-                patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-            }
+            //               patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 100);
+            patientInvestigations = new ArrayList<>();
+        } else {
+            String sql = "select pi from PatientInvestigation pi join pi.investigation i "
+                    + " join pi.billItem.bill b join b.patient.person p where (upper(p.name) "
+                    + " like '%" + txtSearch.toUpperCase() + "%' or upper(b.insId) like '%"
+                    + txtSearch.toUpperCase() + "%' or p.phone like '%" + txtSearch + "%' "
+                    + " or upper(i.name) like '%" + txtSearch.toUpperCase() + "%' )  "
+                    + " and b.createdAt between :fromDate and :toDate order by pi.id desc";
+            patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
         }
+    }
+
+    public List<PatientInvestigation> getPatientInvestigations() {
         return patientInvestigations;
     }
-   
 
     public void listAllPatientInvestigations() {
         String sql;

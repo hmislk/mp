@@ -106,15 +106,15 @@ public class PatientReportController implements Serializable {
     }
 
     public String lastPatientReport(PatientInvestigation pi) {
-        //System.out.println("last pt rpt");
+        System.out.println("last pt rpt");
         if (pi == null) {
             currentPatientReport = null;
-            //System.out.println("pi is null");
+            System.out.println("pi is null");
             return "";
         }
         Investigation ix;
         ix = (Investigation) pi.getInvestigation().getReportedAs();
-        //System.out.println("ix = " + ix);
+        System.out.println("ix = " + ix);
         currentReportInvestigation = ix;
         currentPtIx = pi;
         String sql;
@@ -126,18 +126,18 @@ public class PatientReportController implements Serializable {
         PatientReport r = getFacade().findFirstBySQL(sql, m);
         //System.out.println("r = " + r);
         if (r == null) {
-            //System.out.println("r is null");
+            System.out.println("r is null");
 //            if (ix.getReportType()==InvestigationReportType.Microbiology ) {
             if (ix.getReportType() == InvestigationReportType.Microbiology) {
                 r = createNewMicrobiologyReport(pi, ix);
             } else {
                 r = createNewPatientReport(pi, ix);
             }
-            //System.out.println("r = " + r);
+            System.out.println("r = " + r);
             getCommonReportItemController().setCategory(ix.getReportFormat());
         } else {
-            //System.out.println("r ok");
-            //System.out.println("r = " + r);
+            System.out.println("r ok");
+            System.out.println("r = " + r);
             getCommonReportItemController().setCategory(currentReportInvestigation.getReportFormat());
         }
         currentPatientReport = r;
@@ -148,7 +148,8 @@ public class PatientReportController implements Serializable {
         }
         return "lab_patient_report";
     }
-
+    
+   
 //    public List<PatientReportItemValue> getPatientReportItemValuesValues() {
 //        if (currentPatientReport != null) {
 //            patientReportItemValuesValues = currentPatientReport.getPatientReportItemOfValueType();

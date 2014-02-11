@@ -1127,6 +1127,7 @@ public class CashSummeryController implements Serializable {
             }
             if (!tmpItemList.isEmpty() && tmpItemList.get(0).getItem() != null && tmpItemList.get(0).getItem().getDepartment() != null) {
                 n.setDepartment(tmpItemList.get(0).getItem().getDepartment());
+                
             }
             n.setItemWithFees(tmpItemList);
             categoryWithItem.add(n);

@@ -311,7 +311,7 @@ public class GrnController implements Serializable {
                 bi.setQty(i.getQtyInUnit() - remains);
                 bi.setTmpQty(i.getQtyInUnit() - remains);
                 //Set Suggession
-                bi.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(bi.getItem()));
+//                bi.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(bi.getItem()));
 
                 PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
                 ph.setBillItem(bi);
@@ -345,26 +345,18 @@ public class GrnController implements Serializable {
 
     public void onEdit(RowEditEvent event) {
         BillItem tmp = (BillItem) event.getObject();
-        onEditItem(tmp);
         onEdit(tmp);
         onEditPurchaseRate(tmp);
         setBatch(tmp);
     }
 
-    public void onEditItem(BillItem tmp) {
-        double pur = getPharmacyBean().getLastPurchaseRate(tmp.getItem(), tmp.getReferanceBillItem().getBill().getDepartment());
-        double ret = getPharmacyBean().getLastRetailRate(tmp.getItem(), tmp.getReferanceBillItem().getBill().getDepartment());
-
-        tmp.getPharmaceuticalBillItem().setPurchaseRateInUnit(pur);
-        tmp.getPharmaceuticalBillItem().setRetailRateInUnit(ret);
-        tmp.getPharmaceuticalBillItem().setLastPurchaseRateInUnit(pur);
-
-        // onEdit(tmp);
-    }
-
     public void onEdit(BillItem tmp) {
-
         double remains = getPharmacyBillBean().getRemainingQty(tmp.getPharmaceuticalBillItem());
+
+//        System.err.println("1 " + tmp.getTmpQty());
+//        System.err.println("2 " + tmp.getQty());
+//        System.err.println("3 " + tmp.getPharmaceuticalBillItem().getQty());
+//        System.err.println("4 " + tmp.getPharmaceuticalBillItem().getQtyInUnit());
         if (remains < tmp.getPharmaceuticalBillItem().getQtyInUnit()) {
             tmp.setTmpQty(remains);
             UtilityController.addErrorMessage("You cant Change Qty than Remaining qty");
@@ -391,7 +383,6 @@ public class GrnController implements Serializable {
         double retail = tmp.getPharmaceuticalBillItem().getPurchaseRate() + (tmp.getPharmaceuticalBillItem().getPurchaseRate() * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
         tmp.getPharmaceuticalBillItem().setRetailRate(retail);
 
-        onEdit(tmp);
     }
 
 //    private List<Item> getSuggession(Item item) {

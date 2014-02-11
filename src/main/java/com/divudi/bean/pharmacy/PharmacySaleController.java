@@ -52,6 +52,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.enterprise.context.SessionScoped;
 ;
 import javax.inject.Inject;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
@@ -230,6 +231,11 @@ public class PharmacySaleController implements Serializable {
         Stock st = getStockFacade().find(stock.getId());
         return st;
 
+    }
+
+    public void onEdit(RowEditEvent event) {
+        BillItem tmp = (BillItem) event.getObject();
+        onEdit(tmp);
     }
 
     public void onEdit(BillItem tmp) {
@@ -678,9 +684,23 @@ public class PharmacySaleController implements Serializable {
         getPreBill().setReferenceBill(getSaleBill());
         getBillFacade().edit(getPreBill());
     }
+    
+     private void savePreBillItemsFinally() {
+        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
+            getBillItemFacade().edit(tbi);
+            getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
+            
+            onEdit(tbi);
+          
+        }
+        getBillFacade().edit(getSaleBill());
+    }
 
     private void saveSaleBillItems() {
         for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
+            onEdit(tbi);
+            
+            
             BillItem newBil = new BillItem();
 
             newBil.copy(tbi);
@@ -743,7 +763,7 @@ public class PharmacySaleController implements Serializable {
         }
         Patient pt = savePatient();
         savePreBillFinally(pt);
-//        savePreBillItems();
+        savePreBillItemsFinally();
 
         setPrintBill(getBillFacade().find(getPreBill().getId()));
 
@@ -761,6 +781,7 @@ public class PharmacySaleController implements Serializable {
         Patient pt = savePatient();
         getPreBill().setPaidAmount(getPreBill().getTotal());
         savePreBillFinally(pt);
+        savePreBillItemsFinally();
 
         saveSaleBill(pt);
         saveSaleBillItems();

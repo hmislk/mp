@@ -46,6 +46,7 @@ import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -132,6 +133,10 @@ public class GrnController implements Serializable {
     }
 
     public void setBatch(BillItem pid) {
+        if (pid.getPharmaceuticalBillItem().getDoe() == null) {
+            return;
+        }
+
         if (pid.getPharmaceuticalBillItem().getDoe() != null) {
             if (pid.getPharmaceuticalBillItem().getDoe().getTime() < Calendar.getInstance().getTimeInMillis()) {
                 pid.getPharmaceuticalBillItem().setStringValue(null);
@@ -206,7 +211,7 @@ public class GrnController implements Serializable {
 
             Stock stock = getPharmacyBean().addToStock(
                     i.getPharmaceuticalBillItem(),
-                    Math.abs(addingQty), 
+                    Math.abs(addingQty),
                     getSessionController().getDepartment());
 
             i.getPharmaceuticalBillItem().setStock(stock);
@@ -338,6 +343,14 @@ public class GrnController implements Serializable {
         return getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
+    public void onEdit(RowEditEvent event) {
+        BillItem tmp = (BillItem) event.getObject();
+        onEditItem(tmp);
+        onEdit(tmp);
+        onEditPurchaseRate(tmp);
+        setBatch(tmp);
+    }
+
     public void onEditItem(BillItem tmp) {
         double pur = getPharmacyBean().getLastPurchaseRate(tmp.getItem(), tmp.getReferanceBillItem().getBill().getDepartment());
         double ret = getPharmacyBean().getLastRetailRate(tmp.getItem(), tmp.getReferanceBillItem().getBill().getDepartment());
@@ -396,7 +409,6 @@ public class GrnController implements Serializable {
 //
 //        return suggessions;
 //    }
-
     private void calGrossTotal() {
         double tmp = 0.0;
         int serialNo = 0;

@@ -34,11 +34,11 @@
                                             <p:outputLabel value="Medicines/Devices" ></p:outputLabel>
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
                                             <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
-                                                              value="#{pharmacySaleController.stock}" 
-                                                              converter="stockCon" 
-                                                              completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
-                                                              var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
-                                                              style="width: 50px!important;">
+                                                            value="#{pharmacySaleController.stock}" 
+                                                            converter="stockCon" 
+                                                            completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
+                                                            var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
+                                                            style="width: 50px!important;">
                                                 <p:column headerText="Item">
                                                     <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
                                                 </p:column>
@@ -114,19 +114,33 @@
                                             <h:panelGrid columns="1">
                                                 <p:panel header="Bill Items" id="pBis">
                                                     <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.transActiveBillItem}"
-                                                                 var="bi" rowIndexVar="s" editable="true" editMode="cell" sortBy="#{bi.searialNo}" >
+                                                                 var="bi" rowIndexVar="s" editable="true" sortBy="#{bi.searialNo}" >
+
+                                                        <p:ajax event="rowEdit" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" />  
+                                                        <p:ajax event="rowEditCancel" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" /> 
+
 
                                                         <p:column headerText="Item">
                                                             <h:outputLabel value="#{bi.pharmaceuticalBillItem.itemBatch.item.name}" ></h:outputLabel>
                                                         </p:column>
                                                         <p:column headerText="Quentity">
-
-                                                            <p:inputText  id="ipTblQty" value="#{bi.qty}" style="width:96%" label="Qty" >
-                                                                <f:convertNumber integerOnly="true" />
-                                                                <f:ajax event="change" render="@this gros :#{p:component('pBillDetails')}" execute="@this rate" listener="#{pharmacySaleController.onEdit(bi)}"/>
-                                                            </p:inputText>
-
+                                                            <p:cellEditor>  
+                                                                <f:facet name="output">  
+                                                                    <h:outputText value="#{bi.qty}" >
+                                                                        <f:convertNumber integerOnly="true" />
+                                                                    </h:outputText>
+                                                                </f:facet>  
+                                                                <f:facet name="input">  
+                                                                    <p:inputText id="ipTblQty" value="#{bi.qty}" style="width:96%"/>  
+                                                                </f:facet>  
+                                                            </p:cellEditor> 
                                                         </p:column>
+
+                                                        <p:column style="width:6%">  
+                                                            <p:rowEditor />  
+                                                        </p:column>  
+
+
                                                         <p:column headerText="Rate">
                                                             <h:outputLabel id="rate" value="#{bi.rate}" >
                                                                 <f:convertNumber pattern="#,##0.00" />
@@ -203,7 +217,9 @@
 
                                         <p:calendar id="slipDate"  value="#{pharmacySaleController.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
                                         </p:calendar>
-                                        <p:commandButton ajax= "false" accesskey="s" value="Settle" action="#{pharmacySaleController.settleBillWithPay}" update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}">
+                                        <p:commandButton ajax= "false" accesskey="s" value="Settle" 
+                                                         action="#{pharmacySaleController.settleBillWithPay}" 
+                                                         update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}">
                                             <f:facet name="title" >
                                                 <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
                                                 <h:outputLabel value="ettle"  ></h:outputLabel>

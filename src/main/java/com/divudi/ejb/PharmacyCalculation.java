@@ -71,6 +71,25 @@ public class PharmacyCalculation {
 //
 //       
 //    }
+    
+    
+    public List<Item> getSuggessionOnly(Item item) {
+        List<Item> suggessions = new ArrayList<>();
+
+        if (item instanceof Amp) {
+            suggessions = findPack((Amp) item);
+            suggessions.add(item);
+        } else if (item instanceof Ampp) {
+            Amp amp = ((Ampp) item).getAmp();
+            suggessions = findPack(amp);
+            suggessions.add(amp);
+        }
+
+    
+        return suggessions;
+    }
+    
+    
     public List<Item> getItemsForDealor(Institution i) {
         String temSql;
         List<Item> tmp;
@@ -559,10 +578,10 @@ public class PharmacyCalculation {
         i.getBillItem().setPharmaceuticalBillItem(i);
 
         getBillItemFacade().edit(i.getBillItem());
-
-        double consumed = calQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem());
-        i.getBillItem().setRemainingQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem().getQty() - consumed);
-        getBillItemFacade().edit(i.getBillItem());
+//
+//        double consumed = calQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem());
+//        i.getBillItem().setRemainingQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem().getQty() - consumed);
+//        getBillItemFacade().edit(i.getBillItem());
     }
 
 //    public BillItem saveBillItem(Item i, Bill b, SessionController s) {

@@ -79,6 +79,8 @@ public class GrnController implements Serializable {
     private PharmacyCalculation pharmacyBillBean;
     @EJB
     private CommonFunctions commonFunctions;
+    @EJB
+    private PharmacyCalculation pharmacyCalculation;
     /////////////////
     private Institution dealor;
     private Bill approveBill;
@@ -90,7 +92,7 @@ public class GrnController implements Serializable {
     //////////////
     //private List<PharmacyItemData> pharmacyItems;
     private List<Bill> pos;
-    List<Bill> grns;
+    private List<Bill> grns;
     private List<Bill> filteredValue;
     private List<BillItem> billItems;
     private List<BillItem> selectedBillItems;
@@ -176,7 +178,7 @@ public class GrnController implements Serializable {
         saveBill();
 
         for (BillItem i : getBillItems()) {
-            if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
+            if (i.getTmpQty() == 0.0) {
                 continue;
             }
 
@@ -301,7 +303,7 @@ public class GrnController implements Serializable {
                 bi.setQty(i.getQtyInUnit() - remains);
                 bi.setTmpQty(i.getQtyInUnit() - remains);
                 //Set Suggession
-                bi.setTmpSuggession(getSuggession(bi.getItem()));
+                bi.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(bi.getItem()));
 
                 PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
                 ph.setBillItem(bi);
@@ -376,21 +378,21 @@ public class GrnController implements Serializable {
         onEdit(tmp);
     }
 
-    private List<Item> getSuggession(Item item) {
-        List<Item> suggessions = new ArrayList<>();
-
-        if (item instanceof Amp) {
-            suggessions = getPharmacyBillBean().findItem((Amp) item, suggessions);
-        } else if (item instanceof Ampp) {
-            suggessions = getPharmacyBillBean().findItem((Ampp) item, suggessions);
-        } else if (item instanceof Vmp) {
-            suggessions = getPharmacyBillBean().findItem((Vmp) item, suggessions);
-        } else if (item instanceof Vmpp) {
-            suggessions = getPharmacyBillBean().findItem((Vmpp) item, suggessions);
-        }
-
-        return suggessions;
-    }
+//    private List<Item> getSuggession(Item item) {
+//        List<Item> suggessions = new ArrayList<>();
+//
+//        if (item instanceof Amp) {
+//            suggessions = getPharmacyBillBean().findItem((Amp) item, suggessions);
+//        } else if (item instanceof Ampp) {
+//            suggessions = getPharmacyBillBean().findItem((Ampp) item, suggessions);
+//        } else if (item instanceof Vmp) {
+//            suggessions = getPharmacyBillBean().findItem((Vmp) item, suggessions);
+//        } else if (item instanceof Vmpp) {
+//            suggessions = getPharmacyBillBean().findItem((Vmpp) item, suggessions);
+//        }
+//
+//        return suggessions;
+//    }
 
     private void calGrossTotal() {
         double tmp = 0.0;
@@ -574,7 +576,7 @@ public class GrnController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            billItems = new LinkedList<>();
+            billItems = new ArrayList<>();
             // serialNo = 0;
         }
         return billItems;
@@ -609,6 +611,22 @@ public class GrnController implements Serializable {
 
     public void setBills(List<Bill> bills) {
         this.bills = bills;
+    }
+
+    public PharmacyCalculation getPharmacyCalculation() {
+        return pharmacyCalculation;
+    }
+
+    public void setPharmacyCalculation(PharmacyCalculation pharmacyCalculation) {
+        this.pharmacyCalculation = pharmacyCalculation;
+    }
+
+    public List<Bill> getGrns() {
+        return grns;
+    }
+
+    public void setGrns(List<Bill> grns) {
+        this.grns = grns;
     }
 
 }

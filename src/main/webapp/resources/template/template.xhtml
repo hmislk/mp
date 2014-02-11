@@ -92,8 +92,7 @@
 
                                     <p:menuitem  ajax="false"  action="#{patientInvestigationController.toCollectSample()}" value="Sampling" rendered="#{webUserController.hasPrivilege('LabSampleCollecting')}" ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="#{patientInvestigationController.toPrintWorksheets()}" value="Worksheets" rendered="#{webUserController.hasPrivilege('LabSampleReceiving')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false"  action="lab_search_for_reporting" value="Reports" rendered="#{webUserController.hasPrivilege('LabBillItemSearch')}" ></p:menuitem>
-                                    <p:menuitem ajax="false" action="lab_search_for_reporting_ondemand" value="Search" rendered="#{webUserController.hasPrivilege('LabBillItemSearch')}" ></p:menuitem>
+                                    <p:menuitem ajax="false" action="lab_search_for_reporting_ondemand" value="Reports/Search" rendered="#{webUserController.hasPrivilege('LabBillItemSearch')}" ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="report_lab_matro" value="Summeries"  ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="lab_administration" value="Administration" rendered="#{webUserController.hasPrivilege('LabReportFormatEditing')}" ></p:menuitem>
 

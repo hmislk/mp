@@ -538,7 +538,7 @@ public class SearchController implements Serializable {
         }
 
         if (getSearchKeyword().getFromInstitution() != null && !getSearchKeyword().getFromInstitution().trim().equals("")) {
-            sql += " and  (upper(b.fromInstiution.name) like :frmIns )";
+            sql += " and  (upper(b.fromInstitution.name) like :frmIns )";
             tmp.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
         }
 

@@ -64,7 +64,7 @@
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
                         <h:outputLabel value="" ></h:outputLabel>
 
-                        <p:dataTable stickyHeader="true" value="#{pharmacyErrorChecking.billItems}" var="pb"  rowIndexVar="i"
+                        <p:dataTable value="#{pharmacyErrorChecking.billItems}" var="pb"  rowIndexVar="i"
                                      rowStyleClass="#{(pb.retired eq true or pb.bill.retired eq true) ?'greenText' : ''} 
                                      #{((pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnBill' )or

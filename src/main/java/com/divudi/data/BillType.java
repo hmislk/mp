@@ -69,6 +69,8 @@ public enum BillType {
                 return "Good Receive Note Return";
             case PharmacyPurchaseBill:
                 return "Pharmacy Purchase";
+            case PurchaseReturn:
+                return "Pharmacy Purchase Return";
             case PharmacySale:
                 return "Pharmacy Sale Bill";
             case PharmacyPre:

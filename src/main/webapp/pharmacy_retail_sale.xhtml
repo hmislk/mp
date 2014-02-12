@@ -113,7 +113,7 @@
                                         <p:tab title="Bill Items" >
                                             <h:panelGrid columns="1">
                                                 <p:panel header="Bill Items" id="pBis">
-                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.transActiveBillItem}"
+                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.billItems}"
                                                                  var="bi" rowIndexVar="s" editable="true" sortBy="#{bi.searialNo}" >
 
                                                         <p:ajax event="rowEdit" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" />  

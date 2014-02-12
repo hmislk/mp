@@ -24,6 +24,8 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.StockHistory;
+import com.divudi.entity.pharmacy.UserStock;
+import com.divudi.entity.pharmacy.UserStockContainer;
 import com.divudi.entity.pharmacy.Vmp;
 import com.divudi.entity.pharmacy.Vmpp;
 import com.divudi.entity.pharmacy.Vtm;
@@ -41,6 +43,8 @@ import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
+import com.divudi.facade.UserStockContainerFacade;
+import com.divudi.facade.UserStockFacade;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VmppFacade;
 import com.divudi.facade.VtmFacade;
@@ -53,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -85,10 +90,79 @@ public class PharmacyBean {
     private BillItemFacade billItemFacade;
     @EJB
     StockHistoryFacade stockHistoryFacade;
+    @EJB
+    private UserStockFacade userStockFacade;
+
+    public boolean isStockAvailable(Stock stock, double qty, WebUser webUser) {
+        String sql = "Select sum(us.updationQty) from UserStock us where us.retired=false "
+                + " and us.userStockContainer.retired=false "
+                + " and us.stock=:stk and us.creater!=:wb and us.createdAt "
+                + " between :frm and :to ";
+
+        Calendar cal = Calendar.getInstance();
+        Date toTime = cal.getTime();
+        cal.add(Calendar.MINUTE, -30);
+        Date fromTime = cal.getTime();
+
+        HashMap hm = new HashMap();
+        hm.put("stk", stock);
+        hm.put("wb", webUser);
+        hm.put("to", toTime);
+        hm.put("frm", fromTime);
+
+        double updatableQty = getUserStockFacade().findDoubleByJpql(sql, hm,TemporalType.TIMESTAMP);
+        System.err.println("From "+fromTime);
+        System.err.println("TO "+toTime);
+        System.err.println("1  " + updatableQty);
+        System.err.println("2  " + qty);
+        updatableQty += qty;
+
+        Stock fetchedStock = getStockFacade().find(stock.getId());
+        System.err.println("3  " + fetchedStock.getStock());
+
+        if (updatableQty > fetchedStock.getStock()) {
+            System.err.println("True");
+            return false;
+        } else {
+            System.err.println("False");
+            return true;
+        }
+    }
+
+    public void retiredAllUserStockContainer(WebUser webUser) {
+        String sql = "Select us from UserStockContainer us where us.retired=false "
+                + " and us.creater=:wb ";
+
+        HashMap hm = new HashMap();
+        hm.put("wb", webUser);
+
+        List<UserStockContainer> usList = getUserStockContainerFacade().findBySQL(sql, hm);
+
+        for (UserStockContainer usc : usList) {
+            usc.setRetiredAt(new Date());
+            usc.setRetirer(webUser);
+            usc.setRetireComments("Menu Access");
+            usc.setRetired(true);
+            getUserStockContainerFacade().edit(usc);
+
+            for (UserStock bItem : usc.getUserStocks()) {
+
+                bItem.setRetired(true);
+                bItem.setRetiredAt(new Date());
+                bItem.setRetirer(webUser);
+                bItem.setRetireComments("Menu Access");
+
+                getUserStockFacade().edit(bItem);
+
+            }
+
+        }
+
+    }
 
     public String reAddToStock(Bill bill, WebUser user, Department department) {
 
-        if (bill.getTransActiveBillItem().size() == 0) {
+        if (bill.getBillItems().size() == 0) {
             return "There is no item to re Add";
         }
 
@@ -107,7 +181,7 @@ public class PharmacyBean {
         newPre.setBackwardReferenceBill(bill);
         getBillFacade().create(newPre);
 
-        for (BillItem bItem : bill.getTransActiveBillItem()) {
+        for (BillItem bItem : bill.getBillItems()) {
 
             BillItem newBillItem = new BillItem();
             newBillItem.copy(bItem);
@@ -144,6 +218,37 @@ public class PharmacyBean {
         getBillFacade().edit(bill);
 
         return msg;
+    }
+
+    @EJB
+    private UserStockContainerFacade userStockContainerFacade;
+
+    public void retireUserStock(UserStockContainer userStockContainer, WebUser webUser) {
+
+        if (userStockContainer.getUserStocks().size() == 0) {
+            return;
+        }
+
+//        if (bill.getDepartment().getId() != department.getId()) {
+//            return "Sorry You cant add Another Department Stock";
+//        }
+        userStockContainer.setRetiredAt(new Date());
+        userStockContainer.setRetirer(webUser);
+        userStockContainer.setRetireComments("New Bill Cliked");
+        userStockContainer.setRetired(true);
+        getUserStockContainerFacade().edit(userStockContainer);
+
+        for (UserStock bItem : userStockContainer.getUserStocks()) {
+
+            bItem.setRetired(true);
+            bItem.setRetiredAt(new Date());
+            bItem.setRetirer(webUser);
+            bItem.setRetireComments("New Bill Cliked");
+
+            getUserStockFacade().edit(bItem);
+
+        }
+
     }
 
     public PharmaceuticalItemCategoryFacade getPharmaceuticalItemCategoryFacade() {
@@ -1361,6 +1466,22 @@ public class PharmacyBean {
 
     public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
         this.stockHistoryFacade = stockHistoryFacade;
+    }
+
+    public UserStockFacade getUserStockFacade() {
+        return userStockFacade;
+    }
+
+    public void setUserStockFacade(UserStockFacade userStockFacade) {
+        this.userStockFacade = userStockFacade;
+    }
+
+    public UserStockContainerFacade getUserStockContainerFacade() {
+        return userStockContainerFacade;
+    }
+
+    public void setUserStockContainerFacade(UserStockContainerFacade userStockContainerFacade) {
+        this.userStockContainerFacade = userStockContainerFacade;
     }
 
 }

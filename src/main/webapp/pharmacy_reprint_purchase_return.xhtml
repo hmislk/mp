@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+       xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
 
     <body>
 
@@ -20,14 +20,15 @@
                             <hr/>
                             <p:commandButton value="Reprint" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
-                            </p:commandButton>                         
+                            </p:commandButton>
+                            <p:commandButton ajax="false" value="Cancel" action="pharmacy_cancel_purchase" disabled="#{pharmacyBillSearch.bill.cancelled}">                           
+                            </p:commandButton>     
+                            <p:commandButton ajax="false" value="Return" action="pharmacy_return_purchase" disabled="#{pharmacyBillSearch.bill.cancelled}" >
+                                <f:setPropertyActionListener target="#{purchaseReturnController.bill}"  value="#{pharmacyBillSearch.bill}"/>
+                            </p:commandButton>
                         </f:facet>
 
-                        <p:commandButton ajax="false" value="Cancel" action="pharmacy_cancel_purchase" disabled="#{pharmacyBillSearch.bill.cancelled}">                           
-                        </p:commandButton>     
-                        <p:commandButton ajax="false" value="Return" action="pharmacy_return_purchase" disabled="#{pharmacyBillSearch.bill.cancelled}" >
-                            <f:setPropertyActionListener target="#{purchaseReturnController.bill}"  value="#{pharmacyBillSearch.bill}"/>
-                        </p:commandButton>
+                       
                     </p:panel>
 
 
@@ -36,8 +37,7 @@
                     <h:panelGroup >
 
                         <h:panelGroup id="gpBillPreview" >
-                            <ph:purhcase bill="#{pharmacyBillSearch.bill}" />
-                            
+                            <ph:purchaseReturn bill="#{pharmacyBillSearch.bill}" />
 
                         </h:panelGroup>
 

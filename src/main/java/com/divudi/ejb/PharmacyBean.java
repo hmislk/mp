@@ -93,6 +93,8 @@ public class PharmacyBean {
     @EJB
     private UserStockFacade userStockFacade;
 
+    //check Is there any other user added same stock & exceedintg qty than need for current user
+    //ONLY CHECK Within 30 min transaction
     public boolean isStockAvailable(Stock stock, double qty, WebUser webUser) {
         String sql = "Select sum(us.updationQty) from UserStock us where us.retired=false "
                 + " and us.userStockContainer.retired=false "
@@ -110,21 +112,16 @@ public class PharmacyBean {
         hm.put("to", toTime);
         hm.put("frm", fromTime);
 
-        double updatableQty = getUserStockFacade().findDoubleByJpql(sql, hm,TemporalType.TIMESTAMP);
-        System.err.println("From "+fromTime);
-        System.err.println("TO "+toTime);
-        System.err.println("1  " + updatableQty);
-        System.err.println("2  " + qty);
+        double updatableQty = getUserStockFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
         updatableQty += qty;
 
         Stock fetchedStock = getStockFacade().find(stock.getId());
-        System.err.println("3  " + fetchedStock.getStock());
+      
 
-        if (updatableQty > fetchedStock.getStock()) {
-            System.err.println("True");
+        if (updatableQty > fetchedStock.getStock()) {           
             return false;
         } else {
-            System.err.println("False");
+           
             return true;
         }
     }

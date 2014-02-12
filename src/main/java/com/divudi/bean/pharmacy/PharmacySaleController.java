@@ -280,14 +280,14 @@ public class PharmacySaleController implements Serializable {
 //
 //        calTotal();
 //    }
-    public void onEdit(BillItem tmp) {
+    public boolean onEdit(BillItem tmp) {
         if (tmp.getQty() == null) {
-            return;
+            return true;
         }
 
         if (tmp.getQty() <= 0) {
             UtilityController.addErrorMessage("Can not enter a minus value");
-            return;
+            return true;
         }
 
         if (!getPharmacyBean().isStockAvailable(tmp.getPharmaceuticalBillItem().getStock(), tmp.getQty(), getSessionController().getLoggedUser())) {
@@ -297,8 +297,9 @@ public class PharmacySaleController implements Serializable {
             tmp.getTransUserStock().setUpdationQty(0);
             getUserStockFacade().edit(tmp.getTransUserStock());
 
-            UtilityController.addErrorMessage("No Sufficient Stocks Old Qty value is resetted");
-            return;
+            UtilityController.addErrorMessage("Another User On Change Bill Item "
+                    + " Qty value is resetted");
+            return true;
         } else {
 
             tmp.getTransUserStock().setUpdationQty(tmp.getQty());
@@ -312,6 +313,8 @@ public class PharmacySaleController implements Serializable {
         calculateBillItemForEditing(tmp);
 
         calTotal();
+
+        return false;
     }
 
     public void editQty(BillItem bi) {
@@ -715,6 +718,10 @@ public class PharmacySaleController implements Serializable {
 
     private void savePreBillItemsFinally(List<BillItem> list) {
         for (BillItem tbi : list) {
+            if (onEdit(tbi)) {
+                continue;
+            }
+
             tbi.setInwardChargeType(InwardChargeType.Medicine);
             tbi.setBill(getPreBill());
 
@@ -729,8 +736,6 @@ public class PharmacySaleController implements Serializable {
 
             tbi.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(tbi);
-
-            onEdit(tbi);
 
             double qtyL = tbi.getPharmaceuticalBillItem().getQtyInUnit() + tbi.getPharmaceuticalBillItem().getFreeQtyInUnit();
 
@@ -750,7 +755,6 @@ public class PharmacySaleController implements Serializable {
 
     private void saveSaleBillItems() {
         for (BillItem tbi : getPreBill().getBillItems()) {
-            onEdit(tbi);
 
             BillItem newBil = new BillItem();
 
@@ -797,8 +801,25 @@ public class PharmacySaleController implements Serializable {
         return us;
     }
 
+    private boolean checkAllBillItem() {
+        for (BillItem b : getPreBill().getBillItems()) {
+
+            if (onEdit(b)) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
     public void settlePreBill() {
         editingQty = null;
+
+        if (checkAllBillItem()) {
+            return;
+        }
+
         if (errorCheckForPreBill()) {
             return;
         }

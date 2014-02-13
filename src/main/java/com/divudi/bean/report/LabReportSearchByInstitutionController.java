@@ -36,7 +36,7 @@ import javax.persistence.TemporalType;
  * @author Buddhika
  */
 @Named
-@RequestScoped
+@SessionScoped
 public class LabReportSearchByInstitutionController implements Serializable {
 
     @Inject

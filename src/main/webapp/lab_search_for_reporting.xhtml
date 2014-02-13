@@ -91,6 +91,7 @@
                                     </p:column>
                                     <p:column  headerText="Actions"  styleClass="alignTop" >
                                         <p:panelGrid columns="1" rendered="#{pi.billItem.bill.cancelled ne true and pi.billItem.refunded ne true }" >
+                                            <h1>#{pi}</h1>
                                             <p:commandButton process="btnSample" update="tblBills"  rendered="#{!pi.collected}"   id="btnSample" value="Collect Sample" action="#{patientInvestigationController.markAsSampled}" >
                                                 <f:setPropertyActionListener value="#{pi}" target="#{patientInvestigationController.current}"></f:setPropertyActionListener>
                                             </p:commandButton>

@@ -680,6 +680,7 @@ public class PatientReportController implements Serializable {
             if (currentPatientReport != null) {
                 currentPtIx = currentPatientReport.getPatientInvestigation();
             }
+            
         }
         return currentPtIx;
     }

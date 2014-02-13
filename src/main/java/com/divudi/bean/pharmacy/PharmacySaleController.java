@@ -373,9 +373,8 @@ public class PharmacySaleController implements Serializable {
         this.itemsWithoutStocks = itemsWithoutStocks;
     }
 
-
     public String newSaleBillWithoutReduceStock() {
-        getPharmacyBean().retiredAllUserStockContainer(getSessionController().getLoggedUser());
+
         clearBill();
         clearBillItem();
         billPreview = false;
@@ -383,7 +382,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public String newSaleBillWithoutReduceStockForCashier() {
-        getPharmacyBean().retiredAllUserStockContainer(getSessionController().getLoggedUser());
+
         clearBill();
         clearBillItem();
         billPreview = false;
@@ -391,7 +390,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public String newSaleBill() {
-        getPharmacyBean().retireUserStock(getUserStockContainer(), getSessionController().getLoggedUser());
+        getPharmacyBean().retiredAllUserStockContainer(getSessionController().getLoggedUser());
         clearBill();
         clearBillItem();
         billPreview = false;
@@ -400,7 +399,7 @@ public class PharmacySaleController implements Serializable {
 
     public String newSaleBillForCashier() {
 //        reAddToStock();
-        getPharmacyBean().retireUserStock(getUserStockContainer(), getSessionController().getLoggedUser());
+        getPharmacyBean().retiredAllUserStockContainer(getSessionController().getLoggedUser());
 
         clearBill();
         clearBillItem();

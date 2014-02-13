@@ -233,6 +233,8 @@ public class PharmacySaleController implements Serializable {
 
         //Cheking Minus Value
         if (tmp.getQty() <= 0) {
+            tmp.getTransUserStock().setUpdationQty(0);
+            getUserStockFacade().edit(tmp.getTransUserStock());
             UtilityController.addErrorMessage("Can not enter a minus value");
             return true;
         }
@@ -371,15 +373,7 @@ public class PharmacySaleController implements Serializable {
         this.itemsWithoutStocks = itemsWithoutStocks;
     }
 
-//    public void reAddToStock() {
-//
-//        String msg = getPharmacyBean().reAddToStock(getPreBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
-//        if (msg.trim() == "") {
-//        } else {
-//            UtilityController.addErrorMessage(msg);
-//        }
-//
-//    }
+
     public String newSaleBillWithoutReduceStock() {
         getPharmacyBean().retiredAllUserStockContainer(getSessionController().getLoggedUser());
         clearBill();
@@ -764,7 +758,6 @@ public class PharmacySaleController implements Serializable {
     public void settlePreBill() {
         editingQty = null;
 
-        
         if (checkAllBillItem()) {// Before Settle Bill Current Bills Item Check Agian There is any otheruser change his qty
             return;
         }

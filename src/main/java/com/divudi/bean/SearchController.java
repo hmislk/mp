@@ -272,8 +272,15 @@ public class SearchController implements Serializable {
         hm.put("btp", BillType.PharmacyTransferReceive);
         return getBillFacade().findFirstBySQL(sql, hm);
     }
+    
+    public void makeNull(){
+        searchKeyword=null;
+        bills=null;
+    
+    }
 
     public void createTableByBillType() {
+        
         String sql;
         Map temMap = new HashMap();
 
@@ -298,7 +305,7 @@ public class SearchController implements Serializable {
 
         if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
             sql += " and  (upper(b.toInstitution.name) like :toIns )";
-            temMap.put("frmIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
+            temMap.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
         }
 
         if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {
@@ -538,7 +545,7 @@ public class SearchController implements Serializable {
         }
 
         if (getSearchKeyword().getFromInstitution() != null && !getSearchKeyword().getFromInstitution().trim().equals("")) {
-            sql += " and  (upper(b.fromInstiution.name) like :frmIns )";
+            sql += " and  (upper(b.fromInstitution.name) like :frmIns )";
             tmp.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
         }
 

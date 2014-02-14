@@ -173,11 +173,11 @@ public class ReportsTransfer implements Serializable {
             m.put("fdept", fromDepartment);
             m.put("tdept", toDepartment);
             sql = "select bi from BillItem bi where bi.bill.fromDepartment=:fdept"
-                    + " and bi.bill.toDepartment=:tdept and bi.bill.createdAt between :fd "
+                    + " and bi.bill.department=:tdept and bi.bill.createdAt between :fd "
                     + "and :td and bi.bill.billType=:bt order by bi.id";
         } else if (fromDepartment == null && toDepartment != null) {
             m.put("tdept", toDepartment);
-            sql = "select bi from BillItem bi where bi.bill.toDepartment=:tdept and bi.bill.createdAt "
+            sql = "select bi from BillItem bi where bi.bill.department=:tdept and bi.bill.createdAt "
                     + " between :fd and :td and bi.bill.billType=:bt order by bi.id";
         } else if (fromDepartment != null && toDepartment == null) {
             m.put("fdept", fromDepartment);
@@ -206,7 +206,7 @@ public class ReportsTransfer implements Serializable {
         if (fromDepartment != null && toDepartment != null) {
             m.put("fdept", fromDepartment);
             m.put("tdept", toDepartment);
-            sql = "select bi from BillItem bi where bi.bill.fromDepartment=:fdept"
+            sql = "select bi from BillItem bi where bi.bill.department=:fdept"
                     + " and bi.bill.toDepartment=:tdept and bi.bill.createdAt between :fd "
                     + "and :td and bi.bill.billType=:bt order by bi.id";
         } else if (fromDepartment == null && toDepartment != null) {
@@ -215,7 +215,7 @@ public class ReportsTransfer implements Serializable {
                     + " between :fd and :td and bi.bill.billType=:bt order by bi.id";
         } else if (fromDepartment != null && toDepartment == null) {
             m.put("fdept", fromDepartment);
-            sql = "select bi from BillItem bi where bi.bill.fromDepartment=:fdept and bi.bill.createdAt "
+            sql = "select bi from BillItem bi where bi.bill.department=:fdept and bi.bill.createdAt "
                     + " between :fd and :td and bi.bill.billType=:bt order by bi.id";
         } else {
             sql = "select bi from BillItem bi where bi.bill.createdAt "

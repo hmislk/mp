@@ -19,6 +19,8 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 public class Stock implements Serializable {
+    
+  
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -97,5 +99,6 @@ public class Stock implements Serializable {
     public void setDepartment(Department department) {
         this.department = department;
     }
+
     
 }

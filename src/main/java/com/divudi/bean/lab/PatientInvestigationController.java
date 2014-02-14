@@ -10,6 +10,7 @@ package com.divudi.bean.lab;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.bean.report.LabReportSearchByInstitutionController;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Department;
 import com.divudi.entity.lab.Investigation;
@@ -378,6 +379,9 @@ public class PatientInvestigationController implements Serializable {
         return lstToSamle;
     }
 
+    @Inject
+    private LabReportSearchByInstitutionController labReportSearchByInstitutionController;
+
     public void markAsSampled() {
         if (current == null) {
             UtilityController.addErrorMessage("Nothing to sample");
@@ -400,6 +404,8 @@ public class PatientInvestigationController implements Serializable {
             UtilityController.addErrorMessage("Empty");
         }
         setSampledOutsideDate(Calendar.getInstance().getTime());
+
+        getLabReportSearchByInstitutionController().createPatientInvestigaationList();
     }
 
     public void setLstToSamle(List<PatientInvestigation> lstToSamle) {
@@ -511,6 +517,8 @@ public class PatientInvestigationController implements Serializable {
             getCurrent().setReceivedCollecter(getSessionController().getLoggedUser());
             getEjbFacade().edit(getCurrent());
         }
+
+        getLabReportSearchByInstitutionController().createPatientInvestigaationList();
     }
 
     public void markSelectedAsReceived() {
@@ -662,6 +670,14 @@ public class PatientInvestigationController implements Serializable {
     public void setListIncludingSampled(boolean listIncludingSampled) {
         this.listIncludingSampled = listIncludingSampled;
 
+    }
+
+    public LabReportSearchByInstitutionController getLabReportSearchByInstitutionController() {
+        return labReportSearchByInstitutionController;
+    }
+
+    public void setLabReportSearchByInstitutionController(LabReportSearchByInstitutionController labReportSearchByInstitutionController) {
+        this.labReportSearchByInstitutionController = labReportSearchByInstitutionController;
     }
 
     /**

@@ -454,7 +454,7 @@ public class CommonReport implements Serializable {
                 + " b.billType = :btp "
                 + " and b.department=:d "
                 + " and b.createdAt between :fromDate and "
-                + " :toDate order by b.fromInstitution.name ";
+                + " :toDate order by b.deptId,b.fromInstitution.name ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
@@ -471,7 +471,7 @@ public class CommonReport implements Serializable {
                 + " b.billType = :btp and (b.fromInstitution=:ins or b.toInstitution=:ins ) "
                 + " and b.department=:d "
                 + " and b.createdAt between :fromDate and "
-                + " :toDate order by b.fromInstitution.name ";
+                + " :toDate order by b.deptId,b.fromInstitution.name ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());

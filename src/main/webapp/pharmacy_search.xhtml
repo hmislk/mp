@@ -24,7 +24,7 @@
                                 <p:selectOneMenu value="#{searchController.billType}">
                                     <f:selectItem itemLabel="Select Bill Type"/>
                                     <f:selectItems value="#{enumController.pharmacyBillTypes}" var="i" itemLabel="#{i.label}" itemValue="#{i}" />
-                                    <f:ajax  event="change" execute="@this" render="detail" />
+                                    <f:ajax  event="change" execute="@this" render="detail" listener="#{searchController.makeNull}"/>
                                 </p:selectOneMenu>
                                 <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createTableByBillType}"/>
 
@@ -54,6 +54,10 @@
 
                             <h:panelGroup rendered="#{searchController.billType eq 'PharmacyPurchaseBill'}" >
                                 <se:purchase />
+                            </h:panelGroup>
+                            
+                            <h:panelGroup rendered="#{searchController.billType eq 'PurchaseReturn'}" >
+                                <se:purchase_return />
                             </h:panelGroup>
 
                             <h:panelGroup rendered="#{searchController.billType eq 'PharmacySale'}" >

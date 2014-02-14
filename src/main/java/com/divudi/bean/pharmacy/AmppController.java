@@ -34,7 +34,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- * Informatics)
+ Informatics)
  */
 @Named
 @SessionScoped

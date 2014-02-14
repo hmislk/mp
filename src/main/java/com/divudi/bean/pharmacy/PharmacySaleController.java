@@ -224,42 +224,54 @@ public class PharmacySaleController implements Serializable {
         onEdit(tmp);
     }
 
+    private void setZeroToQty(BillItem tmp) {
+        tmp.setQty(0.0);
+        tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0);
+
+        tmp.getTransUserStock().setUpdationQty(0);
+        getUserStockFacade().edit(tmp.getTransUserStock());
+    }
+
     //Check when edititng Qty
     //
     public boolean onEdit(BillItem tmp) {
-        if (tmp.getQty() == null) {
+        //Cheking Minus Value && Null
+        if (tmp.getQty() <= 0 || tmp.getQty() == null) {
+            setZeroToQty(tmp);
+            onEditCalculation(tmp);
+
+            UtilityController.addErrorMessage("Can not enter a minus value");
             return true;
         }
 
-        //Cheking Minus Value
-        if (tmp.getQty() <= 0) {
-            tmp.setQty(0.0);
-            tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0);
+        if (tmp.getQty() > tmp.getPharmaceuticalBillItem().getStock().getStock()) {
+            setZeroToQty(tmp);
+            onEditCalculation(tmp);
 
-            tmp.getTransUserStock().setUpdationQty(0);
-            getUserStockFacade().edit(tmp.getTransUserStock());
-            UtilityController.addErrorMessage("Can not enter a minus value");
+            UtilityController.addErrorMessage("No Sufficient Stocks?");
             return true;
         }
 
         //Check Is There Any Other User using same Stock
         if (!getPharmacyBean().isStockAvailable(tmp.getPharmaceuticalBillItem().getStock(), tmp.getQty(), getSessionController().getLoggedUser())) {
-            tmp.setQty(0.0);
-            tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0);
 
-            tmp.getTransUserStock().setUpdationQty(0);
-            getUserStockFacade().edit(tmp.getTransUserStock());
+            setZeroToQty(tmp);
+            onEditCalculation(tmp);
 
             UtilityController.addErrorMessage("Another User On Change Bill Item "
                     + " Qty value is resetted");
             return true;
-        } else {
-
-            tmp.getTransUserStock().setUpdationQty(tmp.getQty());
-            getUserStockFacade().edit(tmp.getTransUserStock());
-
         }
 
+        tmp.getTransUserStock().setUpdationQty(tmp.getQty());
+        getUserStockFacade().edit(tmp.getTransUserStock());
+
+        onEditCalculation(tmp);
+
+        return false;
+    }
+
+    private void onEditCalculation(BillItem tmp) {
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
         tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - tmp.getQty());
 
@@ -267,7 +279,6 @@ public class PharmacySaleController implements Serializable {
 
         calTotal();
 
-        return false;
     }
 
     public void editQty(BillItem bi) {
@@ -690,7 +701,7 @@ public class PharmacySaleController implements Serializable {
             getPreBill().getBillItems().add(tbi);
         }
 
-        getPharmacyBean().retireUserStock(getUserStockContainer(), getSessionController().getLoggedUser());
+        getPharmacyBean().retiredAllUserStockContainer(getSessionController().getLoggedUser());
 
         calculateAllRates();
 

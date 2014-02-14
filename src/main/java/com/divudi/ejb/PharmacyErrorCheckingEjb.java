@@ -177,7 +177,8 @@ public class PharmacyErrorCheckingEjb {
         Map m = new HashMap();
         m.put("d", department);
         m.put("i", item);
-        sql = "select bi from BillItem bi where bi.item=:i and bi.bill.department=:d";
+        sql = "select bi from BillItem bi where bi.item=:i  "
+                + " and bi.bill.department=:d order by  bi.createdAt";
         return getBillItemFacade().findBySQL(sql, m);
     }
 
@@ -214,7 +215,7 @@ public class PharmacyErrorCheckingEjb {
                 + " and (bi.bill.billType=:btp1 or bi.bill.billType=:btp2 or "
                 + " bi.bill.billType=:btp3 or bi.bill.billType=:btp4 or "
                 + " bi.bill.billType=:btp5 or bi.bill.billType=:btp6 or"
-                + " bi.bill.billType=:btp7  ) ";
+                + " bi.bill.billType=:btp7  ) order by bi.createdAt ";
         return getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
     }
 

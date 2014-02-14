@@ -71,6 +71,21 @@ public class PharmacyCalculation {
 //
 //       
 //    }
+    public List<Item> getSuggessionOnly(Item item) {
+        List<Item> suggessions = new ArrayList<>();
+
+        if (item instanceof Amp) {
+            suggessions = findPack((Amp) item);
+            suggessions.add(item);
+        } else if (item instanceof Ampp) {
+            Amp amp = ((Ampp) item).getAmp();
+            suggessions = findPack(amp);
+            suggessions.add(amp);
+        }
+
+        return suggessions;
+    }
+
     public List<Item> getItemsForDealor(Institution i) {
         String temSql;
         List<Item> tmp;
@@ -236,9 +251,9 @@ public class PharmacyCalculation {
 
         double netQty = grns - grnReturn;
 
-        //System.err.println("GRN " + grns);
-        //System.err.println("GRN Return " + grnReturn);
-        //System.err.println("Net " + netQty);
+        System.err.println("GRN " + grns);
+        System.err.println("GRN Return " + grnReturn);
+        System.err.println("Net " + netQty);
 
         return netQty;
     }
@@ -248,7 +263,6 @@ public class PharmacyCalculation {
         double returnBill = getTotalQty(bil, BillType.PharmacySale, new RefundBill());
 
         //System.err.println("RETURN " + returnBill);
-
         return bil.getQty() - returnBill;
     }
 
@@ -257,7 +271,6 @@ public class PharmacyCalculation {
         double returnBill = getTotalQty(bil, BillType.PharmacyPre, new RefundBill());
 
         //System.err.println("RETURN " + returnBill);
-
         return bil.getQty() - returnBill;
     }
 
@@ -322,7 +335,7 @@ public class PharmacyCalculation {
 //    }
     public double getRemainingQty(PharmaceuticalBillItem ph) {
 
-        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.id=" + ph.getBillItem().getReferanceBillItem().getId();
+        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.id = " + ph.getBillItem().getReferanceBillItem().getId();
         PharmaceuticalBillItem po = getPharmaceuticalBillItemFacade().findFirstBySQL(sql);
 
         //    Item poItem = po.getBillItem().getItem();
@@ -330,12 +343,8 @@ public class PharmacyCalculation {
         double poQty, grnQty, remains;
         poQty = po.getQtyInUnit();
         remains = poQty - calQty(po);
-        grnQty = ph.getQtyInUnit();
 
-        //System.err.println("poQty : " + poQty);
-        //System.err.println("grnQty : " + grnQty);
-        //System.err.println("remain : " + remains);
-
+        System.err.println("REMAIN " + remains);
         return remains;
 
     }
@@ -355,7 +364,6 @@ public class PharmacyCalculation {
         //System.err.println("poQty : " + poQty);
         //System.err.println("grnQty : " + grnQty);
         //System.err.println("remain : " + remains);
-
         if (remains < grnQty) {
             return true;
         } else {
@@ -415,7 +423,6 @@ public class PharmacyCalculation {
         //System.err.println("Purchase Price : " + i.getPurchaseRate());
         //System.err.println("Retail Price : " + i.getRetailRate());
         //System.err.println("MAX Price : " + max);
-
         if (max < i.getRetailRate()) {
             return true;
         } else {
@@ -437,7 +444,6 @@ public class PharmacyCalculation {
 
         //System.err.println("Puchase :  " + purchase);
         //System.err.println("Puchase :  " + retail);
-
         itemBatch.setDateOfExpire(tmp.getPharmaceuticalBillItem().getDoe());
         itemBatch.setBatchNo(tmp.getPharmaceuticalBillItem().getStringValue());
         itemBatch.setPurcahseRate(purchase);
@@ -559,10 +565,10 @@ public class PharmacyCalculation {
         i.getBillItem().setPharmaceuticalBillItem(i);
 
         getBillItemFacade().edit(i.getBillItem());
-
-        double consumed = calQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem());
-        i.getBillItem().setRemainingQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem().getQty() - consumed);
-        getBillItemFacade().edit(i.getBillItem());
+//
+//        double consumed = calQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem());
+//        i.getBillItem().setRemainingQty(i.getBillItem().getReferanceBillItem().getPharmaceuticalBillItem().getQty() - consumed);
+//        getBillItemFacade().edit(i.getBillItem());
     }
 
 //    public BillItem saveBillItem(Item i, Bill b, SessionController s) {

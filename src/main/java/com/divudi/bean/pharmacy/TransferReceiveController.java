@@ -16,9 +16,6 @@ import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.Item;
-import com.divudi.entity.pharmacy.Amp;
-import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.Vmp;
@@ -28,18 +25,15 @@ import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -74,7 +68,7 @@ public class TransferReceiveController implements Serializable {
     @EJB
     private CommonFunctions commonFunctions;
     @EJB
-    private PharmacyCalculation pharmacyRecieveBean;
+    private PharmacyCalculation pharmacyCalculation;
     private List<BillItem> billItems;
     private List<Bill> bills;
     private SearchKeyword searchKeyword;
@@ -111,22 +105,7 @@ public class TransferReceiveController implements Serializable {
         generateBillComponent();
     }
 
-    private List<Item> getSuggession(Item item) {
-        List<Item> suggessions = new ArrayList<>();
-
-        if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findPack((Amp) item);
-            suggessions.add(item);
-        } else if (item instanceof Ampp) {
-            Amp amp = ((Ampp) item).getAmp();
-            suggessions = getPharmacyRecieveBean().findPack(amp);
-            suggessions.add(amp);
-        }
-
-        //System.err.println("Sugg" + suggessions);
-
-        return suggessions;
-    }
+    
 
     public void generateBillComponent() {
 
@@ -138,7 +117,7 @@ public class TransferReceiveController implements Serializable {
             bItem.setTmpQty(i.getQtyInUnit());
             bItem.setSearialNo(getBillItems().size());
 
-            bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
+            bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
 
             PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
             phItem.setBillItem(bItem);
@@ -362,12 +341,12 @@ public class TransferReceiveController implements Serializable {
         this.stockFacade = stockFacade;
     }
 
-    public PharmacyCalculation getPharmacyRecieveBean() {
-        return pharmacyRecieveBean;
+    public PharmacyCalculation getPharmacyCalculation() {
+        return pharmacyCalculation;
     }
 
-    public void setPharmacyRecieveBean(PharmacyCalculation pharmacyRecieveBean) {
-        this.pharmacyRecieveBean = pharmacyRecieveBean;
+    public void setPharmacyCalculation(PharmacyCalculation pharmacyCalculation) {
+        this.pharmacyCalculation = pharmacyCalculation;
     }
 
     public PharmacyController getPharmacyController() {

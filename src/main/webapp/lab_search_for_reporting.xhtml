@@ -14,20 +14,20 @@
                         <h:panelGrid columns="1" >
                             <h:panelGroup >
                                 <p:panelGrid columns="7" >
-                                    <p:commandButton value="List All" actionListener="#{labReportSearchByInstitutionController.listAllPatientInvestigations}" update="tblBills" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="List All" actionListener="#{labReportSearchByInstitutionController.listAllPatientInvestigations}" ></p:commandButton>
                                     
-                                    <h:inputText autocomplete="off" style="width: 600px;" id="txtSearch" value="#{labReportSearchByInstitutionController.txtSearch}" >
-                                        <f:ajax render="tblBills" execute="txtSearch fromDate toDate" event="keyup" />
+                                    <h:inputText autocomplete="off" style="width: 600px;" id="txtSearch" value="#{labReportSearchByInstitutionController.txtSearch}"  >
+                                        <f:ajax render="tblBills" execute="txtSearch fromDate toDate" event="keyup" listener="#{labReportSearchByInstitutionController.createPatientInvestigaationList()}" />
                                     </h:inputText>
 
                                     <h:outputLabel value="From Date"/>
                                     <p:calendar  id="fromDate" value="#{labReportSearchByInstitutionController.fromDate}"  pattern="dd MMMM yyyy hh mm a" >
-                                        <p:ajax event="dateSelect" process="fromDate"  update="tblBills"/>
+                                        <p:ajax event="dateSelect" process="txtSearch fromDate toDate"  update="tblBills" listener="#{labReportSearchByInstitutionController.createPatientInvestigaationList()}"/>
                                     </p:calendar>
 
                                     <h:outputLabel value="To Date"/>
                                     <p:calendar id="toDate" value="#{labReportSearchByInstitutionController.toDate}" navigator="true" pattern="dd MMMM yyyy hh mm a" >
-                                        <p:ajax event="dateSelect" process="toDate"  update="tblBills"/>
+                                        <p:ajax event="dateSelect" process="txtSearch fromDate toDate"  update="tblBills" listener="#{labReportSearchByInstitutionController.createPatientInvestigaationList()}"/>
                                     </p:calendar>
 
 

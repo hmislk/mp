@@ -60,11 +60,11 @@
                             </p:column>   
 
                             <p:column headerText="Billed at"  >
-                                <h:commandLink action="bill_reprint" >
+                                <h:commandLink action="pharmacy_reprint_bill_sale" >
                                     <h:outputLabel value="#{bill.createdAt}" >
                                         <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                     </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                     <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
                                 </h:commandLink>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >
@@ -81,10 +81,11 @@
                                 </h:panelGroup>
                             </p:column>                 
                             <p:column headerText="Billed by" >
-                                <h:commandLink action="bill_reprint" >
+                                <h:commandLink action="pharmacy_reprint_bill_sale" >
                                     <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
+                                    </h:outputLabel>                                    
+                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
+                                    
                                 </h:commandLink>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >

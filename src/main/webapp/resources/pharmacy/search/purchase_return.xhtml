@@ -12,16 +12,17 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGrid columns="4">         
+        <h:panelGrid columns="5">         
             <h:outputLabel value="Return Note No"/> 
             <h:outputLabel value="Purchase No"/>  
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
-
+            <h:outputLabel value="Item Name"/>
             <p:inputText  value="#{searchController.searchKeyword.billNo}" />
             <p:inputText value="#{searchController.searchKeyword.refBillNo}"/>
             <p:inputText value="#{searchController.searchKeyword.toInstitution}"/>
             <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+            <p:inputText value="#{searchController.searchKeyword.itemName}"/>
         </h:panelGrid>
         <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill" >
             <f:facet name="header">

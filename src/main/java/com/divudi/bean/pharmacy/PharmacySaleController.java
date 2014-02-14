@@ -233,6 +233,9 @@ public class PharmacySaleController implements Serializable {
 
         //Cheking Minus Value
         if (tmp.getQty() <= 0) {
+            tmp.setQty(0.0);
+            tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0);
+
             tmp.getTransUserStock().setUpdationQty(0);
             getUserStockFacade().edit(tmp.getTransUserStock());
             UtilityController.addErrorMessage("Can not enter a minus value");

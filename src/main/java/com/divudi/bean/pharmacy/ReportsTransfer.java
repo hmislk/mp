@@ -270,6 +270,40 @@ public class ReportsTransfer implements Serializable {
         }
     }
 
+    public void fillDepartmentTransfersRecieveByBill() {
+        Map m = new HashMap();
+        String sql;
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        m.put("bt", BillType.PharmacyTransferIssue);
+        if (fromDepartment != null && toDepartment != null) {
+            m.put("fdept", fromDepartment);
+            m.put("tdept", toDepartment);
+            sql = "select b from Bill b where b.department=:fdept"
+                    + " and b.toDepartment=:tdept and b.createdAt between :fd "
+                    + "and :td and b.billType=:bt order by b.id";
+        } else if (fromDepartment == null && toDepartment != null) {
+            m.put("tdept", toDepartment);
+            sql = "select b from Bill b where b.toDepartment=:tdept and b.createdAt "
+                    + " between :fd and :td and b.billType=:bt order by b.id";
+        } else if (fromDepartment != null && toDepartment == null) {
+            m.put("fdept", fromDepartment);
+            sql = "select b from Bill b where b.department=:fdept and b.createdAt "
+                    + " between :fd and :td and b.billType=:bt order by b.id";
+        } else {
+            sql = "select b from Bill b where b.createdAt "
+                    + " between :fd and :td and b.billType=:bt order by b.id";
+        }
+        transferBills = getBillFacade().findBySQL(sql, m);
+        totalsValue=0.0;
+        discountsValue=0.0;
+        netTotalValues=0.0;
+        for (Bill b : transferBills) {
+            totalsValue = totalsValue + (b.getTotal());
+            discountsValue = discountsValue + b.getDiscount();
+            netTotalValues=netTotalValues+b.getNetTotal();
+        }
+    }
     /**
      * Getters & Setters
      *

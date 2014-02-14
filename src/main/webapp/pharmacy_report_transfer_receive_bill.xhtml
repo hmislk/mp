@@ -31,18 +31,17 @@
                             <p:calendar value="#{reportsTransfer.fromDate}" pattern="dd MM yyyy" ></p:calendar>
                             <h:outputLabel value="To" ></h:outputLabel>
                             <p:calendar value="#{reportsTransfer.toDate}" pattern="dd MM yyyy" ></p:calendar>
-                            <p:commandButton ajax="false" value="Fill" action="#{reportsTransfer.fillDepartmentTransfersReceive()}" ></p:commandButton>
+                            <p:commandButton ajax="false" value="Fill" action="#{reportsTransfer.fillDepartmentTransfersRecieveByBill()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" action="#" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
                         </h:panelGrid>
 
                         <h:panelGroup id="gpBillPreview">
-                            <p:dataTable styleClass="noBorder normalFont"  value="#{reportsTransfer.transferItems}" var="i"  >
-
+                            <p:dataTable id="tbl" styleClass="noBorder normalFont" value="#{reportsTransfer.transferBills}" var="i"  >
                                 <f:facet name="header">
-                                    <h:outputLabel value="Transfer List  From "/>
-                                    <h:outputLabel value="#{reportsTransfer.fromDepartment.name}"/> 
+                                    <h:outputLabel value="Transfer List To "/>
+                                    <h:outputLabel value="#{reportsTransfer.toDepartment.name}"/> 
                                     <h:panelGrid columns="4">
                                         <h:outputLabel value="From  "/>
                                         <h:outputLabel value="#{reportsTransfer.fromDate}">
@@ -55,45 +54,49 @@
                                     </h:panelGrid>
                                 </f:facet>
 
-                                <p:column headerText="Bill No"  >
-                                    <h:outputLabel value="#{i.bill.deptId}" ></h:outputLabel>
+                                <p:column headerText="Bill No">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Bill No"/>
+                                    </f:facet>
+                                    <h:outputLabel value="#{i.deptId}" ></h:outputLabel>
                                 </p:column>
+
                                 <p:column headerText="Date">
-                                    <h:outputLabel value="#{i.bill.createdAt}"  >
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Date"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.createdAt}"  >
                                         <f:convertDateTime pattern="yy/MM/dd" ></f:convertDateTime>
                                     </h:outputLabel>
                                 </p:column>
-                                <p:column headerText="Item Descreption">
-                                    <h:outputLabel value="#{i.item.name}"  >                                      
-                                    </h:outputLabel>
-                                </p:column>
-                                <p:column headerText="Qty" style="text-align: right;">
-                                    <h:outputLabel value="#{i.pharmaceuticalBillItem.qty}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                </p:column>
+
+                                
+
                                 <p:column headerText="Cost Rate" style="text-align: right;">
-                                    <h:outputLabel value="#{i.pharmaceuticalBillItem.purchaseRate}"  >
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Net Total"/>
+                                    </f:facet>
+                                    <h:outputLabel value="#{i.netTotal}"  >
                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                     </h:outputLabel>                                  
                                 </p:column>
 
-                                <p:column headerText="Cost Value" style="text-align: right;">
-                                    <h:outputLabel value="#{i.pharmaceuticalBillItem.purchaseRate * i.pharmaceuticalBillItem.qty}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>                                  
-                                </p:column>
-
+                                
                                 <p:columnGroup type="footer">
                                     <p:row>
-                                        <p:column colspan="5"/>
+                                        <p:column colspan="2">
+                                            <f:facet name="footer">
+                                                <h:outputLabel value="Totals" ></h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
                                         <p:column style="text-align: right;" >
                                             <f:facet name="footer">
-                                                <h:outputLabel value="#{reportsTransfer.purchaseValue}" >
+                                                <h:outputLabel value="#{reportsTransfer.totalsValue}" >
                                                     <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                 </h:outputLabel>
                                             </f:facet>
-                                        </p:column>                                        
+                                        </p:column>
+                                        
                                     </p:row>
                                 </p:columnGroup>
 

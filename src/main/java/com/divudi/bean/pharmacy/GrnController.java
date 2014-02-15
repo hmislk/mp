@@ -346,7 +346,7 @@ public class GrnController implements Serializable {
     public void onEdit(RowEditEvent event) {
         BillItem tmp = (BillItem) event.getObject();
         onEdit(tmp);
-        onEditPurchaseRate(tmp);
+    //    onEditPurchaseRate(tmp);
         setBatch(tmp);
     }
 

@@ -12,14 +12,15 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-         <h:panelGrid columns="3">         
+        <h:panelGrid columns="4">         
             <h:outputLabel value="Req No"/>
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
-
+            <h:outputLabel value="Item Name"/>
             <p:inputText  value="#{searchController.searchKeyword.billNo}" />
             <p:inputText value="#{searchController.searchKeyword.toInstitution}"/>
             <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+            <p:inputText value="#{searchController.searchKeyword.itemName}"/>
         </h:panelGrid>
         <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill" >
             <f:facet name="header">
@@ -32,7 +33,7 @@
                     <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
             </p:column> 
-             <p:column headerText="Requested From"  >
+            <p:column headerText="Requested From"  >
                 <h:commandLink action="pharmacy_reprint_order_request" value="#{bill.department.name}">
                     <h:outputLabel  ></h:outputLabel>
                     <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
@@ -84,7 +85,7 @@
                     </h:outputLabel>
                 </h:panelGroup>
             </p:column>                       
-            
+
             <p:column headerText="Paymentmethod"   >
                 <h:commandLink action="pharmacy_reprint_order_request" >
                     <h:outputLabel value="#{bill.paymentMethod}" ></h:outputLabel>
@@ -99,7 +100,7 @@
                     <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
             </p:column>
-            
+
             <p:column headerText="Comments" >
                 <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
                 </h:outputLabel>

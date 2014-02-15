@@ -12,17 +12,19 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGrid columns="5">         
+        <h:panelGrid columns="6">         
             <h:outputLabel value="GRN No"/> 
             <h:outputLabel value="Po No"/> 
             <h:outputLabel value="Invoice No"/> 
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
+             <h:outputLabel value="Item Name"/>
             <p:inputText  value="#{searchController.searchKeyword.billNo}" />
             <p:inputText value="#{searchController.searchKeyword.refBillNo}"/>
             <p:inputText value="#{searchController.searchKeyword.number}"/>
             <p:inputText value="#{searchController.searchKeyword.fromInstitution}"/>
             <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+            <p:inputText value="#{searchController.searchKeyword.itemName}"/>
         </h:panelGrid>
 
         <p:spacer height="30"/>

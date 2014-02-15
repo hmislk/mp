@@ -53,18 +53,25 @@
 
                 <p:dataTable var="ph" value="#{goodsReturnController.billItems}"
                              scrollable="true" scrollHeight="250"
-                             id="itemList" >  
+                             id="itemList" editable="true">  
+
+                    <p:ajax event="rowEdit" listener="#{goodsReturnController.onEdit(ph)}" 
+                            update=":#{p:component('total')} :#{p:component('tab')}" />  
+                    <p:ajax event="rowEditCancel" listener="#{goodsReturnController.onEdit(ph)}" 
+                            update=":#{p:component('total')} :#{p:component('tab')}" /> 
+
 
                     <f:facet name="header">  
                         Returning Item 
-                    </f:facet>  
+                    </f:facet>
 
-                    <p:column headerText="Item Name"  style="width:50px;" >                                                
-                        <p:selectOneMenu id="item"  value="#{ph.item}">
-                            <f:selectItems value="#{ph.tmpSuggession}" var="i" itemLabel="#{i.name}" itemValue="#{i}"/>
-                            <f:ajax event="change" render="qty purchase" 
-                                    execute="@this"></f:ajax>
-                        </p:selectOneMenu>                     
+                    <p:column style="width:10px!important;">  
+                        <p:rowEditor />  
+                    </p:column>
+
+                    <p:column headerText="Item Name" style="width: 250px!important;"  > 
+                        <h:outputText id="item" value="#{ph.item.name}" >                                   
+                        </h:outputText>
                     </p:column>  
 
                     <p:column  headerText="Ballance Qty in Unit" style="width:25px!important;"> 
@@ -90,10 +97,17 @@
                     </p:column>
 
 
-                    <p:column headerText="Returning Qty in Unit" style="width:25px!important;">                     
-                        <p:inputText value="#{ph.tmpQty}" >
-                            <f:ajax event="blur" render="@this :#{p:component('total')} :#{p:component('tab')}"  listener="#{goodsReturnController.onEdit(ph)}" ></f:ajax>
-                        </p:inputText>
+                    <p:column headerText="Returning Qty in Unit" style="width:25px!important;">     
+                        <p:cellEditor>  
+                            <f:facet name="output">  
+                                <h:outputLabel value="#{ph.tmpQty}" />
+                               
+                            </f:facet>
+                            <f:facet name="input">  
+                                <p:inputText value="#{ph.tmpQty}" >
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
                     </p:column>  
 
                 </p:dataTable>  

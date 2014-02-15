@@ -92,6 +92,7 @@ public class Bill implements Serializable {
     double staffFee;
     double billerFee;
     double grantTotal = 0.0;
+    
     //Institution
     @ManyToOne
     Institution paymentSchemeInstitution;

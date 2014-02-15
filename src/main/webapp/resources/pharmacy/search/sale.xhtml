@@ -12,12 +12,13 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGrid columns="2">         
+        <h:panelGrid columns="3">         
             <h:outputLabel value="Bill No"/>
             <h:outputLabel value="Net Total"/>
-
+            <h:outputLabel value="Item Name"/>
             <p:inputText  value="#{searchController.searchKeyword.billNo}" />
             <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+            <p:inputText value="#{searchController.searchKeyword.itemName}"/>
         </h:panelGrid>
         <p:dataTable rowIndexVar="i"  value="#{searchController.bills}" var="bill"  >
             <f:facet name="header">

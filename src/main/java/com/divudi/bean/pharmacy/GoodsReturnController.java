@@ -67,7 +67,7 @@ public class GoodsReturnController implements Serializable {
 
     public void setBill(Bill bill) {
         makeNull();
-        System.err.println("Bill "+bill);
+        System.err.println("Bill " + bill);
         this.bill = bill;
         generateBillComponent();
     }
@@ -171,7 +171,7 @@ public class GoodsReturnController implements Serializable {
     }
 
     private boolean checkStock(PharmaceuticalBillItem pharmaceuticalBillItem) {
-        double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getBill().getDepartment());
+        double stockQty = getPharmacyBean().getStockQty(pharmaceuticalBillItem.getItemBatch(), getSessionController().getDepartment());
 
         if (pharmaceuticalBillItem.getQtyInUnit() > stockQty) {
             return true;
@@ -182,6 +182,10 @@ public class GoodsReturnController implements Serializable {
 
     private boolean checkGrnItems() {
         for (BillItem bi : getBillItems()) {
+            if (bi.getTmpQty() == 0.0) {
+                continue;
+            }
+
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
             }
@@ -193,10 +197,10 @@ public class GoodsReturnController implements Serializable {
     public void settle() {
         System.err.println("1");
         if (checkGrnItems()) {
-            UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't cancel ");
+            UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't Return ");
             return;
         }
-        
+
         System.err.println("2");
         saveReturnBill();
         System.err.println("3");
@@ -247,25 +251,24 @@ public class GoodsReturnController implements Serializable {
             //System.err.println("Billed " + rBilled);
             //System.err.println("Cancelled " + rCacnelled);
             //System.err.println("Net " + netQty);
-
             retPh.setQtyInUnit(grnPh.getQtyInUnit() - netQty);
 
             List<Item> suggessions = new ArrayList<>();
             Item item = bi.getItem();
 
-            if (item instanceof Amp) {
-                suggessions.add(item);
-                suggessions.add(getPharmacyBean().getAmpp((Amp) item));
-            } else if (item instanceof Ampp) {
-                suggessions.add(((Ampp) item).getAmp());
-                suggessions.add(item);
-            }
-
-            
-            bi.setTmpSuggession(suggessions);
+//            if (item instanceof Amp) {
+//                suggessions.add(item);
+//                suggessions.add(getPharmacyBean().getAmpp((Amp) item));
+//            } else if (item instanceof Ampp) {
+//                suggessions.add(((Ampp) item).getAmp());
+//                suggessions.add(item);
+//            }
+//
+//            
+//            bi.setTmpSuggession(suggessions);
             bi.setPharmaceuticalBillItem(retPh);
-            
-            System.err.println("Add "+bi);
+
+            System.err.println("Add " + bi);
 
             getBillItems().add(bi);
 

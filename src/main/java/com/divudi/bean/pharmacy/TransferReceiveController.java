@@ -86,8 +86,6 @@ public class TransferReceiveController implements Serializable {
         billItems = null;
     }
 
-   
-
     public TransferReceiveController() {
     }
 
@@ -105,8 +103,6 @@ public class TransferReceiveController implements Serializable {
         generateBillComponent();
     }
 
-    
-
     public void generateBillComponent() {
 
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getIssuedBill())) {
@@ -114,7 +110,7 @@ public class TransferReceiveController implements Serializable {
             BillItem bItem = new BillItem();
             bItem.setReferanceBillItem(i.getBillItem());
             bItem.copy(i.getBillItem());
-            bItem.setTmpQty(i.getQtyInUnit());
+            bItem.setTmpQty(0 - i.getQtyInUnit());
             bItem.setSearialNo(getBillItems().size());
 
             bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
@@ -143,7 +139,7 @@ public class TransferReceiveController implements Serializable {
 
         for (BillItem i : getBillItems()) {
 
-            i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
+//            i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
 
             if (i.getPharmaceuticalBillItem().getQtyInUnit() == 0.0 || i.getItem() instanceof Vmpp || i.getItem() instanceof Vmp) {
                 continue;

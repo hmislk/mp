@@ -157,8 +157,8 @@ public class PurchaseOrderController implements Serializable {
         calTotal();
     }
 
-    public void onFocus(PharmaceuticalBillItem ph) {
-        getPharmacyController().setPharmacyItem(ph.getBillItem().getItem());
+    public void onFocus(BillItem ph) {
+        getPharmacyController().setPharmacyItem(ph.getItem());
     }
 
     public BillFacade getBillFacade() {

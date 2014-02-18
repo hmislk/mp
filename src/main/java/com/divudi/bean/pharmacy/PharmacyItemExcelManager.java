@@ -19,6 +19,7 @@ import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Atm;
 import com.divudi.entity.pharmacy.ItemsDistributors;
 import com.divudi.entity.pharmacy.MeasurementUnit;
+import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.Vmp;
@@ -29,8 +30,10 @@ import com.divudi.facade.AmpFacade;
 import com.divudi.facade.AmppFacade;
 import com.divudi.facade.AtmFacade;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.ItemsDistributorsFacade;
 import com.divudi.facade.MeasurementUnitFacade;
+import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.PharmaceuticalItemFacade;
 import com.divudi.facade.VmpFacade;
@@ -235,6 +238,157 @@ public class PharmacyItemExcelManager implements Serializable {
                 b.setNetTotal(0 - b.getNetTotal());
                 b.setTotal(0 - b.getTotal());
                 getBillFacade().edit(b);
+            }
+        }
+
+    }
+    @EJB
+    private BillItemFacade billItemFacade;
+
+    @EJB
+    private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
+
+    public void resetQtyValue() {
+        String sql = "Select p from PharmaceuticalBillItem p where p.billItem.retired=false ";
+
+        List<PharmaceuticalBillItem> lis = getPharmaceuticalBillItemFacade().findBySQL(sql);
+
+        for (PharmaceuticalBillItem ph : lis) {
+            if (ph.getBillItem() == null || ph.getBillItem().getBill() == null || 
+                    ph.getBillItem().getBill().getBillType() == null) {
+                continue;
+            }
+            switch (ph.getBillItem().getBill().getBillType()) {
+                case PharmacyGrnBill:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 1 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 2 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+                case PharmacyGrnReturn:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 3 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 4 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+                case PharmacyTransferIssue:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 5 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 6 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+                case PharmacyTransferReceive:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 7 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 8 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+                case PharmacyPurchaseBill:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 9 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 10 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+                case PharmacyPre:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 11 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 12 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+                case PharmacySale:
+                    if (ph.getBillItem().getBill() instanceof BilledBill) {
+                        if (ph.getQtyInUnit() > 0) {
+                            System.err.println("Error 13 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    if (ph.getBillItem().getBill() instanceof CancelledBill) {
+                        if (ph.getQtyInUnit() < 0) {
+                            System.err.println("Error 14 " + ph.getQtyInUnit());
+                            ph.setQtyInUnit(0-ph.getQtyInUnit());
+                        }
+                    }
+                    break;
+
+            }
+            
+            getPharmaceuticalBillItemFacade().edit(ph);
+
+        }
+
+    }
+
+    public void resetTransferIssueValue() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b where (type(b)=:class) "
+                + " and b.billType = :billType ";
+
+        temMap.put("class", BilledBill.class);
+        temMap.put("billType", BillType.PharmacyTransferIssue);
+        //temMap.put("dep", getSessionController().getDepartment());
+        List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
+
+        for (Bill b : bills) {
+            temMap.clear();
+            double totalBySql = 0;
+            sql = "select sum(bi.pharmaceuticalBillItem.itemBatch.purcahseRate * bi.pharmaceuticalBillItem.qty) "
+                    + " from BillItem bi where bi.retired=false and bi.bill=:b ";
+            temMap.put("b", b);
+            totalBySql = getBillItemFacade().findDoubleByJpql(sql, temMap);
+
+            if (b.getNetTotal() != totalBySql) {
+                System.err.println("Net Total " + b.getNetTotal());
+                System.err.println("Sql Total " + totalBySql);
             }
         }
 
@@ -903,6 +1057,22 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public BillItemFacade getBillItemFacade() {
+        return billItemFacade;
+    }
+
+    public void setBillItemFacade(BillItemFacade billItemFacade) {
+        this.billItemFacade = billItemFacade;
+    }
+
+    public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
+        return pharmaceuticalBillItemFacade;
+    }
+
+    public void setPharmaceuticalBillItemFacade(PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade) {
+        this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
     }
 
 }

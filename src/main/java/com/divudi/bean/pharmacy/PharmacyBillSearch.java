@@ -42,13 +42,14 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.LazyDataModel;
+
+
 
 /**
  *
@@ -120,6 +121,21 @@ public class PharmacyBillSearch implements Serializable {
     public void editBillItem(BillItem billItem) {
         getBillItemFacede().edit(billItem);
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
+        
+        calTotalAndUpdate(billItem.getBill());
+    }
+    
+    private void calTotalAndUpdate(Bill bill){
+        double tmp=0;
+        for(BillItem b:bill.getBillItems()){
+            tmp+=(b.getPharmaceuticalBillItem().getQtyInUnit()
+                    +b.getPharmaceuticalBillItem().getFreeQtyInUnit())
+                    *b.getPharmaceuticalBillItem().getPurchaseRateInUnit();
+        }
+        
+        bill.setTotal(tmp);
+        bill.setNetTotal(tmp);
+        getBillFacade().edit(bill);
     }
 
    

@@ -98,6 +98,7 @@ public enum Privileges {
     PharmacyGoodReceive,
     PharmacyGoodReceiveCancel,
     PharmacyGoodReceiveReturn,
+    PharmacyGoodReceiveEdit,
     
     PharmacyPurchase,
     PharmacyPurchaseReprint,

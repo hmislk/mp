@@ -12,22 +12,23 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGrid columns="4">         
+        <h:panelGrid columns="5">         
             <h:outputLabel value="Po No"/> 
             <h:outputLabel value="Requested No"/>  
             <h:outputLabel value="Dealor Name"/>
             <h:outputLabel value="Net Total"/>
-
+            <h:outputLabel value="Item Name"/>
             <p:inputText  value="#{searchController.searchKeyword.billNo}" />
             <p:inputText value="#{searchController.searchKeyword.refBillNo}"/>
-            <psearchControllerText value="#{searchController.searchKeyword.toInstitution}"/>
-      <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+            <p:inputText value="#{searchController.searchKeyword.toInstitution}"/>
+            <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+            <p:inputText value="#{searchController.searchKeyword.itemName}"/>
         </h:panelGrid>
         <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill"  >
             <f:facet name="header">
                 <h:outputLabel value="PURCHASE ORDER APPROVED"/>
             </f:facet>
-            
+
             <p:column headerText="PO NO"  >
                 <h:commandLink action="pharmacy_reprint_po" value="#{bill.deptId}">
                     <h:outputLabel  ></h:outputLabel>
@@ -58,7 +59,7 @@
                     <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
             </p:column>
-             <p:column headerText="Billed at"  >
+            <p:column headerText="Billed at"  >
                 <h:commandLink action="pharmacy_reprint_grn_return" >
                     <h:outputLabel value="#{bill.createdAt}" >
                         <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
@@ -112,7 +113,7 @@
                     <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
                 </h:commandLink>
             </p:column>
-         
+
             <p:column headerText="Comments" >
                 <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
                 </h:outputLabel>

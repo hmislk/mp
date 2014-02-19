@@ -19,7 +19,7 @@
 
                             <p:panel header="Medicines" >
                                 <h:panelGrid columns="1" >
-                                    
+
                                     <p:commandButton ajax="false" value="Categories" action="pharmacy_pharmaceutical_item_category" ></p:commandButton>
                                     <p:commandButton ajax="false" value="ATC Classification" action="pharmacy_pharmaceutical_item_type" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Generic Names" action="pharmacy_vtm" ></p:commandButton>
@@ -65,15 +65,22 @@
                             <p:panel header="Error Checking">
                                 <h:panelGrid columns="1">
                                     <p:commandButton ajax="false" value="Error Detection" action="pharmacy_error_checking" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Error Detection By Date" action="pharmacy_error_checking_date" ></p:commandButton>
-                                    
+                                    <p:commandButton ajax="false" value="Error Detection By Date" action="pharmacy_error_checking_date" ></p:commandButton>                                   
+                                    <p:commandButton ajax="false" value="Error Detection Repport" action="pharmacy_report_department_error" ></p:commandButton>                                   
 
                                     <p:commandButton ajax="false" value="Remove Duplicates" action="#{pharmacyItemExcelManager.removeDuplicateAmpps()}" />
-                                    <p:commandButton ajax="false" value="Reset GRN Value" action="#{pharmacyItemExcelManager.resetGrnValue()}" />
                                     <p:commandButton ajax="false" value="Stock Variant Report" 
                                                      action="pharmacy_variant_category_stock_by_item" />
                                     <p:commandButton ajax="false" value="Stock Variant Adjustment" 
                                                      action="pharmacy_variant_ajustment_pre_list" />
+
+                                    <h:panelGroup rendered="false">
+                                        <p:commandButton ajax="false" value="Reset GRN Value" action="#{pharmacyItemExcelManager.resetGrnValue()}" />
+                                        <p:commandButton ajax="false" value="1) Reset Qty Value" action="#{pharmacyItemExcelManager.resetQtyValue()}" />
+                                        <p:commandButton ajax="false" value="2) Reset Transfer Issue Value" action="#{pharmacyItemExcelManager.resetTransferIssueValue()}" />
+
+                                    </h:panelGroup>
+
                                 </h:panelGrid>
 
                             </p:panel>

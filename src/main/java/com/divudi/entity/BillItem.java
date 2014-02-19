@@ -7,6 +7,7 @@ package com.divudi.entity;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
+import com.divudi.entity.pharmacy.UserStock;
 import com.divudi.entity.pharmacy.Vmpp;
 import java.io.Serializable;
 import java.util.Date;
@@ -97,6 +98,8 @@ public class BillItem implements Serializable {
     private List<Item> tmpSuggession;
     @Transient
     private double tmpQty;
+    @Transient 
+    private UserStock transUserStock;
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -484,8 +487,16 @@ public class BillItem implements Serializable {
         }
 
         if (getPharmaceuticalBillItem() != null) {
-            getPharmaceuticalBillItem().setQty(qty);
+            getPharmaceuticalBillItem().setQty(this.tmpQty);
         }
+    }
+
+    public UserStock getTransUserStock() {
+        return transUserStock;
+    }
+
+    public void setTransUserStock(UserStock transUserStock) {
+        this.transUserStock = transUserStock;
     }
 
 }

@@ -14,7 +14,7 @@
                     <p:panel id="gpBillPreview">
                         <f:facet name="header" >
                             <h:outputLabel value="PHARMACY BILL SEARCH "/>                                 
-                            <h:panelGrid columns="6" >
+                            <h:panelGrid columns="4" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
@@ -24,12 +24,13 @@
                                 <p:selectOneMenu value="#{searchController.billType}">
                                     <f:selectItem itemLabel="Select Bill Type"/>
                                     <f:selectItems value="#{enumController.pharmacyBillTypes}" var="i" itemLabel="#{i.label}" itemValue="#{i}" />
-                                    <f:ajax  event="change" execute="@this" render="detail" />
+                                    <f:ajax  event="change" execute="@this" render="detail" listener="#{searchController.makeNull}"/>
                                 </p:selectOneMenu>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createTableByBillType}"/>
-
+                                <p:inputText value="#{searchController.maxResult}" />
+                                <p:commandButton id="btnSearch" ajax="false" value="Search Current" action="#{searchController.createTableByBillType}"/>
+                                <p:commandButton ajax="false" value="Search in All Department" action="#{searchController.createTableByBillTypeAllDepartment}"/>
                             </h:panelGrid>
-
+                            <p:defaultCommand target="btnSearch"/>
                         </f:facet>
                         <h:panelGroup id="detail">
                             <h:panelGroup rendered="#{searchController.billType eq 'PharmacyGrnBill'}" >
@@ -54,6 +55,10 @@
 
                             <h:panelGroup rendered="#{searchController.billType eq 'PharmacyPurchaseBill'}" >
                                 <se:purchase />
+                            </h:panelGroup>
+                            
+                            <h:panelGroup rendered="#{searchController.billType eq 'PurchaseReturn'}" >
+                                <se:purchase_return />
                             </h:panelGroup>
 
                             <h:panelGroup rendered="#{searchController.billType eq 'PharmacySale'}" >

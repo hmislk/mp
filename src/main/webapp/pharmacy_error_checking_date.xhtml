@@ -85,8 +85,7 @@
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferIssue' and pb.bill.createdAt ne null )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferReceive' and pb.bill.createdAt ne null )
                                        )? 'greenText' : ''}"
-
-                                     sortBy="#{pb.id}" >
+ >
 
                             <p:column >
                                 <h:commandButton action="pharmacy_reprint_bill" value="View Bill">                                    

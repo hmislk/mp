@@ -7,7 +7,6 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
@@ -22,7 +21,6 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.Patient;
-import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
@@ -43,10 +41,11 @@ import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.primefaces.event.TabChangeEvent;
+
+
 
 /**
  *
@@ -452,7 +451,7 @@ public class PharmacyPreSettleController implements Serializable {
     }
 
     private void saveSaleBillItems() {
-         for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
+         for (BillItem tbi : getPreBill().getBillItems()) {
             BillItem newBil = new BillItem();
             newBil.copy(tbi);
             newBil.setBill(getSaleBill());
@@ -478,7 +477,7 @@ public class PharmacyPreSettleController implements Serializable {
     }
 
     private void saveSaleReturnBillItems() {
-        for (BillItem tbi : getPreBill().getTransActiveBillItem()) {
+        for (BillItem tbi : getPreBill().getBillItems()) {
 
             BillItem sbi = new BillItem();
 

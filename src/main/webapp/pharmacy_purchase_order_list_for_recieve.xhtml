@@ -96,6 +96,12 @@
                 </p:column>
                 <p:column headerText="GRNS">                   
                     <p:dataTable var="b" value="#{p.listOfBill}">
+                         <p:column  >
+                            <h:commandLink action="pharmacy_reprint_grn"  >                                
+                                <h:outputLabel  value="#{b.id}"/>
+                                <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b}"/>
+                            </h:commandLink>
+                        </p:column>
                         <p:column  >
                             <h:commandLink action="pharmacy_reprint_grn"  >                                
                                 <h:outputLabel  value="#{b.deptId}"/>

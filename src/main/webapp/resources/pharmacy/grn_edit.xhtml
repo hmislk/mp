@@ -45,8 +45,11 @@
 
 
             <div >
-                <h:panelGrid columns="2" class="poDetail" >                    
-                    <h:outputLabel value="G.R.N.No : #{cc.attrs.bill.deptId}"/>
+                <h:panelGrid columns="2" class="poDetail" >  
+                    <h:panelGroup>
+                        <h:outputLabel value="G.R.N.No : "/>
+                        <p:inputText value="#{cc.attrs.bill.deptId}"/>
+                    </h:panelGroup>
                     <h:outputLabel value="P.O.No : #{cc.attrs.bill.referenceBill.deptId}"/>
                     <h:panelGroup>
                         <h:outputLabel value="G.R.N.Date : "/>
@@ -77,7 +80,14 @@
                         <p:inputText value="#{cc.attrs.bill.invoiceNumber}"/>
                     </h:panelGroup>
                     <h:outputLabel value="P.O.Approve By : #{cc.attrs.bill.referenceBill.creater.staff.code}"/>
-                    <h:outputLabel value="Supplier : #{cc.attrs.bill.fromInstitution.name}"/>
+                    <h:panelGroup>
+                        <h:outputLabel value="Supplier :"/>
+
+                        <p:autoComplete converter="deal"
+                                        value="#{cc.attrs.bill.fromInstitution}"
+                                        completeMethod="#{dealerController.completeDealor}"
+                                        var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+                    </h:panelGroup>
                     <h:outputLabel value="Location : #{cc.attrs.bill.referenceBill.creater.department.name}"/>
                 </h:panelGrid>
             </div>
@@ -146,44 +156,44 @@
                     <p:columnGroup type="footer">
                         <p:row>
                             <p:column colspan="7" footerText="Total"/>
-                            <p:column footerText="#{0-cc.attrs.bill.total}">
+                            <p:column >
                                 <f:facet name="footer">
-                                    <p:inputText value="#{cc.attrs.bill.total}">
+                                    <p:outputLabel value="#{cc.attrs.bill.total}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </p:inputText>
+                                    </p:outputLabel>
                                 </f:facet>
                             </p:column>
 
                         </p:row>
-                        <p:row rendered="#{cc.attrs.bill.tax!=0}">
+                        <p:row >
                             <p:column colspan="9" footerText="Tax"/>
                             <p:column footerText="#{cc.attrs.bill.tax}">
                                 <f:facet name="footer">
-                                    <p:inputText value="#{cc.attrs.bill.tax}">
+                                    <p:outputLabel value="#{cc.attrs.bill.tax}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </p:inputText>                                  
+                                    </p:outputLabel>                              
                                 </f:facet>
                             </p:column>
 
                         </p:row>
-                        <p:row rendered="#{cc.attrs.bill.discount!=0}">
+                        <p:row >
                             <p:column colspan="9" footerText="Discount"/>
                             <p:column footerText="#{0-cc.attrs.bill.discount}">
                                 <f:facet name="footer">
-                                    <p:inputText value="#{0-cc.attrs.bill.discount}">
+                                    <p:outputLabel value="#{0-cc.attrs.bill.discount}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </p:inputText>   
+                                    </p:outputLabel>
                                 </f:facet>
                             </p:column>
 
                         </p:row>
-                        <p:row rendered="#{cc.attrs.bill.total!=cc.attrs.bill.netTotal}">
+                        <p:row >
                             <p:column colspan="9" footerText="Net Total"/>
                             <p:column footerText="#{0-cc.attrs.bill.netTotal}">
                                 <f:facet name="footer">                                 
-                                    <p:inputText value="#{cc.attrs.bill.netTotal}">
+                                    <p:outputLabel value="#{cc.attrs.bill.netTotal}">
                                         <f:convertNumber pattern="#,##0.00" />
-                                    </p:inputText>  
+                                    </p:outputLabel>
                                 </f:facet>
                             </p:column>
 

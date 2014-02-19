@@ -12,7 +12,9 @@ import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Staff;
+import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
+import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -21,10 +23,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -82,9 +87,8 @@ public class ReportsStock implements Serializable {
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
     }
-    
-    
-     public void fillDepartmentStocksMinus() {
+
+    public void fillDepartmentStocksMinus() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
             return;
@@ -102,7 +106,95 @@ public class ReportsStock implements Serializable {
         }
     }
 
-    
+    @EJB
+    private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
+
+    public void fillDepartmentStocksError() {
+        if (department == null) {
+            UtilityController.addErrorMessage("Please select a department");
+            return;
+        }
+        Map m = new HashMap();
+        String sql;
+        sql = "select s from Stock s where s.department=:d order by s.itemBatch.item.name";
+        m.put("d", department);
+        stocks = getStockFacade().findBySQL(sql, m);
+        Set<Stock> tmpStockList = new HashSet<>();
+
+        for (Stock st : stocks) {
+            sql = "Select ph from PharmaceuticalBillItem ph where ph.stock=:st "
+                    + " and ph.billItem.createdAt>:date  "
+                    + " and ph.stockHistory is not null and  "
+                    + "  (ph.billItem.bill.billType=:btp1 or ph.billItem.bill.billType=:btp2 or"
+                    + " ph.billItem.bill.billType=:btp3 or ph.billItem.bill.billType=:btp4 or "
+                    + " ph.billItem.bill.billType=:btp5 or ph.billItem.bill.billType=:btp6 or"
+                    + " ph.billItem.bill.billType=:btp7 )"
+                    + " order by ph.stockHistory.id ";
+
+            m.clear();
+            m.put("btp1", BillType.PharmacyPurchaseBill);
+            m.put("btp2", BillType.PharmacyGrnBill);
+            m.put("btp3", BillType.PharmacyGrnReturn);
+            m.put("btp4", BillType.PurchaseReturn);
+            m.put("btp5", BillType.PharmacyPre);
+            m.put("btp6", BillType.PharmacyTransferIssue);
+            m.put("btp7", BillType.PharmacyTransferReceive);
+            m.put("st", st);
+            m.put("date", date);
+
+            List<PharmaceuticalBillItem> phList = getPharmaceuticalBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
+
+            PharmaceuticalBillItem previousPh = null;
+
+            for (PharmaceuticalBillItem ph : phList) {
+                if (previousPh == null) {
+                    previousPh = ph;
+                    continue;
+                }
+                double preHistoryQty = 0;
+                double curHistory = 0;
+
+                if (previousPh.getStockHistory() != null) {
+                    preHistoryQty = previousPh.getStockHistory().getStockQty();
+                }
+
+                if (ph.getStockHistory() != null) {
+                    curHistory = ph.getStockHistory().getStockQty();
+                }
+
+                double prvQty = preHistoryQty + previousPh.getQtyInUnit() + previousPh.getFreeQtyInUnit();
+
+                if (prvQty != 0 && preHistoryQty != 0
+//                        && ph.getBillItem().getBill().getBillType() != BillType.PharmacyPre
+//                        && ph.getBillItem().isRetired() != true
+                        && prvQty != curHistory) {
+                    System.err.println("Itm " + ph.getBillItem().getItem().getName());
+                    System.err.println("Prv History Qty " + preHistoryQty);
+                    System.err.println("Prv Qty " + previousPh.getQtyInUnit());
+                    System.err.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
+                    System.err.println("History " + curHistory);
+                    System.err.println("######");
+                    tmpStockList.add(st);
+                } else {
+                    //    System.err.println("False");
+                }
+
+                previousPh = ph;
+            }
+
+        }
+
+        List<Stock> stk = new ArrayList<>();
+        for (Stock st : tmpStockList) {
+            stk.add(st);
+        }
+
+        stocks = stk;
+
+    }
+
+    private Date date;
+
     public void fillDepartmentExpiaryStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
@@ -123,8 +215,7 @@ public class ReportsStock implements Serializable {
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
     }
-    
-    
+
     public void fillDepartmentNonmovingStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
@@ -147,8 +238,7 @@ public class ReportsStock implements Serializable {
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
     }
-    
-    
+
     public void fillStaffStocks() {
         if (staff == null) {
             UtilityController.addErrorMessage("Please select a staff member");
@@ -365,8 +455,7 @@ public class ReportsStock implements Serializable {
         toDate = c.getTime();
         fillDepartmentExpiaryStocks();;
     }
-    
-    
+
     public void fillSixMonthsExpiary() {
         fromDate = Calendar.getInstance().getTime();
         Calendar c = Calendar.getInstance();
@@ -374,8 +463,7 @@ public class ReportsStock implements Serializable {
         toDate = c.getTime();
         fillDepartmentExpiaryStocks();;
     }
-    
-    
+
     public void fillOneYearExpiary() {
         fromDate = Calendar.getInstance().getTime();
         Calendar c = Calendar.getInstance();
@@ -384,26 +472,22 @@ public class ReportsStock implements Serializable {
         fillDepartmentExpiaryStocks();;
     }
 
-    
-    
-        public void fillThreeMonthsNonmoving() {
+    public void fillThreeMonthsNonmoving() {
         toDateE = Calendar.getInstance().getTime();
         Calendar c = Calendar.getInstance();
         c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 3);
         fromDateE = c.getTime();
         fillDepartmentNonmovingStocks();
     }
-    
-    
+
     public void fillSixMonthsNonmoving() {
         toDateE = Calendar.getInstance().getTime();
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) -6);
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 6);
         fromDateE = c.getTime();
         fillDepartmentNonmovingStocks();
     }
-    
-    
+
     public void fillOneYearNonmoving() {
         toDateE = Calendar.getInstance().getTime();
         Calendar c = Calendar.getInstance();
@@ -412,8 +496,6 @@ public class ReportsStock implements Serializable {
         fillDepartmentNonmovingStocks();
     }
 
-
-    
     public void setToDate(Date toDate) {
         this.toDate = toDate;
     }
@@ -442,8 +524,20 @@ public class ReportsStock implements Serializable {
         this.toDateE = toDateE;
     }
 
-    
-    
-    
-    
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
+        return pharmaceuticalBillItemFacade;
+    }
+
+    public void setPharmaceuticalBillItemFacade(PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade) {
+        this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
+    }
+
 }

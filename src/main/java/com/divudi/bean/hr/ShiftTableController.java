@@ -80,7 +80,7 @@ public class ShiftTableController implements Serializable {
     @Inject
     private SessionController sessionController;
 
-    private void createShiftTable() {
+    public void createShiftTable() {
         shiftTables = new ArrayList<>();
 
         Calendar nc = Calendar.getInstance();
@@ -504,11 +504,10 @@ public class ShiftTableController implements Serializable {
     public ShiftTableController() {
         //   createDynamicColumns();
     }
-
+    
+  
     public List<ShiftTable> getShiftTables() {
-        if (shiftTables == null) {
-            createShiftTable();
-        }
+       
         return shiftTables;
     }
 

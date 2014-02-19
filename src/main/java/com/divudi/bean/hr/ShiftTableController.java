@@ -80,7 +80,7 @@ public class ShiftTableController implements Serializable {
     @Inject
     private SessionController sessionController;
 
-    private void createShiftTable() {
+    public void createShiftTable() {
         shiftTables = new ArrayList<>();
 
         Calendar nc = Calendar.getInstance();
@@ -230,10 +230,10 @@ public class ShiftTableController implements Serializable {
         cal.setTime(ss.getShiftDate());
         cal.add(Calendar.DATE, -1);
         Date beforDate = cal.getTime();
-        String sql = "Select s from StaffShift s where s.shiftDate=:bDate and s.staff=:st";
+        String sql = "Select s from StaffShift s where s.shiftDate=:bDate ";
         HashMap hm = new HashMap();
         hm.put("bDate", beforDate);
-        hm.put("st", ss.getStaff());
+//        hm.put("st", ss.getStaff());
 
         List<StaffShift> tmp = getStaffShiftFacade().findBySQL(sql, hm, TemporalType.DATE);
         double max = 0;
@@ -242,7 +242,7 @@ public class ShiftTableController implements Serializable {
                 max = sst.getDayShift().getShift().getShiftOrder();
             }
         }
-        //System.err.println("max " + max);
+        System.err.println("max " + max);
         return max;
 
     }
@@ -504,11 +504,10 @@ public class ShiftTableController implements Serializable {
     public ShiftTableController() {
         //   createDynamicColumns();
     }
-
+    
+  
     public List<ShiftTable> getShiftTables() {
-        if (shiftTables == null) {
-            createShiftTable();
-        }
+       
         return shiftTables;
     }
 

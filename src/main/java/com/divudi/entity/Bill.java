@@ -92,6 +92,7 @@ public class Bill implements Serializable {
     double staffFee;
     double billerFee;
     double grantTotal = 0.0;
+    
     //Institution
     @ManyToOne
     Institution paymentSchemeInstitution;
@@ -952,22 +953,22 @@ public class Bill implements Serializable {
         this.backwardReferenceBill = backwardReferenceBill;
     }
 
-    public List<BillItem> getTransActiveBillItem() {
-        if (billItems != null) {
-            transActiveBillItem = new ArrayList<>();
-            for (BillItem b : billItems) {
-                if (!b.isRetired()) {
-                    transActiveBillItem.add(b);
-                }
-            }
-        } else {
-            transActiveBillItem = new ArrayList<>();
-        }
-        return transActiveBillItem;
-    }
-
-    public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
-        this.transActiveBillItem = transActiveBillItem;
-    }
+//    public List<BillItem> getTransActiveBillItem() {
+//        if (billItems != null) {
+//            transActiveBillItem = new ArrayList<>();
+//            for (BillItem b : billItems) {
+//                if (!b.isRetired()) {
+//                    transActiveBillItem.add(b);
+//                }
+//            }
+//        } else {
+//            transActiveBillItem = new ArrayList<>();
+//        }
+//        return transActiveBillItem;
+//    }
+//
+//    public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
+//        this.transActiveBillItem = transActiveBillItem;
+//    }
 
 }

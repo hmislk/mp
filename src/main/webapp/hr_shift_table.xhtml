@@ -9,27 +9,27 @@
     <ui:define name="content">
         <h:form id="form">  
 
-            <h:panelGrid columns="6">
+            <h:panelGrid columns="7">
                 <p:calendar id="date" value="#{shiftTableController.date}" pattern="dd MMMM yyyy" >                    
-                    <f:ajax execute="@this roster" render="staff count lst" event="dateSelect" listener="#{shiftTableController.makeNull}" />
+                    
                 </p:calendar>
                 <p:outputLabel value="Select Roster"/>
                 <p:selectOneMenu id="roster" value="#{shiftTableController.roster}">
                     <f:selectItem itemLabel="Select Roster"/>
                     <f:selectItems value="#{rosterController.items}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
-                    <f:ajax execute="@this date" render="staff count lst" event="change" listener="#{shiftTableController.makeNull}" />
+                    
                 </p:selectOneMenu>
 
                 <p:dataGrid id="staff" columns="3" value="#{shiftTableController.roster.staffList}"   var="s">
                     <h:outputLabel value="#{s.person.nameWithTitle}(#{s.orderNo})"/>
                 </p:dataGrid>
-
+                
+                <p:commandButton ajax="false" value="Fill" actionListener="#{shiftTableController.makeNull}" action="#{shiftTableController.createShiftTable()}" />
                 <p:commandButton ajax="false" value="Clear" action="#{shiftTableController.clear}" />
                 <p:commandButton ajax="false" value="All Staff" action="#{shiftTableController.flagTrue}"/>
+              
             </h:panelGrid>
-
-
-
+                        
             <p:dataGrid  id="lst" columns="1" var="data" value="#{shiftTableController.shiftTables}" >
                 <p:dataTable value="#{data.staffShift}" var="sts" editable="true" >
 

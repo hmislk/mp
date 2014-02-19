@@ -39,11 +39,11 @@
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
 
                                             <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
-                                                              value="#{pharmacySaleController.stock}" 
-                                                              converter="stockCon" 
-                                                              completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
-                                                              var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
-                                                              style="width: 50px!important;">
+                                                            value="#{pharmacySaleController.stock}" 
+                                                            converter="stockCon" 
+                                                            completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
+                                                            var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
+                                                            style="width: 50px!important;">
                                                 <p:column headerText="Item">
                                                     <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
                                                 </p:column>
@@ -118,21 +118,35 @@
                                         <p:tab title="Bill Items" >
                                             <h:panelGrid columns="1">
                                                 <p:panel header="Bill Items" id="pBis">
-                                                    <p:dataTable id="tblBillItem" 
-                                                                 value="#{pharmacySaleController.preBill.transActiveBillItem}" 
-                                                                 var="bi" rowIndexVar="s" editable="true" editMode="cell" sortBy="#{bi.searialNo}" >
+
+                                                    <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.billItems}"
+                                                                 var="bi" rowIndexVar="s" editable="true" sortBy="#{bi.searialNo}" >
+
+                                                        <p:ajax event="rowEdit" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" />  
+                                                        <p:ajax event="rowEditCancel" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" /> 
+
 
                                                         <p:column headerText="Item">
                                                             <h:outputLabel value="#{bi.pharmaceuticalBillItem.itemBatch.item.name}" ></h:outputLabel>
                                                         </p:column>
                                                         <p:column headerText="Quentity">
-
-                                                            <p:inputText  id="ipTblQty" value="#{bi.qty}" style="width:96%" label="Qty" >
-                                                                <f:convertNumber integerOnly="true" />
-                                                                <f:ajax event="change" render="@this gros :#{p:component('pBillDetails')}" execute="@this rate" listener="#{pharmacySaleController.onEdit(bi)}"/>
-                                                            </p:inputText>
-
+                                                            <p:cellEditor>  
+                                                                <f:facet name="output">  
+                                                                    <h:outputText value="#{bi.qty}" >
+                                                                        <f:convertNumber integerOnly="true" />
+                                                                    </h:outputText>
+                                                                </f:facet>  
+                                                                <f:facet name="input">  
+                                                                    <p:inputText id="ipTblQty" value="#{bi.qty}" style="width:96%"/>  
+                                                                </f:facet>  
+                                                            </p:cellEditor> 
                                                         </p:column>
+
+                                                        <p:column style="width:6%">  
+                                                            <p:rowEditor />  
+                                                        </p:column>  
+
+
                                                         <p:column headerText="Rate">
                                                             <h:outputLabel id="rate" value="#{bi.rate}" >
                                                                 <f:convertNumber pattern="#,##0.00" />
@@ -156,6 +170,7 @@
                                                         </p:column>
 
                                                     </p:dataTable>
+
                                                 </p:panel>
                                             </h:panelGrid>
                                         </p:tab>
@@ -286,7 +301,7 @@
                             <p:commandButton accesskey="p" id="btnPrint" value="Print" ajax="false" action="#" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBillWithoutReduceStockForCashier()}" ></p:commandButton>
+                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBillForCashier()}" ></p:commandButton>
 
                         </div>
                         <div >

@@ -157,7 +157,7 @@
                         </td>
                     </tr>
 
-                    <ui:repeat value="#{cc.attrs.bill.transActiveBillItem}" var="bip"   >
+                    <ui:repeat value="#{cc.attrs.bill.billItems}" var="bip"   >
 
                         <tr>
                             <td colspan="4" style="overflow: visible;">
@@ -165,7 +165,7 @@
                                 </h:outputLabel>
                                 -
                                 &nbsp;
-                                <h:outputLabel value="#{bip.searialNo} - #{bip.item.name}"  styleClass="itemsBlock" style="text-transform: capitalize!important;"  >
+                                <h:outputLabel value="#{bip.searialNo+1} - #{bip.item.name}"  styleClass="itemsBlock" style="text-transform: capitalize!important;"  >
                                 </h:outputLabel>
                                 
                                 
@@ -252,7 +252,7 @@
                             <h:outputLabel   value="Number of Items Count" />
                         </td>
                         <td  class="totalsBlock">
-                            <h:outputLabel   value="#{cc.attrs.bill.transActiveBillItem.size()}">
+                            <h:outputLabel   value="#{cc.attrs.bill.billItems.size()}">
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputLabel>
                         </td>

@@ -98,7 +98,7 @@ public class UserPrivilageController implements Serializable {
         TreeNode node212 = new PrivilageNode("Autherize", node2, Privileges.LabAutherizing);
         TreeNode node213 = new PrivilageNode("De-Autherize", node2, Privileges.LabDeAutherizing);
         TreeNode node214 = new PrivilageNode("Report Print", node2, Privileges.LabPrinting);
-        TreeNode node215 = new PrivilageNode("Lab Report Formats", node2, Privileges.LabReportFormatEditing);
+        TreeNode node215 = new PrivilageNode("Lab Report Formats Editing", node2, Privileges.LabReportFormatEditing);
         TreeNode node216 = new PrivilageNode("Lab Summeries", node2, Privileges.LabSummeriesLevel1);
 
         TreeNode node3 = new PrivilageNode("Pharmacy", tmproot);

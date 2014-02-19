@@ -165,8 +165,8 @@ public class ReportsStock implements Serializable {
                 double prvQty = preHistoryQty + previousPh.getQtyInUnit() + previousPh.getFreeQtyInUnit();
 
                 if (prvQty != 0 && preHistoryQty != 0
-                        && ph.getBillItem().getBill().getBillType() != BillType.PharmacyPre
-                        && ph.getBillItem().isRetired() != true
+//                        && ph.getBillItem().getBill().getBillType() != BillType.PharmacyPre
+//                        && ph.getBillItem().isRetired() != true
                         && prvQty != curHistory) {
                     System.err.println("Itm " + ph.getBillItem().getItem().getName());
                     System.err.println("Prv History Qty " + preHistoryQty);

@@ -131,7 +131,7 @@ public class BillController implements Serializable {
     private Institution creditBank;
     private Date chequeDate;
     private Date slipDate;
-    boolean feeChanged = false;
+//    boolean feeChanged = false;
 
     String strTenderedValue;
     private YearMonthDay yearMonthDay;
@@ -151,17 +151,8 @@ public class BillController implements Serializable {
     public void feeChangeListener(BillFee bf) {
         lstBillItems = null;
         getLstBillItems();
-        feeChanged = true;
         bf.setTmpChangedValue(bf.getFeeValue());
         calTotals();
-    }
-
-    public boolean isFeeChanged() {
-        return feeChanged;
-    }
-
-    public void setFeeChanged(boolean feeChanged) {
-        this.feeChanged = feeChanged;
     }
 
     public String getStrTenderedValue() {
@@ -305,7 +296,7 @@ public class BillController implements Serializable {
                 }
             }
 
-            getBillBean().calculateBillItems(myBill, tmp, feeChanged);
+            getBillBean().calculateBillItems(myBill, tmp);
             bills.add(myBill);
         }
     }
@@ -321,7 +312,7 @@ public class BillController implements Serializable {
             BilledBill temp = new BilledBill();
             Bill b = saveBill(lstBillEntries.get(0).getBillItem().getItem().getDepartment(), temp);
             getBillBean().saveBillItems(b, getLstBillEntries(), getSessionController().getLoggedUser());
-            getBillBean().calculateBillItems(b, getLstBillEntries(), feeChanged);
+            getBillBean().calculateBillItems(b, getLstBillEntries());
             getBills().add(b);
 
         } else {
@@ -655,7 +646,6 @@ public class BillController implements Serializable {
         setCashBalance(0.0);
 
         setStrTenderedValue("");
-        feeChanged = false;
 
         patientTabId = "tabNewPt";
     }
@@ -681,47 +671,38 @@ public class BillController implements Serializable {
             double entryNet = 0.0;
             BillItem bi = be.getBillItem();
             for (BillFee bf : be.getLstBillFees()) {
-                boolean flag = false;
-                System.out.println("bill item fee");
+                //  boolean flag = false;
+//                System.out.println("bill item fee");
                 if (bf.getBillItem().getItem().isDiscountAllowed() == false && bf.getBillItem().getItem().isUserChangable() == false) {
-                    System.out.println("billing for not discount allowed");
+                    System.out.println("billing for not discount allowed ");
                     bf.setFeeValue(isForeigner());
-                } else if (getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit && getCreditCompany() != null) {
-                    System.out.println("billing for company " + getCreditCompany().getName());
-                    if (feeChanged) {
-                        System.out.println("billing for user Changeble");
-                        bf.setFeeValue(isForeigner(), feeChanged, getCreditCompany().getLabBillDiscount());
-                        flag = true;
-                    } else {
-                        if (paymentScheme == null) {
-                            System.out.println("billing for payment method");
-                            bf.setFeeValue(isForeigner());
-                        } else {
-                            bf.setFeeValue(isForeigner(), getCreditCompany().getLabBillDiscount());
-                        }
-                    }
+                } else if (bf.getBillItem().getItem().isDiscountAllowed() == true
+                        && getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit && getCreditCompany() != null) {
+                    System.err.println("billing for company " + getCreditCompany().getName());
+                    bf.setFeeValueForCreditCompany(isForeigner(), getCreditCompany().getLabBillDiscount());
+
                 } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == true) {
-                    if (feeChanged) {
-                        System.out.println("billing for user Changeble");
-                        flag = true;
-                    } else {
-                        if (paymentScheme == null) {
-                            System.out.println("billing for payment method");
-                            bf.setFeeValue(isForeigner());
-                        } else {
-                            bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
-                        }
-                    }
-                } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == false) {
-                    System.out.println("billing for payment method Only");
+                    System.err.println("Discount Allowed & User Changable");
                     if (paymentScheme == null) {
                         bf.setFeeValue(isForeigner());
                     } else {
-                        bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
+                        bf.setFeeValueForDiscountAllowedAndUserChangable(isForeigner(), paymentScheme.getDiscountPercent());
+                    }
+
+                } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == false) {
+                    System.out.println("Discount Allowed & Not User Changable");
+                    if (paymentScheme == null) {
+                        bf.setFeeValue(isForeigner());
+                    } else {
+                        bf.setFeeValueForDiscountAllowedNotUserChangable(isForeigner(), paymentScheme.getDiscountPercent());
                     }
                 } else if (bf.getBillItem().getItem().isUserChangable() == true && bf.getBillItem().getItem().isDiscountAllowed() == false) {
-                    System.out.println("billing for user Changeble Only");
-                    flag = true;
+                    System.err.println("User Changable & not Discount Allowed");
+                    if (paymentScheme == null) {
+                        bf.setFeeValue(isForeigner());
+                    } else {
+                        bf.setFeeValueForUserChangableAndNotDiscountAllowed(isForeigner());
+                    }
                 }
 
                 entryGross += bf.getFeeGrossValue();
@@ -753,7 +734,6 @@ public class BillController implements Serializable {
     public void feeChanged() {
         lstBillItems = null;
         getLstBillItems();
-        feeChanged = true;
         calTotals();
         //  feeChanged = false;
 

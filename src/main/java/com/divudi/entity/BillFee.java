@@ -96,19 +96,16 @@ public class BillFee implements Serializable {
     }
 
     public void setFeeValue(boolean foriegn) {
+        if (tmpChangedValue != 0) {
+            this.feeGrossValue = tmpChangedValue;
+            this.feeValue = tmpChangedValue;
+            return;
+        }
+
         if (foriegn) {
-            feeValue = getFee().getFfee();
-            if (tmpChangedValue != 0) {
-                this.feeGrossValue = tmpChangedValue;
-            } else {
-                this.feeGrossValue = getFee().getFfee();
-            }
+            this.feeGrossValue = getFee().getFfee();
         } else {
-            if (tmpChangedValue != 0) {
-                this.feeGrossValue = tmpChangedValue;
-            } else {
-                this.feeGrossValue = getFee().getFee();
-            }
+            this.feeGrossValue = getFee().getFee();
         }
         //    //System.out.println("Setting fee value as " + feeValue);
     }
@@ -150,50 +147,117 @@ public class BillFee implements Serializable {
         }
     }
 
+    public void setFeeValueForDiscountAllowedAndUserChangable(boolean foriegn, double discountPercent) {
+        if (tmpChangedValue != 0) {
+            this.feeGrossValue = tmpChangedValue;
+            this.feeValue = tmpChangedValue;
+            return;
+        }
+
+        if (discountPercent == 0) {
+            if (foriegn) {
+                this.feeGrossValue = getFee().getFfee();
+                this.feeValue = getFee().getFfee();
+            } else {
+                this.feeGrossValue = getFee().getFee();
+                this.feeValue = getFee().getFee();
+
+            }
+        }
+
+        if (discountPercent != 0) {
+            if (foriegn) {
+                this.feeGrossValue = getFee().getFfee();
+                this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
+            } else {
+                this.feeGrossValue = getFee().getFee();
+                this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
+
+            }
+        }
+
+    }
+
+     public void setFeeValueForDiscountAllowedNotUserChangable(boolean foriegn, double discountPercent) {
+//        if (tmpChangedValue != 0) {
+//            this.feeGrossValue = tmpChangedValue;
+//            this.feeValue = tmpChangedValue;
+//            return;
+//        }
+
+        if (discountPercent == 0) {
+            if (foriegn) {
+                this.feeGrossValue = getFee().getFfee();
+                this.feeValue = getFee().getFfee();
+            } else {
+                this.feeGrossValue = getFee().getFee();
+                this.feeValue = getFee().getFee();
+
+            }
+        }
+
+        if (discountPercent != 0) {
+            if (foriegn) {
+                this.feeGrossValue = getFee().getFfee();
+                this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
+            } else {
+                this.feeGrossValue = getFee().getFee();
+                this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
+
+            }
+        }
+
+    }
+
+    
+    
+    public void setFeeValueForUserChangableAndNotDiscountAllowed(boolean foriegn) {
+        if (tmpChangedValue != 0) {
+            this.feeGrossValue = tmpChangedValue;
+            this.feeValue = tmpChangedValue;
+            return;
+        }
+
+        if (foriegn) {
+            this.feeGrossValue = getFee().getFfee();
+            this.feeValue = getFee().getFfee();
+        } else {
+            this.feeGrossValue = getFee().getFee();
+            this.feeValue = getFee().getFee();
+
+        }
+
+    }
+
     @Transient
     private double tmpChangedValue = 0;
 
-    public void setFeeValue(boolean foriegn, boolean feeChanged, double discountPercent) {
-        if (!feeChanged) {
+    public void setFeeValueForCreditCompany(boolean foriegn, double discountPercent) {
+        if (tmpChangedValue == 0) {
             if (getFee().getFeeType() != FeeType.Staff) {
                 if (foriegn) {
-                    if (tmpChangedValue != 0) {
-                        this.feeGrossValue = tmpChangedValue;
-                    } else {
-                        this.feeGrossValue = getFee().getFfee();
-                    }
+                    this.feeGrossValue = getFee().getFfee();
                     this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
                 } else {
-                    if (tmpChangedValue != 0) {
-                        this.feeGrossValue = tmpChangedValue;
-                    } else {
-                        this.feeGrossValue = getFee().getFee();
-                    }
+                    this.feeGrossValue = getFee().getFee();
                     this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
                 }
             } else {
                 if (foriegn) {
-                    if (tmpChangedValue != 0) {
-                        this.feeGrossValue = tmpChangedValue;
-                    } else {
-                        this.feeGrossValue = getFee().getFfee();
-                    }
+                    this.feeGrossValue = getFee().getFfee();
                     this.feeValue = getFee().getFfee();
                 } else {
-                    if (tmpChangedValue != 0) {
-                        this.feeGrossValue = tmpChangedValue;
-                    } else {
-                        this.feeGrossValue = getFee().getFee();
-                    }
+                    this.feeGrossValue = getFee().getFee();
                     this.feeValue = getFee().getFee();
                 }
             }
         } else {
             if (getFee().getFeeType() != FeeType.Staff) {
-                if (tmpChangedValue != 0) {
-                    this.feeGrossValue = tmpChangedValue;
-                    this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
-                }
+                this.feeGrossValue = tmpChangedValue;
+                this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
+            } else {
+                this.feeGrossValue = tmpChangedValue;
+                this.feeValue = tmpChangedValue;
             }
         }
     }

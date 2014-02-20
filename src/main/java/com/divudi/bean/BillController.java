@@ -681,17 +681,17 @@ public class BillController implements Serializable {
             double entryNet = 0.0;
             BillItem bi = be.getBillItem();
             for (BillFee bf : be.getLstBillFees()) {
-                boolean flag = false;
+                //  boolean flag = false;
                 System.out.println("bill item fee");
                 if (bf.getBillItem().getItem().isDiscountAllowed() == false && bf.getBillItem().getItem().isUserChangable() == false) {
                     System.out.println("billing for not discount allowed 1");
                     bf.setFeeValue(isForeigner());
                 } else if (getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit && getCreditCompany() != null) {
-                    System.out.println("billing for company " + getCreditCompany().getName());
+                    System.err.println("billing for company " + getCreditCompany().getName());
                     if (feeChanged) {
                         System.out.println("billing for user Changeble 2");
                         bf.setFeeValue(isForeigner(), feeChanged, getCreditCompany().getLabBillDiscount());
-                        flag = true;
+                        //   flag = true;
                     } else {
                         if (paymentScheme == null) {
                             System.out.println("billing for payment method 3");
@@ -701,13 +701,11 @@ public class BillController implements Serializable {
                         }
                     }
                 } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == true) {
-
-                    if (paymentScheme == null) {
-                        System.out.println("billing for payment method 4");
+                    System.err.println("Discount Allowed & User Changable");
+                    if (paymentScheme == null) {                        
                         bf.setFeeValue(isForeigner());
-                    } else {
-                        System.out.println("billing for user Changeble Only 5");
-                        bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
+                    } else {                       
+                        bf.setFeeValueForDiscountAllowedAndUserChangable(isForeigner(), paymentScheme.getDiscountPercent());
                     }
 
                 } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == false) {
@@ -719,7 +717,11 @@ public class BillController implements Serializable {
                     }
                 } else if (bf.getBillItem().getItem().isUserChangable() == true && bf.getBillItem().getItem().isDiscountAllowed() == false) {
                     System.out.println("billing for user Changeble Only 7");
-                    flag = true;
+                    if (paymentScheme == null) {
+                        bf.setFeeValue(isForeigner());
+                    } else {
+                        bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
+                    }
                 }
 
                 entryGross += bf.getFeeGrossValue();

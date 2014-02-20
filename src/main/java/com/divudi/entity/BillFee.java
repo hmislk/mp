@@ -96,18 +96,20 @@ public class BillFee implements Serializable {
     }
 
     public void setFeeValue(boolean foriegn) {
-        if (foriegn) {          
-            if (tmpChangedValue != 0) {
-                this.feeGrossValue = tmpChangedValue;
-            } else {
-                this.feeGrossValue = getFee().getFfee();
-            }
+        if (tmpChangedValue != 0) {
+            this.feeGrossValue = tmpChangedValue;
+            this.feeValue = tmpChangedValue;
+            return;
+        }
+
+        if (foriegn) {
+
+            this.feeGrossValue = getFee().getFfee();
+
         } else {
-            if (tmpChangedValue != 0) {
-                this.feeGrossValue = tmpChangedValue;
-            } else {
-                this.feeGrossValue = getFee().getFee();
-            }
+
+            this.feeGrossValue = getFee().getFee();
+
         }
         //    //System.out.println("Setting fee value as " + feeValue);
     }
@@ -147,6 +149,24 @@ public class BillFee implements Serializable {
                 this.feeValue = getFee().getFee();
             }
         }
+    }
+
+    public void setFeeValueForDiscountAllowedAndUserChangable(boolean foriegn, double discountPercent) {
+        if (tmpChangedValue != 0) {
+            this.feeGrossValue = tmpChangedValue;
+            this.feeValue = tmpChangedValue;
+            return;
+        }
+
+        if (foriegn) {
+            this.feeGrossValue = getFee().getFfee();
+            this.feeValue = getFee().getFfee();
+        } else {
+            this.feeGrossValue = getFee().getFee();
+            this.feeValue = getFee().getFee();
+
+        }
+
     }
 
     @Transient
@@ -192,8 +212,8 @@ public class BillFee implements Serializable {
                 if (tmpChangedValue != 0) {
                     this.feeGrossValue = tmpChangedValue;
                     this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
-                }else{
-                
+                } else {
+
                 }
             }
         }

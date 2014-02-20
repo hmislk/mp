@@ -342,7 +342,7 @@
                                                     <f:facet name="header">Fee</f:facet>
                                                     <h:inputText id="txtFeeVal" value="#{bif.feeValue}" disabled="#{!bif.billItem.item.userChangable}" >
                                                         <f:convertNumber pattern="#,##0.00" />
-                                                        <f:ajax event="change" execute="txtFeeVal" render=" :#{p:component('tblRequests')}  :#{p:component('pBillDetails')}" listener="#{billController.feeChanged}" />
+                                                        <f:ajax event="change" execute="txtFeeVal" render=" :#{p:component('tblRequests')}  :#{p:component('pBillDetails')}" listener="#{billController.feeChangeListener()}" />
                                                     </h:inputText>
                                                 </p:column>
 

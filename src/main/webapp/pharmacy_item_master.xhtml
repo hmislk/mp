@@ -15,10 +15,13 @@
                 <p:panel header="Manage Pharmacy Item" styleClass="alignTop">
                     <h:panelGrid id ="gpVeda" columns="2" >
 
+                        
                         <h:panelGrid id="gpSelect" columns="1" styleClass="alignTop" >
                             <p:panel  styleClass="alignTop" >
-                                <h:panelGrid id="gpSelectText" >
-                                    <p:autoComplete converter="ampCon"  id="lstSelect"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmp}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
+                                <h:panelGrid columns="2" id="gpSelectText" >
+                                    
+                                    <h:outputLabel value="Search By Name"/>
+                                    <p:autoComplete converter="ampCon"  id="lstSelect1"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmpByName}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
                                         <p:column headerText="Item">
                                             <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
                                         </p:column>
@@ -28,7 +31,37 @@
                                         <p:column headerText="Barcode">
                                             <h:outputLabel value="#{myItem.barcode}" ></h:outputLabel>
                                         </p:column>
-                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect" >
+                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect1" >
+                                        </f:ajax>
+                                    </p:autoComplete>
+                                    
+                                    <h:outputLabel value="Search By Code"/>
+                                    <p:autoComplete converter="ampCon"  id="lstSelect2"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmpByCode}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.code}" >
+                                        <p:column headerText="Item">
+                                            <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="Code">
+                                            <h:outputLabel value="#{myItem.code}" ></h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="Barcode">
+                                            <h:outputLabel value="#{myItem.barcode}" ></h:outputLabel>
+                                        </p:column>
+                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect2" >
+                                        </f:ajax>
+                                    </p:autoComplete>
+                                    
+                                    <h:outputLabel value="Search By Barcode"/>
+                                    <p:autoComplete converter="ampCon"  id="lstSelect3"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmpByBarCode(qry)}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.barcode}" >
+                                        <p:column headerText="Item">
+                                            <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="Code">
+                                            <h:outputLabel value="#{myItem.code}" ></h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="Barcode">
+                                            <h:outputLabel value="#{myItem.barcode}" ></h:outputLabel>
+                                        </p:column>
+                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect3" >
                                         </f:ajax>
                                     </p:autoComplete>
                                     
@@ -40,7 +73,7 @@
                                 </h:panelGrid>
                                 <h:panelGrid id="gpSelectButtons" columns="3"  >
                                     <h:commandButton id="btnAdd" value="Add"  action="#{ampController.prepareAdd()}" styleClass="buttons" >
-                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail " execute="" >
+                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect1 lstSelect2 lstSelect3 gpDetail " execute="" >
                                         </f:ajax>
                                     </h:commandButton>
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
@@ -112,7 +145,7 @@
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <h:commandButton id="btnSave" value="Save"  action="#{ampController.saveSelected()}" styleClass="buttons">
-                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail"  execute="gpDetail" >
+                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect1 lstSelect2 lstSelect3 gpDetail"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>
 

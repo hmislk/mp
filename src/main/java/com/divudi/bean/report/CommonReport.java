@@ -29,8 +29,7 @@ import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-;
+
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 
@@ -922,7 +921,8 @@ public class CommonReport implements Serializable {
         String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
                 + " type(b)=:bill and b.retired=false and "
                 + " b.billType=:btp and b.department=:d "
-                + " and b.paymentMethod=:pm and (b.fromInstitution=ins or b.toInstitution=:ins) "
+                + " and b.paymentMethod=:pm and "
+                + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
                 + "  and b.createdAt between :fromDate and :toDate";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());

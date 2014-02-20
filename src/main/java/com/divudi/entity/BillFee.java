@@ -24,52 +24,50 @@ public class BillFee implements Serializable {
     static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-     Long id;
+    Long id;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
+    Date retiredAt;
+    String retireComments;
     @ManyToOne
-     Fee fee;
+    Fee fee;
     @ManyToOne
-     Patient patient;
+    Patient patient;
     @ManyToOne
-     PatientEncounter patienEncounter;
+    PatientEncounter patienEncounter;
     @ManyToOne
-     PatientEncounter childEncounter;
+    PatientEncounter childEncounter;
     @ManyToOne
-     BillItem billItem;
+    BillItem billItem;
     @ManyToOne
-     Bill bill;
-     double feeValue = 0.0;
-     double feeGrossValue;
-     double feeDiscount;
-     double feeMargin;
+    Bill bill;
+    double feeValue = 0.0;
+    double feeGrossValue;
+    double feeDiscount;
+    double feeMargin;
     @ManyToOne
-     Staff staff;
+    Staff staff;
     @ManyToOne
-     Institution institution;
+    Institution institution;
     @ManyToOne
-     Department department;
+    Department department;
     @ManyToOne
-     Speciality speciality;
-     double paidValue = 0.0;
+    Speciality speciality;
+    double paidValue = 0.0;
     //FeeDate, FeeTime
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date FeeAt;
+    Date FeeAt;
 
     public BillFee() {
     }
-
-  
 
     @Override
     public int hashCode() {
@@ -80,7 +78,7 @@ public class BillFee implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof BillFee)) {
             return false;
         }
@@ -96,8 +94,6 @@ public class BillFee implements Serializable {
         return "com.divudi.entity.BillFee[ id=" + id + " ]";
     }
 
-  
-
     public void setFeeValue(boolean foriegn) {
         if (foriegn) {
             feeValue = getFee().getFfee();
@@ -107,19 +103,24 @@ public class BillFee implements Serializable {
         //    //System.out.println("Setting fee value as " + feeValue);
     }
 
-    public void setFeeValue(boolean foriegn, double discountPercent) {
-
-        if (getFee().getFeeType() != FeeType.Staff) {
-            if (foriegn) {
-                this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
+    public void setFeeValue(boolean foriegn, boolean feeChanged, double discountPercent) {
+        if (!feeChanged) {
+            if (getFee().getFeeType() != FeeType.Staff) {
+                if (foriegn) {
+                    this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
+                } else {
+                    this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
+                }
             } else {
-                this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
+                if (foriegn) {
+                    this.feeValue = getFee().getFfee();
+                } else {
+                    this.feeValue = getFee().getFee();
+                }
             }
         } else {
-            if (foriegn) {
-                this.feeValue = getFee().getFfee();
-            } else {
-                this.feeValue = getFee().getFee();
+            if (getFee().getFeeType() != FeeType.Staff) {
+                this.feeValue = feeValue / 100 * (100 - discountPercent);
             }
         }
     }
@@ -307,6 +308,5 @@ public class BillFee implements Serializable {
     public void setFeeAt(Date FeeAt) {
         this.FeeAt = FeeAt;
     }
-
 
 }

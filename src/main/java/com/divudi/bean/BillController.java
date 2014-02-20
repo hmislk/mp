@@ -62,13 +62,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.TabChangeEvent;
 
-
-
-
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -138,8 +135,8 @@ public class BillController implements Serializable {
 
     String strTenderedValue;
     private YearMonthDay yearMonthDay;
-    
-     public boolean findByFilter(String property, String value) {
+
+    public boolean findByFilter(String property, String value) {
         String sql = "Select b From Bill b where b.retired=false and upper(b." + property + ") like '%" + value.toUpperCase() + " %'";
         Bill b = getBillFacade().findFirstBySQL(sql);
         //System.err.println("SQL " + sql);
@@ -151,6 +148,9 @@ public class BillController implements Serializable {
         }
     }
 
+    public void feeChangeListener() {
+        feeChanged = true;
+    }
 
     public boolean isFeeChanged() {
         return feeChanged;
@@ -200,7 +200,7 @@ public class BillController implements Serializable {
         }
         return a;
     }
-    
+
     public List<Bill> completeGrnDealor(String qry) {
         List<Bill> a = null;
         String sql;
@@ -215,9 +215,9 @@ public class BillController implements Serializable {
                     + " order by c.fromInstitution.name";
             hash.put("btp", BillType.PharmacyGrnBill);
             hash.put("pm", PaymentMethod.Credit);
-            hash.put("q","%"+ qry.toUpperCase()+"%");
-       //     hash.put("pm", PaymentMethod.Credit);
-            a = getFacade().findBySQL(sql, hash,10);
+            hash.put("q", "%" + qry.toUpperCase() + "%");
+            //     hash.put("pm", PaymentMethod.Credit);
+            a = getFacade().findBySQL(sql, hash, 10);
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -369,7 +369,7 @@ public class BillController implements Serializable {
     private Bill saveBill(Department bt, BilledBill temp) {
 
         temp.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), bt, BillType.OpdBill));
-        temp.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),bt,new BilledBill(),BillType.OpdBill,BillNumberSuffix.NONE));
+        temp.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), bt, new BilledBill(), BillType.OpdBill, BillNumberSuffix.NONE));
         temp.setBillType(BillType.OpdBill);
 
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
@@ -501,7 +501,6 @@ public class BillController implements Serializable {
 //                UtilityController.addErrorMessage("Enter 16 Digit");
 //                return true;
 //            }
-
         }
 
         if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Credit) {
@@ -678,51 +677,42 @@ public class BillController implements Serializable {
             double entryNet = 0.0;
             BillItem bi = be.getBillItem();
             for (BillFee bf : be.getLstBillFees()) {
-                boolean flag = false;
-                //System.out.println("bill item fee");
+                System.out.println("bill item fee");
                 if (bf.getBillItem().getItem().isDiscountAllowed() == false && bf.getBillItem().getItem().isUserChangable() == false) {
-                    //System.out.println("billing for not discount allowed");
+                    System.out.println("billing for not discount allowed");
                     bf.setFeeValue(isForeigner());
                 } else if (getCreditCompany() != null) {
-                    //System.out.println("billing for company " + getCreditCompany().getName());
-                    bf.setFeeValue(isForeigner(), getCreditCompany().getLabBillDiscount());
+                    System.out.println("billing for company " + getCreditCompany().getName());
+                    bf.setFeeValue(isForeigner(), feeChanged, getCreditCompany().getLabBillDiscount());
                 } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == true) {
-                    if (feeChanged) {
-                        //System.out.println("billing for user Changeble");
-                        flag = true;
+                    if (paymentScheme == null) {
+                        System.out.println("billing for payment method");
+                        bf.setFeeValue(isForeigner());
                     } else {
-                        if (paymentScheme == null) {
-                            //System.out.println("billing for payment method");
-                            bf.setFeeValue(isForeigner());
-                        } else {
-                            bf.setFeeValue(isForeigner(),paymentScheme.getDiscountPercent());
-                        }
+                        bf.setFeeValue(isForeigner(), feeChanged, paymentScheme.getDiscountPercent());
                     }
+
                 } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == false) {
-                    //System.out.println("billing for payment method Only");
+                    System.out.println("billing for payment method Only");
                     if (paymentScheme == null) {
                         bf.setFeeValue(isForeigner());
                     } else {
-                        bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
+                        bf.setFeeValue(isForeigner(), feeChanged, paymentScheme.getDiscountPercent());
                     }
                 } else if (bf.getBillItem().getItem().isUserChangable() == true && bf.getBillItem().getItem().isDiscountAllowed() == false) {
-                    //System.out.println("billing for user Changeble Only");
-                    flag = true;
-                }
-
-                if (flag) {
-                    entryGross += bf.getFeeValue();
-                } else {
-                    if (isForeigner()) {
-                        entryGross = entryGross + bf.getFee().getFfee();
+                    System.out.println("billing for user Changeble Only");
+                    if (paymentScheme == null) {
+                        bf.setFeeValue(isForeigner());
                     } else {
-                        entryGross = entryGross + bf.getFee().getFee();
+                        bf.setFeeValue(isForeigner(), feeChanged, paymentScheme.getDiscountPercent());
                     }
                 }
+
+                entryGross += bf.getFeeValue();
 
                 entryNet = entryNet + bf.getFeeValue();
                 entryDis = entryDis + (entryGross - entryNet);
-                //   //System.out.println("fee net is " + bf.getFeeValue());
+                System.out.println("fee net is " + bf.getFeeValue());
 
             }
 
@@ -730,10 +720,10 @@ public class BillController implements Serializable {
             bi.setGrossValue(entryGross);
             bi.setNetValue(entryNet);
 
-            //   //System.out.println("item is " + bi.getItem().getName());
-            //    //System.out.println("item gross is " + bi.getGrossValue());
-            //   //System.out.println("item net is " + bi.getNetValue());
-            //    //System.out.println("item dis is " + bi.getDiscount());
+            //System.out.println("item is " + bi.getItem().getName());
+            //System.out.println("item gross is " + bi.getGrossValue());
+            //System.out.println("item net is " + bi.getNetValue());
+            //System.out.println("item dis is " + bi.getDiscount());
             billGross = billGross + entryGross;
             billNet = billNet + entryNet;
             //     billDis = billDis + entryDis;
@@ -741,7 +731,7 @@ public class BillController implements Serializable {
         setDiscount(billGross - billNet);
         setTotal(billGross);
         setNetTotal(billNet);
-        //      //System.out.println("bill tot is " + billGross);
+        System.out.println("bill tot is " + billGross);
     }
 
     public void feeChanged() {
@@ -1206,8 +1196,6 @@ public class BillController implements Serializable {
         this.billSearch = billSearch;
     }
 
-  
-
     public YearMonthDay getYearMonthDay() {
         if (yearMonthDay == null) {
             yearMonthDay = new YearMonthDay();
@@ -1269,8 +1257,8 @@ public class BillController implements Serializable {
             }
         }
     }
-    
-     @FacesConverter(forClass = Bill.class)
+
+    @FacesConverter(forClass = Bill.class)
     public static class BillConverter implements Converter {
 
         @Override

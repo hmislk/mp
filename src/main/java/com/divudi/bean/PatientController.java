@@ -16,7 +16,6 @@ import com.divudi.ejb.CommonFunctions;
 import com.divudi.facade.PatientFacade;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
-import com.divudi.entity.Staff;
 import com.divudi.facade.PersonFacade;
 import java.io.ByteArrayInputStream;
 import java.util.TimeZone;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -43,7 +41,7 @@ import org.primefaces.model.StreamedContent;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -74,13 +72,13 @@ public class PatientController implements Serializable {
     public void setCommonFunctions(CommonFunctions commonFunctions) {
         this.commonFunctions = commonFunctions;
     }
-    
+
     private YearMonthDay yearMonthDay;
 
     public YearMonthDay getYearMonthDay() {
-        if(yearMonthDay==null){
+        if (yearMonthDay == null) {
             yearMonthDay = new YearMonthDay();
-                    
+
         }
         return yearMonthDay;
     }
@@ -88,11 +86,11 @@ public class PatientController implements Serializable {
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
     }
-    
+
     public void dateChangeListen() {
         getCurrent().getPerson().setDob(getCommonFunctions().guessDob(yearMonthDay));
     }
-    
+
     public StreamedContent getPhoto(Patient p) {
         //System.out.println("p is " + p);
         FacesContext context = FacesContext.getCurrentInstance();
@@ -196,12 +194,15 @@ public class PatientController implements Serializable {
     public List<Patient> completePatient(String query) {
         List<Patient> suggestions;
         String sql;
+        HashMap hm = new HashMap();
         if (query == null) {
             suggestions = new ArrayList<Patient>();
         } else {
-            sql = "select p from Patient p where p.retired=false and upper(p.person.name) like '%" + query.toUpperCase() + "%' order by p.person.name";
+            sql = "select p from Patient p where p.retired=false and upper(p.person.name) like "
+                    + " :q order by p.person.name";
+            hm.put("q", "%" + query.toUpperCase() + "%");
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
+            suggestions = getFacade().findBySQL(sql,hm,30);
         }
         return suggestions;
     }
@@ -262,7 +263,6 @@ public class PatientController implements Serializable {
     public PatientController() {
     }
 
-    
     public Patient getCurrent() {
         if (current == null) {
             Person p = new Person();
@@ -320,10 +320,6 @@ public class PatientController implements Serializable {
         this.billNumberBean = billNumberBean;
     }
 
-
-    
-    
-    
     /**
      *
      * Set all Patients to null

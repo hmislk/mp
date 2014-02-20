@@ -70,7 +70,8 @@ root {
         text-transform: capitalize!important;
     }
 
-    .fiveinchbillBreak{      
+    .fiveinchbillBreak{
+        position: relative!important;
         padding: 5px!important;
         height:550px!important;
         width:550px!important; 
@@ -81,6 +82,7 @@ root {
         background-size: 100% auto!important; 
         border: 1px solid!important;
         font-size: 130%;
+
     }
 
 

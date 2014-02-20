@@ -20,37 +20,36 @@ import javax.inject.Inject;
 @Named
 @SessionScoped
 public class EnumController implements Serializable {
-    
-  private PaymentScheme paymentScheme;
-    
-    public BillType[] getCashFlowBillTypes(){
-        BillType[] b={
+
+    private PaymentScheme paymentScheme;
+
+    public BillType[] getCashFlowBillTypes() {
+        BillType[] b = {
             BillType.OpdBill,
             BillType.PaymentBill,
             BillType.PettyCash,
             BillType.CashRecieveBill,
             BillType.AgentPaymentReceiveBill,
             BillType.InwardPaymentBill,
-            BillType.PharmacySale,
-        };
-        
+            BillType.PharmacySale,};
+
         return b;
     }
-    
-    public BillType[] getPharmacyBillTypes(){
-         BillType[] b={
+
+    public BillType[] getPharmacyBillTypes() {
+        BillType[] b = {
             BillType.PharmacyGrnBill,
             BillType.PharmacyGrnReturn,
             BillType.PharmacyOrder,
             BillType.PharmacyOrderApprove,
             BillType.PharmacyPre,
             BillType.PharmacyPurchaseBill,
-            BillType.PharmacySale,   
+            BillType.PharmacySale,
             BillType.PharmacyAdjustment,
-             BillType.PurchaseReturn,
-        };
-        
-        return b;    
+            BillType.PurchaseReturn,
+            BillType.GrnPayment,};
+
+        return b;
     }
 
     public PaymentMethod[] getPaymentMethods() {
@@ -78,7 +77,7 @@ public class EnumController implements Serializable {
         return false;
 
     }
-    
+
     public boolean checkPaymentScheme(String paymentMathod) {
         if (getPaymentScheme() != null && getPaymentScheme().getPaymentMethod() != null) {
             //System.err.println("Payment Scheme : " +getPaymentScheme().getPaymentMethod());
@@ -117,7 +116,6 @@ public class EnumController implements Serializable {
     public EnumController() {
     }
 
-   
     public PaymentScheme getPaymentScheme() {
         return paymentScheme;
     }

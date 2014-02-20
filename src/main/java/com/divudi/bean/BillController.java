@@ -148,10 +148,11 @@ public class BillController implements Serializable {
         }
     }
 
-    public void feeChangeListener() {
+    public void feeChangeListener(BillFee bf) {
         lstBillItems = null;
         getLstBillItems();
         feeChanged = true;
+        bf.setTmpChangedValue(bf.getFeeValue());
         calTotals();
     }
 
@@ -723,18 +724,9 @@ public class BillController implements Serializable {
                     flag = true;
                 }
 
-                if (flag) {
-                    entryGross += bf.getFeeValue();
-                } else {
-                    if (isForeigner()) {
-                        entryGross = entryGross + bf.getFee().getFfee();
-                    } else {
-                        entryGross = entryGross + bf.getFee().getFee();
-                    }
-                }
-
-                entryNet = entryNet + bf.getFeeValue();
-                entryDis = entryDis + (entryGross - entryNet);
+                entryGross += bf.getFeeGrossValue();
+                entryNet += bf.getFeeValue();
+                entryDis += (entryGross - entryNet);
                 //System.out.println("fee net is " + bf.getFeeValue());
 
             }
@@ -747,8 +739,8 @@ public class BillController implements Serializable {
             //    //System.out.println("item gross is " + bi.getGrossValue());
             //   //System.out.println("item net is " + bi.getNetValue());
             //    //System.out.println("item dis is " + bi.getDiscount());
-            billGross = billGross + entryGross;
-            billNet = billNet + entryNet;
+            billGross += +entryGross;
+            billNet += entryNet;
             //     billDis = billDis + entryDis;
         }
         setDiscount(billGross - billNet);

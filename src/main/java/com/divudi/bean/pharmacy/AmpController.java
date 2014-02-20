@@ -10,6 +10,7 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.ejb.BillNumberBean;
 import com.divudi.facade.AmpFacade;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Vmp;
@@ -100,10 +101,14 @@ public class AmpController implements Serializable {
         return a;
     }
 
+    @EJB
+    BillNumberBean billNumberBean;
     public void prepareAdd() {
         current = new Amp();
         currentVmp = new Vmp();
         addingVtmInVmp = new VtmsVmps();
+        
+        current.setCode(billNumberBean.pharmacyItemNumberGenerator());
     }
 
     public void setSelectedItems(List<Amp> selectedItems) {

@@ -27,6 +27,7 @@ public class SearchKeyword {
     private String bank;
     private String number;
     private String department;
+    private String code;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -179,5 +180,13 @@ public class SearchKeyword {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

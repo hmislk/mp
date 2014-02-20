@@ -43,7 +43,7 @@
                 </h:panelGrid>
 
 
-                <p:dataTable value="#{pharmacySaleReport.billedSummery.bills}" var="i">                  
+                <p:dataTable id="sum1" value="#{pharmacySaleReport.billedSummery.bills}" var="i">                  
                     <p:column headerText="Date">
                         #{i.string}
                     </p:column>

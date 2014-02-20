@@ -77,6 +77,8 @@ public enum BillType {
                 return "Pharmacy Pre Bill";
             case PharmacyAdjustment:
                 return "Pharmacy Adjustment Bill";
+            case GrnPayment:
+                return "Grn Payment";
 
         }
 

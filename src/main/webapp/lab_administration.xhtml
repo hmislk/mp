@@ -29,7 +29,7 @@
                                 <hr/>
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Investigations" action="lab_investigation"/>
                                 
-                                <p:commandButton  styleClass="linkButton" ajax="false" value="Investigation Formats" action="lab_investigation_format"/>
+                                <p:commandButton  styleClass="linkButton" ajax="false"  rendered="#{webUserController.hasPrivilege('LabReportFormatEditing')}" value="Investigation Formats" action="lab_investigation_format"/>
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Investigation Field Values" action="lab_investigation_item_value"/>                                
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Replaceable Investigations" action="lab_replaceable_ix"/>
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Investigation Flags" action="lab_flags"/>
@@ -37,7 +37,7 @@
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Investigation Dynamic Labels" action="lab_dynamic_labels"/>
                                 <hr/>
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Report Format Categories" action="lab_report_format_category"/>
-                                <p:commandButton  styleClass="linkButton" ajax="false" value="Report Formats" action="lab_report_format"/>
+                                <p:commandButton  styleClass="linkButton" ajax="false" rendered="#{webUserController.hasPrivilege('LabReportFormatEditing')}" value="Report Formats" action="lab_report_format"/>
                                 <hr/>
                                 <p:commandButton  styleClass="linkButton" ajax="false" value="Antibiotics" action="lab_antibiotic"/>
                                 <hr/>

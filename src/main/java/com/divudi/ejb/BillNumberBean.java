@@ -34,7 +34,6 @@ public class BillNumberBean {
     private InstitutionFacade insFacade;
     @EJB
     private BillFacade billFacade;
-
     @EJB
     PatientFacade patientFacade;
 
@@ -46,7 +45,6 @@ public class BillNumberBean {
         this.patientFacade = patientFacade;
     }
 
-    
     public String institutionBillNumberGenerator(Institution ins, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
@@ -60,16 +58,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix+"\\" + (i + 1);
+                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + (i + 1);
             } else {
-                result = ins.getInstitutionCode() + "\\"+(i + 1);
+                result = ins.getInstitutionCode() + "\\" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix +"\\"+ 1;
+                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
             } else {
-                result = ins.getInstitutionCode() +"\\"+ 1;
+                result = ins.getInstitutionCode() + "\\" + 1;
             }
 
         }
@@ -77,8 +75,7 @@ public class BillNumberBean {
         return result;
     }
 
-    
-     public String institutionBillNumberGeneratorWithReference(Institution ins, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
+    public String institutionBillNumberGeneratorWithReference(Institution ins, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
                 + " b.institution=:ins AND b.billType=:btp and b.createdAt is not null and b.referenceBill is not null";
@@ -91,16 +88,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix+"\\" + (i + 1);
+                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + (i + 1);
             } else {
-                result = ins.getInstitutionCode() + "\\"+(i + 1);
+                result = ins.getInstitutionCode() + "\\" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix +"\\"+ 1;
+                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
             } else {
-                result = ins.getInstitutionCode() +"\\"+ 1;
+                result = ins.getInstitutionCode() + "\\" + 1;
             }
 
         }
@@ -108,8 +105,7 @@ public class BillNumberBean {
         return result;
     }
 
-     
-     public String institutionBillNumberGeneratorByPayment(Institution ins, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
+    public String institutionBillNumberGeneratorByPayment(Institution ins, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
                 + " b.institution=:ins AND b.billType=:btp and"
@@ -123,16 +119,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix+"\\" + (i + 1);
+                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + (i + 1);
             } else {
-                result = ins.getInstitutionCode() + "\\"+(i + 1);
+                result = ins.getInstitutionCode() + "\\" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix +"\\"+ 1;
+                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
             } else {
-                result = ins.getInstitutionCode() +"\\"+ 1;
+                result = ins.getInstitutionCode() + "\\" + 1;
             }
 
         }
@@ -140,7 +136,6 @@ public class BillNumberBean {
         return result;
     }
 
-     
     public String institutionBillNumberGenerator(Department dep, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
@@ -154,16 +149,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix +"\\"+ (i + 1);
+                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + (i + 1);
             } else {
-                result = dep.getDepartmentCode()+"\\" + (i + 1);
+                result = dep.getDepartmentCode() + "\\" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix+"\\" + 1;
+                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + 1;
             } else {
-                result = dep.getDepartmentCode() +"\\"+ 1;
+                result = dep.getDepartmentCode() + "\\" + 1;
             }
 
         }
@@ -171,8 +166,7 @@ public class BillNumberBean {
         return result;
     }
 
-    
-     public String institutionBillNumberGeneratorWithReference(Department dep, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
+    public String institutionBillNumberGeneratorWithReference(Department dep, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
                 + " b.department=:dep and b.createdAt is not null AND b.billType=:btp "
@@ -186,16 +180,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix +"\\"+ (i + 1);
+                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + (i + 1);
             } else {
-                result = dep.getDepartmentCode()+"\\" + (i + 1);
+                result = dep.getDepartmentCode() + "\\" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix+"\\" + 1;
+                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + 1;
             } else {
-                result = dep.getDepartmentCode() +"\\"+ 1;
+                result = dep.getDepartmentCode() + "\\" + 1;
             }
 
         }
@@ -203,8 +197,7 @@ public class BillNumberBean {
         return result;
     }
 
-     
-     public String institutionBillNumberGeneratorByPayment(Department dep, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
+    public String institutionBillNumberGeneratorByPayment(Department dep, Bill bill, BillType billType, BillNumberSuffix billNumberSuffix) {
 
         String sql = "SELECT count(b) FROM Bill b where type(b)=:type and b.retired=false AND "
                 + " b.department=:dep and b.createdAt is not null AND b.billType=:btp "
@@ -218,23 +211,22 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix +"\\"+ (i + 1);
+                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + (i + 1);
             } else {
-                result = dep.getDepartmentCode()+"\\" + (i + 1);
+                result = dep.getDepartmentCode() + "\\" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix+"\\" + 1;
+                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + 1;
             } else {
-                result = dep.getDepartmentCode() +"\\"+ 1;
+                result = dep.getDepartmentCode() + "\\" + 1;
             }
 
         }
 
         return result;
     }
-
 
     static String intToString(int num, int digits) {
         assert digits > 0 : "Invalid number of digits";
@@ -324,16 +316,16 @@ public class BillNumberBean {
             if (b != null && b != 0) {
                 b = b + 1;
                 if (toDept != null) {
-                    result = ins.getInstitutionCode()+ toDept.getDepartmentCode() +billNumberSuffix + "\\" + b;
+                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + billNumberSuffix + "\\" + b;
                 } else {
-                    result = ins.getInstitutionCode()+billNumberSuffix + "\\" + b;
+                    result = ins.getInstitutionCode() + billNumberSuffix + "\\" + b;
                 }
                 return result;
             } else {
                 if (toDept != null) {
-                    result = ins.getInstitutionCode()+ toDept.getDepartmentCode() + billNumberSuffix + "\\" + 1;
+                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + billNumberSuffix + "\\" + 1;
                 } else {
-                    result = ins.getInstitutionCode()+billNumberSuffix + "\\" + 1;
+                    result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
                 }
                 return result;
             }
@@ -393,7 +385,6 @@ public class BillNumberBean {
 
     }
 
-
     public String departmentCancelledBill(Department dep, BillType type, BillNumberSuffix billNumberSuffix) {
         if (dep == null || dep.getId() == null) {
             return "";
@@ -417,7 +408,6 @@ public class BillNumberBean {
 
     }
 
-
     public String departmentCancelledBill(Department dep, Department toDept, BillNumberSuffix billNumberSuffix) {
         if (dep == null || dep.getId() == null) {
             return "";
@@ -440,7 +430,6 @@ public class BillNumberBean {
         }
 
     }
-
 
     public String departmentReturnBill(Department dep, BillType billType, BillNumberSuffix billNumberSuffix) {
 
@@ -479,6 +468,20 @@ public class BillNumberBean {
             result = dep.getDepartmentCode() + toDept.getDepartmentCode() + billNumberSuffix + 1;
             return result;
         }
+
+    }
+
+    public String pharmacyItemNumberGenerator() {
+
+        String sql = "SELECT count(b) FROM Amp b where b.retired=false ";
+
+        String result;
+        Long dd = getBillFacade().findAggregateLong(sql);
+
+        result = dd.toString();
+
+        return result;
+
 
     }
 

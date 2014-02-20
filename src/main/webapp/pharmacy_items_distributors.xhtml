@@ -15,31 +15,41 @@
                 <p:growl autoUpdate="true" />
 
                 <p:panel>
-                    <h:panelGrid columns="4" >
+                    <h:panelGrid columns="2" >
                         <p:panel header="Item Distributor">
-                            <h:selectOneListbox  id="lstSelect"   size="10" value="#{itemsDistributorsController.currentInstituion}" style="min-width: 223px">
-                                <f:selectItems  value="#{dealerController.items}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" ></f:selectItems>
-                                <f:ajax render="gpDetail" execute="lstSelect" >
+
+                            <h:outputLabel value="Search"/>
+                            <p:autoComplete converter="deal"  id="lstSelect"   value="#{itemsDistributorsController.currentInstituion}" style="min-width: 223px" completeMethod="#{dealerController.completeDealor}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
+                                <p:column headerText="Item">
+                                    <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
+                                </p:column>
+
+                                <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect" >
                                 </f:ajax>
-                            </h:selectOneListbox>
+                            </p:autoComplete>
+
                         </p:panel>
                         <p:panel header="Items suply current Distributor">
                             <h:panelGroup id="gpDetail" >
-                                <h:selectOneListbox size="10" id="packageItem"  value="#{itemsDistributorsController.current}" >
-                                    <f:selectItems value="#{itemsDistributorsController.items}" var="myPis"  itemLabel="#{myPis.item.name} - #{myPis.item.code}" itemValue="#{myPis}"  />
-                                </h:selectOneListbox>
+                                <p:dataTable scrollable="true" scrollHeight="150" id="packageItem" value="#{itemsDistributorsController.items}" var="i">
+                                    <p:column headerText="Item Name">
+                                        <h:outputLabel value="#{i.item.name}"/> 
+                                    </p:column>
+                                    <p:column headerText="Item Code">
+                                        <h:outputLabel value="#{i.item.code}"/> 
+                                    </p:column>
+                                     <p:column headerText="Item BarCode">
+                                         <h:outputLabel value="#{i.item.barcode}"/> 
+                                    </p:column>
+                                    <p:column headerText="Action">
+                                        <p:commandButton ajax="false" value="Remove" action="#{itemsDistributorsController.removeFromPackage()}" >
+                                            <f:setPropertyActionListener target="#{itemsDistributorsController.current}" value="#{i}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>                              
                             </h:panelGroup>
                         </p:panel>
-                        <p:panel>
-                            <h:panelGroup >
-                                <h:commandButton id="btnAdd" value="Add" action="#{itemsDistributorsController.addToPackage()}">
-                                </h:commandButton>
-
-                                <h:commandButton value="Remove" action="#{itemsDistributorsController.removeFromPackage()}">
-                                </h:commandButton>
-                                <p:defaultCommand target="btnAdd"/>
-                            </h:panelGroup> 
-                        </p:panel>
+                        
                         <p:panel header="Select Item For Distributor">
                             <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" 
                                             completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
@@ -50,7 +60,16 @@
                                     <h:outputLabel value="#{vt.code}" ></h:outputLabel>
                                 </p:column>
                             </p:autoComplete>                                    
-                        </p:panel>                       
+                        </p:panel>
+                        
+                        <p:panel>
+                            <h:panelGroup >
+                                <h:commandButton id="btnAdd" value="Add" action="#{itemsDistributorsController.addToPackage()}">
+                                </h:commandButton>
+                                <p:defaultCommand target="btnAdd"/>
+                            </h:panelGroup> 
+                        </p:panel>
+                        
                     </h:panelGrid>
                 </p:panel>
             </h:form>

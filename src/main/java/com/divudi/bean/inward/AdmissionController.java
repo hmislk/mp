@@ -558,7 +558,7 @@ public class AdmissionController implements Serializable {
 
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
-    }
+    }  
 
     /**
      *

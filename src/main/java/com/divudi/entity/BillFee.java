@@ -96,8 +96,7 @@ public class BillFee implements Serializable {
     }
 
     public void setFeeValue(boolean foriegn) {
-        if (foriegn) {
-            feeValue = getFee().getFfee();
+        if (foriegn) {          
             if (tmpChangedValue != 0) {
                 this.feeGrossValue = tmpChangedValue;
             } else {
@@ -193,6 +192,8 @@ public class BillFee implements Serializable {
                 if (tmpChangedValue != 0) {
                     this.feeGrossValue = tmpChangedValue;
                     this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
+                }else{
+                
                 }
             }
         }

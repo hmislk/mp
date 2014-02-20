@@ -103,6 +103,23 @@ public class BillFee implements Serializable {
         //    //System.out.println("Setting fee value as " + feeValue);
     }
 
+    public void setFeeValue(boolean foriegn, double discountPercent) {
+
+        if (getFee().getFeeType() != FeeType.Staff) {
+            if (foriegn) {
+                this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
+            } else {
+                this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
+            }
+        } else {
+            if (foriegn) {
+                this.feeValue = getFee().getFfee();
+            } else {
+                this.feeValue = getFee().getFee();
+            }
+        }
+    }
+
     public void setFeeValue(boolean foriegn, boolean feeChanged, double discountPercent) {
         if (!feeChanged) {
             if (getFee().getFeeType() != FeeType.Staff) {

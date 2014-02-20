@@ -98,8 +98,17 @@ public class BillFee implements Serializable {
     public void setFeeValue(boolean foriegn) {
         if (foriegn) {
             feeValue = getFee().getFfee();
+            if (tmpChangedValue != 0) {
+                this.feeGrossValue = tmpChangedValue;
+            } else {
+                this.feeGrossValue = getFee().getFfee();
+            }
         } else {
-            feeValue = getFee().getFee();
+            if (tmpChangedValue != 0) {
+                this.feeGrossValue = tmpChangedValue;
+            } else {
+                this.feeGrossValue = getFee().getFee();
+            }
         }
         //    //System.out.println("Setting fee value as " + feeValue);
     }
@@ -108,18 +117,34 @@ public class BillFee implements Serializable {
 
         if (getFee().getFeeType() != FeeType.Staff) {
             if (foriegn) {
-                this.feeGrossValue = getFee().getFfee();
+                if (tmpChangedValue != 0) {
+                    this.feeGrossValue = tmpChangedValue;
+                } else {
+                    this.feeGrossValue = getFee().getFfee();
+                }
                 this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
             } else {
-                this.feeGrossValue = getFee().getFee();
+                if (tmpChangedValue != 0) {
+                    this.feeGrossValue = tmpChangedValue;
+                } else {
+                    this.feeGrossValue = getFee().getFee();
+                }
                 this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
             }
         } else {
             if (foriegn) {
-                this.feeGrossValue = getFee().getFfee();
+                if (tmpChangedValue != 0) {
+                    this.feeGrossValue = tmpChangedValue;
+                } else {
+                    this.feeGrossValue = getFee().getFfee();
+                }
                 this.feeValue = getFee().getFfee();
             } else {
-                this.feeGrossValue = getFee().getFee();
+                if (tmpChangedValue != 0) {
+                    this.feeGrossValue = tmpChangedValue;
+                } else {
+                    this.feeGrossValue = getFee().getFee();
+                }
                 this.feeValue = getFee().getFee();
             }
         }
@@ -132,18 +157,34 @@ public class BillFee implements Serializable {
         if (!feeChanged) {
             if (getFee().getFeeType() != FeeType.Staff) {
                 if (foriegn) {
-                    this.feeGrossValue = getFee().getFfee();
+                    if (tmpChangedValue != 0) {
+                        this.feeGrossValue = tmpChangedValue;
+                    } else {
+                        this.feeGrossValue = getFee().getFfee();
+                    }
                     this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
                 } else {
-                    this.feeGrossValue = getFee().getFee();
+                    if (tmpChangedValue != 0) {
+                        this.feeGrossValue = tmpChangedValue;
+                    } else {
+                        this.feeGrossValue = getFee().getFee();
+                    }
                     this.feeValue = getFee().getFee() / 100 * (100 - discountPercent);
                 }
             } else {
                 if (foriegn) {
-                    this.feeGrossValue = getFee().getFfee();
+                    if (tmpChangedValue != 0) {
+                        this.feeGrossValue = tmpChangedValue;
+                    } else {
+                        this.feeGrossValue = getFee().getFfee();
+                    }
                     this.feeValue = getFee().getFfee();
                 } else {
-                    this.feeGrossValue = getFee().getFee();
+                    if (tmpChangedValue != 0) {
+                        this.feeGrossValue = tmpChangedValue;
+                    } else {
+                        this.feeGrossValue = getFee().getFee();
+                    }
                     this.feeValue = getFee().getFee();
                 }
             }

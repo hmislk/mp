@@ -92,7 +92,10 @@ public class AmpController implements Serializable {
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
         if (qry != null) {
-            a = getFacade().findBySQL("select c from Amp c where c.retired=false and (upper(c.name) like :n or upper(c.code) like :n or upper(c.barcode) like :n) order by c.name", m, 30);
+            a = getFacade().findBySQL("select c from Amp c where "
+                    + " c.retired=false and "
+                    + "(upper(c.name) like :n or upper(c.code)  "
+                    + "like :n or upper(c.barcode) like :n) order by c.name", m, 30);
             //System.out.println("a size is " + a.size());
         }
         if (a == null) {
@@ -100,6 +103,56 @@ public class AmpController implements Serializable {
         }
         return a;
     }
+    
+     public List<Amp> completeAmpByName(String qry) {
+        List<Amp> a = null;
+        Map m = new HashMap();
+        m.put("n", "%" + qry + "%");
+        if (qry != null) {
+            a = getFacade().findBySQL("select c from Amp c where "
+                    + " c.retired=false and "
+                    + "(upper(c.name) like :n ) order by c.name", m, 30);
+            //System.out.println("a size is " + a.size());
+        }
+        if (a == null) {
+            a = new ArrayList<Amp>();
+        }
+        return a;
+    }
+     
+     public List<Amp> completeAmpByCode(String qry) {
+        List<Amp> a = null;
+        Map m = new HashMap();
+        m.put("n", "%" + qry + "%");
+        if (qry != null) {
+            a = getFacade().findBySQL("select c from Amp c where "
+                    + " c.retired=false and "
+                    + "(upper(c.code) like :n ) order by c.code", m, 30);
+            //System.out.println("a size is " + a.size());
+        }
+        if (a == null) {
+            a = new ArrayList<Amp>();
+        }
+        return a;
+    }
+     
+      public List<Amp> completeAmpByBarCode(String qry) {
+        List<Amp> a = null;
+        Map m = new HashMap();
+        m.put("n", "%" + qry + "%");
+        if (qry != null) {
+            a = getFacade().findBySQL("select c from Amp c where "
+                    + " c.retired=false and "
+                    + "(upper(c.barcode) like :n ) order by c.barcode", m, 30);
+            //System.out.println("a size is " + a.size());
+        }
+        if (a == null) {
+            a = new ArrayList<Amp>();
+        }
+        return a;
+    }
+
+
 
     @EJB
     BillNumberBean billNumberBean;

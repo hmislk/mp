@@ -325,6 +325,13 @@ public class SearchController implements Serializable {
                     + " (upper(bItem.item.name) like :itm ))";
             temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
+        
+          if (getSearchKeyword().getCode()!= null && !getSearchKeyword().getCode().trim().equals("")) {
+            sql += " and b.id in (select bItem.bill.id  "
+                    + " from BillItem bItem where bItem.retired=false and  "
+                    + " (upper(bItem.item.code) like :cde ))";
+            temMap.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
+        }
 
         sql += " order by b.createdAt desc  ";
 
@@ -386,6 +393,14 @@ public class SearchController implements Serializable {
                     + " (upper(bItem.item.name) like :itm ))";
             temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
+        
+         if (getSearchKeyword().getCode()!= null && !getSearchKeyword().getCode().trim().equals("")) {
+            sql += " and b.id in (select bItem.bill.id  "
+                    + " from BillItem bItem where bItem.retired=false and  "
+                    + " (upper(bItem.item.code) like :cde ))";
+            temMap.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
+        }
+
 
         sql += " order by b.createdAt desc  ";
 
@@ -466,6 +481,11 @@ public class SearchController implements Serializable {
         if (getSearchKeyword().getItemName() != null && !getSearchKeyword().getItemName().trim().equals("")) {
             sql += " and  (upper(bi.item.name) like :itm )";
             m.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
+        }
+        
+        if (getSearchKeyword().getCode() != null && !getSearchKeyword().getCode().trim().equals("")) {
+            sql += " and  (upper(bi.item.code) like :cde )";
+            m.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
         }
 
         sql += " order by bi.id desc  ";

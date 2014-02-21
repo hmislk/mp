@@ -23,10 +23,10 @@
                             <h:outputLabel value="#{commonReport.webUser.institution.name}"/><br/>
                             <h:outputLabel value="#{commonReport.webUser.webUserPerson.name}"/>
                             <h:outputLabel value="  Casheir Session Report"/>
-                            <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{commonReport.createCashierTableByUser()}" />  
+                            <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" action="#{commonReport.createCashierTableByUser()}" />  
                             <p:defaultCommand target="btnRefresh"/>
                             
-                            <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                            <p:commandButton actionListener="#{commonReport.createCashierTableByUser()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="sum1,sum2,sum11,sum22" fileName="All_Cashier_Summery"   />
                             </p:commandButton> 
                             

@@ -17,7 +17,7 @@
                 <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="GRN Detail">
 
 
-                    <h:panelGrid columns="4" style="noPrintButton">
+                    <h:panelGrid columns="6" style="noPrintButton">
                         <h:outputLabel value="From Date"/>
                         <p:calendar id="frmDate" value="#{commonReport.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
                         </p:calendar>
@@ -33,7 +33,12 @@
                                          forceSelection="true" rendered="true"
                                          requiredMessage="You must select a department" >
                         </p:autoComplete>
+                        
+                        <p:defaultCommand target="btnRefresh"/>
 
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
                         <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                          styleClass="noPrintButton" 
                                          actionListener="#{commonReport.createGrnDetailTable()}"
@@ -47,11 +52,7 @@
                                          style="float: right;" >
                             <p:printer target="reportPrint"/>
                         </p:commandButton>  
-
-
-                        <p:defaultCommand target="btnRefresh"/>
-
-                    </h:panelGrid>
+                        </h:panelGrid>
 
 
 

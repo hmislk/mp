@@ -7,6 +7,7 @@ package com.divudi.ejb;
 
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.data.FeeType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -474,44 +475,6 @@ public class BillBean {
 //        bill.setNetTotal(net);
 //        getBillFacade().edit(bill);
 //    }
-    public void calculateBillItems(Bill bill, List<BillEntry> billEntrys, boolean feeChanged) {
-        double s = 0.0;
-        double i = 0.0;
-        double tot = 0.0;
-        double net = 0.0;
-        for (BillEntry e : billEntrys) {
-            for (BillFee bf : e.getLstBillFees()) {
-                tot += bf.getFee().getFee();
-                net += bf.getFeeValue();
-                if (bf.getFee().getStaff() == null) {
-                    i = i + bf.getFeeValue();
-                } else {
-                    s = s + bf.getFeeValue();
-                }
-                if (bf.getId() == null || bf.getId() == 0) {
-                    getBillFeeFacade().create(bf);
-                } else {
-                    getBillFeeFacade().edit(bf);
-                }
-            }
-        }
-        bill.setStaffFee(s);
-        bill.setPerformInstitutionFee(i);
-
-        if (tot > net && !feeChanged) {
-            bill.setTotal(tot);
-            bill.setDiscount(tot - net);
-            bill.setDiscountPercent(((tot - net) / tot) * 100);
-            bill.setNetTotal(net);
-        } else {
-            bill.setTotal(net);
-            bill.setDiscount(0.0);
-            bill.setNetTotal(net);
-        }
-
-        getBillFacade().edit(bill);
-    }
-
     public void calculateBillItems(Bill bill, List<BillEntry> billEntrys) {
         double s = 0.0;
         double i = 0.0;
@@ -519,9 +482,9 @@ public class BillBean {
         double net = 0.0;
         for (BillEntry e : billEntrys) {
             for (BillFee bf : e.getLstBillFees()) {
-                tot += bf.getFee().getFee();
+                tot += bf.getFeeGrossValue();
                 net += bf.getFeeValue();
-                if (bf.getFee().getStaff() == null) {
+                if (bf.getFee().getFeeType() != FeeType.Staff) {
                     i = i + bf.getFeeValue();
                 } else {
                     s = s + bf.getFeeValue();
@@ -536,19 +499,51 @@ public class BillBean {
         bill.setStaffFee(s);
         bill.setPerformInstitutionFee(i);
 
-        if (tot > net) {
-            bill.setTotal(tot);
-            bill.setDiscount(tot - net);
-            bill.setDiscountPercent(((tot - net) / tot) * 100);
-            bill.setNetTotal(net);
-        } else {
-            bill.setTotal(net);
-            bill.setDiscount(0.0);
-            bill.setNetTotal(net);
-        }
+        bill.setTotal(tot);
+        bill.setDiscount(tot - net);
+        bill.setDiscountPercent(((tot - net) / tot) * 100);
+        bill.setNetTotal(net);
 
         getBillFacade().edit(bill);
     }
+
+//    public void calculateBillItems(Bill bill, List<BillEntry> billEntrys) {
+//        double s = 0.0;
+//        double i = 0.0;
+//        double tot = 0.0;
+//        double net = 0.0;
+//        for (BillEntry e : billEntrys) {
+//            for (BillFee bf : e.getLstBillFees()) {
+//                tot += bf.getFee().getFee();
+//                net += bf.getFeeValue();
+//                if (bf.getFee().getStaff() == null) {
+//                    i = i + bf.getFeeValue();
+//                } else {
+//                    s = s + bf.getFeeValue();
+//                }
+//                if (bf.getId() == null || bf.getId() == 0) {
+//                    getBillFeeFacade().create(bf);
+//                } else {
+//                    getBillFeeFacade().edit(bf);
+//                }
+//            }
+//        }
+//        bill.setStaffFee(s);
+//        bill.setPerformInstitutionFee(i);
+//
+//        if (tot > net) {
+//            bill.setTotal(tot);
+//            bill.setDiscount(tot - net);
+//            bill.setDiscountPercent(((tot - net) / tot) * 100);
+//            bill.setNetTotal(net);
+//        } else {
+//            bill.setTotal(net);
+//            bill.setDiscount(0.0);
+//            bill.setNetTotal(net);
+//        }
+//
+//        getBillFacade().edit(bill);
+//    }
 
     public void calculateBillItems(Bill bill, BillEntry e) {
         double s = 0.0;

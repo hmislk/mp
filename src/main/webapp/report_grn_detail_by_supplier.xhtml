@@ -17,7 +17,7 @@
                 <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="GRN Detail">
 
 
-                    <h:panelGrid columns="6" style="noPrintButton">
+                    <p:panelGrid columns="8" style="noPrintButton">
                         <h:outputLabel value="From Date"/>
                         <p:calendar id="frmDate" value="#{commonReport.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
                         </p:calendar>
@@ -41,7 +41,11 @@
                                          forceSelection="true" rendered="true"
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
 
+                        <p:defaultCommand target="btnRefresh"/>
 
+                    </p:panelGrid>
+                    
+                    <h:panelGrid columns="3">
                         <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                          styleClass="noPrintButton" 
                                          actionListener="#{commonReport.createGrnDetailTableByDealor()}"
@@ -54,11 +58,7 @@
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" 
                                          style="float: right;" >
                             <p:printer target="reportPrint"/>
-                        </p:commandButton>  
-
-
-                        <p:defaultCommand target="btnRefresh"/>
-
+                        </p:commandButton>
                     </h:panelGrid>
 
 

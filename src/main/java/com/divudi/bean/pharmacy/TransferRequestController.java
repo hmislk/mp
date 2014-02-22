@@ -92,6 +92,11 @@ public class TransferRequestController implements Serializable {
     public void onEdit(BillItem tmp) {
         getPharmacyController().setPharmacyItem(tmp.getItem());
     }
+    
+     public void onEdit() {
+        getPharmacyController().setPharmacyItem(getCurrentBillItem().getItem());
+    }
+
 
     public void saveBill() {
         if (getBill().getId() == null) {
@@ -280,7 +285,11 @@ public class TransferRequestController implements Serializable {
     }
 
     public void setCurrentBillItem(BillItem currentBillItem) {
+
         this.currentBillItem = currentBillItem;
+        if (currentBillItem != null && currentBillItem.getItem() != null) {
+            getPharmacyController().setPharmacyItem(currentBillItem.getItem());
+        }
     }
 
     public List<BillItem> getBillItems() {

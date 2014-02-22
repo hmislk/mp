@@ -41,12 +41,15 @@
                                 <p:outputLabel value=" X #{vt.dblValue}" 
                                                rendered="#{vt.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/>                            
                             </p:column>
+                            <f:ajax execute="@this" event="blur" render="#{p:component('tab')}" listener="#{transferRequestController.onEdit()}"/>
                         </p:autoComplete>
                         <p:inputText value="#{transferRequestController.currentBillItem.tmpQty}"/>
                         <p:commandButton value="Add Item" action="#{transferRequestController.addItem}" ajax="false"/>
                     </p:panel>
                 </p:panelGrid>
-                <p:dataTable styleClass="noBorder" var="bi"  scrollable="true" scrollHeight="250"  value="#{transferRequestController.billItems}" sortOrder="#{bi.searialNo}" id="itemList" editable="true" >  
+                <p:dataTable styleClass="noBorder" var="bi"  scrollable="true" 
+                             scrollHeight="250"  value="#{transferRequestController.billItems}"
+                             sortOrder="#{bi.searialNo}" id="itemList" editable="true" >  
 
                     <f:facet name="header">  
                        Bill Item 

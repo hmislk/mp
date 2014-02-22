@@ -25,27 +25,37 @@
                 </p:panel>
 
                 <p:dataTable styleClass="noBorder" var="ph" value="#{transferReceiveController.billItems}" 
-                             id="itemList" scrollable="true" scrollHeight="250" sortBy="#{ph.searialNo}">  
+                             id="itemList" scrollable="true" scrollHeight="250" sortBy="#{ph.searialNo}"
+                             editable="true">  
+
+                    <p:ajax event="rowEdit" listener="#{transferReceiveController.onEdit}" />  
+                    <p:ajax event="rowEditCancel" listener="#{transferReceiveController.onEdit}"/> 
+
 
                     <f:facet name="header">  
                         Requested Item 
                     </f:facet>  
 
                     <p:column headerText="Item Name"  style="width:25px!important;">  
-                        <p:selectOneMenu id="item"  value="#{ph.item}">
-                            <f:selectItems value="#{ph.tmpSuggession}" var="ii" itemLabel="#{ii.name}" itemValue="#{ii}"/>
-                            <f:ajax event="change" render="@this qty  :#{p:component('tab')}"  execute="@this"
-                                    listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
-                        </p:selectOneMenu> 
-
+                        <h:outputText id="item" value="#{ph.item.name}" >                                   
+                        </h:outputText>
                     </p:column>  
 
+                    <p:column style="width:6%">  
+                        <p:rowEditor />  
+                    </p:column>
 
                     <p:column headerText="Qty" style="width:25px!important;">                      
-                        <p:inputText id="qty" value="#{ph.tmpQty}" >  
-                            <f:ajax event="blur" render="@this"  execute="@this item" listener="#{transferReceiveController.onEdit(ph)}" ></f:ajax>
-                            <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferReceiveController.onFocus(ph)}"/>
-                        </p:inputText>
+                        <p:cellEditor>  
+                            <f:facet name="output">  
+                                <h:outputLabel value="#{ph.pharmaceuticalBillItem.qtyInUnit}" />                               
+                            </f:facet>                        
+                            <f:facet name="input">  
+                                <p:inputText id="qty" value="#{ph.tmpQty}" >
+                                    <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferReceiveController.onFocus(ph)}"/>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
                     </p:column>  
 
                 </p:dataTable>  

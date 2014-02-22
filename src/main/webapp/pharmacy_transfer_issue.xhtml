@@ -9,7 +9,7 @@
 
     <ui:define name="content">
         <h:form>
-         
+
             <p:panel rendered="#{!transferIssueController.printPreview}">
 
                 <f:facet name="header" >                                  
@@ -28,19 +28,20 @@
 
                 <p:dataTable styleClass="noBorder" var="bItm" scrollable="true" scrollHeight="250" 
                              value="#{transferIssueController.billItems}" 
-                             id="itemList" sortBy="#{bItm.searialNo}">  
+                             id="itemList" sortBy="#{bItm.searialNo}"  editable="true">  
 
                     <f:facet name="header">  
                         Requested Item 
                     </f:facet>  
 
-                    <p:column headerText="Item Name"  style="width:50px!important;">  
-                        <p:selectOneMenu id="item"  value="#{bItm.item}">
-                            <f:selectItems value="#{bItm.tmpSuggession}" var="ii" itemLabel="#{ii.name}" itemValue="#{ii}"/>
-                            <f:ajax event="change" render="@this qty  :#{p:component('tab')}"  execute="@this"
-                                    listener="#{transferIssueController.onEdit(bItm)}" ></f:ajax>
-                        </p:selectOneMenu> 
+                    <p:ajax event="rowEdit" listener="#{transferIssueController.onEdit}"  />  
+                    <p:ajax event="rowEditCancel" listener="#{transferIssueController.onEdit}" /> 
 
+
+
+                    <p:column headerText="Item Name" style="width: 50px!important;"  >                     
+                        <h:outputText id="item" value="#{bItm.item.name}" >                                   
+                        </h:outputText>
                     </p:column>  
 
                     <p:column headerText="Batch No"  style="width:50px!important;">  
@@ -50,11 +51,21 @@
                         <h:outputLabel value="#{bItm.pharmaceuticalBillItem.stock.itemBatch.purcahseRate}"/>                        
                     </p:column>  
 
-                    <p:column headerText="Qty" style="width:25px!important;">  
-                        <p:inputText id="qty" value="#{bItm.tmpQty}" >
-                            <f:ajax event="blur" render="@this"   execute="@this" listener="#{transferIssueController.onEdit(bItm)}" ></f:ajax>
-                            <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferIssueController.onFocus(bItm)}"/>
-                        </p:inputText>
+                    <p:column style="width:6%">  
+                        <p:rowEditor />  
+                    </p:column>
+
+                    <p:column headerText="Qty" style="width:25px!important;">                   
+                        <p:cellEditor>  
+                            <f:facet name="output">  
+                                <h:outputLabel value="#{bItm.pharmaceuticalBillItem.qtyInUnit}" />                               
+                            </f:facet>                        
+                            <f:facet name="input">  
+                                <p:inputText id="qty" value="#{bItm.tmpQty}" >
+                                    <f:ajax event="focus" render=":#{p:component('tab')}" execute="@this" listener="#{transferIssueController.onFocus(bItm)}"/>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
                     </p:column>              
 
                     <p:column style="width: 10px!important;">

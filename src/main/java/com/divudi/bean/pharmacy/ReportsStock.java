@@ -124,10 +124,18 @@ public class ReportsStock implements Serializable {
         for (Stock st : stocks) {
             sql = "Select ph from PharmaceuticalBillItem ph where ph.stock=:st "
                     + " and ph.billItem.createdAt>:date  "
-                    + " and ph.stockHistory is not null "
+                    + " and ph.stockHistory is not null and  "
+                    + "  (ph.billItem.bill.billType=:btp1 or ph.billItem.bill.billType=:btp2 or"
+                    + " ph.billItem.bill.billType=:btp3 or ph.billItem.bill.billType=:btp4 or "
+                    + " ph.billItem.bill.billType=:btp5 )"
                     + " order by ph.stockHistory.id ";
 
             m.clear();
+            m.put("btp1", BillType.PharmacyPurchaseBill);
+            m.put("btp2", BillType.PharmacyGrnBill);
+            m.put("btp3", BillType.PharmacyGrnReturn);
+            m.put("btp4", BillType.PurchaseReturn);
+            m.put("btp5", BillType.PharmacyPre);
             m.put("st", st);
             m.put("date", date);
 

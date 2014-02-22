@@ -872,7 +872,7 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             //System.err.println("Updating QTY " + qty);
-            getPharmacyBean().deductFromStock(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            getPharmacyBean().deductFromStockWithoutHistory(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
             getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
@@ -911,7 +911,7 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             //System.err.println("Updating QTY " + qty);
-            getPharmacyBean().addToStock(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            getPharmacyBean().addToStockWithoutHistory(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
             getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);

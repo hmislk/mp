@@ -55,37 +55,37 @@
 
                     <p:columnGroup type="header">
                         <p:row>
-                            <p:column>
+                            <p:column headerText="Bill No">
                                 <f:facet name="header">
                                     <h:outputLabel value="Bill No"/>
                                 </f:facet>
                             </p:column>
-                            <p:column>
+                            <p:column headerText="Billed Time">
                                 <f:facet name="header">
                                     <h:outputLabel value="Billed Time"/>
                                 </f:facet>
                             </p:column>                          
-                            <p:column>
+                            <p:column headerText="Billed By">
                                 <f:facet name="header">
                                     <h:outputLabel value="Billed By"/>
                                 </f:facet>
                             </p:column>                            
-                            <p:column>
+                            <p:column headerText="Discount">
                                 <f:facet name="header">
                                     <h:outputLabel value="Discount"/>
                                 </f:facet>
                             </p:column>
-                            <p:column>
+                            <p:column headerText="Cash">
                                 <f:facet name="header">
                                     <h:outputLabel value="Cash"/>
                                 </f:facet>
                             </p:column>
-                            <p:column>
+                            <p:column headerText="Credit">
                                 <f:facet name="header">
                                     <h:outputLabel value="Credit"/>
                                 </f:facet>
                             </p:column>
-                            <p:column>
+                            <p:column headerText="Card">
                                 <f:facet name="header">
                                     <h:outputLabel value="Card"/>
                                 </f:facet>
@@ -116,29 +116,20 @@
                                 <f:convertNumber pattern="#,000.00" />
                             </h:outputLabel>
                         </p:column>
-                        <p:column headerText="Cash" style=" text-align: right"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Cash"/>
-                            </f:facet> 
+                        <p:column style=" text-align: right" >                             
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod=='Cash'}" value="#{b.netTotal}" >
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod!='Cash'}" value="0.00" />
                         </p:column>
-                        <p:column headerText="Credit" style=" text-align: right" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Credit"/>
-                            </f:facet> 
+                        <p:column style=" text-align: right" >                            
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod=='Credit'}" value="#{b.netTotal}"  >
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod!='Credit'}" value="0.00"/>
                         </p:column>
 
-                        <p:column headerText="C Card" style=" text-align: right" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="C Card"/>
-                            </f:facet> 
+                        <p:column style=" text-align: right" >                           
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod=='Card'}" value="#{b.netTotal}" >
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
@@ -283,29 +274,20 @@
                                 <f:convertNumber pattern="#,000.00" />
                             </h:outputLabel>
                         </p:column>
-                        <p:column headerText="Cash" style=" text-align: right"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Cash"/>
-                            </f:facet> 
+                        <p:column style=" text-align: right"  > 
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod=='Cash'}" value="#{b.netTotal}" >
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod!='Cash'}" value="0.00" />
                         </p:column>
-                        <p:column headerText="Credit" style=" text-align: right" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Credit"/>
-                            </f:facet> 
+                        <p:column style=" text-align: right" >
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod=='Credit'}" value="#{b.netTotal}"  >
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod!='Credit'}" value="0.00"/>
                         </p:column>
 
-                        <p:column headerText="C Card" style=" text-align: right" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="C Card"/>
-                            </f:facet> 
+                        <p:column style=" text-align: right" >                             
                             <h:outputLabel rendered="#{b.paymentScheme.paymentMethod=='Card'}" value="#{b.netTotal}" >
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>

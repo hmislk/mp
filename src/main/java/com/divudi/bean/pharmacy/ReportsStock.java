@@ -124,21 +124,10 @@ public class ReportsStock implements Serializable {
         for (Stock st : stocks) {
             sql = "Select ph from PharmaceuticalBillItem ph where ph.stock=:st "
                     + " and ph.billItem.createdAt>:date  "
-                    + " and ph.stockHistory is not null and  "
-                    + "  (ph.billItem.bill.billType=:btp1 or ph.billItem.bill.billType=:btp2 or"
-                    + " ph.billItem.bill.billType=:btp3 or ph.billItem.bill.billType=:btp4 or "
-                    + " ph.billItem.bill.billType=:btp5 or ph.billItem.bill.billType=:btp6 or"
-                    + " ph.billItem.bill.billType=:btp7 )"
+                    + " and ph.stockHistory is not null "
                     + " order by ph.stockHistory.id ";
 
             m.clear();
-            m.put("btp1", BillType.PharmacyPurchaseBill);
-            m.put("btp2", BillType.PharmacyGrnBill);
-            m.put("btp3", BillType.PharmacyGrnReturn);
-            m.put("btp4", BillType.PurchaseReturn);
-            m.put("btp5", BillType.PharmacyPre);
-            m.put("btp6", BillType.PharmacyTransferIssue);
-            m.put("btp7", BillType.PharmacyTransferReceive);
             m.put("st", st);
             m.put("date", date);
 
@@ -162,12 +151,9 @@ public class ReportsStock implements Serializable {
                     curHistory = ph.getStockHistory().getStockQty();
                 }
 
-                double prvQty = preHistoryQty + previousPh.getQtyInUnit() + previousPh.getFreeQtyInUnit();
+                double calcualtedQty = preHistoryQty + previousPh.getQtyInUnit() + previousPh.getFreeQtyInUnit();
 
-                if (prvQty != 0 && preHistoryQty != 0
-//                        && ph.getBillItem().getBill().getBillType() != BillType.PharmacyPre
-//                        && ph.getBillItem().isRetired() != true
-                        && prvQty != curHistory) {
+                if (calcualtedQty != curHistory) {
                     System.err.println("Itm " + ph.getBillItem().getItem().getName());
                     System.err.println("Prv History Qty " + preHistoryQty);
                     System.err.println("Prv Qty " + previousPh.getQtyInUnit());
@@ -176,7 +162,12 @@ public class ReportsStock implements Serializable {
                     System.err.println("######");
                     tmpStockList.add(st);
                 } else {
-                    //    System.err.println("False");
+                    System.out.println("Itm " + ph.getBillItem().getItem().getName());
+                    System.out.println("Prv History Qty " + preHistoryQty);
+                    System.out.println("Prv Qty " + previousPh.getQtyInUnit());
+                    System.out.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
+                    System.out.println("History " + curHistory);
+                    System.out.println("######");
                 }
 
                 previousPh = ph;

@@ -91,13 +91,13 @@
                                 
                                 <p:columnGroup type="footer">
                                     <p:row>
-                                        <p:column colspan="2">
+                                        <p:column colspan="2" footerText="Totals">
                                             <f:facet name="footer">
                                                 <h:outputLabel value="Totals" ></h:outputLabel>
                                             </f:facet>
                                         </p:column>
                                         
-                                        <p:column style="text-align: right;" >
+                                        <p:column style="text-align: right;"  footerText="#{reportsTransfer.netTotalValues}" >
                                             <f:facet name="footer">
                                                 <h:outputLabel value="#{reportsTransfer.netTotalValues}" >
                                                     <f:convertNumber pattern="#,##0.00" ></f:convertNumber>

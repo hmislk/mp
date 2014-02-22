@@ -124,7 +124,7 @@ public class ReportsStock implements Serializable {
         for (Stock st : stocks) {
             sql = "Select ph from PharmaceuticalBillItem ph where ph.stock=:st "
                     + " and ph.billItem.createdAt>:date  "
-                    + " and ph.stockHistory is not null and  "
+                    + " and ph.stockHistory is not null  "
                     + " order by ph.stockHistory.id ";
 
             m.clear();        

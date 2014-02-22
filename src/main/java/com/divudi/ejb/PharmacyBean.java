@@ -310,7 +310,9 @@ public class PharmacyBean {
                 + " and s.staff=:stf";
         hm.put("batch", batch);
         hm.put("stf", staff);
-        return getStockFacade().findAggregateDbl(sql);
+        double vl = getStockFacade().findAggregateDbl(sql);
+        System.err.println("Return Value " + vl);
+        return vl;
     }
 
     public double getStockQty(ItemBatch batch, Institution institution) {
@@ -780,7 +782,7 @@ public class PharmacyBean {
 
         return true;
     }
-    
+
     public boolean addToStockWithoutHistory(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
         if (stock == null) {
             return false;
@@ -794,7 +796,6 @@ public class PharmacyBean {
         }
 
 //        addToStockHistory(pbi, stock, d);
-
         stock = getStockFacade().find(stock.getId());
 
         //System.err.println("Before Update" + stock.getStock());

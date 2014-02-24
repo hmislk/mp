@@ -15,7 +15,7 @@
                 <f:facet name="header" >                                  
                     <h:panelGrid columns="4"   >
                         <f:facet name="header">
-                            <h:outputLabel value="Department :#{transferIssueController.issuedBill.toDepartment.name}" />
+                            <h:outputLabel value="Department :#{transferIssueController.requestedBill.department.name}" />
                         </f:facet>
                         <p:autoComplete converter="stfcon" completeMethod="#{staffController.completeStaffWithoutDoctors}" styleClass="noPrintButton"
                                         var="w" itemLabel="#{w.person.name}" itemValue="#{w}"

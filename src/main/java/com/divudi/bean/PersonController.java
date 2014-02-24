@@ -51,7 +51,8 @@ public  class PersonController implements Serializable {
     public List<Person> completePerson(String qry) {
         List<Person> a=null ;
         if (qry != null) {
-            a = getFacade().findBySQL("select c from Person c where c.retired=false and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name");
+            a = getFacade().findBySQL("select c from Person c where c.retired=false and "
+                    + "  upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name",20);
         }
         if(a==null){
             a=new ArrayList<Person>();

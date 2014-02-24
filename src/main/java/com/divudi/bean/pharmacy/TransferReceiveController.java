@@ -34,6 +34,7 @@ import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -113,13 +114,10 @@ public class TransferReceiveController implements Serializable {
             bItem.setTmpQty(0 - i.getQtyInUnit());
             bItem.setSearialNo(getBillItems().size());
 
-            bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
-
+     //       bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
             PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
             phItem.setBillItem(bItem);
             phItem.copy(i);
-            phItem.setStock(null);
-            phItem.setItemBatch(null);
             phItem.invertValue(i);
 
             bItem.setPharmaceuticalBillItem(phItem);
@@ -140,7 +138,6 @@ public class TransferReceiveController implements Serializable {
         for (BillItem i : getBillItems()) {
 
 //            i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
-
             if (i.getPharmaceuticalBillItem().getQtyInUnit() == 0.0 || i.getItem() instanceof Vmpp || i.getItem() instanceof Vmp) {
                 continue;
             }
@@ -211,11 +208,22 @@ public class TransferReceiveController implements Serializable {
 
     }
 
-    public void onEdit(BillItem tmp) {
-        double availableStock = getPharmacyBean().getStockQty(tmp.getPharmaceuticalBillItem().getItemBatch(), getReceivedBill().getFromStaff());
-        double oldValue = getPharmaceuticalBillItemFacade().find(tmp.getPharmaceuticalBillItem().getId()).getQtyInUnit();
-        if (availableStock < tmp.getQty()) {
-            tmp.setQty(oldValue);
+//    public void onEdit(BillItem tmp) {
+//        double availableStock = getPharmacyBean().getStockQty(tmp.getPharmaceuticalBillItem().getItemBatch(), getReceivedBill().getFromStaff());
+//        double oldValue = getPharmaceuticalBillItemFacade().find(tmp.getPharmaceuticalBillItem().getId()).getQtyInUnit();
+//        if (availableStock < tmp.getQty()) {
+//            tmp.setQty(oldValue);
+//            UtilityController.addErrorMessage("You cant recieved over than Issued Qty setted Old Value");
+//        }
+//
+//        //   getPharmacyController().setPharmacyItem(tmp.getItem());
+//    }
+    public void onEdit(RowEditEvent event) {
+        BillItem tmp = (BillItem) event.getObject();
+//        double availableStock = getPharmacyBean().getStockQty(tmp.getPharmaceuticalBillItem().getStaffStock(), getIssuedBill().getToStaff());
+        //   double oldValue = getPharmaceuticalBillItemFacade().find(tmp.getPharmaceuticalBillItem().getId()).getQtyInUnit();
+        if (tmp.getPharmaceuticalBillItem().getStaffStock().getStock() < tmp.getQty()) {
+            tmp.setTmpQty(0.0);
             UtilityController.addErrorMessage("You cant recieved over than Issued Qty setted Old Value");
         }
 

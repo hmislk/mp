@@ -40,6 +40,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -117,8 +118,6 @@ public class TransferIssueController implements Serializable {
     private List<Bill> bills;
     private SearchKeyword searchKeyword;
 
-   
-
     public TransferIssueController() {
     }
 
@@ -149,7 +148,6 @@ public class TransferIssueController implements Serializable {
         }
 
         //System.err.println("Sugg" + suggessions);
-
         return suggessions;
     }
 
@@ -172,7 +170,7 @@ public class TransferIssueController implements Serializable {
                 bItem.setTmpQty(sq.getQty());
                 //System.err.println("Bill Item QTY " + bItem.getQty());
 
-                bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
+//               s bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
                 //     //System.err.println("List "+bItem.getTmpSuggession());
 
                 PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
@@ -227,8 +225,8 @@ public class TransferIssueController implements Serializable {
 
             //Remove Department Stock
             getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(),
-                    Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), 
-                    i.getPharmaceuticalBillItem(), 
+                    Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()),
+                    i.getPharmaceuticalBillItem(),
                     getSessionController().getDepartment());
 
             //Addinng Staff
@@ -287,17 +285,18 @@ public class TransferIssueController implements Serializable {
     @Inject
     private PharmacyController pharmacyController;
 
-    public void onEdit(BillItem tmp) {
+    public void onEdit(RowEditEvent event) {
+        BillItem tmp = (BillItem) event.getObject();
 //        //System.err.println("1 " + tmp);
 //        //System.err.println("2 " + tmp.getPharmaceuticalBillItem());
 //        //System.err.println("3 " + tmp.getPharmaceuticalBillItem().getItemBatch());
 //        //System.err.println("4 " + getSessionController().getDepartment());
         double availableStock = getPharmacyBean().getStockQty(tmp.getPharmaceuticalBillItem().getItemBatch(), getSessionController().getDepartment());
-        double oldValue = (getPharmaceuticalBillItemFacade().find(tmp.getPharmaceuticalBillItem().getId())).getQty();
+//        double oldValue = (getPharmaceuticalBillItemFacade().find(tmp.getPharmaceuticalBillItem().getId())).getQty();
 //        //System.err.println("AvailableStock " + availableStock);
 //        //System.err.println("Old Value " + oldValue);
         if (availableStock < tmp.getPharmaceuticalBillItem().getQtyInUnit()) {
-            tmp.getPharmaceuticalBillItem().setQtyInUnit(oldValue);
+            tmp.setTmpQty(0.0);
             UtilityController.addErrorMessage("You cant issue over than Stock Qty setted Old Value");
         }
 

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 /**
  *
@@ -26,6 +27,8 @@ public class Stock implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Double stock=0.0;
+    @Transient
+    private double calculated=0;
     @ManyToOne
     private ItemBatch itemBatch;
     @ManyToOne
@@ -98,6 +101,14 @@ public class Stock implements Serializable {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public double getCalculated() {
+        return calculated;
+    }
+
+    public void setCalculated(double calculated) {
+        this.calculated = calculated;
     }
 
     

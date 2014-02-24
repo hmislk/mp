@@ -233,7 +233,7 @@ public class SearchController implements Serializable {
         tmp.put("fromDate", getFromDate());
         tmp.put("dep", getSessionController().getDepartment());
         tmp.put("bTp", BillType.PharmacyTransferIssue);
-        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
+        sql = "Select b From BilledBill b where b.retired=false and "
                 + " b.toDepartment=:dep and b.billType= :bTp "
                 + " and b.createdAt between :fromDate and :toDate ";
 

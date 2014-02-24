@@ -105,8 +105,8 @@ public class PettyCashBillController implements Serializable {
 
         getCurrent().setBillType(BillType.PettyCash);
 
-        getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
-        getCurrent().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
+        getCurrent().setDepartment(getSessionController().getDepartment());
+        getCurrent().setInstitution(getSessionController().getInstitution());
 
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -114,8 +114,8 @@ public class PettyCashBillController implements Serializable {
         getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setCreater(getSessionController().getLoggedUser());
 
-        getCurrent().setTotal(-getCurrent().getNetTotal());
-        getCurrent().setNetTotal(-getCurrent().getNetTotal());
+        getCurrent().setTotal(0-getCurrent().getNetTotal());
+        getCurrent().setNetTotal(0-getCurrent().getNetTotal());
 
         getBillFacade().create(getCurrent());
     }
@@ -150,7 +150,7 @@ public class PettyCashBillController implements Serializable {
         tmp.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         tmp.setCreater(getSessionController().getLoggedUser());
         tmp.setBill(getCurrent());
-        tmp.setNetValue(-getCurrent().getNetTotal());
+        tmp.setNetValue(0-getCurrent().getNetTotal());
         getBillItemFacade().create(tmp);
 
     }

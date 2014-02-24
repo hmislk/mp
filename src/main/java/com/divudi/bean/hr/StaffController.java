@@ -159,7 +159,7 @@ public class StaffController implements Serializable {
         } else {
             sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) and type(p) != Doctor order by p.person.name";
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
+            suggestions = getFacade().findBySQL(sql,20);
         }
         return suggestions;
     }

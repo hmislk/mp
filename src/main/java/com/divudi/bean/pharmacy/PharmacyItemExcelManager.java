@@ -13,15 +13,18 @@ import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
+import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Atm;
+import com.divudi.entity.pharmacy.ItemBatch;
 import com.divudi.entity.pharmacy.ItemsDistributors;
 import com.divudi.entity.pharmacy.MeasurementUnit;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
+import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.entity.pharmacy.Vmp;
 import com.divudi.entity.pharmacy.Vmpp;
 import com.divudi.entity.pharmacy.Vtm;
@@ -36,6 +39,7 @@ import com.divudi.facade.MeasurementUnitFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.PharmaceuticalItemFacade;
+import com.divudi.facade.StockHistoryFacade;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VmppFacade;
 import com.divudi.facade.VtmFacade;
@@ -46,6 +50,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +58,7 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -262,14 +268,19 @@ public class PharmacyItemExcelManager implements Serializable {
                 case PharmacyGrnBill:
                     if (ph.getBillItem().getBill() instanceof BilledBill) {
                         if (ph.getQtyInUnit() < 0) {
-                            System.err.println("Error 1 " + ph.getQtyInUnit());
                             ph.setQtyInUnit(0 - ph.getQtyInUnit());
+                        }
+                        if (ph.getFreeQtyInUnit() < 0) {
+                            ph.setFreeQtyInUnit(0 - ph.getFreeQtyInUnit());
                         }
                     }
                     if (ph.getBillItem().getBill() instanceof CancelledBill) {
                         if (ph.getQtyInUnit() > 0) {
                             System.err.println("Error 2 " + ph.getQtyInUnit());
                             ph.setQtyInUnit(0 - ph.getQtyInUnit());
+                        }
+                        if (ph.getFreeQtyInUnit() > 0) {
+                            ph.setFreeQtyInUnit(0 - ph.getFreeQtyInUnit());
                         }
                     }
                     break;
@@ -279,11 +290,17 @@ public class PharmacyItemExcelManager implements Serializable {
                             System.err.println("Error 3 " + ph.getQtyInUnit());
                             ph.setQtyInUnit(0 - ph.getQtyInUnit());
                         }
+                        if (ph.getFreeQtyInUnit() > 0) {
+                            ph.setFreeQtyInUnit(0 - ph.getFreeQtyInUnit());
+                        }
                     }
                     if (ph.getBillItem().getBill() instanceof CancelledBill) {
                         if (ph.getQtyInUnit() < 0) {
                             System.err.println("Error 4 " + ph.getQtyInUnit());
                             ph.setQtyInUnit(0 - ph.getQtyInUnit());
+                        }
+                        if (ph.getFreeQtyInUnit() < 0) {
+                            ph.setFreeQtyInUnit(0 - ph.getFreeQtyInUnit());
                         }
                     }
                     break;
@@ -321,11 +338,17 @@ public class PharmacyItemExcelManager implements Serializable {
                             System.err.println("Error 9 " + ph.getQtyInUnit());
                             ph.setQtyInUnit(0 - ph.getQtyInUnit());
                         }
+                        if (ph.getFreeQtyInUnit() < 0) {
+                            ph.setFreeQtyInUnit(0 - ph.getFreeQtyInUnit());
+                        }
                     }
                     if (ph.getBillItem().getBill() instanceof CancelledBill) {
                         if (ph.getQtyInUnit() > 0) {
                             System.err.println("Error 10 " + ph.getQtyInUnit());
                             ph.setQtyInUnit(0 - ph.getQtyInUnit());
+                        }
+                        if (ph.getFreeQtyInUnit() > 0) {
+                            ph.setFreeQtyInUnit(0 - ph.getFreeQtyInUnit());
                         }
                     }
                     break;
@@ -370,10 +393,8 @@ public class PharmacyItemExcelManager implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select b from Bill b where (type(b)=:class) "
-                + " and b.billType = :billType or b.billType = :billType2  ";
+        sql = "select b from Bill b where b.billType = :billType or b.billType = :billType2  ";
 
-        temMap.put("class", BilledBill.class);
         temMap.put("billType", BillType.PharmacyTransferIssue);
         temMap.put("billType2", BillType.PharmacyTransferReceive);
         //temMap.put("dep", getSessionController().getDepartment());
@@ -393,6 +414,71 @@ public class PharmacyItemExcelManager implements Serializable {
             b.setNetTotal(totalBySql);
             getBillFacade().edit(b);
 //            }
+        }
+
+    }
+
+    @EJB
+    private StockHistoryFacade stockHistoryFacade;
+
+    private StockHistory getPreviousStockHistoryByBatch(ItemBatch itemBatch, Department department, Date date) {
+        String sql = "Select sh from StockHistory sh where sh.retired=false and"
+                + " sh.itemBatch=:itmB and sh.department=:dep and sh.pbItem.billItem.createdAt<:dt "
+                + " order by sh.pbItem.billItem.createdAt desc";
+        HashMap hm = new HashMap();
+        hm.put("itmB", itemBatch);
+        hm.put("dt", date);
+        hm.put("dep", department);
+        return getStockHistoryFacade().findFirstBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+
+    private PharmaceuticalBillItem getPreviousPharmacuticalBillByBatch(ItemBatch itemBatch, Department department, Date date) {
+        String sql = "Select sh from PharmaceuticalBillItem sh where "
+                + " sh.itemBatch=:itmB and sh.billItem.bill.department=:dep "
+                + " and (sh.billItem.bill.billType=:btp1 or sh.billItem.bill.billType=:btp2 )"
+                + "  and sh.billItem.createdAt<:dt "
+                + " order by sh.billItem.createdAt desc";
+        HashMap hm = new HashMap();
+        hm.put("itmB", itemBatch);
+        hm.put("dt", date);
+        hm.put("dep", department);
+        hm.put("btp1", BillType.PharmacyGrnBill);
+        hm.put("btp2", BillType.PharmacyPurchaseBill);
+        return getPharmaceuticalBillItemFacade().findFirstBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+
+    public void resetTransferHistoryValue() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select p from PharmaceuticalBillItem p where p.billItem.bill.billType = :billType or "
+                + " p.billItem.bill.billType = :billType2 and p.stockHistory is not null order by p.stockHistory.id ";
+
+        temMap.put("billType", BillType.PharmacyTransferIssue);
+        temMap.put("billType2", BillType.PharmacyTransferReceive);
+        List<PharmaceuticalBillItem> list = getPharmaceuticalBillItemFacade().findBySQL(sql, temMap);
+
+        for (PharmaceuticalBillItem b : list) {
+            System.err.println("Item Name " + b.getBillItem().getItem().getName());
+            System.err.println("History Id " + b.getStockHistory().getId());
+            System.err.println("Stock History " + b.getStockHistory().getStockQty());
+            System.err.println("Department " + b.getBillItem().getBill().getDepartment().getName());
+            StockHistory sh = getPreviousStockHistoryByBatch(b.getItemBatch(), b.getBillItem().getBill().getDepartment(), b.getBillItem().getCreatedAt());
+            PharmaceuticalBillItem phi = getPreviousPharmacuticalBillByBatch(b.getStock().getItemBatch(), b.getBillItem().getBill().getDepartment(), b.getBillItem().getCreatedAt());
+            if (sh != null) {
+                System.err.println("Prev History Id " + sh.getId());
+                System.out.println("Previuos Stock " + sh.getStockQty());
+                System.out.println("Ph Qty " + sh.getPbItem().getQtyInUnit() + sh.getPbItem().getFreeQtyInUnit());
+                System.out.println("Acc Qty " + (sh.getStockQty() + sh.getPbItem().getQtyInUnit() + sh.getPbItem().getFreeQtyInUnit()));
+                b.getStockHistory().setStockQty((sh.getStockQty() + sh.getPbItem().getQtyInUnit() + sh.getPbItem().getFreeQtyInUnit()));
+            } else if (phi != null) {
+                b.getStockHistory().setStockQty(phi.getQtyInUnit() + phi.getFreeQtyInUnit());
+            } else {
+                b.getStockHistory().setStockQty(0.0);
+            }
+            System.out.println("#########");
+            getStockHistoryFacade().edit(b.getStockHistory());
+
         }
 
     }
@@ -1076,6 +1162,14 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public void setPharmaceuticalBillItemFacade(PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade) {
         this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
+    }
+
+    public StockHistoryFacade getStockHistoryFacade() {
+        return stockHistoryFacade;
+    }
+
+    public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
+        this.stockHistoryFacade = stockHistoryFacade;
     }
 
 }

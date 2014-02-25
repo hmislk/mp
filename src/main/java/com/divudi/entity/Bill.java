@@ -36,6 +36,11 @@ import javax.persistence.Transient;
 @Entity
 public class Bill implements Serializable {
 
+    @OneToMany(mappedBy = "backwardReferenceBill", fetch = FetchType.LAZY)
+    private List<Bill> forwardReferenceBills;
+    @OneToMany(mappedBy = "forwardReferenceBill", fetch = FetchType.LAZY)
+    private List<Bill> backwardReferenceBills;
+
     @ManyToOne
     BatchBill batchBill;
 
@@ -92,7 +97,7 @@ public class Bill implements Serializable {
     double staffFee;
     double billerFee;
     double grantTotal = 0.0;
-    
+
     //Institution
     @ManyToOne
     Institution paymentSchemeInstitution;
@@ -182,8 +187,10 @@ public class Bill implements Serializable {
 
     @Transient
     private List<BillItem> transActiveBillItem;
+
     @ManyToOne
     private Bill forwardReferenceBill;
+
     @ManyToOne
     private Bill backwardReferenceBill;
     @Transient
@@ -231,6 +238,24 @@ public class Bill implements Serializable {
 
     public void setBillComponents(List<BillComponent> billComponents) {
         this.billComponents = billComponents;
+    }
+
+    public boolean checkActiveForwardReference() {
+        for (Bill b : getForwardReferenceBills()) {
+            if (b.getCreater() != null && !b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean checkActiveBackwardReference() {
+        for (Bill b : getBackwardReferenceBills()) {
+            if (b.getCreater() != null && !b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Field getField(String name) {
@@ -970,5 +995,27 @@ public class Bill implements Serializable {
 //    public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
 //        this.transActiveBillItem = transActiveBillItem;
 //    }
+    public List<Bill> getForwardReferenceBills() {
+        return forwardReferenceBills;
+    }
 
+    public void setForwardReferenceBills(List<Bill> forwardReferenceBills) {
+        this.forwardReferenceBills = forwardReferenceBills;
+    }
+
+    public List<Bill> getBackwardReferenceBills() {
+        return backwardReferenceBills;
+    }
+
+    public void setBackwardReferenceBills(List<Bill> backwardReferenceBills) {
+        this.backwardReferenceBills = backwardReferenceBills;
+    }
+
+    public List<BillItem> getTransActiveBillItem() {
+        return transActiveBillItem;
+    }
+
+    public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
+        this.transActiveBillItem = transActiveBillItem;
+    }
 }

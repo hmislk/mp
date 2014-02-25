@@ -64,7 +64,7 @@
                         <h:outputLabel value="Calculated Stock" ></h:outputLabel>
                         <h:outputLabel value="#{pharmacyErrorChecking.calculatedStock}" ></h:outputLabel>
                         <br/>
-                       
+
 
                         <p:dataTable styleClass="noBorder summeryBorder" 
                                      value="#{pharmacyErrorChecking.billItems}" var="pb"  rowIndexVar="i"
@@ -85,7 +85,7 @@
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferIssue' and pb.bill.createdAt ne null )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferReceive' and pb.bill.createdAt ne null )
                                        )? 'greenText' : ''}"
- >
+                                     >
 
                             <p:column >
                                 <h:outputLabel value="#{i+1}"/>
@@ -119,15 +119,15 @@
                                     <h:outputLabel value="#{pb.pharmaceuticalBillItem.itemBatch.batchNo}" >
                                     </h:outputLabel>
                                 </h:panelGrid>
-                                <h:panelGrid columns="2">
+                                <h:panelGrid columns="2">                                   
                                     <h:outputLabel value="Before "/>
-                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stockHistory.stockQty}" >
-                                    </h:outputLabel>
+                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stockHistory.stockQty}"  />
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
                                     <h:outputLabel value="After "/>
-                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stockHistory.stockQty+(pb.pharmaceuticalBillItem.qtyInUnit+pb.pharmaceuticalBillItem.freeQtyInUnit)}" >
-                                    </h:outputLabel>
+                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stockHistory.stockQty+(pb.pharmaceuticalBillItem.qtyInUnit+pb.pharmaceuticalBillItem.freeQtyInUnit)}"
+                                                   />
+
                                 </h:panelGrid>
                             </p:column>
 

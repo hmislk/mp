@@ -5,6 +5,7 @@
 package com.divudi.ejb;
 
 import com.divudi.data.BillType;
+import com.divudi.data.HistoryType;
 import com.divudi.data.ItemBatchQty;
 import com.divudi.data.StockQty;
 import com.divudi.entity.Bill;
@@ -310,7 +311,9 @@ public class PharmacyBean {
                 + " and s.staff=:stf";
         hm.put("batch", batch);
         hm.put("stf", staff);
-        return getStockFacade().findAggregateDbl(sql);
+        double vl = getStockFacade().findAggregateDbl(sql);
+        System.err.println("Return Value " + vl);
+        return vl;
     }
 
     public double getStockQty(ItemBatch batch, Institution institution) {
@@ -434,6 +437,7 @@ public class PharmacyBean {
             s.setStock(s.getStock() + qty);
             //System.err.println("Initial Stock After Updation" + s.getStock());
             getStockFacade().create(s);
+            addToStockHistoryInitial(pharmaceuticalBillItem, s, department);
         } else {
             addToStockHistory(pharmaceuticalBillItem, s, department);
             //System.err.println("Before Stock Updation " + s.getStock());
@@ -681,21 +685,72 @@ public class PharmacyBean {
             return;
         }
 
-        sh.setFromDate(Calendar.getInstance().getTime());
+        sh.setFromDate(new Date());
         sh.setPbItem(phItem);
         sh.setHxDate(Calendar.getInstance().get(Calendar.DATE));
         sh.setHxMonth(Calendar.getInstance().get(Calendar.MONTH));
         sh.setHxWeek(Calendar.getInstance().get(Calendar.WEEK_OF_YEAR));
         sh.setHxYear(Calendar.getInstance().get(Calendar.YEAR));
 
-        sh.setStockAt(Calendar.getInstance().getTime());
-
+        sh.setStockAt(new Date());
+        sh.setCreatedAt(new Date());
         sh.setDepartment(d);
         sh.setInstitution(d.getInstitution());
 
         Stock fetchedStock = getStockFacade().find(stock.getId());
 
         sh.setStockQty(fetchedStock.getStock());
+        sh.setItem(phItem.getBillItem().getItem());
+        sh.setItemBatch(fetchedStock.getItemBatch());
+
+        getStockHistoryFacade().create(sh);
+
+        phItem.setStockHistory(sh);
+        getPharmaceuticalBillItemFacade().edit(phItem);
+
+        //System.err.println("Histry Saved " + sh.getStockQty());
+    }
+
+    public void addToStockHistoryInitial(PharmaceuticalBillItem phItem, Stock stock, Department d) {
+        if (phItem == null) {
+            return;
+        }
+
+        if (phItem.getBillItem() == null) {
+            return;
+        }
+
+        if (phItem.getBillItem().getItem() == null) {
+            return;
+        }
+
+        StockHistory sh;
+        String sql;
+        sql = "Select sh from StockHistory sh where sh.pbItem=:pbi";
+        Map m = new HashMap();
+        m.put("pbi", phItem);
+        sh = getStockHistoryFacade().findFirstBySQL(sql, m);
+        if (sh == null) {
+            sh = new StockHistory();
+        } else {
+            return;
+        }
+
+        sh.setFromDate(new Date());
+        sh.setPbItem(phItem);
+        sh.setHxDate(Calendar.getInstance().get(Calendar.DATE));
+        sh.setHxMonth(Calendar.getInstance().get(Calendar.MONTH));
+        sh.setHxWeek(Calendar.getInstance().get(Calendar.WEEK_OF_YEAR));
+        sh.setHxYear(Calendar.getInstance().get(Calendar.YEAR));
+
+        sh.setStockAt(new Date());
+        sh.setCreatedAt(new Date());
+        sh.setDepartment(d);
+        sh.setInstitution(d.getInstitution());
+
+        Stock fetchedStock = getStockFacade().find(stock.getId());
+
+        sh.setStockQty(0.0);
         sh.setItem(phItem.getBillItem().getItem());
         sh.setItemBatch(fetchedStock.getItemBatch());
 
@@ -780,7 +835,7 @@ public class PharmacyBean {
 
         return true;
     }
-    
+
     public boolean addToStockWithoutHistory(Stock stock, double qty, PharmaceuticalBillItem pbi, Department d) {
         if (stock == null) {
             return false;
@@ -794,7 +849,6 @@ public class PharmacyBean {
         }
 
 //        addToStockHistory(pbi, stock, d);
-
         stock = getStockFacade().find(stock.getId());
 
         //System.err.println("Before Update" + stock.getStock());

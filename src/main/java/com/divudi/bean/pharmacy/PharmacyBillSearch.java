@@ -640,10 +640,7 @@ public class PharmacyBillSearch implements Serializable {
             return true;
         }
 
-//        if (getBill().isRefunded()) {
-//            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
-//            return true;
-//        }
+
         if (getBill().getBillType() == BillType.PharmacyOrderApprove) {
             if (checkGrn()) {
                 UtilityController.addErrorMessage("Grn already head been Come u can't bill ");
@@ -659,7 +656,7 @@ public class PharmacyBillSearch implements Serializable {
         }
 
         if (getBill().getBillType() == BillType.PharmacyTransferIssue) {
-            if (getBill().getForwardReferenceBill() != null) {
+            if (getBill().checkActiveForwardReference()) {
                 UtilityController.addErrorMessage("Item for this bill already recieve");
                 return true;
             }
@@ -1343,12 +1340,12 @@ public class PharmacyBillSearch implements Serializable {
             getBill().setCancelledBill(cb);
             getBillFacade().edit(getBill());
 
-            getBill().getBackwardReferenceBill().setForwardReferenceBill(null);
-            getBillFacade().edit(getBill().getBackwardReferenceBill());
-
-            getBill().setBackwardReferenceBill(null);
-            getBill().setForwardReferenceBill(null);
-            getBillFacade().edit(getBill());
+//            getBill().getBackwardReferenceBill().setForwardReferenceBill(null);
+//            getBillFacade().edit(getBill().getBackwardReferenceBill());
+//
+//            getBill().setBackwardReferenceBill(null);
+//            getBill().setForwardReferenceBill(null);
+//            getBillFacade().edit(getBill());
 
             UtilityController.addSuccessMessage("Cancelled");
 
@@ -1382,13 +1379,7 @@ public class PharmacyBillSearch implements Serializable {
             getBill().setCancelledBill(cb);
             getBillFacade().edit(getBill());
 
-            getBill().getBackwardReferenceBill().setForwardReferenceBill(null);
-            getBillFacade().edit(getBill().getBackwardReferenceBill());
-
-            getBill().setBackwardReferenceBill(null);
-            getBill().setForwardReferenceBill(null);
-            getBillFacade().edit(getBill());
-
+          
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;

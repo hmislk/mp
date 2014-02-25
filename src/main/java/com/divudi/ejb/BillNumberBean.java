@@ -36,6 +36,8 @@ public class BillNumberBean {
     private BillFacade billFacade;
     @EJB
     PatientFacade patientFacade;
+    
+    
 
     public PatientFacade getPatientFacade() {
         return patientFacade;

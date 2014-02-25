@@ -172,7 +172,6 @@ public class TransferIssueController implements Serializable {
 
 //               s bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
                 //     //System.err.println("List "+bItem.getTmpSuggession());
-
                 PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
                 phItem.setBillItem(bItem);
                 phItem.setQtyInUnit(sq.getQty());
@@ -259,7 +258,7 @@ public class TransferIssueController implements Serializable {
 
         //Update ReferenceBill
         //     getRequestedBill().setReferenceBill(getIssuedBill());
-        getRequestedBill().setForwardReferenceBill(getIssuedBill());
+        getRequestedBill().getForwardReferenceBills().add(getIssuedBill());
         getBillFacade().edit(getRequestedBill());
 
         Bill b = getBillFacade().find(getIssuedBill().getId());

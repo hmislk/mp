@@ -423,7 +423,7 @@ public class SearchController implements Serializable {
         tmp.put("toDep", getSessionController().getDepartment());
         tmp.put("bTp", BillType.PharmacyTransferRequest);
 
-        sql = "Select b From BilledBill b where "
+        sql = "Select b From Bill b where "
                 + " b.retired=false and  b.toDepartment=:toDep"
                 + " and b.billType= :bTp and b.createdAt between :fromDate and :toDate ";
 
@@ -443,6 +443,14 @@ public class SearchController implements Serializable {
        
         for (Bill b : bills) {
             b.setListOfBill(getIssudBills(b));
+        }
+
+     
+        
+        
+
+        for (Bill b : bills) {
+            b.setListOfBill(getIssuedBills(b));
         }
 
     }
@@ -764,6 +772,16 @@ public class SearchController implements Serializable {
         String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
                 + " and b.billType=:btp and "
                 + " b.referenceBill=:ref or b.backwardReferenceBill=:ref";
+        HashMap hm = new HashMap();
+        hm.put("ref", b);
+        hm.put("btp", BillType.PharmacyTransferIssue);
+        return getBillFacade().findBySQL(sql, hm);
+    }
+
+    private List<Bill> getIssuedBills(Bill b) {
+        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+                + " and b.billType=:btp and "
+                + " b.referenceBill=:ref and b.backwardReferenceBill=:ref";
         HashMap hm = new HashMap();
         hm.put("ref", b);
         hm.put("btp", BillType.PharmacyTransferIssue);

@@ -114,7 +114,7 @@ public class TransferReceiveController implements Serializable {
             bItem.setTmpQty(0 - i.getQtyInUnit());
             bItem.setSearialNo(getBillItems().size());
 
-     //       bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
+            //       bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
             PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
             phItem.setBillItem(bItem);
             phItem.copy(i);
@@ -181,16 +181,18 @@ public class TransferReceiveController implements Serializable {
         getReceivedBill().setCreater(getSessionController().getLoggedUser());
         getReceivedBill().setCreatedAt(Calendar.getInstance().getTime());
 
+        getReceivedBill().setBackwardReferenceBill(getIssuedBill());
+
         getReceivedBill().setNetTotal(calTotal());
 
         getBillFacade().edit(getReceivedBill());
 
         //Update Issue Bills Reference Bill
-        getIssuedBill().setForwardReferenceBill(getReceivedBill());
+        getIssuedBill().getForwardReferenceBills().add(getReceivedBill());
         getBillFacade().edit(getIssuedBill());
 
-        getIssuedBill().setReferenceBill(getReceivedBill());
-        getBillFacade().edit(getIssuedBill());
+//        getIssuedBill().setReferenceBill(getReceivedBill());
+//        getBillFacade().edit(getIssuedBill());
 
         printPreview = true;
 

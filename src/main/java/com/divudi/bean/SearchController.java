@@ -233,7 +233,7 @@ public class SearchController implements Serializable {
         tmp.put("fromDate", getFromDate());
         tmp.put("dep", getSessionController().getDepartment());
         tmp.put("bTp", BillType.PharmacyTransferIssue);
-        sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false and "
+        sql = "Select b From BilledBill b where b.retired=false and "
                 + " b.toDepartment=:dep and b.billType= :bTp "
                 + " and b.createdAt between :fromDate and :toDate ";
 
@@ -325,8 +325,8 @@ public class SearchController implements Serializable {
                     + " (upper(bItem.item.name) like :itm ))";
             temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
-        
-          if (getSearchKeyword().getCode()!= null && !getSearchKeyword().getCode().trim().equals("")) {
+
+        if (getSearchKeyword().getCode() != null && !getSearchKeyword().getCode().trim().equals("")) {
             sql += " and b.id in (select bItem.bill.id  "
                     + " from BillItem bItem where bItem.retired=false and  "
                     + " (upper(bItem.item.code) like :cde ))";
@@ -393,14 +393,13 @@ public class SearchController implements Serializable {
                     + " (upper(bItem.item.name) like :itm ))";
             temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
-        
-         if (getSearchKeyword().getCode()!= null && !getSearchKeyword().getCode().trim().equals("")) {
+
+        if (getSearchKeyword().getCode() != null && !getSearchKeyword().getCode().trim().equals("")) {
             sql += " and b.id in (select bItem.bill.id  "
                     + " from BillItem bItem where bItem.retired=false and  "
                     + " (upper(bItem.item.code) like :cde ))";
             temMap.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
         }
-
 
         sql += " order by b.createdAt desc  ";
 
@@ -424,7 +423,7 @@ public class SearchController implements Serializable {
         tmp.put("toDep", getSessionController().getDepartment());
         tmp.put("bTp", BillType.PharmacyTransferRequest);
 
-        sql = "Select b From BilledBill b where "
+        sql = "Select b From Bill b where "
                 + " b.retired=false and  b.toDepartment=:toDep"
                 + " and b.billType= :bTp and b.createdAt between :fromDate and :toDate ";
 
@@ -441,6 +440,18 @@ public class SearchController implements Serializable {
         sql += " order by b.createdAt desc  ";
 
         bills = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP, 50);
+       
+        for (Bill b : bills) {
+            b.setListOfBill(getIssudBills(b));
+        }
+
+     
+        
+        
+
+        for (Bill b : bills) {
+            b.setListOfBill(getIssuedBills(b));
+        }
 
     }
 
@@ -482,7 +493,7 @@ public class SearchController implements Serializable {
             sql += " and  (upper(bi.item.name) like :itm )";
             m.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
-        
+
         if (getSearchKeyword().getCode() != null && !getSearchKeyword().getCode().trim().equals("")) {
             sql += " and  (upper(bi.item.code) like :cde )";
             m.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
@@ -748,12 +759,32 @@ public class SearchController implements Serializable {
     }
 
     private List<Bill> getGrns(Bill b) {
-        String sql = "Select b From BilledBill b where b.retired=false and b.creater is not null"
+        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
                 + " and b.billType=:btp and "
                 + " b.referenceBill=:ref";
         HashMap hm = new HashMap();
         hm.put("ref", b);
         hm.put("btp", BillType.PharmacyGrnBill);
+        return getBillFacade().findBySQL(sql, hm);
+    }
+    
+     private List<Bill> getIssudBills(Bill b) {
+        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+                + " and b.billType=:btp and "
+                + " b.referenceBill=:ref or b.backwardReferenceBill=:ref";
+        HashMap hm = new HashMap();
+        hm.put("ref", b);
+        hm.put("btp", BillType.PharmacyTransferIssue);
+        return getBillFacade().findBySQL(sql, hm);
+    }
+
+    private List<Bill> getIssuedBills(Bill b) {
+        String sql = "Select b From Bill b where b.retired=false and b.creater is not null"
+                + " and b.billType=:btp and "
+                + " b.referenceBill=:ref and b.backwardReferenceBill=:ref";
+        HashMap hm = new HashMap();
+        hm.put("ref", b);
+        hm.put("btp", BillType.PharmacyTransferIssue);
         return getBillFacade().findBySQL(sql, hm);
     }
 

@@ -43,7 +43,8 @@ public enum BillType {
     ChannelCredit,
     ChannelProPayment,
     gpBooking,
-    gpSettling,;
+    gpSettling,
+    Appointment,;
 
     public String getLabel() {
         switch (this) {

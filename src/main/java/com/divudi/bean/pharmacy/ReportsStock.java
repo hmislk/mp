@@ -8,14 +8,21 @@ package com.divudi.bean.pharmacy;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.StockReportRecord;
+import com.divudi.entity.BilledBill;
+import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.PreBill;
+import com.divudi.entity.RefundBill;
 import com.divudi.entity.Staff;
+import com.divudi.entity.pharmacy.ItemBatch;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
+import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
+import com.divudi.facade.StockHistoryFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -108,8 +115,92 @@ public class ReportsStock implements Serializable {
 
     @EJB
     private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
+    @EJB
+    private StockHistoryFacade stockHistoryFacade;
+
+    private PharmaceuticalBillItem getPreviousPharmacuticalBillByBatch(ItemBatch itemBatch, Department department, Date date) {
+        String sql = "Select sh from PharmaceuticalBillItem sh where "
+                + " sh.itemBatch=:itmB and sh.billItem.bill.department=:dep "
+                + " and (sh.billItem.bill.billType=:btp1 or sh.billItem.bill.billType=:btp2 )"
+                + "  and sh.billItem.createdAt between :fd and :td "
+                + " order by sh.billItem.createdAt desc";
+        HashMap hm = new HashMap();
+        hm.put("itmB", itemBatch);
+        Calendar cl = Calendar.getInstance();
+        cl.set(Calendar.MONTH, 1);
+        cl.set(Calendar.DAY_OF_MONTH, 26);
+        hm.put("td", date);
+        hm.put("fd", cl.getTime());
+        hm.put("dep", department);
+        hm.put("btp1", BillType.PharmacyGrnBill);
+        hm.put("btp2", BillType.PharmacyPurchaseBill);
+        return getPharmaceuticalBillItemFacade().findFirstBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+
+    private StockHistory getPreviousStockHistoryByBatch(ItemBatch itemBatch, Department department, Date date) {
+        String sql = "Select sh from StockHistory sh where sh.retired=false and"
+                + " sh.itemBatch=:itmB and sh.department=:dep and sh.pbItem.billItem.createdAt<:dt "
+                + " order by sh.pbItem.billItem.createdAt desc";
+        HashMap hm = new HashMap();
+        hm.put("itmB", itemBatch);
+        hm.put("dt", date);
+        hm.put("dep", department);
+        return getStockHistoryFacade().findFirstBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
 
     public void fillDepartmentStocksError() {
+        Set<Stock> stockSet = new HashSet<>();
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select p from PharmaceuticalBillItem p where "
+                + " p.billItem.bill.department=:dep "
+                + " and p.billItem.createdAt>:date and "
+                + "  p.stockHistory is not null order by p.stockHistory.id ";
+
+        temMap.put("dep", department);
+        temMap.put("date", date);
+
+        List<PharmaceuticalBillItem> list = getPharmaceuticalBillItemFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        for (PharmaceuticalBillItem b : list) {
+            System.err.println("Item Name " + b.getBillItem().getItem().getName());
+            System.err.println("History Id " + b.getStockHistory().getId());
+            System.err.println("Stock History " + b.getStockHistory().getStockQty());
+            System.err.println("Department " + b.getBillItem().getBill().getDepartment().getName());
+            StockHistory sh = getPreviousStockHistoryByBatch(b.getItemBatch(), b.getBillItem().getBill().getDepartment(), b.getBillItem().getCreatedAt());
+            PharmaceuticalBillItem phi = getPreviousPharmacuticalBillByBatch(b.getStock().getItemBatch(), b.getBillItem().getBill().getDepartment(), b.getBillItem().getCreatedAt());
+
+            double calculatedStk = 0;
+            boolean flg = false;
+            if (sh != null) {
+                System.out.println("Previuos Stock " + sh.getStockQty());
+                calculatedStk = (sh.getStockQty() + sh.getPbItem().getQtyInUnit() + sh.getPbItem().getFreeQtyInUnit());
+                flg = true;
+            } else if (phi != null) {
+                calculatedStk = phi.getQtyInUnit() + phi.getFreeQtyInUnit();
+                flg = true;
+            }
+
+            System.out.println("calculated History Qty " + calculatedStk);
+
+            if (flg == true && b.getStockHistory().getStockQty() != calculatedStk) {
+                stockSet.add(b.getStock());
+                System.out.println("TRUE");
+            }
+
+            System.out.println("#########");
+
+        }
+
+        stocks = new ArrayList<>();
+        for (Stock s : stockSet) {
+            stocks.add(s);
+        }
+
+    }
+
+    public void fillDepartmentStocksError2() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
             return;
@@ -127,17 +218,19 @@ public class ReportsStock implements Serializable {
                     + " and ph.stockHistory is not null  "
                     + " order by ph.stockHistory.id ";
 
-            m.clear();        
+            m.clear();
             m.put("st", st);
             m.put("date", date);
 
             List<PharmaceuticalBillItem> phList = getPharmaceuticalBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
 
             PharmaceuticalBillItem previousPh = null;
+            double calculatedStock = 0;
 
             for (PharmaceuticalBillItem ph : phList) {
                 if (previousPh == null) {
                     previousPh = ph;
+                    calculatedStock = ph.getStockHistory().getStockQty();
                     continue;
                 }
                 double preHistoryQty = 0;
@@ -153,6 +246,44 @@ public class ReportsStock implements Serializable {
 
                 double calcualtedQty = preHistoryQty + previousPh.getQtyInUnit() + previousPh.getFreeQtyInUnit();
 
+                switch (ph.getBillItem().getBill().getBillType()) {
+                    case PharmacyGrnBill:
+                    case PharmacyPurchaseBill:
+                    case PharmacyTransferReceive:
+                        if (ph.getBillItem().getBill() instanceof BilledBill) {
+                            calculatedStock += Math.abs(ph.getQtyInUnit());
+                            calculatedStock += Math.abs(ph.getFreeQtyInUnit());
+                        } else if (ph.getBillItem().getBill() instanceof CancelledBill || ph.getBillItem().getBill() instanceof RefundBill) {
+                            calculatedStock -= Math.abs(ph.getQtyInUnit());
+                            calculatedStock -= Math.abs(ph.getFreeQtyInUnit());
+                        }
+                        break;
+                    case PharmacyGrnReturn:
+                    case PurchaseReturn:
+                    case PharmacyTransferIssue:
+                        if (ph.getBillItem().getBill() instanceof BilledBill) {
+                            calculatedStock -= Math.abs(ph.getQtyInUnit());
+                            calculatedStock -= Math.abs(ph.getFreeQtyInUnit());
+                        } else if (ph.getBillItem().getBill() instanceof CancelledBill || ph.getBillItem().getBill() instanceof RefundBill) {
+                            calculatedStock += Math.abs(ph.getQtyInUnit());
+                            calculatedStock += Math.abs(ph.getFreeQtyInUnit());
+                        }
+                        break;
+                    case PharmacyPre:
+                        if (ph.getBillItem().getBill() instanceof PreBill) {
+                            if (ph.getBillItem().getBill().getReferenceBill() == null) {
+                                break;
+                            }
+                            calculatedStock -= Math.abs(ph.getQtyInUnit());
+
+                        } else if (ph.getBillItem().getBill() instanceof CancelledBill || ph.getBillItem().getBill() instanceof RefundBill) {
+                            calculatedStock += Math.abs(ph.getQtyInUnit());
+                        }
+                        break;
+                    default:
+
+                }
+
                 if (calcualtedQty != curHistory) {
                     System.err.println("Itm " + ph.getBillItem().getItem().getName());
                     System.err.println("Prv History Qty " + preHistoryQty);
@@ -160,6 +291,7 @@ public class ReportsStock implements Serializable {
                     System.err.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
                     System.err.println("History " + curHistory);
                     System.err.println("######");
+                    st.setCalculated(calculatedStock);
                     tmpStockList.add(st);
                 } else {
                     System.out.println("Itm " + ph.getBillItem().getItem().getName());
@@ -529,6 +661,14 @@ public class ReportsStock implements Serializable {
 
     public void setPharmaceuticalBillItemFacade(PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade) {
         this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
+    }
+
+    public StockHistoryFacade getStockHistoryFacade() {
+        return stockHistoryFacade;
+    }
+
+    public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
+        this.stockHistoryFacade = stockHistoryFacade;
     }
 
 }

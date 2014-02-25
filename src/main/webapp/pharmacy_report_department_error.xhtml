@@ -60,6 +60,16 @@
                                         <f:convertNumber pattern="#,###" ></f:convertNumber>
                                     </h:outputLabel>                                 
                                 </p:column>
+                                
+                                
+                                <p:column headerText="Calculated" style="text-align: right;">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Calculated"/>                                     
+                                    </f:facet>
+                                    <h:outputLabel value="#{i.calculated}"  >
+                                        <f:convertNumber pattern="#,###" ></f:convertNumber>
+                                    </h:outputLabel>                                 
+                                </p:column>
 
                               
                                 <p:column headerText="Batch No">

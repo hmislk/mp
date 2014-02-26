@@ -112,7 +112,7 @@ public class PharmacyCalculation {
         return false;
     }
 
-    public Double calRetailRate(PharmaceuticalBillItem ph) {
+    public float calRetailRate(PharmaceuticalBillItem ph) {
 
         PharmaceuticalItem i = (PharmaceuticalItem) ph.getBillItem().getItem();
         double margin = 0.0;
@@ -125,7 +125,7 @@ public class PharmacyCalculation {
             sql = "Select p.category from Vmp p where p.retired=false and p.id in (Select a.amp.vmp.id from Ampp a where a.retired=false and a.id=" + i.getId() + ")";
 
         } else {
-            return 0.0;
+            return 0.0f;
         }
 
         cat = getCategoryFacade().findFirstBySQL(sql);
@@ -134,9 +134,9 @@ public class PharmacyCalculation {
             margin = cat.getSaleMargin();
         }
 
-        Double retailPrice = ph.getPurchaseRate() + (ph.getPurchaseRate() * (margin / 100));
+        double retailPrice = ph.getPurchaseRate() + (ph.getPurchaseRate() * (margin / 100));
 
-        return retailPrice;
+        return (float)retailPrice;
     }
 
     public double getTotalQty(BillItem b, BillType billType, Bill bill) {

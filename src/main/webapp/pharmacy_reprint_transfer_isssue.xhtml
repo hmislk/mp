@@ -24,7 +24,7 @@
                             </p:commandButton>     
                         </f:facet>
 
-                       
+
                     </p:panel>
 
 
@@ -40,6 +40,11 @@
 
                     </h:panelGroup>
 
+
+                    <h:panelGroup  rendered="#{webUserController.hasPrivilege('PharmacyGoodReceiveEdit')}" >
+
+                        <ph:transferIssue_edit bill="#{pharmacyBillSearch.bill}" />
+                    </h:panelGroup>
 
                 </h:form>
             </ui:define>

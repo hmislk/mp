@@ -641,7 +641,7 @@ public class PharmacyItemExcelManager implements Serializable {
                         amp = new Amp();
                         amp.setName(strAmp);
                         amp.setMeasurementUnit(strengthUnit);
-                        amp.setDblValue(strengthUnitsPerIssueUnit);
+                        amp.setDblValue((float)strengthUnitsPerIssueUnit);
                         amp.setCategory(cat);
                         amp.setVmp(vmp);
                         getAmpFacade().create(amp);

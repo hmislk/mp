@@ -154,7 +154,7 @@ public class PurchaseReturnController implements Serializable {
 
     private void saveComponent() {
         for (BillItem i : getBillItems()) {
-            i.getPharmaceuticalBillItem().setQtyInUnit(0 - i.getQty());
+            i.getPharmaceuticalBillItem().setQtyInUnit((float)(double)(0 - i.getQty()));
 
             if (i.getPharmaceuticalBillItem().getQtyInUnit() == 0.0) {
                 continue;
@@ -194,7 +194,7 @@ public class PurchaseReturnController implements Serializable {
 
     private boolean checkGrnItems() {
         for (BillItem bi : getBillItems()) {
-            bi.getPharmaceuticalBillItem().setQty(bi.getQty());
+            bi.getPharmaceuticalBillItem().setQty((float)(double)bi.getQty());
             if (checkStock(bi.getPharmaceuticalBillItem())) {
                 return true;
             }
@@ -254,7 +254,7 @@ public class PurchaseReturnController implements Serializable {
 
             //System.err.println("Billed Qty " + i.getQty());
             //System.err.println("Return Qty " + rBilled);
-            tmp.setQty(i.getQty() - Math.abs(rBilled));
+            tmp.setQty((float)(i.getQty() - Math.abs(rBilled)));
 
             bi.setPharmaceuticalBillItem(tmp);
 
@@ -275,8 +275,8 @@ public class PurchaseReturnController implements Serializable {
     }
 
     public void onEditItem(PharmacyItemData tmp) {
-        double pur = getPharmacyBean().getLastPurchaseRate(tmp.getPharmaceuticalBillItem().getBillItem().getItem(), tmp.getPharmaceuticalBillItem().getBillItem().getReferanceBillItem().getBill().getDepartment());
-        double ret = getPharmacyBean().getLastRetailRate(tmp.getPharmaceuticalBillItem().getBillItem().getItem(), tmp.getPharmaceuticalBillItem().getBillItem().getReferanceBillItem().getBill().getDepartment());
+        float pur = (float)getPharmacyBean().getLastPurchaseRate(tmp.getPharmaceuticalBillItem().getBillItem().getItem(), tmp.getPharmaceuticalBillItem().getBillItem().getReferanceBillItem().getBill().getDepartment());
+        float ret = (float)getPharmacyBean().getLastRetailRate(tmp.getPharmaceuticalBillItem().getBillItem().getItem(), tmp.getPharmaceuticalBillItem().getBillItem().getReferanceBillItem().getBill().getDepartment());
 
         tmp.getPharmaceuticalBillItem().setPurchaseRateInUnit(pur);
         tmp.getPharmaceuticalBillItem().setRetailRateInUnit(ret);

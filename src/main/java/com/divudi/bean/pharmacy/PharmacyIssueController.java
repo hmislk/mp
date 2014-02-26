@@ -456,7 +456,7 @@ public class PharmacyIssueController implements Serializable {
         tbi.setCreatedAt(Calendar.getInstance().getTime());
         tbi.setCreater(getSessionController().getLoggedUser());
         PharmaceuticalBillItem tmpPharmacyItem = tbi.getPharmaceuticalBillItem();
-        tmpPharmacyItem.setQty(0 - tbi.getQty());
+        tmpPharmacyItem.setQty((float)(0 - tbi.getQty()));
         tbi.setPharmaceuticalBillItem(null);
         getBillItemFacade().create(tbi);
 
@@ -632,9 +632,9 @@ public class PharmacyIssueController implements Serializable {
 
         //pharmaceutical Bill Item
         billItem.getPharmaceuticalBillItem().setDoe(getStock().getItemBatch().getDateOfExpire());
-        billItem.getPharmaceuticalBillItem().setFreeQty(0.0);
+        billItem.getPharmaceuticalBillItem().setFreeQty(0.0f);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
-        billItem.getPharmaceuticalBillItem().setQty(qty);
+        billItem.getPharmaceuticalBillItem().setQty((float)(double)qty);
 
         //Rates
         //Values

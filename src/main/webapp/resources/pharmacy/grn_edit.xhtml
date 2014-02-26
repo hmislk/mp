@@ -95,10 +95,6 @@
 
             <div >
                 <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip" >
-                    <!--                    <p:column>
-                                            <f:facet name="header">No</f:facet>
-                    #{rowIndex+1}
-            </p:column>-->
                     <p:column>
                         <f:facet name="header">Item</f:facet>
                             #{bip.item.name}
@@ -115,38 +111,35 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Rcv QTY</f:facet>
-                        <p:inputText value="#{bip.pharmaceuticalBillItem.qty}"/>
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.qtyInUnit}"/>
                     </p:column>
-                    <!--                    <p:column>
-                                            <f:facet name="header">Remaining QTY</f:facet>
-                    #{bip.remainingQty}
-            </p:column>-->
+
                     <p:column>
                         <f:facet name="header">Fr QTY</f:facet>
-                        <p:inputText value="#{bip.pharmaceuticalBillItem.freeQty}"/>
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.freeQtyInUnit}"/>
 
                     </p:column>
                     <p:column>
                         <f:facet name="header">Cur Price</f:facet>
-                        <p:inputText value="#{bip.pharmaceuticalBillItem.purchaseRate}">
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.purchaseRateInUnit}">
                             <f:convertNumber pattern="#,##0.00" />
                         </p:inputText>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Last Price</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.lastPurchaseRate}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.lastPurchaseRateInUnit}">
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Amount</f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}">
+                        <f:facet name="header">Amount</f:facet>                       
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.qtyInUnit*bip.pharmaceuticalBillItem.purchaseRateInUnit}">
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Sale Price</f:facet>
-                        <p:inputText value="#{bip.pharmaceuticalBillItem.retailRate}">
+                        <p:inputText value="#{bip.pharmaceuticalBillItem.retailRateInUnit}">
                             <f:convertNumber pattern="#,##0.00" />
                         </p:inputText>
                     </p:column>
@@ -192,7 +185,7 @@
                             <p:column footerText="#{0-cc.attrs.bill.netTotal}">
                                 <f:facet name="footer">                                 
                                     <p:outputLabel value="#{cc.attrs.bill.netTotal}">
-                                        <f:convertNumber pattern="#,##0.00" />
+                                          <f:convertNumber pattern="#,##0.00" />
                                     </p:outputLabel>
                                 </f:facet>
                             </p:column>

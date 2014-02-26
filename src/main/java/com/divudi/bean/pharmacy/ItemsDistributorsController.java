@@ -255,7 +255,7 @@ public class ItemsDistributorsController implements Serializable {
             tmp.put("cat", "%" + getSearchKeyword().getCategory().trim().toUpperCase() + "%");
         }
 
-        sql += " order by b.instituion.name,b.item.name ";
+        sql += " order by b.institution.name,b.item.name ";
 
       
         searchItems = getFacade().findBySQL(sql, tmp);

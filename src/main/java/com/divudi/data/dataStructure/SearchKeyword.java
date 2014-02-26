@@ -28,6 +28,8 @@ public class SearchKeyword {
     private String number;
     private String department;
     private String code;
+    private String category;
+    private String institution;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -188,5 +190,21 @@ public class SearchKeyword {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
     }
 }

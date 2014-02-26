@@ -41,7 +41,7 @@
                         <p:autoComplete completeMethod="#{institutionController.completeCompany}" required="true" requiredMessage="Please Select Institution" value="#{cashSummeryControllerExcel.institution}"
                                         var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" />
                     </h:panelGrid>
-                    <h:panelGrid columns="2" styleClass="printBlock" style="min-width: 100%;">
+<!--                    <h:panelGrid columns="2" styleClass="printBlock" style="min-width: 100%;">
                         <p:outputLabel value="#{cashSummeryControllerExcel.institution.name}"/><h:outputLabel/>
                         <p:outputLabel value="Book Keeping Summary"/><h:outputLabel/>   
                         <h:outputLabel/><h:outputLabel/>
@@ -57,10 +57,10 @@
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </h:panelGroup>
-                    </h:panelGrid>
+                    </h:panelGrid>-->
                 </f:facet>
             </p:panel>
-            <p:spacer height="30" />
+<!--            <p:spacer height="30" />-->
 
             <p:dataTable id="opd"  value="#{cashSummeryControllerExcel.dailyCashExcel}" var="d" rendered="#{cashSummeryControllerExcel.dailyCashExcel.size()!=0}">                   
                 <f:facet name="header">
@@ -87,13 +87,13 @@
 
 
 
-                <p:column headerText="Item Name">
+                <p:column headerText="Item Name" >
                     <h:outputLabel value="#{d.string}" rendered="#{d.summery eq false}" />
-                    <h:outputLabel value="#{d.string}" rendered="#{d.summery eq true}" style="font-weight: bold;"/>
+                    <h:outputLabel value="#{d.string}" rendered="#{d.summery eq true}" style="font-weight: bold;" />
                 </p:column>                   
                 <p:column headerText="Count">
 
-                    <h:outputLabel value="#{d.value1}" rendered="#{d.summery eq false}"/>
+                    <h:outputLabel value="#{d.value1}" rendered="#{d.summery eq false}" />
                 </p:column>
                 <p:column style="text-align: right;"  headerText="Hospital Fee">                               
                     <h:outputLabel value="#{d.value2}" rendered="#{d.summery eq false}" >

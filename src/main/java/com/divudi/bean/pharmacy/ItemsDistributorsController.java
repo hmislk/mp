@@ -232,7 +232,7 @@ public class ItemsDistributorsController implements Serializable {
         String sql;
         HashMap tmp = new HashMap();
 
-        sql = " SELECT b FROM ItemsDistributors b where and b.item.retired=false "
+        sql = " SELECT b FROM ItemsDistributors b where b.item.retired=false "
                 + " and b.institution.retired=false and b.retired=false";
 
         if (getSearchKeyword().getInstitution()!= null && !getSearchKeyword().getInstitution().trim().equals("")) {

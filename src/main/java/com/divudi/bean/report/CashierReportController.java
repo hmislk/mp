@@ -173,7 +173,7 @@ public class CashierReportController implements Serializable {
                 uSlip += (newB.getSlip() + newC.getSlip() + newR.getSlip());
 
             }
-            
+
 //            System.err.println("1 "+uCard);
 //            System.err.println("2 "+uCash);
 //            System.err.println("3 "+uCheque);
@@ -182,6 +182,7 @@ public class CashierReportController implements Serializable {
 
             BillsTotals newSum = new BillsTotals();
             newSum.setName("Total ");
+            newSum.setBold(true);
             newSum.setCard(uCard);
             newSum.setCash(uCash);
             newSum.setCheque(uCheque);
@@ -198,7 +199,6 @@ public class CashierReportController implements Serializable {
         }
 
     }
-
     private List<WebUserBillsTotal> webUserBillsTotals;
 
     double calTotalValueOwn(WebUser w, Bill billClass, PaymentMethod pM, BillType billType) {

@@ -226,7 +226,7 @@ public class PharmacySaleController implements Serializable {
 
     private void setZeroToQty(BillItem tmp) {
         tmp.setQty(0.0);
-        tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0);
+        tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0f);
 
         tmp.getTransUserStock().setUpdationQty(0);
         getUserStockFacade().edit(tmp.getTransUserStock());
@@ -273,7 +273,7 @@ public class PharmacySaleController implements Serializable {
 
     private void onEditCalculation(BillItem tmp) {
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
-        tmp.getPharmaceuticalBillItem().setQtyInUnit(0 - tmp.getQty());
+        tmp.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - tmp.getQty()));
 
         calculateBillItemForEditing(tmp);
 
@@ -292,7 +292,7 @@ public class PharmacySaleController implements Serializable {
         }
 
         bi.setQty(editingQty);
-        bi.getPharmaceuticalBillItem().setQtyInUnit(0 - editingQty);
+        bi.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - editingQty));
         calculateBillItemForEditing(bi);
 
         calTotal();
@@ -876,7 +876,7 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
-        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - qty);
+        billItem.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - qty));
         billItem.getPharmaceuticalBillItem().setStock(stock);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
         calculateBillItem();
@@ -980,9 +980,9 @@ public class PharmacySaleController implements Serializable {
 
         //pharmaceutical Bill Item
         billItem.getPharmaceuticalBillItem().setDoe(getStock().getItemBatch().getDateOfExpire());
-        billItem.getPharmaceuticalBillItem().setFreeQty(0.0);
+        billItem.getPharmaceuticalBillItem().setFreeQty(0.0f);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
-        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - qty);
+        billItem.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - qty));
 
         //Rates
         //Values

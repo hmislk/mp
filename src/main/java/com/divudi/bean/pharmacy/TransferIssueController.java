@@ -136,21 +136,6 @@ public class TransferIssueController implements Serializable {
         generateBillComponent();
     }
 
-    private List<Item> getSuggession(Item item) {
-        List<Item> suggessions = new ArrayList<>();
-
-        if (item instanceof Amp) {
-            suggessions = getPharmacyRecieveBean().findPack((Amp) item);
-            suggessions.add(item);
-        } else if (item instanceof Ampp) {
-            suggessions = getPharmacyRecieveBean().findPack(((Ampp) item).getAmp());
-            suggessions.add(((Ampp) item).getAmp());
-        }
-
-        //System.err.println("Sugg" + suggessions);
-        return suggessions;
-    }
-
     public void generateBillComponent() {
 
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
@@ -161,24 +146,24 @@ public class TransferIssueController implements Serializable {
                 if (sq.getQty() == 0) {
                     continue;
                 }
-                //System.err.println("Stock " + sq.getStock());
-                //System.err.println("QTY " + sq.getQty());
+                System.err.println("Stock " + sq.getStock());
+                System.err.println("QTY " + sq.getQty());
                 BillItem bItem = new BillItem();
                 bItem.setSearialNo(getBillItems().size());
                 bItem.setItem(i.getBillItem().getItem());
                 bItem.setReferanceBillItem(i.getBillItem());
                 bItem.setTmpQty(sq.getQty());
-                //System.err.println("Bill Item QTY " + bItem.getQty());
+                System.err.println("Bill Item QTY " + bItem.getQty());
 
 //               s bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
                 //     //System.err.println("List "+bItem.getTmpSuggession());
                 PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
                 phItem.setBillItem(bItem);
-                phItem.setQtyInUnit((float)sq.getQty());
-                //System.err.println("Pharmac Item QTY " + phItem.getQtyInUnit());
+                phItem.setQtyInUnit((float) sq.getQty());
+                System.err.println("Pharmac Item QTY " + phItem.getQtyInUnit());
                 phItem.setFreeQtyInUnit(i.getFreeQtyInUnit());
-                phItem.setPurchaseRateInUnit((float)sq.getStock().getItemBatch().getPurcahseRate());
-                phItem.setRetailRateInUnit((float)sq.getStock().getItemBatch().getRetailsaleRate());
+                phItem.setPurchaseRateInUnit((float) sq.getStock().getItemBatch().getPurcahseRate());
+                phItem.setRetailRateInUnit((float) sq.getStock().getItemBatch().getRetailsaleRate());
                 phItem.setStock(sq.getStock());
                 phItem.setDoe(sq.getStock().getItemBatch().getDateOfExpire());
                 phItem.setItemBatch(sq.getStock().getItemBatch());
@@ -188,6 +173,21 @@ public class TransferIssueController implements Serializable {
 
             }
 
+        }
+
+        Stock stock = new Stock();
+        boolean flag = false;
+        for (BillItem b : getBillItems()) {
+            if (b.getPharmaceuticalBillItem().getStock().getId() == stock.getId()) {
+                flag = true;
+                break;
+            }
+            stock = b.getPharmaceuticalBillItem().getStock();
+        }
+
+        if (flag) {
+            billItems = null;
+            UtilityController.addErrorMessage("There is Some Item in request that are added Multiple Time in Transfer request!!! please check request you can't issue errornus transfer request");
         }
 
     }
@@ -221,18 +221,24 @@ public class TransferIssueController implements Serializable {
 
             i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
-
             //Remove Department Stock
-            getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(),
+            boolean returnFlag = getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(),
                     Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()),
                     i.getPharmaceuticalBillItem(),
                     getSessionController().getDepartment());
 
-            //Addinng Staff
-            Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(),
-                    Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), getIssuedBill().getToStaff());
+            if (returnFlag) {
 
-            i.getPharmaceuticalBillItem().setStaffStock(staffStock);
+                //Addinng Staff
+                Stock staffStock = getPharmacyBean().addToStock(i.getPharmaceuticalBillItem(),
+                        Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), getIssuedBill().getToStaff());
+
+                i.getPharmaceuticalBillItem().setStaffStock(staffStock);
+
+            } else {
+                i.setTmpQty(0);
+                getBillItemFacade().edit(i);
+            }
 
             getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
 

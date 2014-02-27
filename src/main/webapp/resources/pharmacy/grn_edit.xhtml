@@ -129,25 +129,25 @@
                     <p:column>
                         <f:facet name="header">Cur Price</f:facet>
                         <p:inputText value="#{bip.pharmaceuticalBillItem.purchaseRateInUnit}">
-                            <f:convertNumber pattern="#,##0.00" />
+                            <!--<f:convertNumber pattern="#,##0.00" />-->
                         </p:inputText>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Last Price</f:facet>
                         <h:outputLabel value="#{bip.pharmaceuticalBillItem.lastPurchaseRateInUnit}">
-                            <f:convertNumber pattern="#,##0.00" />
+                            <!--<f:convertNumber pattern="#,##0.00" />-->
                         </h:outputLabel>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Amount</f:facet>
                         <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRateInUnit*bip.pharmaceuticalBillItem.qtyInUnit}">
-                            <f:convertNumber pattern="#,##0.00" />
+                            <!--<f:convertNumber pattern="#,##0.00" />-->
                         </h:outputLabel>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Sale Price</f:facet>
                         <p:inputText value="#{bip.pharmaceuticalBillItem.retailRateInUnit}">
-                            <f:convertNumber pattern="#,##0.00" />
+                            <!--<f:convertNumber pattern="#,##0.00" />-->
                         </p:inputText>
                     </p:column>
                     <p:column>
@@ -159,7 +159,7 @@
                             <p:column >
                                 <f:facet name="footer">
                                     <p:inputText value="#{cc.attrs.bill.total}">
-                                        <f:convertNumber pattern="#,##0.00" />
+                                        <!--<f:convertNumber pattern="#,##0.00" />-->
                                     <!--</p:outputLabel>-->
                                     </p:inputText>
                                 </f:facet>
@@ -171,7 +171,7 @@
                             <p:column footerText="#{cc.attrs.bill.tax}">
                                 <f:facet name="footer">
                                     <p:outputLabel value="#{cc.attrs.bill.tax}">
-                                        <f:convertNumber pattern="#,##0.00" />
+                                        <!--<f:convertNumber pattern="#,##0.00" />-->
                                     </p:outputLabel>                              
                                 </f:facet>
                             </p:column>
@@ -182,7 +182,7 @@
                             <p:column footerText="#{0-cc.attrs.bill.discount}">
                                 <f:facet name="footer">
                                     <p:outputLabel value="#{0-cc.attrs.bill.discount}">
-                                        <f:convertNumber pattern="#,##0.00" />
+                                        <!--<f:convertNumber pattern="#,##0.00" />-->
                                     </p:outputLabel>
                                 </f:facet>
                             </p:column>
@@ -194,7 +194,7 @@
                                 <f:facet name="footer"> 
                                     <p:inputText value="#{cc.attrs.bill.netTotal}">
                                     <!--<p:outputLabel value="#{cc.attrs.bill.netTotal}">-->
-                                        <f:convertNumber pattern="#,##0.00" />
+                                        <!--<f:convertNumber pattern="#,##0.00" />-->
                                     <!--</p:outputLabel>-->
                                     </p:inputText>
                                 </f:facet>

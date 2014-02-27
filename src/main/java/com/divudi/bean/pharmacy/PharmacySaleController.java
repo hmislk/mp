@@ -273,7 +273,7 @@ public class PharmacySaleController implements Serializable {
 
     private void onEditCalculation(BillItem tmp) {
         tmp.setGrossValue(tmp.getQty() * tmp.getRate());
-        tmp.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - tmp.getQty()));
+        tmp.getPharmaceuticalBillItem().setQtyInUnit((float) (0 - tmp.getQty()));
 
         calculateBillItemForEditing(tmp);
 
@@ -292,7 +292,7 @@ public class PharmacySaleController implements Serializable {
         }
 
         bi.setQty(editingQty);
-        bi.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - editingQty));
+        bi.getPharmaceuticalBillItem().setQtyInUnit((float) (0 - editingQty));
         calculateBillItemForEditing(bi);
 
         calTotal();
@@ -695,8 +695,14 @@ public class PharmacySaleController implements Serializable {
             double qtyL = tbi.getPharmaceuticalBillItem().getQtyInUnit() + tbi.getPharmaceuticalBillItem().getFreeQtyInUnit();
 
             //Deduct Stock
-            getPharmacyBean().deductFromStock(tbi.getPharmaceuticalBillItem().getStock(),
+            boolean returnFlag = getPharmacyBean().deductFromStock(tbi.getPharmaceuticalBillItem().getStock(),
                     Math.abs(qtyL), tbi.getPharmaceuticalBillItem(), getPreBill().getDepartment());
+
+            if (!returnFlag) {
+                tbi.setTmpQty(0);
+                getPharmaceuticalBillItemFacade().edit(tbi.getPharmaceuticalBillItem());
+                getBillItemFacade().edit(tbi);
+            }
 
             getPreBill().getBillItems().add(tbi);
         }
@@ -876,7 +882,7 @@ public class PharmacySaleController implements Serializable {
             return;
         }
 
-        billItem.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - qty));
+        billItem.getPharmaceuticalBillItem().setQtyInUnit((float) (0 - qty));
         billItem.getPharmaceuticalBillItem().setStock(stock);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
         calculateBillItem();
@@ -982,7 +988,7 @@ public class PharmacySaleController implements Serializable {
         billItem.getPharmaceuticalBillItem().setDoe(getStock().getItemBatch().getDateOfExpire());
         billItem.getPharmaceuticalBillItem().setFreeQty(0.0f);
         billItem.getPharmaceuticalBillItem().setItemBatch(getStock().getItemBatch());
-        billItem.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - qty));
+        billItem.getPharmaceuticalBillItem().setQtyInUnit((float) (0 - qty));
 
         //Rates
         //Values

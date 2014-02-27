@@ -111,16 +111,15 @@
                                     </p:submenu>
                                     <p:submenu label="Purchase">
                                         <p:menuitem  ajax="false" action="pharmacy_purhcase_order_request"  value="Purchase Orders" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
-                                        <p:menuitem  ajax="false" action="pharmacy_purhcase_order_list_to_approve"  value="PO Approve" actionListener="#{purchaseOrderController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
-                                        <p:menuitem  ajax="false" action="pharmacy_purchase_order_list_for_recieve"  value="GRN Receive" rendered="#{webUserController.hasPrivilege('Pharmacy')}"  actionListener="#{grnController.makeListNull()}"></p:menuitem>                                        
-                                        <p:menuitem  ajax="false" action="pharmacy_grn_list_for_return"  value="GRN Return" actionListener="#{grnController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                        
-
+                                        <p:menuitem  ajax="false" action="pharmacy_purhcase_order_list_to_approve"  value="PO Approve" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
+                                        <p:menuitem  ajax="false" action="pharmacy_purchase_order_list_for_recieve"  value="GRN Receive"  actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                        
+                                        <p:menuitem  ajax="false" action="pharmacy_grn_list_for_return"  value="GRN Return" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>  
                                         <p:menuitem  ajax="false" action="pharmacy_purchase"  value="Purchase" rendered="#{webUserController.hasPrivilege('Pharmacy')}" actionListener="#{pharmacyPurchaseController.makeNull()}" ></p:menuitem>
                                     </p:submenu>
                                     <p:submenu label="Transfer">
-                                        <p:menuitem  ajax="false" action="pharmacy_transfer_request"  value="Transfer Request" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
-                                        <p:menuitem  ajax="false" action="pharmacy_transfer_request_list"  value="Transfer Requested List" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                           
-                                        <p:menuitem  ajax="false" action="pharmacy_transfer_issued_list"  value="Transfer Issued List" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                                                                        
+                                        <p:menuitem  ajax="false" action="pharmacy_transfer_request"  value="Transfer Request" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
+                                        <p:menuitem  ajax="false" action="pharmacy_transfer_request_list"  value="Transfer Requested List" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                           
+                                        <p:menuitem  ajax="false" action="pharmacy_transfer_issued_list"  value="Transfer Issued List" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>                                                                                        
                                     </p:submenu>                                   
                                     <p:submenu label="Adjustments" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}">
                                         <p:menuitem  ajax="false" action="pharmacy_adjustment_department"  value="Department Stock(QTY)" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>

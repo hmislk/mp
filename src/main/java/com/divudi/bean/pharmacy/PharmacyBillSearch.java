@@ -854,7 +854,12 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             //System.err.println("Updating QTY " + qty);
-            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            boolean returnFlag = getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+
+            if (!returnFlag) {
+                b.setTmpQty(0);
+                getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
+            }
 
             getBillItemFacede().edit(b);
 
@@ -883,7 +888,11 @@ public class PharmacyBillSearch implements Serializable {
             getPharmaceuticalBillItemFacade().create(ph);
 
             b.setPharmaceuticalBillItem(ph);
-            getBillItemFacede().create(b);
+            try {
+                getBillItemFacede().create(b);
+            } catch (Exception e) {
+                System.err.println("Exception " + e.getMessage());
+            }
 
             ph.setBillItem(b);
             getPharmaceuticalBillItemFacade().edit(ph);
@@ -892,8 +901,14 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             //System.err.println("Updating QTY " + qty);
-            getPharmacyBean().deductFromStockWithoutHistory(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
-            getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            boolean returnFlag = getPharmacyBean().deductFromStockWithoutHistory(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+
+            if (returnFlag) {
+                getPharmacyBean().addToStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+            } else {
+                b.setTmpQty(0);
+                getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
+            }
 
             getBillItemFacede().edit(b);
 
@@ -932,7 +947,13 @@ public class PharmacyBillSearch implements Serializable {
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             //System.err.println("Updating QTY " + qty);
             getPharmacyBean().addToStockWithoutHistory(ph.getStaffStock(), Math.abs(qty), ph, getSessionController().getDepartment());
-            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+
+            boolean returnFlag = getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(qty), ph, getSessionController().getDepartment());
+
+            if (!returnFlag) {
+                b.setTmpQty(0);
+                getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
+            }
 
             getBillItemFacede().edit(b);
 
@@ -1040,7 +1061,13 @@ public class PharmacyBillSearch implements Serializable {
             getPharmaceuticalBillItemFacade().edit(ph);
 
             //System.err.println("Updating QTY " + ph.getQtyInUnit());
-            getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
+          boolean returnFlag=  getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
+
+          if(!returnFlag){
+              b.setTmpQty(0);
+              getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
+          }
+
 //
 //            //    updateRemainingQty(nB);
             // if (b.getReferanceBillItem() != null) {

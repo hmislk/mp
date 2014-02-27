@@ -8,6 +8,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
@@ -195,7 +196,7 @@ public class AppointmentController implements Serializable {
 
     private void saveBill(Patient p) {
 
-        //getCurrentBill().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment()));
+        //getCurrentBill().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(),getCurrentAppointment(), BillNumberSuffix.INWSERBillNumberSuffix.INWSER);
 //        getCurrentBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), BillType.Appointment));
       //  getCurrentBill().setBillType(BillType.OpdBill);
 
@@ -528,7 +529,7 @@ public class AppointmentController implements Serializable {
     public Bill getCurrentBill() {
         if (currentBill == null) {
             currentBill=new BilledBill();
-            currentBill.setBillType(BillType.Appointment);
+            currentBill.setBillType(BillType.InwardAppointmentBill);
         }
         return currentBill;
     }

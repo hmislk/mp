@@ -487,7 +487,7 @@ public class BillItem implements Serializable {
         }
 
         if (getPharmaceuticalBillItem() != null) {
-            getPharmaceuticalBillItem().setQty(this.tmpQty);
+            getPharmaceuticalBillItem().setQty((float)this.tmpQty);
         }
     }
 

@@ -97,7 +97,7 @@ public class PharmacyPurchaseController implements Serializable {
     public void onEditPurchaseRate(BillItem tmp) {
 
         double retail = tmp.getPharmaceuticalBillItem().getPurchaseRate() + (tmp.getPharmaceuticalBillItem().getPurchaseRate() * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
-        tmp.getPharmaceuticalBillItem().setRetailRate(retail);
+        tmp.getPharmaceuticalBillItem().setRetailRate((float)retail);
 
         onEdit(tmp);
     }
@@ -105,7 +105,7 @@ public class PharmacyPurchaseController implements Serializable {
     public void onEditPurchaseRate() {
 
         double retail = getCurrentBillItem().getPharmaceuticalBillItem().getPurchaseRate() + (getCurrentBillItem().getPharmaceuticalBillItem().getPurchaseRate() * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
-        getCurrentBillItem().getPharmaceuticalBillItem().setRetailRate(retail);
+        getCurrentBillItem().getPharmaceuticalBillItem().setRetailRate((float)retail);
 
         onEdit(getCurrentBillItem());
     }
@@ -319,7 +319,7 @@ public class PharmacyPurchaseController implements Serializable {
         double tot = 0.0;
         int serialNo=0;
         for (BillItem p : getBillItems()) {
-            p.setQty(p.getPharmaceuticalBillItem().getQtyInUnit());
+            p.setQty((double)p.getPharmaceuticalBillItem().getQtyInUnit());
             p.setRate(p.getPharmaceuticalBillItem().getPurchaseRateInUnit());
             p.setSearialNo(serialNo++);
             double netValue = p.getQty() * p.getRate();

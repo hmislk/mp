@@ -49,8 +49,6 @@ import javax.persistence.TemporalType;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.LazyDataModel;
 
-
-
 /**
  *
  * @author Buddhika
@@ -121,24 +119,50 @@ public class PharmacyBillSearch implements Serializable {
     public void editBillItem(BillItem billItem) {
         getBillItemFacede().edit(billItem);
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
-        
+
         calTotalAndUpdate(billItem.getBill());
     }
-    
-    private void calTotalAndUpdate(Bill bill){
-        double tmp=0;
-        for(BillItem b:bill.getBillItems()){
-            tmp+=(b.getPharmaceuticalBillItem().getQtyInUnit()
-                    +b.getPharmaceuticalBillItem().getFreeQtyInUnit())
-                    *b.getPharmaceuticalBillItem().getPurchaseRateInUnit();
+
+    public void editBillItem2(BillItem billItem) {
+        getBillItemFacede().edit(billItem);
+        billItem.getPharmaceuticalBillItem().setQtyInUnit(0 - billItem.getPharmaceuticalBillItem().getQtyInUnit());
+        getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
+
+        calTotalAndUpdate2(billItem.getBill());
+    }
+
+    private void calTotalAndUpdate2(Bill bill) {
+        double tmp = 0;
+        for (BillItem b : bill.getBillItems()) {
+            System.err.println("id " + b.getPharmaceuticalBillItem().getId());
+            System.err.println("Qty " + b.getPharmaceuticalBillItem().getQtyInUnit());
+            System.err.println("Pur " + b.getPharmaceuticalBillItem().getItemBatch().getPurcahseRate());
+            double tmp2 = (b.getPharmaceuticalBillItem().getQtyInUnit() * b.getPharmaceuticalBillItem().getItemBatch().getPurcahseRate());
+            System.err.println("Total " + tmp2);
+            tmp += tmp2;
         }
-        
+
         bill.setTotal(tmp);
         bill.setNetTotal(tmp);
         getBillFacade().edit(bill);
     }
 
-   
+    private void calTotalAndUpdate(Bill bill) {
+        double tmp = 0;
+        for (BillItem b : bill.getBillItems()) {
+            System.err.println("id " + b.getPharmaceuticalBillItem().getId());
+            System.err.println("Qty " + b.getPharmaceuticalBillItem().getQtyInUnit());
+            System.err.println("Pur " + b.getPharmaceuticalBillItem().getPurchaseRateInUnit());
+            double tmp2 = (b.getPharmaceuticalBillItem().getQtyInUnit() * b.getPharmaceuticalBillItem().getPurchaseRateInUnit());
+            System.err.println("Total " + tmp2);
+            tmp += tmp2;
+        }
+
+        bill.setTotal(tmp);
+        bill.setNetTotal(tmp);
+        getBillFacade().edit(bill);
+    }
+
     public WebUser getUser() {
         return user;
     }
@@ -640,7 +664,6 @@ public class PharmacyBillSearch implements Serializable {
             return true;
         }
 
-
         if (getBill().getBillType() == BillType.PharmacyOrderApprove) {
             if (checkGrn()) {
                 UtilityController.addErrorMessage("Grn already head been Come u can't bill ");
@@ -787,8 +810,8 @@ public class PharmacyBillSearch implements Serializable {
             //  b.setPharmaceuticalBillItem(b.getReferanceBillItem().getPharmaceuticalBillItem());
             double qty = ph.getFreeQtyInUnit() + ph.getQtyInUnit();
             //System.err.println("Updating QTY " + qty);
-            getPharmacyBean().addToStock(ph.getStock(), 
-                    Math.abs(qty), 
+            getPharmacyBean().addToStock(ph.getStock(),
+                    Math.abs(qty),
                     ph, getSessionController().getDepartment());
 
             getBillItemFacede().edit(b);
@@ -1346,7 +1369,6 @@ public class PharmacyBillSearch implements Serializable {
 //            getBill().setBackwardReferenceBill(null);
 //            getBill().setForwardReferenceBill(null);
 //            getBillFacade().edit(getBill());
-
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -1379,7 +1401,6 @@ public class PharmacyBillSearch implements Serializable {
             getBill().setCancelledBill(cb);
             getBillFacade().edit(getBill());
 
-          
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -1593,8 +1614,6 @@ public class PharmacyBillSearch implements Serializable {
         lazyBills = new LazyBill(lst);
 
     }
-
-    
 
     public void makeNull() {
         refundAmount = 0;

@@ -152,7 +152,7 @@ public class AmppController implements Serializable {
     public Ampp getCurrent() {
         if (current == null) {
             current = new Ampp();
-            current.setDblValue(1.0);
+            current.setDblValue(1.0f);
         }
         return current;
     }

@@ -20,6 +20,7 @@ public class BillsTotals {
     private double card;
     private double cheque;
     private double slip;
+    private boolean bold;
     //private BillType billType;
 
     public List<Bill> getBills() {
@@ -103,6 +104,18 @@ public class BillsTotals {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isBold() {
+        return bold;
+    }
+    
+    public boolean getBold(){
+        return bold;
+    }
+
+    public void setBold(boolean bold) {
+        this.bold = bold;
     }
 
    

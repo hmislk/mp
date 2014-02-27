@@ -10,6 +10,9 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.SearchKeyword;
+import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
 import java.util.TimeZone;
 import com.divudi.entity.Item;
@@ -24,6 +27,7 @@ import com.divudi.facade.PackegeFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
@@ -33,6 +37,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -58,6 +63,8 @@ public class ItemsDistributorsController implements Serializable {
     private DealerController dealerController;
     private ItemsDistributors current;
     private List<ItemsDistributors> items = null;
+    private List<ItemsDistributors> searchItems = null;
+    private SearchKeyword searchKeyword;
     private List<PackageFee> charges;
     //private List<Packege> packegeList = null;
     Institution currentInstituion;
@@ -219,24 +226,39 @@ public class ItemsDistributorsController implements Serializable {
         }
         return items;
     }
-    private List<ItemsDistributors> allItems;
-    private List<ItemsDistributors> filter;
 
-    public void clearAllItems() {
-        allItems = null;
-    }
+    public void createItemDistributorTable() {
+        searchItems = null;
+        String sql;
+        HashMap tmp = new HashMap();
 
-    public List<ItemsDistributors> getAll() {
-        if (allItems == null) {
-            allItems = new ArrayList<>();
+        sql = " SELECT b FROM ItemsDistributors b where b.item.retired=false "
+                + " and b.institution.retired=false and b.retired=false";
 
-            String temSql = "SELECT i FROM ItemsDistributors i where i.retired=false ";
-            allItems = getFacade().findBySQL(temSql);
-         //   allItems.addAll(items);
-
+        if (getSearchKeyword().getInstitution()!= null && !getSearchKeyword().getInstitution().trim().equals("")) {
+            sql += " and  (upper(b.institution.name) like :ins )";
+            tmp.put("ins", "%" + getSearchKeyword().getInstitution().trim().toUpperCase() + "%");
         }
 
-        return allItems;
+        if (getSearchKeyword().getItemName()!= null && !getSearchKeyword().getItemName().trim().equals("")) {
+            sql += " and  (upper(b.item.name) like :itm )";
+            tmp.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getCode()!= null && !getSearchKeyword().getCode().trim().equals("")) {
+            sql += " and  (upper(b.item.code) like :cde )";
+            tmp.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
+        }
+        
+        if (getSearchKeyword().getCategory()!= null && !getSearchKeyword().getCategory().trim().equals("")) {
+            sql += " and  (upper(b.item.category.name) like :cat )";
+            tmp.put("cat", "%" + getSearchKeyword().getCategory().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.institution.name,b.item.name ";
+
+      
+        searchItems = getFacade().findBySQL(sql, tmp);
 
     }
 
@@ -375,20 +397,23 @@ public class ItemsDistributorsController implements Serializable {
         this.dealerController = dealerController;
     }
 
-    public List<ItemsDistributors> getAllItems() {
-        return allItems;
+    public SearchKeyword getSearchKeyword() {
+        return searchKeyword;
     }
 
-    public void setAllItems(List<ItemsDistributors> allItems) {
-        this.allItems = allItems;
+    public void setSearchKeyword(SearchKeyword searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 
-    public List<ItemsDistributors> getFilter() {
-        return filter;
+    public List<ItemsDistributors> getSearchItems() {
+        if (searchKeyword == null) {
+            searchKeyword = new SearchKeyword();
+        }
+        return searchItems;
     }
 
-    public void setFilter(List<ItemsDistributors> filter) {
-        this.filter = filter;
+    public void setSearchItems(List<ItemsDistributors> searchItems) {
+        this.searchItems = searchItems;
     }
 
     /**

@@ -3,29 +3,42 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="./resources/template/template.xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:pe="http://primefaces.org/ui/extensions">
+                xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
         <h:form>
-            <p:commandButton ajax="false" value="Refresh" action="#{itemsDistributorsController.clearAllItems()}"/>
-            <p:dataTable value="#{itemsDistributorsController.all}" var="i" filteredValue="#{itemsDistributorsController.filter}">
+            <h:panelGrid columns="5" >              
 
-                <h:outputLabel value="#{i.institution.name}"/>
+                <h:outputLabel value="Distributor"/>
+                <h:outputLabel value="Item Name"/>
+                <h:outputLabel value="Item Code"/>
+                <h:outputLabel value="Category"/>
+                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{itemsDistributorsController.createItemDistributorTable()}"/>
+
+                <p:inputText  value="#{itemsDistributorsController.searchKeyword.institution}" />
+                <p:inputText  value="#{itemsDistributorsController.searchKeyword.itemName}" />
+                <p:inputText  value="#{itemsDistributorsController.searchKeyword.code}" />
+                <p:inputText  value="#{itemsDistributorsController.searchKeyword.category}" />
+                <h:outputLabel/><h:outputLabel/>
+            </h:panelGrid>
+
+            <p:dataTable rowIndexVar="r" value="#{itemsDistributorsController.searchItems}" var="i">
+                <p:column>
+                    #{r+1}
                 </p:column>
-                <p:column headerText="Item Name" filterBy="#{i.item.name}">
+                <p:column headerText="Distributor">
+                    <h:outputLabel value="#{i.institution.name}"/>
+                </p:column>
+                <p:column headerText="Item Name" >
                     <h:outputLabel value="#{i.item.name}"/>
                 </p:column>   
-                <p:column headerText="Catogory" filterBy="#{i.item.category.name}">
-                    <h:outputLabel value="#{i.item.category.name}"/>
-                </p:column>  
-                <p:column headerText="Class" filterBy="#{i.institution.name}">
-                    <h:outputLabel value="#{i.item.category.entityClass}"/>
-                </p:column>
-                <p:column headerText="Manufactures" filterBy="#{i.item.institution.name}">
-                    <h:outputLabel value="#{i.item.institution.name}"/>
-                </p:column>
+                <p:column headerText="Item CODE" >
+                    <h:outputLabel value="#{i.item.code}"/>
+                </p:column>   
 
+                <p:column headerText="Catogory" >
+                    <h:outputLabel value="#{i.item.category.name}"/>
+                </p:column>               
             </p:dataTable>
 
         </h:form>    

@@ -179,7 +179,7 @@ public class SaleReturnController implements Serializable {
 
     private void savePreComponent() {
         for (BillItem i : getBillItems()) {
-            i.getPharmaceuticalBillItem().setQty(i.getQty());
+            i.getPharmaceuticalBillItem().setQty((float)(double)i.getQty());
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
             }
@@ -309,7 +309,7 @@ public class SaleReturnController implements Serializable {
 //                //System.err.println("Cancelled "+rCacnelled);
 //                //System.err.println("Net "+(rBilled-rCacnelled));
 
-            tmp.setQtyInUnit(Math.abs(i.getQty()) - Math.abs(rFund));
+            tmp.setQtyInUnit((float)(Math.abs(i.getQty()) - Math.abs(rFund)));
 
             bi.setPharmaceuticalBillItem(tmp);
 

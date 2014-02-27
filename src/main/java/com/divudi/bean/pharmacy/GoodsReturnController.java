@@ -251,7 +251,7 @@ public class GoodsReturnController implements Serializable {
             //System.err.println("Billed " + rBilled);
             //System.err.println("Cancelled " + rCacnelled);
             //System.err.println("Net " + netQty);
-            retPh.setQtyInUnit(grnPh.getQtyInUnit() - netQty);
+            retPh.setQtyInUnit((float)(grnPh.getQtyInUnit() - netQty));
 
             List<Item> suggessions = new ArrayList<>();
             Item item = bi.getItem();

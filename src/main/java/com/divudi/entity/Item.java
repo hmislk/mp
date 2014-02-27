@@ -32,10 +32,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
-
-
-
-
 /**
  *
  * @author buddhika
@@ -104,7 +100,7 @@ public class Item implements Serializable {
     boolean userChangable;
     @Enumerated(EnumType.STRING)
     InwardChargeType inwardChargeType;
-    Double dblValue = 0.0;
+    private Float dblValue = 0.0f;
     SessionNumberType sessionNumberType;
     boolean priceByBatch;
     @ManyToOne
@@ -509,14 +505,7 @@ public class Item implements Serializable {
         this.patientNotRequired = patientNotRequired;
     }
 
-    public Double getDblValue() {
-        return dblValue;
-    }
-
-    public void setDblValue(Double dblValue) {
-        this.dblValue = dblValue;
-    }
-
+   
     public SessionNumberType getSessionNumberType() {
         return sessionNumberType;
     }
@@ -563,6 +552,14 @@ public class Item implements Serializable {
 
     public void setItemFee(ItemFee itemFee) {
         this.itemFee = itemFee;
+    }
+
+    public Float getDblValue() {
+        return dblValue;
+    }
+
+    public void setDblValue(Float dblValue) {
+        this.dblValue = dblValue;
     }
 
     static class ReportItemComparator implements Comparator<ReportItem> {

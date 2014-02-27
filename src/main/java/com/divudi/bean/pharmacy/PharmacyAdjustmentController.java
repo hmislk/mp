@@ -97,10 +97,10 @@ public class PharmacyAdjustmentController implements Serializable {
     BillItem billItem;
     BillItem removingBillItem;
     BillItem editingBillItem;
-    Double qty;
-    Double pr;
-    Double rsr;
-    Double wsr;
+    Float qty;
+    Float pr;
+    Float rsr;
+    Float wsr;
     Stock stock;
 
     String comment;
@@ -109,11 +109,11 @@ public class PharmacyAdjustmentController implements Serializable {
 
     List<BillItem> billItems;
 
-    public Double getQty() {
+    public Float getQty() {
         return qty;
     }
 
-    public void setQty(Double qty) {
+    public void setQty(Float qty) {
         this.qty = qty;
     }
 
@@ -247,11 +247,11 @@ public class PharmacyAdjustmentController implements Serializable {
         ph.setStock(stock);
 
         tbi.setItem(getStock().getItemBatch().getItem());
-        tbi.setQty(qty);
+        tbi.setQty((double)qty);
 
         //pharmaceutical Bill Item
         ph.setDoe(getStock().getItemBatch().getDateOfExpire());
-        ph.setFreeQty(0.0);
+        ph.setFreeQty(0.0f);
         ph.setItemBatch(getStock().getItemBatch());
         ph.setQty(qty);
 
@@ -553,27 +553,27 @@ public class PharmacyAdjustmentController implements Serializable {
         this.itemBatchFacade = itemBatchFacade;
     }
 
-    public Double getPr() {
+    public Float getPr() {
         return pr;
     }
 
-    public void setPr(Double pr) {
+    public void setPr(Float pr) {
         this.pr = pr;
     }
 
-    public Double getRsr() {
+    public Float getRsr() {
         return rsr;
     }
 
-    public void setRsr(Double rsr) {
+    public void setRsr(Float rsr) {
         this.rsr = rsr;
     }
 
-    public Double getWsr() {
+    public Float getWsr() {
         return wsr;
     }
 
-    public void setWsr(Double wsr) {
+    public void setWsr(Float wsr) {
         this.wsr = wsr;
     }
 

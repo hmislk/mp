@@ -145,7 +145,7 @@ public class PreReturnController implements Serializable {
 
     private void saveComponent() {
         for (BillItem i : getBillItems()) {
-            i.getPharmaceuticalBillItem().setQtyInUnit(i.getQty());
+            i.getPharmaceuticalBillItem().setQtyInUnit((float) (double) i.getQty());
 
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
@@ -154,7 +154,7 @@ public class PreReturnController implements Serializable {
             i.setBill(getReturnBill());
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
-            i.setQty(i.getPharmaceuticalBillItem().getQty());
+            i.setQty((double) i.getPharmaceuticalBillItem().getQty());
 
             double value = i.getNetRate() * i.getQty();
             i.setGrossValue(0 - value);
@@ -182,8 +182,7 @@ public class PreReturnController implements Serializable {
     }
 
     public void settle() {
-        
-        
+
         saveReturnBill();
         saveComponent();
 
@@ -227,8 +226,8 @@ public class PreReturnController implements Serializable {
             double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre);
 
             //System.err.println("Refund " + rFund);
-
-            tmp.setQtyInUnit(Math.abs(i.getQtyInUnit()) - Math.abs(rFund));
+            double tmpQty = Math.abs(i.getQtyInUnit()) - Math.abs(rFund);
+            tmp.setQtyInUnit((float) tmpQty);
 
             bi.setPharmaceuticalBillItem(tmp);
 
@@ -322,11 +321,9 @@ public class PreReturnController implements Serializable {
         this.pharmacyRecieveBean = pharmacyRecieveBean;
     }
 
-  
-
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-          
+
             billItems = new ArrayList<>();
         }
         return billItems;
@@ -335,7 +332,5 @@ public class PreReturnController implements Serializable {
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
     }
-
-   
 
 }

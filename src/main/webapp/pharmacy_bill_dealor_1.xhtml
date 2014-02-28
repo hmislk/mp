@@ -44,7 +44,7 @@
                             <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
-
+                            
                             <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
                             </p:commandButton>
 
@@ -56,32 +56,29 @@
                             <h:outputLabel value="Paying Amount"/>
                             <h:outputLabel/>
                             <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{pharmacyDealorBill.currentBillItem.referenceBill}" completeMethod="#{billController.completeGrnDealor}" var="ix" itemLabel="#{ix.deptId}" itemValue="#{ix}" size="30"  style="width: 400px;">
-                                <p:column headerText="Grn No">
+                                <p:column>
                                     #{ix.deptId}
                                 </p:column>                                  
-                                <p:column headerText="Dealor Name">
+                                <p:column>
                                     #{ix.fromInstitution.name}
                                 </p:column>
-                                <p:column headerText="Grn At">
+                                <p:column>
                                     <h:outputLabel value="#{ix.createdAt}">
                                         <f:convertDateTime pattern="dd MM YYYY"/>
                                     </h:outputLabel>
                                 </p:column>
-                                <p:column headerText="Paid Amount">
+                                <p:column>
                                     <h:outputLabel value="#{ix.paidAmount}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
-                                <p:column headerText="Value">
+                                <p:column>
                                     <h:outputLabel value="#{ix.netTotal}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
-                                <f:ajax event="itemSelect" execute="@this" render="netValue" listener="#{pharmacyDealorBill.selectListener()}"/>
                             </p:autoComplete>
-                            <p:outputLabel id="netValue" value="#{pharmacyDealorBill.currentBillItem.netValue}">
-                                <f:convertNumber pattern="#,000.00" />
-                            </p:outputLabel>
+                            <p:inputText value="#{pharmacyDealorBill.currentBillItem.netValue}"/>
                             <p:commandButton id="btnAddIx" value="Add" action="#{pharmacyDealorBill.addToBill()}" ajax="false"/>
                         </h:panelGrid>
 

@@ -118,7 +118,7 @@
                         </p:tabView>
                     </p:panel>
 
-                    <p:panel header="Gardian Detail">
+<!--                    <p:panel header="Gardian Detail">
                         <h:panelGrid columns="2">
                             <p:outputLabel  value="Name" />
                             <p:inputText value="#{admissionController.current.guardian.name}"/>
@@ -127,7 +127,51 @@
                             <p:outputLabel value="Phone No" />
                             <p:inputMask mask="999-9999999"   value="#{admissionController.current.guardian.phone}"  />
                         </h:panelGrid>
-                    </p:panel>
+                    </p:panel>-->
+
+                    
+                    <p:panel header="Other">                           
+                            <p:tabView>
+                                <p:tab title="Guardian Detail">
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel  value="Name" />
+                                        <p:inputText value="#{admissionController.current.guardian.name}"/>
+                                        <p:outputLabel value="Address" />
+                                        <p:inputText  value="#{admissionController.current.guardian.address}"  />
+                                        <p:outputLabel value="Phone No" />
+                                        <p:inputMask mask="999-9999999"   value="#{admissionController.current.guardian.phone}"  />
+                                    </h:panelGrid>
+                                </p:tab>
+                                <p:tab title="Appointment" >
+                                    <p:autoComplete id="aBill" converter="bill" value="#{admissionController.appointmentBill}" 
+                                                    completeMethod="#{appointmentController.completeAppointment}" 
+                                                    var="apt2" itemLabel="#{apt2.patient.person.nameWithTitle}" 
+                                                    itemValue="#{apt2}" size="30"  style="width: 400px;">
+                                        <p:ajax event="itemSelect" process="aBill" update="panSearch2" />
+                                        <p:column>
+                                            #{apt2.insId}
+                                        </p:column>
+                                        <p:column>
+                                            #{apt2.patient.person.nameWithTitle}
+                                        </p:column>
+                                    </p:autoComplete>   
+                                    <h:panelGrid id="panSearch2" columns="2">
+                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="Name" />
+                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.nameWithTitle}" ></h:outputLabel>
+                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="Sex" />
+                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.sex}" ></h:outputLabel>
+                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="DOB"  />
+
+                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.dob}"   >
+                                            <f:convertDateTime pattern="dd/MM/yy" />
+                                        </h:outputLabel>
+
+                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="Adress" />
+                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.address}" ></h:outputLabel>
+                                    </h:panelGrid>
+                                </p:tab>
+                            </p:tabView>
+                        </p:panel>
 
                 </h:panelGrid>
 

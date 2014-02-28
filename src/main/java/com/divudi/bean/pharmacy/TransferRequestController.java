@@ -157,6 +157,11 @@ public class TransferRequestController implements Serializable {
             return;
         }
 
+        if (getBill().getToDepartment() == getSessionController().getDepartment()) {
+            UtilityController.addErrorMessage("U cant request ur department itself");
+            return;
+        }
+
         for (BillItem bi : getBillItems()) {
             if (bi.getQty() == 0.0) {
                 UtilityController.addErrorMessage("Check Items Qty");

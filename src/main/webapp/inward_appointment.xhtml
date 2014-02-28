@@ -3,11 +3,10 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="./resources/template/template.xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
-                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp">
 
 
 
@@ -189,7 +188,8 @@
 
 
                 <h:panelGroup rendered="#{appointmentController.printPreview}" >
-                    <bi:InwardAppointmentBill bill="#{appointmentController.currentBill}"/>
+                  
+                    
                 </h:panelGroup>
 
             </h:form>

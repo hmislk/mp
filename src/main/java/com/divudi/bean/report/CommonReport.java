@@ -1713,12 +1713,17 @@ public class CommonReport implements Serializable {
         String1Value1 tmp5 = new String1Value1();
         tmp5.setString("Final Cash Total");
         tmp5.setValue(getFinalCashTotal(list));
+        
+        String1Value1 tmp6 = new String1Value1();
+        tmp6.setString("Grant Total");
+        tmp6.setValue(getFinalCreditTotal(list)+getFinalCreditCardTotal(list)+getFinalChequeTot(list)+getFinalSlipTot(list)+getFinalCashTotal(list));
 
         data.add(tmp1);
         data.add(tmp2);
         data.add(tmp3);
         data.add(tmp4);
         data.add(tmp5);
+        data.add(tmp6);
 
         return data;
     }

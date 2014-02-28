@@ -13,6 +13,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
+import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
@@ -104,6 +105,7 @@ public class AppointmentController implements Serializable {
     //private BillItem currentBillItem;
     private Bill currentBill;
     private Appointment currentAppointment;
+    private YearMonthDay yearMonthDay;
 
     public Title[] getTitle() {
         return Title.values();
@@ -116,8 +118,8 @@ public class AppointmentController implements Serializable {
     public String prepareLabBill() {
         //    clearBillItemValues();
         //   clearBillValues();
-        currentBill=null;
-        currentAppointment=null;
+        currentBill = null;
+        currentAppointment = null;
         setPrintPreview(true);
         printPreview = false;
         return "lab_bill";
@@ -165,24 +167,22 @@ public class AppointmentController implements Serializable {
 
         return null;
     }
-    
-    private void saveAppointment(Patient p){
+
+    private void saveAppointment(Patient p) {
         getCurrentAppointment().setCreatedAt(new Date());
         getCurrentAppointment().setCreater(getSessionController().getLoggedUser());
         getCurrentAppointment().setPatient(p);
         getCurrentAppointment().setBill(getCurrentBill());
         getAppointmentFacade().create(getCurrentAppointment());
-  //      currentAppointment=null;
+        //      currentAppointment=null;
     }
 
     public void settleBill() {
         if (errorCheck()) {
             return;
         }
-        
-        Patient p=savePatient();
-        
-        
+
+        Patient p = savePatient();
 
         saveBill(p);
         saveAppointment(p);
@@ -198,13 +198,12 @@ public class AppointmentController implements Serializable {
 
         //getCurrentBill().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(),getCurrentAppointment(), BillNumberSuffix.INWSERBillNumberSuffix.INWSER);
 //        getCurrentBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), BillType.Appointment));
-      //  getCurrentBill().setBillType(BillType.OpdBill);
-
+        //  getCurrentBill().setBillType(BillType.OpdBill);
         getCurrentBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getCurrentBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
         getCurrentBill().setPatient(p);
-       // getCurrentBill().setAppointment(getCurrentAppointment());
+        // getCurrentBill().setAppointment(getCurrentAppointment());
         //     getCurrentBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
         //    getCurrentBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
         if (getCurrentBill().getPaymentMethod().equals(PaymentMethod.Cheque)) {
@@ -528,7 +527,7 @@ public class AppointmentController implements Serializable {
 
     public Bill getCurrentBill() {
         if (currentBill == null) {
-            currentBill=new BilledBill();
+            currentBill = new BilledBill();
             currentBill.setBillType(BillType.InwardAppointmentBill);
         }
         return currentBill;
@@ -547,8 +546,8 @@ public class AppointmentController implements Serializable {
     }
 
     public Appointment getCurrentAppointment() {
-        if(currentAppointment==null){
-            currentAppointment=new Appointment();
+        if (currentAppointment == null) {
+            currentAppointment = new Appointment();
         }
         return currentAppointment;
     }
@@ -563,6 +562,17 @@ public class AppointmentController implements Serializable {
 
     public void setAppointmentFacade(AppointmentFacade appointmentFacade) {
         this.appointmentFacade = appointmentFacade;
+    }
+
+    public YearMonthDay getYearMonthDay() {
+        if (yearMonthDay == null) {
+            yearMonthDay = new YearMonthDay();
+        }
+        return yearMonthDay;
+    }
+
+    public void setYearMonthDay(YearMonthDay yearMonthDay) {
+        this.yearMonthDay = yearMonthDay;
     }
 
     /**

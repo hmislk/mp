@@ -92,11 +92,10 @@ public class TransferRequestController implements Serializable {
     public void onEdit(BillItem tmp) {
         getPharmacyController().setPharmacyItem(tmp.getItem());
     }
-    
-     public void onEdit() {
+
+    public void onEdit() {
         getPharmacyController().setPharmacyItem(getCurrentBillItem().getItem());
     }
-
 
     public void saveBill() {
         if (getBill().getId() == null) {
@@ -114,6 +113,11 @@ public class TransferRequestController implements Serializable {
     public void request() {
         if (getBill().getToDepartment() == null) {
             UtilityController.addErrorMessage("Select Requested Department");
+            return;
+        }
+
+        if (getBill().getToDepartment() == getSessionController().getDepartment()) {
+            UtilityController.addErrorMessage("U cant request ur department itself");
             return;
         }
 

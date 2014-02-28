@@ -491,10 +491,10 @@ public class PharmacyBean {
             s.setStaff(staff);
             s.setItemBatch(pharmaceuticalBillItem.getItemBatch());
         }
-        //System.err.println("5");
-//        if (s.getStock() < qty) {
-//            return false;
-//        }
+        System.err.println("5");
+        if (s.getStock() < qty) {
+            return false;
+        }
 
         if (s.getId() == null || s.getId() == 0) {
             //System.err.println("Initial Stock Before Updation" + s.getStock());
@@ -583,18 +583,18 @@ public class PharmacyBean {
         List<Stock> stocks = getStockFacade().findBySQL(sql, m);
         List<StockQty> list = new ArrayList<>();
         double toAddQty = qty;
-        //System.err.println("To Add Qty : " + toAddQty);
+        System.err.println("To Add Qty : " + toAddQty);
         for (Stock s : stocks) {
             if (s.getStock() >= toAddQty) {
-                //   deductFromStock(s.getItemBatch(), toAddQty, department);
-                //System.err.println("Stock Qty 1 : " + s.getStock());
+                // //   deductFromStock(s.getItemBatch(), toAddQty, department);
+                System.err.println("Stock Qty 1 : " + s.getStock());
                 list.add(new StockQty(s, toAddQty));
                 break;
             } else {
-                //System.err.println("Stock Qty 2 : " + s.getStock());
+                System.err.println("Stock Qty 2 : " + s.getStock());
                 toAddQty = toAddQty - s.getStock();
                 list.add(new StockQty(s, s.getStock()));
-                //      deductFromStock(s.getItemBatch(), s.getStock(), department);
+                // //     deductFromStock(s.getItemBatch(), s.getStock(), department);
             }
         }
         return list;
@@ -606,6 +606,10 @@ public class PharmacyBean {
         }
 
         if (stock.getId() == null) {
+            return false;
+        }
+
+        if (stock.getStock() < qty) {
             return false;
         }
 
@@ -627,6 +631,10 @@ public class PharmacyBean {
         }
 
         if (stock.getId() == null) {
+            return false;
+        }
+
+        if (stock.getStock() < qty) {
             return false;
         }
 
@@ -1061,7 +1069,7 @@ public class PharmacyBean {
         if (item instanceof Ampp) {
             qty /= item.getDblValue();
         }
-        return (float)qty;
+        return (float) qty;
     }
 
     public double getMaximumPurchasePriceChange() {
@@ -1247,7 +1255,7 @@ public class PharmacyBean {
             vmpp.setName(vmp.getName() + " " + vmp.getCategory().getName() + " (" + issueUnitsPerPack + " " + packUnit.getName() + ")");
             vmpp.setPackUnit(packUnit);
             vmpp.setCreatedAt(Calendar.getInstance().getTime());
-            vmpp.setDblValue((float)issueUnitsPerPack);
+            vmpp.setDblValue((float) issueUnitsPerPack);
             getVmppFacade().create(vmpp);
         } else {
             vmpp.setRetired(false);
@@ -1274,7 +1282,7 @@ public class PharmacyBean {
             ampp = new Ampp();
             ampp.setAmp(amp);
             ampp.setName(amp.getName() + " " + issueUnitsPerPack + amp.getMeasurementUnit() + unit.getName());
-            ampp.setDblValue((float)issueUnitsPerPack);
+            ampp.setDblValue((float) issueUnitsPerPack);
             ampp.setMeasurementUnit(unit);
             ampp.setVmpp(vmpp);
             getAmppFacade().create(ampp);
@@ -1394,7 +1402,7 @@ public class PharmacyBean {
         ItemBatch ii = getItemBatchFacade().findFirstBySQL(sql, m);
         // //System.err.println("d = " + ii.getPurcahseRate());
         if (ii != null) {
-            return (float)ii.getPurcahseRate();
+            return (float) ii.getPurcahseRate();
         } else {
             return 0.0f;
         }
@@ -1536,7 +1544,7 @@ public class PharmacyBean {
         ItemBatch ii = getItemBatchFacade().findFirstBySQL(sql, m);
         // //System.err.println("d = " + ii.getPurcahseRate());
         if (ii != null) {
-            return (float)ii.getRetailsaleRate();
+            return (float) ii.getRetailsaleRate();
         } else {
             return 0.0f;
         }

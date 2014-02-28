@@ -160,8 +160,14 @@ public class GoodsReturnController implements Serializable {
             i.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(i);
 
-            getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(), Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
+            boolean returnFlag = getPharmacyBean().deductFromStock(i.getPharmaceuticalBillItem().getStock(), Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
+            if(!returnFlag){
+                i.setTmpQty(0);
+                getBillItemFacade().edit(i);
+                getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
+            }
+            
             getReturnBill().getBillItems().add(i);
 
         }
@@ -251,7 +257,7 @@ public class GoodsReturnController implements Serializable {
             //System.err.println("Billed " + rBilled);
             //System.err.println("Cancelled " + rCacnelled);
             //System.err.println("Net " + netQty);
-            retPh.setQtyInUnit((float)(grnPh.getQtyInUnit() - netQty));
+            retPh.setQtyInUnit((float) (grnPh.getQtyInUnit() - netQty));
 
             List<Item> suggessions = new ArrayList<>();
             Item item = bi.getItem();

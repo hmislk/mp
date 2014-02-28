@@ -15,6 +15,7 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
+import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
@@ -70,9 +71,49 @@ public class TransferRequestController implements Serializable {
         //      printPreview = false;
     }
 
-    public void addItem() {
+    private boolean checkItems(Item item) {
+        for (BillItem b : getBillItems()) {
+            if (b.getItem().getId() == item.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean errorCheck() {
         if (getBill().getToDepartment() == null) {
             UtilityController.addErrorMessage("Select Department");
+            return true;
+        }
+
+        if (getBill().getToDepartment().getId() == getSessionController().getDepartment().getId()) {
+            UtilityController.addErrorMessage("U can't request same department");
+            return true;
+        }
+
+        if (getCurrentBillItem().getItem() == null) {
+            UtilityController.addErrorMessage("Select Item");
+            return true;
+        }
+
+        if (getCurrentBillItem().getTmpQty() == 0) {
+            UtilityController.addErrorMessage("Set Ordering Qty");
+            return true;
+        }
+
+        if (checkItems(getCurrentBillItem().getItem())) {
+            UtilityController.addErrorMessage("Item is Already Added");
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public void addItem() {
+
+        if (errorCheck()) {
+            currentBillItem = null;
             return;
         }
 

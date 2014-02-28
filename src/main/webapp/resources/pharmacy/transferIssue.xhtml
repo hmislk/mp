@@ -91,7 +91,7 @@
                             <h:outputLabel value="Cost Price"/>
                         </f:facet>
                         <h:outputLabel value="#{bip.pharmaceuticalBillItem.itemBatch.purcahseRate}">
-                            <!--<f:convertNumber pattern="#0.00" />-->
+                            <f:convertNumber pattern="#0.00" />
                         </h:outputLabel>
                     </p:column>
 
@@ -100,7 +100,7 @@
                             <h:outputLabel value="Value"/>
                         </f:facet>
                         <h:outputLabel value="#{0-bip.pharmaceuticalBillItem.itemBatch.purcahseRate*bip.pharmaceuticalBillItem.qty}">
-                            <!--<f:convertNumber pattern="#0.00" />-->
+                            <f:convertNumber pattern="#0.00" />
                         </h:outputLabel>
                     </p:column>
 
@@ -109,7 +109,7 @@
                             <h:outputLabel value="Sale Price"/>
                         </f:facet>                           
                         <h:outputLabel value="#{bip.pharmaceuticalBillItem.itemBatch.retailsaleRate}">
-                            <!--<f:convertNumber pattern="#0.00" />-->
+                            <f:convertNumber pattern="#0.00" />
                         </h:outputLabel>
                     </p:column>
 
@@ -139,7 +139,7 @@
                             <p:column  style="text-align: right;">
                                 <f:facet name="footer">
                                     <h:outputLabel value="#{-cc.attrs.bill.netTotal}">
-                                        <!--<f:convertNumber pattern="#0.00" />-->
+                                        <f:convertNumber pattern="#0.00" />
                                     </h:outputLabel>
                                 </f:facet>
                             </p:column>

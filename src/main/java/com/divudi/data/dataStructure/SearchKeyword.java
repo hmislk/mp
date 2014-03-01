@@ -30,6 +30,7 @@ public class SearchKeyword {
     private String code;
     private String category;
     private String institution;
+    private String bhtNo;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -206,5 +207,13 @@ public class SearchKeyword {
 
     public void setInstitution(String institution) {
         this.institution = institution;
+    }
+
+    public String getBhtNo() {
+        return bhtNo;
+    }
+
+    public void setBhtNo(String bhtNo) {
+        this.bhtNo = bhtNo;
     }
 }

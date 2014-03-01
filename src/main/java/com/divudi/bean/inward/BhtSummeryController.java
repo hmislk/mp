@@ -168,19 +168,29 @@ public class BhtSummeryController implements Serializable {
     }
 
     public void settle() {
+        System.err.println("1");
         if (errorCheck()) {
+            System.err.println("2");
             return;
         }
+        System.err.println("3");
         // savePayment();
         if (getPatientEncounter().getPaymentMethod() == PaymentMethod.Credit) {
+          System.err.println("4");
             updateCreditDetail();
+            System.err.println("5");
         }
+        System.err.println("6");
         saveBill();
+        System.err.println("7");
         saveBillItem();
+        System.err.println("8");
         UtilityController.addSuccessMessage("Bill Saved");
 
         if (!getPatientEncounter().isDischarged()) {
+            System.err.println("9");
             getDischargeController().setCurrent((Admission) getPatientEncounter());
+            System.err.println("10");
             getDischargeController().discharge();
         }
 

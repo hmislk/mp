@@ -47,14 +47,14 @@
                         <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill">    
                             
                            
-                            <p:column headerText="Bill No"  filterBy="#{bill.insId}" filterMatchMode="contains" >
+                            <p:column headerText="Bill No">
                                 <h:commandLink action="inward_bill_reprint" value="#{bill.insId}">
                                     <h:outputLabel></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
                             
-                            <p:column headerText="Bht No" filterBy="#{bill.patientEncounter.bhtNo}" filterMatchMode="contains" >
+                            <p:column headerText="Bht No">
                                 <h:commandLink action="inward_bill_reprint" value="#{bill.patientEncounter.bhtNo}">
                                     <h:outputLabel  ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
@@ -70,14 +70,14 @@
                                 </h:commandLink>
                             </p:column>
                            
-                            <p:column headerText="Client" filterBy="#{bill.patientEncounter.patient.person.nameWithTitle}" filterMatchMode="contains" >
+                            <p:column headerText="Client">
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel value="#{bill.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>         
                             
-                            <p:column headerText="Billed By" filterBy="#{bill.creater.webUserPerson.name}" filterMatchMode="contains" >
+                            <p:column headerText="Billed By">
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel value="#{bill.creater.webUserPerson.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
@@ -91,7 +91,7 @@
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>       
-                            <p:column headerText="Cancelled User" filterBy="#{bill.cancelledBill.creater.webUserPerson.name}" filterMatchMode="contains" >
+                            <p:column headerText="Cancelled User">
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>

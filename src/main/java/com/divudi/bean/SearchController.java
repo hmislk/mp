@@ -1452,9 +1452,11 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=true and "
-                + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is not null)"
-                + " and b.createdAt between :fromDate and :toDate and b.retired=false";
+
+        sql = "select b from BilledBill b where b.createdAt is not null "
+                + " and b.patientEncounter.discharged=true and"
+                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
+                + "and b.retired=false  ";
         
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
@@ -1543,10 +1545,14 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.createdAt is not null and "
-                + " b.patientEncounter.discharged=true and"
+//        sql = "select b from BilledBill b where b.createdAt is not null and "
+//                + " b.patientEncounter.discharged=true and"
+//                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
+//                + "and b.retired=false";
+        sql = "select b from BilledBill b where b.createdAt is not null "
+                + " and b.patientEncounter.discharged=true and"
                 + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false";
+                + "and b.retired=false  ";
         
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
@@ -1634,9 +1640,16 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=true and "
-                + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is null)"
-                + " and b.createdAt between :fromDate and :toDate and b.retired=false";
+//        sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=true and "
+//                + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is null)"
+//                + " and b.createdAt between :fromDate and :toDate and b.retired=false";
+        
+        sql = "select b from BilledBill b where b.createdAt is not null "
+                + " and b.patientEncounter.discharged=true and"
+                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
+                + "and b.retired=false  ";
+        
+        
         
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";

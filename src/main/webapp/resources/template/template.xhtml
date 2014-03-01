@@ -82,7 +82,11 @@
                                         <p:menuitem  ajax="false"  action="inward_room_occupancy" value="Room Occupancy" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
                                         <p:menuitem  ajax="false"  action="inward_room_change" value="Room Change" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
                                     </p:submenu>                                      
-
+                                    <p:submenu label="Professional Payment" >
+                                        <p:menuitem  ajax="false"  value="Pay Doctor"  action="inward_bill_staff_payment"></p:menuitem>
+                                        <p:menuitem  ajax="false"  value="Payment Due Search"  action="inward_search_payment_due"></p:menuitem>
+                                        <p:menuitem  ajax="false"  value="Payment Done Search"  action="inward_search_payment_done" actionListener="#{billSearch.recreateModel}"></p:menuitem>
+                                    </p:submenu>  
                                     <p:menuitem  ajax="false"  action="inward_reports" value="Inward Reports" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="inward_administration" value="Inward Administration" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="inward_appointment" value="Inward Appointment" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>

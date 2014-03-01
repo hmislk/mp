@@ -40,7 +40,7 @@ public class PatientEncounter implements Serializable {
 //     List<PatientRoom> patientRooms;
 
     @OneToMany(mappedBy = "patientEncounter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     List<EncounterComponent> encounterComponents;
+    List<EncounterComponent> encounterComponents;
 
     static final long serialVersionUID = 1L;
     @Id
@@ -72,7 +72,7 @@ public class PatientEncounter implements Serializable {
     Date retiredAt;
     String retireComments;
     @Enumerated(EnumType.STRING)
-     PaymentMethod paymentMethod;
+    PaymentMethod paymentMethod;
     @ManyToOne
     Institution creditCompany;
     @ManyToOne
@@ -88,19 +88,19 @@ public class PatientEncounter implements Serializable {
     Date timeOfDischarge;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date dateOfDischarge;
-     double creditLimit;
-     double creditUsedAmount;
+    double creditLimit;
+    double creditUsedAmount;   
     @Enumerated(EnumType.STRING)
     PatientEncounterType patientEncounterType;
     @OneToMany(mappedBy = "parentEncounter")
-     List<PatientEncounter> childEncounters;
+    List<PatientEncounter> childEncounters;
     @OneToMany(mappedBy = "encounter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     List<ClinicalFindingValue> clinicalFindingValues;
+    List<ClinicalFindingValue> clinicalFindingValues;
     String name;
     @Temporal(javax.persistence.TemporalType.DATE)
     Date dateTime;
     @OneToOne
-     PatientRoom lastPatientRoom;
+    PatientRoom lastPatientRoom;
 
     @Transient
     List<ClinicalFindingValue> diagnosis;
@@ -119,7 +119,6 @@ public class PatientEncounter implements Serializable {
 
     @Transient
     List<ClinicalFindingValue> plans;
-    
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
@@ -506,5 +505,9 @@ public class PatientEncounter implements Serializable {
     public void setToTime(Date toTime) {
         this.toTime = toTime;
     }
+
+    
+
+  
 
 }

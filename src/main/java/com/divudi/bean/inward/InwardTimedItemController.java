@@ -30,7 +30,7 @@ import javax.inject.Inject;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -42,8 +42,6 @@ public class InwardTimedItemController implements Serializable {
     //////////////////////
     private List<PatientItem> items;
     private PatientItem current;
-    private PatientItem tmpPI;
-    private Date toTime;
     /////////
     @EJB
     private PatientItemFacade patientItemFacade;
@@ -58,8 +56,6 @@ public class InwardTimedItemController implements Serializable {
     public void makeNull() {
         items = null;
         current = null;
-        tmpPI = null;
-        toTime = null;
     }
 
     private boolean errorCheck() {
@@ -76,7 +72,7 @@ public class InwardTimedItemController implements Serializable {
             return;
         }
 
-        double serviceTot = getInwardCalculation().calTimedServiceCharge(getCurrent(),getToTime());
+        double serviceTot = getInwardCalculation().calTimedServiceCharge(getCurrent(), null);
         getCurrent().setServiceValue(serviceTot);
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getCurrent().setCreatedAt(Calendar.getInstance().getTime());
@@ -84,52 +80,51 @@ public class InwardTimedItemController implements Serializable {
         PatientEncounter tmp = getCurrent().getPatientEncounter();
         current = new PatientItem();
         current.setPatientEncounter(tmp);
+        
+        createPatientItems();
     }
 
-    public void finalizeService() {
-        if (getToTime() != null) {
-            if (getToTime().before(getTmpPI().getFromTime())) {
+    public void finalizeService(PatientItem tmpPI) {
+        if (tmpPI.getToTime() != null) {
+            if (tmpPI.getToTime().before(tmpPI.getFromTime())) {
                 UtilityController.addErrorMessage("Service Not Finalize check Service Start Time & End Time");
                 return;
             }
         }
 
-        if (getToTime() == null) {
-            getTmpPI().setToTime(Calendar.getInstance().getTime());
-        } else {
-            getTmpPI().setToTime(getToTime());
+        if (tmpPI.getToTime() == null) {
+            tmpPI.setToTime(Calendar.getInstance().getTime());
         }
 
-        double serviceTot = getInwardCalculation().calTimedServiceCharge(getTmpPI(),getToTime());
-        getTmpPI().setServiceValue(serviceTot);
+        double serviceTot = getInwardCalculation().calTimedServiceCharge(tmpPI, tmpPI.getToTime());
+        tmpPI.setServiceValue(serviceTot);
 
-        getTmpPI().setFinalize(Boolean.TRUE);
+        tmpPI.setFinalize(Boolean.TRUE);
         getPatientItemFacade().edit(tmpPI);
+        
+        createPatientItems();
 
-        setToTime(null);
     }
 
-    public List<PatientItem> getItems() {
-        if (getCurrent().getPatientEncounter() == null) {
-            return new ArrayList<PatientItem>();
-        }
-
-        String sql = "SELECT i FROM PatientItem i where type(i.item)=TimedItem and i.retired=false and i.patientEncounter=:pe" ;
-        HashMap hm=new HashMap();
+    public void createPatientItems() {
+        String sql = "SELECT i FROM PatientItem i where type(i.item)=TimedItem and i.retired=false and i.patientEncounter=:pe";
+        HashMap hm = new HashMap();
         hm.put("pe", getCurrent().getPatientEncounter());
-        items = getPatientItemFacade().findBySQL(sql,hm);
+        items = getPatientItemFacade().findBySQL(sql, hm);
 
         if (items == null) {
-            items = new ArrayList<PatientItem>();
+            items = new ArrayList<>();
         }
 
         for (PatientItem pi : items) {
             if (pi.getFinalize() == null) {
-                double serviceTot = getInwardCalculation().calTimedServiceCharge(pi,getToTime());
+                double serviceTot = getInwardCalculation().calTimedServiceCharge(pi, null);
                 pi.setServiceValue(serviceTot);
             }
         }
+    }
 
+    public List<PatientItem> getItems() {        
         return items;
     }
 
@@ -178,14 +173,6 @@ public class InwardTimedItemController implements Serializable {
         this.commonFunctions = commonFunctions;
     }
 
-    public PatientItem getTmpPI() {
-        return tmpPI;
-    }
-
-    public void setTmpPI(PatientItem tmpPI) {
-        this.tmpPI = tmpPI;
-    }
-
     public InwardCalculation getInwardCalculation() {
         return inwardCalculation;
     }
@@ -194,11 +181,4 @@ public class InwardTimedItemController implements Serializable {
         this.inwardCalculation = inwardCalculation;
     }
 
-    public Date getToTime() {
-        return toTime;
-    }
-
-    public void setToTime(Date toTime) {
-        this.toTime = toTime;
-    }
 }

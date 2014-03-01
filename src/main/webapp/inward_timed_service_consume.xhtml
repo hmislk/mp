@@ -18,7 +18,7 @@
                             <h:outputLabel value="Inward Timed Service Bill" />
                             <p:commandButton id="btnAddService" ajax="false" value="Add Service" action="#{inwardTimedItemController.save}" />
                             <p:defaultCommand target="btnAddService"/>
-                            
+
                             <p:commandButton ajax="false" value="Clear" action="#{inwardTimedItemController.makeNull}" />
                         </h:panelGrid>
                     </f:facet>
@@ -30,7 +30,7 @@
                                             var="myItem" itemValue="#{myItem}" 
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  style="width: 400px;">
-                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 con"/>
+                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 con" listener="#{inwardTimedItemController.createPatientItems()}"/>
                                 <p:column>
                                     #{myItem.bhtNo}
                                 </p:column>
@@ -57,9 +57,7 @@
                             </h:panelGrid>
                         </p:panel>
 
-                        <p:panel header="Consumed Timed Sevice" id="con">
-                            <p:calendar id="stopDate" value="#{inwardTimedItemController.toTime}" pattern="dd MMMM yyyy hh mm a" >    
-                            </p:calendar> 
+                        <p:panel header="Consumed Timed Sevice" id="con">                          
                             <p:dataTable value="#{inwardTimedItemController.items}" var="ti">
                                 <p:column headerText="Service Name">
                                     #{ti.item.name}
@@ -71,11 +69,11 @@
                                     #{ti.serviceValue}
                                 </p:column>
                                 <p:column headerText="Stopped Time">
-                                    #{ti.toTime}
+                                    <p:calendar  value="#{ti.toTime}" pattern="dd MMMM yyyy hh mm a" >    
+                                    </p:calendar>                                     
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton value="Finalize" disabled="#{ti.finalize}" ajax="false" action="#{inwardTimedItemController.finalizeService}">
-                                        <f:setPropertyActionListener value="#{ti}" target="#{inwardTimedItemController.tmpPI}"/>                                      
+                                    <p:commandButton value="Finalize" ajax="false" action="#{inwardTimedItemController.finalizeService(ti)}">                                                                    
                                     </p:commandButton>
                                 </p:column>
                             </p:dataTable>

@@ -145,41 +145,7 @@
                     </p:commandButton>
 
 
-
-                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
-                        <bi:inwardFinalBill   bill="#{bhtSummeryController.current}"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
-                        <bi:inwardFinalBill  hosCopy="true"                                       
-                                             bill="#{bhtSummeryController.current}"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
-                        <bi:inwardFinalBill duplicate="true"                                   
-                                            bill="#{bhtSummeryController.current}" />
-                    </h:panelGroup>
-
-                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
-                        <bi:inwardFinalBill  bill="#{bhtSummeryController.current}"
-                                             withoutPro="true" showProfessionalOnly="true"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
-                        <bi:inwardFinalBill  hosCopy="true"   withoutPro="true"   showProfessionalOnly="true"                                 
-                                             bill="#{bhtSummeryController.current}"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup id="professional" styleClass="noBorder">       
-                        <bi:inwardFinalProfessionalBill bill="#{bhtSummeryController.current}"  />
-                    </h:panelGroup>
-
-                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
-                        <bi:inwardFinalBill duplicate="true"                                   
-                                            bill="#{bhtSummeryController.current}" withoutPro="true" showProfessionalOnly="true" />
-                    </h:panelGroup>
-
-                                  
+  
 
                 </p:panel>
             </h:form>

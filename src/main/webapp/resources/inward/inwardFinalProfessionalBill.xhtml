@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="bill" />        
+        <cc:attribute name="duplicate" />
+        <cc:attribute name="hosCopy" />   
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <h:outputStylesheet library="css" name="printing.css"></h:outputStylesheet>
+        <div  >
+            <h:panelGroup id="gpBillPreview" style="font-size: 10px!important;" >
+
+                <div class="fiveinchbill"  >
+
+                    <div class="heading">
+                        <h:outputLabel value="**Final Bill Original**" 
+                                       rendered="#{cc.attrs.duplicate ne true and cc.attrs.hosCopy ne true}"/>
+                        <h:outputLabel  value="**DUPLICATE**" rendered="#{cc.attrs.duplicate eq true}"/>
+                        <h:outputLabel value="**HOSPITAL COPY**" rendered="#{cc.attrs.hosCopy eq true}"/>
+                    </div>
+
+                    <div class="cel1R1L" >
+                        <h:outputLabel value="Name">
+                        </h:outputLabel>
+                    </div>
+                    <div class="cel1R1C" >
+                        <h:outputLabel value=":">
+                        </h:outputLabel>
+                    </div>
+                    <div class="cel1R1V" >
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.person.nameWithTitle}" />
+                    </div>
+                    
+                    <div class="cel2R1L" >
+                       
+                        <h:outputLabel value="Admit" />
+                    </div>
+                    
+                    <div class="cel2R1C" >
+                        <h:outputLabel value=":">
+                        </h:outputLabel>
+                    </div>
+                    
+                    <div class="cel2R1V" >                        
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfAdmission}" >
+                            <f:convertDateTime pattern="dd MM yy" />
+                        </h:outputLabel>                     
+                    </div>
+
+
+                    <div class="cel1R2L" >
+                        <h:outputLabel value="Sex" />
+
+                    </div>
+                    <div class="cel1R2C" >
+                        <h:outputLabel value=":">
+                        </h:outputLabel>
+                    </div>
+                    <div class="cel1R2V" >
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.person.sex}" /> 
+
+                    </div>
+                    <div Class="cel2R2L" >                        
+                        <h:outputLabel value="" />
+                    </div>
+                    
+                    <div Class="cel2R2C" >                        
+                        <h:outputLabel value=":" ></h:outputLabel>
+                    </div>
+                    
+                    <div Class="cel2R2V" >                        
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfAdmission}" >
+                            <f:convertDateTime pattern="h:mm a" />
+                        </h:outputLabel>
+                    </div>
+
+
+                    <div class="cel1R3L" >
+                        <h:outputLabel value="BHT" />
+                    </div>
+                    <div class="cel1R3C" >
+                        <h:outputLabel value=":">
+                        </h:outputLabel>
+                    </div>
+                    <div class="cel1R3V" >
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.bhtNo}" />
+                    </div>
+                    <div Class="cel2R3L" >                        
+                        <h:outputLabel value="Disch." />
+                    </div>
+                    
+                    <div Class="cel2R3C" >                        
+                        <h:outputLabel value=":" ></h:outputLabel>
+                    </div>
+                    
+                    <div Class="cel2R3V" >                        
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
+
+                            <f:convertDateTime pattern="dd MM yy" />                            
+                        </h:outputLabel>
+                    </div>
+
+                    <div class="cel1R4L" >
+                        <h:outputLabel value="Age" />
+                    </div>
+                    
+                    <div class="cel1R4C" >
+                        <h:outputLabel value=":">
+                        </h:outputLabel>
+                    </div>
+                    
+                    <div class="cel1R4V" >
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.age}" />
+                    </div>
+                    
+                    <div Class="cel2R4L" >
+                        <h:outputLabel value="" />
+                    </div>
+                    
+                    <div Class="cel2R4C" >   
+                        <h:outputLabel value=":" ></h:outputLabel>
+                    </div>                    
+                    <div Class="cel2R4V" >                        
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
+                            <f:convertDateTime pattern="h:mm a" />
+                        </h:outputLabel>
+                    </div>
+
+
+
+
+
+                    <ui:repeat class="table" value="#{cc.attrs.bill.billItems}" var="bip">
+                        <h:panelGroup rendered="#{bip.netValue!=0 and  bip.inwardChargeType eq 'ProfessionalCharge'}">
+                             <br></br>
+                            <p:dataTable style="noBorder" value="#{bip.billFees}" var="fe">
+                                
+                                <p:column headerText="Consultant Name" style="text-align: left!important; line-height: 2px;"> 
+                                    <h:panelGroup rendered="#{fe.referenceBillFee.feeValue ne 0}">
+                                        <h:outputLabel value="#{fe.referenceBillFee.staff.person.nameWithTitle}"/> 
+                                    </h:panelGroup>
+                                </p:column>
+                                <p:column headerText="Amount" style="text-align: right;">
+                                    <h:panelGroup rendered="#{fe.referenceBillFee.feeValue ne 0}">
+                                    <h:outputLabel value="#{fe.referenceBillFee.feeValue}">
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                    </h:panelGroup>
+                                </p:column>
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column footerText="Total"/>
+                                        <p:column style="text-align: right;" >
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{bip.netValue}">
+                                                    <f:convertNumber pattern="#,000.00" />
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+                            </p:dataTable>                         
+                        </h:panelGroup>
+                    </ui:repeat>
+
+
+
+
+                </div>
+                <div>
+                    <h:outputLabel value="Cashier : #{cc.attrs.bill.creater.code}"
+                                   style="position:absolute;left:2.0cm;"  >
+                    </h:outputLabel>
+
+                </div>
+
+            </h:panelGroup>
+        </div>
+
+    </cc:implementation>
+</html>

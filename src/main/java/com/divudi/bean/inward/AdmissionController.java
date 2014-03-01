@@ -339,7 +339,7 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(getSessionController().getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());        
             //      getCurrent().setDateOfAdmission(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getFacade().create(current);
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");

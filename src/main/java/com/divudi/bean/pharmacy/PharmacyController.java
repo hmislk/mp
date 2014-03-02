@@ -8,11 +8,9 @@
  */
 package com.divudi.bean.pharmacy;
 
-import com.divudi.bean.InstitutionController;
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.InstitutionType;
-import com.divudi.data.dataStructure.DateRange;
 import com.divudi.data.dataStructure.DepartmentSale;
 import com.divudi.data.dataStructure.DepartmentStock;
 import com.divudi.data.dataStructure.InstitutionSale;
@@ -24,7 +22,6 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.Ampp;
-import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.AmpFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;

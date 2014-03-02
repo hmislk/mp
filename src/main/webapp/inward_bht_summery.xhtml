@@ -16,8 +16,8 @@
                     <f:facet name="header">
                         <p:outputLabel value="Inward Payment Bill"/>
                         <p:commandButton ajax="false" style="float: right;" value="Clear" action="#{bhtSummeryController.makeNull}" />                        
-                        <p:commandButton ajax="false" style="float: right;" value="To Settle Bill" action="inward_final_bill"/>
-                        
+                        <p:commandButton ajax="false" style="float: right;" value="To Settle Bill" action="#{bhtSummeryController.toSettleBill()}" />
+
                     </f:facet>
                     <h:panelGrid columns="3" style="min-width: 100%;">
                         <p:panel header="BHT">
@@ -27,7 +27,7 @@
                                             var="myItem" itemValue="#{myItem}" 
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  >
-                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 tvPt sum tot "/>
+                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 tvPt sum tot dis " listener="#{bhtSummeryController.createTables()}"/>
                                 <p:column>
                                     #{myItem.bhtNo}
                                 </p:column>
@@ -66,7 +66,7 @@
                                 <h:outputLabel id="due" value="#{bhtSummeryController.due}"/>
                             </h:panelGrid>
                         </p:panel>
-                        <p:panel header="Discharge">
+                        <p:panel id="dis" header="Discharge">
                             <h:panelGrid columns="2">
                                 <p:outputLabel value="Discharge Time"/>
                                 <p:calendar value="#{bhtSummeryController.patientEncounter.dateOfDischarge}" pattern="dd MMMM yyyy hh mm a" >                               
@@ -186,9 +186,7 @@
                                 </p:dataTable>
                             </p:tab>
 
-                            <p:tab id="tabTimed" title="Timed Service Detail"  >
-                                <p:calendar value="#{bhtSummeryController.toTime}" pattern="dd MMMM yyyy hh mm a" >    
-                                </p:calendar> 
+                            <p:tab id="tabTimed" title="Timed Service Detail"  >                              
                                 <p:dataTable value="#{bhtSummeryController.patientItems}" var="ti">
                                     <p:column headerText="Service Name">
                                         #{ti.item.name}
@@ -202,13 +200,11 @@
                                         #{ti.serviceValue}
                                     </p:column>
                                     <p:column headerText="Stopped Time">
-                                        <h:outputLabel value="#{ti.toTime}">
-                                            <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
-                                        </h:outputLabel>
+                                        <p:calendar value="#{ti.toTime}" pattern="dd MMMM yyyy hh mm a" >    
+                                        </p:calendar>                                        
                                     </p:column>
                                     <p:column >
-                                        <p:commandButton value="Finalize" disabled="#{ti.finalize}" ajax="false" action="#{bhtSummeryController.finalizeService}">
-                                            <f:setPropertyActionListener value="#{ti}" target="#{bhtSummeryController.tmpPI}"/>
+                                        <p:commandButton value="Finalize" disabled="#{ti.finalize}" ajax="false" action="#{bhtSummeryController.finalizeService(ti)}">                                            
                                         </p:commandButton>
                                     </p:column>
                                 </p:dataTable>

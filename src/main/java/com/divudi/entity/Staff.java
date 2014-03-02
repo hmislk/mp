@@ -96,6 +96,7 @@ public class Staff implements Serializable {
     byte[] baImage = new byte[1];
     String fileName;
     String fileType;
+    private float charge;
     //////////////////
     @OneToOne
     Department workingDepartment;
@@ -511,5 +512,13 @@ public class Staff implements Serializable {
 
     public void setWorkingHour(double workingHour) {
         this.workingHour = workingHour;
+    }
+
+    public float getCharge() {
+        return charge;
+    }
+
+    public void setCharge(float charge) {
+        this.charge = charge;
     }
 }

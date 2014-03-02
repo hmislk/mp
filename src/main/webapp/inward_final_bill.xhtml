@@ -6,10 +6,11 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+                xmlns:bi="http://java.sun.com/jsf/composite/inward">
+
 
     <ui:define name="content">
-        
+
         <h:panelGroup >
             <h:form  >
                 <p:panel rendered="#{!bhtSummeryController.printPreview}" >
@@ -96,19 +97,55 @@
                         <h:outputLabel value="Paid " style="font-weight: bold"/>
                         <h:outputLabel value="#{bhtSummeryController.paid}"/>
                         <h:outputLabel value="Due " style="font-weight: bold"/>
-                        <h:outputLabel id="due" value="#{bhtSummeryController.due}"/>
-                        <h:outputLabel value="Paying Amount" style="font-weight: bold"/>
-                        <h:inputText  value="#{bhtSummeryController.current.cashPaid}"/>
+                        <h:outputLabel id="due" value="#{bhtSummeryController.due}"/>                        
                     </p:panelGrid>
                 </p:panel>
 
                 <p:panel rendered="#{bhtSummeryController.printPreview}">
 
-                   <bi:inwardBill controller="#{bhtSummeryController}" 
-                                   isIntrim="false"
-                                   item="#{bhtSummeryController.billItems}"
-                                   patientEncounter="#{bhtSummeryController.current.patientEncounter}"
-                                   bill="#{bhtSummeryController.current}"/>
+                    <h:panelGrid columns="2">
+                        <p:panel>
+                            <f:facet name="header" >   
+                                <h:outputLabel value="Claimable"/>
+                            </f:facet>
+                            <h:panelGrid columns="1">
+                                <p:commandButton value="Patient Copy" ajax="false" >
+                                    <p:printer target="claimablePatientCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Hospital Copy" ajax="false" >
+                                    <p:printer target="claimableHospitalCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Duplicate Copy" ajax="false" >
+                                    <p:printer target="claimableDuplicate" ></p:printer>
+                                </p:commandButton> 
+                            </h:panelGrid>
+                        </p:panel>
+                        <p:panel header="Not Claimable">
+                            <h:panelGrid columns="1">
+                                <p:commandButton value="Patient Copy without Professional" ajax="false" >
+                                    <p:printer target="notClaimablePatientCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Hospital Copy wihout Professional" ajax="false" >
+                                    <p:printer target="notClaimableHospitalCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Duplicate wihout Professional" ajax="false" >
+                                    <p:printer target="notClaimableDuplicate" ></p:printer>
+                                </p:commandButton>  
+                                <p:commandButton value="Professional Fees" ajax="false" >
+                                    <p:printer target="professional" ></p:printer>
+                                </p:commandButton>
+
+
+                            </h:panelGrid>
+
+                        </p:panel>
+                    </h:panelGrid>
+
+                    <p:commandButton value="Check Intrim " ajax="false" action="#{bhtSummeryController.prepareNewBill()}"  styleClass="noPrintButton">
+                    </p:commandButton>
+
+
+  
 
                 </p:panel>
             </h:form>

@@ -46,6 +46,7 @@ public class BillFee implements Serializable {
     PatientEncounter patienEncounter;
     @ManyToOne
     PatientEncounter childEncounter;
+   
     @ManyToOne
     BillItem billItem;
     @ManyToOne
@@ -66,6 +67,8 @@ public class BillFee implements Serializable {
     //FeeDate, FeeTime
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date FeeAt;
+    @ManyToOne
+    private BillFee referenceBillFee;
 
     public BillFee() {
     }
@@ -96,7 +99,7 @@ public class BillFee implements Serializable {
     }
 
     public void setFeeValue(boolean foriegn) {
-        if (tmpChangedValue != 0) {
+        if (tmpChangedValue != null) {
             this.feeGrossValue = tmpChangedValue;
             this.feeValue = tmpChangedValue;
             return;
@@ -114,14 +117,14 @@ public class BillFee implements Serializable {
 
         if (getFee().getFeeType() != FeeType.Staff) {
             if (foriegn) {
-                if (tmpChangedValue != 0) {
+                if (tmpChangedValue != null) {
                     this.feeGrossValue = tmpChangedValue;
                 } else {
                     this.feeGrossValue = getFee().getFfee();
                 }
                 this.feeValue = getFee().getFfee() / 100 * (100 - discountPercent);
             } else {
-                if (tmpChangedValue != 0) {
+                if (tmpChangedValue != null) {
                     this.feeGrossValue = tmpChangedValue;
                 } else {
                     this.feeGrossValue = getFee().getFee();
@@ -130,14 +133,14 @@ public class BillFee implements Serializable {
             }
         } else {
             if (foriegn) {
-                if (tmpChangedValue != 0) {
+                if (tmpChangedValue != null) {
                     this.feeGrossValue = tmpChangedValue;
                 } else {
                     this.feeGrossValue = getFee().getFfee();
                 }
                 this.feeValue = getFee().getFfee();
             } else {
-                if (tmpChangedValue != 0) {
+                if (tmpChangedValue != null) {
                     this.feeGrossValue = tmpChangedValue;
                 } else {
                     this.feeGrossValue = getFee().getFee();
@@ -148,7 +151,7 @@ public class BillFee implements Serializable {
     }
 
     public void setFeeValueForDiscountAllowedAndUserChangable(boolean foriegn, double discountPercent) {
-        if (tmpChangedValue != 0) {
+        if (tmpChangedValue != null) {
             this.feeGrossValue = tmpChangedValue;
             this.feeValue = tmpChangedValue;
             return;
@@ -178,7 +181,7 @@ public class BillFee implements Serializable {
 
     }
 
-     public void setFeeValueForDiscountAllowedNotUserChangable(boolean foriegn, double discountPercent) {
+    public void setFeeValueForDiscountAllowedNotUserChangable(boolean foriegn, double discountPercent) {
 //        if (tmpChangedValue != 0) {
 //            this.feeGrossValue = tmpChangedValue;
 //            this.feeValue = tmpChangedValue;
@@ -209,10 +212,8 @@ public class BillFee implements Serializable {
 
     }
 
-    
-    
     public void setFeeValueForUserChangableAndNotDiscountAllowed(boolean foriegn) {
-        if (tmpChangedValue != 0) {
+        if (tmpChangedValue != null) {
             this.feeGrossValue = tmpChangedValue;
             this.feeValue = tmpChangedValue;
             return;
@@ -230,10 +231,10 @@ public class BillFee implements Serializable {
     }
 
     @Transient
-    private double tmpChangedValue = 0;
+    private Double tmpChangedValue;
 
     public void setFeeValueForCreditCompany(boolean foriegn, double discountPercent) {
-        if (tmpChangedValue == 0) {
+        if (tmpChangedValue == null) {
             if (getFee().getFeeType() != FeeType.Staff) {
                 if (foriegn) {
                     this.feeGrossValue = getFee().getFfee();
@@ -254,7 +255,11 @@ public class BillFee implements Serializable {
         } else {
             if (getFee().getFeeType() != FeeType.Staff) {
                 this.feeGrossValue = tmpChangedValue;
-                this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
+                if (tmpChangedValue != 0) {
+                    this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
+                } else {
+                    this.feeValue = 0;
+                }
             } else {
                 this.feeGrossValue = tmpChangedValue;
                 this.feeValue = tmpChangedValue;
@@ -446,12 +451,20 @@ public class BillFee implements Serializable {
         this.FeeAt = FeeAt;
     }
 
-    public double getTmpChangedValue() {
+    public Double getTmpChangedValue() {
         return tmpChangedValue;
     }
 
-    public void setTmpChangedValue(double tmpChangedValue) {
+    public void setTmpChangedValue(Double tmpChangedValue) {
         this.tmpChangedValue = tmpChangedValue;
+    }
+
+    public BillFee getReferenceBillFee() {
+        return referenceBillFee;
+    }
+
+    public void setReferenceBillFee(BillFee referenceBillFee) {
+        this.referenceBillFee = referenceBillFee;
     }
 
 }

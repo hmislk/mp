@@ -16,6 +16,7 @@ import com.divudi.data.Title;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardCalculation;
+import com.divudi.entity.Bill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
@@ -84,6 +85,7 @@ public class AdmissionController implements Serializable {
     private String patientTabId = "tabNewPt";
     private Patient newPatient;
     private YearMonthDay yearMonthDay;
+    private Bill appointmentBill;
 
     public void dateChangeListen() {
         getNewPatient().getPerson().setDob(getCommonFunctions().guessDob(yearMonthDay));
@@ -337,7 +339,7 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(getSessionController().getLoggedUser());
+            current.setCreater(getSessionController().getLoggedUser());        
             //      getCurrent().setDateOfAdmission(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getFacade().create(current);
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
@@ -559,6 +561,14 @@ public class AdmissionController implements Serializable {
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
     }  
+
+    public Bill getAppointmentBill() {
+        return appointmentBill;
+    }
+
+    public void setAppointmentBill(Bill appointmentBill) {
+        this.appointmentBill = appointmentBill;
+    }
 
     /**
      *

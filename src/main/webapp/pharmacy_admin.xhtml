@@ -76,10 +76,12 @@
 
                                     <h:panelGroup rendered="false">
                                         <p:commandButton ajax="false" value="Reset GRN Value" action="#{pharmacyItemExcelManager.resetGrnValue()}" />
+                                        <p:commandButton ajax="false" value="1) Reset Qty Value" action="#{pharmacyItemExcelManager.resetQtyValue()}" />
+                                        <p:commandButton ajax="false" value="2) Reset Transfer Issue Value" action="#{pharmacyItemExcelManager.resetTransferIssueValue()}" />
+                                        <p:commandButton ajax="false"  value="3) Reset Transfer History Value" action="#{pharmacyItemExcelManager.resetTransferHistoryValue()}" />
+                                        <p:commandButton ajax="false" value="Reset GRN Reference" action="#{pharmacyItemExcelManager.resetGrnReference()}" />
                                     </h:panelGroup>
-                                    <p:commandButton ajax="false" value="1) Reset Qty Value" action="#{pharmacyItemExcelManager.resetQtyValue()}" />
-                                    <p:commandButton ajax="false" value="2) Reset Transfer Issue Value" action="#{pharmacyItemExcelManager.resetTransferIssueValue()}" />
-                                    <p:commandButton ajax="false"  value="3) Reset Transfer History Value" action="#{pharmacyItemExcelManager.resetTransferHistoryValue()}" />
+                                    
                                 </h:panelGrid>
 
                             </p:panel>

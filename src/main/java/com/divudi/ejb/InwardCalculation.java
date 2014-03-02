@@ -85,7 +85,7 @@ public class InwardCalculation {
 
     public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem) {
 
-        List<BillFee> billFeeList = new ArrayList<BillFee>();
+        List<BillFee> billFeeList = new ArrayList<>();
         BillFee billFee;
         String sql;
         sql = "Select f from ItemFee f where f.retired=false and f.item.id = " + billItem.getItem().getId();
@@ -126,6 +126,52 @@ public class InwardCalculation {
         return billFeeList;
     }
 
+//    private BillFee calInwardMargin2(BillItem billItem) {
+//        BillFee billFee = new BillFee();
+//        Fee matrix = createMatrixFee();
+//        String sql;
+//        HashMap hm = new HashMap();
+//
+//        billFee.setBillItem(billItem);
+//        billFee.setFee(matrix);
+//        billFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+//
+//        if (billItem.getItem() instanceof Investigation) {
+//            if (((Investigation) billItem.getItem()).getInvestigationCategory() == null || billItem.getItem().getDepartment() == null) {
+//                billFee.setFeeValue(0.0);
+//                return billFee;
+//            }
+//            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category.id="
+//                    + ((Investigation) billItem.getItem()).getInvestigationCategory().getId() + " and  a.department.id="
+//                    + billItem.getItem().getDepartment().getId() + " and (a.fromPrice<" + billItem.getItem().getTotal() + " and a.toPrice >" + billItem.getItem().getTotal() + ")";
+//        } else {
+//            if (billItem.getItem().getCategory() == null || billItem.getItem().getDepartment() == null) {
+//                billFee.setFeeValue(0.0);
+//                return billFee;
+//            }
+//            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category.id="
+//                    + billItem.getItem().getCategory().getId() + " and  a.department.id="
+//                    + billItem.getItem().getDepartment().getId() + " and (a.fromPrice<" + billItem.getItem().getTotal() + " and a.toPrice >" + billItem.getItem().getTotal() + ")";
+//        }
+//
+//        List<InwardPriceAdjustment> is = getInwardPriceAdjustmentFacade().findBySQL(sql);
+//
+//        if (is.size() <= 0) {
+//            billFee.setFeeValue(0.0);
+//            return billFee;
+//        }
+//
+//        matrix.setFee((is.get(0).getMargin() * billItem.getItem().getTotal()) / 100);
+//        billFee.setInstitution(billItem.getItem().getDepartment().getInstitution());
+//        billFee.setFeeValue(matrix.getFee());
+//
+//        if (matrix.getId() == null) {
+//            getFeeFacade().create(matrix);
+//        } else {
+//            getFeeFacade().edit(matrix);
+//        }
+//        return billFee;
+//    }
     private BillFee calInwardMargin(BillItem billItem) {
         BillFee billFee = new BillFee();
         Fee matrix = createMatrixFee();
@@ -137,31 +183,30 @@ public class InwardCalculation {
         billFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
 
         if (billItem.getItem() instanceof Investigation) {
-            if (((Investigation) billItem.getItem()).getInvestigationCategory() == null || billItem.getItem().getDepartment() == null) {
-                billFee.setFeeValue(0.0);
-                return billFee;
-            }
-            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category.id="
-                    + ((Investigation) billItem.getItem()).getInvestigationCategory().getId() + " and  a.department.id="
-                    + billItem.getItem().getDepartment().getId() + " and (a.fromPrice<" + billItem.getItem().getTotal() + " and a.toPrice >" + billItem.getItem().getTotal() + ")";
+            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
+                    + " and  a.department=:dep and (a.fromPrice< :frPrice and a.toPrice >:tPrice)";
+
+            hm.put("cat", ((Investigation) billItem.getItem()).getInvestigationCategory());
+
         } else {
-            if (billItem.getItem().getCategory() == null || billItem.getItem().getDepartment() == null) {
-                billFee.setFeeValue(0.0);
-                return billFee;
-            }
-            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category.id="
-                    + billItem.getItem().getCategory().getId() + " and  a.department.id="
-                    + billItem.getItem().getDepartment().getId() + " and (a.fromPrice<" + billItem.getItem().getTotal() + " and a.toPrice >" + billItem.getItem().getTotal() + ")";
+            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
+                    + " and  a.department=:dep and (a.fromPrice< :frPrice and a.toPrice >:tPrice)";
+
+            hm.put("cat", billItem.getItem().getCategory());
         }
 
-        List<InwardPriceAdjustment> is = getInwardPriceAdjustmentFacade().findBySQL(sql);
+        hm.put("dep", billItem.getItem().getDepartment());
+        hm.put("frPrice", billItem.getItem().getTotal());
+        hm.put("tPrice", billItem.getItem().getTotal());
+
+        List<InwardPriceAdjustment> is = getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
 
         if (is.size() <= 0) {
             billFee.setFeeValue(0.0);
             return billFee;
         }
 
-        matrix.setFee(is.get(0).getMargin());
+        matrix.setFee((is.get(0).getMargin() * billItem.getItem().getTotal()) / 100);
         billFee.setInstitution(billItem.getItem().getDepartment().getInstitution());
         billFee.setFeeValue(matrix.getFee());
 
@@ -212,19 +257,22 @@ public class InwardCalculation {
         long tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
         Date currentTime;
-
+       
         if (date == null) {
             currentTime = Calendar.getInstance().getTime();
         } else {
             currentTime = date;
         }
 
-        Long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
-
-        long count = tempServ / (tempDur * 60);
-
-        if (((tempOve * 60) < tempServ % (tempDur * 60))) {
-            count++;
+        long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
+        long count = 0l;
+     
+        if (tempServ != 0 && tempDur != 0) {         
+            count = tempServ / (tempDur * 60);        
+            if (((tempOve * 60) < tempServ % (tempDur * 60))) {               
+                count++;
+            }
+        
         }
 
         return (tempFee * count);

@@ -69,6 +69,8 @@
                                     <h:inputText id="txtReg" value="#{doctorController.current.registration}"  ></h:inputText>                 
                                     <h:outputText id="lblQua" value="Qualification" ></h:outputText>
                                     <h:inputText id="txtQua" value="#{doctorController.current.qualification}"  ></h:inputText>   
+                                    <h:outputText  value="Refering Charge" ></h:outputText>
+                                    <h:inputText  value="#{doctorController.current.charge}"  ></h:inputText>   
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <h:commandButton id="btnSave" value="Save"  action="#{doctorController.saveSelected()}" styleClass="buttons">

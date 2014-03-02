@@ -248,6 +248,39 @@ public class PharmacyItemExcelManager implements Serializable {
         }
 
     }
+
+    public void resetGrnReference() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b where (type(b)=:class) "
+                + " and b.billType = :billType ";
+
+        temMap.put("class", BilledBill.class);
+        temMap.put("billType", BillType.PharmacyGrnBill);
+        //temMap.put("dep", getSessionController().getDepartment());
+        List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
+        int index = 1;
+        for (Bill b : bills) {
+            if (b.getReferenceBill().getBillType() == BillType.PharmacyOrder) {
+                System.err.println("No " + index++);
+                Bill refApproved = b.getReferenceBill().getReferenceBill();
+                System.err.println("Grn No" + b.getDeptId());
+                System.err.println("Po No " + b.getReferenceBill().getDeptId());
+                System.err.println("1 " + b.getBillType());
+                System.err.println("2 " + b.getReferenceBill().getBillType());
+                System.err.println("3" + refApproved.getBillType());
+                System.err.println("%%%%%%%%%%%%%%%%%%%%");
+                
+                b.setReferenceBill(refApproved);
+                getBillFacade().edit(b);
+                
+            }
+
+        }
+
+    }
+
     @EJB
     private BillItemFacade billItemFacade;
 
@@ -641,7 +674,7 @@ public class PharmacyItemExcelManager implements Serializable {
                         amp = new Amp();
                         amp.setName(strAmp);
                         amp.setMeasurementUnit(strengthUnit);
-                        amp.setDblValue((float)strengthUnitsPerIssueUnit);
+                        amp.setDblValue((float) strengthUnitsPerIssueUnit);
                         amp.setCategory(cat);
                         amp.setVmp(vmp);
                         getAmpFacade().create(amp);

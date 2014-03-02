@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 
 /**
  *
@@ -61,13 +62,33 @@ public class PatientRoom implements Serializable {
     private WebUser dischargedBy;
     @ManyToOne
     private PatientRoom previousRoom;
-    
-    private double currentMaintananceCharge = 0.0;    
+
+    private double currentMaintananceCharge = 0.0;
     private double currentLinenCharge = 0.0;
     private double currentNursingCharge = 0.0;
-    private double currentMoCharge=0.0;
-    
-    
+    private double currentMoCharge = 0.0;
+    private double currentRoomCharge;
+
+    @Transient
+    private long tmpStayedTime;
+    @Transient
+    private double tmpTotalRoomCharge;
+
+    public long getTmpStayedTime() {
+        return tmpStayedTime;
+    }
+
+    public void setTmpStayedTime(long tmpStayedTime) {
+        this.tmpStayedTime = tmpStayedTime;
+    }
+
+    public double getTmpTotalRoomCharge() {
+        return tmpTotalRoomCharge;
+    }
+
+    public void setTmpTotalRoomCharge(double tmpTotalRoomCharge) {
+        this.tmpTotalRoomCharge = tmpTotalRoomCharge;
+    }
 
     public Long getId() {
         return id;
@@ -86,7 +107,7 @@ public class PatientRoom implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof PatientRoom)) {
             return false;
         }
@@ -255,7 +276,7 @@ public class PatientRoom implements Serializable {
     }
 
     public double getAddedLinenCharge() {
-        
+
         return addedLinenCharge;
     }
 
@@ -271,7 +292,6 @@ public class PatientRoom implements Serializable {
         this.currentMaintananceCharge = currentMaintananceCharge;
     }
 
-   
     public double getCurrentLinenCharge() {
         return currentLinenCharge;
     }
@@ -294,5 +314,13 @@ public class PatientRoom implements Serializable {
 
     public void setCurrentMoCharge(double currentMoCharge) {
         this.currentMoCharge = currentMoCharge;
+    }
+
+    public double getCurrentRoomCharge() {
+        return currentRoomCharge;
+    }
+
+    public void setCurrentRoomCharge(double currentRoomCharge) {
+        this.currentRoomCharge = currentRoomCharge;
     }
 }

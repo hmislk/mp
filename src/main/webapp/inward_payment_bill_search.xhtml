@@ -13,7 +13,7 @@
                     <p:panel header="Search Bills" >
                         <f:facet name="header" >
                             <h:panelGroup>
-                                <h:panelGrid columns="4" style="min-width: 100%;">
+                                <h:panelGrid columns="5">
                                     <h:outputLabel value="From Date"/>
                                     <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                        
@@ -23,6 +23,22 @@
                                         
                                     </p:calendar>
                                     <p:commandButton ajax="false" action="#{searchController.createInwardPaymentBills()}" value="Search"/>
+                                </h:panelGrid>
+                                
+                                <h:panelGrid columns="6">
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="BHT No"/>
+                                <h:outputLabel value="Patient Name"/>
+                                <h:outputLabel value="Patient Phone"/>
+                                <h:outputLabel value="Total"/>
+                                <h:outputLabel value="Net Total"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText  value="#{searchController.searchKeyword.bhtNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.patientName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.patientPhone}" />
+                                <p:inputText  value="#{searchController.searchKeyword.total}" />
+                                <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+                                    
                                 </h:panelGrid>                                
                             </h:panelGroup>
                         </f:facet>
@@ -72,7 +88,7 @@
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
-                            <p:column headerText="Gross Value" >
+                            <p:column headerText="Value" >
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel value="#{bill.netTotal}" >
                                         <f:convertNumber pattern="#,000.00"/>

@@ -22,11 +22,12 @@
 
                 <h:panelGrid columns="2" >
                     <h:panelGrid columns="1" >
+                        
                         <h:panelGroup id="panelPatient" >
                             <p:panel header="Patient Details">
                                 <h:outputLabel value="Type Patinet Name or BHT : "/>
                                 <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admCon"
-                                                value="#{billBhtController.patientEncounter}" 
+                                                value="#{pharmacySaleBhtController.patientEncounter}" 
                                                 completeMethod="#{admissionController.completePatientBht}"
                                                 var="apt2" itemLabel="#{amp2.bhtNo}"
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">
@@ -88,8 +89,7 @@
                                 </p:autoComplete>
                                 <h:commandButton id="btnAddIx" value="Add" action="#{billBhtController.addToBill()}">
                                     <f:ajax execute="acIx btnAddIx" render="tblBillItem  pBillDetails pIxAdd" />
-                                </h:commandButton>
-                                <p:defaultCommand target="btnAddIx" />
+                                </h:commandButton>                              
                             </p:panel>
                         </h:panelGroup>
 

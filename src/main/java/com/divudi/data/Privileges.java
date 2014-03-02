@@ -9,9 +9,8 @@ package com.divudi.data;
  * @author www.divudi.com
  */
 public enum Privileges {
-    
+
     //Main Menu Privileges
-    
     Opd,
     Inward,
     Lab,
@@ -23,7 +22,6 @@ public enum Privileges {
     Admin,
     Channelling,
     Clinical,
-    
     //Submenu Privileges
     OpdBilling,
     OpdBillSearch,
@@ -32,8 +30,6 @@ public enum Privileges {
     OpdCancel,
     OpdReturn,
     OpdReactivate,
-    
-    
     InwardBilling,
     InwardBillSearch,
     InwardBillItemSearch,
@@ -41,7 +37,6 @@ public enum Privileges {
     InwardCancel,
     InwardReturn,
     InwardReactivate,
-    
     LabBilling,
     LabBillSearch,
     LabBillItemSearch,
@@ -62,52 +57,46 @@ public enum Privileges {
     LabSummeriesLevel2,
     LabSummeriesLevel3,
     LabReportSearchOwn,
-    LabReportSearchAll,    
-    LabReceive,        
-    LabEditPatient,    
-    
-    
+    LabReportSearchAll,
+    LabReceive,
+    LabEditPatient,
     PaymentBilling,
     PaymentBillSearch,
     PaymentBillReprint,
     PaymentBillCancel,
     PaymentBillRefund,
     PaymentBillReactivation,
-    
     ReportsSearchCashCardOwn,
-    ReportsSearchCreditOwn,    
+    ReportsSearchCreditOwn,
     ReportsItemOwn,
-    ReportsSearchCashCardOther,    
+    ReportsSearchCashCardOther,
     ReportSearchCreditOther,
     ReportsItemOther,
-    
-    
     PharmacyOrderCreation,
     PharmacyOrderApproval,
     PharmacyOrderCancellation,
-    
     PharmacySale,
     PharmacySaleReprint,
     PharmacySaleCancel,
     PharmacySaleReturn,
-    
     PharmacyInwardBilling,
     PharmacyInwardBillingCancel,
     PharmacyInwardBillingReturn,
-    
     PharmacyGoodReceive,
     PharmacyGoodReceiveCancel,
     PharmacyGoodReceiveReturn,
     PharmacyGoodReceiveEdit,
-    
     PharmacyPurchase,
     PharmacyPurchaseReprint,
     PharmacyPurchaseCancellation,
     PharmacyPurchaseReturn,
-    PharmacyAdministration,
     PharmacyStockAdjustment,
     PharmacyReAddToStock,
-    
+    PharmacyDealorPayment,
+    PharmacySearch,
+    PharmacyReports,
+    PharmacySummery,
+    PharmacyAdministration,
     ClinicalPatientSummery,
     ClinicalPatientDetails,
     ClinicalPatientPhoto,
@@ -115,11 +104,6 @@ public enum Privileges {
     ClinicalVisitSummery,
     ClinicalHistory,
     ClinicalAdministration,
-    
-    
-    
-    
-    
     ChannelAdd,
     ChannelCancel,
     ChannelRefund,
@@ -132,11 +116,6 @@ public enum Privileges {
     ChannelManageSessions,
     ChannelAdministration,
     ChannelAgencyReports,
-    
-    
-    
-    
-    
     AdminManagingUsers,
     AdminInstitutions,
     AdminStaff,

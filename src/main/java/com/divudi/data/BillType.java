@@ -15,6 +15,7 @@ public enum BillType {
     PaymentBill,
     OpdBill,
     InwardPaymentBill,
+    InwardAppointmentBill,
     InwardBill,
     AdmissionBill,
     CashRecieveBill,
@@ -26,6 +27,8 @@ public enum BillType {
     @Deprecated
     SandryGrn,
     PharmacyIssue,
+    PharmacyBhtIssue,
+    PharmacyBhtPre,
     PharmacyPre,
     PharmacyOrder,
     PharmacyOrderApprove,

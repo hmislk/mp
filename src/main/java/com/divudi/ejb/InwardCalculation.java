@@ -188,7 +188,7 @@ public class InwardCalculation {
 
             hm.put("cat", ((Investigation) billItem.getItem()).getInvestigationCategory());
 
-        } else {           
+        } else {
             sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
                     + " and  a.department=:dep and (a.fromPrice< :frPrice and a.toPrice >:tPrice)";
 
@@ -257,19 +257,22 @@ public class InwardCalculation {
         long tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
         Date currentTime;
-
+       
         if (date == null) {
             currentTime = Calendar.getInstance().getTime();
         } else {
             currentTime = date;
         }
 
-        Long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
-
-        long count = tempServ / (tempDur * 60);
-
-        if (((tempOve * 60) < tempServ % (tempDur * 60))) {
-            count++;
+        long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
+        long count = 0l;
+     
+        if (tempServ != 0 && tempDur != 0) {         
+            count = tempServ / (tempDur * 60);        
+            if (((tempOve * 60) < tempServ % (tempDur * 60))) {               
+                count++;
+            }
+        
         }
 
         return (tempFee * count);

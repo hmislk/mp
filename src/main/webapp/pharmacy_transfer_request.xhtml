@@ -5,11 +5,12 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+                xmlns:ph="http://java.sun.com/jsf/composite/pharmacy"
+                xmlns:bi="http://java.sun.com/jsf/composite/bill">
 
     <ui:define name="content">
         <h:form>
-            <p:panel>
+            <p:panel rendered="#{!transferRequestController.printPreview}">
                 <f:facet name="header" >                                  
                     <h:panelGrid columns="4" style="min-width: 100%;" >                        
                         <h:outputLabel value="To :#{transferRequestController.bill.toDepartment.name} " />     
@@ -76,7 +77,11 @@
 
 
             </p:panel>   
-
+            <p:panel rendered="#{transferRequestController.printPreview}" >
+                    <p:commandButton value="New Bill" ajax="false" action="#{transferRequestController.recreate}" >
+                    </p:commandButton>
+                <bi:insRecieve billController ="#{transferRequestController}"  bill="#{transferRequestController.bill}" dup="false"/>                       
+            </p:panel>
 
         </h:form>
     </ui:define>  

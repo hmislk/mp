@@ -1615,9 +1615,14 @@ public class CommonReport implements Serializable {
         String1Value1 tmp5 = new String1Value1();
         tmp5.setString("Final Cash Total");
         tmp5.setValue(getFinalCashTotal(list));
+        
+        String1Value1 tmp6 = new String1Value1();
+        tmp6.setString("Final Credit & Cash Total");
+        tmp6.setValue(getFinalCashTotal(list)+getFinalCreditTotal(list));
 
         dataTableData.add(tmp1);
         dataTableData.add(tmp5);
+        dataTableData.add(tmp6);
 
         return dataTableData;
     }

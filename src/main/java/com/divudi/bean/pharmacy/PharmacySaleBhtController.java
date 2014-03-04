@@ -375,7 +375,7 @@ public class PharmacySaleBhtController implements Serializable {
         clearBill();
         clearBillItem();
         billPreview = false;
-        return "pharmacy_retail_sale";
+        return "pharmacy_retail_sale_bht";
     }
 
     public String newSaleBillWithoutReduceStockForCashier() {
@@ -391,7 +391,7 @@ public class PharmacySaleBhtController implements Serializable {
         clearBill();
         clearBillItem();
         billPreview = false;
-        return "pharmacy_retail_sale";
+        return "pharmacy_retail_sale_bht";
     }
 
     public String newSaleBillForCashier() {
@@ -736,7 +736,7 @@ public class PharmacySaleBhtController implements Serializable {
         if (errorCheckForPreBill()) {
             return;
         }
-        Patient pt = getp;
+        Patient pt = getPatientEncounter().getPatient();
 
         List<BillItem> tmpBillItems = getPreBill().getBillItems();
         getPreBill().setBillItems(null);
@@ -794,7 +794,7 @@ public class PharmacySaleBhtController implements Serializable {
         clearBill();
         clearBillItem();
         billPreview = false;
-        return "pharmacy_retail_sale";
+        return "pharmacy_repharmacy_retail_sale_bhttail_sale";
     }
 
     private boolean checkItemBatch() {

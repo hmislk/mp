@@ -35,7 +35,7 @@
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
                                             <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
                                                             value="#{pharmacySaleBhtController.stock}" 
-                                                            converter="stockCon" 
+                                                       converter="stockCon" 
                                                             completeMethod="#{pharmacySaleBhtController.completeAvailableStocks}" 
                                                             var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
                                                             style="width: 50px!important;">
@@ -269,7 +269,7 @@
                                                 completeMethod="#{admissionController.completePatientBht}"
                                                 var="apt2" itemLabel="#{amp2.bhtNo}"
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">
-                                    <p:ajax event="itemSelect" process="acPt2" update="panSearch2"/>
+                                    <p:ajax event="itemSelect" process="acPt2" />
                                     <p:column >
                                         <h:outputLabel value="#{apt2.bhtNo}"/> 
                                     </p:column>

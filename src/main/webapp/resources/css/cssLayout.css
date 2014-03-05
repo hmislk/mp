@@ -15,14 +15,14 @@
 }
 
 #left {
-    float: left;
+    double: left;
     background-color: #ece3a5;
     padding: 5px;
     width: 150px;
 }
 
 #right {
-    float: right;
+    double: right;
     background-color: #ece3a5;
     padding: 5px;
     width: 150px;

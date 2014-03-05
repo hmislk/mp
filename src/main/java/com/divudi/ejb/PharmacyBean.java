@@ -1064,12 +1064,12 @@ public class PharmacyBean {
         return v;
     }
 
-    public float getOrderingQty(Item item, Department department) {
+    public double getOrderingQty(Item item, Department department) {
         double qty = 10;
         if (item instanceof Ampp) {
             qty /= item.getDblValue();
         }
-        return (float) qty;
+        return (double) qty;
     }
 
     public double getMaximumPurchasePriceChange() {
@@ -1255,7 +1255,7 @@ public class PharmacyBean {
             vmpp.setName(vmp.getName() + " " + vmp.getCategory().getName() + " (" + issueUnitsPerPack + " " + packUnit.getName() + ")");
             vmpp.setPackUnit(packUnit);
             vmpp.setCreatedAt(Calendar.getInstance().getTime());
-            vmpp.setDblValue((float) issueUnitsPerPack);
+            vmpp.setDblValue((double) issueUnitsPerPack);
             getVmppFacade().create(vmpp);
         } else {
             vmpp.setRetired(false);
@@ -1282,7 +1282,7 @@ public class PharmacyBean {
             ampp = new Ampp();
             ampp.setAmp(amp);
             ampp.setName(amp.getName() + " " + issueUnitsPerPack + amp.getMeasurementUnit() + unit.getName());
-            ampp.setDblValue((float) issueUnitsPerPack);
+            ampp.setDblValue((double) issueUnitsPerPack);
             ampp.setMeasurementUnit(unit);
             ampp.setVmpp(vmpp);
             getAmppFacade().create(ampp);
@@ -1381,7 +1381,7 @@ public class PharmacyBean {
 //        m.put("t", BillType.PharmacyGrnBill);
 //        return getBillItemFacade().findDoubleByJpql(sql, m);
 //    }
-    public float getLastPurchaseRate(Item item, Department dept) {
+    public double getLastPurchaseRate(Item item, Department dept) {
         //System.out.println("getting last purchase rate");
         if (item instanceof Ampp) {
             item = ((Ampp) item).getAmp();
@@ -1402,7 +1402,7 @@ public class PharmacyBean {
         ItemBatch ii = getItemBatchFacade().findFirstBySQL(sql, m);
         // //System.err.println("d = " + ii.getPurcahseRate());
         if (ii != null) {
-            return (float) ii.getPurcahseRate();
+            return (double) ii.getPurcahseRate();
         } else {
             return 0.0f;
         }
@@ -1525,7 +1525,7 @@ public class PharmacyBean {
 
     }
 
-    public float getLastRetailRate(Item item, Department dept) {
+    public double getLastRetailRate(Item item, Department dept) {
         //System.out.println("getting last purchase rate");
         if (item instanceof Ampp) {
             item = ((Ampp) item).getAmp();
@@ -1544,7 +1544,7 @@ public class PharmacyBean {
         ItemBatch ii = getItemBatchFacade().findFirstBySQL(sql, m);
         // //System.err.println("d = " + ii.getPurcahseRate());
         if (ii != null) {
-            return (float) ii.getRetailsaleRate();
+            return (double) ii.getRetailsaleRate();
         } else {
             return 0.0f;
         }

@@ -11,7 +11,7 @@
             <p:panel >
                 <f:facet name="header">
                     <p:outputLabel value="Purchase Order To Approve"/>      
-                    <h:panelGroup style="float: right;">
+                    <h:panelGroup style="double: right;">
                         <p:inputText value="#{searchController.maxResult}"/>
                         <p:commandButton value="All Request" action="#{searchController.createPoRequestedAndApproved()}" ajax="false" ></p:commandButton>
                         <p:commandButton value="Approved Only" action="#{searchController.createApproved()}" ajax="false" ></p:commandButton>

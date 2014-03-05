@@ -61,6 +61,15 @@
                                         <f:selectItem itemLabel="Select Sex"/>
                                         <f:selectItems value="#{admissionController.sex}"/>
                                     </p:selectOneMenu>
+                                    <h:outputLabel value="Date of Birth"/>
+                                    <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
+                                        <f:ajax event="dateSelect" />
+                                    </p:calendar>
+
+                                    <p:watermark value="YEAR" for="year" />
+                                    <p:watermark value="MONTH" for="month" />
+                                    <p:watermark value="DAYS" for="day" />
+                                    <h:outputLabel/>
                                     <h:outputLabel value="Age"/>
                                     <h:panelGroup>
                                         <p:inputText  id="year" autocomplete="off" value="#{admissionController.yearMonthDay.year}">
@@ -81,14 +90,14 @@
                                     <h:outputLabel value="Phone"/>
                                     <p:inputMask mask="999-9999999" id="txtNewPtPhone" autocomplete="off" maxlength="11" value="#{admissionController.newPatient.person.phone}">
                                     </p:inputMask>
-                                    <h:outputLabel value="Date of Birth"/>
+<!--                                <h:outputLabel value="Date of Birth"/>
                                     <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
                                         <f:ajax event="dateSelect" />
                                     </p:calendar>
 
                                     <p:watermark value="YEAR" for="year" />
                                     <p:watermark value="MONTH" for="month" />
-                                    <p:watermark value="DAYS" for="day" />
+                                    <p:watermark value="DAYS" for="day" />-->
                                 </h:panelGrid>
 
                             </p:tab>
@@ -125,7 +134,7 @@
 
 
 
-                    <p:panel header="Other">                           
+                    <p:panel header="Other" style="min-width: 100%;">                           
                         <p:tabView>
                             <p:tab title="Guardian Detail">
                                 <h:panelGrid columns="2">

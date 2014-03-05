@@ -112,7 +112,7 @@ public class PharmacyCalculation {
         return false;
     }
 
-    public float calRetailRate(PharmaceuticalBillItem ph) {
+    public double calRetailRate(PharmaceuticalBillItem ph) {
 
         PharmaceuticalItem i = (PharmaceuticalItem) ph.getBillItem().getItem();
         double margin = 0.0;
@@ -136,7 +136,7 @@ public class PharmacyCalculation {
 
         double retailPrice = ph.getPurchaseRate() + (ph.getPurchaseRate() * (margin / 100));
 
-        return (float)retailPrice;
+        return (double)retailPrice;
     }
 
     public double getTotalQty(BillItem b, BillType billType, Bill bill) {

@@ -14,14 +14,14 @@
             <p:panel>
                 <f:facet name="header" >                
 
-                    <p:commandButton value="Refresh" ajax="false" id="btnRefresh"  styleClass="noPrintButton" style="float: right;" />
+                    <p:commandButton value="Refresh" ajax="false" id="btnRefresh"  styleClass="noPrintButton" style="double: right;" />
                     <p:defaultCommand target="btnRefresh"/>
 
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
+                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
                         <p:printer target="panelPrint" />
                     </p:commandButton>
 
-                    <p:commandButton value="Excel" ajax="false" style="float: right;">
+                    <p:commandButton value="Excel" ajax="false" style="double: right;">
                         <pe:exporter type="xlsx" target="opd" fileName="Service_Summery_By_Category"  />
                     </p:commandButton>
 

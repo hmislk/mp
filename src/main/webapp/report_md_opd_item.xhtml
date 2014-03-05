@@ -27,10 +27,10 @@
                         <f:ajax event="change"   listener="#{mdReportController.makeBillNull}"/>
                     </p:selectOneMenu>
 
-                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh" style="float: right;"/>
+                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh" style="double: right;"/>
                     <p:defaultCommand target="btnRefresh"/>
 
-                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="float: right;">
+                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="double: right;">
                         <pe:exporter type="xlsx" target="tbl" fileName="Report by Bill OPD From #{mdReportController.fromDate} To #{mdReportController.toDate}"
                                      facetBackground="#008000" facetFontSize="15" 
                                      facetFontColor="#FFFFFF" facetFontStyle="BOLD" cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL"  

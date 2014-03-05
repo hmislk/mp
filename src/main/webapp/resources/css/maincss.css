@@ -216,7 +216,7 @@ a:hover {
 }
 
 #menu li {
-    float: left;
+    double: left;
     border-right: 1px solid #543E40;
 }
 
@@ -259,7 +259,7 @@ a:hover {
 /* Content */
 
 #content {
-    float: left;
+    double: left;
     width: 540px;
 }
 
@@ -297,11 +297,11 @@ a:hover {
 }
 
 .post .meta .date {
-    float: left;
+    double: left;
 }
 
 .post .meta .posted {
-    float: right;
+    double: right;
 }
 
 .post .meta a {
@@ -336,7 +336,7 @@ a:hover {
 
 #sidebar2
 {
-    float: right;
+    double: right;
     width: 250px;
     padding: 40px 30px 0px 30px;
     border: 1px solid #E7DFD7;
@@ -345,7 +345,7 @@ a:hover {
 }
 
 #sidebar {
-    float: left;
+    double: left;
     width: 230px;
     margin-right: 30px;
     padding: 40px 30px 0px 30px;

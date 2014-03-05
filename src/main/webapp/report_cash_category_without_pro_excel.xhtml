@@ -14,12 +14,12 @@
             <p:panel>
                 <f:facet name="header" >
 
-                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
+                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="double: right;" />
 
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
+                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
                         <p:printer target="panelPrint" />
                     </p:commandButton>
-                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="float: right;">
+                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="double: right;">
                         <pe:exporter type="xlsx" target="opd,other,pharmacy,
                                      agent,inwProf,col,dept,card,slip,cheque,finalSum" fileName="Book_Keeping_Summery"
 
@@ -53,7 +53,7 @@
                         </h:panelGroup>
                         <h:panelGroup>
                             <h:outputLabel value="To : "/>
-                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="float: right" >
+                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="double: right" >
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </h:panelGroup>
@@ -76,7 +76,7 @@
                         </h:panelGroup>
                         <h:panelGroup>
                             <h:outputLabel value="To : "/>
-                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="float: right" >
+                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="double: right" >
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </h:panelGroup>

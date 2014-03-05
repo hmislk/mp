@@ -269,13 +269,14 @@
                                                 completeMethod="#{admissionController.completePatientBht}"
                                                 var="apt2" itemLabel="#{amp2.bhtNo}"
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">
-                                    <p:ajax event="itemSelect" process="acPt2" rendered="gpDetail" />
+                                 
                                     <p:column >
                                         <h:outputLabel value="#{apt2.bhtNo}"/> 
                                     </p:column>
                                     <p:column >
                                         <h:outputLabel value="#{apt2.patient.person.name}"/> 
                                     </p:column>
+                                       <p:ajax event="itemSelect" process="acPt2" update="#{p:component('gpDetail')}" />
                                 </p:autoComplete>  
 
                                 </p:panel>
@@ -285,18 +286,18 @@
                                     <p:panel header="Patient Detail" >
                                         <h:panelGrid columns="2">
                                             <p:outputLabel  value="Name" />
-                                            <p:outputLabel value="#{apt2.patient.person.name}"/>
+                                            <p:outputLabel value="#{billBhtController.patientEncounter.patient.person.name}"/>
                                             <p:outputLabel value="NIC" />
-                                            <p:outputLabel  value="#{apt2.patient.person.nic}"  />
+                                            <p:outputLabel  value="#{billBhtController.patientEncounter.patient.person.nic}"  />
                                             <p:outputLabel value="Age"/>
-                                            <p:outputLabel value="#{apt2.patient.age}"/>
+                                            <p:outputLabel value="#{billBhtController.patientEncounter.patient.age}"/>
                                             <p:outputLabel value="Address" />
-                                            <p:outputLabel  value="#{apt2.patient.person.address}" />
+                                            <p:outputLabel  value="#{billBhtController.patientEncounter.patient.person.address}" />
                                             <p:outputLabel value="Phone No" />
-                                            <p:outputLabel  value="#{apt2.patient.person.phone}"  />
+                                            <p:outputLabel  value="#{billBhtController.patientEncounter.patient.person.phone}"  />
                                         </h:panelGrid>
+                                    </p:panel>
                                 </p:panel>
-			</p:panel>
 
                             </p:panel>
 

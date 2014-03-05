@@ -44,7 +44,7 @@
                             <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
-
+                            
                             <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
                             </p:commandButton>
 
@@ -55,16 +55,19 @@
                             <h:outputLabel value="Type GRN No or Dealor Name"/>
                             <h:outputLabel value="Paying Amount"/>
                             <h:outputLabel/>
-                            <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{pharmacyDealorBill.currentBillItem.referenceBill}" completeMethod="#{billController.completeGrnDealor}" var="ix" itemLabel="#{ix.deptId}" itemValue="#{ix}" size="30"  style="width: 400px;">
-                                <p:column headerText="Grn No">
-                                    #{ix.deptId}
-                                </p:column>                                  
+                            <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{pharmacyDealorBill.currentBillItem.referenceBill}" completeMethod="#{billController.completeGrnDealor}" var="ix" itemLabel="#{ix.deptId}" itemValue="#{ix}" size="30"  style="width: 400px;">                                  
                                 <p:column headerText="Dealor Name">
                                     #{ix.fromInstitution.name}
                                 </p:column>
+                                <p:column headerText="Grn No">
+                                    #{ix.deptId}
+                                </p:column>
+                                 <p:column headerText="Invoice No">
+                                    #{ix.invoiceNumber}
+                                </p:column>
                                 <p:column headerText="Grn At">
                                     <h:outputLabel value="#{ix.createdAt}">
-                                        <f:convertDateTime pattern="dd MM YYYY"/>
+                                        <f:convertDateTime pattern="dd MM YY"/>
                                     </h:outputLabel>
                                 </p:column>
                                 <p:column headerText="Paid Amount">

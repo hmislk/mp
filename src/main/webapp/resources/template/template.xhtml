@@ -114,6 +114,7 @@
                                         </p:submenu>
                                         <p:menuitem  ajax="false" action="pharmacy_search_pre_bill_not_paid" actionListener="#{pharmacyBillSearch.makeNull()}"  value="Add To Stock" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>
                                     </p:submenu>
+                                    <p:menuitem ajax="false" action="pharmacy_retail_sale_bht"  value="Inward Billing" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleBhtController.newSaleBillWithoutReduceStock()}"/>
                                     <p:submenu label="Purchase">
                                         <p:menuitem  ajax="false" action="pharmacy_purhcase_order_request"  value="Purchase Orders" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="pharmacy_purhcase_order_list_to_approve"  value="PO Approve" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>

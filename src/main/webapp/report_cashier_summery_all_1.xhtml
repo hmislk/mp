@@ -24,10 +24,10 @@
                         </p:commandButton>  
 
                         <p:commandButton  actionListener="#{cashierReportController.calCashierData()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;">
-                            <pe:exporter type="xlsx" target="tbl" fileName="All_Cashier_Summery_Detail_Report" subTable="true"/>
+                            <pe:exporter type="xlsx" target="tbl" fileName="All_Cashier_Summery_report" subTable="true"/>
                         </p:commandButton>  
 
-                        <h:outputLabel value="Cashier Wise Session Summery Detail Report"/>
+                        <h:outputLabel value="Cashier Wise Session Summery Report"/>
 <!--                        <h:outputLabel value="#{sessionController.loggedUser.institution.name}"/> -->
                         <br/>
 
@@ -58,16 +58,16 @@
 
                     </f:facet>
 
-                    <p:dataTable id="tbl" value="#{cashierReportController.webUserBillsTotals}" var="csh">
+                    <p:dataTable id="tbl" value="#{cashierReportController.webUserBillsTotals}" var="csh" >
 
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column headerText="User Name"/>
-                                <p:column headerText="Cash"/>
-                                <p:column headerText="Credit"/>
-                                <p:column headerText="C Card"/>
-                                <p:column headerText="Cheque"/>
-                                <p:column headerText="Slip"/>
+                                <p:column headerText="Total Cash"/>
+                                <p:column headerText="Total Credit"/>
+                                <p:column headerText="Total C Card"/>
+                                <p:column headerText="Total Cheque"/>
+                                <p:column headerText="Total Slip"/>
                             </p:row>
                         </p:columnGroup>
 
@@ -81,36 +81,36 @@
                                      
                                 </f:facet>
 
-                                <p:column>
-                                    <h:outputLabel value="#{dt.name}" style="#{dt.bold?'font-weight: bold':''}"></h:outputLabel>
+                                <p:column >
+                                    <h:outputLabel value="#{dt.name}" rendered="#{dt.bold eq true}"></h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.cash}" style="#{dt.bold?'font-weight: bold':''}">
+                                    <h:outputLabel value="#{dt.cash}" rendered="#{dt.bold eq true}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.credit}" style="#{dt.bold?'font-weight: bold':''}">
+                                    <h:outputLabel value="#{dt.credit}" rendered="#{dt.bold eq true}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.card}" style="#{dt.bold?'font-weight: bold':''}">
+                                    <h:outputLabel value="#{dt.card}" rendered="#{dt.bold eq true}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>                                
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.cheque}" style="#{dt.bold?'font-weight: bold':''}">
+                                    <h:outputLabel value="#{dt.cheque}" rendered="#{dt.bold eq true}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>                                
                                 </p:column>
 
                                 <p:column style="text-align: right;" >
-                                    <h:outputLabel value="#{dt.slip}" style="#{dt.bold?'font-weight: bold':''}">
+                                    <h:outputLabel value="#{dt.slip}"  rendered="#{dt.bold eq true}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>                                
                                 </p:column>
@@ -167,8 +167,7 @@
                         </p:columnGroup>
                     </p:dataTable>
                     <p:spacer height="50" />
-                    <p:spacer width="20" />
-                    <p:panelGrid columns="2" style="text-align: right;" >
+                    <p:panelGrid columns="2">
                         <h:outputLabel value="Bought Forward Amount : " />
                         <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

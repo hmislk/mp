@@ -16,9 +16,9 @@
                 <p:panel  >
                     <f:facet name="header">
                         <p:outputLabel value="Inward Payment Bill"/>
-                        <p:commandButton ajax="false" style="float: right;" value="Clear" action="#{bhtSummeryController.makeNull}" />                        
-                        <p:commandButton ajax="false" style="float: right;" value="To Settle Bill" action="inward_final_bill"/>
-                        <p:commandButton ajax="false" style="float: right;" value="Print Intrim bill" >
+                        <p:commandButton ajax="false" style="double: right;" value="Clear" action="#{bhtSummeryController.makeNull}" />                        
+                        <p:commandButton ajax="false" style="double: right;" value="To Settle Bill" action="inward_final_bill"/>
+                        <p:commandButton ajax="false" style="double: right;" value="Print Intrim bill" >
                             <p:printer target="intrimBill"/>
                         </p:commandButton> 
 
@@ -74,7 +74,7 @@
                                 <p:calendar value="#{bhtSummeryController.patientEncounter.dateOfDischarge}" pattern="dd MMMM yyyy hh mm a" >                               
                                     <f:ajax execute="@this" render="sum tvPt ss" event="dateSelect" listener="#{bhtSummeryController.checkDate}" />
                                 </p:calendar> 
-                                <p:commandButton ajax="false" style="float: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
+                                <p:commandButton ajax="false" style="double: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
                             </h:panelGrid>
                         </p:panel>
 

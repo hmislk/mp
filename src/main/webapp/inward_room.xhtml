@@ -44,11 +44,15 @@
                                 <h:panelGrid id="gpDetailText" columns="2">
                                     <h:outputText id="lblName" value="Name" ></h:outputText>
                                     <h:inputText id="txtName" value="#{roomController.current.name}"  ></h:inputText>
-                                    <h:outputLabel value="Room Category"/>
+                                    <h:outputLabel value="Room Location"/>
                                     <h:selectOneMenu value="#{roomController.current.parentCategory}">
                                         <f:selectItem itemLabel="Select Room Category"/>
                                         <f:selectItems value="#{roomCategoryController.items}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" />
                                     </h:selectOneMenu>
+                                    <h:outputLabel value="Department"/>
+                                    <p:autoComplete value="#{roomController.current.department}" completeMethod="#{departmentController.completeDept}" 
+                                                    var="c" itemLabel="#{c.name}" itemValue="#{c}" >
+                                    </p:autoComplete>
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <h:commandButton id="btnSave" value="Save"  action="#{roomController.saveSelected()}" styleClass="buttons">

@@ -100,7 +100,7 @@ public class Item implements Serializable {
     boolean userChangable;
     @Enumerated(EnumType.STRING)
     InwardChargeType inwardChargeType;
-    private Float dblValue = 0.0f;
+    private double dblValue = 0.0f;
     SessionNumberType sessionNumberType;
     boolean priceByBatch;
     @ManyToOne
@@ -554,11 +554,11 @@ public class Item implements Serializable {
         this.itemFee = itemFee;
     }
 
-    public Float getDblValue() {
+    public double getDblValue() {
         return dblValue;
     }
 
-    public void setDblValue(Float dblValue) {
+    public void setDblValue(double dblValue) {
         this.dblValue = dblValue;
     }
 

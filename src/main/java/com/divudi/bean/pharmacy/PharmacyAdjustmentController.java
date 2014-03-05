@@ -6,12 +6,8 @@
 package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
-import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
-import com.divudi.data.Sex;
-import com.divudi.data.Title;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.BillNumberBean;
@@ -19,11 +15,7 @@ import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
-import com.divudi.entity.Patient;
-import com.divudi.entity.PaymentScheme;
-import com.divudi.entity.Person;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
@@ -39,18 +31,13 @@ import com.divudi.facade.StockFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import org.primefaces.event.CellEditEvent;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.TabChangeEvent;
 
 /**
  *
@@ -97,23 +84,25 @@ public class PharmacyAdjustmentController implements Serializable {
     BillItem billItem;
     BillItem removingBillItem;
     BillItem editingBillItem;
-    Float qty;
-    Float pr;
-    Float rsr;
-    Float wsr;
+
     Stock stock;
 
     String comment;
+
+    private Double qty;
+    private Double pr;
+    private Double rsr;
+    private Double wsr;
 
     private YearMonthDay yearMonthDay;
 
     List<BillItem> billItems;
 
-    public Float getQty() {
+    public double getQty() {
         return qty;
     }
 
-    public void setQty(Float qty) {
+    public void setQty(double qty) {
         this.qty = qty;
     }
 
@@ -247,7 +236,7 @@ public class PharmacyAdjustmentController implements Serializable {
         ph.setStock(stock);
 
         tbi.setItem(getStock().getItemBatch().getItem());
-        tbi.setQty((double)qty);
+        tbi.setQty((double) qty);
 
         //pharmaceutical Bill Item
         ph.setDoe(getStock().getItemBatch().getDateOfExpire());
@@ -280,7 +269,7 @@ public class PharmacyAdjustmentController implements Serializable {
         getDeptAdjustmentPreBill().getBillItems().add(tbi);
 
         getBillFacade().edit(getDeptAdjustmentPreBill());
-        
+
         return ph;
 
     }
@@ -355,9 +344,9 @@ public class PharmacyAdjustmentController implements Serializable {
 
     public void adjustDepartmentStock() {
         saveDeptAdjustmentBill();
-       PharmaceuticalBillItem ph= saveDeptAdjustmentBillItems();
+        PharmaceuticalBillItem ph = saveDeptAdjustmentBillItems();
         setBill(getBillFacade().find(getDeptAdjustmentPreBill().getId()));
-        getPharmacyBean().resetStock(ph,stock, qty,getSessionController().getDepartment());
+        getPharmacyBean().resetStock(ph, stock, qty, getSessionController().getDepartment());
         clearBill();
         clearBillItem();
     }
@@ -553,27 +542,31 @@ public class PharmacyAdjustmentController implements Serializable {
         this.itemBatchFacade = itemBatchFacade;
     }
 
-    public Float getPr() {
+    public Double getPr() {
         return pr;
     }
 
-    public void setPr(Float pr) {
-        this.pr = pr;
-    }
-
-    public Float getRsr() {
+    public Double getRsr() {
         return rsr;
     }
 
-    public void setRsr(Float rsr) {
-        this.rsr = rsr;
-    }
-
-    public Float getWsr() {
+    public Double getWsr() {
         return wsr;
     }
 
-    public void setWsr(Float wsr) {
+    public void setQty(Double qty) {
+        this.qty = qty;
+    }
+
+    public void setPr(Double pr) {
+        this.pr = pr;
+    }
+
+    public void setRsr(Double rsr) {
+        this.rsr = rsr;
+    }
+
+    public void setWsr(Double wsr) {
         this.wsr = wsr;
     }
 

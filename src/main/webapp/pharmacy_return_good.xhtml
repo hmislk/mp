@@ -44,7 +44,7 @@
                             <p:commandButton  value="Return" action="#{goodsReturnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:outputLabel  value="Recievable Amount" /> 
-                            <p:outputLabel id="total"  value="#{goodsReturnController.returnBill.total}" style="float: right;">
+                            <p:outputLabel id="total"  value="#{goodsReturnController.returnBill.total}" style="double: right;">
                                 <f:convertNumber pattern="#,##0.00" />
                             </p:outputLabel>
                         </h:panelGrid>

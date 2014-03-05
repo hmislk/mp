@@ -49,8 +49,10 @@ public class Person implements Serializable {
      String tName;
      String sName;
      String phone;
+     
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
      Date dob;
+    
     //Created Properties
     @ManyToOne
     WebUser creater;

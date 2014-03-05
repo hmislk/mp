@@ -18,7 +18,7 @@
                                 <h:inputText id="txtSearch" value="#{billSearch.txtSearch}" >
                                     <f:ajax render="tblBills" execute="txtSearch" event="keyup" />
                                 </h:inputText>
-                                <p:commandButton  value="Export as Excel" ajax="false" styleClass="noPrintButton" style="float:right;">
+                                <p:commandButton  value="Export as Excel" ajax="false" styleClass="noPrintButton" style="double:right;">
                                     <pe:exporter type="xlsx" target="tblBills" fileName="Report by Referring Doctor"
                                                  facetBackground="#008000" facetFontSize="15" 
                                                  facetFontColor="#FFFFFF" facetFontStyle="BOLD" cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL"  

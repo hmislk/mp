@@ -42,7 +42,7 @@
                                         <h:outputLabel value="Recorded By : #{reportsStockVariant.recordedBill.creater.name}"/>
                                         <h:outputLabel value="Recorded Time : #{reportsStockVariant.recordedBill.createdAt}"/>
                                     </h:panelGrid>
-                                    <h:outputLabel value="Report Id : #{reportsStockVariant.recordedBill.deptId}"/>                                   
+                                    <h:outputLabel value="Report Id : #{reportsStockVariant.recordedBill.id}"/>                                   
                                 </f:facet> 
 
                                 <p:column headerText="Item">
@@ -60,16 +60,7 @@
                                         <f:convertNumber integerOnly="true" ></f:convertNumber>
                                     </h:outputLabel>                                  
                                 </p:column>
-
-                                <p:column headerText="Calculated Stock" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Calculated Stock"/>    
-                                    </f:facet>
-                                    <h:outputLabel id="calStock"  value="#{i.calCulatedStock}"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
-                                    </h:outputLabel>                                  
-                                </p:column>
-
+                              
                                 <p:column headerText="Physical Stock" style="text-align: right;">
                                     <f:facet name="header">
                                         <h:outputLabel value="Physical Stock"/>    
@@ -88,15 +79,7 @@
                                     </h:outputLabel>                    
                                 </p:column>
 
-                                <p:column headerText="Calculated - Physical" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Calculated - Physical"/>    
-                                    </f:facet>
-                                    <h:outputLabel id="varCalPhy" value="#{i.calCulatedStock-i.physicalStock}"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
-                                    </h:outputLabel>                            
-                                </p:column>
-
+                           
                                 <p:columnGroup type="footer">
                                     <p:row>
                                         <p:column footerText="Total Value"/>
@@ -107,13 +90,7 @@
                                                 </h:outputLabel>
                                             </f:facet>
                                         </p:column>
-                                        <p:column footerText="#{reportsStockVariant.calCulatedStockValue}">
-                                            <f:facet name="footer">
-                                                <h:outputLabel value="#{reportsStockVariant.calCulatedStockValue}">
-                                                    <f:convertNumber pattern="#,000.00"/>
-                                                </h:outputLabel>
-                                            </f:facet>
-                                        </p:column>
+                                     
                                         <p:column footerText="#{reportsStockVariant.physicalStockValue}">
                                             <f:facet name="footer">
                                                 <h:outputLabel value="#{reportsStockVariant.calCulatedStockValue}">
@@ -128,13 +105,7 @@
                                                 </h:outputLabel>
                                             </f:facet>
                                         </p:column>
-                                        <p:column footerText="#{reportsStockVariant.calCulatedStockValue-reportsStockVariant.physicalStockValue}">
-                                            <f:facet name="footer">
-                                                <h:outputLabel value="#{reportsStockVariant.calCulatedStockValue-reportsStockVariant.physicalStockValue}">
-                                                    <f:convertNumber pattern="#,000.00"/>
-                                                </h:outputLabel>
-                                            </f:facet>
-                                        </p:column>
+                                    
                                     </p:row>
                                 </p:columnGroup>
 

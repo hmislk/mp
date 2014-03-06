@@ -108,7 +108,7 @@ public class ReportsStockVariant implements Serializable {
             getPharmacyErrorChecking().setItem(r.getItem());
             getPharmacyErrorChecking().setDepartment(department);
             getPharmacyErrorChecking().calculateTotals3();
-            r.setCalCulatedStock(getPharmacyErrorChecking().getCalculatedStock());
+          //  r.setCalCulatedStock(getPharmacyErrorChecking().getCalculatedStock());
             //////////////
             records.add(r);
 
@@ -130,6 +130,7 @@ public class ReportsStockVariant implements Serializable {
     public void saveRecord() {
 
         getRecordedBill().setCreatedAt(new Date());
+        getRecordedBill().setDepartment(department);
         getRecordedBill().setCreater(getSessionController().getLoggedUser());
         getRecordedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));
         getRecordedBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));

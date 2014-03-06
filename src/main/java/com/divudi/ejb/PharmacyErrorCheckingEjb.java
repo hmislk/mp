@@ -208,6 +208,7 @@ public class PharmacyErrorCheckingEjb {
         m.put("btp5", BillType.PharmacyPre);
         m.put("btp6", BillType.PharmacyTransferIssue);
         m.put("btp7", BillType.PharmacyTransferReceive);
+        m.put("btp8", BillType.PharmacyAdjustment);
 
         sql = "select bi from BillItem bi where bi.item=:i"
                 + " and bi.bill.department=:d "
@@ -215,7 +216,7 @@ public class PharmacyErrorCheckingEjb {
                 + " and (bi.bill.billType=:btp1 or bi.bill.billType=:btp2 or "
                 + " bi.bill.billType=:btp3 or bi.bill.billType=:btp4 or "
                 + " bi.bill.billType=:btp5 or bi.bill.billType=:btp6 or"
-                + " bi.bill.billType=:btp7  ) order by bi.pharmaceuticalBillItem.stock.id,bi.createdAt ";
+                + " bi.bill.billType=:btp7  or bi.bill.billType=:btp8 ) order by bi.pharmaceuticalBillItem.stock.id,bi.createdAt ";
         return getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
     }
 

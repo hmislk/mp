@@ -98,7 +98,7 @@ public class PharmacyAdjustmentController implements Serializable {
 
     List<BillItem> billItems;
 
-    public double getQty() {
+    public Double getQty() {
         return qty;
     }
 
@@ -242,7 +242,14 @@ public class PharmacyAdjustmentController implements Serializable {
         ph.setDoe(getStock().getItemBatch().getDateOfExpire());
         ph.setFreeQty(0.0f);
         ph.setItemBatch(getStock().getItemBatch());
-        ph.setQty(qty);
+
+        Stock fetchedStock = getStockFacade().find(stock.getId());
+        double stockQty = fetchedStock.getStock();
+        double changingQty;
+
+        changingQty = qty - stockQty;
+
+        ph.setQty(changingQty);
 
         //Rates
         //Values

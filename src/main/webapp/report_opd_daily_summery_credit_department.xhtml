@@ -18,10 +18,10 @@
                                     completeMethod="#{creditCompanyController.completeCredit}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
 
                     </p:autoComplete>  
-                    <p:commandButton id="btnRefresh" value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" actionListener="#{creditSummeryController.makeNull}" />
+                    <p:commandButton id="btnRefresh" value="Refresh" ajax="false"  styleClass="noPrintButton" style="double: right;" actionListener="#{creditSummeryController.makeNull}" />
                     <p:defaultCommand target="btnRefresh"/>
                     
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
+                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
                         <p:printer target="panelPrint" />
                     </p:commandButton>
 
@@ -114,7 +114,7 @@
                         <p:row>
                             <p:column colspan="4"  >
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{d.department.name} Total :" style="text-align: left;float:left;"/>
+                                    <h:outputLabel value="#{d.department.name} Total :" style="text-align: left;double:left;"/>
                                 </f:facet>
                             </p:column>
                             <p:column style="text-align: right;" >
@@ -129,7 +129,7 @@
                 </p:dataTable>
                 <f:facet name="footer">
                     <h:outputLabel value="Total Collection" />
-                    <h:outputLabel value="#{creditSummeryController.departmentTotal}" style="float: right;">
+                    <h:outputLabel value="#{creditSummeryController.departmentTotal}" style="double: right;">
                         <f:convertNumber pattern="#,000.00"/>
                     </h:outputLabel>
                 </f:facet>

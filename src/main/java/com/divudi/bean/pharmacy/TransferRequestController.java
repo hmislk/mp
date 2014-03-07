@@ -62,13 +62,14 @@ public class TransferRequestController implements Serializable {
     private List<BillItem> billItems;
     @EJB
     private PharmacyCalculation pharmacyBillBean;
+    private boolean printPreview;
 
     public void recreate() {
         bill = null;
         currentBillItem = null;
         dealor = null;
         billItems = null;
-        //      printPreview = false;
+        printPreview = false;
     }
 
     private boolean checkItems(Item item) {
@@ -126,7 +127,6 @@ public class TransferRequestController implements Serializable {
 
         currentBillItem = null;
     }
-
     @Inject
     private PharmacyController pharmacyController;
 
@@ -195,8 +195,8 @@ public class TransferRequestController implements Serializable {
 
         UtilityController.addSuccessMessage("Transfer Request Succesfully Created");
 
-        //   printPreview = true;
-        recreate();
+        printPreview = true;
+        
     }
 
     public void remove(BillItem billItem) {
@@ -346,5 +346,13 @@ public class TransferRequestController implements Serializable {
 
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
+    }
+
+    public boolean isPrintPreview() {
+        return printPreview;
+    }
+
+    public void setPrintPreview(boolean printPreview) {
+        this.printPreview = printPreview;
     }
 }

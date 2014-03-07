@@ -13,7 +13,7 @@
                     <p:panel header="Search Bills" >
                         <f:facet name="header" >
                             <h:panelGroup>
-                                <h:panelGrid columns="4" style="min-width: 100%;">
+                                <h:panelGrid columns="5">
                                     <h:outputLabel value="From Date"/>
                                     <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                        
@@ -23,21 +23,38 @@
                                        
                                     </p:calendar>
                                     <p:commandButton ajax="false" action="#{searchController.createInwardServiceTable()}" value="Search"/>
-                                </h:panelGrid>                                
+                                </h:panelGrid>
+                                
+                                <h:panelGrid columns="6">
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="BHT No"/>
+                                <h:outputLabel value="Patient Name"/>
+                                <h:outputLabel value="Patient Phone"/>
+                                <h:outputLabel value="Total"/>
+                                <h:outputLabel value="Net Total"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText  value="#{searchController.searchKeyword.bhtNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.patientName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.patientPhone}" />
+                                <p:inputText  value="#{searchController.searchKeyword.total}" />
+                                <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+                                    
+                                </h:panelGrid>
+                                
                             </h:panelGroup>
                         </f:facet>
                         
-                        <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill"  filteredValue="#{inwardSearch.filterBill}"  >
+                        <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill">    
                             
                            
-                            <p:column headerText="Bill No"  filterBy="#{bill.insId}" filterMatchMode="contains" >
+                            <p:column headerText="Bill No">
                                 <h:commandLink action="inward_bill_reprint" value="#{bill.insId}">
-                                    <h:outputLabel  ></h:outputLabel>
+                                    <h:outputLabel></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>
                             
-                            <p:column headerText="Bht No" filterBy="#{bill.patientEncounter.bhtNo}" filterMatchMode="contains" >
+                            <p:column headerText="Bht No">
                                 <h:commandLink action="inward_bill_reprint" value="#{bill.patientEncounter.bhtNo}">
                                     <h:outputLabel  ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
@@ -53,14 +70,14 @@
                                 </h:commandLink>
                             </p:column>
                            
-                            <p:column headerText="Client" filterBy="#{bill.patientEncounter.patient.person.nameWithTitle}" filterMatchMode="contains" >
+                            <p:column headerText="Client">
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel value="#{bill.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>         
                             
-                            <p:column headerText="Billed By" filterBy="#{bill.creater.webUserPerson.name}" filterMatchMode="contains" >
+                            <p:column headerText="Billed By">
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel value="#{bill.creater.webUserPerson.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
@@ -74,7 +91,7 @@
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>       
-                            <p:column headerText="Cancelled User" filterBy="#{bill.cancelledBill.creater.webUserPerson.name}" filterMatchMode="contains" >
+                            <p:column headerText="Cancelled User">
                                 <h:commandLink action="inward_bill_reprint" >
                                     <h:outputLabel rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" ></h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{inwardSearch.bill}"/>

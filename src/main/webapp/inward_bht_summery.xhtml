@@ -5,8 +5,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+                xmlns:p="http://primefaces.org/ui">
 
 
     <ui:define name="content">
@@ -16,12 +15,8 @@
                 <p:panel  >
                     <f:facet name="header">
                         <p:outputLabel value="Inward Payment Bill"/>
-                        <p:commandButton ajax="false" style="float: right;" value="Clear" action="#{bhtSummeryController.makeNull}" />                        
-                        <p:commandButton ajax="false" style="float: right;" value="To Settle Bill" action="inward_final_bill"/>
-                        <p:commandButton ajax="false" style="float: right;" value="Print Intrim bill" >
-                            <p:printer target="intrimBill"/>
-                        </p:commandButton> 
-
+                        <p:commandButton ajax="false" style="double: right;" value="Clear" action="#{bhtSummeryController.makeNull}" />                        
+                        <p:commandButton ajax="false" style="double: right;" value="To Settle Bill" action="#{bhtSummeryController.toSettleBill()}" />
 
                     </f:facet>
                     <h:panelGrid columns="3" style="min-width: 100%;">
@@ -32,12 +27,15 @@
                                             var="myItem" itemValue="#{myItem}" 
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  >
-                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 tvPt sum tot intrimBill"/>
+                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 tvPt sum tot dis " listener="#{bhtSummeryController.createTables()}"/>
                                 <p:column>
-                                    <h:outputLabel value="#{myItem.bhtNo}"/>
+                                    #{myItem.bhtNo}
                                 </p:column>
                                 <p:column>
-                                    <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
+                                    #{myItem.patient.person.nameWithTitle}
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="Discharged"  rendered="#{myItem.discharged}"/>
                                 </p:column>
                             </p:autoComplete>   
                             <h:panelGrid id="panSearch2" columns="2" >
@@ -68,13 +66,13 @@
                                 <h:outputLabel id="due" value="#{bhtSummeryController.due}"/>
                             </h:panelGrid>
                         </p:panel>
-                        <p:panel header="Discharge">
+                        <p:panel id="dis" header="Discharge">
                             <h:panelGrid columns="2">
                                 <p:outputLabel value="Discharge Time"/>
                                 <p:calendar value="#{bhtSummeryController.patientEncounter.dateOfDischarge}" pattern="dd MMMM yyyy hh mm a" >                               
                                     <f:ajax execute="@this" render="sum tvPt ss" event="dateSelect" listener="#{bhtSummeryController.checkDate}" />
                                 </p:calendar> 
-                                <p:commandButton ajax="false" style="float: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
+                                <p:commandButton ajax="false" style="double: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
                             </h:panelGrid>
                         </p:panel>
 
@@ -82,10 +80,10 @@
                     <h:panelGrid id="sum" columns="2">
                         <p:dataTable value="#{bhtSummeryController.chargeItemTotals}" style="max-width: 25%;" var="c">
                             <p:column >
-                                <h:outputLabel value="#{c.inwardChargeType}"/>
+                                #{c.inwardChargeType}
                             </p:column>
                             <p:column >
-                                <h:outputLabel value="#{c.total}"/>
+                                #{c.total}
                             </p:column>
                         </p:dataTable>                       
 
@@ -119,9 +117,6 @@
                                     <p:column headerText="Nursing Charge">
                                         #{rm.nursingTot}
                                     </p:column> 
-                                    <p:column headerText="Linen Charge">
-                                        #{rm.linenTot}
-                                    </p:column> 
                                 </p:dataTable>
                             </p:tab>
 
@@ -149,7 +144,7 @@
                                         </h:outputLabel>
                                     </p:column>
                                     <p:column>
-                                        <h:commandLink action="inward_bill_reprint" value="Remove">
+                                        <h:commandLink action="inward_reprint_bill" value="Remove">
                                             <h:outputLabel  ></h:outputLabel>
                                             <f:setPropertyActionListener value="#{ser.bill}" target="#{inwardSearch.bill}"/>
                                         </h:commandLink>
@@ -158,9 +153,40 @@
                                 </p:dataTable>
                             </p:tab>
 
-                            <p:tab id="tabTimed" title="Timed Service Detail"  >
-                                <p:calendar value="#{bhtSummeryController.toTime}" pattern="dd MMMM yyyy hh mm a" >    
-                                </p:calendar> 
+                            <p:tab id="tabAdd" title="Additional Charge Detail"  >
+                                <p:dataTable value="#{bhtSummeryController.additionalChargeBill}" var="bil">
+                                    <p:column headerText="Name">
+                                        #{bil.comments}
+                                    </p:column>
+                                    <p:column headerText="Cost">
+                                        #{bil.total}
+                                    </p:column>
+                                    <p:column headerText="Added Date">
+                                        <h:outputLabel value="#{bil.createdAt}">
+                                            <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Added Time">
+                                        <h:outputLabel value="#{bil.createdAt}">
+                                            <f:convertDateTime pattern="hh mm a"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Added User">
+                                        <h:outputLabel value="#{bil.creater.webUserPerson.name}">
+                                            <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <h:commandLink action="inward_reprint_bill" value="Remove">
+                                            <h:outputLabel  ></h:outputLabel>
+                                            <f:setPropertyActionListener value="#{bil}" target="#{inwardSearch.bill}"/>
+                                        </h:commandLink>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:tab>
+
+                            <p:tab id="tabTimed" title="Timed Service Detail"  >                              
                                 <p:dataTable value="#{bhtSummeryController.patientItems}" var="ti">
                                     <p:column headerText="Service Name">
                                         #{ti.item.name}
@@ -174,13 +200,11 @@
                                         #{ti.serviceValue}
                                     </p:column>
                                     <p:column headerText="Stopped Time">
-                                        <h:outputLabel value="#{ti.toTime}">
-                                            <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
-                                        </h:outputLabel>
+                                        <p:calendar value="#{ti.toTime}" pattern="dd MMMM yyyy hh mm a" >    
+                                        </p:calendar>                                        
                                     </p:column>
                                     <p:column >
-                                        <p:commandButton value="Finalize" disabled="#{ti.finalize}" ajax="false" action="#{bhtSummeryController.finalizeService}">
-                                            <f:setPropertyActionListener value="#{ti}" target="#{bhtSummeryController.tmpPI}"/>
+                                        <p:commandButton value="Finalize" disabled="#{ti.finalize}" ajax="false" action="#{bhtSummeryController.finalizeService(ti)}">                                            
                                         </p:commandButton>
                                     </p:column>
                                 </p:dataTable>
@@ -210,19 +234,18 @@
                                         </h:outputLabel>
                                     </p:column>
                                     <p:column>
-                                        <h:commandLink action="inward_bill_reprint" value="Remove">
+                                        <h:commandLink action="inward_reprint_bill" value="Remove">
                                             <h:outputLabel  ></h:outputLabel>
                                             <f:setPropertyActionListener value="#{pf.bill}" target="#{inwardSearch.bill}"/>
                                         </h:commandLink>
                                     </p:column>
-
                                 </p:dataTable>
                             </p:tab>
 
                             <p:tab id="tabP" title="Payments"  >
                                 <p:dataTable value="#{bhtSummeryController.paymentBill}" var="p">
                                     <p:column headerText="Paid At">                                            
-                                        <h:outputLabel value="#{p.billTime}">
+                                        <h:outputLabel value="#{p.createdAt}">
                                             <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
                                         </h:outputLabel>
                                     </p:column>
@@ -236,17 +259,6 @@
                         </p:tabView>
 
                     </h:panelGrid>
-                </p:panel>
-
-
-                <p:panel id="intrimBill"  >
-                    <bi:inwardBill controller="#{bhtSummeryController}" 
-                                   isIntrim="true"
-                                   item="#{bhtSummeryController.chargeItemTotals}"
-                                   patientEncounter="#{bhtSummeryController.patientEncounter}"
-                                   bill="#{bhtSummeryController.current}"/>
-
-
                 </p:panel>
 
             </h:form>

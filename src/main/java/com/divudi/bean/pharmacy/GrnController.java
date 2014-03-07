@@ -316,7 +316,7 @@ public class GrnController implements Serializable {
                 PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
                 ph.setBillItem(bi);
                 double tmpQty=bi.getQty();
-                ph.setQtyInUnit((float)tmpQty);
+                ph.setQtyInUnit((double)tmpQty);
                 ph.setPurchaseRate(i.getPurchaseRate());
                 ph.setRetailRate(i.getRetailRate());
                 ph.setLastPurchaseRate(getPharmacyBean().getLastPurchaseRate(bi.getItem(), getSessionController().getDepartment()));
@@ -337,11 +337,11 @@ public class GrnController implements Serializable {
         calGrossTotal();
     }
 
-    private float getRetailPrice(BillItem billItem) {
+    private double getRetailPrice(BillItem billItem) {
         String sql = "select (p.retailRate) from PharmaceuticalBillItem p where p.billItem=:b";
         HashMap hm = new HashMap();
         hm.put("b", billItem.getReferanceBillItem());
-        return (float)getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+        return (double)getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
     public void onEdit(RowEditEvent event) {
@@ -382,7 +382,7 @@ public class GrnController implements Serializable {
     public void onEditPurchaseRate(BillItem tmp) {
 
         double retail = tmp.getPharmaceuticalBillItem().getPurchaseRate() + (tmp.getPharmaceuticalBillItem().getPurchaseRate() * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
-        tmp.getPharmaceuticalBillItem().setRetailRate((float)retail);
+        tmp.getPharmaceuticalBillItem().setRetailRate((double)retail);
 
     }
 

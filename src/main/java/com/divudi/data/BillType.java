@@ -27,6 +27,8 @@ public enum BillType {
     @Deprecated
     SandryGrn,
     PharmacyIssue,
+    PharmacyBhtIssue,
+    PharmacyBhtPre,
     PharmacyPre,
     PharmacyOrder,
     PharmacyOrderApprove,

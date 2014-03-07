@@ -14,13 +14,14 @@
 
             <ui:define name="content">
 
+                
 
                 <h:form id="bill" >
-
+                    <h:outputLabel value="rs#{300.0*24.08}">
+                         <f:convertNumber pattern="#,##0.00" />
+                    </h:outputLabel>
                     <p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>
                     <p:defaultCommand  target="btnAdd" />  
-
-
 
                     <p:panel rendered="#{!pharmacySaleController.billPreview}"  >
                         <h:panelGrid id="sale" columns="2" class="alignTop" >
@@ -117,7 +118,7 @@
                                                                  var="bi" rowIndexVar="s" editable="true" sortBy="#{bi.searialNo}" >
 
                                                         <p:ajax event="rowEdit" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" />  
-                                                        <p:ajax event="rowEditCancel" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" /> 
+                                                        <p:ajax event="rowEditCancel" listener="#{pharmacySaleController.onEdt}" update="@this gros :#{p:component('pBillDetails')}" /> 
 
 
                                                         <p:column headerText="Item">

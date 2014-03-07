@@ -94,8 +94,27 @@ public class Patient implements Serializable {
         this.ageInDays = ageInDays;
     }
 
+//    public String getAge() {
+//        LocalDate birthdate = new LocalDate(getPerson().getDob());
+//        LocalDate now = new LocalDate();
+//        Years ageInYears;
+//        ageInYears = Years.yearsBetween(birthdate, now);
+//        if (0 < ageInYears.getYears()) {
+//            return ageInYears.getYears() + " Years";
+//        } else {
+//            Months ageInMonths = Months.monthsBetween(birthdate, now);
+//            if (ageInMonths.getMonths() > 0) {
+//                return ageInMonths.getMonths() + " Months";
+//            } else {
+//                Days ageDays = Days.daysBetween(birthdate, now);
+//                return ageDays.getDays() + " Days";
+//            }
+//        }
+//    }
+    
+    
     public String getAge() {
-        LocalDate birthdate = new LocalDate(getPerson().getDob());
+       LocalDate birthdate = new LocalDate(getPerson().getDob());
         LocalDate now = new LocalDate();
         Years ageInYears;
         ageInYears = Years.yearsBetween(birthdate, now);
@@ -110,7 +129,8 @@ public class Patient implements Serializable {
                 return ageDays.getDays() + " Days";
             }
         }
-    }
+   }
+    
 
     public void setAge(String age) {
         this.age = age;

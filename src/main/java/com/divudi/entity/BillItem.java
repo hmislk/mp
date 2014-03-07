@@ -10,6 +10,7 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.UserStock;
 import com.divudi.entity.pharmacy.Vmpp;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -21,6 +22,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
@@ -100,6 +102,8 @@ public class BillItem implements Serializable {
     private double tmpQty;
     @Transient 
     private UserStock transUserStock;
+    @OneToMany(mappedBy = "billItem")
+    private List<BillFee> billFees=new ArrayList<>();
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -487,7 +491,7 @@ public class BillItem implements Serializable {
         }
 
         if (getPharmaceuticalBillItem() != null) {
-            getPharmaceuticalBillItem().setQty((float)this.tmpQty);
+            getPharmaceuticalBillItem().setQty((double)this.tmpQty);
         }
     }
 
@@ -497,6 +501,14 @@ public class BillItem implements Serializable {
 
     public void setTransUserStock(UserStock transUserStock) {
         this.transUserStock = transUserStock;
+    }
+
+    public List<BillFee> getBillFees() {
+        return billFees;
+    }
+
+    public void setBillFees(List<BillFee> billFees) {
+        this.billFees = billFees;
     }
 
 }

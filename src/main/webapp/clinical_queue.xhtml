@@ -22,7 +22,7 @@
                                     <f:selectItems value="#{practiceBookingController.consultants}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}" />
                                     <f:ajax  event="change" execute="@this" render="bSession"  />
                                 </p:selectOneMenu>
-                                <p:commandButton   value="Refresh" ajax="false" style="float: right;" action="#{practiceBookingController.listBillSessions}" >                        
+                                <p:commandButton   value="Refresh" ajax="false" style="double: right;" action="#{practiceBookingController.listBillSessions}" >                        
                                 </p:commandButton>
                             </h:panelGrid>
                             <p:dataTable id="bSession" value="#{practiceBookingController.billSessions}" var='bs'

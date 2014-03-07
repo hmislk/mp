@@ -46,6 +46,7 @@ public class BillFee implements Serializable {
     PatientEncounter patienEncounter;
     @ManyToOne
     PatientEncounter childEncounter;
+   
     @ManyToOne
     BillItem billItem;
     @ManyToOne
@@ -66,6 +67,8 @@ public class BillFee implements Serializable {
     //FeeDate, FeeTime
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date FeeAt;
+    @ManyToOne
+    private BillFee referenceBillFee;
 
     public BillFee() {
     }
@@ -254,8 +257,8 @@ public class BillFee implements Serializable {
                 this.feeGrossValue = tmpChangedValue;
                 if (tmpChangedValue != 0) {
                     this.feeValue = tmpChangedValue / 100 * (100 - discountPercent);
-                }else{
-                     this.feeValue=0;
+                } else {
+                    this.feeValue = 0;
                 }
             } else {
                 this.feeGrossValue = tmpChangedValue;
@@ -454,6 +457,14 @@ public class BillFee implements Serializable {
 
     public void setTmpChangedValue(Double tmpChangedValue) {
         this.tmpChangedValue = tmpChangedValue;
+    }
+
+    public BillFee getReferenceBillFee() {
+        return referenceBillFee;
+    }
+
+    public void setReferenceBillFee(BillFee referenceBillFee) {
+        this.referenceBillFee = referenceBillFee;
     }
 
 }

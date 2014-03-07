@@ -125,7 +125,7 @@ public class PharmacyBillSearch implements Serializable {
 
     public void editBillItem2(BillItem billItem) {
         getBillItemFacede().edit(billItem);
-        billItem.getPharmaceuticalBillItem().setQtyInUnit((float)(0 - billItem.getQty()));
+        billItem.getPharmaceuticalBillItem().setQtyInUnit((double)(0 - billItem.getQty()));
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
 
         calTotalAndUpdate2(billItem.getBill());

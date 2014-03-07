@@ -11,6 +11,7 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.entity.BillItem;
 import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
@@ -22,22 +23,24 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import javax.inject.Inject;
-import javax.inject.Named; import javax.ejb.EJB;
+import javax.inject.Named;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
-public  class InwardPriceAdjustmntController implements Serializable {
+public class InwardPriceAdjustmntController implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Inject
@@ -54,6 +57,7 @@ public  class InwardPriceAdjustmntController implements Serializable {
     double fromPrice;
     double toPrice;
     double margin;
+    private Category roomLocation;
 
     private void recreateModel() {
         fromPrice = toPrice + 1;
@@ -72,19 +76,19 @@ public  class InwardPriceAdjustmntController implements Serializable {
             UtilityController.addErrorMessage("Check prices");
             return;
         }
-      
+
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
             return;
         }
-        
+
         if (category == null) {
             UtilityController.addErrorMessage("Please select a category");
             return;
         }
 
         InwardPriceAdjustment a = new InwardPriceAdjustment();
-       
+
         a.setCategory(category);
         a.setDepartment(department);
         a.setFromPrice(fromPrice);
@@ -96,7 +100,7 @@ public  class InwardPriceAdjustmntController implements Serializable {
         getFacade().create(a);
         UtilityController.addSuccessMessage("savedNewSuccessfully");
         recreateModel();
-        getItems();
+        createItems();
     }
 
     public InwardPriceAdjustmentFacade getEjbFacade() {
@@ -123,7 +127,7 @@ public  class InwardPriceAdjustmntController implements Serializable {
     }
 
     public void setCurrent(InwardPriceAdjustment current) {
-       
+
         this.current = current;
     }
 
@@ -191,8 +195,6 @@ public  class InwardPriceAdjustmntController implements Serializable {
         this.margin = margin;
     }
 
-    
-    
     public void delete() {
         if (current != null) {
             current.setRetired(true);
@@ -203,7 +205,7 @@ public  class InwardPriceAdjustmntController implements Serializable {
         } else {
             UtilityController.addSuccessMessage("NothingToDelete");
         }
-    //    recreateModel();
+        //    recreateModel();
         getItems();
         current = null;
         getCurrent();
@@ -214,10 +216,29 @@ public  class InwardPriceAdjustmntController implements Serializable {
     }
 
     public List<InwardPriceAdjustment> getItems() {
-        String sql;
-        sql = "select a from InwardPriceAdjustment a where a.retired=false" ;
-        items = getFacade().findBySQL(sql);
+
         return items;
+    }
+
+    public void createItems() {
+        String sql;
+        sql = "select a from InwardPriceAdjustment a where a.retired=false order by a.department.name,a.category.name,a.fromPrice";
+        items = getFacade().findBySQL(sql);
+    }
+
+    public void onEdit(InwardPriceAdjustment tmp) {
+        //Cheking Minus Value && Null
+        getFacade().edit(tmp);
+        createItems();
+    }
+
+    public Category getRoomLocation() {
+        
+        return roomLocation;
+    }
+
+    public void setRoomLocation(Category roomLocation) {
+        this.roomLocation = roomLocation;
     }
 
     /**

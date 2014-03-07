@@ -21,6 +21,7 @@ import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.WebUserFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -202,6 +203,16 @@ public class CashierReportController implements Serializable {
     private List<WebUserBillsTotal> webUserBillsTotals;
 
     double calTotalValueOwn(WebUser w, Bill billClass, PaymentMethod pM, BillType billType) {
+////        int day= Calendar.HOUR_OF_DAY(getToDate())- Calendar.DATE(getFromDate()) ;
+//        Date a;
+//        a = Calendar.Date.getToDate()-Date.getFromDate();
+//        int day2;
+//        day2 = Calendar.DAY_OF_YEAR(getToDate());
+//        if(day2>=2){
+//                    
+//            JsfUtil.addErrorMessage("Please Enter Blow 2 Days");
+//            return 0;
+//        }
         String sql;
         Map temMap = new HashMap();
 

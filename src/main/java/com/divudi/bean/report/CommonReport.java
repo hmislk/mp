@@ -15,9 +15,11 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.InwardPriceAdjustmentFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,6 +52,8 @@ public class CommonReport implements Serializable {
     private BillFacade billFacade;
     @EJB
     CommonFunctions commonFunctions;
+    @EJB
+    private InwardPriceAdjustmentFacade inwdPriceAdjFacade;
     ////////////////////
     private Institution collectingIns;
     Institution institution;
@@ -85,6 +89,7 @@ public class CommonReport implements Serializable {
     private BillsTotals grnReturnCancel;
     //////////////////    
     private List<String1Value1> dataTableData;
+    private List<InwardPriceAdjustment> items = null;
 
     /**
      * Creates a new instance of CommonReport
@@ -1184,6 +1189,13 @@ public class CommonReport implements Serializable {
         getRefundedBillsPh2().setSlip(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
 
     }
+    
+    public List<InwardPriceAdjustment> createMatrxTabl() {
+        String sql;
+        sql = "select a from InwardPriceAdjustment a where a.retired=false order by a.department.name,a.category.name,a.fromPrice" ;
+        items = getInwdPriceAdjFacade().findBySQL(sql);
+        return items;
+    }
 
     public void createGrnDetailTable() {
         recreteModal();
@@ -1615,9 +1627,14 @@ public class CommonReport implements Serializable {
         String1Value1 tmp5 = new String1Value1();
         tmp5.setString("Final Cash Total");
         tmp5.setValue(getFinalCashTotal(list));
+        
+        String1Value1 tmp6 = new String1Value1();
+        tmp6.setString("Final Credit & Cash Total");
+        tmp6.setValue(getFinalCashTotal(list)+getFinalCreditTotal(list));
 
         dataTableData.add(tmp1);
         dataTableData.add(tmp5);
+        dataTableData.add(tmp6);
 
         return dataTableData;
     }
@@ -1927,5 +1944,21 @@ public class CommonReport implements Serializable {
 
     public void setGrnReturnCancel(BillsTotals grnReturnCancel) {
         this.grnReturnCancel = grnReturnCancel;
+    }
+
+    public List<InwardPriceAdjustment> getItems() {
+        return items;
+    }
+
+    public void setItems(List<InwardPriceAdjustment> items) {
+        this.items = items;
+    }
+
+    public InwardPriceAdjustmentFacade getInwdPriceAdjFacade() {
+        return inwdPriceAdjFacade;
+    }
+
+    public void setInwdPriceAdjFacade(InwardPriceAdjustmentFacade inwdPriceAdjFacade) {
+        this.inwdPriceAdjFacade = inwdPriceAdjFacade;
     }
 }

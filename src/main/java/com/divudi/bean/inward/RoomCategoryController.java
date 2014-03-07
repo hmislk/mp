@@ -11,6 +11,7 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.inward.RoomFacility;
+import com.divudi.entity.Department;
 import com.divudi.entity.inward.RoomCategory;
 import com.divudi.entity.inward.RoomFacilityCharge;
 import com.divudi.facade.RoomCategoryFacade;
@@ -143,6 +144,12 @@ public  class RoomCategoryController implements Serializable {
             items = new ArrayList<RoomCategory>();
         }
         return items;
+    }
+    
+     public List<RoomCategory> completeRoomCategory(String qry) {
+        String sql;
+        sql = "select c from RoomCategory c where c.retired=false and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name";
+        return getFacade().findBySQL(sql);
     }
     /**
      *

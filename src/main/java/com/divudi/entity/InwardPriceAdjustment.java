@@ -47,6 +47,8 @@ public class InwardPriceAdjustment implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date retiredAt;
     String retireComments;
+    @ManyToOne
+    private Category roomLocation;
 
     public BillType getBillType() {
         return billType;
@@ -186,5 +188,13 @@ public class InwardPriceAdjustment implements Serializable {
 
     public void setFromPrice(Double fromPrice) {
         this.fromPrice = fromPrice;
+    }
+
+    public Category getRoomLocation() {
+        return roomLocation;
+    }
+
+    public void setRoomLocation(Category roomLocation) {
+        this.roomLocation = roomLocation;
     }
 }

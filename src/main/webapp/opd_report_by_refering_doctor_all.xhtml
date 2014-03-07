@@ -21,13 +21,13 @@
                         <p:outputLabel value="#{labels.company_name}"/>
                         <br/>
                         <p:outputLabel value="Report by Referring Doctor"/>
-                        <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
+                        <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="double: right;" />
 
-                        <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
+                        <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
                             <p:printer target="panelPrint" />
                         </p:commandButton>
 
-                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="float: right;" >
+                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="double: right;" >
                             <poue:exporter type="xlsx" target="tbl" fileName="Report By Referring Doctor"  />  
                         </p:commandButton>
 

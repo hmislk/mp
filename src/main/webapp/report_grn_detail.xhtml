@@ -42,14 +42,14 @@
                         <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                          styleClass="noPrintButton" 
                                          actionListener="#{commonReport.createGrnDetailTable()}"
-                                         style="float: right;" />  
+                                         style="double: right;" />  
                         
-                        <p:commandButton actionListener="#{commonReport.createGrnDetailTable()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                        <p:commandButton actionListener="#{commonReport.createGrnDetailTable()}" ajax="false" value="Excel" styleClass="noPrintButton" style="double: right;" >
                                 <pe:exporter type="xlsx" target="billed,cancelled,refunded,returnCancelled,sum" fileName="report_grn_detail"  />
                         </p:commandButton>
                         
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" 
-                                         style="float: right;" >
+                                         style="double: right;" >
                             <p:printer target="reportPrint"/>
                         </p:commandButton>  
                         </h:panelGrid>
@@ -69,14 +69,14 @@
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>                          
                         <h:outputLabel value="To"/>
-                        <h:outputLabel  value="#{commonReport.toDate}" style="float: right" >
+                        <h:outputLabel  value="#{commonReport.toDate}" style="double: right" >
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>
                     </h:panelGrid>
 
 
                     <p:dataTable id="billed"  value="#{commonReport.grnBilled.bills}" var="b" 
-                                 rendered="#{commonReport.grnBilled.bills.size()!=0}" sortBy="#{b.billType}"  >
+                                 rendered="#{commonReport.grnBilled.bills.size()!=0}" sortBy="#{b.billType}">
 
                         <f:facet name="header">  
                             <h:outputLabel value="GRN"/>

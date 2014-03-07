@@ -40,12 +40,12 @@ public class PharmaceuticalBillItem implements Serializable {
     @ManyToOne
     ItemBatch itemBatch;
     private String stringValue;
-    float qty;
-    float freeQty;
-    float purchaseRate;
-    private float lastPurchaseRate;
-    float retailRate;
-    float wholesaleRate;
+    double qty;
+    double freeQty;
+    double purchaseRate;
+    private double lastPurchaseRate;
+    double retailRate;
+    double wholesaleRate;
     @ManyToOne
     Stock stock;
     @ManyToOne
@@ -124,7 +124,7 @@ public class PharmaceuticalBillItem implements Serializable {
         this.itemBatch = itemBatch;
     }
 
-    public float getQty() {
+    public double getQty() {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             return qty / getBillItem().getItem().getDblValue();
@@ -134,7 +134,7 @@ public class PharmaceuticalBillItem implements Serializable {
 
     }
 
-    public void setQty(float qty) {
+    public void setQty(double qty) {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             this.qty = qty * getBillItem().getItem().getDblValue();
@@ -143,23 +143,23 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public float getQtyInUnit() {
+    public double getQtyInUnit() {
         return qty;
     }
 
-    public void setQtyInUnit(float qty) {
+    public void setQtyInUnit(double qty) {
         this.qty = qty;
     }
 
-    public float getFreeQtyInUnit() {
+    public double getFreeQtyInUnit() {
         return freeQty;
     }
 
-    public void setFreeQtyInUnit(float freeQty) {
+    public void setFreeQtyInUnit(double freeQty) {
         this.freeQty = freeQty;
     }
 
-    public float getFreeQty() {
+    public double getFreeQty() {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             return freeQty / getBillItem().getItem().getDblValue();
@@ -168,7 +168,7 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public void setFreeQty(float freeQty) {
+    public void setFreeQty(double freeQty) {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             this.freeQty = freeQty * getBillItem().getItem().getDblValue();
@@ -177,7 +177,7 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public float getPurchaseRate() {
+    public double getPurchaseRate() {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             return purchaseRate * getBillItem().getItem().getDblValue();
@@ -187,15 +187,15 @@ public class PharmaceuticalBillItem implements Serializable {
 
     }
 
-    public float getPurchaseRateInUnit() {
+    public double getPurchaseRateInUnit() {
         return purchaseRate;
     }
 
-    public void setPurchaseRateInUnit(float purchaseRate) {
+    public void setPurchaseRateInUnit(double purchaseRate) {
         this.purchaseRate = purchaseRate;
     }
 
-    public void setPurchaseRate(float purchaseRate) {
+    public void setPurchaseRate(double purchaseRate) {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             this.purchaseRate = purchaseRate / getBillItem().getItem().getDblValue();
@@ -204,15 +204,15 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public float getRetailRateInUnit() {
+    public double getRetailRateInUnit() {
         return retailRate;
     }
 
-    public void setRetailRateInUnit(float retailRate) {
+    public void setRetailRateInUnit(double retailRate) {
         this.retailRate = retailRate;
     }
 
-    public float getRetailRate() {
+    public double getRetailRate() {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             return retailRate * getBillItem().getItem().getDblValue();
@@ -221,7 +221,7 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public void setRetailRate(float retailRate) {
+    public void setRetailRate(double retailRate) {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             this.retailRate = retailRate / getBillItem().getItem().getDblValue();
@@ -230,11 +230,11 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public float getWholesaleRate() {
+    public double getWholesaleRate() {
         return wholesaleRate;
     }
 
-    public void setWholesaleRate(float wholesaleRate) {
+    public void setWholesaleRate(double wholesaleRate) {
         this.wholesaleRate = wholesaleRate;
     }
 
@@ -271,19 +271,19 @@ public class PharmaceuticalBillItem implements Serializable {
         this.stringValue = stringValue;
     }
 
-    public float getLastPurchaseRateInUnit() {
+    public double getLastPurchaseRateInUnit() {
 
         return lastPurchaseRate;
 
     }
 
-    public void setLastPurchaseRateInUnit(float lastPurchaseRate) {
+    public void setLastPurchaseRateInUnit(double lastPurchaseRate) {
 
         this.lastPurchaseRate = lastPurchaseRate;
 
     }
 
-    public float getLastPurchaseRate() {
+    public double getLastPurchaseRate() {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             return lastPurchaseRate * getBillItem().getItem().getDblValue();
@@ -292,7 +292,7 @@ public class PharmaceuticalBillItem implements Serializable {
         }
     }
 
-    public void setLastPurchaseRate(float lastPurchaseRate) {
+    public void setLastPurchaseRate(double lastPurchaseRate) {
         if (getBillItem() != null && getBillItem().getItem() instanceof Ampp
                 || getBillItem() != null && getBillItem().getItem() instanceof Vmpp) {
             this.lastPurchaseRate = lastPurchaseRate / getBillItem().getItem().getDblValue();

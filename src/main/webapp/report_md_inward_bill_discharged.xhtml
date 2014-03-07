@@ -20,7 +20,7 @@
                     <p:calendar id="toDate" value="#{mdInwardReportController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                         <f:ajax event="dateSelect"   render="tbl" execute="@this fromDate" listener="#{mdInwardReportController.makeBillNull}"/>
                     </p:calendar>
-                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh"  style="float: right;"/>
+                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh"  style="double: right;"/>
                     <p:defaultCommand target="btnRefresh"/>
                 </h:panelGrid>   
 

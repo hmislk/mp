@@ -11,7 +11,7 @@
             <p:panel >
                 <f:facet name="header">
                     <p:outputLabel value="Pharmacy Variant Adjustment"/>      
-                    <h:panelGroup style="float: right;">
+                    <h:panelGroup style="double: right;">
                         <p:commandButton value="All Request" action="#{variantAdjustment.createAll()}" ajax="false" ></p:commandButton>
                     </h:panelGroup>
                 </f:facet>
@@ -65,8 +65,8 @@
                         </h:outputLabel>
                     </p:column>
 
-                    <p:column headerText="Adusted ReportId" filterBy="#{b.forwardReferenceBill.deptId}" >                       
-                        <h:outputLabel  value="#{b.forwardReferenceBill.deptId}" rendered="#{b.forwardReferenceBill.cancelled eq false}"/>                         
+                    <p:column headerText="Adusted ReportId" filterBy="#{b.forwardReferenceBill.id}" >                       
+                        <h:outputLabel  value="#{b.forwardReferenceBill.id}" rendered="#{b.forwardReferenceBill.cancelled eq false}"/>                         
                     </p:column>
 
                     <p:column headerText="Adjust">

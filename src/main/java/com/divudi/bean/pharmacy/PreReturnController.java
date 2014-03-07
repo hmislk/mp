@@ -145,7 +145,7 @@ public class PreReturnController implements Serializable {
 
     private void saveComponent() {
         for (BillItem i : getBillItems()) {
-            i.getPharmaceuticalBillItem().setQtyInUnit((float) (double) i.getQty());
+            i.getPharmaceuticalBillItem().setQtyInUnit((double) (double) i.getQty());
 
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
@@ -227,7 +227,7 @@ public class PreReturnController implements Serializable {
 
             //System.err.println("Refund " + rFund);
             double tmpQty = Math.abs(i.getQtyInUnit()) - Math.abs(rFund);
-            tmp.setQtyInUnit((float) tmpQty);
+            tmp.setQtyInUnit((double) tmpQty);
 
             bi.setPharmaceuticalBillItem(tmp);
 

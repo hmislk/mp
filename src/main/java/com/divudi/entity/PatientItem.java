@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 
 /**
  *
@@ -57,6 +58,9 @@ public class PatientItem implements Serializable {
      Double serviceValue;
   //   Boolean finalize=false;
      Boolean finalize;
+     @Transient
+     private long tmpConsumedTime;
+    
 
     public Item getItem() {
         return item;
@@ -229,6 +233,16 @@ public class PatientItem implements Serializable {
     public void setFinalize(Boolean finalize) {
         this.finalize = finalize;
     }
+
+    public long getTmpConsumedTime() {
+        return tmpConsumedTime;
+    }
+
+    public void setTmpConsumedTime(long tmpConsumedTime) {
+        this.tmpConsumedTime = tmpConsumedTime;
+    }
+
+  
 
 
   

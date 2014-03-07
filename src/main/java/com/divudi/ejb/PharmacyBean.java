@@ -716,19 +716,22 @@ public class PharmacyBean {
         phItem.setStockHistory(sh);
         getPharmaceuticalBillItemFacade().edit(phItem);
 
-        //System.err.println("Histry Saved " + sh.getStockQty());
+        System.err.println("Histry Saved " + sh.getStockQty());
     }
 
     public void addToStockHistoryInitial(PharmaceuticalBillItem phItem, Stock stock, Department d) {
         if (phItem == null) {
+              System.err.println("H1");
             return;
         }
 
         if (phItem.getBillItem() == null) {
+            System.err.println("H2");
             return;
         }
 
         if (phItem.getBillItem().getItem() == null) {
+            System.err.println("H3");
             return;
         }
 
@@ -739,8 +742,10 @@ public class PharmacyBean {
         m.put("pbi", phItem);
         sh = getStockHistoryFacade().findFirstBySQL(sql, m);
         if (sh == null) {
+            System.err.println("H4");
             sh = new StockHistory();
         } else {
+            System.err.println("H5");
             return;
         }
 
@@ -767,7 +772,7 @@ public class PharmacyBean {
         phItem.setStockHistory(sh);
         getPharmaceuticalBillItemFacade().edit(phItem);
 
-        //System.err.println("Histry Saved " + sh.getStockQty());
+        System.err.println("Histry Saved " + sh.getStockQty());
     }
 
     public void addToStockHistory(PharmaceuticalBillItem phItem, Stock stock, Staff staff) {

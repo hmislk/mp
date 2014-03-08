@@ -189,9 +189,17 @@ public class TransferRequestController implements Serializable {
             getBillItemFacade().create(b);
 
             getPharmaceuticalBillItemFacade().create(tmpPh);
+            
+            
+            b.setPharmaceuticalBillItem(tmpPh);
+            getPharmaceuticalBillItemFacade().edit(tmpPh);
+            getBillItemFacade().edit(b);
+            
 
             getBill().getBillItems().add(b);
         }
+        
+        getBillFacade().edit(getBill());
 
         UtilityController.addSuccessMessage("Transfer Request Succesfully Created");
 

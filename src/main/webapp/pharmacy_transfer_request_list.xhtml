@@ -71,7 +71,7 @@
                     </p:column>
                     <p:column>
                         <p:commandButton ajax="false" value="Issue" action="pharmacy_transfer_issue"
-                                         disabled="#{p.checkActiveForwardReference() or p.cancelled eq true}">
+                                         disabled="#{p.cancelled eq true}">
                             <f:setPropertyActionListener target="#{transferIssueController.requestedBill}" value="#{p}"/>
                         </p:commandButton>
                     </p:column>

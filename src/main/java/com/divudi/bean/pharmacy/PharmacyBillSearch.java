@@ -1309,6 +1309,9 @@ public class PharmacyBillSearch implements Serializable {
         //System.err.println("Stock Qty" + stockQty);
         //System.err.println("Ph Qty" + pharmaceuticalBillItem.getQtyInUnit());
         if (Math.abs(pharmaceuticalBillItem.getQtyInUnit()) > stockQty) {
+            System.err.println("Check Item : "+pharmaceuticalBillItem.getBillItem().getItem());
+            System.err.println("Item Qty : "+pharmaceuticalBillItem.getQtyInUnit());
+            System.err.println("Check Item : "+stockQty);
             return true;
         } else {
             return false;

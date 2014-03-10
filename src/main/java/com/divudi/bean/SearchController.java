@@ -303,10 +303,20 @@ public class SearchController implements Serializable {
             sql += " and  (upper(b.fromInstitution.name) like :frmIns )";
             temMap.put("frmIns", "%" + getSearchKeyword().getFromInstitution().trim().toUpperCase() + "%");
         }
+        
+         if (getSearchKeyword().getFromDepartment()!= null && !getSearchKeyword().getFromDepartment().trim().equals("")) {
+            sql += " and  (upper(b.fromDepartment.name) like :frmDept )";
+            temMap.put("frmDept", "%" + getSearchKeyword().getFromDepartment().trim().toUpperCase() + "%");
+        }
 
         if (getSearchKeyword().getToInstitution() != null && !getSearchKeyword().getToInstitution().trim().equals("")) {
             sql += " and  (upper(b.toInstitution.name) like :toIns )";
             temMap.put("toIns", "%" + getSearchKeyword().getToInstitution().trim().toUpperCase() + "%");
+        }
+        
+          if (getSearchKeyword().getToDepartment()!= null && !getSearchKeyword().getToDepartment().trim().equals("")) {
+            sql += " and  (upper(b.toDepartment.name) like :toDept )";
+            temMap.put("toDept", "%" + getSearchKeyword().getToDepartment().trim().toUpperCase() + "%");
         }
 
         if (getSearchKeyword().getRefBillNo() != null && !getSearchKeyword().getRefBillNo().trim().equals("")) {

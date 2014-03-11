@@ -925,6 +925,12 @@ public class SearchController implements Serializable {
             sql += " and  (upper(bi.item.name) like :itemName )";
             m.put("itemName", "%" + searchKeyword.getItemName().trim().toUpperCase() + "%");
         }
+        
+        if (searchKeyword.getToInstitution()!= null && !searchKeyword.getToInstitution().trim().equals("")) {
+            sql += " and  (upper(bi.bill.toInstitution.name) like :toIns )";
+            m.put("toIns", "%" + searchKeyword.getToInstitution().trim().toUpperCase() + "%");
+        }
+
 
         sql += " order by bi.id desc  ";
         //System.err.println("Sql " + sql);

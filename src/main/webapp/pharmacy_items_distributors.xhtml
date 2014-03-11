@@ -29,9 +29,23 @@
                             </p:autoComplete>
 
                         </p:panel>
+                        <p:panel header="Select Item For Distributor">
+                            <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" 
+                                            completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                <p:column headerText="Name" >
+                                    <h:outputLabel value="#{vt.name}" ></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Code" >
+                                    <h:outputLabel value="#{vt.code}" ></h:outputLabel>
+                                </p:column>
+                            </p:autoComplete>  
+                            <h:commandButton id="btnAdd" value="Add" action="#{itemsDistributorsController.addToPackage()}">
+                                </h:commandButton>
+                                <p:defaultCommand target="btnAdd"/>
+                        </p:panel>
                         <p:panel header="Items suply current Distributor">
                             <h:panelGroup id="gpDetail" >
-                                <p:dataTable scrollable="true" scrollHeight="150" id="packageItem" value="#{itemsDistributorsController.items}" var="i">
+                                <p:dataTable scrollable="true" scrollHeight="450" id="packageItem" value="#{itemsDistributorsController.items}" var="i">
                                     <p:column headerText="Item Name">
                                         <h:outputLabel value="#{i.item.name}"/> 
                                     </p:column>
@@ -50,25 +64,7 @@
                             </h:panelGroup>
                         </p:panel>
                         
-                        <p:panel header="Select Item For Distributor">
-                            <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" 
-                                            completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
-                                <p:column headerText="Name" >
-                                    <h:outputLabel value="#{vt.name}" ></h:outputLabel>
-                                </p:column>
-                                <p:column headerText="Code" >
-                                    <h:outputLabel value="#{vt.code}" ></h:outputLabel>
-                                </p:column>
-                            </p:autoComplete>                                    
-                        </p:panel>
                         
-                        <p:panel>
-                            <h:panelGroup >
-                                <h:commandButton id="btnAdd" value="Add" action="#{itemsDistributorsController.addToPackage()}">
-                                </h:commandButton>
-                                <p:defaultCommand target="btnAdd"/>
-                            </h:panelGroup> 
-                        </p:panel>
                         
                     </h:panelGrid>
                 </p:panel>

@@ -201,7 +201,9 @@ public class BillController implements Serializable {
         String sql;
         HashMap hash = new HashMap();
         if (qry != null) {
-            sql = "select c from BilledBill c where c.paidAmount!=abs(c.netTotal) and c.billType= :btp "
+            sql = "select c from BilledBill c where c.paidAmount!=abs(c.netTotal) "
+                    + " and c.billType= :btp and c.createdAt is not null "
+                    + " and c.deptId is not null "
                     + " and c.cancelledBill is null and "
                     + " c.retired=false and c.paymentMethod=:pm  and"
                     + " ((upper(c.deptId) "

@@ -136,7 +136,7 @@ public class PharmacyCalculation {
 
         double retailPrice = ph.getPurchaseRate() + (ph.getPurchaseRate() * (margin / 100));
 
-        return (double)retailPrice;
+        return (double) retailPrice;
     }
 
     public double getTotalQty(BillItem b, BillType billType, Bill bill) {
@@ -167,6 +167,38 @@ public class PharmacyCalculation {
         double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
 
         //System.err.println("GETTING TOTAL QTY " + value);
+        return value;
+    }
+
+    public double getBilledIssuedByRequestedItem(BillItem b, BillType billType) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  p.creater is not null and type(p.bill)=:class and "
+                + " p.referanceBillItem=:bt and p.bill.billType=:btp";
+
+        HashMap hm = new HashMap();
+        hm.put("bt", b);
+        hm.put("class", BilledBill.class);
+        hm.put("btp", billType);
+
+        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+
+        System.err.println("GETTING Billed QTY " + value);
+        return value;
+    }
+    
+    public double getCancelledIssuedByRequestedItem(BillItem b, BillType billType) {
+        String sql = "Select sum(p.pharmaceuticalBillItem.qty) from BillItem p where"
+                + "  p.creater is not null and type(p.bill)=:class and "
+                + " p.referanceBillItem.referanceBillItem=:bt and p.bill.billType=:btp";
+
+        HashMap hm = new HashMap();
+        hm.put("bt", b);
+        hm.put("class", CancelledBill.class);
+        hm.put("btp", billType);
+
+        double value = getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+
+        System.err.println("GETTING Cancelled TOTAL QTY " + value);
         return value;
     }
 

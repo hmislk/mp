@@ -22,7 +22,9 @@ public class SearchKeyword {
     private String staffName;
     private String personName;
     private String fromInstitution;
+    private String fromDepartment;
     private String toInstitution;
+    private String toDepartment;
     private String creator;
     private String bank;
     private String number;
@@ -215,5 +217,21 @@ public class SearchKeyword {
 
     public void setBhtNo(String bhtNo) {
         this.bhtNo = bhtNo;
+    }
+
+    public String getToDepartment() {
+        return toDepartment;
+    }
+
+    public void setToDepartment(String toDepartment) {
+        this.toDepartment = toDepartment;
+    }
+
+    public String getFromDepartment() {
+        return fromDepartment;
+    }
+
+    public void setFromDepartment(String fromDepartment) {
+        this.fromDepartment = fromDepartment;
     }
 }

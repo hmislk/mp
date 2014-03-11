@@ -7,6 +7,7 @@ package com.divudi.bean;
 
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.inward.AdmissionTypeEnum;
 import com.divudi.entity.PaymentScheme;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -49,8 +50,7 @@ public class EnumController implements Serializable {
             BillType.PurchaseReturn,
             BillType.GrnPayment,
             BillType.PharmacyTransferRequest,
-            BillType.PharmacyTransferIssue,
-        };
+            BillType.PharmacyTransferIssue,};
 
         return b;
     }
@@ -111,6 +111,10 @@ public class EnumController implements Serializable {
 
         return false;
 
+    }
+
+    public AdmissionTypeEnum[] getAdmissionTypeEnum() {
+        return AdmissionTypeEnum.values();
     }
 
     /**

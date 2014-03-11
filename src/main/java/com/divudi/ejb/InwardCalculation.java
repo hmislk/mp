@@ -5,6 +5,7 @@
 package com.divudi.ejb;
 
 import com.divudi.data.FeeType;
+import com.divudi.data.inward.AdmissionTypeEnum;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Fee;
@@ -54,9 +55,11 @@ public class InwardCalculation {
     public String getBhtText(AdmissionType admissionType) {
         String bhtText;
         String sql = "SELECT count(a.id) FROM Admission a where "
-                + " a.retired=false and a.admissionType.id=" + admissionType.getId();
+                + " a.retired=false and a.admissionTypeEnum=:adType ";
 
-        long temp = getAdmissionFacade().bhtBySql(sql);
+        HashMap hm = new HashMap();
+        hm.put("adType", admissionType.getAdmissionTypeEnum());
+        long temp = getAdmissionFacade().countBySql(sql, hm);
 
         temp++;
         bhtText = admissionType.getCode().trim() + Long.toString(temp);
@@ -257,7 +260,7 @@ public class InwardCalculation {
         long tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
         Date currentTime;
-       
+
         if (date == null) {
             currentTime = Calendar.getInstance().getTime();
         } else {
@@ -266,13 +269,13 @@ public class InwardCalculation {
 
         long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
         long count = 0l;
-     
-        if (tempServ != 0 && tempDur != 0) {         
-            count = tempServ / (tempDur * 60);        
-            if (((tempOve * 60) < tempServ % (tempDur * 60))) {               
+
+        if (tempServ != 0 && tempDur != 0) {
+            count = tempServ / (tempDur * 60);
+            if (((tempOve * 60) < tempServ % (tempDur * 60))) {
                 count++;
             }
-        
+
         }
 
         return (tempFee * count);

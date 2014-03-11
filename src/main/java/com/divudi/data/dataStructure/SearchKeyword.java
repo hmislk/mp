@@ -33,6 +33,8 @@ public class SearchKeyword {
     private String category;
     private String institution;
     private String bhtNo;
+    private String paymentScheme;
+    private String paymentmethod;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -233,5 +235,21 @@ public class SearchKeyword {
 
     public void setFromDepartment(String fromDepartment) {
         this.fromDepartment = fromDepartment;
+    }
+
+    public String getPaymentScheme() {
+        return paymentScheme;
+    }
+
+    public void setPaymentScheme(String paymentScheme) {
+        this.paymentScheme = paymentScheme;
+    }
+
+    public String getPaymentmethod() {
+        return paymentmethod;
+    }
+
+    public void setPaymentmethod(String paymentmethod) {
+        this.paymentmethod = paymentmethod;
     }
 }

@@ -212,8 +212,9 @@ public class AdmissionController implements Serializable {
         selectText = "";
         selectedItems = null;
         newPatient = null;
-        yearMonthDay=null;
+        yearMonthDay = null;
 
+        bhtNumberCalculation();
     }
 
     public void discharge() {
@@ -288,7 +289,7 @@ public class AdmissionController implements Serializable {
             }
         }
 
-        if (!getCurrent().getAdmissionType().isOneDay()) {
+        if (getCurrent().getAdmissionType().isRoomChargesAllowed()) {
             if (getPatientRoom().getRoomFacilityCharge() == null) {
                 UtilityController.addErrorMessage("Select Room");
                 return true;
@@ -339,18 +340,18 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(getSessionController().getLoggedUser());        
+            current.setCreater(getSessionController().getLoggedUser());
             //      getCurrent().setDateOfAdmission(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getFacade().create(current);
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
         }
 
-        if (!getCurrent().getAdmissionType().isOneDay()) {
+        if (getCurrent().getAdmissionType().isRoomChargesAllowed()) {
             savePatientRoom();
         }
 
         makeNull();
-        getItems();
+        //   getItems();
     }
 
     private void makeRoomFilled(PatientRoom pr) {
@@ -501,12 +502,21 @@ public class AdmissionController implements Serializable {
         this.patientRoomFacade = patientRoomFacade;
     }
 
-    public String getBhtText() {
-        if (getCurrent().getAdmissionType() != null) {
-            bhtText = getInwardCalculation().getBhtText(getCurrent().getAdmissionType());
-        } else {
-            bhtText = "";
+    public void bhtNumberCalculation() {
+        if (getCurrent() == null || getCurrent().getAdmissionType() == null) {
+//            UtilityController.addErrorMessage("Please Set Admission Type DayCase/Admission For this this Admission ");
+            return;
         }
+
+        if (getCurrent().getAdmissionType().getAdmissionTypeEnum() == null) {
+            UtilityController.addErrorMessage("Please Set Admission Type DayCase/Admission For this this Admission ");
+            return;
+        }
+
+        bhtText = getInwardCalculation().getBhtText(getCurrent().getAdmissionType());
+    }
+
+    public String getBhtText() {
         return bhtText;
     }
 
@@ -560,7 +570,7 @@ public class AdmissionController implements Serializable {
 
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
-    }  
+    }
 
     public Bill getAppointmentBill() {
         return appointmentBill;

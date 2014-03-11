@@ -16,12 +16,12 @@
 
                     <p:selectOneMenu  id="lstSelect"   value="#{admissionController.current.admissionType}" >
                         <f:selectItem itemLabel="Select Admission Type"/>
-                        <f:selectItems  value="#{admissionTypeController.items}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" ></f:selectItems>
-                        <f:ajax execute="@this" render="bh cmbDoc"/>
+                        <f:selectItems  value="#{admissionTypeController.items}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}"></f:selectItems>
+                        <f:ajax event="change" execute="@this" render="bh cmbDoc" listener="#{admissionController.bhtNumberCalculation()}" />
                     </p:selectOneMenu>
                     <p:inputText id="bh" value="#{admissionController.bhtText}" disabled="true"  />
 
-                    <p:autoComplete  disabled="#{admissionController.current.admissionType.oneDay}" converter="fac" forceSelection="true" id="cmbDoc" value="#{admissionController.patientRoom.roomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoom}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;">
+                    <p:autoComplete  disabled="#{!admissionController.current.admissionType.roomChargesAllowed}" converter="fac" forceSelection="true" id="cmbDoc" value="#{admissionController.patientRoom.roomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoom}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;">
                         <p:column>
                             #{rf.name}
                         </p:column>

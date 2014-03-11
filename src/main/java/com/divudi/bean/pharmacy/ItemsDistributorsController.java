@@ -215,7 +215,7 @@ public class ItemsDistributorsController implements Serializable {
     public List<ItemsDistributors> getItems() {
         String temSql;
         if (getCurrentInstituion() != null) {
-            temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and i.institution.id = " + getCurrentInstituion().getId();
+            temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and i.institution.id = " + getCurrentInstituion().getId() + " order by i.item.name";
             items = getFacade().findBySQL(temSql);
         } else {
             items = null;

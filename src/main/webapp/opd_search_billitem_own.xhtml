@@ -27,12 +27,12 @@
                                 <h:outputLabel value="Item Name"/>
                                 <h:outputLabel value="Patient Name"/>
                                 <h:outputLabel value="Patient Phone"/>
-                                <h:outputLabel/>
+                                <h:outputLabel value="Institution Name"/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
                                 <p:inputText  value="#{searchController.searchKeyword.itemName}" />
                                 <p:inputText value="#{searchController.searchKeyword.patientName}" />
                                 <p:inputText  value="#{searchController.searchKeyword.patientPhone}" />
-                                <h:outputLabel/>
+                                <p:inputText  value="#{searchController.searchKeyword.toInstitution}" />
                             </h:panelGrid>
 
                         </f:facet>
@@ -50,7 +50,7 @@
                                 </h:commandLink>   
                             </p:column>
                             <p:column headerText="Institution Name" styleClass="alignTop"  >
-                                <h:commandLink action="bill_reprint" value="#{pi.bill.institution.name}">
+                                <h:commandLink action="bill_reprint" value="#{pi.bill.toInstitution.name}">
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
                             </p:column>

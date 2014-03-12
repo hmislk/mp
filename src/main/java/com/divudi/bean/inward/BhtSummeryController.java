@@ -15,6 +15,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.ChargeItemTotal;
+import com.divudi.data.dataStructure.DepartmentBillItems;
 import com.divudi.data.dataStructure.InwardBillItem;
 import com.divudi.data.dataStructure.RoomChargeData;
 import com.divudi.data.inward.InwardChargeType;
@@ -25,7 +26,6 @@ import static com.divudi.data.inward.InwardChargeType.MaintainCharges;
 import static com.divudi.data.inward.InwardChargeType.Medicine;
 import static com.divudi.data.inward.InwardChargeType.NursingCharges;
 import static com.divudi.data.inward.InwardChargeType.OtherCharges;
-import static com.divudi.data.inward.InwardChargeType.PackageFee;
 import static com.divudi.data.inward.InwardChargeType.ProfessionalCharge;
 import static com.divudi.data.inward.InwardChargeType.RoomCharges;
 import com.divudi.ejb.BillNumberBean;
@@ -35,6 +35,7 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.Department;
 import com.divudi.entity.PatientItem;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
@@ -42,6 +43,7 @@ import com.divudi.entity.inward.TimedItemFee;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.DepartmentFacade;
 import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientItemFacade;
 import com.divudi.facade.PatientRoomFacade;
@@ -104,7 +106,7 @@ public class BhtSummeryController implements Serializable {
     private DischargeController dischargeController;
     ////////////////////////
     private List<RoomChargeData> patientRoom;
-    private List<BillItem> service;
+    private List<DepartmentBillItems> departmentBillItems;
     private List<BillFee> profesionallFee;
     private List<Bill> paymentBill;
     List<PatientItem> patientItems;
@@ -162,7 +164,7 @@ public class BhtSummeryController implements Serializable {
         profesionallFee = null;
         patientItems = null;
         paymentBill = null;
-        service = null;
+        departmentBillItems = null;
         printPreview = false;
         current = null;
         tmpPI = null;
@@ -305,7 +307,7 @@ public class BhtSummeryController implements Serializable {
             UtilityController.addErrorMessage("Please Discharge This Patient");
             return "";
         }
-        
+
         createTables();
 
         return "inward_final_bill";
@@ -519,7 +521,7 @@ public class BhtSummeryController implements Serializable {
         profesionallFee = null;
         patientItems = null;
         paymentBill = null;
-        service = null;
+        departmentBillItems = null;
         printPreview = false;
         current = null;
         tmpPI = null;
@@ -531,18 +533,10 @@ public class BhtSummeryController implements Serializable {
         return patientEncounter;
     }
 
-    private void update() {
-        getPatientRoom();
-        getService();
-        getPatientItems();
-        getProfessionalCharges();
-        getPaymentBill();
-    }
-
     public void setPatientEncounter(Admission patientEncounter) {
         makeNull();
         this.patientEncounter = patientEncounter;
-        update();
+//        update();
     }
 
     public SessionController getSessionController() {
@@ -628,6 +622,7 @@ public class BhtSummeryController implements Serializable {
         for (PatientRoom p : tmp) {
 
             RoomChargeData rcd = new RoomChargeData();
+            rcd.setPatientRoom(p);
             addRoomCharge(rcd, p);
             addLinenCharge(rcd, p);
             addMaintananceCharge(rcd, p);
@@ -778,29 +773,43 @@ public class BhtSummeryController implements Serializable {
         this.patientRoomFacade = patientRoomFacade;
     }
 
-    private void createServices() {
+    @EJB
+    private DepartmentFacade departmentFacade;
 
-        String sql = "SELECT  b FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
+    private void createServices() {
+        departmentBillItems = new ArrayList<>();
+
+        String sql;
+        HashMap hm;
+
+        sql = "SELECT  distinct(b.bill.toDepartment) FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
                 + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe ";
-        HashMap hm = new HashMap();
+        hm = new HashMap();
         hm.put("btp", BillType.InwardBill);
         hm.put("pe", getPatientEncounter());
 
-        service = getBillItemFacade().findBySQL(sql, hm, TemporalType.TIME);
+        List<Department> deptList = getDepartmentFacade().findBySQL(sql, hm, TemporalType.TIME);
+        hm.clear();
 
-        if (service == null) {
-            service = new ArrayList<>();
+        for (Department dep : deptList) {
+            DepartmentBillItems table = new DepartmentBillItems();
+            sql = "SELECT  b FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
+                    + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe and b.bill.toDepartment=:dep ";
+            hm = new HashMap();
+            hm.put("btp", BillType.InwardBill);
+            hm.put("pe", getPatientEncounter());
+            hm.put("dep", dep);
+            List<BillItem> billItems = getBillItemFacade().findBySQL(sql, hm, TemporalType.TIME);
+
+            table.setDepartment(dep);
+            table.setBillItems(billItems);
+
+            departmentBillItems.add(table);
+
         }
 
-        calServiceTot(service);
+        calServiceTot(departmentBillItems);
 
-    }
-
-    public List<BillItem> getService() {
-        if (service == null) {
-            service = new ArrayList<>();
-        }
-        return service;
     }
 
     public List<BillItem> getService(InwardChargeType inwardChargeType) {
@@ -816,17 +825,15 @@ public class BhtSummeryController implements Serializable {
 
     }
 
-    private void calServiceTot(List<BillItem> sl) {
+    private void calServiceTot(List<DepartmentBillItems> sl) {
         double temp = 0.0;
-        for (BillItem s : sl) {
-            temp += s.getNetValue();
+        for (DepartmentBillItems depB : sl) {
+            for (BillItem s : depB.getBillItems()) {
+                temp += s.getNetValue();
+            }
         }
         costOfServices = temp;
 
-    }
-
-    public void setService(List<BillItem> service) {
-        this.service = service;
     }
 
     public ServiceFacade getServiceFacade() {
@@ -922,7 +929,6 @@ public class BhtSummeryController implements Serializable {
     }
 
     public double getCostOfServices() {
-        getService();
         return costOfServices;
     }
 
@@ -1219,12 +1225,7 @@ public class BhtSummeryController implements Serializable {
                     if (getPatientEncounter().getAdmissionType() != null && !getPatientEncounter().getAdmissionType().isInwardPackage()) {
                         i.setTotal(getPatientEncounter().getAdmissionType().getAdmissionFee());
                     }
-                    break;
-                case PackageFee:
-                    if (getPatientEncounter().getAdmissionType() != null && getPatientEncounter().getAdmissionType().isInwardPackage()) {
-                        i.setTotal(getPatientEncounter().getAdmissionType().getAdmissionFee());
-                    }
-                    break;
+                    break;             
                 case RoomCharges:
                     i.setTotal(getTotalRoomCharges());
                     break;
@@ -1254,12 +1255,14 @@ public class BhtSummeryController implements Serializable {
     }
 
     private void setServiceTotCategoryWise(List<ChargeItemTotal> tmp) {
-        for (BillItem b : getService()) {
-            for (ChargeItemTotal ch : tmp) {
-                if (b.getItem().getInwardChargeType() != null) {
-                    if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
-                        ch.setTotal(ch.getTotal() + b.getNetValue());
-                        break;
+        for (DepartmentBillItems depB : getDepartmentBillItems()) {
+            for (BillItem b : depB.getBillItems()) {
+                for (ChargeItemTotal ch : tmp) {
+                    if (b.getItem().getInwardChargeType() != null) {
+                        if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
+                            ch.setTotal(ch.getTotal() + b.getNetValue());
+                            break;
+                        }
                     }
                 }
             }
@@ -1399,5 +1402,24 @@ public class BhtSummeryController implements Serializable {
 
     public void setToTime(Date toTime) {
         this.toTime = toTime;
+    }
+
+    public List<DepartmentBillItems> getDepartmentBillItems() {
+        if (departmentBillItems == null) {
+            departmentBillItems = new ArrayList<>();
+        }
+        return departmentBillItems;
+    }
+
+    public void setDepartmentBillItems(List<DepartmentBillItems> departmentBillItems) {
+        this.departmentBillItems = departmentBillItems;
+    }
+
+    public DepartmentFacade getDepartmentFacade() {
+        return departmentFacade;
+    }
+
+    public void setDepartmentFacade(DepartmentFacade departmentFacade) {
+        this.departmentFacade = departmentFacade;
     }
 }

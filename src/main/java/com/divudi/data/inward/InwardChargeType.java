@@ -10,8 +10,8 @@ package com.divudi.data.inward;
  */
 public enum InwardChargeType {
     AdmissionFee,
-    @Deprecated
-    PackageFee,
+   // @Deprecated
+   // PackageFee,
     RoomCharges,
     Medicine,
     MOCharges,

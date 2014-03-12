@@ -374,7 +374,7 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
         }
 
-        savePatientRoom();
+        savePatientRoom(getCurrent().getDateOfAdmission());
 
         double appointmentFee = 0;
         if (getAppointmentBill() != null) {
@@ -414,7 +414,7 @@ public class AdmissionController implements Serializable {
 
     }
 
-    private void savePatientRoom() {
+    private void savePatientRoom(Date admittedAt) {
         getPatientRoom().setCurrentLinenCharge(getPatientRoom().getRoomFacilityCharge().getLinenCharge());
         getPatientRoom().setCurrentMaintananceCharge(getPatientRoom().getRoomFacilityCharge().getMaintananceCharge());
         getPatientRoom().setCurrentMoCharge(getPatientRoom().getRoomFacilityCharge().getMoCharge());
@@ -422,7 +422,7 @@ public class AdmissionController implements Serializable {
         //   getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
 
         getPatientRoom().setAddmittedBy(getSessionController().getLoggedUser());
-        getPatientRoom().setAdmittedAt(getCurrent().getDateOfAdmission());
+        getPatientRoom().setAdmittedAt(admittedAt);
         getPatientRoom().setCreatedAt(Calendar.getInstance().getTime());
         getPatientRoom().setCreater(getSessionController().getLoggedUser());
         getPatientRoom().setPatientEncounter(getCurrent());

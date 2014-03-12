@@ -21,7 +21,10 @@
                             <p:calendar styleClass="noPrintButton" value="#{labReportSearchByInstitutionController.toDate}" pattern="dd MMMM yyyy hh:mm a" >
                             </p:calendar>
                             <h:outputLabel styleClass="noPrintButton" value="Institution" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
-                            <p:autoComplete styleClass="noPrintButton"  value="#{labReportSearchByInstitutionController.institution}"  style="text-align: left; margin: 5px; padding: 5px;"  completeMethod="#{institutionController.completeIns}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" forceSelection="true" rendered="true" requiredMessage="You must select a department" >
+                            <p:autoComplete styleClass="noPrintButton"  value="#{labReportSearchByInstitutionController.institution}" 
+                                            style="text-align: left; margin: 5px; padding: 5px;" 
+                                            completeMethod="#{institutionController.completeIns}" 
+                                            var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" forceSelection="true" rendered="true" requiredMessage="You must select a department" >
                             </p:autoComplete>
                             <p:commandButton styleClass="noPrintButton" value="Refresh" ajax="false" ></p:commandButton>
                             <p:commandButton styleClass="noPrintButton" value="Print" ajax="false" >

@@ -38,7 +38,9 @@
                         
                         <h:outputLabel value="Select Institution"/>
                       
-                        <p:autoComplete completeMethod="#{institutionController.completeCompany}" required="true" requiredMessage="Please Select Institution" value="#{cashSummeryControllerExcel.institution}"
+                        <p:autoComplete completeMethod="#{institutionController.completeCompany}" required="true" 
+                                        forceSelection="true"
+                                        requiredMessage="Please Select Institution" value="#{cashSummeryControllerExcel.institution}"
                                         var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" />
                     </h:panelGrid>
 

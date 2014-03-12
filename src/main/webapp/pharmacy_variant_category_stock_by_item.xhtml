@@ -17,9 +17,11 @@
                     <p:panel header="Department Stock Report by Batch" >
 
                         <h:panelGrid columns="6" >                           
-                            <p:autoComplete id="dep" completeMethod="#{departmentController.completeDept}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.department}" converter="dep"/>
+                            <p:autoComplete id="dep" completeMethod="#{departmentController.completeDept}" 
+                                            var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.department}" converter="dep"/>
 
-                            <p:autoComplete id="cat" completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.category}" >
+                            <p:autoComplete id="cat" completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" 
+                                            var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.category}" >
                             </p:autoComplete>
                             <p:commandButton ajax="false" value="Process" actionListener="#{reportsStockVariant.fillCategoryStocks()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" >

@@ -21,7 +21,10 @@
                                 <h:panelGrid columns="2" id="gpSelectText" >
                                     
                                     <h:outputLabel value="Search By Name"/>
-                                    <p:autoComplete converter="ampCon"  id="lstSelect1"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmpByName}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
+                                    <p:autoComplete converter="ampCon"  id="lstSelect1"   size="10" value="#{ampController.current}" 
+                                                    forceSelection="true"
+                                                    style="min-width: 223px" completeMethod="#{ampController.completeAmpByName}" 
+                                                    var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
                                         <p:column headerText="Item">
                                             <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
                                         </p:column>
@@ -36,7 +39,11 @@
                                     </p:autoComplete>
                                     
                                     <h:outputLabel value="Search By Code"/>
-                                    <p:autoComplete converter="ampCon"  id="lstSelect2"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmpByCode}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.code}" >
+                                    <p:autoComplete converter="ampCon"  id="lstSelect2"   size="10" 
+                                                    forceSelection="true"
+                                                    value="#{ampController.current}" style="min-width: 223px" 
+                                                    completeMethod="#{ampController.completeAmpByCode}"  var="myItem" 
+                                                    itemValue="#{myItem}" itemLabel="#{myItem.code}" >
                                         <p:column headerText="Item">
                                             <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
                                         </p:column>
@@ -51,7 +58,11 @@
                                     </p:autoComplete>
                                     
                                     <h:outputLabel value="Search By Barcode"/>
-                                    <p:autoComplete converter="ampCon"  id="lstSelect3"   size="10" value="#{ampController.current}" style="min-width: 223px" completeMethod="#{ampController.completeAmpByBarCode(qry)}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.barcode}" >
+                                    <p:autoComplete converter="ampCon"  id="lstSelect3"   size="10" 
+                                                    forceSelection="true"
+                                                    value="#{ampController.current}" style="min-width: 223px" 
+                                                    completeMethod="#{ampController.completeAmpByBarCode(qry)}" 
+                                                    var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.barcode}" >
                                         <p:column headerText="Item">
                                             <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
                                         </p:column>
@@ -95,9 +106,11 @@
                                             <h:outputText  value="Bar Code" ></h:outputText>
                                             <h:inputText  value="#{ampController.current.barcode}"  ></h:inputText>
                                             <h:outputText  value="Manufacturer" ></h:outputText>
-                                            <p:autoComplete  converter="ManuFacCon" completeMethod="#{manufacturerController.completeManu}" var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" forceSelection="true" value="#{ampController.current.institution}" ></p:autoComplete>
+                                            <p:autoComplete  converter="ManuFacCon" completeMethod="#{manufacturerController.completeManu}"
+                                                             var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" forceSelection="true" value="#{ampController.current.institution}" ></p:autoComplete>
                                             <h:outputLabel value="Item Category"/>
                                             <p:autoComplete  value="#{ampController.current.category}" 
+                                                             forceSelection="true"
                                                              completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" 
                                                              var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                                             </p:autoComplete>                                           
@@ -119,7 +132,10 @@
                                             <p:tab id="tabGen" title="Generic">
                                                 <p:panelGrid columns="2">
                                                     <h:outputLabel value="Select Generic Name" ></h:outputLabel>
-                                                    <p:autoComplete converter="vtm" value="#{ampController.addingVtmInVmp.vtm}" completeMethod="#{vtmController.completeVtm}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                                    <p:autoComplete converter="vtm" value="#{ampController.addingVtmInVmp.vtm}"
+                                                                    forceSelection="true"
+                                                                    completeMethod="#{vtmController.completeVtm}" var="vt"
+                                                                    itemLabel="#{vt.name}" itemValue="#{vt}" >
                                                     </p:autoComplete>
                                                     <h:outputLabel value="Strength" />                                                    
                                                     <h:panelGroup>
@@ -130,7 +146,9 @@
                                                     </h:panelGroup>
                                                     <h:outputLabel value="Type" ></h:outputLabel>
 
-                                                    <p:autoComplete value="#{ampController.currentVmp.category}" completeMethod="#{pharmaceuticalItemTypeController.completeCategory}" 
+                                                    <p:autoComplete value="#{ampController.currentVmp.category}"
+                                                                    forceSelection="true"
+                                                                    completeMethod="#{pharmaceuticalItemTypeController.completeCategory}" 
                                                                     var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                                                     </p:autoComplete>
                                                    

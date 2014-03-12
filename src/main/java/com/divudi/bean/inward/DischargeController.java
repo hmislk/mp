@@ -75,7 +75,7 @@ public class DischargeController implements Serializable {
         HashMap hm = new HashMap();
         hm.put("pEnc", current);
         List<Bill> list = getBillFacade().findBySQL(sql, hm);
-        if (list != null && list.size() != 0) {
+        if (list != null && !list.isEmpty()) {
             return true;
         }
 
@@ -167,7 +167,7 @@ public class DischargeController implements Serializable {
         if (getCurrent().getId() == null || getCurrent().getId() == 0) {
             UtilityController.addSuccessMessage("No Patient Data Found");
         } else {
-            getCurrent().setLastPatientRoom(getPatientRoom().get(getPatientRoom().size() - 1));
+          //  getCurrent().setLastPatientRoom(getPatientRoom().get(getPatientRoom().size() - 1));
             getCurrent().setDischarged(Boolean.TRUE);
             if (getCurrent().getDateOfDischarge() == null) {
                 getCurrent().setDateOfDischarge(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());

@@ -10,11 +10,13 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.entity.Bill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.facade.AdmissionFacade;
+import com.divudi.facade.BillFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.PersonFacade;
@@ -22,6 +24,7 @@ import com.divudi.facade.RoomFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -63,14 +66,44 @@ public class DischargeController implements Serializable {
     private List<Admission> items = null;
     private List<Patient> patientList;
     String selectText = "";
+    @EJB
+    private BillFacade billFacade;
+
+    private boolean checkPaymentIsMade() {
+        String sql = "select b from BilledBill b where b.retired=false "
+                + " and b.patientEncounter=:pEnc and b.cancelled=false ";
+        HashMap hm = new HashMap();
+        hm.put("pEnc", current);
+        List<Bill> list = getBillFacade().findBySQL(sql, hm);
+        if (list != null && list.size() != 0) {
+            return true;
+        }
+
+        return false;
+    }
 
     public void cancel() {
+
+        if (current == null) {
+            return;
+        }
+
+        if (checkPaymentIsMade()) {
+            UtilityController.addErrorMessage("Payment Is made for this Bht please cancel allpayment done for this bht ");
+            return;
+        }
+
+        //Net to check if Any Payment Paid for this BHT
         for (PatientRoom pr : getPatientRoom()) {
             pr.getRoom().setFilled(false);
             getRoomFacade().edit(pr.getRoom());
             getPatientRoomFacade().remove(pr);
         }
-        getEjbFacade().remove(current);
+        current.setRetired(true);
+        current.setRetireComments("BHT Cancel");
+        current.setRetiredAt(new Date());
+        current.setRetirer(getSessionController().getLoggedUser());
+        getEjbFacade().edit(current);
         makeNull();
     }
 
@@ -300,6 +333,14 @@ public class DischargeController implements Serializable {
 
     public void setRoomFacade(RoomFacade roomFacade) {
         this.roomFacade = roomFacade;
+    }
+
+    public BillFacade getBillFacade() {
+        return billFacade;
+    }
+
+    public void setBillFacade(BillFacade billFacade) {
+        this.billFacade = billFacade;
     }
 
     /**

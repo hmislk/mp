@@ -1278,6 +1278,7 @@ public class BillSearch implements Serializable {
 
     public void setBill(BilledBill bill) {
         recreateModel();
+        System.err.println("Bill "+bill);
         this.bill = bill;
     }
 

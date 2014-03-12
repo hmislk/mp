@@ -92,8 +92,7 @@ public class InwardSearch implements Serializable {
     List<BillFee> billFees;
     List<BillItem> refundingItems;
     List<Bill> bills;
-    private List<BillItem> tempbillItems;
-    private List<Bill> filterBill;
+    private List<BillItem> tempbillItems;   
     /////////////////////
     @Inject
     SessionController sessionController;
@@ -103,7 +102,6 @@ public class InwardSearch implements Serializable {
     public void makeNull() {
         bill = null;
         paymentMethod = null;
-
         printPreview = false;
         refundAmount = 0.0;
         billForRefund = null;
@@ -117,8 +115,7 @@ public class InwardSearch implements Serializable {
         billFees = null;
         refundingItems = null;
         bills = null;
-        tempbillItems = null;
-        filterBill = null;
+        tempbillItems = null;    
     }
 
     public WebUser getUser() {
@@ -693,7 +690,7 @@ public class InwardSearch implements Serializable {
         return bill;
     }
 
-    public void setBill(BilledBill bill) {
+    public void setBill(Bill bill) {
         recreateModel();
         this.bill = bill;
     }
@@ -909,8 +906,7 @@ public class InwardSearch implements Serializable {
     }
 
     public void setToDate(Date toDate) {
-        bills = null;
-        filterBill = null;
+        bills = null;        
         this.toDate = toDate;
     }
 
@@ -922,8 +918,7 @@ public class InwardSearch implements Serializable {
     }
 
     public void setFromDate(Date fromDate) {
-        bills = null;
-        filterBill = null;
+        bills = null;     
         this.fromDate = fromDate;
     }
 
@@ -959,14 +954,7 @@ public class InwardSearch implements Serializable {
         this.patientInvestigationFacade = patientInvestigationFacade;
     }
 
-    public List<Bill> getFilterBill() {
-        return filterBill;
-    }
-
-    public void setFilterBill(List<Bill> filterBill) {
-        this.filterBill = filterBill;
-    }
-
+ 
     public BillFacade getBillFacade() {
         return billFacade;
     }
@@ -975,7 +963,5 @@ public class InwardSearch implements Serializable {
         this.billFacade = billFacade;
     }
 
-    public void setBill(Bill bill) {
-        this.bill = bill;
-    }
+
 }

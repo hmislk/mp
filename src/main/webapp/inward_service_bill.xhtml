@@ -81,11 +81,7 @@
                                     </p:column>
                                     <p:column>
                                         <h:outputLabel value="#{ix.department.name}"/>
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputLabel value="#{ix.total}"/>
-                                    </p:column>
-
+                                    </p:column>                                   
                                 </p:autoComplete>
                                 <h:commandButton id="btnAddIx" value="Add" action="#{billBhtController.addToBill()}">
                                     <f:ajax execute="acIx btnAddIx" render="tblBillItem  pBillDetails pIxAdd" />
@@ -107,11 +103,7 @@
                                         <p:column>
                                             <f:facet name="header">Item</f:facet>
                                                 <h:outputLabel value="#{bi.billItem.item.name}"/>
-                                        </p:column>
-                                        <p:column>
-                                            <f:facet name="header">Fee</f:facet>
-                                                <h:outputLabel value="#{bi.billItem.netValue}"/>
-                                        </p:column>
+                                        </p:column>                                       
                                         <p:column>
                                             <f:facet name="header">Department</f:facet>
                                                 <h:outputLabel value="#{bi.billItem.item.department.name}"/>
@@ -145,7 +137,8 @@
                                     </p:dataTable>
                                 </p:tab>
                                 <p:tab id="tabBillFee" title="Fees" >
-                                    <p:dataTable rowIndexVar="rowIndex" value="#{billBhtController.lstBillFees}" var="bif" >
+                                    <p:dataTable rowIndexVar="rowIndex" value="#{billBhtController.lstBillFees}" var="bif" 
+                                                 rowStyleClass="#{bif.fee.feeType ne 'Staff' ?'noDisplayRow':''}">
                                         <p:column>
                                             <f:facet name="header">No</f:facet>
                                                 <h:outputLabel value="#{rowIndex+1}"/>
@@ -161,7 +154,7 @@
                                             <f:facet name="header">Payee</f:facet>
                                             <h:outputLabel value="#{bif.department.name}" rendered="#{bif.department!=null}" ></h:outputLabel>
                                             <h:outputLabel value="#{bif.staff.person.name}" rendered="#{bif.staff!=null and bif.fee.speciality==null}" ></h:outputLabel>
-
+                                            <h:outputLabel value="#{bif.fee.name}" rendered="#{bif.fee.feeType eq 'Matrix'}" ></h:outputLabel>
                                             <p:selectOneMenu value="#{bif.staff}" rendered="#{bif.fee.speciality!=null}" >
                                                 <f:selectItem itemLabel="Select Staff" />
                                                 <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality) }" var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
@@ -176,7 +169,7 @@
 
                         </h:panelGroup>
 
-                        <h:panelGroup id="panelBillTotals" >
+                        <h:panelGroup id="panelBillTotals" rendered="false" >
 
                             <p:panel header="Bill Details" id="pBillDetails" style="padding: 5px; margin: 10px;" >
                                 <p:panelGrid columns="2" columnClasses="numberCol, textCol"  >

@@ -57,7 +57,7 @@
                     <p:panel header="Add Extra Item ">
                         <p:autoComplete id="exItem" value="#{purchaseOrderRequestController.currentBillItem.item}"
                                         forceSelection="true"
-                                        completeMethod="#{itemController.completeAmpAndAmppItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                        completeMethod="#{itemController.completeAmpItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>
                             </p:column>

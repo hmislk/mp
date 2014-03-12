@@ -31,14 +31,14 @@
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                             <h:outputLabel value="To"/>
-                            <h:outputLabel  value="#{cashierReportController.toDate}" style="double: right" >
+                            <h:outputLabel  value="#{cashierReportController.toDate}" style="float: right" >
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </p:panelGrid>
 
 
-                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="double: right;" />  
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" />  
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint" />
                         </p:commandButton> 
 
@@ -46,7 +46,7 @@
                             ajax="false" 
                             value="Excel"  
                             styleClass="noPrintButton" 
-                            style="double: right;" >
+                            style="float: right;" >
 
                             <pe:exporter  type="xlsx" 
                                           target="tbl"  fileName="Cashier Detailed Report"

@@ -19,6 +19,7 @@ import com.divudi.entity.inward.TimedItem;
 import com.divudi.entity.inward.TimedItemFee;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.facade.AdmissionFacade;
+import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.FeeFacade;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import com.divudi.facade.ItemFeeFacade;
@@ -139,9 +140,11 @@ public class InwardCalculation {
         }
 
         BillFee bf = null;
-        
+
         if (!billItem.getItem().isUserChangable()) {
-            bf = calInwardMargin(billItem, patientEncounter);
+            bf = getBillFeeMatrix(billItem);
+            double serviceValue = getHospitalFeeByItem(billItem.getItem());
+            bf.setFeeValue(calInwardMargin(billItem, patientEncounter, serviceValue));
         }
 
         if (bf != null && bf.getFeeValue() != 0.0) {
@@ -251,17 +254,49 @@ public class InwardCalculation {
         return dbl;
 
     }
-
-    private BillFee calInwardMargin(BillItem billItem, PatientEncounter patientEncounter) {
-        BillFee billFee = new BillFee();
-        Fee matrix = createMatrixFee();
-        String sql;
-        double serviceValue = getHospitalFeeByItem(billItem.getItem());
+    
+    public double getHospitalFeeByBillItem(BillItem billItem) {
+        double dbl = 0;
         HashMap hm = new HashMap();
+        String sql = "select sum(f.feeValue) from BillFee f where f.retired=false and f.fee.feeType=:ftp "
+                + " and f.billItem=:itm ";
+        hm.put("ftp", FeeType.OwnInstitution);
+        hm.put("itm", billItem);
+        dbl = getBillFeeFacade().findDoubleByJpql(sql, hm);
 
-        billFee.setBillItem(billItem);
-        billFee.setFee(matrix);
-        billFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        return dbl;
+
+    }
+
+    @EJB
+    private BillFeeFacade billFeeFacade;
+
+    public BillFee getBillFeeMatrix(BillItem billItem) {
+        String sql = "Select bf from BillFee bf where bf.retired=false and "
+                + " bf.billItem=:bItem and bf.fee.feeType=:ftp ";
+        HashMap hm = new HashMap();
+        hm.put("bItem", billItem);
+        hm.put("ftp", FeeType.Matrix);
+
+        BillFee matrixFee = getBillFeeFacade().findFirstBySQL(sql, hm);
+
+        if (matrixFee == null) {
+            BillFee billFee = new BillFee();
+            Fee matrix = getMatrixFee();
+            billFee.setBillItem(billItem);
+            billFee.setFee(matrix);
+            billFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            billFee.setInstitution(billItem.getItem().getDepartment().getInstitution());
+            getBillFeeFacade().create(billFee);
+        }
+
+        return matrixFee;
+    }
+
+    public double calInwardMargin(BillItem billItem, PatientEncounter patientEncounter, double serviceValue) {
+
+        String sql;
+        HashMap hm = new HashMap();
 
         if (billItem.getItem() instanceof Investigation) {
             sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
@@ -283,23 +318,14 @@ public class InwardCalculation {
         List<InwardPriceAdjustment> is = getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
 
         if (is.size() <= 0) {
-            billFee.setFeeValue(0.0);
-            return billFee;
+            return 0;
         }
 
-        matrix.setFee((is.get(0).getMargin() * serviceValue) / 100);
-        billFee.setInstitution(billItem.getItem().getDepartment().getInstitution());
-        billFee.setFeeValue(matrix.getFee());
+        return ((is.get(0).getMargin() * serviceValue) / 100);
 
-        if (matrix.getId() == null) {
-            getFeeFacade().create(matrix);
-        } else {
-            getFeeFacade().edit(matrix);
-        }
-        return billFee;
     }
 
-    private Fee createMatrixFee() {
+    private Fee getMatrixFee() {
         String sql = "Select f from Fee f where f.retired=false and f.feeType=:nm";
         HashMap hm = new HashMap();
         hm.put("nm", FeeType.Matrix);
@@ -311,6 +337,7 @@ public class InwardCalculation {
             matrix.setName("Matrix");
             matrix.setFeeType(FeeType.Matrix);
             matrix.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            getFeeFacade().create(matrix);
             return matrix;
         } else {
             return fee.get(0);
@@ -494,5 +521,13 @@ public class InwardCalculation {
 
     public void setPatientRoomFacade(PatientRoomFacade patientRoomFacade) {
         this.patientRoomFacade = patientRoomFacade;
+    }
+
+    public BillFeeFacade getBillFeeFacade() {
+        return billFeeFacade;
+    }
+
+    public void setBillFeeFacade(BillFeeFacade billFeeFacade) {
+        this.billFeeFacade = billFeeFacade;
     }
 }

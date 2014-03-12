@@ -27,16 +27,16 @@
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                             <h:outputLabel value="To"/>
-                            <h:outputLabel  value="#{commonReport.toDate}" style="double: right" >
+                            <h:outputLabel  value="#{commonReport.toDate}" style="float: right" >
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </p:panelGrid>
 
-                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="double: right;" />  
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" />  
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint" />
                         </p:commandButton>  
-                        <p:commandButton ajax="false" value="Eport Excel" action="report_cashier_summery_by_user_print"  styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Eport Excel" action="report_cashier_summery_by_user_print"  styleClass="noPrintButton" style="float: right;" >
                         </p:commandButton>  
                     </f:facet>
 
@@ -141,31 +141,31 @@
 
                     <h:panelGrid columns="2" style="min-width: 100%;" >
                         <h:outputLabel value="Final Credit Total : "/>
-                        <h:outputLabel style="font-weight: bold;double: right; "  value="#{commonReport.finalCreditTotal}">
+                        <h:outputLabel style="font-weight: bold;float: right; "  value="#{commonReport.finalCreditTotal}">
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                         <h:outputLabel value="Final Credit Card Total : "/>
-                        <h:outputLabel style="font-weight: bold;double: right; "  value="#{commonReport.finalCreditCardTotal}">
+                        <h:outputLabel style="font-weight: bold;float: right; "  value="#{commonReport.finalCreditCardTotal}">
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                         <h:outputLabel value="Final Cheque Total : "/>
-                        <h:outputLabel value="#{commonReport.finalChequeTot}" style="font-weight: bold;double: right; "  >
+                        <h:outputLabel value="#{commonReport.finalChequeTot}" style="font-weight: bold;float: right; "  >
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                         <h:outputLabel value="Final Slip Total : "/>
-                        <h:outputLabel  value="#{commonReport.finalSlipTot}" style="font-weight: bold;double: right; "   >
+                        <h:outputLabel  value="#{commonReport.finalSlipTot}" style="font-weight: bold;float: right; "   >
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                         <h:outputLabel value="Final Cash Total : "/>
-                        <h:outputLabel style="font-weight: bold;double: right; "  value="#{commonReport.finalCashTotal}">
+                        <h:outputLabel style="font-weight: bold;float: right; "  value="#{commonReport.finalCashTotal}">
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                     </h:panelGrid>
 
                     <h:outputLabel value="..........................."/>
-                    <h:outputLabel value="..........................." style="double: right;"/><br/>
+                    <h:outputLabel value="..........................." style="float: right;"/><br/>
                     <h:outputLabel value="Cashier"/>
-                    <h:outputLabel value="Date" style="double: right;"/>
+                    <h:outputLabel value="Date" style="float: right;"/>
                 </p:panel>
 
             </h:form>

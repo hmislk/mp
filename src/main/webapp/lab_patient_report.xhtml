@@ -75,11 +75,11 @@
 
 
 
-                                                    <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Double'}"  >
+                                                    <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'float'}"  >
                                                         <p:inputText id="txtDblVal" autocomplete="off"  value="#{patientReportController.dblEnterVal}"   style="min-width: 200px;">
                                                             <f:ajax event="blur"  execute="@this" listener="#{patientReportController.saveDblVal(pv.id)}" ></f:ajax>
                                                         </p:inputText>
-                                                        <p:watermark  value="#{pv.doubleValue}" for="txtDblVal" />
+                                                        <p:watermark  value="#{pv.floatValue}" for="txtDblVal" />
                                                     </h:panelGroup>
 
                                                     <h:panelGroup rendered="#{pv.investigationItem.ixItemValueType eq 'Memo'}" >
@@ -130,11 +130,11 @@
                                                     </p:inputText>
                                                     <p:watermark  value="#{pvc.strValue}" for="txtStrCal" />
                                                 </h:panelGroup>
-                                                <h:panelGroup rendered="#{pvc.investigationItem.ixItemValueType eq 'Double'}" style="width: 200px;">
+                                                <h:panelGroup rendered="#{pvc.investigationItem.ixItemValueType eq 'float'}" style="width: 200px;">
                                                     <p:inputText id="txtDblCal" value="#{patientReportController.dblEnterVal}" >
                                                         <f:ajax event="blur"  execute="@this" listener="#{patientReportController.saveDblVal(pvc.id) }" ></f:ajax>
                                                     </p:inputText>
-                                                    <p:watermark  value="#{pvc.doubleValue}" for="txtDblCal" >
+                                                    <p:watermark  value="#{pvc.floatValue}" for="txtDblCal" >
                                                     </p:watermark>
                                                 </h:panelGroup>
                                             </p:column>
@@ -294,7 +294,7 @@
 
                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
                                     <div style="#{prv.investigationItem.cssStyle}; position:absolute;">
-                                        <h:outputLabel value="#{prv.doubleValue}"  rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'Double' and prv.investigationItem.retired eq false}"   escape="false" />
+                                        <h:outputLabel value="#{prv.floatValue}"  rendered="#{prv.investigationItem.ixItemType eq 'Value' and prv.investigationItem.ixItemValueType eq 'float' and prv.investigationItem.retired eq false}"   escape="false" />
                                     </div>
                                 </ui:repeat>
 
@@ -313,7 +313,7 @@
 
                                 <ui:repeat  value="#{patientReportController.currentPatientReport.patientReportItemValues}" var="prv" >
                                     <div style="#{prv.investigationItem.cssStyle}; position:absolute;">
-                                        <h:outputLabel value="#{prv.doubleValue}" rendered="#{prv.investigationItem.ixItemType eq 'Calculation' }" escape="false" >
+                                        <h:outputLabel value="#{prv.floatValue}" rendered="#{prv.investigationItem.ixItemType eq 'Calculation' }" escape="false" >
                                             <f:convertNumber pattern="0.0" />
                                         </h:outputLabel>
                                     </div>

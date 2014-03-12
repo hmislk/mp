@@ -72,7 +72,7 @@
                                 <p:calendar value="#{bhtSummeryController.patientEncounter.dateOfDischarge}" pattern="dd MMMM yyyy hh mm a" >                               
                                     <f:ajax execute="@this" render="sum tvPt ss" event="dateSelect" listener="#{bhtSummeryController.checkDate}" />
                                 </p:calendar> 
-                                <p:commandButton ajax="false" style="double: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
+                                <p:commandButton ajax="false" style="float: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
                             </h:panelGrid>
                         </p:panel>
 
@@ -88,9 +88,8 @@
                         </p:dataTable>                       
 
                         <p:tabView  id="tvPt" style="min-height: 75%;"  >
-                            <p:ajax event="tabChange"  process="@this" />
                             <p:tab id="tabNewPt" title="Room Detail" >
-                                <p:dataTable value="#{bhtSummeryController.patientRoom}" var="rm">
+                                <p:dataTable value="#{bhtSummeryController.roomChargeDatas}" var="rm">
                                     <p:column headerText="Room Name">
                                         #{rm.patientRoom.roomFacilityCharge.name}
                                     </p:column>                                                                          
@@ -190,7 +189,7 @@
                                         </p:column>     
                                         <p:column>
                                             <p:commandButton ajax="false" action="inward_edit_bill_item"  value="Update Bill Fee" >                                              
-                                                <f:setPropertyActionListener value="#{ser.bill}" target="#{serviceFeeEdit.bill}"/>
+                                                <f:setPropertyActionListener value="#{ser}" target="#{serviceFeeEdit.billItem}"/>
                                             </p:commandButton>
                                         </p:column>
                                         <p:column>

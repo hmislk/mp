@@ -56,7 +56,7 @@
                                 
                                 <p:defaultCommand target="btnAdd"/>
                             </p:panelGrid>
-                            <p:commandButton actionListener="#{commonReport.createMatrxTabl()}" ajax="false" value="Excel" styleClass="noPrintButton" style="double: right;" >
+                            <p:commandButton actionListener="#{commonReport.createMatrxTabl()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="inwd" fileName="Price_metrix_inward"  />
                              </p:commandButton>
                             <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createItems()}"/>

@@ -15,12 +15,12 @@
             <p:panel id="panelPrint"  styleClass="noBorder summeryBorder" header="Collecting Centre Sale Report">
                 <f:facet name="header"  >
                     <p:outputLabel value="Lab Credit Sale Report By Investigation" styleClass="noPrintButton"/>
-                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="double: right;" />
+                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
 
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
+                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
                         <p:printer target="panelPrint" />
                     </p:commandButton>
-                    <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="double: right;" >
+                    <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="float: right;" >
                         <p:dataExporter type="xls" target="tbl"  fileName="Collecting_Centre_Sale_Report" />
                     </p:commandButton>  
 

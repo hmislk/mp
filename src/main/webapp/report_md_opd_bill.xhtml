@@ -23,10 +23,10 @@
                         <f:ajax event="dateSelect"   listener="#{mdReportController.makeBillNull}"/>
                     </p:calendar>
 
-                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh" style="double: right;"/>
+                    <p:commandButton id="btnRefresh" ajax="false" value="Refresh" style="float: right;"/>
                     <p:defaultCommand target="btnRefresh"/>
 
-                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="double:right;">
+                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="float:right;">
                         <pe:exporter type="xlsx" target="tbl" fileName="Report_by_Bill_OPD_From_#{mdReportController.fromDate} To #{mdReportController.toDate}"
                                      facetBackground="#008000" facetFontSize="15" 
                                      facetFontColor="#FFFFFF" facetFontStyle="BOLD" cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL"  

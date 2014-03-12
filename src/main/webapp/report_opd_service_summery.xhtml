@@ -35,7 +35,8 @@
                         </p:calendar>
 
                         <h:outputLabel value="Service Name"/>
-                        <p:autoComplete value="#{serviceSummery.service}" completeMethod="#{itemController.completeService}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;" >
+                        <p:autoComplete value="#{serviceSummery.service}" completeMethod="#{itemController.completeService}" var="ix" 
+                                        itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;" forceSelection="true" >
                             <p:column>
                                 #{ix.name}
                             </p:column>

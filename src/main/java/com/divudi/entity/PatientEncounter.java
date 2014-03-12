@@ -99,8 +99,8 @@ public class PatientEncounter implements Serializable {
     String name;
     @Temporal(javax.persistence.TemporalType.DATE)
     Date dateTime;
-    @OneToOne
-    PatientRoom lastPatientRoom;
+//    @OneToOne
+//    PatientRoom lastPatientRoom;
 
     @Transient
     List<ClinicalFindingValue> diagnosis;
@@ -119,6 +119,8 @@ public class PatientEncounter implements Serializable {
 
     @Transient
     List<ClinicalFindingValue> plans;
+    @Transient
+    private PatientRoom transPatientRoom;
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
@@ -474,13 +476,7 @@ public class PatientEncounter implements Serializable {
 //    public PatientRoom getLastPateintRoom(){
 //        return getPatientRooms().get(getPatientRooms().size()-1);
 //    }
-    public PatientRoom getLastPatientRoom() {
-        return lastPatientRoom;
-    }
-
-    public void setLastPatientRoom(PatientRoom lastPatientRoom) {
-        this.lastPatientRoom = lastPatientRoom;
-    }
+   
 
     public Item getItem() {
         return item;
@@ -504,6 +500,14 @@ public class PatientEncounter implements Serializable {
 
     public void setToTime(Date toTime) {
         this.toTime = toTime;
+    }
+
+    public PatientRoom getTransPatientRoom() {
+        return transPatientRoom;
+    }
+
+    public void setTransPatientRoom(PatientRoom transPatientRoom) {
+        this.transPatientRoom = transPatientRoom;
     }
 
     

@@ -47,7 +47,9 @@
 
                                 <h:panelGrid columns="2" >
                                     <h:outputLabel value="User Name"/>
-                                    <p:autoComplete id="cmbUser" converter="webUs" completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
+                                    <p:autoComplete id="cmbUser" converter="webUs" 
+                                                    forceSelection="true"
+                                                    completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
                                                     var="w" itemLabel="#{w.webUserPerson.name}" itemValue="#{w}"
                                                     value="#{billSearch.user}" >
                                         <f:ajax event="itemSelect" execute="@this"  render="tblBills toDate fromDate"/>

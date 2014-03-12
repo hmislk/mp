@@ -43,7 +43,7 @@
                             </h:outputLabel>
                         </f:facet>
 
-                        <p:autoComplete value="#{sts.staff}" disabled="#{sts.finalized}"
+                        <p:autoComplete value="#{sts.staff}" disabled="#{sts.finalized}" forceSelection="true"
                                         completeMethod="#{shiftTableController.completeStaff}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
                                         converter="stfcon"   >  
                             <f:ajax event="itemSelect" execute="@this" render=":#{p:component('count')}" listener="#{shiftTableController.onEdit(sts)}" />

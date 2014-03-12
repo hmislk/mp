@@ -41,7 +41,11 @@
                             <p:ajax event="tabChange"  process="@this" listener="#{pettyCashBillController.onTabChange}" />
                             <p:tab id="tabStaff" title="Staff" >
                                 <p:panelGrid columns="1">
-                                    <p:autoComplete converter="stfcon"  id="cmbDoc1" value="#{pettyCashBillController.current.staff}" completeMethod="#{staffController.completeStaffWithoutDoctors}" var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                    <p:autoComplete converter="stfcon"  id="cmbDoc1" 
+                                                    value="#{pettyCashBillController.current.staff}" 
+                                                    completeMethod="#{staffController.completeStaffWithoutDoctors}" 
+                                                    forceSelection="true"
+                                                    var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                         <p:ajax event="itemSelect" process="acPt"/>
                                         <p:column>
                                             #{ix.code}
@@ -58,6 +62,7 @@
                             <p:tab id="tabSearchPerson" title="Search Person">
                                 <p:panelGrid columns="1" >
                                     <p:autoComplete widgetVar="aPt" id="acPt" 
+                                                    forceSelection="true"
                                                     value="#{pettyCashBillController.current.person}" 
                                                     completeMethod="#{personController.completePerson}" 
                                                     var="apt" itemLabel="#{apt.name}" converter="personCon"

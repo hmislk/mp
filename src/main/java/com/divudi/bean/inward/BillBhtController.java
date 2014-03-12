@@ -26,6 +26,7 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
+import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
@@ -52,11 +53,12 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.persistence.Transient;
 
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -149,7 +151,7 @@ public class BillBhtController implements Serializable {
         for (Department d : billDepts) {
             BilledBill myBill = new BilledBill();
             saveBill(d, myBill);
-            List<BillEntry> tmp = new ArrayList<BillEntry>();
+            List<BillEntry> tmp = new ArrayList<>();
             for (BillEntry e : lstBillEntries) {
                 if (e.getBillItem().getItem().getDepartment().getId() == d.getId()) {
                     getBillBean().saveBillItem(myBill, e, getSessionController().getLoggedUser());
@@ -167,11 +169,13 @@ public class BillBhtController implements Serializable {
             return "";
         }
 
-        for (BillEntry bE : getLstBillEntries()) {
+        if (getBillBean().checkDepartment(getLstBillEntries()) == 1) {
             BilledBill temp = new BilledBill();
-            Bill b = saveBill(bE.getBillItem().getItem().getDepartment(), temp);
-            getBillBean().saveBillItems(b, bE, getSessionController().getLoggedUser());
-            getBillBean().calculateBillItems(b, bE);
+            Bill b = saveBill(lstBillEntries.get(0).getBillItem().getItem().getDepartment(), temp);
+            getBillBean().saveBillItems(b, getLstBillEntries(), getSessionController().getLoggedUser());
+            getBillBean().calculateBillItems(b, getLstBillEntries());
+        } else {
+            putToBills();
         }
 
         makeNull();
@@ -183,7 +187,7 @@ public class BillBhtController implements Serializable {
     private Bill saveBill(Department bt, BilledBill temp) {
 
         temp.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), bt, BillType.InwardBill));
-        temp.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),temp,BillType.InwardBill,BillNumberSuffix.INWSER));
+        temp.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), temp, BillType.InwardBill, BillNumberSuffix.INWSER));
         //getCurrent().setCashBalance(cashBalance);
         //getCurrent().setCashPaid(cashPaid);
         temp.setBillType(BillType.InwardBill);
@@ -235,6 +239,17 @@ public class BillBhtController implements Serializable {
             return;
         }
 
+        if (getPatientEncounter() == null) {
+            UtilityController.addErrorMessage("Please Select Bht");
+            return;
+        }
+
+        if (getPatientEncounter().getTransPatientRoom() != null
+                && getPatientEncounter().getTransPatientRoom().getRoom().getDepartment() == null) {
+            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + getPatientEncounter().getTransPatientRoom().getRoom().getName());
+            return;
+        }
+
         if (getCurrentBillItem().getItem().getDepartment() == null) {
             UtilityController.addErrorMessage("Under administration, add a Department for this item " + getCurrentBillItem().getItem().getName());
             return;
@@ -258,7 +273,7 @@ public class BillBhtController implements Serializable {
         addingEntry.setBillItem(getCurrentBillItem());
         addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(getCurrentBillItem()));
 
-        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem()));
+        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(),getPatientEncounter()));
         addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
         lstBillEntries.add(addingEntry);
         getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
@@ -598,6 +613,11 @@ public class BillBhtController implements Serializable {
 
     public void setPatientEncounter(PatientEncounter patientEncounter) {
         this.patientEncounter = patientEncounter;
+        if (patientEncounter != null) {
+            patientEncounter.setTransPatientRoom(getInwardCalculation().getCurrentPatientRoom(patientEncounter));
+
+        }
+
     }
 
     public InwardPriceAdjustmentFacade getPriceAdjustmentFacade() {

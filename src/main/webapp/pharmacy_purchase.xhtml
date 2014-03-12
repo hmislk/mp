@@ -22,7 +22,9 @@
                                 <f:selectItems value="#{enumController.paymentMethodsForPo}" />
                             </p:selectOneMenu>
                             <p:outputLabel value="Select Dealor"/>
-                            <p:autoComplete converter="deal" value="#{pharmacyPurchaseController.bill.fromInstitution}" completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+                            <p:autoComplete converter="deal" value="#{pharmacyPurchaseController.bill.fromInstitution}" 
+                                            forceSelection="true"
+                                            completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
                             <p:commandButton  value="Settle" action="#{pharmacyPurchaseController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:commandButton value="New Bill" ajax="false" action="#{pharmacyPurchaseController.makeNull()}" >
@@ -52,6 +54,7 @@
                         <h:outputLabel/>
 
                         <p:autoComplete id="acItem"   value="#{pharmacyPurchaseController.currentBillItem.item}" 
+                                        forceSelection="true"
                                         completeMethod="#{itemController.completeAmpAndAmppItem}" 
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >

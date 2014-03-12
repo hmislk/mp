@@ -11,6 +11,7 @@ import com.divudi.entity.BillItem;
 import com.divudi.entity.Fee;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.ItemFee;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.PatientRoom;
@@ -21,6 +22,7 @@ import com.divudi.facade.AdmissionFacade;
 import com.divudi.facade.FeeFacade;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import com.divudi.facade.ItemFeeFacade;
+import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.TimedItemFeeFacade;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +53,19 @@ public class InwardCalculation {
     private FeeFacade feeFacade;
     @EJB
     private AdmissionFacade admissionFacade;
+    @EJB
+    private PatientRoomFacade patientRoomFacade;
+
+    public PatientRoom getCurrentPatientRoom(PatientEncounter patientEncounter) {
+        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and "
+                + " pr.patientEncounter=:pe order by pr.admittedAt desc ";
+        HashMap hm = new HashMap();
+        hm.put("pe", patientEncounter);
+        PatientRoom patientRoom = getPatientRoomFacade().findFirstBySQL(sql, hm);
+
+        return patientRoom;
+
+    }
 
     public String getBhtText(AdmissionType admissionType) {
         String bhtText;
@@ -86,13 +101,15 @@ public class InwardCalculation {
         }
     }
 
-    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem) {
+    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter) {
 
         List<BillFee> billFeeList = new ArrayList<>();
         BillFee billFee;
         String sql;
-        sql = "Select f from ItemFee f where f.retired=false and f.item.id = " + billItem.getItem().getId();
-        List<ItemFee> itemFee = getItemFeeFacade().findBySQL(sql);
+        HashMap hm = new HashMap();
+        sql = "Select f from ItemFee f where f.retired=false and f.item=:itm ";
+        hm.put("itm", billItem.getItem());
+        List<ItemFee> itemFee = getItemFeeFacade().findBySQL(sql,hm);
 
         for (Fee i : itemFee) {
             billFee = new BillFee();
@@ -120,7 +137,7 @@ public class InwardCalculation {
             billFeeList.add(billFee);
         }
 
-        BillFee bf = calInwardMargin(billItem);
+        BillFee bf = calInwardMargin(billItem,patientEncounter);
 
         if (bf.getFeeValue() != 0.0) {
             billFeeList.add(bf);
@@ -129,6 +146,48 @@ public class InwardCalculation {
         return billFeeList;
     }
 
+//    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem) {
+//
+//        List<BillFee> billFeeList = new ArrayList<>();
+//        BillFee billFee;
+//        String sql;
+//        sql = "Select f from ItemFee f where f.retired=false and f.item.id = " + billItem.getItem().getId();
+//        List<ItemFee> itemFee = getItemFeeFacade().findBySQL(sql);
+//
+//        for (Fee i : itemFee) {
+//            billFee = new BillFee();
+//            billFee.setFee(i);
+//            billFee.setFeeValue(i.getFee());
+//            billFee.setBillItem(billItem);
+//
+//            billFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+//
+//            if (billItem.getItem().getDepartment() != null) {
+//                billFee.setDepartment(billItem.getItem().getDepartment());
+//            }
+//
+//            if (billItem.getItem().getDepartment().getInstitution() != null) {
+//                billFee.setInstitution(billItem.getItem().getDepartment().getInstitution());
+//            }
+//
+//            if (i.getStaff() != null) {
+//                billFee.setStaff(i.getStaff());
+//            } else {
+//                billFee.setStaff(null);
+//            }
+//            billFee.setSpeciality(i.getSpeciality());
+//
+//            billFeeList.add(billFee);
+//        }
+//
+//        BillFee bf = calInwardMargin(billItem);
+//
+//        if (bf.getFeeValue() != 0.0) {
+//            billFeeList.add(bf);
+//        }
+//
+//        return billFeeList;
+//    }
 //    private BillFee calInwardMargin2(BillItem billItem) {
 //        BillFee billFee = new BillFee();
 //        Fee matrix = createMatrixFee();
@@ -175,7 +234,7 @@ public class InwardCalculation {
 //        }
 //        return billFee;
 //    }
-    private BillFee calInwardMargin(BillItem billItem) {
+    private BillFee calInwardMargin(BillItem billItem,PatientEncounter patientEncounter) {
         BillFee billFee = new BillFee();
         Fee matrix = createMatrixFee();
         String sql;
@@ -198,7 +257,7 @@ public class InwardCalculation {
             hm.put("cat", billItem.getItem().getCategory());
         }
 
-        hm.put("dep", billItem.getItem().getDepartment());
+        hm.put("dep", patientEncounter.getTransPatientRoom().getRoom().getDepartment());
         hm.put("frPrice", billItem.getItem().getTotal());
         hm.put("tPrice", billItem.getItem().getTotal());
 
@@ -408,5 +467,13 @@ public class InwardCalculation {
 
     public void setAdmissionFacade(AdmissionFacade admissionFacade) {
         this.admissionFacade = admissionFacade;
+    }
+
+    public PatientRoomFacade getPatientRoomFacade() {
+        return patientRoomFacade;
+    }
+
+    public void setPatientRoomFacade(PatientRoomFacade patientRoomFacade) {
+        this.patientRoomFacade = patientRoomFacade;
     }
 }

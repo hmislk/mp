@@ -27,7 +27,7 @@
                             <p:panel header="Patient Details">
                                 <h:outputLabel value="Type Patinet Name or BHT : "/>
                                 <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admCon"
-                                                value="#{pharmacySaleBhtController.patientEncounter}" 
+                                                value="#{billBhtController.patientEncounter}" 
                                                 completeMethod="#{admissionController.completePatientBht}"
                                                 var="apt2" itemLabel="#{amp2.bhtNo}"
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">

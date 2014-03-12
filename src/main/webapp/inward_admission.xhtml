@@ -140,7 +140,7 @@
                                 </h:panelGrid>
                             </p:tab>
                             <p:tab title="Appointment" >
-                                <p:autoComplete id="aBill" converter="bill" value="#{admissionController.appointmentBill}" 
+                                <p:autoComplete forceSelection="true" id="aBill" converter="bill" value="#{admissionController.appointmentBill}" 
                                                 completeMethod="#{appointmentController.completeAppointment}" 
                                                 var="apt2" itemLabel="#{apt2.patient.person.nameWithTitle}" 
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">

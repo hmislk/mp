@@ -51,6 +51,8 @@
                                     <p:selectOneMenu   value="#{admissionTypeController.current.admissionTypeEnum}"  >
                                         <f:selectItems value="#{enumController.admissionTypeEnum}"  />                                        
                                     </p:selectOneMenu>
+                                    <h:outputText  value="Code" ></h:outputText>
+                                    <h:inputText  value="#{admissionTypeController.current.code}"  ></h:inputText>
                                     <h:outputLabel value="Fee"/>
                                     <h:inputText value="#{admissionTypeController.current.admissionFee}"/>
                                     <h:outputLabel value="Room/Bed Allowed"/>

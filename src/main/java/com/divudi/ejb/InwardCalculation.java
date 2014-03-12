@@ -55,7 +55,7 @@ public class InwardCalculation {
     public String getBhtText(AdmissionType admissionType) {
         String bhtText;
         String sql = "SELECT count(a.id) FROM Admission a where "
-                + " a.retired=false and a.admissionTypeEnum=:adType ";
+                + " a.retired=false and a.admissionType.admissionTypeEnum=:adType ";
 
         HashMap hm = new HashMap();
         hm.put("adType", admissionType.getAdmissionTypeEnum());

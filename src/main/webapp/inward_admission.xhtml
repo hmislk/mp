@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp">
+                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
+                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward">
 
 
     <ui:define name="content">
@@ -90,14 +91,6 @@
                                     <h:outputLabel value="Phone"/>
                                     <p:inputMask mask="999-9999999" id="txtNewPtPhone" autocomplete="off" maxlength="11" value="#{admissionController.newPatient.person.phone}">
                                     </p:inputMask>
-<!--                                <h:outputLabel value="Date of Birth"/>
-                                    <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
-                                        <f:ajax event="dateSelect" />
-                                    </p:calendar>
-
-                                    <p:watermark value="YEAR" for="year" />
-                                    <p:watermark value="MONTH" for="month" />
-                                    <p:watermark value="DAYS" for="day" />-->
                                 </h:panelGrid>
 
                             </p:tab>
@@ -209,12 +202,18 @@
                             </p:autoComplete> 
                             <p:outputLabel id="lblLimit" value="Credit Limit" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; "/>
                             <p:inputText id="limit" value="#{admissionController.current.creditLimit}" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; "/>
+                            <h:outputLabel value="Diposit" />
+                            <p:inputText value="#{admissionController.deposit}"/>
                         </h:panelGrid>
 
 
                     </p:panel>
                 </h:panelGrid>
             </h:panelGrid>
+
+            <p:panel rendered="#{inwardPaymentController.printPreview}">
+                <bill:inwardPayment bill="#{inwardPaymentController.current}"  />
+            </p:panel>
 
         </h:form>
 

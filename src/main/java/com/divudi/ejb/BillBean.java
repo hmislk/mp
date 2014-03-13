@@ -478,12 +478,12 @@ public class BillBean {
     public void calculateBillItems(Bill bill, List<BillEntry> billEntrys) {
         double s = 0.0;
         double i = 0.0;
-        double tot = 0.0;
-        double net = 0.0;
+        double val = 0.0;
+       
         for (BillEntry e : billEntrys) {
             for (BillFee bf : e.getLstBillFees()) {
-                tot += bf.getFeeGrossValue();
-                net += bf.getFeeValue();
+             //   tot += bf.getFeeGrossValue();
+                val += bf.getFeeValue();
                 if (bf.getFee().getFeeType() != FeeType.Staff) {
                     i = i + bf.getFeeValue();
                 } else {
@@ -499,10 +499,8 @@ public class BillBean {
         bill.setStaffFee(s);
         bill.setPerformInstitutionFee(i);
 
-        bill.setTotal(tot);
-        bill.setDiscount(tot - net);
-        bill.setDiscountPercent(((tot - net) / tot) * 100);
-        bill.setNetTotal(net);
+        bill.setTotal(val);
+        bill.setNetTotal(val);
 
         getBillFacade().edit(bill);
     }

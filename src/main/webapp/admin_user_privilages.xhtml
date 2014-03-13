@@ -19,7 +19,7 @@
                 <p:panel header="Manage User Privilages"   >
                     <h:panelGrid  columns="2" >                          
                         <h:outputLabel value="Select User"/>
-                        <p:autoComplete id="user" converter="webUs"  completeMethod="#{webUserController.completeUser}" var="us" itemLabel="#{us.webUserPerson.name}" itemValue="#{us}"  value="#{userPrivilageController.currentWebUser}" >
+                        <p:autoComplete id="user" converter="webUs" forceSelection="true"  completeMethod="#{webUserController.completeUser}" var="us" itemLabel="#{us.webUserPerson.name}" itemValue="#{us}"  value="#{userPrivilageController.currentWebUser}" >
                             <f:ajax event="itemSelect" execute="user" render="tree" />
                         </p:autoComplete>
                     </h:panelGrid>

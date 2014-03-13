@@ -18,7 +18,9 @@
                         <p:panel header="Add new adjustment" >
                             <p:panelGrid columns="2" >
                                 <h:outputLabel value="Department :" />
-                                <p:autoComplete value="#{inwardPriceAdjustmntController.department}" completeMethod="#{departmentController.completeDept}" 
+                                <p:autoComplete value="#{inwardPriceAdjustmntController.department}" 
+                                                forceSelection="true"
+                                                completeMethod="#{departmentController.completeDept}" 
                                                 var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
                                     <p:column>
                                         <h:outputLabel value="#{dep.name}"/>
@@ -28,7 +30,9 @@
                                     </p:column>
                                 </p:autoComplete>
                                 <h:outputLabel value="Category/Subcategory" ></h:outputLabel>
-                                <p:autoComplete value="#{inwardPriceAdjustmntController.category}" completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
+                                <p:autoComplete value="#{inwardPriceAdjustmntController.category}" 
+                                                forceSelection="true"
+                                                completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
                                     <p:column>
                                         <h:outputLabel value="#{cat.name}"/>
@@ -38,17 +42,7 @@
                                     </p:column> 
 
                                 </p:autoComplete>
-                                <h:outputLabel></h:outputLabel>
-                                
-<!--                                <h:outputLabel value="Room Location" ></h:outputLabel>
-                                <p:autoComplete value="#{inwardPriceAdjustmntController.roomLocation}" completeMethod="#{roomCategoryController.completeRoomCategory(c)}" 
-                                                var="c" itemLabel="#{c.name}" itemValue="#{c}" >
-                                    <p:column>
-                                        <h:outputLabel value="#{c.name}"/>
-                                    </p:column>
-                                    
-                                </p:autoComplete>-->
-                                
+                            
                
                                 <h:outputLabel value="From" ></h:outputLabel>
                                 <p:inputText value="#{inwardPriceAdjustmntController.fromPrice}" />
@@ -62,7 +56,7 @@
                                 
                                 <p:defaultCommand target="btnAdd"/>
                             </p:panelGrid>
-                            <p:commandButton actionListener="#{commonReport.createMatrxTabl()}" ajax="false" value="Excel" styleClass="noPrintButton" style="double: right;" >
+                            <p:commandButton actionListener="#{commonReport.createMatrxTabl()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="inwd" fileName="Price_metrix_inward"  />
                              </p:commandButton>
                             <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createItems()}"/>
@@ -84,7 +78,7 @@
                                 <p:column headerText="Department Name">
 <!--                                    <h:inputText value="#{a.department.name}" />-->
                                     
-                                    <p:autoComplete value="#{a.department}" completeMethod="#{departmentController.completeDept}" 
+                                    <p:autoComplete forceSelection="true" value="#{a.department}" completeMethod="#{departmentController.completeDept}" 
                                                 var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
                                     <p:column>
                                         <h:inputText value="#{dep.name}"/>
@@ -96,18 +90,11 @@
                                     
                                 </p:column>
                                 
-<!--                                <p:column headerText="Location">
-                                    <p:autoComplete value="#{a.roomLocation}" completeMethod="#{roomCategoryController.completeRoomCategory(c)}" 
-                                                var="c" itemLabel="#{c.name}" itemValue="#{c}" >
-                                    <p:column>
-                                        <h:inputText value="#{c.name}"/>
-                                    </p:column>
-                                    
-                                </p:autoComplete>
-                                </p:column>-->
+
                                 
                                 <p:column headerText="Category Name">
-                                         <p:autoComplete value="#{a.category}" completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
+                                         <p:autoComplete forceSelection="true" value="#{a.category}" completeMethod="#{categoryController.completeCategoryMatrix}" 
+                                                         converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
                                     <p:column>
                                         <h:outputLabel value="#{cat.name}"/>

@@ -182,7 +182,8 @@
                                 </p:panel>
 
                                 <p:panel header="Department Details">                                        
-                                    <p:autoComplete completeMethod="#{departmentController.completeDept}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsTransfer.department}" converter="dep" >
+                                    <p:autoComplete completeMethod="#{departmentController.completeDept}"  
+                                                    var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsTransfer.department}" converter="dep" >
                                     </p:autoComplete>
                                 </p:panel>
 

@@ -34,7 +34,9 @@
                         <p:panelGrid columns="2" >
 
                             <h:outputLabel value="Select Generic Name" ></h:outputLabel>
-                            <p:autoComplete converter="vtm" value="#{vmpController.addingVtmInVmp.vtm}" completeMethod="#{vtmController.completeVtm}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                            <p:autoComplete converter="vtm" value="#{vmpController.addingVtmInVmp.vtm}" 
+                                            forceSelection="true"
+                                            completeMethod="#{vtmController.completeVtm}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             </p:autoComplete>
                             <h:outputLabel value="Strength" >
                             </h:outputLabel>

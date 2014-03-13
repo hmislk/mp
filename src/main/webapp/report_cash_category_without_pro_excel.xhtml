@@ -14,12 +14,12 @@
             <p:panel>
                 <f:facet name="header" >
 
-                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="double: right;" />
+                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
 
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
+                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
                         <p:printer target="panelPrint" />
                     </p:commandButton>
-                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="double: right;">
+                    <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="float: right;">
                         <pe:exporter type="xlsx" target="opd,other,pharmacy,
                                      agent,inwProf,col,dept,card,slip,cheque,finalSum" fileName="Book_Keeping_Summery"
 
@@ -38,26 +38,12 @@
                         
                         <h:outputLabel value="Select Institution"/>
                       
-                        <p:autoComplete completeMethod="#{institutionController.completeCompany}" required="true" requiredMessage="Please Select Institution" value="#{cashSummeryControllerExcel.institution}"
+                        <p:autoComplete completeMethod="#{institutionController.completeCompany}" required="true" 
+                                        forceSelection="true"
+                                        requiredMessage="Please Select Institution" value="#{cashSummeryControllerExcel.institution}"
                                         var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" />
                     </h:panelGrid>
-<!--                    <h:panelGrid columns="2" styleClass="printBlock" style="min-width: 100%;">
-                        <p:outputLabel value="#{cashSummeryControllerExcel.institution.name}"/><h:outputLabel/>
-                        <p:outputLabel value="Book Keeping Summary"/><h:outputLabel/>   
-                        <h:outputLabel/><h:outputLabel/>
-                        <h:panelGroup>
-                            <h:outputLabel value="From : "  />
-                            <h:outputLabel  value="#{cashSummeryControllerExcel.fromDate}" >
-                                <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
-                            </h:outputLabel>
-                        </h:panelGroup>
-                        <h:panelGroup>
-                            <h:outputLabel value="To : "/>
-                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="double: right" >
-                                <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
-                            </h:outputLabel>
-                        </h:panelGroup>
-                    </h:panelGrid>-->
+
                 </f:facet>
             </p:panel>
 <!--            <p:spacer height="30" />-->
@@ -76,7 +62,7 @@
                         </h:panelGroup>
                         <h:panelGroup>
                             <h:outputLabel value="To : "/>
-                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="double: right" >
+                            <h:outputLabel  value="#{cashSummeryControllerExcel.toDate}" style="float: right" >
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </h:panelGroup>

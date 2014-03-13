@@ -55,7 +55,7 @@
                                 </p:submenu>
                                 <p:submenu label="Inward"  rendered="#{webUserController.hasPrivilege('Inward')}">
                                     <p:menuitem  ajax="false"  action="inward_admission" value="Admission" actionListener="#{admissionController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false"  action="inward_bht_edit" value="Edit Admission Detail" actionListener="#{bhtEditController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                
+                                    <p:menuitem  ajax="false"  action="inward_edit_bht" value="Edit Admission Detail" actionListener="#{bhtEditController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                
                                     <p:menuitem  ajax="false"  action="inward_search" value="Patient Search" actionListener="#{dischargeController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>                                        
 
                                     <p:submenu label="Billing">

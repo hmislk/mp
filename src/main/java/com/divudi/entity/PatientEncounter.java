@@ -119,8 +119,7 @@ public class PatientEncounter implements Serializable {
 
     @Transient
     List<ClinicalFindingValue> plans;
-    @Transient
-    private PatientRoom transPatientRoom;
+ 
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
@@ -502,16 +501,6 @@ public class PatientEncounter implements Serializable {
         this.toTime = toTime;
     }
 
-    public PatientRoom getTransPatientRoom() {
-        return transPatientRoom;
-    }
-
-    public void setTransPatientRoom(PatientRoom transPatientRoom) {
-        this.transPatientRoom = transPatientRoom;
-    }
-
-    
-
-  
+   
 
 }

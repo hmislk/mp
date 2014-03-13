@@ -144,7 +144,7 @@ public class BillBhtController implements Serializable {
     }
 
     public void putToBills() {
-        Set<Department> billDepts = new HashSet<Department>();
+        Set<Department> billDepts = new HashSet<>();
         for (BillEntry e : lstBillEntries) {
             billDepts.add(e.getBillItem().getItem().getDepartment());
         }
@@ -195,8 +195,8 @@ public class BillBhtController implements Serializable {
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        temp.setFromDepartment(getSessionController().getLoggedUser().getDepartment());
-        temp.setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
+        temp.setFromDepartment(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoom().getDepartment());
+        temp.setFromInstitution(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoom().getDepartment().getInstitution());
 
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
@@ -244,9 +244,15 @@ public class BillBhtController implements Serializable {
             return;
         }
 
-        if (getPatientEncounter().getTransPatientRoom() != null
-                && getPatientEncounter().getTransPatientRoom().getRoom().getDepartment() == null) {
-            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + getPatientEncounter().getTransPatientRoom().getRoom().getName());
+        PatientRoom patientRoom = getInwardCalculation().getCurrentPatientRoom(patientEncounter);
+
+        if (patientRoom == null) {
+            UtilityController.addErrorMessage("Please Set Room or Bed For This Patient");
+            return;
+        }
+
+        if (patientRoom.getRoom().getDepartment() == null) {
+            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoom().getName());
             return;
         }
 
@@ -273,7 +279,7 @@ public class BillBhtController implements Serializable {
         addingEntry.setBillItem(getCurrentBillItem());
         addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(getCurrentBillItem()));
 
-        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(),getPatientEncounter()));
+        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter()));
         addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
         lstBillEntries.add(addingEntry);
         getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
@@ -613,10 +619,6 @@ public class BillBhtController implements Serializable {
 
     public void setPatientEncounter(PatientEncounter patientEncounter) {
         this.patientEncounter = patientEncounter;
-        if (patientEncounter != null) {
-            patientEncounter.setTransPatientRoom(getInwardCalculation().getCurrentPatientRoom(patientEncounter));
-
-        }
 
     }
 

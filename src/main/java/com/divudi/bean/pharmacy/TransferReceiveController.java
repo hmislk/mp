@@ -176,9 +176,7 @@ public class TransferReceiveController implements Serializable {
 //                i.setTmpQty(0);
 //                getBillItemFacade().edit(i);
 //            }
-            
-            
-            
+
             //Temprory Solution
             Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
             tmpPh.setStock(addedStock);

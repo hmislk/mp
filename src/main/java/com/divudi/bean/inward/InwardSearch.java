@@ -8,7 +8,6 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.bean.WebUserController;
 import com.divudi.data.BillNumberSuffix;
-import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -21,7 +20,6 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
-import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.lab.PatientInvestigation;
@@ -36,11 +34,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.persistence.Temporal;
@@ -91,9 +87,8 @@ public class InwardSearch implements Serializable {
     List<BillComponent> billComponents;
     List<BillFee> billFees;
     List<BillItem> refundingItems;
-    List<Bill> bills;
+    private List<Bill> bills;
     private List<BillItem> tempbillItems;
-    private List<Bill> filterBill;
     /////////////////////
     @Inject
     SessionController sessionController;
@@ -103,7 +98,6 @@ public class InwardSearch implements Serializable {
     public void makeNull() {
         bill = null;
         paymentMethod = null;
-
         printPreview = false;
         refundAmount = 0.0;
         billForRefund = null;
@@ -118,7 +112,6 @@ public class InwardSearch implements Serializable {
         refundingItems = null;
         bills = null;
         tempbillItems = null;
-        filterBill = null;
     }
 
     public WebUser getUser() {
@@ -266,7 +259,7 @@ public class InwardSearch implements Serializable {
             rb.setDiscount(0.00);
             rb.setDiscountPercent(0.0);
 
-            rb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), rb,getBill().getBillType(), BillNumberSuffix.INWREF));
+            rb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), rb, getBill().getBillType(), BillNumberSuffix.INWREF));
             rb.setDeptId(getBillNumberBean().departmentRefundBill(getSessionController().getLoggedUser().getDepartment(), getBill().getToDepartment(), BillNumberSuffix.INWREF));
 
             rb.setToDepartment(getBill().getToDepartment());
@@ -538,7 +531,7 @@ public class InwardSearch implements Serializable {
             cb.setDiscount(0 - getBill().getDiscount());
 
             cb.setDiscountPercent(getBill().getDiscountPercent());
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(),cb, getBill().getBillType(), BillNumberSuffix.INWCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), cb, getBill().getBillType(), BillNumberSuffix.INWCAN));
 
 //            TODO: FIND NULL POINT EXCEPTION
             cb.setInstitution(getSessionController().getLoggedUser().getInstitution());
@@ -670,17 +663,6 @@ public class InwardSearch implements Serializable {
         }
     }
 
-   
-
-   
-
-   
-    
-
-   
-
-   
-
     public void setBills(List<Bill> bills) {
         this.bills = bills;
     }
@@ -693,9 +675,15 @@ public class InwardSearch implements Serializable {
         return bill;
     }
 
-    public void setBill(BilledBill bill) {
+    public void setBill(Bill bill) {
         recreateModel();
+        System.err.println("Billed " + bill);
         this.bill = bill;
+    }
+
+    public void setBillActionListener(String id) {
+        System.err.println("Billed Id " + id);
+        setBill(bill);
     }
 
     public List<BillEntry> getBillEntrys() {
@@ -735,13 +723,17 @@ public class InwardSearch implements Serializable {
                 String sql = "SELECT b FROM BillFee b WHERE b.retired=false and b.bill.id=" + getBill().getId();
                 billFees = getBillFeeFacade().findBySQL(sql);
                 if (billFees == null) {
-                    billFees = new ArrayList<BillFee>();
+                    billFees = new ArrayList<>();
                 }
             }
         }
 
         return billFees;
     }
+    
+    
+
+  
 
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
@@ -910,7 +902,6 @@ public class InwardSearch implements Serializable {
 
     public void setToDate(Date toDate) {
         bills = null;
-        filterBill = null;
         this.toDate = toDate;
     }
 
@@ -923,7 +914,6 @@ public class InwardSearch implements Serializable {
 
     public void setFromDate(Date fromDate) {
         bills = null;
-        filterBill = null;
         this.fromDate = fromDate;
     }
 
@@ -959,14 +949,6 @@ public class InwardSearch implements Serializable {
         this.patientInvestigationFacade = patientInvestigationFacade;
     }
 
-    public List<Bill> getFilterBill() {
-        return filterBill;
-    }
-
-    public void setFilterBill(List<Bill> filterBill) {
-        this.filterBill = filterBill;
-    }
-
     public BillFacade getBillFacade() {
         return billFacade;
     }
@@ -975,7 +957,8 @@ public class InwardSearch implements Serializable {
         this.billFacade = billFacade;
     }
 
-    public void setBill(Bill bill) {
-        this.bill = bill;
+    public List<Bill> getBills() {
+        return bills;
     }
+
 }

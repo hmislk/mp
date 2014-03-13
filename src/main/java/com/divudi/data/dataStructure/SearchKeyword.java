@@ -22,7 +22,9 @@ public class SearchKeyword {
     private String staffName;
     private String personName;
     private String fromInstitution;
+    private String fromDepartment;
     private String toInstitution;
+    private String toDepartment;
     private String creator;
     private String bank;
     private String number;
@@ -31,6 +33,8 @@ public class SearchKeyword {
     private String category;
     private String institution;
     private String bhtNo;
+    private String paymentScheme;
+    private String paymentmethod;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -215,5 +219,37 @@ public class SearchKeyword {
 
     public void setBhtNo(String bhtNo) {
         this.bhtNo = bhtNo;
+    }
+
+    public String getToDepartment() {
+        return toDepartment;
+    }
+
+    public void setToDepartment(String toDepartment) {
+        this.toDepartment = toDepartment;
+    }
+
+    public String getFromDepartment() {
+        return fromDepartment;
+    }
+
+    public void setFromDepartment(String fromDepartment) {
+        this.fromDepartment = fromDepartment;
+    }
+
+    public String getPaymentScheme() {
+        return paymentScheme;
+    }
+
+    public void setPaymentScheme(String paymentScheme) {
+        this.paymentScheme = paymentScheme;
+    }
+
+    public String getPaymentmethod() {
+        return paymentmethod;
+    }
+
+    public void setPaymentmethod(String paymentmethod) {
+        this.paymentmethod = paymentmethod;
     }
 }

@@ -21,14 +21,14 @@
                         <h:outputLabel value="#{commonReport.webUser.institution.name}"/> <br/>
 
 
-                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" actionListener="#{commonReport.recreteModal}" style="double: right;" />  
+                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" actionListener="#{commonReport.recreteModal}" style="float: right;" />  
                         <p:defaultCommand target="btnRefresh"/>
                         
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint" />
                         </p:commandButton>  
 
-                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="float: right;" >
                             <pe:exporter type="xlsx" 
                                          target="#{commonReport.userBillsOwn.bills.size() ne 0 ?'billed,':''}
                                          #{commonReport.userCancelledBillsOwn.bills.size() ne 0 ?'cancelled,':''}
@@ -61,6 +61,7 @@
                         <h:outputLabel styleClass="noPrintButton" value="User Name"/>
 
                         <p:autoComplete converter="webUs" completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
+                                        forceSelection="true"
                                         var="w" itemLabel="#{w.webUserPerson.name}" itemValue="#{w}"
                                         value="#{commonReport.webUser}" >
                         </p:autoComplete>

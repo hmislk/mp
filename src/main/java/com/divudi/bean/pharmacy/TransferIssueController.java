@@ -69,6 +69,8 @@ public class TransferIssueController implements Serializable {
     @EJB
     private PharmacyBean pharmacyBean;
     @EJB
+    private PharmacyCalculation pharmacyCalculation;
+    @EJB
     private BillNumberBean billNumberBean;
     @EJB
     private CommonFunctions commonFunctions;
@@ -140,7 +142,14 @@ public class TransferIssueController implements Serializable {
 
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
 
-            List<StockQty> stockQtys = getPharmacyBean().getStockByQty(i.getBillItem().getItem(), i.getQtyInUnit(), getSessionController().getDepartment());
+            double billedIssue = getPharmacyCalculation().getBilledIssuedByRequestedItem(i.getBillItem(), BillType.PharmacyTransferIssue);
+            double cancelledIssue = getPharmacyCalculation().getCancelledIssuedByRequestedItem(i.getBillItem(), BillType.PharmacyTransferIssue);
+
+            double issuableQty = i.getQtyInUnit() - (Math.abs(billedIssue) - Math.abs(cancelledIssue));
+
+            System.err.println("Issueable Qty " + issuableQty);
+
+            List<StockQty> stockQtys = getPharmacyBean().getStockByQty(i.getBillItem().getItem(), issuableQty, getSessionController().getDepartment());
 
             for (StockQty sq : stockQtys) {
                 if (sq.getQty() == 0) {
@@ -462,6 +471,14 @@ public class TransferIssueController implements Serializable {
 
     public void setSearchKeyword(SearchKeyword searchKeyword) {
         this.searchKeyword = searchKeyword;
+    }
+
+    public PharmacyCalculation getPharmacyCalculation() {
+        return pharmacyCalculation;
+    }
+
+    public void setPharmacyCalculation(PharmacyCalculation pharmacyCalculation) {
+        this.pharmacyCalculation = pharmacyCalculation;
     }
 
 }

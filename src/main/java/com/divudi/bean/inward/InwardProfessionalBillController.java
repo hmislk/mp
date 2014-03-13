@@ -48,7 +48,7 @@ import org.primefaces.event.TabChangeEvent;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -109,20 +109,22 @@ public class InwardProfessionalBillController implements Serializable {
         List<Staff> suggestions;
         String sql;
         HashMap hm = new HashMap();
-        if (query == null) {
-            suggestions = new ArrayList<Staff>();
+
+        if (getCurrentBillFee() != null && getCurrentBillFee().getSpeciality() != null) {
+            sql = " select p from Staff p where p.retired=false and "
+                    + " (upper(p.person.name) like :q "
+                    + " or  upper(p.code) like :q  ) "
+                    + " and p.speciality=:spe order by p.person.name";
+            hm.put("spe", getCurrentBillFee().getSpeciality());
         } else {
-            if (getCurrentBillFee() != null && getCurrentBillFee().getSpeciality() != null) {
-                sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%"
-                        + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase()
-                        + "%' ) and p.speciality=:spe order by p.person.name";
-                hm.put("spe", getCurrentBillFee().getSpeciality());
-            } else {
-                sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
-            }
-            //System.out.println(sql);
-            suggestions = getStaffFacade().findBySQL(sql, hm);
+            sql = " select p from Staff p where p.retired=false and "
+                    + " (upper(p.person.name) "
+                    + " like :q or  upper(p.code) like :q "
+                    + " ) order by p.person.name";
         }
+        hm.put("q", "%" + query.toUpperCase() + "%");
+        suggestions = getStaffFacade().findBySQL(sql, hm, 20);
+
         return suggestions;
     }
 
@@ -297,12 +299,13 @@ public class InwardProfessionalBillController implements Serializable {
 
         getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getCurrent().setInstitution(getSessionController().getLoggedUser().getInstitution());
+        currentBillFee.setTransSerial(lstBillFees.size());
         lstBillFees.add(getCurrentBillFee());
         calTotals();
         //    clearBillItemValues();
 
         currentBillFee = null;
-        UtilityController.addSuccessMessage("Fee Added");
+        //   UtilityController.addSuccessMessage("Fee Added");
     }
 
     public void feeChanged() {
@@ -314,8 +317,9 @@ public class InwardProfessionalBillController implements Serializable {
     private void calTotals() {
         double tot = 0.0;
         double dis = 0.0;
-
+        int index = 0;
         for (BillFee bf : getLstBillFees()) {
+            bf.setTransSerial(++index);
             tot += bf.getFeeValue();
         }
 
@@ -338,10 +342,10 @@ public class InwardProfessionalBillController implements Serializable {
 
     private Bill saveBill(BillFee bi) {
         Bill bill = new BilledBill();
-         bill.setBillType(BillType.InwardBill);
-        bill.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), BillType.InwardBill,BillNumberSuffix.INWPRO));
-        bill.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(),bill, BillType.InwardBill,BillNumberSuffix.INWPRO));
-       
+        bill.setBillType(BillType.InwardBill);
+        bill.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), BillType.InwardBill, BillNumberSuffix.INWPRO));
+        bill.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), bill, BillType.InwardBill, BillNumberSuffix.INWPRO));
+
         /////////
         bill.setPatientEncounter(getCurrent().getPatientEncounter());
         bill.setReferredBy(getCurrent().getReferredBy());
@@ -394,7 +398,7 @@ public class InwardProfessionalBillController implements Serializable {
         lstBillItems = null;
     }
 
-    private void saveBillFee(Bill  b,BillFee bf) {
+    private void saveBillFee(Bill b, BillFee bf) {
 
         bf.setBill(b);
         bf.setPatienEncounter(getCurrent().getPatientEncounter());
@@ -489,6 +493,11 @@ public class InwardProfessionalBillController implements Serializable {
             calTotals();
             //System.out.println(getCurrent().getNetTotal());
         }
+    }
+
+    public void remove(BillFee bf) {
+        getLstBillFees().remove(bf.getTransSerial());
+        calTotals();
     }
 
     public void recreateList(BillEntry r) {

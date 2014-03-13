@@ -143,12 +143,10 @@ public class InwardCalculation {
 
         BillFee bf = null;
 
-        if (!billItem.getItem().isUserChangable()) {
-            bf = getBillFeeMatrix(billItem);
-            double serviceValue = getHospitalFeeByItem(billItem.getItem());
-            PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
-            bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoom().getDepartment()));
-        }
+        bf = getBillFeeMatrix(billItem);
+        double serviceValue = getHospitalFeeByItem(billItem.getItem());
+        PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
+        bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoom().getDepartment()));
 
         if (bf != null && bf.getFeeValue() != 0.0) {
             billFeeList.add(bf);
@@ -314,18 +312,16 @@ public class InwardCalculation {
             hm.put("cat", billItem.getItem().getCategory());
         }
 
-   
         hm.put("dep", department);
         hm.put("frPrice", serviceValue);
         hm.put("tPrice", serviceValue);
 
         InwardPriceAdjustment inwardPriceAdjustment = getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
-        
+
         if (inwardPriceAdjustment == null) {
             return 0;
         }
 
-       
         System.err.println(inwardPriceAdjustment);
         System.err.println(inwardPriceAdjustment.getMargin());
         System.err.println(serviceValue);

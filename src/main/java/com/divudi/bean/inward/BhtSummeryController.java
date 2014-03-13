@@ -416,7 +416,8 @@ public class BhtSummeryController implements Serializable {
     private List<PatientItem> createPatientItems() {
         patientItems = new ArrayList<>();
         HashMap hm = new HashMap();
-        String sql = "SELECT i FROM PatientItem i where Type(i.item)=TimedItem and i.retired=false and i.patientEncounter=:pe";
+        String sql = "SELECT i FROM PatientItem i where Type(i.item)=TimedItem and "
+                + " i.retired=false and i.patientEncounter=:pe";
         hm.put("pe", getPatientEncounter());
         patientItems = getPatientItemFacade().findBySQL(sql, hm);
 
@@ -723,7 +724,8 @@ public class BhtSummeryController implements Serializable {
         String sql;
         HashMap hm;
 
-        sql = "SELECT  distinct(b.bill.toDepartment) FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
+        sql = "SELECT  distinct(b.bill.toDepartment) FROM BillItem b WHERE "
+                + "  b.retired=false  and b.bill.billType=:btp and"
                 + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe ";
         hm = new HashMap();
         hm.put("btp", BillType.InwardBill);

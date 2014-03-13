@@ -37,7 +37,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -66,12 +66,12 @@ public class TimedItemController implements Serializable {
         List<Department> d;
         //System.out.println("gettin ins dep ");
         if (getCurrent().getInstitution() == null) {
-            return new ArrayList<Department>();
+            return new ArrayList<>();
         } else {
             String sql = "Select d From Department d where d.retired=false and d.institution=:ins";
             HashMap hm = new HashMap();
             hm.put("ins", getCurrent().getInstitution());
-            d = getDepartmentFacade().findBySQL(sql);
+            d = getDepartmentFacade().findBySQL(sql, hm);
         }
 
         return d;
@@ -174,13 +174,10 @@ public class TimedItemController implements Serializable {
                 String f = w.get(4);
                 //System.out.println(code + " " + ix + " " + ic + " " + f);
 
-
                 TimedItem tix = new TimedItem();
                 tix.setCode(code);
                 tix.setName(ix);
                 tix.setDepartment(null);
-
-
 
             } catch (Exception e) {
             }

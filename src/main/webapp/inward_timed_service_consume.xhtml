@@ -12,10 +12,10 @@
 
         <h:panelGroup >
             <h:form  >
-                <p:panel header="Inward Payment Bill" >
+                <p:panel >
                     <f:facet name="header" >
                         <h:panelGrid columns="10"  >
-                            <h:outputLabel value="Inward Timed Service Bill" />
+                            <h:outputLabel value="Inward Timed Service" />
                             <p:commandButton id="btnAddService" ajax="false" value="Add Service" action="#{inwardTimedItemController.save}" />
                             <p:defaultCommand target="btnAddService"/>
 
@@ -24,12 +24,13 @@
                     </f:facet>
                     <h:panelGrid columns="2" style="min-width: 100%;">
                         <p:panel header="BHT">
-                            <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
-                                            value="#{inwardTimedItemController.current.patientEncounter}"
-                                            completeMethod="#{roomChangeController.completePatient}" 
-                                            var="myItem" itemValue="#{myItem}" 
-                                            itemLabel="#{myItem.bhtNo}" 
-                                            size="30"  style="width: 400px;">
+                            <p:autoComplete  converter="admis"
+                                             widgetVar="aPt" id="acPt" forceSelection="true" 
+                                             value="#{inwardTimedItemController.current.patientEncounter}"
+                                             completeMethod="#{admissionController.completePatient}" 
+                                             var="myItem" itemValue="#{myItem}" 
+                                             itemLabel="#{myItem.bhtNo}" 
+                                             size="30"  style="width: 400px;">
                                 <p:ajax event="itemSelect" process="acPt" update="panSearch2 con" listener="#{inwardTimedItemController.createPatientItems()}"/>
                                 <p:column>
                                     #{myItem.bhtNo}
@@ -63,17 +64,20 @@
                                     #{ti.item.name}
                                 </p:column>
                                 <p:column headerText="Start Time">
-                                    #{ti.fromTime}
+                                    <p:calendar navigator="true"  
+                                                value="#{ti.fromTime}" 
+                                                pattern="dd MMMM yyyy hh mm a" />                                      
+                                </p:column>                               
+                                <p:column headerText="Stopped Time">
+                                    <p:calendar navigator="true"  
+                                                value="#{ti.toTime}" 
+                                                pattern="dd MMMM yyyy hh mm a" />  
                                 </p:column>
                                 <p:column headerText="Total">
                                     #{ti.serviceValue}
                                 </p:column>
-                                <p:column headerText="Stopped Time">
-                                    <p:calendar  value="#{ti.toTime}" pattern="dd MMMM yyyy hh mm a" >    
-                                    </p:calendar>                                     
-                                </p:column>
                                 <p:column >
-                                    <p:commandButton value="Finalize" ajax="false" action="#{inwardTimedItemController.finalizeService(ti)}">                                                                    
+                                    <p:commandButton value="Cal Value" ajax="false" action="#{inwardTimedItemController.finalizeService(ti)}">                                                                    
                                     </p:commandButton>
                                 </p:column>
                             </p:dataTable>

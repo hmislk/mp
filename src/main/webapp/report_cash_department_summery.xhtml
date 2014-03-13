@@ -16,10 +16,10 @@
                     <p:outputLabel value="#{sessionController.institution.name}"/> <br/>
                     <p:outputLabel value="Daily Cash Summary Report"/>
                     
-                    <p:commandButton id="btnRefresh" value="Refresh" ajax="false"  styleClass="noPrintButton" actionListener="#{cashSummeryController.makeNull}" style="double: right;" />
+                    <p:commandButton id="btnRefresh" value="Refresh" ajax="false"  styleClass="noPrintButton" actionListener="#{cashSummeryController.makeNull}" style="float: right;" />
                     <p:defaultCommand target="btnRefresh"/>
                     
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
+                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
                         <p:printer target="panelPrint" />
                     </p:commandButton>
 
@@ -81,7 +81,7 @@
                             </p:column>
                             <p:column>
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{d.departmentTotal}" style="double: right;">
+                                    <h:outputLabel value="#{d.departmentTotal}" style="float: right;">
                                         <f:convertNumber pattern="#,000.00"/>
                                     </h:outputLabel>
                                 </f:facet>

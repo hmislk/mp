@@ -18,7 +18,7 @@
                                 <h:inputText id="txtSearch" value="#{billSearch.txtSearch}" >
                                     <f:ajax render="tblBills" execute="txtSearch" event="keyup" />
                                 </h:inputText>
-                                <p:commandButton  value="Export as Excel" ajax="false" styleClass="noPrintButton" style="double:right;">
+                                <p:commandButton  value="Export as Excel" ajax="false" styleClass="noPrintButton" style="float:right;">
                                     <pe:exporter type="xlsx" target="tblBills" fileName="Report by Referring Doctor"
                                                  facetBackground="#008000" facetFontSize="15" 
                                                  facetFontColor="#FFFFFF" facetFontStyle="BOLD" cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL"  
@@ -47,7 +47,9 @@
 
                                 <h:panelGrid columns="2" >
                                     <h:outputLabel value="User Name"/>
-                                    <p:autoComplete id="cmbUser" converter="webUs" completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
+                                    <p:autoComplete id="cmbUser" converter="webUs" 
+                                                    forceSelection="true"
+                                                    completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
                                                     var="w" itemLabel="#{w.webUserPerson.name}" itemValue="#{w}"
                                                     value="#{billSearch.user}" >
                                         <f:ajax event="itemSelect" execute="@this"  render="tblBills toDate fromDate"/>

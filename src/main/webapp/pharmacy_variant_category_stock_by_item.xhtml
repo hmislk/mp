@@ -17,15 +17,17 @@
                     <p:panel header="Department Stock Report by Batch" >
 
                         <h:panelGrid columns="6" >                           
-                            <p:autoComplete id="dep" completeMethod="#{departmentController.completeDept}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.department}" converter="dep"/>
+                            <p:autoComplete id="dep" completeMethod="#{departmentController.completeDept}" 
+                                            var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.department}" converter="dep"/>
 
-                            <p:autoComplete id="cat" completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.category}" >
+                            <p:autoComplete id="cat" completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" 
+                                            var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStockVariant.category}" >
                             </p:autoComplete>
                             <p:commandButton ajax="false" value="Process" actionListener="#{reportsStockVariant.fillCategoryStocks()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="double: right;" >
+                            <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="tbl" fileName="Category_report"  />
                             </p:commandButton>  
                             <p:commandButton ajax="false" value="Save Records" action="#{reportsStockVariant.saveRecord()}"/>

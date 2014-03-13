@@ -47,14 +47,16 @@
                                 <h:panelGrid id="gpDetailText" columns="2">
                                     <h:outputText id="lblName" value="Name" ></h:outputText>
                                     <h:inputText id="txtName" value="#{admissionTypeController.current.name}"  ></h:inputText>
+                                    <h:outputText  value="Admission Type" ></h:outputText>
+                                    <p:selectOneMenu   value="#{admissionTypeController.current.admissionTypeEnum}"  >
+                                        <f:selectItems value="#{enumController.admissionTypeEnum}"  />                                        
+                                    </p:selectOneMenu>
                                     <h:outputText  value="Code" ></h:outputText>
                                     <h:inputText  value="#{admissionTypeController.current.code}"  ></h:inputText>
                                     <h:outputLabel value="Fee"/>
                                     <h:inputText value="#{admissionTypeController.current.admissionFee}"/>
-                                    <h:outputLabel value="One Day"/>
-                                    <p:selectBooleanCheckbox value="#{admissionTypeController.current.oneDay}"/>
-                                    <h:outputLabel value="Package"/>
-                                    <p:selectBooleanCheckbox value="#{admissionTypeController.current.inwardPackage}"/>
+                                    <h:outputLabel value="Room/Bed Allowed"/>
+                                    <p:selectBooleanCheckbox value="#{admissionTypeController.current.roomChargesAllowed}"/>                                  
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <h:commandButton id="btnSave" value="Save"  action="#{admissionTypeController.saveSelected()}" styleClass="buttons">

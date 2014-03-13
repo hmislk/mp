@@ -16,13 +16,13 @@
 
                     <f:facet name="header" >
                         <p:outputLabel value="Casheir Staff Payment Detail"/>
-                        <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="double: right;" actionListener="#{commonReport.recreteModal()}" />
+                        <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" actionListener="#{commonReport.recreteModal()}" />
 
-                        <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="panelPrint" />
                         </p:commandButton>  
 
-                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="float: right;" >
                             <p:dataExporter type="xls" target="panelPrint" fileName="Casheir Staff Payment Detail" />
                         </p:commandButton>  
 

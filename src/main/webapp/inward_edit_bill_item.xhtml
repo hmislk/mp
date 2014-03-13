@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panel header="Reprint" >
+                        
+                        <p:panel>
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <p:panel header="Patient Detail">
+                                    <p:panelGrid columns="2">
+                                        <h:outputLabel value="Patient ​Name:" ></h:outputLabel>
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.bill.patient.person.nameWithTitle }" ></h:outputLabel>
+                                        <h:outputLabel value="Age" />
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.bill.patient.age}"  />
+                                        <h:outputLabel value="Sex" >
+                                        </h:outputLabel>
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.bill.patient.person.sex}" >
+                                        </h:outputLabel>
+                                        <h:outputLabel value="Phone" >
+                                        </h:outputLabel>
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.bill.patient.person.phone}" >
+                                        </h:outputLabel>
+                                    </p:panelGrid>
+                                </p:panel>
+                                <p:panel header="Bill Detail">
+                                    <p:panelGrid columns="2">
+                                        <h:outputLabel value="Bill No :" ></h:outputLabel>
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.bill.insId}" ></h:outputLabel>                                    
+                                        <h:outputLabel value="Bill Total :" ></h:outputLabel>
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.bill.netTotal}" ></h:outputLabel>
+                                        <h:outputLabel value="BillItem Value :" ></h:outputLabel>
+                                        <h:outputLabel value="#{serviceFeeEdit.billItem.netValue}" ></h:outputLabel>
+                                    </p:panelGrid>
+                                </p:panel>
+
+                                <p:dataTable rowIndexVar="rowIndex" value="#{serviceFeeEdit.billFees}" var="bif" >                                   
+                                    <p:column>
+                                        <f:facet name="header">Fee</f:facet>
+                                        <h:inputText  value="#{bif.feeValue}" disabled="#{!bif.billItem.item.userChangable or bif.paidValue!=0}" >
+                                            <f:ajax event="blur" />
+                                        </h:inputText>
+                                    </p:column>
+
+                                    <p:column headerText="Fee Name">
+                                        <h:outputLabel value="#{bif.fee.name}" ></h:outputLabel>
+                                    </p:column>
+
+                                    <p:column headerText="Fee Department">
+                                        <h:outputLabel value="#{bif.department.name}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">Payee</f:facet>
+                                        <h:outputLabel value="#{bif.staff.person.name}" rendered="#{bif.staff!=null and bif.fee.speciality==null}" ></h:outputLabel>
+
+                                        <p:selectOneMenu value="#{bif.staff}" rendered="#{bif.fee.speciality!=null}" disabled="#{bif.paidValue!=0}" >
+                                            <f:selectItem itemLabel="Select Staff" />
+                                            <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality) }"  var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton ajax="false" value="Update" action="#{serviceFeeEdit.updateFee(bif)}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panelGrid>
+
+                        </p:panel>
+                    </p:panel>
+
+
+
+                </h:form>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+</html>

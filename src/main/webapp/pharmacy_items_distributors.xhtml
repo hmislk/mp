@@ -19,7 +19,10 @@
                         <p:panel header="Item Distributor">
 
                             <h:outputLabel value="Search"/>
-                            <p:autoComplete converter="deal"  id="lstSelect"   value="#{itemsDistributorsController.currentInstituion}" style="min-width: 223px" completeMethod="#{dealerController.completeDealor}"  var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
+                            <p:autoComplete converter="deal"  id="lstSelect"   value="#{itemsDistributorsController.currentInstituion}" 
+                                            forceSelection="true"
+                                            style="min-width: 223px" completeMethod="#{dealerController.completeDealor}"   
+                                            var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
                                 <p:column headerText="Item">
                                     <h:outputLabel value="#{myItem.name}" ></h:outputLabel>
                                 </p:column>
@@ -31,6 +34,7 @@
                         </p:panel>
                         <p:panel header="Select Item For Distributor">
                             <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" 
+                                            forceSelection="true"
                                             completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                                 <p:column headerText="Name" >
                                     <h:outputLabel value="#{vt.name}" ></h:outputLabel>

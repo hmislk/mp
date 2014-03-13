@@ -42,10 +42,8 @@
                                         <f:selectItem itemLabel="Select Doctor"/>
                                         <f:selectItems value="#{doctorController.items}" var="d" itemLabel="#{d.person.name}" itemValue="#{d}"/>
                                     </p:selectOneMenu>
-                                    <p:outputLabel value="Select Admission Type "/>
-                                    <p:selectOneMenu  id="lstSelect"  value="#{bhtEditController.current.admissionType}" >
-                                        <f:selectItems  value="#{admissionTypeController.items}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" ></f:selectItems>                                        
-                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Admission Type "/>
+                                    <h:outputLabel value="#{bhtEditController.current.admissionType.name}"/>                               
                                     <p:outputLabel value="Select PaymentScheme "/>
                                     <p:selectOneMenu   id="cmbPs" value="#{bhtEditController.current.paymentMethod}"  >
                                         <f:selectItems value="#{admissionController.paymentMethods}"  />

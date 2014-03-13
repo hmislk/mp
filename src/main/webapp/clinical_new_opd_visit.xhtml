@@ -18,7 +18,7 @@
                                 <h:form>
                                     <p:autoComplete id="acDx" value="#{patientEncounterController.diagnosis}"
                                                     completeMethod="#{diagnosisController.completeDiagnosis}"
-                                                    var="dx"
+                                                    var="dx" forceSelection="true"
                                                     itemLabel="#{dx.name}" 
                                                     itemValue="#{dx}"
                                                     converter="diagnosisConverter"></p:autoComplete>

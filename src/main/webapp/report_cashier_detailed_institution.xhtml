@@ -19,13 +19,13 @@
                     <f:facet name="header" >
                         <h:outputLabel value="#{labels.company_name}"/> <br/>
 
-                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" actionListener="#{commonReport.recreteModal()}" style="double: right;" />  
+                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" actionListener="#{commonReport.recreteModal()}" style="float: right;" />  
                         <p:defaultCommand target="btnRefresh"/>
                         
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint"/>
                         </p:commandButton>  
-                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="float: right;" >
                             <pe:exporter type="xlsx" 
                                          target="#{commonReport.institutionBilledBillsOwn.bills.size() ne 0 ?'billed,':''}
                                          #{commonReport.institutionCancelledBillsOwn.bills.size() ne 0 ?'cancelled,':''}
@@ -55,7 +55,7 @@
                             </h:outputLabel>
                             <p:spacer width="10" height="0"/>
                             <h:outputLabel value="To"/>
-                            <h:outputLabel  value="#{cashierReportController.toDate}" style="double: right" >
+                            <h:outputLabel  value="#{cashierReportController.toDate}" style="float: right" >
                                 <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                             </h:outputLabel>
                         </h:panelGrid>

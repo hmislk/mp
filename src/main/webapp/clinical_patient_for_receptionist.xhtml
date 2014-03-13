@@ -18,7 +18,7 @@
                             <p:panel header="Search" >
                                 <f:facet name="header" >
                                     <h:outputLabel value="Search" />
-                                    <p:commandButton id="btnAddPt" style="double: right;" value="New" process="btnAddPt" update="acPt :#{p:component('panelDetails')} " action="#{patientController.prepareAdd()}" >
+                                    <p:commandButton id="btnAddPt" style="float: right;" value="New" process="btnAddPt" update="acPt :#{p:component('panelDetails')} " action="#{patientController.prepareAdd()}" >
 
                                     </p:commandButton>
                                 </f:facet>
@@ -64,7 +64,7 @@
                                                 <f:selectItems value="#{practiceBookingController.consultants}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}" />
                                                 <f:ajax  event="change" execute="@this" render="bSession"  />
                                             </p:selectOneMenu>
-                                            <p:commandButton   value="Add" ajax="false" style="double: right;" 
+                                            <p:commandButton   value="Add" ajax="false" style="float: right;" 
                                                                onclick="if (!confirm('Are you sure you want to Add this record?'))
                                                                            return false;" 
                                                                action="#{practiceBookingController.addToQueue()}" >                        
@@ -88,7 +88,7 @@
                             <p:panel id="panelDetails"  >
                                 <f:facet name="header" >
                                     <h:outputLabel value="Details" />
-                                    <p:commandButton style="double: right;" ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
+                                    <p:commandButton style="float: right;" ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
                                 </f:facet>
                                 <h:panelGrid columns="2" >
                                     <h:panelGrid columns="2" >

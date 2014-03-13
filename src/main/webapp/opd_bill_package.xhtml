@@ -194,7 +194,7 @@
                                         <p:tab id="pacName" title="Package Name" >
                                             <h:panelGrid columns="2" style="min-width: 100%;">
                                                 <h:outputLabel value="#{billPackageController.currentBillItem.item.name}"/>
-                                                <p:commandButton id="btnRemove" value="X" style="double: right;" rendered="#{billPackageController.currentBillItem.item ne null}" action="#{billPackageController.removeBillItem}" ajax="false" />                                                
+                                                <p:commandButton id="btnRemove" value="X" style="float: right;" rendered="#{billPackageController.currentBillItem.item ne null}" action="#{billPackageController.removeBillItem}" ajax="false" />                                                
                                             </h:panelGrid>
                                         </p:tab>
                                         <p:tab id="tabBillItems" title="Bill Items" >

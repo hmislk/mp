@@ -164,22 +164,24 @@ public class TransferReceiveController implements Serializable {
 
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
 
-//            //Deduct Staff Stock
-//            boolean returnFlag = getPharmacyBean().deductFromStock(tmpPh, Math.abs(qty), getIssuedBill().getToStaff());
-//
-//            if (returnFlag) {
-//                //Add Stock To Department
-//                Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
-//
-//                tmpPh.setStock(addedStock);
-//            } else {
-//                i.setTmpQty(0);
-//                getBillItemFacade().edit(i);
-//            }
+        //    Deduct Staff Stock
+            boolean returnFlag = getPharmacyBean().deductFromStock(tmpPh, Math.abs(qty), getIssuedBill().getToStaff());
 
-            //Temprory Solution
-            Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
-            tmpPh.setStock(addedStock);
+            if (returnFlag) {
+           //     Add Stock To Department
+                Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
+
+                tmpPh.setStock(addedStock);
+            } else {
+                i.setTmpQty(0);
+                getBillItemFacade().edit(i);
+            }
+            
+            
+            
+//            //Temprory Solution
+//            Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
+//            tmpPh.setStock(addedStock);
             
             
             getPharmaceuticalBillItemFacade().edit(tmpPh);

@@ -40,7 +40,9 @@
                             </h:panelGroup> 
                         </p:panel>
                         <p:panel header="Select Item For Category">
-                            <p:autoComplete converter="itemcon" value="#{itemsCategoriesController.currentItem}" completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                            <p:autoComplete converter="itemcon" value="#{itemsCategoriesController.currentItem}" 
+                                            forceSelection="true"
+                                            completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             </p:autoComplete>                                    
                         </p:panel>                       
                     </h:panelGrid>

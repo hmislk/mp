@@ -165,7 +165,7 @@ public class RoomChangeController implements Serializable {
         List<Admission> suggestions;
         String sql;
         if (query == null) {
-            suggestions = new ArrayList<Admission>();
+            suggestions = new ArrayList<>();
         } else {
             sql = "select c from Admission c where c.retired=false and c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
             //System.out.println(sql);
@@ -331,7 +331,7 @@ public class RoomChangeController implements Serializable {
 
     public List<PatientRoom> getPatientRoom() {
         if (getCurrent().getId() == null) {
-            return new ArrayList<PatientRoom>();
+            return new ArrayList<>();
         }
 
         String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and pr.patientEncounter=:pe order by pr.admittedAt";
@@ -340,7 +340,7 @@ public class RoomChangeController implements Serializable {
         patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
 
         if (patientRoom.size() <= 0) {
-            return new ArrayList<PatientRoom>();
+            return new ArrayList<>();
         }
 
         return patientRoom;

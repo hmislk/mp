@@ -20,8 +20,8 @@
                         
                         <h:outputLabel value="#{commonReport.webUser.institution.name}"/> <br/>
                         <h:outputLabel value="Cashier Detailed Report - Lab Bills -&nbsp;&nbsp; #{commonReport.webUser.webUserPerson.name}"/>
-                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="double: right;" actionListener="#{commonReport.recreteModal()}" />  
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{commonReport.recreteModal()}" />  
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint" />
                         </p:commandButton> 
                         
@@ -29,7 +29,7 @@
                         ajax="false" 
                         value="Excel"  
                         styleClass="noPrintButton" 
-                        style="double: right;" >
+                        style="float: right;" >
                         <pe:exporter 
                             type="xlsx" 
                             target="tbl" 
@@ -50,7 +50,7 @@
                         <p:calendar id="toDate" value="#{commonReport.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
                         </p:calendar>
                         <h:outputLabel styleClass="noPrintButton" value="User Name"/>
-                        <p:autoComplete converter="webUs" completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
+                        <p:autoComplete forceSelection="true" converter="webUs" completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
                                         var="w" itemLabel="#{w.webUserPerson.name}" itemValue="#{w}"
                                         value="#{commonReport.webUser}" ></p:autoComplete>
                     </p:panelGrid>
@@ -61,7 +61,7 @@
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>
                         <h:outputLabel value="To"/>
-                        <h:outputLabel  value="#{commonReport.toDate}" style="double: right" >
+                        <h:outputLabel  value="#{commonReport.toDate}" style="float: right" >
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>
                     </p:panelGrid>

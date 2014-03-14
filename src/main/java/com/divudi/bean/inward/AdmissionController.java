@@ -124,7 +124,6 @@ public class AdmissionController implements Serializable {
 //        }
 //        return suggestions;
 //    }
-
     public List<Admission> getSelectedItems() {
         selectedItems = getFacade().findBySQL("select c from Admission c where c.retired=false and upper(c.name) like '%" + getSelectText().toUpperCase() + "%' order by c.name");
         return selectedItems;
@@ -318,10 +317,7 @@ public class AdmissionController implements Serializable {
                 UtilityController.addErrorMessage("Select Credit Company");
                 return true;
             }
-            if (getCurrent().getCreditLimit() == 0.0) {
-                UtilityController.addErrorMessage("Set Credit Limit");
-                return true;
-            }
+
         }
 
         if (getCurrent().getAdmissionType().isRoomChargesAllowed()) {

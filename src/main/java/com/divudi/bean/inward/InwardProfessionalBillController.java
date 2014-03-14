@@ -292,6 +292,11 @@ public class InwardProfessionalBillController implements Serializable {
     }
 
     public void addToBill() {
+        if (getCurrent().getPatientEncounter() == null) {
+            UtilityController.addErrorMessage("Please Select Patient Encounter");
+            return;
+        }
+
         if (currentBillFee == null) {
             UtilityController.addErrorMessage("Nothing to add");
             return;
@@ -299,6 +304,7 @@ public class InwardProfessionalBillController implements Serializable {
 
         getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getCurrent().setInstitution(getSessionController().getLoggedUser().getInstitution());
+        currentBillFee.setPatienEncounter(getCurrent().getPatientEncounter());
         currentBillFee.setTransSerial(lstBillFees.size());
         lstBillFees.add(getCurrentBillFee());
         calTotals();

@@ -15,7 +15,7 @@
                 <p:panel header="Inward Payment Bill" >
                     <p:panel header="BHT">
 
-                        <p:autoComplete converter="admCon" widgetVar="aPt" id="acPt" forceSelection="true" 
+                        <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                         value="#{inwardPaymentController.current.patientEncounter}"
                                         completeMethod="#{admissionController.completePatient}" 
                                         var="myItem" itemValue="#{myItem}" 

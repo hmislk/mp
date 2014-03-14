@@ -594,6 +594,7 @@ public class BhtSummeryController implements Serializable {
         } else {
             charge = linen * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
         }
+        
         rcd.setLinenTot(charge + p.getAddedLinenCharge());
     }
 
@@ -790,8 +791,9 @@ public class BhtSummeryController implements Serializable {
     private List<BillFee> createProfesionallFee() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT bt FROM BillFee bt WHERE bt.retired=false and bt.fee is null and  bt.bill.id in "
-                + "(SELECT  b.id FROM Bill b WHERE b.retired=false  and b.billType=:btp and b.patientEncounter=:pe)";
+        String sql = "SELECT bt FROM BillFee bt WHERE bt.retired=false and "
+                + " bt.fee is null "
+                + " bt.bill.billType=:btp and bt.bill.patientEncounter=:pe ";
         hm.put("btp", BillType.InwardBill);
         hm.put("pe", getPatientEncounter());
 
@@ -832,7 +834,8 @@ public class BhtSummeryController implements Serializable {
     private List<Bill> createPaymentBill() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT  b FROM Bill b WHERE b.retired=false  and b.billType=:btp and b.patientEncounter=:pe and b.cancelled=false";
+        String sql = "SELECT  b FROM Bill b WHERE b.retired=false  and b.billType=:btp "
+                + " and b.patientEncounter=:pe ";
         hm.put("btp", BillType.InwardPaymentBill);
         hm.put("pe", getPatientEncounter());
         paymentBill = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
@@ -865,7 +868,7 @@ public class BhtSummeryController implements Serializable {
     }
 
     public double getPaid() {
-        getPaymentBill();
+
         return paid;
     }
 

@@ -28,13 +28,15 @@
                                 <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                             </p:column>
                         </p:autoComplete>   
-
+                        <p:commandButton id="btnChange" value="Change"  action="#{roomChangeController.change()}" ajax="false" styleClass="buttons">
+                        </p:commandButton>
+                        <p:defaultCommand target="btnChange"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <p:panel id="gpDetail">
                     <p:panel>
-                        <p:panelGrid columns="2" style="min-width: 100%;">
+                        <h:panelGrid columns="3" style="min-width: 100%;">
                             <p:panel header="Patient Detail" >
                                 <h:panelGrid columns="2">
                                     <h:outputText  value="Name" ></h:outputText>
@@ -53,17 +55,14 @@
                             <p:panel header="Gardian Detail">
                                 <h:panelGrid columns="2">
                                     <h:outputText  value="Name" ></h:outputText>
-                                    <h:inputText value="#{roomChangeController.current.guardian.name}"  ></h:inputText>
+                                    <h:outputText value="#{roomChangeController.current.guardian.name}"  />
                                     <h:outputText value="Address" ></h:outputText>
-                                    <h:inputText  value="#{roomChangeController.current.guardian.address}"  ></h:inputText>
+                                    <h:outputText  value="#{roomChangeController.current.guardian.address}"  />
                                     <h:outputText value="Phone No" ></h:outputText>
-                                    <h:inputText  value="#{roomChangeController.current.guardian.phone}"  ></h:inputText>
+                                    <h:outputText  value="#{roomChangeController.current.guardian.phone}"  />
                                 </h:panelGrid>
                             </p:panel>
-                        </p:panelGrid>
-
-                        <p:panelGrid columns="2" style="min-width: 100%;">
-
+                            
                             <p:panel header="Current Room Detail">
                                 <p:panelGrid columns="2">
 
@@ -71,10 +70,17 @@
                                     <h:outputLabel value=" #{roomChangeController.currentPatientRoom.roomFacilityCharge.name}"/>
 
                                     <h:outputLabel  value="Admitted At"/>
-                                    <h:outputLabel  value="#{roomChangeController.currentPatientRoom.admittedAt}"/>                                        
+                                    <h:outputLabel  value="#{roomChangeController.currentPatientRoom.admittedAt}">
+                                        <f:convertDateTime pattern="dd MM yy hh mm a" />
+                                    </h:outputLabel>
 
                                 </p:panelGrid>
                             </p:panel>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" style="min-width: 100%;">
+
+
                             <p:panel header="New Room Detail">
                                 <p:panelGrid columns="2">
                                     <h:outputLabel value="Type Room Number or Facility"/>
@@ -87,15 +93,38 @@
                                     </p:calendar>
 
                                     <h:outputLabel value="Additional Linen Charge"/>
-                                    <h:inputText value="#{roomChangeController.addLinenCharge}"/>
+                                    <p:inputText value="#{roomChangeController.addLinenCharge}"/>
 
                                 </p:panelGrid>                                    
-                            </p:panel>                                    
-                        </p:panelGrid>
+                            </p:panel>  
 
-                        <p:commandButton id="btnChange" value="Change"  action="#{roomChangeController.change()}" ajax="false" styleClass="buttons">
-                        </p:commandButton>
-                        <p:defaultCommand target="btnChange"/>
+                            <p:panel>
+                                <p:panel header="Room Detail">
+                                    <p:dataTable value="#{roomChangeController.patientRoom}" var="rm">
+                                        <p:column headerText="Admitted At">
+                                            #{rm.admittedAt}
+                                        </p:column>
+                                        <p:column headerText="Admitted By">
+                                            #{rm.addmittedBy.webUserPerson.name}
+                                        </p:column>
+                                        <p:column headerText="Discahrged At">
+                                            #{rm.dischargedAt}
+                                        </p:column>
+                                        <p:column headerText="Discharge By">
+                                            #{rm.dischargedBy.webUserPerson.name}
+                                        </p:column>
+                                        <p:column headerText="Room Name">
+                                            #{rm.roomFacilityCharge.name}
+                                        </p:column>
+                                        <p:column headerText="Extra Linen">
+                                            #{rm.addedLinenCharge}
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                            </p:panel>
+                        </h:panelGrid>
+
+
                     </p:panel>
                 </p:panel>
             </p:panel>

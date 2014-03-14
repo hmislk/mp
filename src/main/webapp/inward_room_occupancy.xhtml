@@ -10,7 +10,7 @@
 
     <ui:define name="content">
         <h:form>
-
+            <p:commandButton ajax="false" action="#{roomOccupancyController.createPatientRoom}" value="Fill"/>
             <p:dataTable value="#{roomOccupancyController.patientRooms}" var="pr">
                 <f:facet name="header">
                     Room Occupancy Detail

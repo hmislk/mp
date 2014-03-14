@@ -71,6 +71,8 @@ public class BillFee implements Serializable {
     Date FeeAt;
     @ManyToOne
     private BillFee referenceBillFee;
+    @Transient
+    private double transSerial;
 
     public BillFee() {
     }
@@ -467,6 +469,14 @@ public class BillFee implements Serializable {
 
     public void setReferenceBillFee(BillFee referenceBillFee) {
         this.referenceBillFee = referenceBillFee;
+    }
+
+    public double getTransSerial() {
+        return transSerial;
+    }
+
+    public void setTransSerial(double transSerial) {
+        this.transSerial = transSerial;
     }
 
 }

@@ -8,6 +8,7 @@
  */
 package com.divudi.bean.inward;
 
+import com.divudi.bean.BillSearch;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -16,6 +17,7 @@ import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardCalculation;
+import com.divudi.entity.BatchBill;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -28,6 +30,7 @@ import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.lab.Investigation;
+import com.divudi.facade.BatchBillFacade;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -41,6 +44,7 @@ import com.divudi.facade.PersonFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -115,6 +119,8 @@ public class BillBhtController implements Serializable {
     private List<BillFee> lstBillFees;
     private List<BillItem> lstBillItems;
     private List<BillEntry> lstBillEntries;
+    private boolean printPreview;
+    private List<Bill> bills;
 
     public void makeNull() {
         total = 0.0;
@@ -133,6 +139,7 @@ public class BillBhtController implements Serializable {
         lstBillFees = null;
         lstBillItems = null;
         lstBillEntries = null;
+        printPreview = false;
     }
 
     public CommonFunctions getCommonFunctions() {
@@ -143,8 +150,41 @@ public class BillBhtController implements Serializable {
         this.commonFunctions = commonFunctions;
     }
 
+    @EJB
+    private BatchBillFacade batchBillFacade;
+    @Inject
+    private BillSearch billSearch;
+
+    private void saveBatchBill() {
+        BatchBill tmp = new BatchBill();
+        tmp.setCreatedAt(new Date());
+        tmp.setCreater(getSessionController().getLoggedUser());
+        for (Bill b : bills) {
+            tmp.getListBill().add(b);
+        }
+
+        getBatchBillFacade().create(tmp);
+
+        for (Bill b : bills) {
+            b.setBatchBill(tmp);
+            getBillFacade().edit(b);
+        }
+    }
+
+    public void cancellAll() {
+        for (Bill b : bills) {
+            getBillSearch().setBill((BilledBill) b);
+            getBillSearch().setPaymentScheme(b.getPaymentScheme());
+            getBillSearch().setComment("Batch Cancell");
+            //System.out.println("ggg : " + getBillSearch().getComment());
+            getBillSearch().cancelBill();
+        }
+
+    }
+
     public void putToBills() {
-        Set<Department> billDepts = new HashSet<Department>();
+        bills = new ArrayList<>();
+        Set<Department> billDepts = new HashSet<>();
         for (BillEntry e : lstBillEntries) {
             billDepts.add(e.getBillItem().getItem().getDepartment());
         }
@@ -160,13 +200,14 @@ public class BillBhtController implements Serializable {
                 }
             }
             getBillBean().calculateBillItems(myBill, tmp);
-
+            bills.add(myBill);
         }
+
     }
 
-    public String settleBill() {
+    public void settleBill() {
         if (errorCheck()) {
-            return "";
+            return;
         }
 
         if (getBillBean().checkDepartment(getLstBillEntries()) == 1) {
@@ -178,10 +219,11 @@ public class BillBhtController implements Serializable {
             putToBills();
         }
 
-        makeNull();
+        printPreview = true;
+        saveBatchBill();
 
         UtilityController.addSuccessMessage("Bill Saved");
-        return "inward_service_bill";
+
     }
 
     private Bill saveBill(Department bt, BilledBill temp) {
@@ -195,8 +237,8 @@ public class BillBhtController implements Serializable {
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        temp.setFromDepartment(getSessionController().getLoggedUser().getDepartment());
-        temp.setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
+        temp.setFromDepartment(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoom().getDepartment());
+        temp.setFromInstitution(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoom().getDepartment().getInstitution());
 
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
@@ -244,9 +286,15 @@ public class BillBhtController implements Serializable {
             return;
         }
 
-        if (getPatientEncounter().getTransPatientRoom() != null
-                && getPatientEncounter().getTransPatientRoom().getRoom().getDepartment() == null) {
-            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + getPatientEncounter().getTransPatientRoom().getRoom().getName());
+        PatientRoom patientRoom = getInwardCalculation().getCurrentPatientRoom(patientEncounter);
+
+        if (patientRoom == null) {
+            UtilityController.addErrorMessage("Please Set Room or Bed For This Patient");
+            return;
+        }
+
+        if (patientRoom.getRoom().getDepartment() == null) {
+            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoom().getName());
             return;
         }
 
@@ -273,7 +321,7 @@ public class BillBhtController implements Serializable {
         addingEntry.setBillItem(getCurrentBillItem());
         addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(getCurrentBillItem()));
 
-        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(),getPatientEncounter()));
+        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter()));
         addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
         lstBillEntries.add(addingEntry);
         getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
@@ -333,6 +381,10 @@ public class BillBhtController implements Serializable {
     }
 
     public void prepareNewBill() {
+        clearBillItemValues();
+        makeNull();
+        printPreview = false;
+
     }
 
     public void removeBillItem() {
@@ -613,10 +665,6 @@ public class BillBhtController implements Serializable {
 
     public void setPatientEncounter(PatientEncounter patientEncounter) {
         this.patientEncounter = patientEncounter;
-        if (patientEncounter != null) {
-            patientEncounter.setTransPatientRoom(getInwardCalculation().getCurrentPatientRoom(patientEncounter));
-
-        }
 
     }
 
@@ -651,6 +699,38 @@ public class BillBhtController implements Serializable {
     public void setInwardCalculation(InwardCalculation inwardCalculation) {
         this.inwardCalculation = inwardCalculation;
 
+    }
+
+    public boolean isPrintPreview() {
+        return printPreview;
+    }
+
+    public void setPrintPreview(boolean printPreview) {
+        this.printPreview = printPreview;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public BatchBillFacade getBatchBillFacade() {
+        return batchBillFacade;
+    }
+
+    public void setBatchBillFacade(BatchBillFacade batchBillFacade) {
+        this.batchBillFacade = batchBillFacade;
+    }
+
+    public BillSearch getBillSearch() {
+        return billSearch;
+    }
+
+    public void setBillSearch(BillSearch billSearch) {
+        this.billSearch = billSearch;
     }
 
     /**

@@ -183,7 +183,7 @@ public class BillBhtController implements Serializable {
     }
 
     public void putToBills() {
-        bills = new ArrayList<>();
+        
         Set<Department> billDepts = new HashSet<>();
         for (BillEntry e : lstBillEntries) {
             billDepts.add(e.getBillItem().getItem().getDepartment());
@@ -206,6 +206,7 @@ public class BillBhtController implements Serializable {
     }
 
     public void settleBill() {
+        bills = new ArrayList<>();
         if (errorCheck()) {
             return;
         }
@@ -215,6 +216,7 @@ public class BillBhtController implements Serializable {
             Bill b = saveBill(lstBillEntries.get(0).getBillItem().getItem().getDepartment(), temp);
             getBillBean().saveBillItems(b, getLstBillEntries(), getSessionController().getLoggedUser());
             getBillBean().calculateBillItems(b, getLstBillEntries());
+            bills.add(b);
         } else {
             putToBills();
         }
@@ -237,8 +239,8 @@ public class BillBhtController implements Serializable {
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        temp.setFromDepartment(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoom().getDepartment());
-        temp.setFromInstitution(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoom().getDepartment().getInstitution());
+        temp.setFromDepartment(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoomFacilityCharge().getDepartment());
+        temp.setFromInstitution(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoomFacilityCharge().getDepartment().getInstitution());
 
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
@@ -293,7 +295,7 @@ public class BillBhtController implements Serializable {
             return;
         }
 
-        if (patientRoom.getRoom().getDepartment() == null) {
+        if (patientRoom.getRoomFacilityCharge().getDepartment() == null) {
             UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoom().getName());
             return;
         }

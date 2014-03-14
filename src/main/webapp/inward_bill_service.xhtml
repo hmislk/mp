@@ -29,7 +29,7 @@
                                     <h:outputLabel value="Type Patinet Name or BHT : "/>
                                     <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admis"
                                                     value="#{billBhtController.patientEncounter}" 
-                                                    completeMethod="#{admissionController.completePatientBht}"
+                                                    completeMethod="#{admissionController.completePatient}"
                                                     var="apt2" itemLabel="#{amp2.bhtNo}"
                                                     itemValue="#{apt2}" size="30"  style="width: 400px;">
                                         <p:ajax event="itemSelect" process="acPt2" update="panSearch2"/>

@@ -446,7 +446,7 @@ public class AdmissionController implements Serializable {
         getPatientRoom().setCurrentMaintananceCharge(getPatientRoom().getRoomFacilityCharge().getMaintananceCharge());
         getPatientRoom().setCurrentMoCharge(getPatientRoom().getRoomFacilityCharge().getMoCharge());
         getPatientRoom().setCurrentNursingCharge(getPatientRoom().getRoomFacilityCharge().getNursingCharge());
-        //   getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
+        getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
 
         getPatientRoom().setAddmittedBy(getSessionController().getLoggedUser());
         getPatientRoom().setAdmittedAt(admittedAt);

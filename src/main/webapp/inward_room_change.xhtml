@@ -16,7 +16,7 @@
                         <h:outputLabel value="Type Patinet Name or BHT"/>
                         <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                         value="#{roomChangeController.current}"
-                                        completeMethod="#{roomChangeController.completePatient}" 
+                                        completeMethod="#{admissionController.completePatient}" 
                                         var="myItem" itemValue="#{myItem}" 
                                         itemLabel="#{myItem.bhtNo}" 
                                         size="30"  style="width: 400px;" required="true"> 
@@ -62,7 +62,7 @@
                                     <h:outputText  value="#{roomChangeController.current.guardian.phone}"  />
                                 </h:panelGrid>
                             </p:panel>
-                            
+
                             <p:panel header="Current Room Detail">
                                 <p:panelGrid columns="2">
 
@@ -101,14 +101,18 @@
                             <p:panel>
                                 <p:panel header="Room Detail">
                                     <p:dataTable value="#{roomChangeController.patientRoom}" var="rm">
-                                        <p:column headerText="Admitted At">
-                                            #{rm.admittedAt}
+                                        <p:column headerText="Admitted At">                                          
+                                            <p:calendar navigator="true"  
+                                                        value="#{rm.admittedAt}" 
+                                                        pattern="dd MMMM yyyy hh mm a" />     
                                         </p:column>
                                         <p:column headerText="Admitted By">
                                             #{rm.addmittedBy.webUserPerson.name}
                                         </p:column>
-                                        <p:column headerText="Discahrged At">
-                                            #{rm.dischargedAt}
+                                        <p:column headerText="Discahrged At">                                            
+                                            <p:calendar navigator="true"  
+                                                        value="#{rm.dischargedAt}" 
+                                                        pattern="dd MMMM yyyy hh mm a" />   
                                         </p:column>
                                         <p:column headerText="Discharge By">
                                             #{rm.dischargedBy.webUserPerson.name}
@@ -117,7 +121,11 @@
                                             #{rm.roomFacilityCharge.name}
                                         </p:column>
                                         <p:column headerText="Extra Linen">
-                                            #{rm.addedLinenCharge}
+                                            <p:inputText value="#{rm.addedLinenCharge}"/>                                            
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton ajax="false" value="Update" 
+                                                             action="#{roomChangeController.update(rm)}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </p:panel>

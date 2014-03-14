@@ -94,14 +94,12 @@ public class TheatreModuleController implements Serializable {
             UtilityController.addErrorMessage("Please select Surgary");
             return;
         }
-        
+
         if (getProcedure().getId() == null || getProcedure().getId() == 0) {
             getPeFacade().create(procedure);
         } else {
             getPeFacade().edit(procedure);
         }
-        
-      
 
     }
 
@@ -110,8 +108,6 @@ public class TheatreModuleController implements Serializable {
         staff = null;
         encounterComponent = null;
     }
-    
-   
 
     public void addComponantForAdmissions() {
         if (getAdmission() == null) {
@@ -129,7 +125,7 @@ public class TheatreModuleController implements Serializable {
 
         saveProcedure();
 
-        if (encounterComponent.getBillFee() != null && encounterComponent.getBillFee().getFeeValue()!=0) {
+        if (encounterComponent.getBillFee() != null && encounterComponent.getBillFee().getFeeValue() != 0) {
 
             BilledBill bill = new BilledBill();
             bill.setGrantTotal(encounterComponent.getBillFee().getFeeValue());
@@ -149,7 +145,7 @@ public class TheatreModuleController implements Serializable {
             bf.setFeeAt(Calendar.getInstance().getTime());
             bf.setFeeGrossValue(bf.getFeeValue());
             bf.setDepartment(getSessionController().getDepartment());
-            bf.setPatienEncounter(admission);
+            bf.setPatienEncounter(getProcedure());
             bf.setPatient(admission.getPatient());
             bf.setInstitution(getSessionController().getInstitution());
             bf.setStaff(staff);

@@ -12,11 +12,13 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
+import com.divudi.entity.Bill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.facade.AdmissionFacade;
+import com.divudi.facade.BillFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.PersonFacade;
@@ -24,6 +26,7 @@ import com.divudi.facade.RoomFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -39,7 +42,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -67,6 +70,47 @@ public class BhtEditController implements Serializable {
     /////////////
     private Admission current;
     String selectText = "";
+    @EJB
+    private BillFacade billFacade;
+
+    private boolean checkPaymentIsMade() {
+        String sql = "select b from BilledBill b where b.retired=false "
+                + " and b.patientEncounter=:pEnc and b.cancelled=false ";
+        HashMap hm = new HashMap();
+        hm.put("pEnc", current);
+        Bill bill = getBillFacade().findFirstBySQL(sql, hm);
+        if (bill != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void cancelBht() {
+        if (current == null) {
+            return;
+        }
+
+        if (checkPaymentIsMade()) {
+            UtilityController.addErrorMessage("Payment Is made for this Bht please cancel allpayment done for this bht ");
+            return;
+        }
+
+        //Net to check if Any Payment Paid for this BHT
+        for (PatientRoom pr : getPatientRoom()) {
+            pr.getRoom().setFilled(false);
+            getRoomFacade().edit(pr.getRoom());
+            getPatientRoomFacade().remove(pr);
+        }
+        current.setRetired(true);
+        current.setRetireComments("BHT Cancel");
+        current.setRetiredAt(new Date());
+        current.setRetirer(getSessionController().getLoggedUser());
+        getEjbFacade().edit(current);
+
+        UtilityController.addSuccessMessage("Bht Successfully Cancelled");
+        makeNull();
+    }
 
     public Title[] getTitle() {
         return Title.values();
@@ -193,6 +237,7 @@ public class BhtEditController implements Serializable {
 
     public void setCurrent(Admission current) {
         this.current = current;
+        createPatientRoom();
     }
 
     private AdmissionFacade getFacade() {
@@ -242,18 +287,6 @@ public class BhtEditController implements Serializable {
     }
 
     public List<PatientRoom> getPatientRoom() {
-        if (getCurrent().getId() == null) {
-            return new ArrayList<PatientRoom>();
-        }
-
-        HashMap hm = new HashMap();
-        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and pr.patientEncounter=:pe order by pr.createdAt";
-        hm.put("pe", getCurrent());
-        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
-
-        if (patientRoom.size() <= 0) {
-            return new ArrayList<PatientRoom>();
-        }
 
         return patientRoom;
     }
@@ -276,6 +309,24 @@ public class BhtEditController implements Serializable {
 
     public void setRoomFacade(RoomFacade roomFacade) {
         this.roomFacade = roomFacade;
+    }
+
+    private void createPatientRoom() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
+                + " and pr.patientEncounter=:pe order by pr.createdAt";
+        hm.put("pe", getCurrent());
+        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
+
+    }
+
+    public BillFacade getBillFacade() {
+        return billFacade;
+    }
+
+    public void setBillFacade(BillFacade billFacade) {
+        this.billFacade = billFacade;
     }
 
     /**

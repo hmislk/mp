@@ -25,10 +25,13 @@
                         <h:panelGrid columns="1" >
                             <h:panelGroup id="panelPatient" >
                                 <p:panel header="Patient Details">
+                                    <f:facet name="header">
+                                        <p:commandButton value="Clear All" ajax="false" action="#{theatreModuleController.makeNull}"  style="float: right;"></p:commandButton>
+                                    </f:facet>
                                     <h:outputLabel value="Type Patient Name or BHT : "/>
-                                    <p:autoComplete id="acPt" forceSelection="true" converter="admCon"
+                                    <p:autoComplete id="acPt" forceSelection="true" converter="admis"
                                                     value="#{theatreModuleController.admission}" 
-                                                    completeMethod="#{admissionController.completePatientBht}"
+                                                    completeMethod="#{admissionController.completePatient}"
                                                     var="apt2" itemLabel="#{apt2.patient.person.name}"
                                                     itemValue="#{apt2}" size="30"  style="width: 400px;">
                                         <p:ajax event="itemSelect" process="acPt" update="panSearch2"/>
@@ -72,6 +75,7 @@
                                         <h:outputLabel value="Surgery Details" >
                                         </h:outputLabel>
                                         <p:commandButton value="Save Procedure" ajax="false" action="#{theatreModuleController.saveProcedure()}" style="float: right;"></p:commandButton>
+                                        
                                         <p:commandButton value="New Procedure" ajax="false" action="#{theatreModuleController.newProcedure() }"  style="float: right;"></p:commandButton>
                                     </f:facet>
                                     <p:panelGrid columns="2" >

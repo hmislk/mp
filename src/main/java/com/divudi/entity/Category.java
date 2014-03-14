@@ -56,8 +56,8 @@ public class Category implements Serializable {
     SymanticHyrachi symanticType;
     @Transient
     private String entityClass;
-    @ManyToOne
-    private Department department;
+   // @ManyToOne
+ //   private Department department;
 
     public SymanticHyrachi getSymanticType() {
         return symanticType;
@@ -264,12 +264,12 @@ public class Category implements Serializable {
     public void setEntityClass(String entityClass) {
         this.entityClass = entityClass;
     }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
+//
+//    public Department getDepartment() {
+//        return department;
+//    }
+//
+//    public void setDepartment(Department department) {
+//        this.department = department;
+//    }
 }

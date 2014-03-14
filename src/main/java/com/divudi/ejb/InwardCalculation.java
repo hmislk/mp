@@ -146,7 +146,7 @@ public class InwardCalculation {
         bf = getBillFeeMatrix(billItem);
         double serviceValue = getHospitalFeeByItem(billItem.getItem());
         PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
-        bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoom().getDepartment()));
+        bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoomFacilityCharge().getDepartment()));
 
         if (bf != null && bf.getFeeValue() != 0.0) {
             billFeeList.add(bf);

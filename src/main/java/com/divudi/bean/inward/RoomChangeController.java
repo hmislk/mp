@@ -43,7 +43,7 @@ import javax.persistence.TemporalType;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -75,8 +75,11 @@ public class RoomChangeController implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date changeAt;
     private double addLinenCharge = 0.0;
-
     
+    public void update(PatientRoom pR){
+        getPatientRoomFacade().edit(pR);
+    }
+
     private void recreate() {
         patientRoom = null;
         selectedItems = null;
@@ -131,7 +134,7 @@ public class RoomChangeController implements Serializable {
         pr.setCurrentMaintananceCharge(newRoomFacilityCharge.getMaintananceCharge());
         pr.setCurrentMoCharge(newRoomFacilityCharge.getMoCharge());
         pr.setCurrentNursingCharge(newRoomFacilityCharge.getNursingCharge());
-//        pr.setCurrentRoomCharge(newRoomFacilityCharge.getRoomCharge());
+        pr.setCurrentRoomCharge(newRoomFacilityCharge.getRoomCharge());
 
         pr.setAddmittedBy(getSessionController().getLoggedUser());
 
@@ -162,9 +165,6 @@ public class RoomChangeController implements Serializable {
         return selectedItems;
     }
 
-   
-
-  
     @EJB
     private RoomFacilityChargeFacade roomFacilityChargeFacade;
 
@@ -246,7 +246,7 @@ public class RoomChangeController implements Serializable {
         this.current = current;
         createPatientRoom();
     }
-    
+
     private void createPatientRoom() {
 
         HashMap hm = new HashMap();
@@ -256,7 +256,6 @@ public class RoomChangeController implements Serializable {
         patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
 
     }
-
 
     private AdmissionFacade getFacade() {
         return ejbFacade;
@@ -268,10 +267,9 @@ public class RoomChangeController implements Serializable {
             temSql = "SELECT i FROM Admission i where i.retired=false and i.discharged=false order by i.bhtNo";
             items = getFacade().findBySQL(temSql);
             if (items == null) {
-                items = new ArrayList<Admission>();
+                items = new ArrayList<>();
             }
         }
-
 
         return items;
     }
@@ -306,7 +304,9 @@ public class RoomChangeController implements Serializable {
     }
 
     public List<PatientRoom> getPatientRoom() {
-       
+        if (patientRoom == null) {
+            patientRoom = new ArrayList<>();
+        }
         return patientRoom;
     }
 
@@ -337,6 +337,7 @@ public class RoomChangeController implements Serializable {
             getRoomFacilityChargeController().setCurrent(currentPatientRoom.getRoomFacilityCharge());
         } else {
             currentPatientRoom = new PatientRoom();
+            currentPatientRoom.setRoomFacilityCharge(new RoomFacilityCharge());
         }
 
         return currentPatientRoom;

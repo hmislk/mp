@@ -71,7 +71,6 @@ public class InwardSearch implements Serializable {
     EjbApplication ejbApplication;
     ////////////////////
     private Bill bill;
-    PaymentMethod paymentMethod;
     private boolean printPreview = false;
     private double refundAmount;
     private RefundBill billForRefund;
@@ -97,7 +96,6 @@ public class InwardSearch implements Serializable {
 
     public void makeNull() {
         bill = null;
-        paymentMethod = null;
         printPreview = false;
         refundAmount = 0.0;
         billForRefund = null;
@@ -180,22 +178,6 @@ public class InwardSearch implements Serializable {
         this.sessionController = sessionController;
     }
 
-    public String toReprint() {
-        return "inward_bill_reprint";
-    }
-
-    public String toCancel() {
-        return "inward_bill_cancel";
-    }
-
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
     private boolean checkInvestigation(BillItem bit) {
         HashMap hm = new HashMap();
         String sql = "SELECT p FROM PatientInvestigation p where p.retired=false and p.billItem=:bi";
@@ -274,7 +256,7 @@ public class InwardSearch implements Serializable {
             rb.setNetTotal(refundAmount);
             rb.setPatient(getBill().getPatient());
             rb.setPatientEncounter(getBill().getPatientEncounter());
-            rb.setPaymentMethod(paymentMethod);
+            rb.setPaymentMethod(getBill().getPaymentMethod());
             rb.setReferredBy(getBill().getReferredBy());
             rb.setTotal(0 - refundAmount);
             rb.setNetTotal(0 - refundAmount);
@@ -423,8 +405,10 @@ public class InwardSearch implements Serializable {
     }
 
     private boolean checkPaid() {
-        String sql = "SELECT bf FROM BillFee bf where bf.retired=false and bf.bill.id=" + getBill().getId();
-        List<BillFee> tempFe = getBillFeeFacade().findBySQL(sql);
+        HashMap hm = new HashMap();
+        String sql = "SELECT bf FROM BillFee bf where bf.retired=false and bf.bill=:b ";
+        hm.put("b", getBill());
+        List<BillFee> tempFe = getBillFeeFacade().findBySQL(sql, hm);
 
         for (BillFee f : tempFe) {
             if (f.getPaidValue() != 0.0) {
@@ -458,20 +442,22 @@ public class InwardSearch implements Serializable {
             return true;
         }
 
-        if (checkPaid()) {
-            UtilityController.addErrorMessage("Doctor Payment Already Paid So Cant Cancel Bill");
+        if (getBill().getPatientEncounter() == null) {
+            UtilityController.addErrorMessage("U cant cancel Because this Bill has no BHT");
             return true;
         }
-        if (getPaymentMethod() == null) {
+
+        if (getBill().getPatientEncounter().isPaymentFinalized()) {
+            UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
+            return true;
+        }
+
+        if (getBill().getPaymentMethod() == null) {
             UtilityController.addErrorMessage("Please select a payment Method.");
             return true;
         }
         if (getComment() == null || getComment().trim().equals("")) {
             UtilityController.addErrorMessage("Please enter a comment");
-            return true;
-        }
-        if (checkInvestigation()) {
-            UtilityController.addErrorMessage("Lab Report was already Entered .you cant Cancel");
             return true;
         }
 
@@ -498,52 +484,7 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
-            CancelledBill cb = new CancelledBill();
-            cb.setBilledBill(getBill());
-            cb.setBalance(0.0);
-
-            cb.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            cb.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            cb.setBillType(getBill().getBillType());
-            cb.setCatId(getBill().getCatId());
-            cb.setCollectingCentre(getBill().getCollectingCentre());
-            cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            cb.setCreater(getSessionController().getLoggedUser());
-            cb.setCreditCompany(getBill().getCreditCompany());
-            cb.setStaffFee(0 - getBill().getStaffFee());
-            cb.setPerformInstitutionFee(0 - getBill().getPerformInstitutionFee());
-            cb.setBillerFee(0 - getBill().getBillerFee());
-
-            cb.setPaymentMethod(paymentMethod);
-            //TODO: Find null Point Exception
-
-            cb.setToDepartment(getBill().getToDepartment());
-            cb.setToInstitution(getBill().getToInstitution());
-
-            cb.setFromDepartment(getBill().getDepartment());
-            cb.setFromInstitution(getBill().getFromInstitution());
-
-            cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
-            cb.setInstitution(getSessionController().getInstitution());
-
-            cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getLoggedUser().getDepartment(), getBill().getBillType(), BillNumberSuffix.INWCAN));
-
-            cb.setDiscount(0 - getBill().getDiscount());
-
-            cb.setDiscountPercent(getBill().getDiscountPercent());
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), cb, getBill().getBillType(), BillNumberSuffix.INWCAN));
-
-//            TODO: FIND NULL POINT EXCEPTION
-            cb.setInstitution(getSessionController().getLoggedUser().getInstitution());
-            cb.setNetTotal(0 - getBill().getNetTotal());
-            cb.setPatient(getBill().getPatient());
-            cb.setPatientEncounter(getBill().getPatientEncounter());
-            cb.setComments(comment);
-            cb.setPaymentMethod(paymentMethod);
-            cb.setReferredBy(getBill().getReferredBy());
-            cb.setReferringDepartment(getBill().getReferringDepartment());
-            cb.setTotal(0 - getBill().getTotal());
-
+            CancelledBill cb = createCancelBill();
             //Copy & paste
             if (webUserController.hasPrivilege("LabBillCancelling")) {
                 getBillFacade().create(cb);
@@ -565,6 +506,120 @@ public class InwardSearch implements Serializable {
         }
 
     }
+
+    public void cancelBillService() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            if (check()) {
+                return;
+            }
+
+            if (checkPaid()) {
+                UtilityController.addErrorMessage("Doctor Payment Already Paid So Cant Cancel Bill");
+                return;
+            }
+
+            if (checkInvestigation()) {
+                UtilityController.addErrorMessage("Lab Report was already Entered .you cant Cancel");
+                return;
+            }
+
+            CancelledBill cb = createCancelBill();
+            //Copy & paste
+            getBillFacade().create(cb);
+            cancelBillItems(cb);
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit((BilledBill) getBill());
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+            return;
+        }
+
+    }
+
+    public void cancelBillPayment() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            if (check()) {
+                return;
+            }
+
+            CancelledBill cb = createCancelBill();
+            //Copy & paste
+            getBillFacade().create(cb);
+            cancelBillItems(cb);
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit((BilledBill) getBill());
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+            return;
+        }
+
+    }
+
+    private CancelledBill createCancelBill() {
+        CancelledBill cb = new CancelledBill();
+        cb.copy(getBill());
+        cb.setBilledBill(getBill());
+        cb.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setCreater(getSessionController().getLoggedUser());
+        cb.setPaymentMethod(getBill().getPaymentMethod());
+        cb.setComments(comment);
+        //TODO: Find null Point Exception
+
+        cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
+        cb.setInstitution(getSessionController().getInstitution());
+
+        cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getLoggedUser().getDepartment(), getBill().getBillType(), BillNumberSuffix.INWCAN));
+        cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), cb, getBill().getBillType(), BillNumberSuffix.INWCAN));
+
+        cb.invertValue(getBill());
+        return cb;
+    }
+
+    public void cancelProfessional() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            if (check()) {
+                return;
+            }
+
+            if (checkPaid()) {
+                UtilityController.addErrorMessage("Doctor Payment Already Paid So Cant Cancel Bill");
+                return;
+            }
+
+            CancelledBill cb = createCancelBill();
+
+            //Copy & paste
+            getBillFacade().create(cb);
+            cancelBillItems(cb);
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit((BilledBill) getBill());
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+            return;
+        }
+
+    }
+
     List<Bill> billsToApproveCancellation;
     List<Bill> billsApproving;
     private CancelledBill billForCancel;
@@ -618,16 +673,8 @@ public class InwardSearch implements Serializable {
         for (BillItem nB : getBillItems()) {
             BillItem b = new BillItem();
             b.setBill(can);
-            b.setNetValue(-nB.getNetValue());
-            b.setGrossValue(-nB.getGrossValue());
-//            b.setRate(-nB.getRate());
-
-            b.setCatId(nB.getCatId());
-            b.setDeptId(nB.getDeptId());
-            b.setInsId(nB.getInsId());
-            b.setDiscount(nB.getDiscount());
-            b.setQty(1.0);
-            //   b.setRate(nB.getRate());
+            b.copy(nB);
+            b.invertValue(nB);
 
             b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             b.setCreater(getSessionController().getLoggedUser());
@@ -643,19 +690,11 @@ public class InwardSearch implements Serializable {
     private void cancelBillFee(Bill can, BillItem bt) {
         for (BillFee nB : getBillFees()) {
             BillFee bf = new BillFee();
-            bf.setFee(nB.getFee());
-            bf.setFeeValue(nB.getFeeValue());
-            bf.setPatienEncounter(nB.getPatienEncounter());
-            bf.setPatient(nB.getPatient());
-            bf.setDepartment(nB.getDepartment());
-            bf.setInstitution(nB.getInstitution());
-            bf.setSpeciality(nB.getSpeciality());
-            bf.setStaff(nB.getStaff());
+            bf.copy(nB);
+            bf.invertValue(nB);
 
             bf.setBill(can);
             bf.setBillItem(bt);
-            bf.setFeeValue(-nB.getFeeValue());
-
             bf.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             bf.setCreater(getSessionController().getLoggedUser());
 
@@ -695,12 +734,12 @@ public class InwardSearch implements Serializable {
     }
 
     public List<BillItem> getBillItems() {
-        if (getBill() != null) {
-            String sql = "SELECT b FROM BillItem b WHERE b.retired=false and b.bill.id=" + getBill().getId();
-            billItems = getBillItemFacede().findBySQL(sql);
-            if (billItems == null) {
-                billItems = new ArrayList<BillItem>();
-            }
+        HashMap hm = new HashMap();
+        String sql = "SELECT b FROM BillItem b WHERE b.retired=false and b.bill=:b ";
+        hm.put("b", getBill());
+        billItems = getBillItemFacede().findBySQL(sql, hm);
+        if (billItems == null) {
+            billItems = new ArrayList<>();
         }
 
         return billItems;
@@ -711,7 +750,7 @@ public class InwardSearch implements Serializable {
             String sql = "SELECT b FROM BillComponent b WHERE b.retired=false and b.bill.id=" + getBill().getId();
             billComponents = getBillCommponentFacade().findBySQL(sql);
             if (billComponents == null) {
-                billComponents = new ArrayList<BillComponent>();
+                billComponents = new ArrayList<>();
             }
         }
         return billComponents;
@@ -730,10 +769,6 @@ public class InwardSearch implements Serializable {
 
         return billFees;
     }
-    
-    
-
-  
 
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;

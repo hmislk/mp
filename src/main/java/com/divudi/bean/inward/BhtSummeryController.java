@@ -296,7 +296,7 @@ public class BhtSummeryController implements Serializable {
         double tot = 0.0;
         double tot2 = 0.0;
         for (ChargeItemTotal cit : chargeItemTotals) {
-            tot += cit.getTotal();
+            tot += cit.getNetTotal();
             tot2 += cit.getAdjustedTotal();
         }
 
@@ -348,15 +348,16 @@ public class BhtSummeryController implements Serializable {
             temBi.setBill(getCurrent());
             temBi.setInwardChargeType(cit.getInwardChargeType());
             temBi.setGrossValue(cit.getTotal());
-            temBi.setNetValue(cit.getAdjustedTotal());
+            temBi.setDiscount(cit.getDiscount());
+            temBi.setNetValue(cit.getNetTotal());
             temBi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             temBi.setCreater(getSessionController().getLoggedUser());
 
             if (cit.getInwardChargeType() == InwardChargeType.ProfessionalCharge) {
                 saveProBillFee(temBi);
-                temProfFee += cit.getTotal();
+                temProfFee += cit.getNetTotal();
             } else {
-                temHosFee += cit.getTotal();
+                temHosFee += cit.getNetTotal();
             }
 
             if (cit.getInwardChargeType() == InwardChargeType.OtherCharges) {
@@ -1258,7 +1259,7 @@ public class BhtSummeryController implements Serializable {
     public String prepareNewBill() {
         patientEncounter = null;
         makeNull();
-        return "inward_bht_summery";
+        return "inward_bill_intrim";
     }
 
     public BillNumberBean getBillNumberBean() {

@@ -44,7 +44,7 @@
                             <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
-                            
+
                             <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
                             </p:commandButton>
 
@@ -64,10 +64,7 @@
                                 <p:column headerText="Grn No">
                                     #{ix.deptId}
                                 </p:column>
-                                 <p:column headerText="Grn No">
-                                    #{ix.id}
-                                </p:column>
-                                 <p:column headerText="Invoice No">
+                                <p:column headerText="Invoice No">
                                     #{ix.invoiceNumber}
                                 </p:column>
                                 <p:column headerText="Grn At">
@@ -87,9 +84,9 @@
                                 </p:column>
                                 <f:ajax event="itemSelect" execute="@this" render="netValue" listener="#{pharmacyDealorBill.selectListener()}"/>
                             </p:autoComplete>
-                            <p:outputLabel id="netValue" value="#{pharmacyDealorBill.currentBillItem.netValue}">
+                            <p:inputText id="netValue" value="#{pharmacyDealorBill.currentBillItem.netValue}">
                                 <f:convertNumber pattern="#,000.00" />
-                            </p:outputLabel>
+                            </p:inputText>
                             <p:commandButton id="btnAddIx" value="Add" action="#{pharmacyDealorBill.addToBill()}" ajax="false"/>
                         </h:panelGrid>
 
@@ -145,7 +142,9 @@
 
                         <p:panelGrid  columns="2">
                             <p:outputLabel value="Net Total" />
-                            <p:outputLabel id="tot" value="#{pharmacyDealorBill.current.netTotal}"/>  
+                            <p:outputLabel id="tot" value="#{pharmacyDealorBill.current.netTotal}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </p:outputLabel>
 
                             <p:outputLabel value="Description"/>
                             <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         

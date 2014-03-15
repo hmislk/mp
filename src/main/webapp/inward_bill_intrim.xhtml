@@ -15,8 +15,8 @@
                 <p:panel  >
                     <f:facet name="header">
                         <p:outputLabel value="Inward Payment Bill"/>
-                        <p:commandButton ajax="false"  value="Clear" action="#{bhtSummeryController.makeNull}" />                        
-                        <p:commandButton ajax="false" value="To Settle Bill" action="#{bhtSummeryController.toSettleBill()}" />
+                        <p:commandButton ajax="false"  value="Clear" style="float:right;" action="#{bhtSummeryController.makeNull}" />                        
+                        <p:commandButton ajax="false" value="To Settle Bill" style="float:right;" action="#{bhtSummeryController.toSettleBill()}" />
 
                     </f:facet>
                     <h:panelGrid columns="3" style="min-width: 100%;">
@@ -75,6 +75,7 @@
                                     <f:ajax execute="@this" render="sum tvPt ss" event="dateSelect" listener="#{bhtSummeryController.checkDate}" />
                                 </p:calendar> 
                                 <p:commandButton ajax="false" style="float: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
+                                <p:commandButton ajax="false" style="float: right;" value="Disharge Cancel" action="#{bhtSummeryController.dischargeCancel}" />
                             </h:panelGrid>
                         </p:panel>
 
@@ -99,16 +100,15 @@
                                         #{rm.patientRoom.roomFacilityCharge.name}
                                     </p:column>                                                                          
                                     <p:column headerText="Admitted At">
-                                        <h:outputLabel value="#{rm.patientRoom.admittedAt}">
-                                            <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
-                                        </h:outputLabel>
+                                        <p:calendar navigator="true"  
+                                                    value="#{rm.patientRoom.admittedAt}" 
+                                                    pattern="dd MMMM yyyy hh mm a" />     
                                     </p:column>
-                                    <p:column headerText="Discharged At">
-                                        <h:outputLabel value="#{rm.patientRoom.dischargedAt}">
-                                            <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
-                                        </h:outputLabel>
+                                    <p:column headerText="Discharged At">                                      
+                                        <p:calendar navigator="true"  
+                                                    value="#{rm.patientRoom.dischargedAt}" 
+                                                    pattern="dd MMMM yyyy hh mm a" /> 
                                     </p:column>
-
                                     <p:column headerText="Room Charge">
                                         #{rm.chargeTot}
                                     </p:column> 
@@ -121,30 +121,38 @@
                                     <p:column headerText="Nursing Charge">
                                         #{rm.nursingTot}
                                     </p:column> 
-                                    
+                                    <p:column headerText="Linen Charge">
+                                        #{rm.linenTot}
+                                    </p:column> 
+                                    <p:column>
+                                        <p:commandButton ajax="false" value="Update"
+                                                         action="#{bhtSummeryController.updatePatientRoom(rm)}"/>
+                                    </p:column>
+
                                 </p:dataTable>
                             </p:tab>
 
                             <p:tab id="tabTimed" title="Timed Service Detail"  >                              
-                                <p:dataTable  scrollable="true" scrollHeight="300"  value="#{bhtSummeryController.patientItems}" var="ti">
+                                <p:dataTable  scrollable="true" scrollHeight="300"  value="#{bhtSummeryController.patientItems}" var="pt">
                                     <p:column headerText="Service Name">
-                                        #{ti.item.name}
+                                        #{pt.item.name}
                                     </p:column>
                                     <p:column headerText="Start Time">
-                                        <h:outputLabel value="#{ti.fromTime}">
-                                            <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
-                                        </h:outputLabel>
-                                    </p:column>
-                                    <p:column headerText="Total">
-                                        #{ti.serviceValue}
+                                        <p:calendar navigator="true"  
+                                                    value="#{pt.fromTime}" 
+                                                    pattern="dd MMMM yyyy hh mm a" />           
                                     </p:column>
                                     <p:column headerText="Stopped Time">
-                                        <p:calendar value="#{ti.toTime}" pattern="dd MMMM yyyy hh mm a" >    
-                                        </p:calendar>                                        
+                                        <p:calendar navigator="true"  
+                                                    value="#{pt.toTime}" 
+                                                    pattern="dd MMMM yyyy hh mm a" />                                    
+                                    </p:column>
+                                    <p:column headerText="Total">
+                                        #{pt.serviceValue}
                                     </p:column>
                                     <p:column >
-                                        <p:commandButton value="Finalize" disabled="#{ti.finalize}" ajax="false" action="#{bhtSummeryController.finalizeService(ti)}">                                            
-                                        </p:commandButton>
+                                        <p:commandButton ajax="false" value="Update" 
+                                                         action="#{bhtSummeryController.updatePatientItem(pt)}"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:tab>

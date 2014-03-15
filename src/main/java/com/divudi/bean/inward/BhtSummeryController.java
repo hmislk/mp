@@ -124,6 +124,19 @@ public class BhtSummeryController implements Serializable {
     private Date toTime;
     private boolean printPreview;
 
+    public void updatePatientItem(PatientItem patientItem) {
+        getInwardTimedItemController().finalizeService(patientItem);
+        createPatientItems();
+        createChargeItemTotals();
+
+    }
+
+    public void updatePatientRoom(RoomChargeData roomChargeData) {
+        getPatientRoomFacade().edit(roomChargeData.getPatientRoom());
+        createRoomChargeDatas();
+        createChargeItemTotals();
+    }
+
     public void checkDate() {
         if (getPatientEncounter() != null && getPatientEncounter().getDateOfAdmission().after(getPatientEncounter().getDateOfDischarge())) {
             UtilityController.addErrorMessage("Check Discharge Time should be after Admitted Time");
@@ -176,17 +189,46 @@ public class BhtSummeryController implements Serializable {
         getPatientEncounterFacade().edit(getPatientEncounter());
     }
 
+    private boolean checkRoomIsDischarged() {
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            if (rcd.getPatientRoom().getDischargedAt() == null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkPatientItems() {
+        for (PatientItem pi : patientItems) {
+            if (pi.getFinalize() == false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    public void dischargeCancel(){
+        patientEncounter.setDischarged(false);
+        patientEncounter.setDateOfDischarge(null);
+        getPatientEncounterFacade().edit(patientEncounter);
+    }
+
     public void discharge() {
         if (patientEncounter.isDischarged()) {
             UtilityController.addErrorMessage("Patient Already Discharged");
             return;
         }
 
-        for (PatientItem pi : patientItems) {
-            if (pi.getFinalize() == false) {
+        if (checkRoomIsDischarged()) {
+            UtilityController.addErrorMessage("Please Discharged From Room");
+            return;
+        }
 
-                getInwardTimedItemController().finalizeService(pi);
-            }
+        if (checkPatientItems()) {
+            UtilityController.addErrorMessage("Please Finalize Patient Timed Service");
+            return;
         }
 
         getDischargeController().setCurrent((Admission) patientEncounter);
@@ -274,7 +316,7 @@ public class BhtSummeryController implements Serializable {
 
         createTables();
 
-        return "inward_final_bill";
+        return "inward_bill_final";
     }
 
     private void saveBill() {
@@ -440,6 +482,7 @@ public class BhtSummeryController implements Serializable {
         if (patientItems == null) {
             patientItems = createPatientItems();
         }
+
         return patientItems;
     }
 
@@ -552,6 +595,10 @@ public class BhtSummeryController implements Serializable {
     }
 
     private long getDuration(Date from, Date to) {
+        if (from == null || to == null) {
+            return 0l;
+        }
+
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(from);
         Calendar cal2 = Calendar.getInstance();
@@ -594,7 +641,7 @@ public class BhtSummeryController implements Serializable {
         } else {
             charge = linen * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
         }
-        
+
         rcd.setLinenTot(charge + p.getAddedLinenCharge());
     }
 
@@ -636,13 +683,15 @@ public class BhtSummeryController implements Serializable {
 
     private void addRoomCharge(RoomChargeData rcd, PatientRoom p) {
         double charge;
+        System.err.println("1 " + p.getRoomFacilityCharge());
+        System.err.println("2 " + p.getCurrentRoomCharge());
         if (p.getRoomFacilityCharge() == null || p.getCurrentRoomCharge() == 0) {
             return;
         }
 
         TimedItemFee timedFee = p.getRoomFacilityCharge().getTimedItemFee();
         double roomCharge = p.getCurrentRoomCharge();
-        //  System.out.println("ssssssssssssssssssssss " + roomCharge);
+
         rcd.setPatientRoom(p);
 
         if (p.getDischargedAt() != null) {
@@ -650,7 +699,8 @@ public class BhtSummeryController implements Serializable {
         } else {
             charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
         }
-
+        System.err.println("Room Charge " + roomCharge);
+        System.out.println("calculated " + charge);
         rcd.setChargeTot(charge);
     }
 
@@ -792,7 +842,7 @@ public class BhtSummeryController implements Serializable {
 
         HashMap hm = new HashMap();
         String sql = "SELECT bt FROM BillFee bt WHERE bt.retired=false and "
-                + " bt.fee is null "
+                + " bt.fee is null and "
                 + " bt.bill.billType=:btp and bt.bill.patientEncounter=:pe ";
         hm.put("btp", BillType.InwardBill);
         hm.put("pe", getPatientEncounter());

@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -107,7 +109,9 @@ public class ReportsTransfer implements Serializable {
             StockReportRecord r = new StockReportRecord();
             r.setItem((Item) obj[0]);
             r.setQty((Double) obj[1]);
-//            r.setPurchaseValue((Double) obj[3]);
+            Days daysBetween = Days.daysBetween(LocalDate.fromDateFields(fromDate), LocalDate.fromDateFields(toDate));
+            int ds = daysBetween.getDays();
+            r.setPurchaseValue((Double) (r.getQty() / ds));
 //            r.setRetailsaleValue((Double) obj[2]);
             r.setStockQty(getPharmacyBean().getStockQty(r.getItem(), institution));
             movementRecordsQty.add(r);

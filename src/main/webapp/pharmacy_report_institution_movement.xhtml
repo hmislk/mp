@@ -78,6 +78,16 @@
                                             </h:outputLabel>
                                         </p:column>
 
+                                        
+                                        <p:column headerText="Daily Average" style="text-align: right; padding: 5px;">
+                                            <f:facet name="header">
+                                                <h:outputLabel value="Quantity"/>
+                                            </f:facet>
+                                            <h:outputLabel value="#{i.purchaseValue}"  >
+                                                <f:convertNumber pattern="#,###" ></f:convertNumber>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        
                                         <p:column headerText="QOH" style="text-align: right;">
                                             <f:facet name="header">
                                                 <h:outputLabel value="QOH"/>
@@ -117,7 +127,7 @@
                                         <p:column headerText="Item"  >
                                             <h:outputLabel value="#{i.item.name}" ></h:outputLabel>
                                         </p:column>
-                                        <p:column headerText="Quentity" style="text-align: right; padding: 5px;">
+                                        <p:column headerText="Total Quentity" style="text-align: right; padding: 5px;">
                                             <h:outputLabel value="#{i.qty}"  >
                                                 <f:convertNumber pattern="#,###" ></f:convertNumber>
                                             </h:outputLabel>

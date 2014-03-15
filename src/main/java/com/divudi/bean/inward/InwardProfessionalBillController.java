@@ -346,7 +346,7 @@ public class InwardProfessionalBillController implements Serializable {
 
     }
 
-    private Bill saveBill(BillFee bi) {
+    private Bill saveBill() {
         Bill bill = new BilledBill();
         bill.setBillType(BillType.InwardBill);
         bill.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), BillType.InwardBill, BillNumberSuffix.INWPRO));
@@ -357,9 +357,9 @@ public class InwardProfessionalBillController implements Serializable {
         bill.setReferredBy(getCurrent().getReferredBy());
         bill.setCollectingCentre(getCurrent().getCollectingCentre());
         bill.setStaff(getCurrent().getStaff());
-        bill.setTotal(bi.getFeeValue());
-        bill.setNetTotal(bi.getFeeValue());
-        ////////////////
+//        bill.setTotal(bi.getFeeValue());
+//        bill.setNetTotal(bi.getFeeValue());
+//        ////////////////
 
         bill.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         bill.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -391,9 +391,11 @@ public class InwardProfessionalBillController implements Serializable {
             return;
         }
 
+        Bill b = saveBill();
+        BillItem bItm = saveBillItem(b);
+
         for (BillFee bf : getLstBillFees()) {
-            Bill b = saveBill(bf);
-            saveBillFee(b, bf);
+            saveBillFee(b, bItm, bf);
         }
         UtilityController.addSuccessMessage("Bill Saved");
         current = null;
@@ -404,8 +406,19 @@ public class InwardProfessionalBillController implements Serializable {
         lstBillItems = null;
     }
 
-    private void saveBillFee(Bill b, BillFee bf) {
+    private BillItem saveBillItem(Bill bill) {
+        BillItem b = new BillItem();
+        b.setBill(bill);
 
+        b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        b.setCreater(getSessionController().getLoggedUser());
+
+        getBillItemFacade().create(b);
+        return b;
+    }
+
+    private void saveBillFee(Bill b, BillItem bItm, BillFee bf) {
+        bf.setBillItem(bItm);
         bf.setBill(b);
         bf.setPatienEncounter(getCurrent().getPatientEncounter());
         bf.setPatient(getCurrent().getPatientEncounter().getPatient());

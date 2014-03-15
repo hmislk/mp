@@ -1176,6 +1176,51 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
+    
+    public void createGrnPaymentTableAll() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where b.billType = :billType "
+                + " and b.createdAt between :fromDate and :toDate and b.retired=false ";
+
+        if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
+            sql += " and  (upper(b.patient.person.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPatientPhone() != null && !getSearchKeyword().getPatientPhone().trim().equals("")) {
+            sql += " and  (upper(b.patient.person.phone) like :patientPhone )";
+            temMap.put("patientPhone", "%" + getSearchKeyword().getPatientPhone().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            temMap.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getTotal() != null && !getSearchKeyword().getTotal().trim().equals("")) {
+            sql += " and  (upper(b.total) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.createdAt desc  ";
+//    
+        temMap.put("billType", BillType.GrnPayment);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+      //  temMap.put("ins", getSessionController().getInstitution());
+
+        //System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
+    }
 
     public void createTableByKeyword() {
         bills = null;

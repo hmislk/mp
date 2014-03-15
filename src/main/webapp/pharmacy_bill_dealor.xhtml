@@ -55,12 +55,17 @@
                             <h:outputLabel value="Type GRN No or Dealor Name"/>
                             <h:outputLabel value="Paying Amount"/>
                             <h:outputLabel/>
-                            <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{pharmacyDealorBill.currentBillItem.referenceBill}" completeMethod="#{billController.completeGrnDealor}" var="ix" itemLabel="#{ix.deptId}" itemValue="#{ix}" size="30"  style="width: 400px;">                                  
+                            <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{pharmacyDealorBill.currentBillItem.referenceBill}"
+                                            completeMethod="#{billController.completeGrnDealor}" var="ix" itemLabel="#{ix.deptId}"
+                                            itemValue="#{ix}" size="30"  style="width: 400px;">                                  
                                 <p:column headerText="Dealor Name">
                                     #{ix.fromInstitution.name}
                                 </p:column>
                                 <p:column headerText="Grn No">
                                     #{ix.deptId}
+                                </p:column>
+                                 <p:column headerText="Grn No">
+                                    #{ix.id}
                                 </p:column>
                                  <p:column headerText="Invoice No">
                                     #{ix.invoiceNumber}

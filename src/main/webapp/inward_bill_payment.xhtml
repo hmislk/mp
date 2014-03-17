@@ -13,7 +13,7 @@
 
         <h:panelGroup >
             <h:form  >
-                <p:panel header="Inward Payment Bill"  rendered="#{!inwardPaymentController.printPreview}">
+                <p:panel header="Inward Payment Bill">
                     <p:panel header="BHT">
 
                         <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
@@ -76,7 +76,7 @@
 
                 </p:panel>
 
-                <h:panelGroup>
+                <h:panelGroup rendered="#{inwardPaymentController.printPreview}">
 
                     <bill:payment bill="#{inwardPaymentController.current}"/>
                 </h:panelGroup>

@@ -42,6 +42,9 @@
                         <p:defaultCommand target="btnSearch" />
 
                         <p:dataTable id="tblBills" value="#{searchController.billItems}" var="bi"  >
+                            <p:column>
+                                <h:outputLabel value="#{bi.paidForBillFee.id}"/>
+                            </p:column>
                             <p:column headerText="Opd Bill No" >
                                 <h:commandLink action="payment_bill_reprint" value="#{bi.paidForBillFee.bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>

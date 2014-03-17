@@ -410,6 +410,9 @@ public class InwardCalculation {
         long tempDur = tmp.getDurationHours();
         long tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
+        
+        
+        
         Date currentTime;
 
         if (date == null) {

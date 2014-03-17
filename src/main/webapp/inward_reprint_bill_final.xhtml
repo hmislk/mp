@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:bi="http://java.sun.com/jsf/composite/inward">
+      xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
 
     <body>
 
@@ -97,35 +97,35 @@
 
 
                     <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
-                        <bi:inwardFinalBill   bill="#{inwardSearch.bill}"/>
+                        <bi:finalBill   bill="#{inwardSearch.bill}"/>
                     </h:panelGroup>
 
                     <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
-                        <bi:inwardFinalBill  hosCopy="true"                                       
+                        <bi:finalBill  hosCopy="true"                                       
                                              bill="#{inwardSearch.bill}"/>
                     </h:panelGroup>
 
                     <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
-                        <bi:inwardFinalBill duplicate="true"                                   
+                        <bi:finalBill duplicate="true"                                   
                                             bill="#{inwardSearch.bill}" />
                     </h:panelGroup>
 
                     <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
-                        <bi:inwardFinalBill  bill="#{inwardSearch.bill}"
+                        <bi:finalBill  bill="#{inwardSearch.bill}"
                                              withoutPro="true" showProfessionalOnly="true"/>
                     </h:panelGroup>
 
                     <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
-                        <bi:inwardFinalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
+                        <bi:finalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
                                              bill="#{inwardSearch.bill}"/>
                     </h:panelGroup>
 
                     <h:panelGroup id="professional" styleClass="noBorder">       
-                        <bi:inwardFinalProfessionalBill bill="#{inwardSearch.bill}"  />
+                        <bi:finalProfessionalBill bill="#{inwardSearch.bill}"  />
                     </h:panelGroup>
 
                     <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
-                        <bi:inwardFinalBill duplicate="true"                                   
+                        <bi:finalBill duplicate="true"                                   
                                             bill="#{inwardSearch.bill}" withoutPro="true" showProfessionalOnly="true" />
                     </h:panelGroup>
 

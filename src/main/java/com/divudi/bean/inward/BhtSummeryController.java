@@ -60,7 +60,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.primefaces.event.RowEditEvent;
 
@@ -119,10 +118,13 @@ public class BhtSummeryController implements Serializable {
     private PatientItem tmpPI;
     private Admission patientEncounter;
     private Bill current;
-    @Temporal(TemporalType.TIMESTAMP)
     private Date currentTime;
     private Date toTime;
     private boolean printPreview;
+    
+    public void changeMemberShipSchemeListener(){
+        
+    }
 
     public void updatePatientItem(PatientItem patientItem) {
         getInwardTimedItemController().finalizeService(patientItem);

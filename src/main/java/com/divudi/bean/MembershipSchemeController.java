@@ -8,11 +8,14 @@
  */
 package com.divudi.bean;
 
+import com.divudi.data.PaymentMethod;
+import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.facade.MembershipSchemeFacade;
 import com.divudi.entity.MembershipScheme;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.inject.Named;
@@ -27,7 +30,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -42,19 +45,24 @@ public class MembershipSchemeController implements Serializable {
     private MembershipScheme current;
     private List<MembershipScheme> items = null;
     String selectText = "";
+    
+    
+
 
     public List<MembershipScheme> completeMembershipScheme(String qry) {
         List<MembershipScheme> c;
-        c = getFacade().findBySQL("select c from MembershipScheme c where c.retired=false and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name");
+        HashMap hm = new HashMap();
+        String sql = "select c from MembershipScheme c where c.retired=false and upper(c.name) "
+                + " like :q order by c.name";
+        hm.put("q", "%" + qry.toUpperCase() + "%");
+        c = getFacade().findBySQL(sql, hm);
+
         if (c == null) {
             c = new ArrayList<>();
         }
         return c;
     }
 
-    
-
-  
     public List<MembershipScheme> getSelectedItems() {
         selectedItems = getFacade().findBySQL("select c from MembershipScheme c where c.retired=false and upper(c.name) like '%" + getSelectText().toUpperCase() + "%' order by c.name");
         return selectedItems;

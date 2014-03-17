@@ -15,6 +15,7 @@ public enum BillType {
     PaymentBill,
     OpdBill,
     InwardPaymentBill,
+    InwardFinalBill,
     InwardAppointmentBill,
     InwardBill,
     AdmissionBill,

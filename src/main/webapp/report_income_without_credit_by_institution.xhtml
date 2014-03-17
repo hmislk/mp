@@ -42,6 +42,9 @@
                                              facetFontColor="#FFFFFF" facetFontStyle="BOLD" cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL" 
                                              fontName="Courier New" />
                             </p:commandButton>
+                              <p:commandButton value="Pdf" ajax="false">
+                                  <pe:exporter type="pdf" target="tbl" fileName="33" />
+                            </p:commandButton>
                         </h:panelGrid>
                     </p:panel>
                     <p:panel id="panelReport" styleClass="noBorder summeryBorder">
@@ -63,7 +66,7 @@
                             </f:facet>
 
                             <p:column>
-                                #{i+1}
+                                <h:outputLabel value="#{i+1}"/>
                             </p:column>
                             <p:column headerText="Bill Id" >
                                 <f:facet name="header">

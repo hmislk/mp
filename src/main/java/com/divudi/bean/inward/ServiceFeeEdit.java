@@ -54,7 +54,7 @@ public class ServiceFeeEdit implements Serializable {
         getBillFeeFacade().edit(billFee);
         double serviceValue = 0;
         BillFee marginFee = null;
-        marginFee = getInwardCalculation().getBillFeeMatrix(billFee.getBillItem());
+        marginFee = getInwardCalculation().getBillFeeMatrix(billFee.getBillItem(), billFee.getBill().getInstitution());
         serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billFee.getBillItem());
 
         double matrixValue = getInwardCalculation().calInwardMargin(billFee.getBillItem(), serviceValue, billFee.getBill().getFromDepartment());

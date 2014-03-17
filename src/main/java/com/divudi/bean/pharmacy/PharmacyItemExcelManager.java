@@ -264,25 +264,44 @@ public class PharmacyItemExcelManager implements Serializable {
         List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
 
         for (Bill b : bills) {
-            String str="";
+            String str = "";
             //Reset Institution ID
-            if(b.getInsId()!=null){
-             str = b.getInsId().replace('\\', '/');
-            System.err.println("Ins No " + b.getInsId() + " : " + str);
-            b.setInsId(str);
+            if (b.getInsId() != null) {
+                str = b.getInsId().replace('\\', '/');
+                System.err.println("Ins No " + b.getInsId() + " : " + str);
+                b.setInsId(str);
             }
 
             //Reset Department ID
-            if(b.getDeptId()!=null){
-            str = b.getDeptId().replace('\\', '/');
-            System.err.println("Dept No " + b.getDeptId() + " : " + str);
-            b.setDeptId(str);
+            if (b.getDeptId() != null) {
+                str = b.getDeptId().replace('\\', '/');
+                System.err.println("Dept No " + b.getDeptId() + " : " + str);
+                b.setDeptId(str);
             }
 
             getBillFacade().edit(b);
         }
 
     }
+
+//    public void resetPharmacyPurhcaseCancelPayentScheme() {
+//        String sql;
+//        Map temMap = new HashMap();
+//
+//        sql = "select b from Bill b where (type(b)=:class) "
+//                + " and b.billType = :billType ";
+//
+//        temMap.put("class", BilledBill.class);
+//        temMap.put("billType", BillType.PharmacyPurchaseBill);
+//        //temMap.put("dep", getSessionController().getDepartment());
+//        List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
+//
+//        for (Bill b : bills) {
+//            System.err.println("Billed "+b.getPaymentScheme());
+//            System.err.println("Cancelled "+b.getCancelledBill().getPaymentScheme());
+//        }
+//
+//    }
 
     public void resetGrnReference() {
         String sql;

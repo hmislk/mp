@@ -9,6 +9,7 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
 import com.divudi.entity.Fee;
+import com.divudi.entity.Institution;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.Item;
 import com.divudi.entity.ItemFee;
@@ -103,7 +104,7 @@ public class InwardCalculation {
         }
     }
 
-    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter) {
+    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter,Institution institution) {
 
         List<BillFee> billFeeList = new ArrayList<>();
         BillFee billFee;
@@ -143,7 +144,7 @@ public class InwardCalculation {
 
         BillFee bf = null;
 
-        bf = getBillFeeMatrix(billItem);
+        bf = getBillFeeMatrix(billItem,institution);
         double serviceValue = getHospitalFeeByItem(billItem.getItem());
         PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
         bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoomFacilityCharge().getDepartment()));
@@ -272,7 +273,7 @@ public class InwardCalculation {
     @EJB
     private BillFeeFacade billFeeFacade;
 
-    public BillFee getBillFeeMatrix(BillItem billItem) {
+    public BillFee getBillFeeMatrix(BillItem billItem, Institution institution) {
         String sql = "Select bf from BillFee bf where bf.retired=false and "
                 + " bf.billItem=:bItem and bf.fee.feeType=:ftp ";
         HashMap hm = new HashMap();
@@ -287,11 +288,35 @@ public class InwardCalculation {
             matrixFee.setBillItem(billItem);
             matrixFee.setFee(matrix);
             matrixFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            matrixFee.setInstitution(billItem.getItem().getDepartment().getInstitution());
+            matrixFee.setInstitution(institution);
 //            getBillFeeFacade().create(billFee);
         }
 
         return matrixFee;
+    }
+
+    public BillFee getIssueBillFee(BillItem billItem, Institution institution) {
+        String sql = "Select bf from BillFee bf where bf.retired=false and "
+                + " bf.billItem=:bItem and bf.fee.feeType=:ftp ";
+        HashMap hm = new HashMap();
+        hm.put("bItem", billItem);
+        hm.put("ftp", FeeType.Issue);
+
+        BillFee billtItemFee = getBillFeeFacade().findFirstBySQL(sql, hm);
+
+        if (billtItemFee == null) {
+            billtItemFee = new BillFee();
+
+            Fee issueFee = getIssueFee();
+
+            billtItemFee.setBillItem(billItem);
+            billtItemFee.setFee(issueFee);
+            billtItemFee.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            billtItemFee.setInstitution(institution);
+//            getBillFeeFacade().create(billFee);
+        }
+
+        return billtItemFee;
     }
 
     public double calInwardMargin(BillItem billItem, double serviceValue, Department department) {
@@ -333,19 +358,36 @@ public class InwardCalculation {
         String sql = "Select f from Fee f where f.retired=false and f.feeType=:nm";
         HashMap hm = new HashMap();
         hm.put("nm", FeeType.Matrix);
-        List<Fee> fee = getFeeFacade().findBySQL(sql, hm, TemporalType.TIME);
-        Fee matrix;
+        Fee matrix = getFeeFacade().findFirstBySQL(sql, hm);
 
-        if (fee.size() <= 0) {
+        if (matrix == null) {
             matrix = new Fee();
             matrix.setName("Matrix");
             matrix.setFeeType(FeeType.Matrix);
             matrix.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getFeeFacade().create(matrix);
-            return matrix;
-        } else {
-            return fee.get(0);
+
         }
+
+        return matrix;
+    }
+
+    private Fee getIssueFee() {
+        String sql = "Select f from Fee f where f.retired=false and f.feeType=:nm";
+        HashMap hm = new HashMap();
+        hm.put("nm", FeeType.Issue);
+        Fee issue = getFeeFacade().findFirstBySQL(sql, hm);
+
+        if (issue == null) {
+            issue = new Fee();
+            issue.setName("Issue");
+            issue.setFeeType(FeeType.Issue);
+            issue.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            getFeeFacade().create(issue);
+
+        }
+
+        return issue;
     }
 
     public TimedItemFee getTimedItemFee(TimedItem ti) {

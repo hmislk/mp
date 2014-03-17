@@ -17,5 +17,6 @@ public enum FeeType {
     Department,
     Tax,
     Matrix,
+    Issue,
     Additional,
 }

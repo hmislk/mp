@@ -32,7 +32,7 @@ import javax.persistence.Transient;
 @Entity
 public class Person implements Serializable {
     @OneToMany(mappedBy = "person")
-     List<ClinicalFindingValue> clinicalFindingValues;
+     private List<ClinicalFindingValue> clinicalFindingValues;
 
      static final long serialVersionUID = 1L;
     @Id
@@ -79,6 +79,9 @@ public class Person implements Serializable {
     @Transient
     String nameWithTitle;
     boolean foreigner = false;
+    
+    @ManyToOne
+    private MembershipScheme membershipScheme;
 
     public boolean isForeigner() {
         return foreigner;
@@ -352,5 +355,21 @@ public class Person implements Serializable {
 
     public void setNic(String nic) {
         this.nic = nic;
+    }
+
+    public List<ClinicalFindingValue> getClinicalFindingValues() {
+        return clinicalFindingValues;
+    }
+
+    public void setClinicalFindingValues(List<ClinicalFindingValue> clinicalFindingValues) {
+        this.clinicalFindingValues = clinicalFindingValues;
+    }
+
+    public MembershipScheme getMembershipScheme() {
+        return membershipScheme;
+    }
+
+    public void setMembershipScheme(MembershipScheme membershipScheme) {
+        this.membershipScheme = membershipScheme;
     }
 }

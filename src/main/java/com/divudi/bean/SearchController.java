@@ -1628,9 +1628,10 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.patientEncounter.discharged=true and"
-                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false and b.grantTotal!=0 ";
+        sql = "select b from BilledBill b where"
+                + " b.billType = :billType and "
+                + " b.createdAt between :fromDate and :toDate "
+                + "and b.retired=false ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
@@ -1659,7 +1660,7 @@ public class SearchController implements Serializable {
 
         sql += " order by b.insId desc  ";
 
-        temMap.put("billType", BillType.InwardPaymentBill);
+        temMap.put("billType", BillType.InwardFinalBill);
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
 

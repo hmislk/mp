@@ -8,6 +8,8 @@
  */
 package com.divudi.bean;
 
+import com.divudi.data.PaymentMethod;
+import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.facade.MembershipSchemeFacade;
 import com.divudi.entity.MembershipScheme;
 import java.io.Serializable;
@@ -43,6 +45,9 @@ public class MembershipSchemeController implements Serializable {
     private MembershipScheme current;
     private List<MembershipScheme> items = null;
     String selectText = "";
+    
+    
+
 
     public List<MembershipScheme> completeMembershipScheme(String qry) {
         List<MembershipScheme> c;

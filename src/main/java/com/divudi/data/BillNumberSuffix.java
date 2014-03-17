@@ -51,6 +51,7 @@ public enum BillNumberSuffix {
     ADJ,//Adjustment
     //Inward
     INWPAY,//Payment Bill
+    INWFINAL,//Inward Final
     INWPRO,//Professional
     INWSER,//Service
     INWREF,//Refund

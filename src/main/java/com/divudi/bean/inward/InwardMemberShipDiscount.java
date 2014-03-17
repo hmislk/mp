@@ -52,26 +52,31 @@ public class InwardMemberShipDiscount implements Serializable {
         items = null;
     }
 
-    private InwardPriceAdjustment getInwardPriceAdjustment(InwardChargeType inwardChargeType) {
+    public InwardPriceAdjustment getMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, InwardChargeType inwardChargeType) {
         String sql;
         HashMap hm = new HashMap();
 
-        if (getCurrentMembershipScheme() != null) {
+        if (membershipScheme != null) {
             sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
                     + "  i.membershipScheme=:m and"
                     + " i.paymentMethod=:p and"
                     + " i.inwardChargeType=:inw ";
-            hm.put("m", getCurrentMembershipScheme());
+            hm.put("m", membershipScheme);
         } else {
-            sql = "Select i from InwardPriceAdjustment i where i.retired=false and"                
+            sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
                     + " i.paymentMethod=:p and"
-                    + " i.inwardChargeType=:inw ";
+                    + " i.inwardChargeType=:inw "
+                    + " and i.membershipScheme is null ";
         }
 
-        hm.put("p", getCurrentPaymentMethod());
+        hm.put("p", paymentMethod);
         hm.put("inw", inwardChargeType);
 
-        InwardPriceAdjustment object = getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
+        return getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
+    }
+
+    private InwardPriceAdjustment getInwardPriceAdjustment(InwardChargeType inwardChargeType) {
+        InwardPriceAdjustment object = getMemberDisCount(getCurrentPaymentMethod(), getCurrentMembershipScheme(), inwardChargeType);
 
         if (object == null) {
             object = new InwardPriceAdjustment();

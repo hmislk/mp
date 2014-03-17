@@ -72,7 +72,7 @@ public class InwardTimedItemController implements Serializable {
             return;
         }
 
-        double serviceTot = getInwardCalculation().calTimedServiceCharge(getCurrent(), null);
+        double serviceTot = getInwardCalculation().calTimedServiceCharge(getCurrent(), getCurrent().getToTime());
         getCurrent().setServiceValue(serviceTot);
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getCurrent().setCreatedAt(Calendar.getInstance().getTime());

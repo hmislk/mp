@@ -27,6 +27,7 @@ import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientInvestigationFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -447,11 +448,6 @@ public class InwardSearch implements Serializable {
             return true;
         }
 
-        if (getBill().getPatientEncounter().isPaymentFinalized()) {
-            UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
-            return true;
-        }
-
         if (getBill().getPaymentMethod() == null) {
             UtilityController.addErrorMessage("Please select a payment Method.");
             return true;
@@ -484,6 +480,11 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
+            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
+                return;
+            }
+
             CancelledBill cb = createCancelBill();
             //Copy & paste
             if (webUserController.hasPrivilege("LabBillCancelling")) {
@@ -511,6 +512,11 @@ public class InwardSearch implements Serializable {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
 
             if (check()) {
+                return;
+            }
+
+            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
                 return;
             }
 
@@ -549,6 +555,11 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
+            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
+                return;
+            }
+
             CancelledBill cb = createCancelBill();
             //Copy & paste
             getBillFacade().create(cb);
@@ -556,6 +567,65 @@ public class InwardSearch implements Serializable {
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
             getBillFacade().edit((BilledBill) getBill());
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+            return;
+        }
+
+    }
+
+    public boolean cancelBillPayment(Bill bill) {
+        if (bill != null && bill.getId() != null && bill.getId() != 0) {
+
+            if (check()) {
+                return true;
+            }
+
+            CancelledBill cb = createCancelBill();
+            //Copy & paste
+            getBillFacade().create(cb);
+            cancelBillItems(cb);
+            bill.setCancelled(true);
+            bill.setCancelledBill(cb);
+            getBillFacade().edit((BilledBill) bill);
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+            return true;
+        }
+
+        return false;
+    }
+
+    @EJB
+    private PatientEncounterFacade patientEncounterFacade;
+
+    public void cancelFinalBillPayment() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            if (check()) {
+                return;
+            }
+
+            if (cancelBillPayment(getBill().getReferenceBill())) {
+                return;
+            }
+
+            CancelledBill cb = createCancelBill();
+            //Copy & paste
+            getBillFacade().create(cb);
+            cancelBillItems(cb);
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit((BilledBill) getBill());
+
+            getBill().getPatientEncounter().setPaymentFinalized(false);
+            getPatientEncounterFacade().edit(getBill().getPatientEncounter());
+
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -994,6 +1064,14 @@ public class InwardSearch implements Serializable {
 
     public List<Bill> getBills() {
         return bills;
+    }
+
+    public PatientEncounterFacade getPatientEncounterFacade() {
+        return patientEncounterFacade;
+    }
+
+    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
+        this.patientEncounterFacade = patientEncounterFacade;
     }
 
 }

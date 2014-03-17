@@ -425,10 +425,7 @@ public class AdmissionController implements Serializable {
 
         if (getDeposit() != 0) {
             System.err.println("Deposit ");
-            getInwardPaymentController().getCurrent().setPaymentMethod(getCurrent().getPaymentMethod());
-            getInwardPaymentController().getCurrent().setPatientEncounter(current);
-            getInwardPaymentController().getCurrent().setTotal(getDeposit());
-            getInwardPaymentController().pay();
+            getInwardPaymentController().pay(getCurrent().getPaymentMethod(), getCurrent(), getDeposit());
             //     getInwardPaymentController().setPrintPreview(true);
         }
 

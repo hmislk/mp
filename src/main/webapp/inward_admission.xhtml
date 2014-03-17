@@ -7,7 +7,7 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
-                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward">
+                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill">
 
 
     <ui:define name="content">
@@ -212,7 +212,7 @@
             </h:panelGrid>
 
             <p:panel rendered="#{inwardPaymentController.printPreview}">
-                <bill:inwardPayment bill="#{inwardPaymentController.current}"  />
+                <bill:payment bill="#{inwardPaymentController.current}"  />
             </p:panel>
 
         </h:form>

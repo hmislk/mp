@@ -43,7 +43,7 @@ import javax.persistence.TemporalType;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -75,6 +75,10 @@ public class RoomChangeController implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date changeAt;
     private double addLinenCharge = 0.0;
+    
+    public void update(PatientRoom pR){
+        getPatientRoomFacade().edit(pR);
+    }
 
     private void recreate() {
         patientRoom = null;
@@ -130,7 +134,7 @@ public class RoomChangeController implements Serializable {
         pr.setCurrentMaintananceCharge(newRoomFacilityCharge.getMaintananceCharge());
         pr.setCurrentMoCharge(newRoomFacilityCharge.getMoCharge());
         pr.setCurrentNursingCharge(newRoomFacilityCharge.getNursingCharge());
-//        pr.setCurrentRoomCharge(newRoomFacilityCharge.getRoomCharge());
+        pr.setCurrentRoomCharge(newRoomFacilityCharge.getRoomCharge());
 
         pr.setAddmittedBy(getSessionController().getLoggedUser());
 
@@ -161,46 +165,6 @@ public class RoomChangeController implements Serializable {
         return selectedItems;
     }
 
-    public List<Admission> completePatient(String query) {
-        List<Admission> suggestions;
-        String sql;
-        if (query == null) {
-            suggestions = new ArrayList<>();
-        } else {
-            sql = "select c from Admission c where c.retired=false and c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
-        }
-        return suggestions;
-    }
-
-    public List<Admission> completePatient2(String query) {
-        List<Admission> suggestions;
-        String sql;
-        HashMap h = new HashMap();
-        if (query == null) {
-            suggestions = new ArrayList<Admission>();
-        } else {
-            sql = "select c from Admission c where c.retired=false and c.id not in(Select b.patientEncounter.id from Bill b where b.retired=false and  b.billType=:btp and b.grantTotal!=0) and(upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            //System.out.println(sql);
-            h.put("btp", BillType.InwardPaymentBill);
-            suggestions = getFacade().findBySQL(sql, h);
-        }
-        return suggestions;
-    }
-
-    public List<Admission> completeDishcahrgedPatient(String query) {
-        List<Admission> suggestions;
-        String sql;
-        if (query == null) {
-            suggestions = new ArrayList<Admission>();
-        } else {
-            sql = "select c from Admission c where c.retired=false and c.discharged=true and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
-        }
-        return suggestions;
-    }
     @EJB
     private RoomFacilityChargeFacade roomFacilityChargeFacade;
 
@@ -280,6 +244,17 @@ public class RoomChangeController implements Serializable {
 
     public void setCurrent(Admission current) {
         this.current = current;
+        createPatientRoom();
+    }
+
+    private void createPatientRoom() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
+                + " and pr.patientEncounter=:pe order by pr.createdAt";
+        hm.put("pe", getCurrent());
+        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
+
     }
 
     private AdmissionFacade getFacade() {
@@ -292,10 +267,9 @@ public class RoomChangeController implements Serializable {
             temSql = "SELECT i FROM Admission i where i.retired=false and i.discharged=false order by i.bhtNo";
             items = getFacade().findBySQL(temSql);
             if (items == null) {
-                items = new ArrayList<Admission>();
+                items = new ArrayList<>();
             }
         }
-
 
         return items;
     }
@@ -330,19 +304,9 @@ public class RoomChangeController implements Serializable {
     }
 
     public List<PatientRoom> getPatientRoom() {
-        if (getCurrent().getId() == null) {
-            return new ArrayList<>();
+        if (patientRoom == null) {
+            patientRoom = new ArrayList<>();
         }
-
-        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and pr.patientEncounter=:pe order by pr.admittedAt";
-        HashMap hm = new HashMap();
-        hm.put("pe", getCurrent());
-        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
-
-        if (patientRoom.size() <= 0) {
-            return new ArrayList<>();
-        }
-
         return patientRoom;
     }
 
@@ -373,6 +337,7 @@ public class RoomChangeController implements Serializable {
             getRoomFacilityChargeController().setCurrent(currentPatientRoom.getRoomFacilityCharge());
         } else {
             currentPatientRoom = new PatientRoom();
+            currentPatientRoom.setRoomFacilityCharge(new RoomFacilityCharge());
         }
 
         return currentPatientRoom;

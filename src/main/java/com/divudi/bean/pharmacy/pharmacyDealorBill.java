@@ -5,6 +5,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.BillController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -46,6 +47,7 @@ public class pharmacyDealorBill implements Serializable {
     private Date chequeDate;
     private Date slipDate;
     private BillItem currentBillItem;
+    private Institution institution;
     private int index;
     //List
     private List<BillItem> billItems;
@@ -99,8 +101,23 @@ public class pharmacyDealorBill implements Serializable {
         getCurrentBillItem().getReferenceBill().setTmpReturnTotal(grnReturnTotal);
 
         double ballanceAmt = getCurrentBillItem().getReferenceBill().getNetTotal() + grnReturnTotal + getCurrentBillItem().getReferenceBill().getPaidAmount();
-        getCurrentBillItem().setNetValue(0 - ballanceAmt);
 
+        if (ballanceAmt != 0) {
+            getCurrentBillItem().setNetValue(0 - ballanceAmt);
+        }
+
+    }
+
+    @Inject
+    private BillController billController;
+
+    public void selectInstitutionListener() {
+        List<Bill> list = getBillController().getGrnBills(institution);
+        for (Bill b : list) {
+            getCurrentBillItem().setReferenceBill(b);
+            selectListener();
+            addToBill();
+        }
     }
 
     public void addToBill() {
@@ -113,13 +130,28 @@ public class pharmacyDealorBill implements Serializable {
         //     getCurrentBillItem().getBill().setNetTotal(getCurrentBillItem().getNetValue());
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
-        getBillItems().add(getCurrentBillItem());
+        if (getCurrentBillItem().getNetValue() != 0) {
+            System.err.println("11 "+getCurrentBillItem().getReferenceBill().getDeptId());
+            System.err.println("aa "+getCurrentBillItem().getNetValue());
+            getBillItems().add(getCurrentBillItem());
+        }
 
         currentBillItem = null;
         calTotal();
     }
 
-    private void calTotal() {
+    public void changeNetValueListener(BillItem billItem) {
+
+        if (!checkPaidAmount(billItem)) {
+            billItem.setNetValue(0);
+//            UtilityController.addSuccessMessage("U cant add more than ballance");
+//            return;
+        }
+
+        calTotal();
+    }
+
+    public void calTotal() {
         double n = 0.0;
         for (BillItem b : billItems) {
             n += b.getNetValue();
@@ -384,6 +416,22 @@ public class pharmacyDealorBill implements Serializable {
 
     public void setBillItemFacade(BillItemFacade billItemFacade) {
         this.billItemFacade = billItemFacade;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public BillController getBillController() {
+        return billController;
+    }
+
+    public void setBillController(BillController billController) {
+        this.billController = billController;
     }
 
 }

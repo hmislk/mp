@@ -32,7 +32,7 @@ import javax.inject.Inject;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -160,26 +160,18 @@ public class InwardRefundController implements Serializable {
         this.current = current;
     }
 
-    public double getPaidAmount() {
-        paidAmount = 0.0;
-        if (getCurrent().getPatientEncounter() == null) {
-            return 0.0;
-        }
+    public void calculatePaidAmount() {
+
         HashMap map = new HashMap();
-        String sql = "SELECT bb FROM Bill bb where bb.retired=false and bb.billType=:bType and bb.patientEncounter=:pe";
+        String sql = "SELECT sum(bb.netTotal) FROM Bill bb where bb.retired=false "
+                + " and bb.billType=:bType and bb.patientEncounter=:pe";
         map.put("bType", BillType.InwardPaymentBill);
         map.put("pe", getCurrent().getPatientEncounter());
-        List<Bill> bb = getBillFacade().findBySQL(sql, map);
+        paidAmount = getBillFacade().findDoubleByJpql(sql, map);
 
-        if (bb.size() <= 0) {
-            paidAmount = 0.0;
-        } else {
-            for (Bill t : bb) {
-                paidAmount += t.getNetTotal();
+    }
 
-            }
-
-        }
+    public double getPaidAmount() {
 
         return paidAmount;
     }

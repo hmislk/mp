@@ -36,7 +36,7 @@
                     <div class="cel1R1L" >
                         <h:outputLabel value="Bill No">
                         </h:outputLabel>
-                        
+
                     </div>
 
                     <div class="cel1R1C" >
@@ -92,39 +92,34 @@
                         </h:outputLabel>
                     </div>
 
-                    <div class="billEntryBlock">
-                        <p>
-                            #{cc.attrs.bill.advancePaymentBillText}
-                            &nbsp;                           
-                        </p>
-                    </div>
-
-                        <div style="position: absolute;left: 5%;top: 50%;min-width: 85%;" >
-
-                            <table style="min-width:100%;padding-left: 30px;">
-                                <tr>
-                                    <td style="min-width: 80%;text-align: left;font-size: 120%;">
-                                        <h:outputLabel value="Rs. "/>
-                                         <h:outputLabel value="#{cc.attrs.bill.netTotal}" >
-                                             <f:convertNumber integerOnly="true" />
-                                        </h:outputLabel>
-                                        <h:outputLabel value=" /="/>
-                                    </td>
-                                  
-                                </tr>
-                            </table>
 
 
+                    <div style="position: absolute;left: 5%;top: 50%;min-width: 85%;" >
 
-                        </div>
+                        <table style="min-width:100%;padding-left: 30px;">
+                            <tr>
+                                <td style="min-width: 80%;text-align: left;font-size: 120%;">
+                                    <h:outputLabel value="Rs. "/>
+                                    <h:outputLabel value="#{cc.attrs.bill.netTotal}" >
+                                        <f:convertNumber integerOnly="true" />
+                                    </h:outputLabel>
+                                    <h:outputLabel value=" /="/>
+                                </td>
 
-                        <div class="cashierBlock" >
-                            <h:outputLabel value=".................."  /><br/>
-                            <h:outputLabel  value="Cashier : #{cc.attrs.bill.creater.code}"   />
-                        </div>
+                            </tr>
+                        </table>
+
 
 
                     </div>
+
+                    <div class="cashierBlock" >
+                        <h:outputLabel value=".................."  /><br/>
+                        <h:outputLabel  value="Cashier : #{cc.attrs.bill.creater.code}"   />
+                    </div>
+
+
+                </div>
 
             </h:panelGroup>
         </div>

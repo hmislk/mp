@@ -6,7 +6,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bi="http://java.sun.com/jsf/composite/inward">
+                xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
 
 
     <ui:define name="content">
@@ -162,7 +162,38 @@
                     <p:commandButton value="Check Intrim " ajax="false" action="#{bhtSummeryController.prepareNewBill()}"  styleClass="noPrintButton">
                     </p:commandButton>
 
+                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                        <bi:finalBill   bill="#{bhtSummeryController.current}"/>
+                    </h:panelGroup>
 
+                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
+                        <bi:finalBill  hosCopy="true"                                       
+                                       bill="#{bhtSummeryController.current}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
+                        <bi:finalBill duplicate="true"                                   
+                                      bill="#{bhtSummeryController.current}" />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
+                        <bi:finalBill  bill="#{bhtSummeryController.current}"
+                                       withoutPro="true" showProfessionalOnly="true"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
+                        <bi:finalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
+                                       bill="#{bhtSummeryController.current}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="professional" styleClass="noBorder">       
+                        <bi:finalProfessionalBill bill="#{bhtSummeryController.current}"  />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
+                        <bi:finalBill duplicate="true"                                   
+                                      bill="#{bhtSummeryController.current}" withoutPro="true" showProfessionalOnly="true" />
+                    </h:panelGroup>
 
 
                 </p:panel>

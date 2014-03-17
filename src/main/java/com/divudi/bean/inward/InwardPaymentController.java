@@ -8,12 +8,15 @@
  */
 package com.divudi.bean.inward;
 
+import com.divudi.bean.BillSearch;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.entity.Bill;
+import com.divudi.entity.BillEntry;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.facade.BillFeeFacade;
@@ -21,6 +24,7 @@ import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BilledBillFacade;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -49,6 +53,8 @@ public class InwardPaymentController implements Serializable {
     @Inject
     private SessionController sessionController;
     private boolean printPreview;
+    private List<BillEntry> lstBillEntries;
+    private List<Bill> bills;
 
     public PaymentMethod[] getPaymentMethods() {
         return PaymentMethod.values();
@@ -97,6 +103,8 @@ public class InwardPaymentController implements Serializable {
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getBilledBillFacade().create(getCurrent());
     }
+@Inject
+private BillSearch billSearch;
 
     private void saveBillItem() {
         BillItem temBi = new BillItem();
@@ -106,6 +114,17 @@ public class InwardPaymentController implements Serializable {
         temBi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         temBi.setCreater(getSessionController().getLoggedUser());
         getBillItemFacade().create(temBi);
+
+    }
+    
+    public void cancellAll() {
+        for (Bill b : bills) {
+            getBillSearch().setBill((BilledBill) b);
+            getBillSearch().setPaymentScheme(b.getPaymentScheme());
+            getBillSearch().setComment("Batch Cancell");
+            //System.out.println("ggg : " + getBillSearch().getComment());
+            getBillSearch().cancelBill();
+        }
 
     }
 
@@ -168,5 +187,29 @@ public class InwardPaymentController implements Serializable {
 
     public void setPrintPreview(boolean printPreview) {
         this.printPreview = printPreview;
+    }
+
+    public List<BillEntry> getLstBillEntries() {
+        return lstBillEntries;
+    }
+
+    public void setLstBillEntries(List<BillEntry> lstBillEntries) {
+        this.lstBillEntries = lstBillEntries;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public BillSearch getBillSearch() {
+        return billSearch;
+    }
+
+    public void setBillSearch(BillSearch billSearch) {
+        this.billSearch = billSearch;
     }
 }

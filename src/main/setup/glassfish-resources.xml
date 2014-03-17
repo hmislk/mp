@@ -33,4 +33,5 @@
     <jdbc-resource enabled="true" jndi-name="piumi" object-type="user" pool-name="mysql_hmis_rootPool_1"/>
     <jdbc-resource enabled="true" jndi-name="piumi1" object-type="user" pool-name="mysql_hmis_jsfPool"/>
     <jdbc-resource enabled="true" jndi-name="piumi2" object-type="user" pool-name="mysql_hmis_rootPool_1"/>
+    <jdbc-resource enabled="true" jndi-name="piumi3" object-type="user" pool-name="mysql_hmis_rootPool_1"/>
 </resources>

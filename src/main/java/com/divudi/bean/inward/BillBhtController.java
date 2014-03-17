@@ -183,7 +183,7 @@ public class BillBhtController implements Serializable {
     }
 
     public void putToBills() {
-        
+
         Set<Department> billDepts = new HashSet<>();
         for (BillEntry e : lstBillEntries) {
             billDepts.add(e.getBillItem().getItem().getDepartment());
@@ -323,7 +323,7 @@ public class BillBhtController implements Serializable {
         addingEntry.setBillItem(getCurrentBillItem());
         addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(getCurrentBillItem()));
 
-        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter()));
+        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter(), getCurrentBillItem().getItem().getInstitution()));
         addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
         lstBillEntries.add(addingEntry);
         getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));

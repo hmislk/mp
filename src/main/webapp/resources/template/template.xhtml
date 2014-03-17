@@ -82,6 +82,7 @@
                                             <p:menuitem  ajax="false"  action="inward_search_service_discharged" value="Service Bill" actionListener="#{inwardSearch.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>  
                                             <p:menuitem  ajax="false"  action="inward_search_professional_discharged" value="Professional Bill" actionListener="#{inwardSearch.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
                                         </p:submenu>
+                                        <p:menuitem  ajax="false"  action="inward_payment_bill_search_discharged_final" value="Final Bill Search" actionListener="#{inwardSearch.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>                                                                                
                                     </p:submenu>
                                     <p:submenu label="Professional Payment" >
                                         <p:menuitem  ajax="false"  value="Pay Doctor"  action="inward_bill_staff_payment"></p:menuitem>

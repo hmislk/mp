@@ -11,7 +11,6 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
-import com.divudi.entity.BillItem;
 import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
@@ -22,7 +21,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -31,7 +29,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import org.primefaces.event.RowEditEvent;
 
 /**
  *

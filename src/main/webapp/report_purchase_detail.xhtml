@@ -14,7 +14,7 @@
 
         <h:panelGroup rendered="true" >
             <h:form>
-                <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="GRN Detail">
+                <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="Purchase Detail">
 
 
                     <h:panelGrid columns="6" style="noPrintButton">
@@ -115,7 +115,7 @@
 
                         <p:column headerText="GRN No" >
                             <f:facet name="header">  
-                                <h:outputLabel value="Po No"/>
+                                <h:outputLabel value="GRN No"/>
                             </f:facet> 
                             <h:outputLabel value="#{b.referenceBill.deptId}"/>
                         </p:column>
@@ -371,8 +371,8 @@
 
                     <p:spacer height="30"/>
 
-                    <p:dataTable id="returnCancelled"  value="#{commonReport.grnReturnCancel.bills}" var="b1"  
-                                 rendered="#{commonReport.grnReturnCancel.bills.size()!=0}" >
+                    <p:dataTable id="returnCancelled"  value="#{commonReport.purchaseReturnCancel.bills}" var="b1"  
+                                 rendered="#{commonReport.purchaseReturnCancel.bills.size()!=0}" >
                         <f:facet name="header">  
                             <h:outputLabel value="Cancelled GRN Return "/>
                         </f:facet> 
@@ -440,17 +440,17 @@
                                 <p:column colspan="4" style="text-align:left" footerText="Totals:">
 
                                 </p:column>
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnReturnCancel.bills}">
+                                <p:column style="text-align: right;" footerText="#{commonReport.purchaseReturnCancel.bills}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnReturnCancel.cash}">
+                                        <h:outputLabel value="#{commonReport.purchaseReturnCancel.cash}">
                                             <f:convertNumber pattern="#,000.00"/>
                                         </h:outputLabel>
                                     </f:facet>
 
                                 </p:column>                                                           
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnReturnCancel.credit}">
+                                <p:column style="text-align: right;" footerText="#{commonReport.purchaseReturnCancel.credit}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnReturnCancel.credit}">
+                                        <h:outputLabel value="#{commonReport.purchaseReturnCancel.credit}">
                                             <f:convertNumber pattern="#,000.00"/>
                                         </h:outputLabel>
                                     </f:facet>
@@ -464,7 +464,7 @@
 
                     <p:spacer height="30"/>
 
-                    <p:dataTable id="sum" value="#{commonReport.grnTotal}"  var="i" >
+                    <p:dataTable id="sum" value="#{commonReport.purchaseTotal}"  var="i" >
                         <f:facet name="header">
                             Summery
                         </f:facet>

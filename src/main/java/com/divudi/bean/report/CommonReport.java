@@ -39,8 +39,6 @@ import javax.persistence.TemporalType;
  *
  * @author www.divudi.com
  */
-
-
 @Named
 @RequestScoped
 public class CommonReport implements Serializable {
@@ -122,9 +120,9 @@ public class CommonReport implements Serializable {
     }
 
     public void setInstitution(Institution institution) {
-         recreteModal();
+        recreteModal();
         this.institution = institution;
-      
+
     }
 
     public BillType[] getBillTypes() {
@@ -457,12 +455,12 @@ public class CommonReport implements Serializable {
 
     }
 
-    private List<Bill> grnBills(Bill billClass, BillType billType, Department dep) {
+    private List<Bill> getBills(Bill billClass, BillType billType, Department dep) {
         String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and "
                 + " b.billType = :btp "
                 + " and b.department=:d "
                 + " and b.createdAt between :fromDate and "
-                + " :toDate order by b.deptId,b.fromInstitution.name ";
+                + " :toDate order by b.deptId  ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
@@ -991,6 +989,9 @@ public class CommonReport implements Serializable {
         double tmp = 0.0;
         for (BillsTotals bt : list) {
             if (bt != null) {
+                System.err.println("CRDIT " + bt.getCredit());
+                System.err.println("CASH " + bt.getCash());
+                System.err.println("Size " + bt.getBills().size());
                 tmp += bt.getCredit();
             }
         }
@@ -1193,10 +1194,10 @@ public class CommonReport implements Serializable {
         getRefundedBillsPh2().setSlip(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
 
     }
-    
+
     public List<InwardPriceAdjustment> createMatrxTabl() {
         String sql;
-        sql = "select a from InwardPriceAdjustment a where a.retired=false order by a.department.name,a.category.name,a.fromPrice" ;
+        sql = "select a from InwardPriceAdjustment a where a.retired=false order by a.department.name,a.category.name,a.fromPrice";
         items = getInwdPriceAdjFacade().findBySQL(sql);
         return items;
     }
@@ -1214,58 +1215,58 @@ public class CommonReport implements Serializable {
         }
 
         //GRN Billed Bills
-        getGrnBilled().setBills(grnBills(new BilledBill(), BillType.PharmacyGrnBill, getDepartment()));
+        getGrnBilled().setBills(getBills(new BilledBill(), BillType.PharmacyGrnBill, getDepartment()));
         getGrnBilled().setCash(calValue(new BilledBill(), BillType.PharmacyGrnBill, PaymentMethod.Cash, getDepartment()));
         getGrnBilled().setCredit(calValue(new BilledBill(), BillType.PharmacyGrnBill, PaymentMethod.Credit, getDepartment()));
 
         //GRN Cancelled Bill
-        getGrnCancelled().setBills(grnBills(new CancelledBill(), BillType.PharmacyGrnBill, getDepartment()));
+        getGrnCancelled().setBills(getBills(new CancelledBill(), BillType.PharmacyGrnBill, getDepartment()));
         getGrnCancelled().setCash(calValue(new CancelledBill(), BillType.PharmacyGrnBill, PaymentMethod.Cash, getDepartment()));
         getGrnCancelled().setCredit(calValue(new CancelledBill(), BillType.PharmacyGrnBill, PaymentMethod.Credit, getDepartment()));
 
         //GRN Refunded Bill
-        getGrnReturn().setBills(grnBills(new BilledBill(), BillType.PharmacyGrnReturn, getDepartment()));
+        getGrnReturn().setBills(getBills(new BilledBill(), BillType.PharmacyGrnReturn, getDepartment()));
         getGrnReturn().setCash(calValue(new BilledBill(), BillType.PharmacyGrnReturn, PaymentMethod.Cash, getDepartment()));
         getGrnReturn().setCredit(calValue(new BilledBill(), BillType.PharmacyGrnReturn, PaymentMethod.Credit, getDepartment()));
 
         //GRN Refunded Bill Cancel
-        getGrnReturnCancel().setBills(grnBills(new CancelledBill(), BillType.PharmacyGrnReturn, getDepartment()));
+        getGrnReturnCancel().setBills(getBills(new CancelledBill(), BillType.PharmacyGrnReturn, getDepartment()));
         getGrnReturnCancel().setCash(calValue(new CancelledBill(), BillType.PharmacyGrnReturn, PaymentMethod.Cash, getDepartment()));
         getGrnReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PharmacyGrnReturn, PaymentMethod.Credit, getDepartment()));
 
     }
-    
+
     public void createPurchaseDetailTable() {
         recreteModal();
 
-        grnBilled = new BillsTotals();
-        grnCancelled = new BillsTotals();
-        grnReturn = new BillsTotals();
-        grnReturnCancel = new BillsTotals();
+        purchaseBilled = new BillsTotals();
+        purchaseCancelled = new BillsTotals();
+        purchaseReturn = new BillsTotals();
+        purchaseReturnCancel = new BillsTotals();
 
         if (getDepartment() == null) {
             return;
         }
 
-        //GRN Billed Bills
-        getGrnBilled().setBills(grnBills(new BilledBill(), BillType.PharmacyPurchaseBill, getDepartment()));
-        getGrnBilled().setCash(calValue(new BilledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Cash, getDepartment()));
-        getGrnBilled().setCredit(calValue(new BilledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Credit, getDepartment()));
+        //Purchase Billed Bills
+        getPurchaseBilled().setBills(getBills(new BilledBill(), BillType.PharmacyPurchaseBill, getDepartment()));
+        getPurchaseBilled().setCash(calValue(new BilledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Cash, getDepartment()));
+        getPurchaseBilled().setCredit(calValue(new BilledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Credit, getDepartment()));
 
-        //GRN Cancelled Bill
-        getGrnCancelled().setBills(grnBills(new CancelledBill(), BillType.PharmacyPurchaseBill, getDepartment()));
-        getGrnCancelled().setCash(calValue(new CancelledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Cash, getDepartment()));
-        getGrnCancelled().setCredit(calValue(new CancelledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Credit, getDepartment()));
+        //Purchase Cancelled Bill
+        getPurchaseCancelled().setBills(getBills(new CancelledBill(), BillType.PharmacyPurchaseBill, getDepartment()));
+        getPurchaseCancelled().setCash(calValue(new CancelledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Cash, getDepartment()));
+        getPurchaseCancelled().setCredit(calValue(new CancelledBill(), BillType.PharmacyPurchaseBill, PaymentMethod.Credit, getDepartment()));
 
-        //GRN Refunded Bill
-        getGrnReturn().setBills(grnBills(new BilledBill(), BillType.PurchaseReturn, getDepartment()));
-        getGrnReturn().setCash(calValue(new BilledBill(), BillType.PurchaseReturn, PaymentMethod.Cash, getDepartment()));
-        getGrnReturn().setCredit(calValue(new BilledBill(), BillType.PurchaseReturn, PaymentMethod.Credit, getDepartment()));
+        //Purchase Refunded Bill
+        getPurchaseReturn().setBills(getBills(new BilledBill(), BillType.PurchaseReturn, getDepartment()));
+        getPurchaseReturn().setCash(calValue(new BilledBill(), BillType.PurchaseReturn, PaymentMethod.Cash, getDepartment()));
+        getPurchaseReturn().setCredit(calValue(new BilledBill(), BillType.PurchaseReturn, PaymentMethod.Credit, getDepartment()));
 
-        //GRN Refunded Bill Cancel
-        getGrnReturnCancel().setBills(grnBills(new CancelledBill(), BillType.PurchaseReturn, getDepartment()));
-        getGrnReturnCancel().setCash(calValue(new CancelledBill(), BillType.PurchaseReturn, PaymentMethod.Cash, getDepartment()));
-        getGrnReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PurchaseReturn, PaymentMethod.Credit, getDepartment()));
+        //Purchase Refunded Bill Cancel
+        getPurchaseReturnCancel().setBills(getBills(new CancelledBill(), BillType.PurchaseReturn, getDepartment()));
+        getPurchaseReturnCancel().setCash(calValue(new CancelledBill(), BillType.PurchaseReturn, PaymentMethod.Cash, getDepartment()));
+        getPurchaseReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PurchaseReturn, PaymentMethod.Credit, getDepartment()));
 
     }
 
@@ -1665,10 +1666,37 @@ public class CommonReport implements Serializable {
         String1Value1 tmp5 = new String1Value1();
         tmp5.setString("Final Cash Total");
         tmp5.setValue(getFinalCashTotal(list));
-        
+
         String1Value1 tmp6 = new String1Value1();
         tmp6.setString("Final Credit & Cash Total");
-        tmp6.setValue(getFinalCashTotal(list)+getFinalCreditTotal(list));
+        tmp6.setValue(getFinalCashTotal(list) + getFinalCreditTotal(list));
+
+        dataTableData.add(tmp1);
+        dataTableData.add(tmp5);
+        dataTableData.add(tmp6);
+
+        return dataTableData;
+    }
+
+    public List<String1Value1> getPurchaseTotal() {
+        List<BillsTotals> list = new ArrayList<>();
+        list.add(getPurchaseBilled());
+        list.add(getPurchaseCancelled());
+        list.add(getPurchaseReturn());
+        list.add(getPurchaseReturnCancel());
+
+        dataTableData = new ArrayList<>();
+        String1Value1 tmp1 = new String1Value1();
+        tmp1.setString("Final Credit Total");
+        tmp1.setValue(getFinalCreditTotal(list));
+
+        String1Value1 tmp5 = new String1Value1();
+        tmp5.setString("Final Cash Total");
+        tmp5.setValue(getFinalCashTotal(list));
+
+        String1Value1 tmp6 = new String1Value1();
+        tmp6.setString("Final Credit & Cash Total");
+        tmp6.setValue(getFinalCashTotal(list) + getFinalCreditTotal(list));
 
         dataTableData.add(tmp1);
         dataTableData.add(tmp5);
@@ -1768,10 +1796,10 @@ public class CommonReport implements Serializable {
         String1Value1 tmp5 = new String1Value1();
         tmp5.setString("Final Cash Total");
         tmp5.setValue(getFinalCashTotal(list));
-        
+
         String1Value1 tmp6 = new String1Value1();
         tmp6.setString("Grant Total");
-        tmp6.setValue(getFinalCreditTotal(list)+getFinalCreditCardTotal(list)+getFinalChequeTot(list)+getFinalSlipTot(list)+getFinalCashTotal(list));
+        tmp6.setValue(getFinalCreditTotal(list) + getFinalCreditCardTotal(list) + getFinalChequeTot(list) + getFinalSlipTot(list) + getFinalCashTotal(list));
 
         data.add(tmp1);
         data.add(tmp2);

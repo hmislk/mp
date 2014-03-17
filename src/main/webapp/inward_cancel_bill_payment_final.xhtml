@@ -11,7 +11,7 @@
             <ui:define name="content">
                 <h:form>
                     <h:panelGroup rendered="#{!inwardSearch.printPreview}" styleClass="alignTop" >
-                        <p:panel  header="Payment Cancellation">
+                        <p:panel  header="Final Payment Cancellation">
                             <p:selectOneMenu   id="cmbPs" value="#{inwardSearch.bill.paymentMethod}" required="true"  >
                                 <f:selectItem itemLabel="Select Payment Method" />
                                 <f:selectItems value="#{inwardPaymentController.paymentMethods}"  />

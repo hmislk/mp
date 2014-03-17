@@ -133,14 +133,11 @@ public class BhtSummeryController implements Serializable {
 
         for (ChargeItemTotal cit : chargeItemTotals) {
             InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getCurrent().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), cit.getInwardChargeType());
-            if (ipa == null) {
+
+            if (ipa == null || ipa.getDiscountPercent() == 0 || cit.getTotal() == 0) {
                 cit.setDiscount(0);
-                cit.setNetTotal(cit.getNetTotal());
-
-                continue;
-            }
-
-            if (ipa.getDiscountPercent() == 0 || cit.getTotal() == 0) {
+                cit.setNetTotal(cit.getTotal());
+                cit.setAdjustedTotal(cit.getTotal());
                 continue;
             }
 
@@ -344,16 +341,18 @@ public class BhtSummeryController implements Serializable {
     private boolean checkCatTotal() {
         double tot = 0.0;
         double tot2 = 0.0;
-        for (ChargeItemTotal cit : chargeItemTotals) {
+        for (ChargeItemTotal cit : getChargeItemTotals()) {
             tot += cit.getNetTotal();
             tot2 += cit.getAdjustedTotal();
         }
 
-        if (tot != tot2) {
-            UtilityController.addErrorMessage("Please Adjust category amount correctly");
-            return true;
-        }
+        System.err.println("Total " + tot);
+        System.err.println("Total 2 " + tot2);
 
+//        if (tot != tot2) {
+//            UtilityController.addErrorMessage("Please Adjust category amount correctly");
+//            return true;
+//        }
         return false;
     }
 

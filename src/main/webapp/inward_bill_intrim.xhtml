@@ -260,7 +260,8 @@
                             </p:tab>
 
                             <p:tab title="Madicine">
-                                <p:dataTable value="#{bhtSummeryController.issues}" var="iss">
+                                <p:dataTable value="#{bhtSummeryController.issues}" var="iss" scrollable="true"
+                                             scrollHeight="300">
                                     <p:column>
                                         #{iss.item.name}
                                     </p:column>

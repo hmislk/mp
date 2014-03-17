@@ -56,11 +56,18 @@ public class InwardMemberShipDiscount implements Serializable {
         String sql;
         HashMap hm = new HashMap();
 
-        sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                + "  i.membershipScheme=:m and"
-                + " i.paymentMethod=:p and"
-                + " i.inwardChargeType=:inw ";
-        hm.put("m", getCurrentMembershipScheme());
+        if (getCurrentMembershipScheme() != null) {
+            sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
+                    + "  i.membershipScheme=:m and"
+                    + " i.paymentMethod=:p and"
+                    + " i.inwardChargeType=:inw ";
+            hm.put("m", getCurrentMembershipScheme());
+        } else {
+            sql = "Select i from InwardPriceAdjustment i where i.retired=false and"                
+                    + " i.paymentMethod=:p and"
+                    + " i.inwardChargeType=:inw ";
+        }
+
         hm.put("p", getCurrentPaymentMethod());
         hm.put("inw", inwardChargeType);
 
@@ -81,9 +88,6 @@ public class InwardMemberShipDiscount implements Serializable {
     }
 
     public void createItems() {
-        if (getCurrentMembershipScheme() == null) {
-            return;
-        }
 
         if (getCurrentPaymentMethod() == null) {
             return;

@@ -21,7 +21,7 @@
                             <p:commandButton id="btnSave" value="Save" action="#{inwardProfessionalBillController.save}" ajax="false"  >
                             </p:commandButton>
                             <p:defaultCommand target="btnSave"/>
-                            
+
                             <p:commandButton value="New Bill" ajax="false" action="#{inwardProfessionalBillController.prepareNewBill()}" style="float: right;">
                             </p:commandButton>
                         </h:panelGrid>
@@ -32,9 +32,9 @@
                             <h:panelGroup id="panelPatient" >
                                 <p:panel header="Patient Details">
                                     <h:outputLabel value="Type Patient Name or BHT : "/>
-                                    <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admCon"
+                                    <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admis"
                                                     value="#{inwardProfessionalBillController.current.patientEncounter}" 
-                                                    completeMethod="#{admissionController.completePatientBht}"
+                                                    completeMethod="#{admissionController.completePatient}"
                                                     var="apt2" itemLabel="#{amp2.bhtNo}"
                                                     itemValue="#{apt2}" size="30"  style="width: 400px;">
                                         <p:ajax event="itemSelect" process="acPt2" update="panSearch2"/>
@@ -113,63 +113,6 @@
 
                         <h:panelGrid columns="1" >
 
-                            <p:dialog id="panDoc" header="Add New Doctor" widgetVar="dlg" resizable="false">  
-                                <h:panelGrid columns="2" style="margin-bottom:10px">  
-                                    <h:outputText id="lblNameD" value="Name" ></h:outputText>
-                                    <h:inputText id="txtNameD"  value="#{doctorController.current.person.name}"  ></h:inputText>
-                                    <h:outputText id="lblPhoneD" value="Phone" ></h:outputText>
-                                    <h:inputText id="txtPhoneD" value="#{doctorController.current.person.phone}"  ></h:inputText>
-                                    <h:outputText id="lblFaxD" value="Fax" ></h:outputText>
-                                    <h:inputText id="txtFaxD" value="#{doctorController.current.person.fax}"  ></h:inputText>
-                                    <h:outputText id="lblMobileD" value="Mobile" ></h:outputText>
-                                    <h:inputText id="txtMobileD" value="#{doctorController.current.person.mobile}"  ></h:inputText>
-                                    <h:outputText id="lblAddressD" value="Address" ></h:outputText>
-                                    <h:inputText id="txtAddressD" value="#{doctorController.current.person.address}"  ></h:inputText>
-                                    <h:outputText value="Speciality" ></h:outputText>                                    
-                                    <h:selectOneListbox id="cmbSpecialityD" size="1" value="#{doctorController.current.speciality}" >
-                                        <f:selectItem itemLabel="Please select a speciality"/>
-                                        <f:selectItems value="#{specialityController.items}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" />
-                                    </h:selectOneListbox>
-                                    <h:outputText id="lblRegD" value="Registration" ></h:outputText>
-                                    <h:inputText id="txtRegD" value="#{doctorController.current.registration}"  ></h:inputText>                 
-                                    <h:outputText id="lblQuaD" value="Qualification" ></h:outputText>
-                                    <h:inputText id="txtQuaD" value="#{doctorController.current.qualification}"  ></h:inputText>   
-
-                                    <p:commandButton id="btnDocSave" value="Add New" process="btnDocSave panDoc" update="panDoc #{p:component('cmbDoc')}"  actionListener="#{doctorController.saveSelected()}" styleClass="buttons" oncomplete="dlg.hide();">
-                                    </p:commandButton>
-
-                                </h:panelGrid>  
-
-                            </p:dialog>  
-
-
-                            <h:panelGroup id="panelBillReferrals" >
-
-                                <p:tabView >
-                                    <p:tab title="Refering Doctor">
-                                        <p:autoComplete forceSelection="true" id="cmbDoc" value="#{inwardProfessionalBillController.current.referredBy}" completeMethod="#{doctorController.completeDoctor}" var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
-                                        </p:autoComplete>
-                                        <p:commandButton id="btnAddNewDoc" type="button" value="Add New Doctor" onclick="dlg.show();" actionListener="#{doctorController.prepareAdd}" process="btnAddNewDoc" update="#{p:component('panDoc')}" />  
-                                    </p:tab>
-                                    <p:tab title="Collecting Centre" >
-                                        <p:autoComplete forceSelection="true" value="#{inwardProfessionalBillController.current.collectingCentre}" completeMethod="#{collectingCentreController.completeCollecting}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
-                                            <p:column>
-                                                <h:outputLabel value="#{ix.name}"/>
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputLabel value="#{ix.institutionCode}"/>
-                                            </p:column>
-                                        </p:autoComplete>
-                                    </p:tab>
-                                    <p:tab title="Staff">
-                                        <p:autoComplete forceSelection="true" converter="stfcon" value="#{inwardProfessionalBillController.current.staff}" completeMethod="#{staffController.completeStaff}" var="ix2" itemLabel="#{ix2.person.name}" itemValue="#{ix2}" size="30"  style="width: 400px;">
-                                        </p:autoComplete>
-                                    </p:tab>
-
-                                </p:tabView>
-
-                            </h:panelGroup>
-
                             <h:panelGroup id="panelBillItems" >
                                 <p:dataTable rowIndexVar="rowIndex" id="bFee" value="#{inwardProfessionalBillController.lstBillFees}" var="bif" >
                                     <f:facet name="header">
@@ -186,9 +129,7 @@
                                         </h:inputText>
                                     </p:column>
                                     <p:column>
-                                        <f:facet name="header">Payee</f:facet>
-                                        <h:outputLabel value="#{bif.institution.name}" rendered="#{bif.institution!=null}" ></h:outputLabel>
-                                        <h:outputLabel value="#{bif.department.name}" rendered="#{bif.department!=null}" ></h:outputLabel>
+                                        <f:facet name="header">Payee</f:facet> 
                                         <h:outputLabel value="#{bif.staff.person.name}" rendered="#{bif.staff!=null}" ></h:outputLabel>
                                     </p:column>
                                     <p:column >
@@ -196,6 +137,9 @@
                                         <h:outputLabel value="#{bif.feeAt}" >
                                             <f:convertDateTime pattern="dd MM yyyy"/>
                                         </h:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton ajax="false" value="Remove" action="#{inwardProfessionalBillController.remove(bif)}"/>
                                     </p:column>
                                 </p:dataTable>
                             </h:panelGroup>

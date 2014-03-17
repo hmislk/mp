@@ -222,6 +222,30 @@ public class BillController implements Serializable {
         return a;
     }
 
+    public List<Bill> getGrnBills(Institution institution) {
+        String sql;
+        HashMap hash = new HashMap();
+
+        sql = "select c from BilledBill c where c.paidAmount!=abs(c.netTotal) "
+                + " and c.billType= :btp and c.createdAt is not null "
+                + " and c.deptId is not null "
+                + " and c.cancelledBill is null and "
+                + " c.retired=false and c.paymentMethod=:pm  and"
+                + " c.fromInstitution=:ins "
+                + " order by c.id ";
+        hash.put("btp", BillType.PharmacyGrnBill);
+        hash.put("pm", PaymentMethod.Credit);
+        hash.put("ins", institution);
+        //     hash.put("pm", PaymentMethod.Credit);
+        List<Bill> bill = getFacade().findBySQL(sql, hash);
+
+        if (bill == null) {
+            bill = new ArrayList<>();
+        }
+
+        return bill;
+    }
+
     public Date getSessionDate() {
         if (sessionDate == null) {
             sessionDate = Calendar.getInstance().getTime();

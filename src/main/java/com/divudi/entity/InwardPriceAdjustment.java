@@ -49,6 +49,9 @@ public class InwardPriceAdjustment implements Serializable {
     String retireComments;
     @ManyToOne
     private Category roomLocation;
+    @ManyToOne
+    Category membershipScheme;
+    
 
     public BillType getBillType() {
         return billType;
@@ -197,4 +200,16 @@ public class InwardPriceAdjustment implements Serializable {
     public void setRoomLocation(Category roomLocation) {
         this.roomLocation = roomLocation;
     }
+
+    public Category getMembershipScheme() {
+        return membershipScheme;
+    }
+
+    public void setMembershipScheme(Category membershipScheme) {
+        this.membershipScheme = membershipScheme;
+    }
+    
+    
+    
+    
 }

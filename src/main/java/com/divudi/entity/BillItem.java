@@ -51,6 +51,7 @@ public class BillItem implements Serializable {
     double grossValue;
     double discount;
     double netValue;
+    private double adjustedValue;
 //    private double dblValue;
     @ManyToOne
     Item item;
@@ -509,6 +510,14 @@ public class BillItem implements Serializable {
 
     public void setBillFees(List<BillFee> billFees) {
         this.billFees = billFees;
+    }
+
+    public double getAdjustedValue() {
+        return adjustedValue;
+    }
+
+    public void setAdjustedValue(double adjustedValue) {
+        this.adjustedValue = adjustedValue;
     }
 
 }

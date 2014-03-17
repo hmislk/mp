@@ -6,10 +6,8 @@
 package com.divudi.bean.inward;
 
 import com.divudi.ejb.InwardCalculation;
-import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
-import static com.divudi.entity.Payment_.bill;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
@@ -54,12 +52,22 @@ public class ServiceFeeEdit implements Serializable {
 
     public void updateFee(BillFee billFee) {
         getBillFeeFacade().edit(billFee);
-
+        double serviceValue = 0;
         BillFee marginFee = null;
         marginFee = getInwardCalculation().getBillFeeMatrix(billFee.getBillItem());
-        double serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billFee.getBillItem());
-        marginFee.setFeeValue(getInwardCalculation().calInwardMargin(billFee.getBillItem(), billFee.getBill().getPatientEncounter(), serviceValue));
-        getBillFeeFacade().edit(marginFee);
+        serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billFee.getBillItem());
+
+        double matrixValue = getInwardCalculation().calInwardMargin(billFee.getBillItem(), serviceValue, billFee.getBill().getFromDepartment());
+        marginFee.setBill(billFee.getBill());
+        marginFee.setFeeValue(matrixValue);
+
+        if (marginFee.getId() != null) {
+            getBillFeeFacade().edit(marginFee);
+        }
+
+        if (marginFee.getId() == null && marginFee.getFeeValue() != 0) {
+            getBillFeeFacade().create(marginFee);
+        }
 
         calBillFees();
         calBillItemTotal();
@@ -69,7 +77,7 @@ public class ServiceFeeEdit implements Serializable {
     private void calBillItemTotal() {
         String sql = "SELECT sum(b.feeValue) FROM BillFee b WHERE b.retired=false and b.billItem=:billItem ";
         HashMap hm = new HashMap();
-        hm.put("bill", billItem);
+        hm.put("billItem", billItem);
         double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
 
         billItem.setNetValue(val);

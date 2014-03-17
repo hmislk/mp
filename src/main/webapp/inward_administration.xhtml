@@ -12,9 +12,6 @@
             <ui:define name="content">
                 <h:form>
                     <h:panelGrid columns="3" columnClasses="grid1 grid1 grid1"  >
-
-
-
                         <p:panel header="Administration">
                             <p:panelGrid columns="1">
                                 <p:commandButton  ajax="false" value="Manage Admission Types" action="inward_admission_type" ></p:commandButton>
@@ -37,6 +34,13 @@
                                 <p:commandButton value="Manage Timebased Services Charges" action="inward_timed_item_fee" ></p:commandButton>
                             </p:panelGrid>
                         </p:panel>
+
+                        <p:panel header="Manage Clinical Data">
+                            <p:panelGrid columns="1">
+                                <p:commandButton value="Manage Surgeries" action="clinical_procedures" ></p:commandButton>
+                            </p:panelGrid>
+                        </p:panel>
+
 
                     </h:panelGrid>                    
                 </h:form>

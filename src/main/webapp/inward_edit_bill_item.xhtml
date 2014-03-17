@@ -45,8 +45,7 @@
                                 </p:panel>
 
                                 <p:dataTable rowIndexVar="rowIndex" value="#{serviceFeeEdit.billFees}" var="bif" >                                   
-                                    <p:column>
-                                        <f:facet name="header">Fee</f:facet>
+                                    <p:column headerText="Fee Value">                                       
                                         <h:inputText  value="#{bif.feeValue}" disabled="#{!bif.billItem.item.userChangable or bif.paidValue!=0}" >
                                             <f:ajax event="blur" />
                                         </h:inputText>
@@ -60,14 +59,8 @@
                                         <h:outputLabel value="#{bif.department.name}" />
                                     </p:column>
 
-                                    <p:column>
-                                        <f:facet name="header">Payee</f:facet>
-                                        <h:outputLabel value="#{bif.staff.person.name}" rendered="#{bif.staff!=null and bif.fee.speciality==null}" ></h:outputLabel>
-
-                                        <p:selectOneMenu value="#{bif.staff}" rendered="#{bif.fee.speciality!=null}" disabled="#{bif.paidValue!=0}" >
-                                            <f:selectItem itemLabel="Select Staff" />
-                                            <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality) }"  var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
-                                        </p:selectOneMenu>
+                                    <p:column headerText="Payee">                                      
+                                        <h:outputLabel value="#{bif.staff.person.name}" ></h:outputLabel>
                                     </p:column>
                                     <p:column>
                                         <p:commandButton ajax="false" value="Update" action="#{serviceFeeEdit.updateFee(bif)}"/>

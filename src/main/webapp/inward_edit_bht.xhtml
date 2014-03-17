@@ -14,7 +14,7 @@
                     <p:panel header="BHT">
                         <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                         value="#{bhtEditController.current}"
-                                        completeMethod="#{dischargeController.completePatient}" 
+                                        completeMethod="#{admissionController.completePatient}" 
                                         var="myItem" itemValue="#{myItem}" 
                                         itemLabel="#{myItem.bhtNo}" 
                                         size="30"  style="width: 400px;">
@@ -27,6 +27,7 @@
                             </p:column>
                         </p:autoComplete>   
                         <p:commandButton ajax="false" value="Update" action="#{bhtEditController.save}"/>
+                        <p:commandButton ajax="false" value="Cancel Admission" action="#{bhtEditController.cancelBht}" style="float: right;"/>
                         <p:commandButton ajax="false" value="Clear" action="#{bhtEditController.makeNull}"/>
                         <h:panelGrid id="panSearch2" columns="2" style="min-width: 100%;" >
                             <p:panel header="Admission">
@@ -123,7 +124,15 @@
                                     <p:inputText value="#{bhtEditController.current.guardian.address}" />
                                 </h:panelGrid>
                             </p:panel>
+                            <p:panel header="Room Detail">
+                                <p:dataTable value="#{bhtEditController.patientRoom}" var="rm">
+                                    <p:column headerText="Room Name">
+                                        #{rm.roomFacilityCharge.name}
+                                    </p:column>                                  
+                                </p:dataTable>
+                            </p:panel>
                         </h:panelGrid>
+
                     </p:panel>
 
                 </p:panel>

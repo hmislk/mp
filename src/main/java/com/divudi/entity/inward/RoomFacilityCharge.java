@@ -5,6 +5,7 @@
 package com.divudi.entity.inward;
 
 import com.divudi.data.inward.RoomFacility;
+import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.WebUser;
@@ -58,6 +59,8 @@ public class RoomFacilityCharge implements Serializable {
     PaymentScheme paymentScheme;
     @ManyToOne
     Institution company;
+    @ManyToOne
+    private Department department;
     List<RoomFacility> roomFacilities;
     @ManyToOne
     private TimedItemFee timedItemFee;
@@ -261,5 +264,13 @@ public class RoomFacilityCharge implements Serializable {
 
     public void setRoomCharge(Double roomCharge) {
         this.roomCharge = roomCharge;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

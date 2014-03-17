@@ -7,11 +7,9 @@ package com.divudi.entity;
 //import ch.lambdaj.Lambda;
 import com.divudi.data.inward.PatientEncounterType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.SymanticType;
 import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.EncounterComponent;
-import com.divudi.entity.inward.PatientRoom;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +23,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 //import org.hamcrest.Matchers;
@@ -89,7 +86,7 @@ public class PatientEncounter implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date dateOfDischarge;
     double creditLimit;
-    double creditUsedAmount;   
+    double creditUsedAmount;
     @Enumerated(EnumType.STRING)
     PatientEncounterType patientEncounterType;
     @OneToMany(mappedBy = "parentEncounter")
@@ -99,9 +96,14 @@ public class PatientEncounter implements Serializable {
     String name;
     @Temporal(javax.persistence.TemporalType.DATE)
     Date dateTime;
+    @ManyToOne
+    PatientEncounter parentEncounter;
+    @ManyToOne
+    BillSession billSession;
+    private boolean paymentFinalized;
+
 //    @OneToOne
 //    PatientRoom lastPatientRoom;
-
     @Transient
     List<ClinicalFindingValue> diagnosis;
 
@@ -119,8 +121,6 @@ public class PatientEncounter implements Serializable {
 
     @Transient
     List<ClinicalFindingValue> plans;
-    @Transient
-    private PatientRoom transPatientRoom;
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
@@ -187,11 +187,6 @@ public class PatientEncounter implements Serializable {
     public void setPlans(List<ClinicalFindingValue> plans) {
         this.plans = plans;
     }
-
-    @ManyToOne
-    PatientEncounter parentEncounter;
-    @ManyToOne
-    BillSession billSession;
 
     public BillSession getBillSession() {
         return billSession;
@@ -476,8 +471,6 @@ public class PatientEncounter implements Serializable {
 //    public PatientRoom getLastPateintRoom(){
 //        return getPatientRooms().get(getPatientRooms().size()-1);
 //    }
-   
-
     public Item getItem() {
         return item;
     }
@@ -502,16 +495,12 @@ public class PatientEncounter implements Serializable {
         this.toTime = toTime;
     }
 
-    public PatientRoom getTransPatientRoom() {
-        return transPatientRoom;
+    public boolean isPaymentFinalized() {
+        return paymentFinalized;
     }
 
-    public void setTransPatientRoom(PatientRoom transPatientRoom) {
-        this.transPatientRoom = transPatientRoom;
+    public void setPaymentFinalized(boolean paymentFinalized) {
+        this.paymentFinalized = paymentFinalized;
     }
-
-    
-
-  
 
 }

@@ -37,6 +37,7 @@ import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.PreBill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.TimedItemFee;
@@ -108,6 +109,7 @@ public class BhtSummeryController implements Serializable {
     private List<DepartmentBillItems> departmentBillItems;
     private List<BillFee> profesionallFee;
     private List<Bill> paymentBill;
+    private List<BillItem> issues;
     List<PatientItem> patientItems;
     private List<ChargeItemTotal> chargeItemTotals;
     //////////////////////////
@@ -121,9 +123,9 @@ public class BhtSummeryController implements Serializable {
     private Date currentTime;
     private Date toTime;
     private boolean printPreview;
-    
-    public void changeMemberShipSchemeListener(){
-        
+
+    public void changeMemberShipSchemeListener() {
+
     }
 
     public void updatePatientItem(PatientItem patientItem) {
@@ -210,8 +212,8 @@ public class BhtSummeryController implements Serializable {
 
         return false;
     }
-    
-    public void dischargeCancel(){
+
+    public void dischargeCancel() {
         patientEncounter.setDischarged(false);
         patientEncounter.setDateOfDischarge(null);
         getPatientEncounterFacade().edit(patientEncounter);
@@ -451,6 +453,7 @@ public class BhtSummeryController implements Serializable {
     public void createTables() {
         createRoomChargeDatas();
         createPatientItems();
+        createIssueTable();
         createDepartmentBillItems();
         createAdditionalChargeBill();
         createProfesionallFee();
@@ -807,6 +810,21 @@ public class BhtSummeryController implements Serializable {
 
 //        calServiceTot(departmentBillItems);
         return departmentBillItems;
+
+    }
+
+    public void createIssueTable() {
+        String sql;
+        HashMap hm;
+        sql = "SELECT  b FROM BillItem b WHERE b.retired=false "
+                + " and b.bill.billType=:btp  "
+                + " and  b.bill.patientEncounter=:pe"
+                + " and type(b.bill)=:class ";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("class", BilledBill.class);
+        hm.put("pe", getPatientEncounter());
+        issues = getBillItemFacade().findBySQL(sql, hm);
 
     }
 
@@ -1189,8 +1207,15 @@ public class BhtSummeryController implements Serializable {
     }
 
     private double calCostOfMadicine() {
-        //Need to Immplement Functions
-        return 0;
+        String sql;
+        HashMap hm;
+        sql = "SELECT  sum(b.adjustedValue) FROM BillItem b WHERE b.retired=false "
+                + " and b.bill.billType=:btp  "
+                + " and  b.bill.patientEncounter=:pe";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("pe", getPatientEncounter());
+        return getBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
     private void setServiceTotCategoryWise(List<ChargeItemTotal> tmp) {
@@ -1359,5 +1384,13 @@ public class BhtSummeryController implements Serializable {
 
     public void setRoomChargeDatas(List<RoomChargeData> roomChargeDatas) {
         this.roomChargeDatas = roomChargeDatas;
+    }
+
+    public List<BillItem> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<BillItem> issues) {
+        this.issues = issues;
     }
 }

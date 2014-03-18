@@ -117,9 +117,9 @@ public class ServiceSessionBean {
             default:
                 bs = null;
         }
-        if (bs != null) {
-            getBillSessionFacade().create(bs);
-        }
+//        if (bs != null) {
+//            getBillSessionFacade().create(bs);
+//        }
         return bs;
     }
 

@@ -351,18 +351,21 @@ public class BillController implements Serializable {
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
     }
-    
-    
-    
-    private void saveBillItemSessions(){
-        for(BillEntry be:lstBillEntries){
-            be.getBillItem().getBillSession().setBill(be.getBillItem().getBill());
-            be.getBillItem().getBillSession().setBillItem(be.getBillItem());
-            getBillSessionFacade().edit(be.getBillItem().getBillSession());
+
+    private void saveBillItemSessions() {
+        for (BillEntry be : lstBillEntries) {
+            be.getBillItem().setBillSession(getServiceSessionBean().createBillSession(be.getBillItem()));
+
+            if (be.getBillItem().getBillSession() != null) {
+                getBillSessionFacade().create(be.getBillItem().getBillSession());
+              
+            }
+
             
+
         }
     }
-    
+
     @EJB
     private BatchBillFacade batchBillFacade;
 
@@ -381,8 +384,7 @@ public class BillController implements Serializable {
             getBillFacade().edit(b);
         }
     }
-    
-    
+
     @Inject
     private BillSearch billSearch;
 
@@ -631,7 +633,7 @@ public class BillController implements Serializable {
         getCurrentBillItem().setSessionDate(sessionDate);
 
 //        New Session
-        getCurrentBillItem().setBillSession(getServiceSessionBean().createBillSession(getCurrentBillItem()));
+     //   getCurrentBillItem().setBillSession(getServiceSessionBean().createBillSession(getCurrentBillItem()));
 
         lastBillItem = getCurrentBillItem();
         BillEntry addingEntry = new BillEntry();

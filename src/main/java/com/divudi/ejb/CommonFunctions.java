@@ -56,26 +56,24 @@ public class CommonFunctions {
 
         //System.err.println("From " + dateRange.getFromDate());
         //System.err.println("To " + dateRange.getToDate());
-
         return dateRange;
     }
-    
+
     public Date getAddedDate(Date date, int range) {
-       
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, range);
         Date returnDate = cal.getTime();
-       
 
         return returnDate;
     }
 
     public Long getDayCountTillNow(Date date) {
-        if(date==null){
+        if (date == null) {
             return 0l;
         }
-        
+
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(date);
@@ -321,6 +319,7 @@ public class CommonFunctions {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+        System.err.println("Only Date " + cal.getTime());
         return cal.getTime();
     }
 

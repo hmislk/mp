@@ -207,7 +207,14 @@ public class Bill implements Serializable {
         discount = 0 - bill.getDiscount();
         netTotal = 0 - bill.getNetTotal();
         total = 0 - bill.getTotal();
-
+        discountPercent = 0 - bill.getDiscountPercent();
+        paidAmount = 0 - bill.getPaidAmount();
+        balance = 0 - bill.getBalance();
+        cashPaid = 0 - bill.getCashPaid();
+        cashBalance = 0 - bill.getCashBalance();
+        saleValue = 0 - bill.getSaleValue();
+        freeValue = 0 - bill.getFreeValue();
+        grantTotal = 0 - bill.getGrantTotal();
     }
 
     public void copy(Bill bill) {
@@ -248,7 +255,7 @@ public class Bill implements Serializable {
         }
         return false;
     }
-    
+
     public boolean checkActiveBackwardReference() {
         for (Bill b : getBackwardReferenceBills()) {
             if (b.getCreater() != null && !b.isCancelled() && !b.isRetired()) {

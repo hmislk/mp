@@ -169,9 +169,13 @@ public class AdmissionController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select c from Admission c where c.retired=false and c.id not in(Select b.patientEncounter.id from Bill b where b.retired=false and  b.billType=:btp and b.grantTotal!=0) and(upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
+            sql = "select c from Admission c where c.retired=false and "
+                    + " ( c.paymentFinalized is null or c.paymentFinalized=false )"
+                    + " and ( (upper(c.bhtNo) like :q )or (upper(c.patient.person.name)"
+                    + " like :q) ) order by c.bhtNo";
             //System.out.println(sql);
-            h.put("btp", BillType.InwardPaymentBill);
+            //      h.put("btp", BillType.InwardPaymentBill);
+            h.put("q", "%" + query.toUpperCase() + "%");
             suggestions = getFacade().findBySQL(sql, h);
         }
         return suggestions;
@@ -421,10 +425,7 @@ public class AdmissionController implements Serializable {
 
         if (getDeposit() != 0) {
             System.err.println("Deposit ");
-            getInwardPaymentController().getCurrent().setPaymentMethod(getCurrent().getPaymentMethod());
-            getInwardPaymentController().getCurrent().setPatientEncounter(current);
-            getInwardPaymentController().getCurrent().setTotal(getDeposit());
-            getInwardPaymentController().pay();
+            getInwardPaymentController().pay(getCurrent().getPaymentMethod(), getCurrent(), getDeposit());
             //     getInwardPaymentController().setPrintPreview(true);
         }
 

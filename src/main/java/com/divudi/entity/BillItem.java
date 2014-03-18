@@ -51,6 +51,7 @@ public class BillItem implements Serializable {
     double grossValue;
     double discount;
     double netValue;
+    private double adjustedValue;
 //    private double dblValue;
     @ManyToOne
     Item item;
@@ -100,10 +101,10 @@ public class BillItem implements Serializable {
     private List<Item> tmpSuggession;
     @Transient
     private double tmpQty;
-    @Transient 
+    @Transient
     private UserStock transUserStock;
     @OneToMany(mappedBy = "billItem")
-    private List<BillFee> billFees=new ArrayList<>();
+    private List<BillFee> billFees = new ArrayList<>();
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -115,6 +116,7 @@ public class BillItem implements Serializable {
         grossValue = billItem.getGrossValue();
         netValue = billItem.getNetValue();
         discount = billItem.getDiscount();
+        adjustedValue = billItem.getAdjustedValue();
         discountRate = billItem.getDiscountRate();
         Rate = billItem.getRate();
         netRate = billItem.getNetRate();
@@ -135,6 +137,7 @@ public class BillItem implements Serializable {
         netRate = 0 - billItem.getNetRate();
         grossValue = 0 - billItem.getGrossValue();
         netValue = 0 - billItem.getNetValue();
+        adjustedValue = 0 - billItem.getAdjustedValue();
     }
 
     @Override
@@ -491,7 +494,7 @@ public class BillItem implements Serializable {
         }
 
         if (getPharmaceuticalBillItem() != null) {
-            getPharmaceuticalBillItem().setQty((double)this.tmpQty);
+            getPharmaceuticalBillItem().setQty((double) this.tmpQty);
         }
     }
 
@@ -509,6 +512,14 @@ public class BillItem implements Serializable {
 
     public void setBillFees(List<BillFee> billFees) {
         this.billFees = billFees;
+    }
+
+    public double getAdjustedValue() {
+        return adjustedValue;
+    }
+
+    public void setAdjustedValue(double adjustedValue) {
+        this.adjustedValue = adjustedValue;
     }
 
 }

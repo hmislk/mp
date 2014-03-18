@@ -1180,6 +1180,40 @@ public class PharmacyBillSearch implements Serializable {
             UtilityController.addErrorMessage("No Bill to cancel");
         }
     }
+    
+      public void pharmacyRetailCancelBillWithStockBht() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+            if (pharmacyErrorCheck()) {
+                return;
+            }
+
+            getPharmacyBean().reAddToStock(getBill().getReferenceBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
+
+            CancelledBill cb = pharmacyCreateCancelBill();
+
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.SALCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.SALCAN));
+
+            getBillFacade().create(cb);
+
+            pharmacyCancelBillItems(cb);
+
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit(getBill());
+
+//            if (getBill().getReferenceBill() != null) {
+//                getBill().getReferenceBill().setReferenceBill(null);
+//                getBillFacade().edit(getBill().getReferenceBill());
+//            }
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+    }
 
     public void pharmacyReturnPreCancel() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {

@@ -43,58 +43,59 @@
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
-                            <p:column headerText="Bill No" styleClass="alignTop"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" value="#{pi.bill.deptId}">
+                            <p:column headerText="View">
+                                <p:commandButton ajax="false" value="View Bill"
+                                                 action="pharmacy_reprint_bill_sale">
                                     <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>                                     
-                                </h:commandLink>   
+                                </p:commandButton>
+                            </p:column>
+                            <p:column headerText="Bill No" styleClass="alignTop"  >
+                                <h:outputLabel value="#{pi.bill.deptId}"/>
                             </p:column>
                             <p:column headerText="Item Name"  styleClass="alignTop" >
-                                <h:outputLabel value="#{pi.item.name}" >
-                                </h:outputLabel>                             
+                                <h:outputLabel value="#{pi.item.name}" />    
                             </p:column>
-                            
+
                             <p:column headerText="Item Code">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Code"/>
-                                    </f:facet>
-                                    <h:outputLabel value="#{pi.item.code}" style="width: 100px!important;" ></h:outputLabel>
-                                </p:column>
-                            
+                                <f:facet name="header">
+                                    <h:outputLabel value="Code"/>
+                                </f:facet>
+                                <h:outputLabel value="#{pi.item.code}" style="width: 100px!important;" ></h:outputLabel>
+                            </p:column>
+
                             <p:column headerText="Billed At"  >
                                 <h:outputLabel value="Billed at " />
                                 <h:outputLabel value="#{pi.bill.createdAt}" >
                                     <f:convertDateTime pattern="dd MM yy hh mm a"/>
                                 </h:outputLabel>
                                 <br/>
-                                <h:panelGroup rendered="#{pi.bill.cancelled}" >
+                                <h:panelGroup rendered="#{pi.bill.referenceBill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled at " />
-                                    <h:outputLabel style="color: red;" rendered="#{pi.bill.cancelled}" value="#{pi.bill.cancelledBill.createdAt}" >
+                                    <h:outputLabel style="color: red;" 
+                                                   rendered="#{pi.bill.referenceBill.cancelled}" 
+                                                   value="#{pi.bill.referenceBill.cancelledBill.createdAt}" >
                                         <f:convertDateTime pattern="dd MM yy hh mm a"/>
                                     </h:outputLabel>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{pi.refunded}" >
+                                <h:panelGroup rendered="#{pi.bill.referenceBill.refunded}" >
                                     <h:outputLabel style="color: red;" value="Refunded at " />
-                                    <h:outputLabel style="color: red;" rendered="#{pi.refunded}" value="#{pi.referanceBillItem.bill.createdAt}" >
+                                    <h:outputLabel style="color: red;" 
+                                                   rendered="#{pi.bill.referenceBill.refunded}" 
+                                                   value="#{pi.referanceBillItem.bill.createdAt}" >
                                         <f:convertDateTime pattern="dd MM yy hh mm a"/>
                                     </h:outputLabel>
                                 </h:panelGroup>
                             </p:column>     
                             <p:column headerText="Qty" >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{pi.qty}" >
-                                        <f:convertNumber pattern="#0.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{pi.qty}" >
+                                    <f:convertNumber pattern="#0.00"/>
+                                </h:outputLabel>
                             </p:column>   
 
                             <p:column headerText="Bill item Value"   >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{pi.netValue}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{pi.netValue}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Patient"  styleClass="alignTop" >

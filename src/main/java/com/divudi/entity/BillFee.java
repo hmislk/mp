@@ -15,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
-
-
 /**
  *
  * @author www.divudi.com
@@ -40,6 +38,7 @@ public class BillFee implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date retiredAt;
     String retireComments;
+    ///////////////////////
     @ManyToOne
     Fee fee;
     @ManyToOne
@@ -48,15 +47,6 @@ public class BillFee implements Serializable {
     PatientEncounter patienEncounter;
     @ManyToOne
     PatientEncounter childEncounter;
-   
-    @ManyToOne
-    BillItem billItem;
-    @ManyToOne
-    Bill bill;
-    double feeValue = 0.0;
-    double feeGrossValue;
-    double feeDiscount;
-    double feeMargin;
     @ManyToOne
     Staff staff;
     @ManyToOne
@@ -65,14 +55,46 @@ public class BillFee implements Serializable {
     Department department;
     @ManyToOne
     Speciality speciality;
-    double paidValue = 0.0;
     //FeeDate, FeeTime
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date FeeAt;
     @ManyToOne
     private BillFee referenceBillFee;
+    //////////////////
+    @ManyToOne
+    BillItem billItem;
+    @ManyToOne
+    Bill bill;
+    ///////////////
+    double feeValue = 0.0;
+    double feeGrossValue;
+    double feeDiscount;
+    double feeMargin;
+    double paidValue = 0.0;
+
     @Transient
     private double transSerial;
+
+    public void copy(BillFee billFee) {
+        fee = billFee.getFee();
+        patient = billFee.getPatient();
+        patienEncounter = billFee.getPatienEncounter();
+        childEncounter = billFee.getChildEncounter();
+        staff = billFee.getStaff();
+        institution = billFee.getInstitution();
+        department = billFee.getDepartment();
+        speciality = billFee.getSpeciality();
+        FeeAt = billFee.getFeeAt();
+
+    }
+
+    public void invertValue(BillFee billFee) {
+        feeValue = 0 - billFee.getFeeValue();
+        feeGrossValue = 0 - billFee.getFeeGrossValue();
+        feeDiscount = 0 - billFee.getFeeDiscount();
+        feeMargin = 0 - billFee.getFeeMargin();
+        paidValue = 0 - billFee.getPaidValue();
+    }
 
     public BillFee() {
     }

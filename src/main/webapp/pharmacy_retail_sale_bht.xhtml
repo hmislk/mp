@@ -64,8 +64,8 @@
                                 <p:panel header="Patient Detail">                                        
                                         <h:outputLabel value="Type Patinet Name or BHT : "/>
                                 <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admis"
-                                                value="#{billBhtController.patientEncounter}" 
-                                                completeMethod="#{admissionController.completePatientBht}"
+                                                value="#{pharmacySaleBhtController.patientEncounter}" 
+                                                completeMethod="#{admissionController.completePatient}"
                                                 var="apt2" itemLabel="#{amp2.bhtNo}"
                                                 itemValue="#{apt2}" size="30"  style="width: 400px;">
                                  
@@ -85,15 +85,15 @@
                                     <p:panel header="Patient Detail" >
                                         <h:panelGrid columns="2">
                                             <p:outputLabel  value="Name" />
-                                            <p:outputLabel value="#{billBhtController.patientEncounter.patient.person.name}"/>
+                                            <p:outputLabel value="#{pharmacySaleBhtController.patientEncounter.patient.person.name}"/>
                                             <p:outputLabel value="NIC" />
-                                            <p:outputLabel  value="#{billBhtController.patientEncounter.patient.person.nic}"  />
+                                            <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.nic}"  />
                                             <p:outputLabel value="Age"/>
-                                            <p:outputLabel value="#{billBhtController.patientEncounter.patient.age}"/>
+                                            <p:outputLabel value="#{pharmacySaleBhtController.patientEncounter.patient.age}"/>
                                             <p:outputLabel value="Address" />
-                                            <p:outputLabel  value="#{billBhtController.patientEncounter.patient.person.address}" />
+                                            <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.address}" />
                                             <p:outputLabel value="Phone No" />
-                                            <p:outputLabel  value="#{billBhtController.patientEncounter.patient.person.phone}"  />
+                                            <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.phone}"  />
                                         </h:panelGrid>
                                     </p:panel>
                                 </p:panel>

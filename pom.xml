@@ -22,7 +22,8 @@
             <version>2.5.0</version>
              <scope>compile</scope>
         </dependency>
-         <dependency>
+    
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>

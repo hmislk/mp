@@ -76,7 +76,7 @@ public class ServiceSessionBean {
 //                return 0;
 //        }
 //    }
-    public BillSession saveBillSession(BillItem bi) {
+    public BillSession createBillSession(BillItem bi) {
         //  //System.out.println("Going to saving bill item sessions");
         if (bi == null || bi.getItem() == null || bi.getItem().getSessionNumberType() == null) {
             //   //System.out.println("Bil items sessions not save because of null values");
@@ -84,13 +84,13 @@ public class ServiceSessionBean {
         }
         Item i = bi.getItem();
         BillSession bs = new BillSession();
-        bs.setBill(bi.getBill());
+//        bs.setBill(bi.getBill());
         bs.setBillItem(bi);
         bs.setItem(i);
         bs.setCreatedAt(Calendar.getInstance().getTime());
         bs.setCreater(bi.getBill().getCreater());
         bi.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
-        bs.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
+//        bs.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
         // //System.out.println("bill item session switch - pre");
         int count = getBillSessions(i, bi.getSessionDate()).size() + 1;
         bs.setSerialNo(count);
@@ -117,9 +117,9 @@ public class ServiceSessionBean {
             default:
                 bs = null;
         }
-        if (bs != null) {
-            getBillSessionFacade().create(bs);
-        }
+//        if (bs != null) {
+//            getBillSessionFacade().create(bs);
+//        }
         return bs;
     }
 

@@ -991,7 +991,7 @@ public class CommonReport implements Serializable {
             if (bt != null) {
                 System.err.println("CRDIT " + bt.getCredit());
                 System.err.println("CASH " + bt.getCash());
-                System.err.println("Size " + bt.getBills().size());
+             //   System.err.println("Size " + bt.getBills().size());
                 tmp += bt.getCredit();
             }
         }

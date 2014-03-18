@@ -10,11 +10,13 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.entity.Bill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.facade.AdmissionFacade;
+import com.divudi.facade.BillFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.PersonFacade;
@@ -22,6 +24,7 @@ import com.divudi.facade.RoomFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -63,35 +66,15 @@ public class DischargeController implements Serializable {
     private List<Admission> items = null;
     private List<Patient> patientList;
     String selectText = "";
-
-    public void cancel() {
-        for (PatientRoom pr : getPatientRoom()) {
-            pr.getRoom().setFilled(false);
-            getRoomFacade().edit(pr.getRoom());
-            getPatientRoomFacade().remove(pr);
-        }
-        getEjbFacade().remove(current);
-        makeNull();
-    }
+    @EJB
+    private BillFacade billFacade;
 
     public List<Admission> getSelectedItems() {
         selectedItems = getFacade().findBySQL("select c from Admission c where c.retired=false and c.discharged!=true and upper(c.bhtNo) like '%" + getSelectText().toUpperCase() + "%' or upper(c.patient.person.name) like '%" + getSelectText().toUpperCase() + "%' order by c.bhtNo");
         return selectedItems;
     }
 
-    public List<Admission> completePatient(String query) {
-        List<Admission> suggestions;
-        String sql;
-        if (query == null) {
-            suggestions = new ArrayList<Admission>();
-        } else {
-            sql = "select c from Admission c where c.retired=false and c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
-        }
-        return suggestions;
-    }
-
+  
     public void prepareAdd() {
         current = new Admission();
     }
@@ -134,7 +117,7 @@ public class DischargeController implements Serializable {
         if (getCurrent().getId() == null || getCurrent().getId() == 0) {
             UtilityController.addSuccessMessage("No Patient Data Found");
         } else {
-            getCurrent().setLastPatientRoom(getPatientRoom().get(getPatientRoom().size() - 1));
+            //  getCurrent().setLastPatientRoom(getPatientRoom().get(getPatientRoom().size() - 1));
             getCurrent().setDischarged(Boolean.TRUE);
             if (getCurrent().getDateOfDischarge() == null) {
                 getCurrent().setDateOfDischarge(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -217,6 +200,17 @@ public class DischargeController implements Serializable {
 
     public void setCurrent(Admission current) {
         this.current = current;
+        createPatientRoom();
+    }
+
+    private void createPatientRoom() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
+                + " and pr.patientEncounter=:pe order by pr.createdAt";
+        hm.put("pe", getCurrent());
+        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
+
     }
 
     private AdmissionFacade getFacade() {
@@ -266,18 +260,6 @@ public class DischargeController implements Serializable {
     }
 
     public List<PatientRoom> getPatientRoom() {
-        if (getCurrent().getId() == null) {
-            return new ArrayList<PatientRoom>();
-        }
-
-        HashMap hm = new HashMap();
-        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and pr.patientEncounter=:pe order by pr.createdAt";
-        hm.put("pe", getCurrent());
-        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
-
-        if (patientRoom.size() <= 0) {
-            return new ArrayList<PatientRoom>();
-        }
 
         return patientRoom;
     }
@@ -300,6 +282,14 @@ public class DischargeController implements Serializable {
 
     public void setRoomFacade(RoomFacade roomFacade) {
         this.roomFacade = roomFacade;
+    }
+
+    public BillFacade getBillFacade() {
+        return billFacade;
+    }
+
+    public void setBillFacade(BillFacade billFacade) {
+        this.billFacade = billFacade;
     }
 
     /**

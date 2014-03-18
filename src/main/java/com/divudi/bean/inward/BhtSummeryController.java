@@ -15,6 +15,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.ChargeItemTotal;
+import com.divudi.data.dataStructure.DepartmentBillItems;
 import com.divudi.data.dataStructure.InwardBillItem;
 import com.divudi.data.dataStructure.RoomChargeData;
 import com.divudi.data.inward.InwardChargeType;
@@ -25,7 +26,6 @@ import static com.divudi.data.inward.InwardChargeType.MaintainCharges;
 import static com.divudi.data.inward.InwardChargeType.Medicine;
 import static com.divudi.data.inward.InwardChargeType.NursingCharges;
 import static com.divudi.data.inward.InwardChargeType.OtherCharges;
-import static com.divudi.data.inward.InwardChargeType.PackageFee;
 import static com.divudi.data.inward.InwardChargeType.ProfessionalCharge;
 import static com.divudi.data.inward.InwardChargeType.RoomCharges;
 import com.divudi.ejb.BillNumberBean;
@@ -35,6 +35,8 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.Department;
+import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.PatientItem;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
@@ -42,6 +44,7 @@ import com.divudi.entity.inward.TimedItemFee;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.DepartmentFacade;
 import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientItemFacade;
 import com.divudi.facade.PatientRoomFacade;
@@ -58,7 +61,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.primefaces.event.RowEditEvent;
 
@@ -103,24 +105,14 @@ public class BhtSummeryController implements Serializable {
     @Inject
     private DischargeController dischargeController;
     ////////////////////////
-    private List<RoomChargeData> patientRoom;
-    private List<BillItem> service;
+    private List<RoomChargeData> roomChargeDatas;
+    private List<DepartmentBillItems> departmentBillItems;
     private List<BillFee> profesionallFee;
     private List<Bill> paymentBill;
+    private List<BillItem> issues;
     List<PatientItem> patientItems;
     private List<ChargeItemTotal> chargeItemTotals;
     //////////////////////////
-    private double costOfServices;
-    private double costOfTimed;
-    private double costOfMadicine;
-    private double totalRoomCharges;
-    private double totalMaintanance;
-    private double totalMOCharge;
-    private double totalLinen;
-    private double totalAdditional;
-    private double totalNursing;
-    private double professionalCharges = 0.0;
-    private double additionalCharge;
     private double grantTotal = 0.0;
     private double discount;
     private double due;
@@ -128,10 +120,52 @@ public class BhtSummeryController implements Serializable {
     private PatientItem tmpPI;
     private Admission patientEncounter;
     private Bill current;
-    @Temporal(TemporalType.TIMESTAMP)
     private Date currentTime;
     private Date toTime;
     private boolean printPreview;
+    @Inject
+    private InwardMemberShipDiscount inwardMemberShipDiscount;
+
+    public void changePaymentmethodListener() {
+        if (getCurrent().getPaymentMethod() == null) {
+            return;
+        }
+
+        for (ChargeItemTotal cit : chargeItemTotals) {
+            InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getCurrent().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), cit.getInwardChargeType());
+
+            if (ipa == null || ipa.getDiscountPercent() == 0 || cit.getTotal() == 0) {
+                cit.setDiscount(0);
+                cit.setNetTotal(cit.getTotal());
+                cit.setAdjustedTotal(cit.getTotal());
+                continue;
+            }
+
+            double discountPercent = ipa.getDiscountPercent();
+            double total = cit.getTotal();
+            double dis = (total * discountPercent) / 100;
+            double net = total - dis;
+
+            cit.setDiscount(dis);
+            cit.setNetTotal(net);
+            cit.setAdjustedTotal(net);
+        }
+
+        calFinalValue();
+    }
+
+    public void updatePatientItem(PatientItem patientItem) {
+        getInwardTimedItemController().finalizeService(patientItem);
+        createPatientItems();
+        createChargeItemTotals();
+
+    }
+
+    public void updatePatientRoom(RoomChargeData roomChargeData) {
+        getPatientRoomFacade().edit(roomChargeData.getPatientRoom());
+        createRoomChargeDatas();
+        createChargeItemTotals();
+    }
 
     public void checkDate() {
         if (getPatientEncounter() != null && getPatientEncounter().getDateOfAdmission().after(getPatientEncounter().getDateOfDischarge())) {
@@ -142,32 +176,7 @@ public class BhtSummeryController implements Serializable {
             UtilityController.addErrorMessage("Check Discharge Time can't be set after than now");
         }
 
-        chargeItemTotals = null;
-        costOfServices = 0.0;
-        costOfTimed = 0.0;
-        costOfMadicine = 0.0;
-        totalRoomCharges = 0.0;
-        totalMaintanance = 0.0;
-        totalMOCharge = 0.0;
-        totalLinen = 0.0;
-        totalAdditional = 0.0;
-        totalNursing = 0.0;
-        professionalCharges = 0.0;
-        additionalCharge = 0.0;
-        grantTotal = 0.0;
-        discount = 0.0;
-        due = 0.0;
-        paid = 0.0;
-        patientRoom = null;
-        profesionallFee = null;
-        patientItems = null;
-        paymentBill = null;
-        service = null;
-        printPreview = false;
-        current = null;
-        tmpPI = null;
-        currentTime = null;
-        toTime = null;
+        makeNull();
         createTables();
     }
 
@@ -178,17 +187,22 @@ public class BhtSummeryController implements Serializable {
         return getBillItemFacade().findBySQL(sql, hm);
     }
 
+    @Inject
+    private InwardPaymentController inwardPaymentController;
+
     public void settle() {
 
         if (errorCheck()) {
             return;
         }
 
-        if (getPatientEncounter().getPaymentMethod() == PaymentMethod.Credit) {
+        if (getPatientEncounter().getCreditLimit() != 0) {
             updateCreditDetail();
         }
 
-        saveBill();
+        Bill refBill = getInwardPaymentController().pay(getCurrent().getPaymentMethod(), patientEncounter, due);
+
+        saveBill(refBill);
         saveBillItem();
         UtilityController.addSuccessMessage("Bill Saved");
 
@@ -197,6 +211,10 @@ public class BhtSummeryController implements Serializable {
 //            getDischargeController().discharge();
 //        }
         getBillFacade().edit(getCurrent());
+
+        getPatientEncounter().setPaymentFinalized(true);
+        getPatientEncounterFacade().edit(getPatientEncounter());
+
         printPreview = true;
     }
 
@@ -210,17 +228,46 @@ public class BhtSummeryController implements Serializable {
         getPatientEncounterFacade().edit(getPatientEncounter());
     }
 
+    private boolean checkRoomIsDischarged() {
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            if (rcd.getPatientRoom().getDischargedAt() == null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkPatientItems() {
+        for (PatientItem pi : patientItems) {
+            if (pi.getFinalize() == false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void dischargeCancel() {
+        patientEncounter.setDischarged(false);
+        patientEncounter.setDateOfDischarge(null);
+        getPatientEncounterFacade().edit(patientEncounter);
+    }
+
     public void discharge() {
         if (patientEncounter.isDischarged()) {
             UtilityController.addErrorMessage("Patient Already Discharged");
             return;
         }
 
-        for (PatientItem pi : patientItems) {
-            if (pi.getFinalize() == false) {
+        if (checkRoomIsDischarged()) {
+            UtilityController.addErrorMessage("Please Discharged From Room");
+            return;
+        }
 
-                getInwardTimedItemController().finalizeService(pi);
-            }
+        if (checkPatientItems()) {
+            UtilityController.addErrorMessage("Please Finalize Patient Timed Service");
+            return;
         }
 
         getDischargeController().setCurrent((Admission) patientEncounter);
@@ -237,21 +284,35 @@ public class BhtSummeryController implements Serializable {
     }
 
     private boolean errorCheck() {
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cheque) {
+        if (getCurrent().getPaymentMethod() == null) {
+            UtilityController.addErrorMessage("Select Paymentmethod");
+            return true;
+        }
+
+        if (getPatientEncounter() == null) {
+            return true;
+        }
+
+        if (getPatientEncounter().isPaymentFinalized()) {
+            UtilityController.addErrorMessage("Payment is Finalized U need to cancel Previuios Final Bill of This Bht");
+            return true;
+        }
+
+        if (getCurrent().getPaymentMethod() == PaymentMethod.Cheque) {
             if (getCurrent().getBank().getId() == null || getCurrent().getChequeRefNo() == null) {
                 UtilityController.addErrorMessage("Please select Cheque Number and Bank");
                 return true;
             }
         }
 
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Slip) {
+        if (getCurrent().getPaymentMethod() == PaymentMethod.Slip) {
             if (getCurrent().getBank().getId() == null || getCurrent().getComments() == null) {
                 UtilityController.addErrorMessage("Please Fill Memo and Bank");
                 return true;
             }
         }
 
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Card) {
+        if (getCurrent().getPaymentMethod() == PaymentMethod.Card) {
             if (getCurrent().getBank() == null || getCurrent().getCreditCardRefNo() == null) {
                 UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
                 return true;
@@ -262,20 +323,13 @@ public class BhtSummeryController implements Serializable {
             }
         }
 
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit) {
+        if (getCurrent().getPaymentMethod() == PaymentMethod.Credit) {
             if (getCurrent().getCreditCompany() == null) {
                 UtilityController.addErrorMessage("Please Select Credit Company");
                 return true;
             }
         }
 
-//        if (getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cash) {
-//
-//            if (getCurrent().getCashPaid() < due) {
-//                UtilityController.addErrorMessage("Please select tendered amount correctly");
-//                return true;
-//            }
-//        }
         if (checkCatTotal()) {
             return true;
         }
@@ -287,16 +341,18 @@ public class BhtSummeryController implements Serializable {
     private boolean checkCatTotal() {
         double tot = 0.0;
         double tot2 = 0.0;
-        for (ChargeItemTotal cit : chargeItemTotals) {
-            tot += cit.getTotal();
+        for (ChargeItemTotal cit : getChargeItemTotals()) {
+            tot += cit.getNetTotal();
             tot2 += cit.getAdjustedTotal();
         }
 
-        if (tot != tot2) {
-            UtilityController.addErrorMessage("Please Adjust category amount correctly");
-            return true;
-        }
+        System.err.println("Total " + tot);
+        System.err.println("Total 2 " + tot2);
 
+//        if (tot != tot2) {
+//            UtilityController.addErrorMessage("Please Adjust category amount correctly");
+//            return true;
+//        }
         return false;
     }
 
@@ -305,24 +361,25 @@ public class BhtSummeryController implements Serializable {
             UtilityController.addErrorMessage("Please Discharge This Patient");
             return "";
         }
-        
-        createTables();
 
-        return "inward_final_bill";
+        createTables();
+        calFinalValue();
+
+        return "inward_bill_final";
     }
 
-    private void saveBill() {
-        getCurrent().setDiscount(discount);
-        getCurrent().setNetTotal(due);
-        getCurrent().setGrantTotal(grantTotal);
-        getCurrent().setPaidAmount(paid);
+    private void saveBill(Bill refBill) {
 
+        getCurrent().setGrantTotal(grantTotal);
+        getCurrent().setDiscount(discount);
+        getCurrent().setNetTotal(netCharge);
         getCurrent().setInstitution(getSessionController().getInstitution());
 
-        getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), BillType.InwardPaymentBill, BillNumberSuffix.INWPAY));
-        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), BillType.InwardPaymentBill, BillNumberSuffix.INWPAY));
+        getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), BillType.InwardFinalBill, BillNumberSuffix.INWFINAL));
+        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), BillType.InwardFinalBill, BillNumberSuffix.INWFINAL));
 
-        getCurrent().setBillType(BillType.InwardPaymentBill);
+        getCurrent().setReferenceBill(refBill);
+        getCurrent().setBillType(BillType.InwardFinalBill);
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setPatientEncounter(patientEncounter);
@@ -332,6 +389,7 @@ public class BhtSummeryController implements Serializable {
         getBillFacade().create(getCurrent());
     }
 
+    // private void saveAdmissionBillFee
     private void saveBillItem() {
         double temProfFee = 0;
         double temHosFee = 0.0;
@@ -340,15 +398,16 @@ public class BhtSummeryController implements Serializable {
             temBi.setBill(getCurrent());
             temBi.setInwardChargeType(cit.getInwardChargeType());
             temBi.setGrossValue(cit.getTotal());
-            temBi.setNetValue(cit.getAdjustedTotal());
+            temBi.setDiscount(cit.getDiscount());
+            temBi.setNetValue(cit.getNetTotal());
             temBi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             temBi.setCreater(getSessionController().getLoggedUser());
 
             if (cit.getInwardChargeType() == InwardChargeType.ProfessionalCharge) {
-                saveProBillFee(temBi);
-                temProfFee += cit.getTotal();
+                //    saveProBillFee(temBi);
+                temProfFee += cit.getNetTotal();
             } else {
-                temHosFee += cit.getTotal();
+                temHosFee += cit.getNetTotal();
             }
 
             if (cit.getInwardChargeType() == InwardChargeType.OtherCharges) {
@@ -438,24 +497,26 @@ public class BhtSummeryController implements Serializable {
 //
 //    }
     public void createTables() {
-        createChargeItemTotals();
+        createRoomChargeDatas();
         createPatientItems();
-        createPatientRoom();
-        createServices();
+        createIssueTable();
+        createDepartmentBillItems();
         createAdditionalChargeBill();
         createProfesionallFee();
         createPaymentBill();
+        createChargeItemTotals();
     }
 
-    private void createPatientItems() {
-
+    private List<PatientItem> createPatientItems() {
+        patientItems = new ArrayList<>();
         HashMap hm = new HashMap();
-        String sql = "SELECT i FROM PatientItem i where Type(i.item)=TimedItem and i.retired=false and i.patientEncounter=:pe";
+        String sql = "SELECT i FROM PatientItem i where Type(i.item)=TimedItem and "
+                + " i.retired=false and i.patientEncounter=:pe";
         hm.put("pe", getPatientEncounter());
         patientItems = getPatientItemFacade().findBySQL(sql, hm);
 
         if (patientItems == null) {
-            patientItems = new ArrayList<>();
+            return new ArrayList<>();
         }
 
         for (PatientItem pi : patientItems) {
@@ -466,12 +527,14 @@ public class BhtSummeryController implements Serializable {
             }
         }
 
+        return patientItems;
     }
 
     public List<PatientItem> getPatientItems() {
         if (patientItems == null) {
-            patientItems = new ArrayList<>();
+            patientItems = createPatientItems();
         }
+
         return patientItems;
     }
 
@@ -499,27 +562,14 @@ public class BhtSummeryController implements Serializable {
 
     public void makeNull() {
         chargeItemTotals = null;
-        costOfServices = 0.0;
-        costOfTimed = 0.0;
-        costOfMadicine = 0.0;
-        totalRoomCharges = 0.0;
-        totalMaintanance = 0.0;
-        totalMOCharge = 0.0;
-        totalLinen = 0.0;
-        totalAdditional = 0.0;
-        totalNursing = 0.0;
-        professionalCharges = 0.0;
-        additionalCharge = 0.0;
         grantTotal = 0.0;
         discount = 0.0;
         due = 0.0;
         paid = 0.0;
-        patientEncounter = null;
-        patientRoom = null;
         profesionallFee = null;
         patientItems = null;
         paymentBill = null;
-        service = null;
+        departmentBillItems = null;
         printPreview = false;
         current = null;
         tmpPI = null;
@@ -531,18 +581,9 @@ public class BhtSummeryController implements Serializable {
         return patientEncounter;
     }
 
-    private void update() {
-        getPatientRoom();
-        getService();
-        getPatientItems();
-        getProfessionalCharges();
-        getPaymentBill();
-    }
-
     public void setPatientEncounter(Admission patientEncounter) {
         makeNull();
         this.patientEncounter = patientEncounter;
-        update();
     }
 
     public SessionController getSessionController() {
@@ -569,7 +610,8 @@ public class BhtSummeryController implements Serializable {
         this.billFeeFacade = billFeeFacade;
     }
 
-    private void createPatientRoom() {
+    private List<RoomChargeData> createRoomChargeDatas() {
+        roomChargeDatas = new ArrayList<>();
 
         HashMap hm = new HashMap();
         String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
@@ -580,14 +622,7 @@ public class BhtSummeryController implements Serializable {
         setRoomChargeData(tmp);
         // totalLinen = getInwardCalculation().calTotalLinen(tmp);
 
-    }
-
-    public List<RoomChargeData> getPatientRoom() {
-        if (patientRoom == null) {
-            patientRoom = new ArrayList<>();
-        }
-        return patientRoom;
-
+        return roomChargeDatas;
     }
 
     public List<PatientRoom> getBreakDownPatientRoom() {
@@ -612,6 +647,10 @@ public class BhtSummeryController implements Serializable {
     }
 
     private long getDuration(Date from, Date to) {
+        if (from == null || to == null) {
+            return 0l;
+        }
+
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(from);
         Calendar cal2 = Calendar.getInstance();
@@ -628,13 +667,14 @@ public class BhtSummeryController implements Serializable {
         for (PatientRoom p : tmp) {
 
             RoomChargeData rcd = new RoomChargeData();
+            rcd.setPatientRoom(p);
             addRoomCharge(rcd, p);
             addLinenCharge(rcd, p);
             addMaintananceCharge(rcd, p);
             addNursingCharge(rcd, p);
             addMoCharge(rcd, p);
 
-            patientRoom.add(rcd);
+            roomChargeDatas.add(rcd);
         }
     }
 
@@ -653,6 +693,7 @@ public class BhtSummeryController implements Serializable {
         } else {
             charge = linen * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
         }
+
         rcd.setLinenTot(charge + p.getAddedLinenCharge());
     }
 
@@ -694,13 +735,15 @@ public class BhtSummeryController implements Serializable {
 
     private void addRoomCharge(RoomChargeData rcd, PatientRoom p) {
         double charge;
+        System.err.println("1 " + p.getRoomFacilityCharge());
+        System.err.println("2 " + p.getCurrentRoomCharge());
         if (p.getRoomFacilityCharge() == null || p.getCurrentRoomCharge() == 0) {
             return;
         }
 
         TimedItemFee timedFee = p.getRoomFacilityCharge().getTimedItemFee();
         double roomCharge = p.getCurrentRoomCharge();
-        //  System.out.println("ssssssssssssssssssssss " + roomCharge);
+
         rcd.setPatientRoom(p);
 
         if (p.getDischargedAt() != null) {
@@ -708,7 +751,8 @@ public class BhtSummeryController implements Serializable {
         } else {
             charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
         }
-
+        System.err.println("Room Charge " + roomCharge);
+        System.out.println("calculated " + charge);
         rcd.setChargeTot(charge);
     }
 
@@ -766,10 +810,6 @@ public class BhtSummeryController implements Serializable {
 //
 //
 //    }
-    public void setPatientRoom(List<RoomChargeData> patientRoom) {
-        this.patientRoom = patientRoom;
-    }
-
     public PatientRoomFacade getPatientRoomFacade() {
         return patientRoomFacade;
     }
@@ -778,29 +818,60 @@ public class BhtSummeryController implements Serializable {
         this.patientRoomFacade = patientRoomFacade;
     }
 
-    private void createServices() {
+    @EJB
+    private DepartmentFacade departmentFacade;
 
-        String sql = "SELECT  b FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
+    private List<DepartmentBillItems> createDepartmentBillItems() {
+        departmentBillItems = new ArrayList<>();
+
+        String sql;
+        HashMap hm;
+
+        sql = "SELECT  distinct(b.bill.toDepartment) FROM BillItem b WHERE "
+                + "  b.retired=false  and b.bill.billType=:btp and"
                 + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe ";
-        HashMap hm = new HashMap();
+        hm = new HashMap();
         hm.put("btp", BillType.InwardBill);
         hm.put("pe", getPatientEncounter());
 
-        service = getBillItemFacade().findBySQL(sql, hm, TemporalType.TIME);
+        List<Department> deptList = getDepartmentFacade().findBySQL(sql, hm, TemporalType.TIME);
+        hm.clear();
 
-        if (service == null) {
-            service = new ArrayList<>();
+        for (Department dep : deptList) {
+            DepartmentBillItems table = new DepartmentBillItems();
+            sql = "SELECT  b FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
+                    + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe and b.bill.toDepartment=:dep ";
+            hm = new HashMap();
+            hm.put("btp", BillType.InwardBill);
+            hm.put("pe", getPatientEncounter());
+            hm.put("dep", dep);
+            List<BillItem> billItems = getBillItemFacade().findBySQL(sql, hm, TemporalType.TIME);
+
+            table.setDepartment(dep);
+            table.setBillItems(billItems);
+
+            departmentBillItems.add(table);
+
         }
 
-        calServiceTot(service);
+//        calServiceTot(departmentBillItems);
+        return departmentBillItems;
 
     }
 
-    public List<BillItem> getService() {
-        if (service == null) {
-            service = new ArrayList<>();
-        }
-        return service;
+    public void createIssueTable() {
+        String sql;
+        HashMap hm;
+        sql = "SELECT  b FROM BillItem b WHERE b.retired=false "
+                + " and b.bill.billType=:btp  "
+                + " and  b.bill.patientEncounter=:pe"
+                + " and type(b.bill)=:class ";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("class", BilledBill.class);
+        hm.put("pe", getPatientEncounter());
+        issues = getBillItemFacade().findBySQL(sql, hm);
+
     }
 
     public List<BillItem> getService(InwardChargeType inwardChargeType) {
@@ -816,19 +887,16 @@ public class BhtSummeryController implements Serializable {
 
     }
 
-    private void calServiceTot(List<BillItem> sl) {
-        double temp = 0.0;
-        for (BillItem s : sl) {
-            temp += s.getNetValue();
-        }
-        costOfServices = temp;
-
-    }
-
-    public void setService(List<BillItem> service) {
-        this.service = service;
-    }
-
+//    private double calServiceTot(List<DepartmentBillItems> sl) {
+//        double temp = 0.0;
+//        for (DepartmentBillItems depB : sl) {
+//            for (BillItem s : depB.getBillItems()) {
+//                temp += s.getNetValue();
+//            }
+//        }
+//        return temp;
+//
+//    }
     public ServiceFacade getServiceFacade() {
         return serviceFacade;
     }
@@ -837,11 +905,12 @@ public class BhtSummeryController implements Serializable {
         this.serviceFacade = serviceFacade;
     }
 
-    private void createProfesionallFee() {
+    private List<BillFee> createProfesionallFee() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT bt FROM BillFee bt WHERE bt.retired=false and bt.fee is null and  bt.bill.id in "
-                + "(SELECT  b.id FROM Bill b WHERE b.retired=false  and b.billType=:btp and b.patientEncounter=:pe)";
+        String sql = "SELECT bt FROM BillFee bt WHERE bt.retired=false and "
+                + " bt.fee is null and "
+                + " bt.bill.billType=:btp and bt.bill.patientEncounter=:pe ";
         hm.put("btp", BillType.InwardBill);
         hm.put("pe", getPatientEncounter());
 
@@ -849,64 +918,58 @@ public class BhtSummeryController implements Serializable {
         //System.out.println("Size : " + profesionallFee.size());
 
         if (profesionallFee == null) {
-            profesionallFee = new ArrayList<>();
+            return new ArrayList<>();
         }
 
-        calProfessionalTot(profesionallFee);
+        return profesionallFee;
+    }
 
+    private double calculateProfessionalCharges() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT sum(bt.feeValue) FROM BillFee bt WHERE bt.retired=false and bt.fee is null and  bt.bill.id in "
+                + "(SELECT  b.id FROM Bill b WHERE b.retired=false  and b.billType=:btp and b.patientEncounter=:pe)";
+        hm.put("btp", BillType.InwardBill);
+        hm.put("pe", getPatientEncounter());
+
+        double val = getBillFeeFacade().findDoubleByJpql(sql, hm, TemporalType.TIME);
+
+        return val;
     }
 
     public List<BillFee> getProfesionallFee() {
         if (profesionallFee == null) {
-            profesionallFee = new ArrayList<>();
+            profesionallFee = createProfesionallFee();
         }
         return profesionallFee;
-    }
-
-    private void calProfessionalTot(List<BillFee> pr) {
-        double temp = 0.0;
-        professionalCharges = 0.0;
-        for (BillFee b : pr) {
-            temp += b.getFeeValue();
-        }
-        professionalCharges = temp;
     }
 
     public void setProfesionallFee(List<BillFee> profesionallFee) {
         this.profesionallFee = profesionallFee;
     }
 
-    private void createPaymentBill() {
+    private List<Bill> createPaymentBill() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT  b FROM Bill b WHERE b.retired=false  and b.billType=:btp and b.patientEncounter=:pe and b.cancelled=false";
+        String sql = "SELECT  b FROM Bill b WHERE b.retired=false  and b.billType=:btp "
+                + " and b.patientEncounter=:pe ";
         hm.put("btp", BillType.InwardPaymentBill);
         hm.put("pe", getPatientEncounter());
         paymentBill = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
         if (paymentBill == null) {
-            paymentBill = new ArrayList<>();
+            return new ArrayList<>();
         }
 
-        calPaidTot(paymentBill);
+        return paymentBill;
 
     }
 
     public List<Bill> getPaymentBill() {
         if (paymentBill == null) {
-            paymentBill = new ArrayList<>();
+            paymentBill = createPaymentBill();
         }
         return paymentBill;
-    }
-
-    private void calPaidTot(List<Bill> lb) {
-        double temp = 0.0;
-        paid = 0.0;
-        for (Bill b : lb) {
-            temp += b.getNetTotal();
-        }
-
-        paid = temp;
     }
 
     public void setPaymentBill(List<Bill> paymentBill) {
@@ -921,26 +984,7 @@ public class BhtSummeryController implements Serializable {
         this.billFacade = billFacade;
     }
 
-    public double getCostOfServices() {
-        getService();
-        return costOfServices;
-    }
-
-    public void setCostOfServices(double costOfServices) {
-        this.costOfServices = costOfServices;
-    }
-
-    public double getProfessionalCharges() {
-        getProfesionallFee();
-        return professionalCharges;
-    }
-
-    public void setProfessionalCharges(double professionalCharges) {
-        this.professionalCharges = professionalCharges;
-    }
-
     public double getPaid() {
-        getPaymentBill();
         return paid;
     }
 
@@ -956,74 +1000,48 @@ public class BhtSummeryController implements Serializable {
         this.commonFunctions = commonFunctions;
     }
 
-    public double getTotalRoomCharges() {
-        if (totalRoomCharges == 0.0) {
-            for (RoomChargeData rcd : getPatientRoom()) {
-                totalRoomCharges += rcd.getChargeTot();
-            }
+    public double calTotalRoomCharges() {
+        double tmp = 0;
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            tmp += rcd.getChargeTot();
         }
-        return totalRoomCharges;
-    }
 
-    public void setTotalRoomCharges(double totalRoomCharges) {
-        this.totalRoomCharges = totalRoomCharges;
+        return tmp;
     }
 
     public double getTotalMaintanance() {
-        if (totalMaintanance == 0.0) {
-            for (RoomChargeData rcd : patientRoom) {
-                totalMaintanance += rcd.getMaintananceTot();
-            }
+        double tmp = 0;
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            tmp += rcd.getMaintananceTot();
         }
-        return totalMaintanance;
-    }
 
-    public void setTotalMaintanance(double totalMaintanance) {
-        this.totalMaintanance = totalMaintanance;
-    }
-
-    public double getCostOfMadicine() {
-        return costOfMadicine;
-    }
-
-    public void setCostOfMadicine(double costOfMadicine) {
-        this.costOfMadicine = costOfMadicine;
+        return tmp;
     }
 
     public double getTotalLinen() {
-        if (totalLinen == 0.0) {
-            for (RoomChargeData rcd : patientRoom) {
-                totalLinen += rcd.getLinenTot();
-            }
+        double tmp = 0;
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            tmp += rcd.getLinenTot();
         }
-        return totalLinen;
+        return tmp;
     }
 
-    public void setTotalLinen(double totalLinen) {
-        this.totalLinen = totalLinen;
-    }
-
-    public double getTotalAdditional() {
-        return totalAdditional;
-    }
-
-    public void setTotalAdditional(double totalAdditional) {
-        this.totalAdditional = totalAdditional;
-    }
-
-    public double getGrantTotal() {
-        grantTotal = 0.0;
-        if (patientEncounter == null) {
-            return grantTotal;
-        }
+    public void calFinalValue() {
+        grantTotal = 0;
+        discount = 0;
+        netCharge = 0;
 
         for (ChargeItemTotal c : getChargeItemTotals()) {
             grantTotal += c.getTotal();
+            discount += c.getDiscount();
+            netCharge += c.getNetTotal();
         }
+    }
 
+    public double getGrantTotal() {
         return grantTotal;
     }
-    double netCharge = 0.0;
+    private double netCharge = 0.0;
 
     public void setGrantTotal(double grantTotal) {
         this.grantTotal = grantTotal;
@@ -1042,9 +1060,9 @@ public class BhtSummeryController implements Serializable {
             return 0.0;
         }
 
-        due = grantTotal - discount - paid;
+        due = netCharge - paid;
 
-        if (getPatientEncounter().getPaymentMethod() == PaymentMethod.Credit) {
+        if (getPatientEncounter().getCreditLimit() != 0) {
             due -= getPatientEncounter().getCreditLimit();
 
         }
@@ -1056,26 +1074,13 @@ public class BhtSummeryController implements Serializable {
         this.due = due;
     }
 
-    public double getNetCharge() {
-        if (discount == 0.0) {
-            return grantTotal;
-        }
-        return (grantTotal - discount);
-    }
-
     public double getTotalNursing() {
-        if (totalNursing == 0.0) {
-            for (RoomChargeData rcd : patientRoom) {
-                totalNursing += rcd.getNursingTot();
-            }
+        double tmp = 0;
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            tmp += rcd.getNursingTot();
         }
 
-        System.out.println("nursing : " + totalNursing);
-        return totalNursing;
-    }
-
-    public void setTotalNursing(double totalNursing) {
-        this.totalNursing = totalNursing;
+        return tmp;
     }
 
     public Date getCurrentTime() {
@@ -1104,20 +1109,6 @@ public class BhtSummeryController implements Serializable {
         this.timedItemFeeFacade = timedItemFeeFacade;
     }
 
-    public double getCostOfTimed() {
-        if (getPatientItems().size() > 0) {
-            for (PatientItem pi : getPatientItems()) {
-                costOfTimed += pi.getServiceValue();
-            }
-        }
-
-        return costOfTimed;
-    }
-
-    public void setCostOfTimed(double costOfTimed) {
-        this.costOfTimed = costOfTimed;
-    }
-
     public InwardCalculation getInwardCalculation() {
         return inwardCalculation;
     }
@@ -1144,6 +1135,7 @@ public class BhtSummeryController implements Serializable {
         }
 
         for (ChargeItemTotal cit : chargeItemTotals) {
+            cit.setNetTotal(cit.getTotal());
             cit.setAdjustedTotal(cit.getTotal());
         }
     }
@@ -1190,7 +1182,8 @@ public class BhtSummeryController implements Serializable {
 //        }
 //
 //    }
-    private void createAdditionalChargeBill() {
+    private List<Bill> createAdditionalChargeBill() {
+        additionalChargeBill = new ArrayList<>();
         String sql = "Select i From Bill i where i.retired=false and i.billType=:btp "
                 + "and i.patientEncounter=:pe and i.id in "
                 + "(Select bf.bill.id from BillFee bf where bf.retired=false and bf.patienEncounter=:pe and bf.fee.feeType=:fn)";
@@ -1199,34 +1192,36 @@ public class BhtSummeryController implements Serializable {
         m.put("pe", getPatientEncounter());
         m.put("fn", FeeType.Additional);
         additionalChargeBill = getBillFacade().findBySQL(sql, m, TemporalType.DATE);
+
+        return additionalChargeBill;
+    }
+
+    private double calculateAdditionalChargeTotal() {
+        additionalChargeBill = new ArrayList<>();
+        String sql = "Select sum(i.netTotal) From Bill i where i.retired=false and i.billType=:btp "
+                + "and i.patientEncounter=:pe and i.id in "
+                + "(Select bf.bill.id from BillFee bf where bf.retired=false and bf.patienEncounter=:pe and bf.fee.feeType=:fn)";
+        HashMap m = new HashMap();
+        m.put("btp", BillType.InwardBill);
+        m.put("pe", getPatientEncounter());
+        m.put("fn", FeeType.Additional);
+        double val = getBillFacade().findDoubleByJpql(sql, m, TemporalType.DATE);
+
+        return val;
     }
 
     private List<Bill> additionalChargeBill;
-
-    private void calAdditionalTot() {
-        double temp = 0.0;
-        additionalCharge = 0.0;
-        for (Bill b : getAdditionalChargeBill()) {
-            temp += b.getNetTotal();
-        }
-        additionalCharge = temp;
-    }
 
     private void setKnownChargeTot(List<ChargeItemTotal> tmp) {
         for (ChargeItemTotal i : tmp) {
             switch (i.getInwardChargeType()) {
                 case AdmissionFee:
-                    if (getPatientEncounter().getAdmissionType() != null && !getPatientEncounter().getAdmissionType().isInwardPackage()) {
-                        i.setTotal(getPatientEncounter().getAdmissionType().getAdmissionFee());
-                    }
-                    break;
-                case PackageFee:
-                    if (getPatientEncounter().getAdmissionType() != null && getPatientEncounter().getAdmissionType().isInwardPackage()) {
+                    if (getPatientEncounter().getAdmissionType() != null) {
                         i.setTotal(getPatientEncounter().getAdmissionType().getAdmissionFee());
                     }
                     break;
                 case RoomCharges:
-                    i.setTotal(getTotalRoomCharges());
+                    i.setTotal(calTotalRoomCharges());
                     break;
                 case MOCharges:
                     i.setTotal(getTotalMOCharge());
@@ -1241,25 +1236,39 @@ public class BhtSummeryController implements Serializable {
                     i.setTotal(getTotalMaintanance());
                     break;
                 case Medicine:
-                    i.setTotal(getCostOfMadicine());
+                    i.setTotal(calCostOfMadicine());
                     break;
                 case ProfessionalCharge:
-                    i.setTotal(getProfessionalCharges());
+                    i.setTotal(calculateProfessionalCharges());
                     break;
                 case OtherCharges:
-                    i.setTotal(getAdditionalCharge());
+                    i.setTotal(calculateAdditionalChargeTotal());
 
             }
         }
     }
 
+    private double calCostOfMadicine() {
+        String sql;
+        HashMap hm;
+        sql = "SELECT  sum(b.adjustedValue) FROM BillItem b WHERE b.retired=false "
+                + " and b.bill.billType=:btp  "
+                + " and  b.bill.patientEncounter=:pe";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("pe", getPatientEncounter());
+        return getBillItemFacade().findDoubleByJpql(sql, hm);
+    }
+
     private void setServiceTotCategoryWise(List<ChargeItemTotal> tmp) {
-        for (BillItem b : getService()) {
-            for (ChargeItemTotal ch : tmp) {
-                if (b.getItem().getInwardChargeType() != null) {
-                    if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
-                        ch.setTotal(ch.getTotal() + b.getNetValue());
-                        break;
+        for (DepartmentBillItems depB : getDepartmentBillItems()) {
+            for (BillItem b : depB.getBillItems()) {
+                for (ChargeItemTotal ch : tmp) {
+                    if (b.getItem().getInwardChargeType() != null) {
+                        if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
+                            ch.setTotal(ch.getTotal() + b.getNetValue());
+                            break;
+                        }
                     }
                 }
             }
@@ -1297,16 +1306,12 @@ public class BhtSummeryController implements Serializable {
     }
 
     public double getTotalMOCharge() {
-        if (totalMOCharge == 0.0) {
-            for (RoomChargeData rcd : patientRoom) {
-                totalMOCharge += rcd.getMoChargeTot();
-            }
+        double tmp = 0;
+        for (RoomChargeData rcd : getRoomChargeDatas()) {
+            tmp += rcd.getMoChargeTot();
         }
-        return totalMOCharge;
-    }
 
-    public void setTotalMOCharge(double totalMOCharge) {
-        this.totalMOCharge = totalMOCharge;
+        return tmp;
     }
 
     public Bill getCurrent() {
@@ -1321,8 +1326,9 @@ public class BhtSummeryController implements Serializable {
     }
 
     public String prepareNewBill() {
+        patientEncounter = null;
         makeNull();
-        return "inward_bht_summery";
+        return "inward_bill_intrim";
     }
 
     public BillNumberBean getBillNumberBean() {
@@ -1357,15 +1363,6 @@ public class BhtSummeryController implements Serializable {
         this.inwardTimedItemController = inwardTimedItemController;
     }
 
-    public double getAdditionalCharge() {
-        calAdditionalTot();
-        return additionalCharge;
-    }
-
-    public void setAdditionalCharge(double additionalCharge) {
-        this.additionalCharge = additionalCharge;
-    }
-
     public PatientEncounterFacade getPatientEncounterFacade() {
         return patientEncounterFacade;
     }
@@ -1376,7 +1373,7 @@ public class BhtSummeryController implements Serializable {
 
     public List<Bill> getAdditionalChargeBill() {
         if (additionalChargeBill == null) {
-            additionalChargeBill = new ArrayList<>();
+            additionalChargeBill = createAdditionalChargeBill();
         }
         return additionalChargeBill;
     }
@@ -1399,5 +1396,67 @@ public class BhtSummeryController implements Serializable {
 
     public void setToTime(Date toTime) {
         this.toTime = toTime;
+    }
+
+    public List<DepartmentBillItems> getDepartmentBillItems() {
+        if (departmentBillItems == null) {
+            departmentBillItems = createDepartmentBillItems();
+        }
+        return departmentBillItems;
+    }
+
+    public void setDepartmentBillItems(List<DepartmentBillItems> departmentBillItems) {
+        this.departmentBillItems = departmentBillItems;
+    }
+
+    public DepartmentFacade getDepartmentFacade() {
+        return departmentFacade;
+    }
+
+    public void setDepartmentFacade(DepartmentFacade departmentFacade) {
+        this.departmentFacade = departmentFacade;
+    }
+
+    public List<RoomChargeData> getRoomChargeDatas() {
+        if (roomChargeDatas == null) {
+            roomChargeDatas = createRoomChargeDatas();
+        }
+        return roomChargeDatas;
+    }
+
+    public void setRoomChargeDatas(List<RoomChargeData> roomChargeDatas) {
+        this.roomChargeDatas = roomChargeDatas;
+    }
+
+    public List<BillItem> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<BillItem> issues) {
+        this.issues = issues;
+    }
+
+    public InwardMemberShipDiscount getInwardMemberShipDiscount() {
+        return inwardMemberShipDiscount;
+    }
+
+    public void setInwardMemberShipDiscount(InwardMemberShipDiscount inwardMemberShipDiscount) {
+        this.inwardMemberShipDiscount = inwardMemberShipDiscount;
+    }
+
+    public double getNetCharge() {
+        return netCharge;
+    }
+
+    public void setNetCharge(double netCharge) {
+        this.netCharge = netCharge;
+    }
+
+    public InwardPaymentController getInwardPaymentController() {
+        return inwardPaymentController;
+    }
+
+    public void setInwardPaymentController(InwardPaymentController inwardPaymentController) {
+        this.inwardPaymentController = inwardPaymentController;
     }
 }

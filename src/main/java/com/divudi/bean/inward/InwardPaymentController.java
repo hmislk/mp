@@ -14,8 +14,10 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BilledBillFacade;
@@ -30,7 +32,7 @@ import javax.inject.Inject;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -48,6 +50,7 @@ public class InwardPaymentController implements Serializable {
     private BillFeeFacade billFeeFacade;
     @Inject
     private SessionController sessionController;
+    private boolean printPreview;
 
     public PaymentMethod[] getPaymentMethods() {
         return PaymentMethod.values();
@@ -75,20 +78,41 @@ public class InwardPaymentController implements Serializable {
         saveBill();
         saveBillItem();
         UtilityController.addSuccessMessage("Payment Bill Saved");
+        printPreview = true;
+    }
+
+    public Bill pay(PaymentMethod paymentMethod, PatientEncounter patientEncounter, double value) {
         makeNull();
+        getCurrent().setPaymentMethod(paymentMethod);
+        getCurrent().setPatientEncounter(patientEncounter);
+        getCurrent().setTotal(value);
+
+        if (errorCheck()) {
+            return null;
+        }
+
+        saveBill();
+        saveBillItem();
+        UtilityController.addSuccessMessage("Payment Bill Saved");
+
+        Bill curr = getCurrent();
+
+        makeNull();
+
+        return curr;
     }
 
     public void makeNull() {
         current = null;
+        printPreview = false;
     }
 
     private void saveBill() {
         getCurrent().setInstitution(getSessionController().getInstitution());
-          getCurrent().setBillType(BillType.InwardPaymentBill);
-        getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), getSessionController().getDepartment(),BillType.InwardPaymentBill));
-        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),getCurrent(),getCurrent().getBillType(),BillNumberSuffix.INWPAY));
+        getCurrent().setBillType(BillType.InwardPaymentBill);
+        getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), getSessionController().getDepartment(), BillType.InwardPaymentBill));
+        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWPAY));
 
-      
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setNetTotal(getCurrent().getTotal());
@@ -159,5 +183,13 @@ public class InwardPaymentController implements Serializable {
 
     public void setBillNumberBean(BillNumberBean billNumberBean) {
         this.billNumberBean = billNumberBean;
+    }
+
+    public boolean isPrintPreview() {
+        return printPreview;
+    }
+
+    public void setPrintPreview(boolean printPreview) {
+        this.printPreview = printPreview;
     }
 }

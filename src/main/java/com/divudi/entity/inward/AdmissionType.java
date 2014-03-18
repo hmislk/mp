@@ -4,12 +4,14 @@
  */
 package com.divudi.entity.inward;
 
+import com.divudi.data.inward.AdmissionTypeEnum;
 import com.divudi.entity.Category;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 
 /**
  *
@@ -23,9 +25,9 @@ public class AdmissionType extends Category implements Serializable {
     //Admission Fee
     private double admissionFee=0.0;
     private boolean inwardPackage;
-    private boolean oneDay;
-
     boolean roomChargesAllowed;
+    @Enumerated(EnumType.STRING)
+    private AdmissionTypeEnum admissionTypeEnum;
 
     public boolean isRoomChargesAllowed() {
         return roomChargesAllowed;
@@ -35,11 +37,7 @@ public class AdmissionType extends Category implements Serializable {
         this.roomChargesAllowed = roomChargesAllowed;
     }
 
-    
-    
-    
-    
-    
+  
     public double getAdmissionFee() {
         return admissionFee;
     }
@@ -56,11 +54,11 @@ public class AdmissionType extends Category implements Serializable {
         this.inwardPackage = inwardPackage;
     }
 
-    public boolean isOneDay() {
-        return oneDay;
+    public AdmissionTypeEnum getAdmissionTypeEnum() {
+        return admissionTypeEnum;
     }
 
-    public void setOneDay(boolean oneDay) {
-        this.oneDay = oneDay;
+    public void setAdmissionTypeEnum(AdmissionTypeEnum admissionTypeEnum) {
+        this.admissionTypeEnum = admissionTypeEnum;
     }
 }

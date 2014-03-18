@@ -10,18 +10,22 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardCalculation;
+import com.divudi.entity.Appointment;
 import com.divudi.entity.Bill;
-import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
+import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.facade.AdmissionFacade;
+import com.divudi.facade.AppointmentFacade;
+import com.divudi.facade.BillFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.PersonFacade;
@@ -33,14 +37,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.inject.Inject;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 import org.primefaces.event.TabChangeEvent;
 
@@ -105,19 +109,21 @@ public class AdmissionController implements Serializable {
         return Sex.values();
     }
 
-    public List<Admission> completePatientBht(String query) {
-        List<Admission> suggestions;
-        String sql;
-        if (query == null) {
-            suggestions = new ArrayList<Admission>();
-        } else {
-            sql = "select c from Admission c where c.retired=false and c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
-        }
-        return suggestions;
-    }
-
+//    public List<Admission> completePatientBht(String query) {
+//        List<Admission> suggestions;
+//        String sql;
+//        if (query == null) {
+//            suggestions = new ArrayList<>();
+//        } else {
+//            sql = "select c from Admission c where c.retired=false and "
+//                    + " c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' "
+//                    + "or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') "
+//                    + "order by c.bhtNo";
+//            //System.out.println(sql);
+//            suggestions = getFacade().findBySQL(sql);
+//        }
+//        return suggestions;
+//    }
     public List<Admission> getSelectedItems() {
         selectedItems = getFacade().findBySQL("select c from Admission c where c.retired=false and upper(c.name) like '%" + getSelectText().toUpperCase() + "%' order by c.name");
         return selectedItems;
@@ -131,13 +137,13 @@ public class AdmissionController implements Serializable {
     public List<Admission> completePatient(String query) {
         List<Admission> suggestions;
         String sql;
-        if (query == null) {
-            suggestions = new ArrayList<Admission>();
-        } else {
-            sql = "select c from Admission c where c.retired=false and c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
-        }
+        HashMap hm = new HashMap();
+        sql = "select c from Admission c where c.retired=false and c.discharged=false "
+                + " and (upper(c.bhtNo) like :q or"
+                + " upper(c.patient.person.name) like :q ) order by c.bhtNo";
+        hm.put("q", "%" + query.toUpperCase() + "%");
+        suggestions = getFacade().findBySQL(sql, hm);
+
         return suggestions;
     }
 
@@ -156,6 +162,38 @@ public class AdmissionController implements Serializable {
         return suggestions;
     }
 
+    public List<Admission> completePatient2(String query) {
+        List<Admission> suggestions;
+        String sql;
+        HashMap h = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            sql = "select c from Admission c where c.retired=false and "
+                    + " ( c.paymentFinalized is null or c.paymentFinalized=false )"
+                    + " and ( (upper(c.bhtNo) like :q )or (upper(c.patient.person.name)"
+                    + " like :q) ) order by c.bhtNo";
+            //System.out.println(sql);
+            //      h.put("btp", BillType.InwardPaymentBill);
+            h.put("q", "%" + query.toUpperCase() + "%");
+            suggestions = getFacade().findBySQL(sql, h);
+        }
+        return suggestions;
+    }
+
+    public List<Admission> completeDishcahrgedPatient(String query) {
+        List<Admission> suggestions;
+        String sql;
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            sql = "select c from Admission c where c.retired=false and c.discharged=true and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') order by c.bhtNo";
+            //System.out.println(sql);
+            suggestions = getFacade().findBySQL(sql);
+        }
+        return suggestions;
+    }
+
     public void prepareAdd() {
         current = new Admission();
     }
@@ -164,14 +202,14 @@ public class AdmissionController implements Serializable {
         List<Admission> suggestions;
         String sql;
         if (query == null || query.trim().equals("")) {
-            suggestions = new ArrayList<Admission>();
+            suggestions = new ArrayList<>();
         } else {
             sql = "select p from Admission p where p.retired=false and upper(p.bhtNo) like '%" + query.toUpperCase() + "%'";
             //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         if (suggestions == null) {
-            suggestions = new ArrayList<Admission>();
+            suggestions = new ArrayList<>();
         }
         return suggestions;
     }
@@ -212,8 +250,9 @@ public class AdmissionController implements Serializable {
         selectText = "";
         selectedItems = null;
         newPatient = null;
-        yearMonthDay=null;
-
+        yearMonthDay = null;
+        deposit = 0;
+        bhtNumberCalculation();
     }
 
     public void discharge() {
@@ -282,13 +321,10 @@ public class AdmissionController implements Serializable {
                 UtilityController.addErrorMessage("Select Credit Company");
                 return true;
             }
-            if (getCurrent().getCreditLimit() == 0.0) {
-                UtilityController.addErrorMessage("Set Credit Limit");
-                return true;
-            }
+
         }
 
-        if (!getCurrent().getAdmissionType().isOneDay()) {
+        if (getCurrent().getAdmissionType().isRoomChargesAllowed()) {
             if (getPatientRoom().getRoomFacilityCharge() == null) {
                 UtilityController.addErrorMessage("Select Room");
                 return true;
@@ -320,6 +356,30 @@ public class AdmissionController implements Serializable {
         return false;
     }
 
+    private double deposit;
+    @Inject
+    private InwardPaymentController inwardPaymentController;
+    @EJB
+    private AppointmentFacade appointmentFacade;
+    @EJB
+    private BillFacade billFacade;
+
+    private void updateAppointment() {
+        String sql = "Select s from Appointment s where s.retired=false and s.bill=:b";
+        HashMap hm = new HashMap();
+        hm.put("b", getAppointmentBill());
+        Appointment apt = getAppointmentFacade().findFirstBySQL(sql, hm);
+        apt.setPatientEncounter(getCurrent());
+        getAppointmentFacade().edit(apt);
+
+    }
+
+    private void updateAppointmentBill() {
+        getAppointmentBill().setRefunded(true);
+        getBillFacade().edit(getAppointmentBill());
+
+    }
+
     public void saveSelected() {
 
         if (errorCheck()) {
@@ -339,18 +399,40 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(getSessionController().getLoggedUser());        
+            current.setCreater(getSessionController().getLoggedUser());
             //      getCurrent().setDateOfAdmission(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             getFacade().create(current);
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
         }
 
-        if (!getCurrent().getAdmissionType().isOneDay()) {
-            savePatientRoom();
+        savePatientRoom(getCurrent().getDateOfAdmission());
+
+        double appointmentFee = 0;
+        if (getAppointmentBill() != null) {
+            appointmentFee = getAppointmentBill().getTotal();
+            updateAppointment();
+            updateAppointmentBill();
         }
 
-        makeNull();
-        getItems();
+        if (appointmentFee != 0) {
+            System.err.println("Appoint ");
+            getInwardPaymentController().getCurrent().setPaymentMethod(getCurrent().getPaymentMethod());
+            getInwardPaymentController().getCurrent().setPatientEncounter(current);
+            getInwardPaymentController().getCurrent().setTotal(appointmentFee);
+            getInwardPaymentController().pay();
+            getInwardPaymentController().makeNull();
+        }
+
+        if (getDeposit() != 0) {
+            System.err.println("Deposit ");
+            getInwardPaymentController().pay(getCurrent().getPaymentMethod(), getCurrent(), getDeposit());
+            //     getInwardPaymentController().setPrintPreview(true);
+        }
+
+        if (getDeposit() == 0) {
+            makeNull();
+        }
+
     }
 
     private void makeRoomFilled(PatientRoom pr) {
@@ -360,15 +442,15 @@ public class AdmissionController implements Serializable {
 
     }
 
-    private void savePatientRoom() {
+    private void savePatientRoom(Date admittedAt) {
         getPatientRoom().setCurrentLinenCharge(getPatientRoom().getRoomFacilityCharge().getLinenCharge());
         getPatientRoom().setCurrentMaintananceCharge(getPatientRoom().getRoomFacilityCharge().getMaintananceCharge());
         getPatientRoom().setCurrentMoCharge(getPatientRoom().getRoomFacilityCharge().getMoCharge());
         getPatientRoom().setCurrentNursingCharge(getPatientRoom().getRoomFacilityCharge().getNursingCharge());
-        //   getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
+        getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
 
         getPatientRoom().setAddmittedBy(getSessionController().getLoggedUser());
-        getPatientRoom().setAdmittedAt(getCurrent().getDateOfAdmission());
+        getPatientRoom().setAdmittedAt(admittedAt);
         getPatientRoom().setCreatedAt(Calendar.getInstance().getTime());
         getPatientRoom().setCreater(getSessionController().getLoggedUser());
         getPatientRoom().setPatientEncounter(getCurrent());
@@ -501,12 +583,21 @@ public class AdmissionController implements Serializable {
         this.patientRoomFacade = patientRoomFacade;
     }
 
-    public String getBhtText() {
-        if (getCurrent().getAdmissionType() != null) {
-            bhtText = getInwardCalculation().getBhtText(getCurrent().getAdmissionType());
-        } else {
-            bhtText = "";
+    public void bhtNumberCalculation() {
+        if (getCurrent() == null || getCurrent().getAdmissionType() == null) {
+//            UtilityController.addErrorMessage("Please Set Admission Type DayCase/Admission For this this Admission ");
+            return;
         }
+
+        if (getCurrent().getAdmissionType().getAdmissionTypeEnum() == null) {
+            UtilityController.addErrorMessage("Please Set Admission Type DayCase/Admission For this this Admission ");
+            return;
+        }
+
+        bhtText = getInwardCalculation().getBhtText(getCurrent().getAdmissionType());
+    }
+
+    public String getBhtText() {
         return bhtText;
     }
 
@@ -560,7 +651,7 @@ public class AdmissionController implements Serializable {
 
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
-    }  
+    }
 
     public Bill getAppointmentBill() {
         return appointmentBill;
@@ -570,10 +661,82 @@ public class AdmissionController implements Serializable {
         this.appointmentBill = appointmentBill;
     }
 
+    public double getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(double deposit) {
+        this.deposit = deposit;
+    }
+
+    public InwardPaymentController getInwardPaymentController() {
+        return inwardPaymentController;
+    }
+
+    public void setInwardPaymentController(InwardPaymentController inwardPaymentController) {
+        this.inwardPaymentController = inwardPaymentController;
+    }
+
+    public AppointmentFacade getAppointmentFacade() {
+        return appointmentFacade;
+    }
+
+    public void setAppointmentFacade(AppointmentFacade appointmentFacade) {
+        this.appointmentFacade = appointmentFacade;
+    }
+
+    public BillFacade getBillFacade() {
+        return billFacade;
+    }
+
+    public void setBillFacade(BillFacade billFacade) {
+        this.billFacade = billFacade;
+    }
+
     /**
      *
      */
-    @FacesConverter("admCon")
+    @FacesConverter("admis")
+    public static class AdmissionConverter implements Converter {
+
+        @Override
+        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+            if (value == null || value.length() == 0) {
+                return null;
+            }
+            AdmissionController controller = (AdmissionController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "admissionController");
+            return controller.getEjbFacade().find(getKey(value));
+        }
+
+        java.lang.Long getKey(String value) {
+            java.lang.Long key;
+            key = Long.valueOf(value);
+            return key;
+        }
+
+        String getStringKey(java.lang.Long value) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(value);
+            return sb.toString();
+        }
+
+        @Override
+        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+            if (object == null) {
+                return null;
+            }
+            if (object instanceof Admission) {
+                Admission o = (Admission) object;
+                return getStringKey(o.getId());
+            } else {
+                throw new IllegalArgumentException("object " + object + " is of type "
+                        + object.getClass().getName() + "; expected type: " + AdmissionController.class.getName());
+            }
+        }
+    }
+
+    @FacesConverter(forClass = Admission.class)
     public static class AdmissionControllerConverter implements Converter {
 
         @Override

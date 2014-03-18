@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill">
+
+
+    <ui:define name="content">
+
+        <h:panelGroup >
+            <h:form  >
+                <p:panel header="Inward Payment Bill">
+                    <p:panel header="BHT">
+
+                        <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
+                                        value="#{inwardPaymentController.current.patientEncounter}"
+                                        completeMethod="#{admissionController.completePatient}" 
+                                        var="myItem" itemValue="#{myItem}" 
+                                        itemLabel="#{myItem.bhtNo}" 
+                                        size="30"  style="width: 400px;">
+                            <p:ajax event="itemSelect" process="acPt" update="panSearch2"/>
+                            <p:column>
+                                <h:outputLabel value="#{myItem.bhtNo}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
+                            </p:column>
+                        </p:autoComplete>   
+
+
+
+                        <h:panelGrid id="panSearch2" columns="2" >
+                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Name:" />
+                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
+                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Sex" />
+                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.age}" ></h:outputLabel>
+                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="DOB"  />
+                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.person.dob}"   >
+                                <f:convertDateTime pattern="dd/MM/yy" />
+                            </h:outputLabel>
+                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Adress" />
+                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
+                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Date of Admission"  />
+                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.dateOfAdmission}"   >
+                                <f:convertDateTime pattern="dd/MM/yy" />
+                            </h:outputLabel>
+                        </h:panelGrid>
+                    </p:panel>
+                    <p:panel header="Payment Detail">
+                        <h:panelGrid columns="7">
+                            <p:selectOneMenu   id="cmbPs" value="#{inwardPaymentController.current.paymentMethod}"  >
+                                <f:selectItem itemLabel="Select Payment Method" />
+                                <f:selectItems value="#{inwardPaymentController.paymentMethods}"  />
+                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef bank" event="change" />
+                            </p:selectOneMenu>
+                            <p:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{inwardPaymentController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCardRef" value="#{inwardPaymentController.current.creditCardRefNo}" style="display: #{inwardPaymentController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+                            <p:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCheqRef" value="#{inwardPaymentController.current.chequeRefNo}" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <p:selectOneMenu id="bank" value="#{inwardPaymentController.current.bank}" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </p:selectOneMenu>
+                            <p:inputText value="#{inwardPaymentController.current.total}"/>
+
+                        </h:panelGrid>
+                        <p:commandButton id="btnPay" value="Pay" ajax="false" action="#{inwardPaymentController.pay}"/>
+                        <p:defaultCommand target="btnPay"/>
+
+                        <p:commandButton value="Clear" ajax="false" action="#{inwardPaymentController.makeNull}"/>
+                    </p:panel>
+
+                </p:panel>
+
+                <h:panelGroup rendered="#{inwardPaymentController.printPreview}">
+
+                    <bill:payment bill="#{inwardPaymentController.current}"/>
+                </h:panelGroup>
+
+
+            </h:form>
+
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

@@ -54,7 +54,12 @@
                                         <f:selectItem itemValue="Select Room"/>
                                         <f:selectItems value="#{roomController.items}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
                                     </h:selectOneMenu>
-
+                                    <h:outputLabel value="Department"/>
+                                    <p:autoComplete value="#{roomFacilityChargeController.current.department}" 
+                                                    forceSelection="true"
+                                                    completeMethod="#{departmentController.completeDept}" 
+                                                    var="c" itemLabel="#{c.name}" itemValue="#{c}" >
+                                    </p:autoComplete>
                                     <h:outputLabel value="Duration Hour"/>
                                     <h:inputText value="#{roomFacilityChargeController.current.timedItemFee.durationHours}"/>
                                     <h:outputLabel value="Over Shoot Hour"/>

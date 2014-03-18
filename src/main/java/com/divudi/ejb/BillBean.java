@@ -479,10 +479,10 @@ public class BillBean {
         double s = 0.0;
         double i = 0.0;
         double val = 0.0;
-       
+
         for (BillEntry e : billEntrys) {
             for (BillFee bf : e.getLstBillFees()) {
-             //   tot += bf.getFeeGrossValue();
+                //   tot += bf.getFeeGrossValue();
                 val += bf.getFeeValue();
                 if (bf.getFee().getFeeType() != FeeType.Staff) {
                     i = i + bf.getFeeValue();
@@ -542,7 +542,6 @@ public class BillBean {
 //
 //        getBillFacade().edit(bill);
 //    }
-
     public void calculateBillItems(Bill bill, BillEntry e) {
         double s = 0.0;
         double i = 0.0;
@@ -749,6 +748,7 @@ public class BillBean {
         return null;
     }
 
+   
     public List<BillFee> billFeefromBillItemPackage(BillItem billItem, Item packege) {
         List<BillFee> t = new ArrayList<>();
         BillFee f;

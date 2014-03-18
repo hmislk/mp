@@ -25,7 +25,7 @@
 
                                 <h:outputLabel value="Bill No"/>
                                 <h:outputLabel value="Patient Name"/>    
-                                 <h:outputLabel value="Department Name"/>   
+                                <h:outputLabel value="Department Name"/>   
                                 <h:outputLabel value="Total"/>
                                 <h:outputLabel value="Net Total"/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
@@ -45,108 +45,88 @@
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
 
-                            <p:column headerText="Bill No" >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" value="#{bill.deptId}">
-                                    <h:outputLabel  ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                            <p:column headerText="View">
+                                <p:commandButton ajax="false" value="View Bill"
+                                                 action="pharmacy_reprint_bill_sale">
+                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>   
+                                </p:commandButton>
                             </p:column>
 
-                            <p:column headerText="Department"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" value="#{bill.department.name}">
-                                    <h:outputLabel  ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                            <p:column headerText="Bill No" >                                
+                                <h:outputLabel  value="#{bill.deptId}"  />
+                            </p:column>
+
+                            <p:column headerText="Department"  >                                
+                                <h:outputLabel value="#{bill.department.name}" />                                    
                             </p:column>   
 
                             <p:column headerText="Billed at"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.createdAt}" >
-                                        <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
-                                    </h:outputLabel>
-                                     <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.createdAt}" >
+                                    <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
+                                </h:outputLabel>
+
                                 <br/>
-                                <h:panelGroup rendered="#{bill.cancelled}" >
+                                <h:panelGroup rendered="#{bill.referenceBill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled at " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.createdAt}" >
+                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.cancelled}" 
+                                                   value="#{bill.referenceBill.cancelledBill.createdAt}" >
                                         <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
                                     </h:outputLabel>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{bill.refunded}" >
                                     <h:outputLabel style="color: red;" value="Refunded at " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.refunded}" value="#{bill.refundedBill.createdAt}" >
+                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.refunded}" 
+                                                   value="#{bill.referenceBill.refundedBill.createdAt}" >
                                         <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
                                     </h:outputLabel>
                                 </h:panelGroup>
                             </p:column>                 
                             <p:column headerText="Billed by" >
-                                <h:commandLink action="pharmacy_reprint_bill_sale">
-                                    <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
-                                    </h:outputLabel>                                    
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                    
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.creater.webUserPerson.name}" />                                      
                                 <br/>
-                                <h:panelGroup rendered="#{bill.cancelled}" >
+                                <h:panelGroup rendered="#{bill.referenceBill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled By " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" >                                       
+                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.cancelled}" 
+                                                   value="#{bill.referenceBill.cancelledBill.creater.webUserPerson.name}" >                                       
                                     </h:outputLabel>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{bill.refunded}" >
+                                <h:panelGroup rendered="#{bill.referenceBill.refunded}" >
                                     <h:outputLabel style="color: red;" value="Refunded By " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.refunded}" value="#{bill.refundedBill.creater.webUserPerson.name}" >
+                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.refunded}"
+                                                   value="#{bill.referenceBill.refundedBill.creater.webUserPerson.name}" >
 
                                     </h:outputLabel>
                                 </h:panelGroup>
                             </p:column>                      
 
                             <p:column headerText="Client" >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.patient.person.nameWithTitle}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>                               
+                                <h:outputLabel value="#{bill.patient.person.nameWithTitle}" />
                             </p:column>
 
                             <p:column headerText="Paymentmethod"   >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.paymentScheme.paymentMethod}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.paymentScheme.paymentMethod}" />
                             </p:column>
 
                             <p:column headerText="Paymentscheme" >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.paymentScheme.name}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.paymentScheme.name}" />
                             </p:column>
 
                             <p:column headerText="Gross Value"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.total}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.total}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Discount">
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.discount}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.discount}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Net Value"  >
-                                <h:commandLink action="pharmacy_reprint_bill_sale" >
-                                    <h:outputLabel value="#{bill.netTotal}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.netTotal}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Comments" >

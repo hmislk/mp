@@ -5,14 +5,15 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill">
 
 
     <ui:define name="content">
 
         <h:panelGroup >
             <h:form  >
-                <p:panel header="Inward Payment Bill" >
+                <p:panel header="Inward Payment Bill">
                     <p:panel header="BHT">
 
                         <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
@@ -69,11 +70,18 @@
                         </h:panelGrid>
                         <p:commandButton id="btnPay" value="Pay" ajax="false" action="#{inwardPaymentController.pay}"/>
                         <p:defaultCommand target="btnPay"/>
-                        
+
                         <p:commandButton value="Clear" ajax="false" action="#{inwardPaymentController.makeNull}"/>
                     </p:panel>
 
                 </p:panel>
+
+                <h:panelGroup rendered="#{inwardPaymentController.printPreview}">
+
+                    <bill:payment bill="#{inwardPaymentController.current}"/>
+                </h:panelGroup>
+
+
             </h:form>
 
         </h:panelGroup>

@@ -633,7 +633,7 @@ public class BillController implements Serializable {
         getCurrentBillItem().setSessionDate(sessionDate);
 
 //        New Session
-        getCurrentBillItem().setBillSession(getServiceSessionBean().createBillSession(getCurrentBillItem()));
+     //   getCurrentBillItem().setBillSession(getServiceSessionBean().createBillSession(getCurrentBillItem()));
 
         lastBillItem = getCurrentBillItem();
         BillEntry addingEntry = new BillEntry();

@@ -1059,9 +1059,9 @@ public class BillSearch implements Serializable {
                 b.setReferanceBillItem(nB.getReferanceBillItem());
             }
 
-            b.setNetValue(-nB.getNetValue());
-            b.setGrossValue(-nB.getGrossValue());
-            b.setRate(-nB.getRate());
+            b.setNetValue(0-nB.getNetValue());
+            b.setGrossValue(0-nB.getGrossValue());
+            b.setRate(0-nB.getRate());
 
             b.setCatId(nB.getCatId());
             b.setDeptId(nB.getDeptId());
@@ -1278,6 +1278,7 @@ public class BillSearch implements Serializable {
 
     public void setBill(BilledBill bill) {
         recreateModel();
+        System.err.println("Bill "+bill);
         this.bill = bill;
     }
 

@@ -14,7 +14,7 @@
 
                 <h:form>
 
-                    <h:panelGrid columns="4"  > 
+                    <h:panelGrid columns="5"  style="width: 100%"> 
                         <h:panelGrid columns="1" >
                             <f:facet name="header">
                                 <p:outputLabel value="Cashier" />
@@ -49,6 +49,15 @@
                             </f:facet>    
                             <p:commandButton styleClass="linkButton" ajax="false" value="GRN Summery" action="report_grn_detail.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
                             <p:commandButton styleClass="linkButton" ajax="false" value="GRN Summery By Supplier" action="report_grn_detail_by_supplier.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
+
+                        </h:panelGrid>
+                        
+                        <h:panelGrid columns="1" >
+                            <f:facet name="header">
+                                <p:outputLabel value="Purchase" />
+                            </f:facet>    
+                            <p:commandButton styleClass="linkButton" ajax="false" value="Purchase Summery" action="report_purchase_detail.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
+                            <p:commandButton styleClass="linkButton" ajax="false" value="Purchase Summery By Supplier" action="report_grn_detail_by_supplier.xhtml" actionListener="#{pharmacySaleReport.makeNull}"/>
 
                         </h:panelGrid>
 

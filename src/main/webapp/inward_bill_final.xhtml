@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
+
+
+    <ui:define name="content">
+
+        <h:panelGroup >
+            <h:form  >
+                <p:panel rendered="#{!bhtSummeryController.printPreview}" >
+                    <f:facet name="header" >
+                        <h:panelGrid columns="15"  >
+                            <h:outputLabel value="Inward Final Bill" />
+                            <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
+                            <p:selectOneMenu  value="#{bhtSummeryController.current.paymentMethod}">                                                                   
+                                <f:selectItem itemLabel="Select Paymentmethod"/>
+                                <f:selectItems value="#{enumController.paymentMethods}"/>
+                                <p:ajax process="@this" update="lblCardRef txtCardRef creditBank
+                                        lblCheqRef txtCheqRef bank lblSlipRef
+                                        txtSlipRef slipBank tot dList" event="change"
+                                        listener="#{bhtSummeryController.changePaymentmethodListener()}" />
+                            </p:selectOneMenu>
+
+                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{bhtSummeryController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
+                            <p:inputMask mask="9999-9999-9999-9999" id="txtCardRef" autocomplete="off" maxlength="16" value="#{bhtSummeryController.current.creditCardRefNo}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
+                            <h:selectOneMenu id="creditBank" value="#{bhtSummeryController.current.bank}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{bhtSummeryController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCheqRef" value="#{bhtSummeryController.current.chequeRefNo}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="bank" value="#{bhtSummeryController.current.bank}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{bhtSummeryController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtSlipRef" value="#{bhtSummeryController.current.comments}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="slipBank" value="#{bhtSummeryController.current.bank}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+
+                            <p:commandButton  value="Settle" action="#{bhtSummeryController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            </p:commandButton>
+                            <p:commandButton value="New Bill" ajax="false" action="#{bhtSummeryController.prepareNewBill()}" >
+                            </p:commandButton>
+                        </h:panelGrid>
+                    </f:facet>       
+
+                    <p:panel header="BHT">                               
+                        <h:panelGrid id="panSearch2" columns="2" >
+                            <h:outputLabel  value="Name:" />
+                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
+                            <h:outputLabel  value="Sex" />
+                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.age}" ></h:outputLabel>
+                            <h:outputLabel value="DOB"  />
+                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.person.dob}"   >
+                                <f:convertDateTime pattern="dd/MM/yy" />
+                            </h:outputLabel>
+                            <h:outputLabel  value="Adress" />
+                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.person.address}" ></h:outputLabel>
+                            <h:outputLabel  value="Date of Admission"  />
+                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.dateOfAdmission}"   >
+                                <f:convertDateTime pattern="dd/MM/yy" />
+                            </h:outputLabel>
+                        </h:panelGrid>
+                    </p:panel>                    
+
+
+
+                    <p:dataTable id="dList" value="#{bhtSummeryController.chargeItemTotals}" var="c">
+                        <p:column headerText="Inward Charge Type" >
+                            #{c.inwardChargeType}
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputLabel value="#{c.total}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </h:outputLabel>                            
+                        </p:column>
+                        <p:column headerText="Discount">
+                            <h:outputLabel value="#{c.discount}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="NetTotal">
+                            <h:outputLabel value="#{c.netTotal}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column >
+                            <p:inputText value="#{c.adjustedTotal}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </p:inputText>
+                        </p:column>
+                    </p:dataTable>    
+
+                    <br/><br/>
+                    <p:panelGrid columns="2" id="tot" style="min-width: 100%;">
+                        <h:outputLabel  value="Total Charges" style="font-weight: bold"/>
+                        <h:outputLabel id="gtot" value="#{bhtSummeryController.grantTotal}"/>
+                        <h:outputLabel value="Discount" style="font-weight: bold"/>
+                        <h:inputText  id="dis" value="#{bhtSummeryController.discount}" >
+                            <f:ajax event="keyup" execute="gtot dis" render="net due"/>
+                        </h:inputText>
+                        <h:outputLabel value="Net Charges" style="font-weight: bold"/>
+                        <h:outputLabel id="net" value="#{bhtSummeryController.grantTotal-bhtSummeryController.discount}"/>
+                        <h:outputLabel value="Paid " style="font-weight: bold"/>
+                        <h:outputLabel value="#{bhtSummeryController.paid}"/>
+                        <h:outputLabel value="Due " style="font-weight: bold"/>
+                        <h:outputLabel id="due" value="#{bhtSummeryController.due}"/>                        
+                    </p:panelGrid>
+                </p:panel>
+
+                <p:panel rendered="#{bhtSummeryController.printPreview}">
+
+                    <h:panelGrid columns="2">
+                        <p:panel>
+                            <f:facet name="header" >   
+                                <h:outputLabel value="Claimable"/>
+                            </f:facet>
+                            <h:panelGrid columns="1">
+                                <p:commandButton value="Patient Copy" ajax="false" >
+                                    <p:printer target="claimablePatientCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Hospital Copy" ajax="false" >
+                                    <p:printer target="claimableHospitalCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Duplicate Copy" ajax="false" >
+                                    <p:printer target="claimableDuplicate" ></p:printer>
+                                </p:commandButton> 
+                            </h:panelGrid>
+                        </p:panel>
+                        <p:panel header="Not Claimable">
+                            <h:panelGrid columns="1">
+                                <p:commandButton value="Patient Copy without Professional" ajax="false" >
+                                    <p:printer target="notClaimablePatientCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Hospital Copy wihout Professional" ajax="false" >
+                                    <p:printer target="notClaimableHospitalCopy" ></p:printer>
+                                </p:commandButton>
+                                <p:commandButton value="Duplicate wihout Professional" ajax="false" >
+                                    <p:printer target="notClaimableDuplicate" ></p:printer>
+                                </p:commandButton>  
+                                <p:commandButton value="Professional Fees" ajax="false" >
+                                    <p:printer target="professional" ></p:printer>
+                                </p:commandButton>
+
+
+                            </h:panelGrid>
+
+                        </p:panel>
+                    </h:panelGrid>
+
+                    <p:commandButton value="Check Intrim " ajax="false" action="#{bhtSummeryController.prepareNewBill()}"  styleClass="noPrintButton">
+                    </p:commandButton>
+
+                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                        <bi:finalBill   bill="#{bhtSummeryController.current}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
+                        <bi:finalBill  hosCopy="true"                                       
+                                       bill="#{bhtSummeryController.current}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
+                        <bi:finalBill duplicate="true"                                   
+                                      bill="#{bhtSummeryController.current}" />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
+                        <bi:finalBill  bill="#{bhtSummeryController.current}"
+                                       withoutPro="true" showProfessionalOnly="true"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
+                        <bi:finalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
+                                       bill="#{bhtSummeryController.current}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="professional" styleClass="noBorder">       
+                        <bi:finalProfessionalBill bill="#{bhtSummeryController.current}"  />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
+                        <bi:finalBill duplicate="true"                                   
+                                      bill="#{bhtSummeryController.current}" withoutPro="true" showProfessionalOnly="true" />
+                    </h:panelGroup>
+
+
+                </p:panel>
+            </h:form>
+
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

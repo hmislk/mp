@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"                    
+                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+    <ui:define name="content">
+        <h:panelGroup >
+            <h:form  >
+                <p:panel rendered="#{!pharmacyDealorBill.printPreview}" >
+                    <f:facet name="header" >
+                        <h:panelGrid columns="15"  >
+                            <h:outputLabel value="Cash Bill" />
+                            <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
+                            <p:selectOneMenu   id="cmbPs" value="#{pharmacyDealorBill.current.paymentMethod}">                                                                     
+                                <f:selectItems value="#{enumController.paymentMethods}"  />
+                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />
+
+                            </p:selectOneMenu>
+                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCardRef" value="#{pharmacyDealorBill.current.creditCardRefNo}" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+
+                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtCheqRef" value="#{pharmacyDealorBill.current.chequeRefNo}" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="bank" value="#{pharmacyDealorBill.chequeBank}"  style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+                            <p:calendar id="chequeDate"  value="#{pharmacyDealorBill.chequeDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
+                            </p:calendar>
+
+                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <p:inputText  id="txtSlipRef" value="#{pharmacyDealorBill.current.comments}" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
+                            <h:selectOneMenu id="slipBank" value="#{pharmacyDealorBill.slipBank}"  style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
+                            <p:calendar id="slipDate"  value="#{pharmacyDealorBill.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
+                            </p:calendar>
+
+                            <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            </p:commandButton>
+                            <p:defaultCommand target="btnSettle"/>
+
+                            <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
+                            </p:commandButton>
+
+                        </h:panelGrid>
+                    </f:facet>
+                    <h:panelGrid columns="2" style="min-width: 100%;">
+                        <h:panelGrid columns="3">
+                            <h:outputLabel value="Type GRN No or Dealor Name"/>
+                            <h:outputLabel value="Paying Amount"/>
+                            <h:outputLabel/>
+                            <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{pharmacyDealorBill.institution}"
+                                            completeMethod="#{institutionController.completeSupplier}" var="ix" itemLabel="#{ix.name}"
+                                            itemValue="#{ix}" size="30"  style="width: 400px;">                                  
+                                <p:column headerText="Name">
+                                    #{ix.name}
+                                </p:column>
+                                <p:column headerText="Code">
+                                    #{ix.institutionCode}
+                                </p:column>
+                                <f:ajax event="itemSelect" execute="@this" render="@all" listener="#{pharmacyDealorBill.selectInstitutionListener()}"/>
+                            </p:autoComplete>                            
+
+                        </h:panelGrid>
+
+                        <p:dataTable value="#{pharmacyDealorBill.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
+                            <f:facet name="header">
+                                <h:outputLabel value="Paying GRN : "/>
+                                <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
+                            </f:facet>
+                            <p:column>
+                                <f:facet name="header">No</f:facet>
+                                    #{rowIndex+1}
+                            </p:column>
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputLabel value="GRN No"/>                                  
+                                </f:facet>                              
+                                <p:outputLabel value="#{b.referenceBill.deptId}"/>
+                            </p:column> 
+                            <p:column headerText="GRN Amount">
+                                <p:outputLabel value="#{-b.referenceBill.netTotal}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="GRN Return Amount">
+                                <p:outputLabel value="#{b.referenceBill.tmpReturnTotal}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Paid Amount">
+                                <p:outputLabel value="#{b.referenceBill.paidAmount}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Recievable Amount">
+                                <p:outputLabel value="#{-(b.referenceBill.netTotal+b.referenceBill.tmpReturnTotal+b.referenceBill.paidAmount)}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Paying Amount">
+                                <p:inputText value="#{b.netValue}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:ajax event="blur" execute="@this" render="@all" listener="#{pharmacyDealorBill.changeNetValueListener(b)}"/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column headerText="Remove">
+                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.remove}" value="X">
+                                    <f:setPropertyActionListener target="#{pharmacyDealorBill.index}" value="#{rowIndex}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                    </h:panelGrid>
+                    <p:panel  id="total" style="min-width: 100%;">
+
+                        <p:panelGrid  columns="2" >
+                            <p:outputLabel value="Net Total" />
+                            <p:outputLabel  value="#{pharmacyDealorBill.current.netTotal}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </p:outputLabel>
+
+                            <p:outputLabel value="Description"/>
+                            <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         
+                        </p:panelGrid>
+                    </p:panel>
+                </p:panel>
+
+
+
+                <p:panel rendered="#{pharmacyDealorBill.printPreview}" >
+                    <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
+                    </p:commandButton>
+                    <bi:insRecieve billController ="#{pharmacyDealorBill}"  bill="#{pharmacyDealorBill.current}" dup="false"/>                       
+                </p:panel>
+
+            </h:form>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

@@ -249,6 +249,60 @@ public class PharmacyItemExcelManager implements Serializable {
 
     }
 
+    public void resetBillNo() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b where b.createdAt between :fd and :td ";
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -40);
+        temMap.put("fd", cal.getTime());
+        temMap.put("td", new Date());
+        //temMap.put("dep", getSessionController().getDepartment());
+        List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
+
+        for (Bill b : bills) {
+            String str = "";
+            //Reset Institution ID
+            if (b.getInsId() != null) {
+                str = b.getInsId().replace('\\', '/');
+                System.err.println("Ins No " + b.getInsId() + " : " + str);
+                b.setInsId(str);
+            }
+
+            //Reset Department ID
+            if (b.getDeptId() != null) {
+                str = b.getDeptId().replace('\\', '/');
+                System.err.println("Dept No " + b.getDeptId() + " : " + str);
+                b.setDeptId(str);
+            }
+
+            getBillFacade().edit(b);
+        }
+
+    }
+
+//    public void resetPharmacyPurhcaseCancelPayentScheme() {
+//        String sql;
+//        Map temMap = new HashMap();
+//
+//        sql = "select b from Bill b where (type(b)=:class) "
+//                + " and b.billType = :billType ";
+//
+//        temMap.put("class", BilledBill.class);
+//        temMap.put("billType", BillType.PharmacyPurchaseBill);
+//        //temMap.put("dep", getSessionController().getDepartment());
+//        List<Bill> bills = getBillFacade().findBySQL(sql, temMap);
+//
+//        for (Bill b : bills) {
+//            System.err.println("Billed "+b.getPaymentScheme());
+//            System.err.println("Cancelled "+b.getCancelledBill().getPaymentScheme());
+//        }
+//
+//    }
+
     public void resetGrnReference() {
         String sql;
         Map temMap = new HashMap();
@@ -271,10 +325,10 @@ public class PharmacyItemExcelManager implements Serializable {
                 System.err.println("2 " + b.getReferenceBill().getBillType());
                 System.err.println("3" + refApproved.getBillType());
                 System.err.println("%%%%%%%%%%%%%%%%%%%%");
-                
+
                 b.setReferenceBill(refApproved);
                 getBillFacade().edit(b);
-                
+
             }
 
         }

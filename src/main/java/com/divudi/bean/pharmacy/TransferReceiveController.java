@@ -111,7 +111,12 @@ public class TransferReceiveController implements Serializable {
             BillItem bItem = new BillItem();
             bItem.setReferanceBillItem(i.getBillItem());
             bItem.copy(i.getBillItem());
-            bItem.setTmpQty(0 - i.getQtyInUnit());
+            if (Math.abs(i.getQtyInUnit()) >= Math.abs(i.getStaffStock().getStock())) {
+                bItem.setTmpQty(Math.abs(i.getQtyInUnit()));
+            } else {
+                bItem.setTmpQty(Math.abs(i.getStaffStock().getStock()));
+            }
+
             bItem.setSearialNo(getBillItems().size());
 
             //       bItem.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(i.getBillItem().getItem()));
@@ -159,11 +164,11 @@ public class TransferReceiveController implements Serializable {
 
             double qty = Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit());
 
-            //Deduct Staff Stock
+        //    Deduct Staff Stock
             boolean returnFlag = getPharmacyBean().deductFromStock(tmpPh, Math.abs(qty), getIssuedBill().getToStaff());
 
             if (returnFlag) {
-                //Add Stock To Department
+           //     Add Stock To Department
                 Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
 
                 tmpPh.setStock(addedStock);
@@ -171,7 +176,14 @@ public class TransferReceiveController implements Serializable {
                 i.setTmpQty(0);
                 getBillItemFacade().edit(i);
             }
-
+            
+            
+            
+//            //Temprory Solution
+//            Stock addedStock = getPharmacyBean().addToStock(tmpPh, Math.abs(qty), getSessionController().getDepartment());
+//            tmpPh.setStock(addedStock);
+            
+            
             getPharmaceuticalBillItemFacade().edit(tmpPh);
 
             getReceivedBill().getBillItems().add(i);

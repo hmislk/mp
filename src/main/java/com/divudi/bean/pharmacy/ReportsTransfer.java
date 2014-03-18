@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -52,7 +54,7 @@ public class ReportsTransfer implements Serializable {
     double totalsValue;
     double discountsValue;
     double netTotalValues;
-    
+
     List<BillItem> transferItems;
     List<Bill> transferBills;
 
@@ -82,6 +84,38 @@ public class ReportsTransfer implements Serializable {
     public void fillSlowMoving() {
         fillMoving(false);
         fillMovingQty(false);
+    }
+
+    public void fillMovingWithStock() {
+        String sql;
+        Map m = new HashMap();
+        m.put("i", institution);
+        m.put("t1", BillType.PharmacyTransferIssue);
+        m.put("t2", BillType.PharmacyPre);
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        BillItem bi = new BillItem();
+
+        sql = "select bi.item, abs(SUM(bi.pharmaceuticalBillItem.qty)), "
+                + "abs(SUM(bi.pharmaceuticalBillItem.stock.itemBatch.purcahseRate * bi.pharmaceuticalBillItem.qty)), "
+                + "SUM(bi.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate * bi.qty)) "
+                + "FROM BillItem bi where bi.retired=false and  bi.bill.department.institution=:i and "
+                + "(bi.bill.billType=:t1 or bi.bill.billType=:t2) and "
+                + "bi.bill.billDate between :fd and :td group by bi.item "
+                + "order by  SUM(bi.pharmaceuticalBillItem.qty) desc";
+        List<Object[]> objs = getBillItemFacade().findAggregates(sql, m);
+        movementRecordsQty = new ArrayList<>();
+        for (Object[] obj : objs) {
+            StockReportRecord r = new StockReportRecord();
+            r.setItem((Item) obj[0]);
+            r.setQty((Double) obj[1]);
+            Days daysBetween = Days.daysBetween(LocalDate.fromDateFields(fromDate), LocalDate.fromDateFields(toDate));
+            int ds = daysBetween.getDays();
+            r.setPurchaseValue((Double) (r.getQty() / ds));
+//            r.setRetailsaleValue((Double) obj[2]);
+            r.setStockQty(getPharmacyBean().getStockQty(r.getItem(), institution));
+            movementRecordsQty.add(r);
+        }
     }
 
     public void fillMoving(boolean fast) {
@@ -260,13 +294,13 @@ public class ReportsTransfer implements Serializable {
                     + " between :fd and :td and b.billType=:bt order by b.id";
         }
         transferBills = getBillFacade().findBySQL(sql, m);
-        totalsValue=0.0;
-        discountsValue=0.0;
-        netTotalValues=0.0;
+        totalsValue = 0.0;
+        discountsValue = 0.0;
+        netTotalValues = 0.0;
         for (Bill b : transferBills) {
             totalsValue = totalsValue + (b.getTotal());
             discountsValue = discountsValue + b.getDiscount();
-            netTotalValues=netTotalValues+b.getNetTotal();
+            netTotalValues = netTotalValues + b.getNetTotal();
         }
     }
 
@@ -295,15 +329,16 @@ public class ReportsTransfer implements Serializable {
                     + " between :fd and :td and b.billType=:bt order by b.id";
         }
         transferBills = getBillFacade().findBySQL(sql, m);
-        totalsValue=0.0;
-        discountsValue=0.0;
-        netTotalValues=0.0;
+        totalsValue = 0.0;
+        discountsValue = 0.0;
+        netTotalValues = 0.0;
         for (Bill b : transferBills) {
             totalsValue = totalsValue + (b.getTotal());
             discountsValue = discountsValue + b.getDiscount();
-            netTotalValues=netTotalValues+b.getNetTotal();
+            netTotalValues = netTotalValues + b.getNetTotal();
         }
     }
+
     /**
      * Getters & Setters
      *
@@ -483,7 +518,4 @@ public class ReportsTransfer implements Serializable {
         this.netTotalValues = netTotalValues;
     }
 
-    
-    
-    
 }

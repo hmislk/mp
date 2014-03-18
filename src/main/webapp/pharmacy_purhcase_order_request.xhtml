@@ -25,6 +25,7 @@
                             Distributor
                         </f:facet>
                         <p:autoComplete converter="deal" value="#{purchaseOrderRequestController.currentBill.toInstitution}"  
+                                        forceSelection="true"
                                         completeMethod="#{dealerController.completeDealor}"
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <f:ajax event="itemSelect" execute="@this" render="itemList" listener="#{purchaseOrderRequestController.setInsListener}"/>
@@ -36,6 +37,7 @@
 
                     <p:panel header="Add Dealors Item ">
                         <p:autoComplete id="exDItem" value="#{purchaseOrderRequestController.currentBillItem.item}"
+                                        forceSelection="true"
                                         completeMethod="#{itemController.completeDealorItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>
@@ -54,7 +56,8 @@
 
                     <p:panel header="Add Extra Item ">
                         <p:autoComplete id="exItem" value="#{purchaseOrderRequestController.currentBillItem.item}"
-                                        completeMethod="#{itemController.completeAmpAndAmppItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                        forceSelection="true"
+                                        completeMethod="#{itemController.completeAmpItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>
                             </p:column>

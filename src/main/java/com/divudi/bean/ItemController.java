@@ -131,10 +131,12 @@ public class ItemController implements Serializable {
             suggestions = new ArrayList<>();
         } else {
 
-            sql = "select c from Item c where c.retired=false and (type(c)= :amp or type(c)= :ampp) and (upper(c.name) like :str or upper(c.code) like :str or upper(c.barcode) like :str ) order by c.name";
+            sql = "select c from Item c where c.retired=false and (type(c)= :amp) "
+                    + " and (upper(c.name) like :str or upper(c.code) like :str or"
+                    + " upper(c.barcode) like :str ) order by c.name";
             //System.out.println(sql);
             tmpMap.put("amp", Amp.class);
-            //  tmpMap.put("ampp", Ampp.class);
+            tmpMap.put("str", "%" + query.toUpperCase() + "%");
             suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
         }
         return suggestions;

@@ -49,14 +49,14 @@
                         <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                          styleClass="noPrintButton" 
                                          actionListener="#{commonReport.createGrnDetailTableByDealor()}"
-                                         style="double: right;" /> 
+                                         style="float: right;" /> 
                         
-                        <p:commandButton actionListener="#{commonReport.createGrnDetailTableByDealor()}" ajax="false" value="Excel" styleClass="noPrintButton" style="double: right;" >
+                        <p:commandButton actionListener="#{commonReport.createGrnDetailTableByDealor()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="billed,cancelled,refunded,returnCancelled,sum," fileName="report_grn_detail_by_supplier"  />
                             </p:commandButton>
 
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" 
-                                         style="double: right;" >
+                                         style="float: right;" >
                             <p:printer target="reportPrint"/>
                         </p:commandButton>
                     </h:panelGrid>
@@ -76,7 +76,7 @@
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>                          
                         <h:outputLabel value="To"/>
-                        <h:outputLabel  value="#{commonReport.toDate}" style="double: right" >
+                        <h:outputLabel  value="#{commonReport.toDate}" style="float: right" >
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>
                     </h:panelGrid>

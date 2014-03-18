@@ -23,14 +23,14 @@
 
                             <h:outputLabel value="Cashier Summery Report - &nbsp;&nbsp; #{commonReport.webUser.webUserPerson.name}"/>
 
-                            <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="double: right;" actionListener="#{commonReport.createCashierTableByUser()}" />
+                            <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{commonReport.createCashierTableByUser()}" />
                             <p:defaultCommand target="btnRefresh"/>
 
-                            <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="double: right;" >
+                            <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                                 <p:printer target="reportPrint"  />
                             </p:commandButton>
 
-                            <p:commandButton actionListener="#{commonReport.createCashierTableByUser()}" ajax="false" value="Excel" styleClass="noPrintButton" style="double: right;" >
+                            <p:commandButton actionListener="#{commonReport.createCashierTableByUser()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="sum1,sum2,sum11,sum22" fileName="Cashier_Detailed_Report"  />
                             </p:commandButton> 
 
@@ -48,6 +48,7 @@
                             </p:calendar>
                             <h:outputLabel styleClass="noPrintButton" value="User Name"/>
                             <p:autoComplete converter="webUs" completeMethod="#{webUserController.completeUser}" styleClass="noPrintButton"
+                                            forceSelection="true"
                                             var="w" itemLabel="#{w.webUserPerson.name}" itemValue="#{w}"
                                             value="#{commonReport.webUser}" ></p:autoComplete>
 

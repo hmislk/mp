@@ -60,16 +60,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + (i + 1);
+                result = ins.getInstitutionCode() + billNumberSuffix + "/" + (i + 1);
             } else {
-                result = ins.getInstitutionCode() + "\\" + (i + 1);
+                result = ins.getInstitutionCode() + "/" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
+                result = ins.getInstitutionCode() + billNumberSuffix + "/" + 1;
             } else {
-                result = ins.getInstitutionCode() + "\\" + 1;
+                result = ins.getInstitutionCode() + "/" + 1;
             }
 
         }
@@ -90,16 +90,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + (i + 1);
+                result = ins.getInstitutionCode() + billNumberSuffix + "/" + (i + 1);
             } else {
-                result = ins.getInstitutionCode() + "\\" + (i + 1);
+                result = ins.getInstitutionCode() + "/" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
+                result = ins.getInstitutionCode() + billNumberSuffix + "/" + 1;
             } else {
-                result = ins.getInstitutionCode() + "\\" + 1;
+                result = ins.getInstitutionCode() + "/" + 1;
             }
 
         }
@@ -121,16 +121,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + (i + 1);
+                result = ins.getInstitutionCode() + billNumberSuffix + "/" + (i + 1);
             } else {
-                result = ins.getInstitutionCode() + "\\" + (i + 1);
+                result = ins.getInstitutionCode() + "/" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
+                result = ins.getInstitutionCode() + billNumberSuffix + "/" + 1;
             } else {
-                result = ins.getInstitutionCode() + "\\" + 1;
+                result = ins.getInstitutionCode() + "/" + 1;
             }
 
         }
@@ -151,16 +151,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + (i + 1);
+                result = dep.getDepartmentCode() + billNumberSuffix + "/" + (i + 1);
             } else {
-                result = dep.getDepartmentCode() + "\\" + (i + 1);
+                result = dep.getDepartmentCode() + "/" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + 1;
+                result = dep.getDepartmentCode() + billNumberSuffix + "/" + 1;
             } else {
-                result = dep.getDepartmentCode() + "\\" + 1;
+                result = dep.getDepartmentCode() + "/" + 1;
             }
 
         }
@@ -182,16 +182,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + (i + 1);
+                result = dep.getDepartmentCode() + billNumberSuffix + "/" + (i + 1);
             } else {
-                result = dep.getDepartmentCode() + "\\" + (i + 1);
+                result = dep.getDepartmentCode() + "/" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + 1;
+                result = dep.getDepartmentCode() + billNumberSuffix + "/" + 1;
             } else {
-                result = dep.getDepartmentCode() + "\\" + 1;
+                result = dep.getDepartmentCode() + "/" + 1;
             }
 
         }
@@ -213,16 +213,16 @@ public class BillNumberBean {
 
         if (i != null) {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + (i + 1);
+                result = dep.getDepartmentCode() + billNumberSuffix + "/" + (i + 1);
             } else {
-                result = dep.getDepartmentCode() + "\\" + (i + 1);
+                result = dep.getDepartmentCode() + "/" + (i + 1);
             }
 
         } else {
             if (billNumberSuffix != BillNumberSuffix.NONE) {
-                result = dep.getDepartmentCode() + billNumberSuffix + "\\" + 1;
+                result = dep.getDepartmentCode() + billNumberSuffix + "/" + 1;
             } else {
-                result = dep.getDepartmentCode() + "\\" + 1;
+                result = dep.getDepartmentCode() + "/" + 1;
             }
 
         }
@@ -301,16 +301,16 @@ public class BillNumberBean {
             if (b != null && b != 0) {
                 b = b + 1;
                 if (toDept != null) {
-                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + "\\" + b;
+                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + "/" + b;
                 } else {
-                    result = ins.getInstitutionCode() + "\\" + b;
+                    result = ins.getInstitutionCode() + "/" + b;
                 }
                 return result;
             } else {
                 if (toDept != null) {
-                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + "\\" + 1;
+                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + "/" + 1;
                 } else {
-                    result = ins.getInstitutionCode() + "\\" + 1;
+                    result = ins.getInstitutionCode() + "/" + 1;
                 }
                 return result;
             }
@@ -318,16 +318,16 @@ public class BillNumberBean {
             if (b != null && b != 0) {
                 b = b + 1;
                 if (toDept != null) {
-                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + billNumberSuffix + "\\" + b;
+                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + billNumberSuffix + "/" + b;
                 } else {
-                    result = ins.getInstitutionCode() + billNumberSuffix + "\\" + b;
+                    result = ins.getInstitutionCode() + billNumberSuffix + "/" + b;
                 }
                 return result;
             } else {
                 if (toDept != null) {
-                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + billNumberSuffix + "\\" + 1;
+                    result = ins.getInstitutionCode() + toDept.getDepartmentCode() + billNumberSuffix + "/" + 1;
                 } else {
-                    result = ins.getInstitutionCode() + billNumberSuffix + "\\" + 1;
+                    result = ins.getInstitutionCode() + billNumberSuffix + "/" + 1;
                 }
                 return result;
             }

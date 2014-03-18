@@ -13,12 +13,14 @@ import java.util.List;
  * @author safrin
  */
 public class ChargeItemTotal {
+
     private InwardChargeType inwardChargeType;
     private List<Item> list;
-    private Double total=0.0;
-    private Double adjustedTotal=0.0;
+    private double total = 0.0;
+    private double discount = 0;
+    private double netTotal = 0;
+    private double adjustedTotal = 0.0;
 
-  
     public List<Item> getList() {
         return list;
     }
@@ -50,6 +52,21 @@ public class ChargeItemTotal {
     public void setInwardChargeType(InwardChargeType inwardChargeType) {
         this.inwardChargeType = inwardChargeType;
     }
-    
-    
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getNetTotal() {
+        return netTotal;
+    }
+
+    public void setNetTotal(double netTotal) {
+        this.netTotal = netTotal;
+    }
+
 }

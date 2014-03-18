@@ -19,7 +19,7 @@
                     <p:calendar id="toDate" value="#{mdInwardReportController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                         <f:ajax event="dateSelect"   render="tbl" execute="@this fromDate" listener="#{mdInwardReportController.makeBillNull}"/>
                     </p:calendar>
-                    <p:commandButton ajax="false" value="Refresh" style="double: right;"/>
+                    <p:commandButton ajax="false" value="Refresh" style="float: right;"/>
                 </h:panelGrid>   
 
                 <p:dataTable id="tbl" value="#{mdInwardReportController.bills}" rowIndexVar="i" var="bill" filteredValue="#{mdInwardReportController.fillterBill}" sortBy="#{bill.institution.id}">

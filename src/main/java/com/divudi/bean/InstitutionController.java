@@ -94,7 +94,9 @@ public class InstitutionController implements Serializable {
         String sql;
         HashMap hm=new HashMap();
         hm.put("type", InstitutionType.Dealer);
-        sql = "select c from Institution c where c.retired=false and c.institutionType=:type and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name";
+        sql = "select c from Institution c where c.retired=false and"
+                + " c.institutionType=:type and upper(c.name)"
+                + " like '%" + qry.toUpperCase() + "%' order by c.name";
         return getFacade().findBySQL(sql,hm);
     }
     
@@ -319,6 +321,47 @@ public class InstitutionController implements Serializable {
         return i;
     }
     
+    
+    
+    @FacesConverter("institutionConverter")
+    public static class InstitutionConverter implements Converter {
+
+        @Override
+        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+            if (value == null || value.length() == 0) {
+                return null;
+            }
+            InstitutionController controller = (InstitutionController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "institutionController");
+            return controller.getEjbFacade().find(getKey(value));
+        }
+
+        java.lang.Long getKey(String value) {
+            java.lang.Long key;
+            key = Long.valueOf(value);
+            return key;
+        }
+
+        String getStringKey(java.lang.Long value) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(value);
+            return sb.toString();
+        }
+
+        @Override
+        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+            if (object == null) {
+                return null;
+            }
+            if (object instanceof Institution) {
+                Institution o = (Institution) object;
+                return getStringKey(o.getId());
+            } else {
+                throw new IllegalArgumentException("object " + object + " is of type "
+                        + object.getClass().getName() + "; expected type: " + InstitutionController.class.getName());
+            }
+        }
+    }
     
     /**
      *

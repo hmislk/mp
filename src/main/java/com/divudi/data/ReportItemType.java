@@ -25,4 +25,5 @@ public enum ReportItemType {
     ReportedTime,
     ReferringDoctor,
     Speciman,
+    CollectingCenter,
 }

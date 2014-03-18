@@ -5,9 +5,13 @@
 package com.divudi.entity;
 
 import com.divudi.data.BillType;
+import com.divudi.data.PaymentMethod;
+import com.divudi.data.inward.InwardChargeType;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,10 +25,10 @@ import javax.persistence.Temporal;
 @Entity
 public class InwardPriceAdjustment implements Serializable {
 
-     static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-     Long id;
+    Long id;
     BillType billType;
     @ManyToOne
     Category category;
@@ -32,9 +36,9 @@ public class InwardPriceAdjustment implements Serializable {
     Institution institution;
     @ManyToOne
     Department department;
-     Double fromPrice=0.0;
-     Double toPrice=0.0;
-     Double margin=0.0;
+    Double fromPrice = 0.0;
+    Double toPrice = 0.0;
+    Double margin = 0.0;
 //Created Properties
     @ManyToOne
     WebUser creater;
@@ -49,6 +53,13 @@ public class InwardPriceAdjustment implements Serializable {
     String retireComments;
     @ManyToOne
     private Category roomLocation;
+    @ManyToOne
+    Category membershipScheme;
+    @Enumerated(value = EnumType.STRING)
+    private PaymentMethod paymentMethod;
+    @Enumerated(value = EnumType.STRING)
+    private InwardChargeType inwardChargeType;
+    private double discountPercent;
 
     public BillType getBillType() {
         return billType;
@@ -82,7 +93,6 @@ public class InwardPriceAdjustment implements Serializable {
         this.department = department;
     }
 
-    
     public WebUser getCreater() {
         return creater;
     }
@@ -131,8 +141,6 @@ public class InwardPriceAdjustment implements Serializable {
         this.retireComments = retireComments;
     }
 
-    
-    
     public Long getId() {
         return id;
     }
@@ -150,7 +158,7 @@ public class InwardPriceAdjustment implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof InwardPriceAdjustment)) {
             return false;
         }
@@ -197,4 +205,37 @@ public class InwardPriceAdjustment implements Serializable {
     public void setRoomLocation(Category roomLocation) {
         this.roomLocation = roomLocation;
     }
+
+    public Category getMembershipScheme() {
+        return membershipScheme;
+    }
+
+    public void setMembershipScheme(Category membershipScheme) {
+        this.membershipScheme = membershipScheme;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public InwardChargeType getInwardChargeType() {
+        return inwardChargeType;
+    }
+
+    public void setInwardChargeType(InwardChargeType inwardChargeType) {
+        this.inwardChargeType = inwardChargeType;
+    }
+
+    public double getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public void setDiscountPercent(double discountPercent) {
+        this.discountPercent = discountPercent;
+    }
+
 }

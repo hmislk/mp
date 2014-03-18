@@ -49,7 +49,8 @@
                     </p:panel>
                     <p:panel id="panelReport" styleClass="noBorder summeryBorder">
 
-                        <p:dataTable id="tbl" value="#{labReportSearchByInstitutionController.labBillsWithoutOwn}" rowIndexVar="i" var="b" sortBy="#{b.billClass}"  >
+                        <p:dataTable id="tbl" value="#{labReportSearchByInstitutionController.labBillsWithoutOwn}"
+                                     rowIndexVar="i" var="b" sortBy="#{b.billClass}"  >
                             <f:facet name="header">
                                 <h:outputLabel value="Hand Over Report"/>
                                 <h:outputLabel value="#{labReportSearchByInstitutionController.institution.name}"/>

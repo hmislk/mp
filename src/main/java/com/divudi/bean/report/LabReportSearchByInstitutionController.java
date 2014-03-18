@@ -7,6 +7,7 @@ package com.divudi.bean.report;
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.table.String1Value1;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
@@ -70,6 +71,7 @@ public class LabReportSearchByInstitutionController implements Serializable {
     double profTotR;
     double netTotR;
     double labHandoverR;
+    private List<String1Value1> string1Value1s;
 
     List<PatientInvestigation> searchedPatientInvestigations;
 
@@ -676,6 +678,10 @@ public class LabReportSearchByInstitutionController implements Serializable {
         }
         return labBills;
     }
+    
+    public List<Bill> getBills(){
+        return bills;
+    }
 
     public List<Bill> getLabBills() {
         if (labBills == null) {
@@ -689,6 +695,68 @@ public class LabReportSearchByInstitutionController implements Serializable {
             calTotals();
         }
         return labBills;
+    }
+
+    public void createLabBillsWithoutOwn() {
+        String sql;
+        Map tm;
+
+        sql = "select f from Bill f where f.retired=false and f.billType = :billType and "
+                + "(f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 "
+                + " or f.paymentScheme.paymentMethod = :pm3 or f.paymentScheme.paymentMethod = :pm4 ) "
+                + " and f.institution=:ins and f.toInstitution=:toIns and f.createdAt "
+                + " between :fromDate and :toDate order by type(f), f.insId";
+
+        tm = new HashMap();
+        tm.put("fromDate", fromDate);
+        tm.put("toDate", toDate);
+        tm.put("billType", BillType.OpdBill);
+        tm.put("pm1", PaymentMethod.Cash);
+        tm.put("pm2", PaymentMethod.Card);
+        tm.put("pm3", PaymentMethod.Cheque);
+        tm.put("pm4", PaymentMethod.Slip);
+        tm.put("ins", getSessionController().getInstitution());
+        tm.put("toIns", getInstitution());
+        bills = getBillFacade().findBySQL(sql, tm, TemporalType.TIMESTAMP);
+        if (bills != null) {
+            calTotalsWithout();
+        } else {
+            clearTotals();
+        }
+
+        setString1Value1Table();
+
+    }
+
+    private void setString1Value1Table() {
+        string1Value1s = new ArrayList<>();
+        String1Value1 row;
+
+        row = new String1Value1();
+        row.setString("Gross Fee Total");
+        row.setValue(hosTot + profTot);
+        string1Value1s.add(row);
+
+        row = new String1Value1();
+        row.setString("Discount Total");
+        row.setValue(disTot);
+        string1Value1s.add(row);
+
+        row = new String1Value1();
+        row.setString("Net Fee Total");
+        row.setValue(netTot);
+        string1Value1s.add(row);
+
+        row = new String1Value1();
+        row.setString("Professional Fee Total");
+        row.setValue(profTot);
+        string1Value1s.add(row);
+
+        row = new String1Value1();
+        row.setString("Net Department Income");
+        row.setValue(labHandover);
+        string1Value1s.add(row);
+
     }
 
     public List<Bill> getLabBillsWithoutOwn() {
@@ -918,6 +986,8 @@ public class LabReportSearchByInstitutionController implements Serializable {
         recreteModal();
         this.txtSearch = txtSearch;
     }
+    
+    private List<Bill> bills;
 
     private void recreteModal() {
         patientInvestigations = null;
@@ -1017,5 +1087,17 @@ public class LabReportSearchByInstitutionController implements Serializable {
 
     public void setSessionController(SessionController sessionController) {
         this.sessionController = sessionController;
+    }
+
+    public List<String1Value1> getString1Value1s() {
+        return string1Value1s;
+    }
+
+    public void setString1Value1s(List<String1Value1> string1Value1s) {
+        this.string1Value1s = string1Value1s;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
     }
 }

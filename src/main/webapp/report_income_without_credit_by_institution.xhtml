@@ -29,7 +29,7 @@
                                 <f:selectItem itemLabel="Select Institution"/>
                                 <f:selectItems value="#{institutionController.company}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" />
                             </p:selectOneMenu>
-                            <p:commandButton id="btnRefresh" styleClass="noPrintButton" value="Refresh" ajax="false" />
+                            <p:commandButton id="btnRefresh" styleClass="noPrintButton" value="Refresh" ajax="false" action="#{labReportSearchByInstitutionController.createLabBillsWithoutOwn()}" />
                             <p:defaultCommand target="btnRefresh"/>
 
                             <p:commandButton styleClass="noPrintButton" value="Print" ajax="false" >
@@ -37,19 +37,20 @@
                             </p:commandButton>             
 
                             <p:commandButton value="Excel" ajax="false">
-                                <pe:exporter type="xlsx" target="tbl" fileName="Hand_Over_Ins"
+                                <pe:exporter type="xlsx" target="tbl,sum" fileName="Hand_Over_Ins"
                                              facetBackground="#008000" facetFontSize="15" 
-                                             facetFontColor="#FFFFFF" facetFontStyle="BOLD" cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL" 
+                                             facetFontColor="#FFFFFF" facetFontStyle="BOLD" 
+                                             cellFontColor="#0000FF" cellFontSize="12"  cellFontStyle="NORMAL" 
                                              fontName="Courier New" />
                             </p:commandButton>
-                              <p:commandButton value="Pdf" ajax="false">
-                                  <pe:exporter type="pdf" target="tbl" fileName="33" />
+                            <p:commandButton value="Pdf" ajax="false">
+                                <pe:exporter type="pdf" target="tbl,sum" fileName="33" />
                             </p:commandButton>
                         </h:panelGrid>
                     </p:panel>
                     <p:panel id="panelReport" styleClass="noBorder summeryBorder">
 
-                        <p:dataTable id="tbl" value="#{labReportSearchByInstitutionController.labBillsWithoutOwn}" rowIndexVar="i" var="b" sortBy="#{b.billClass}"  >
+                        <p:dataTable id="tbl" value="#{labReportSearchByInstitutionController.bills}" rowIndexVar="i" var="b" sortBy="#{b.billClass}"  >
                             <f:facet name="header">
                                 <h:outputLabel value="Hand Over Report"/>
                                 <h:outputLabel value="#{labReportSearchByInstitutionController.institution.name}"/>
@@ -73,7 +74,6 @@
                                     <h:outputLabel value="Bill Id"/>
                                 </f:facet>
                                 <h:outputLabel value="#{b.insId}" rendered="#{b.billClass eq 'class com.divudi.entity.BilledBill'}" ></h:outputLabel>
-
                                 <h:outputLabel value="#{b.billedBill.insId}" rendered="#{b.billClass ne 'class com.divudi.entity.BilledBill'}"></h:outputLabel>
                             </p:column>
 
@@ -194,35 +194,20 @@
 
                             </p:summaryRow>
 
-                            <f:facet name="footer" >
-                                <p:row>
-                                    <h:panelGrid columns="2" style="text-align: right;">
-                                        <h:outputLabel  value="Gross Fee Total" ></h:outputLabel>
-                                        <h:outputLabel value="#{labReportSearchByInstitutionController.hosTot + labReportSearchByInstitutionController.profTot }" style="text-align: right;" >
-                                            <f:convertNumber pattern="#,##0.00" />
-                                        </h:outputLabel>
-                                        <h:outputLabel value="Discount Total" ></h:outputLabel>
-                                        <h:outputLabel value="#{labReportSearchByInstitutionController.disTot}" >
-                                            <f:convertNumber pattern="#,##0.00" />
-                                        </h:outputLabel>
-                                        <h:outputLabel value="Net Fee Total" ></h:outputLabel>
-                                        <h:outputLabel value="#{labReportSearchByInstitutionController.netTot}" >                                        
-                                            <f:convertNumber pattern="#,##0.00" />
-                                        </h:outputLabel>
-                                        <h:outputLabel value="Professional Fee Total" ></h:outputLabel>
-                                        <h:outputLabel value="#{labReportSearchByInstitutionController.profTot}" style="text-align: right;" >
-                                            <f:convertNumber pattern="#,##0.00" />
-                                        </h:outputLabel>
-                                        <h:outputLabel value="" ></h:outputLabel>
-                                        <h:outputLabel value="" ></h:outputLabel>
-                                        <h:outputLabel style="font-weight: bolder; " value="Net Department Income"/>
-                                        <h:outputLabel style="font-weight: bolder; " value="#{labReportSearchByInstitutionController.labHandover}" >
-                                            <f:convertNumber pattern="#,##0.00" />
-                                        </h:outputLabel>
-                                    </h:panelGrid>
-                                </p:row>
-                            </f:facet>
                         </p:dataTable>
+
+                        <p:dataTable id="sum" value="#{labReportSearchByInstitutionController.string1Value1s}" var="sv">
+                            <p:column>
+                                <h:outputLabel value="#{sv.string}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{sv.value}" style="text-align: right;" >
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </h:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+
+
 
                     </p:panel>
 

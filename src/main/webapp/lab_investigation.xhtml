@@ -131,6 +131,11 @@
 
                                     <h:outputText value="" ></h:outputText>
                                     <p:selectBooleanCheckbox value="#{investigationController.current.discountAllowed}" itemLabel="Discount Allowed"/>
+                                    <p:selectOneMenu id="cmbInward" value="#{investigationController.current.inwardChargeType}" >
+                                        <f:selectItem itemLabel="Please select Charge"/>
+                                        <f:selectItems value="#{serviceController.inwardChargeTypes}"/>
+                                    </p:selectOneMenu>
+
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

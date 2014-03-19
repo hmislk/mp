@@ -12,8 +12,8 @@
                 <h:form>
                     <h:panelGroup rendered="#{!dealorPaymentBillSearch.printPreview}" styleClass="alignTop" >
                         <p:panel  header="Cancellation">
-                            <p:selectOneMenu   id="cmbPs" value="#{dealorPaymentBillSearch.paymentScheme}" required="true"  >
-                                <f:selectItems value="#{paymentSchemeController.items}" var="ps" itemLabel="#{ps.name}"  itemValue="#{ps}" />
+                            <p:selectOneMenu   id="cmbPs" value="#{dealorPaymentBillSearch.bill.paymentMethod}">
+                                <f:selectItems value="#{enumController.paymentMethods}" />
                             </p:selectOneMenu>
                             <h:commandButton value="Cancel" action="#{dealorPaymentBillSearch.cancelBill()}" >
                             </h:commandButton>                            

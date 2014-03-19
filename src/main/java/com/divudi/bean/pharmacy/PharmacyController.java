@@ -420,7 +420,7 @@ public class PharmacyController implements Serializable {
                     r.setStock((Double) obj[1]);
 
                     double qty = calDepartmentSaleQty(r.getDepartment(), i);
-
+                    qty = 0 - qty;
                     if (qty != 0 && dayCount != 0) {
                         double avg = qty / dayCount;
                         r.setAverage(avg);

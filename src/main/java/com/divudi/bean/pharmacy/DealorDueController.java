@@ -156,7 +156,7 @@ public class DealorDueController implements Serializable {
 
             double finalValue = (newIns.getPaidTotal() + newIns.getTotal() + newIns.getReturned());
             System.err.println("Final Value " + finalValue);
-            if (finalValue != 0 && finalValue < 0.01) {
+            if (finalValue != 0 && finalValue < 0.1) {
                 items.add(newIns);
             }
         }

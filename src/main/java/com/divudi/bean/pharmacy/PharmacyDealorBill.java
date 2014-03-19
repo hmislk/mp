@@ -119,7 +119,7 @@ public class PharmacyDealorBill implements Serializable {
                 + getCurrentBillItem().getReferenceBill().getPaidAmount();
 
         System.err.println("Ballance Amount " + ballanceAmt);
-        if (ballanceAmt < 0.01) {
+        if (ballanceAmt < 0.1) {
             getCurrentBillItem().setNetValue(0 - ballanceAmt);
         }
 

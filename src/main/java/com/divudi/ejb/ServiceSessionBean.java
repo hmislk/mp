@@ -36,13 +36,13 @@ public class ServiceSessionBean {
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     public List<BillSession> getBillSessions(Item i, Date d) {
-          System.out.println("getting bill sessions");
+        System.out.println("getting bill sessions");
         if (i == null || i.getSessionNumberType() == null) {
             return null;
         }
         switch (i.getSessionNumberType()) {
             case ByCategory:
-                   System.out.println("by cat");
+                System.out.println("by cat");
                 if (i.getCategory().getParentCategory() == null) {
                     System.out.println("by cat 2");
                     return getBillSessionsByCat(i.getCategory(), d);
@@ -51,10 +51,10 @@ public class ServiceSessionBean {
                     return getBillSessionsByCat(i.getCategory().getParentCategory(), d);
                 }
             case BySubCategory:
-                   System.out.println("by sc");
+                System.out.println("by sc");
                 return getBillSessionsByCat(i.getCategory(), d);
             case ByItem:
-                  System.out.println("by items 3");
+                System.out.println("by items 3");
                 return getBillSessionsByItem(i, d);
             default:
                 return null;
@@ -91,21 +91,31 @@ public class ServiceSessionBean {
         bs.setItem(i);
         bs.setCreatedAt(Calendar.getInstance().getTime());
 //        bs.setCreater(bi.getCreater());
-        bi.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
+        Date sessDate;
+        if (bi.getSessionDate() == null) {
+            sessDate = CommonFunctions.removeTime(new Date());
+            //sessDate = new Date();
+        } else {
+            sessDate = CommonFunctions.removeTime(bi.getSessionDate());
+          //  sessDate = bi.getSessionDate();
+        }
+        System.err.println("Date " + sessDate);
+        bi.setSessionDate(sessDate);
+        bs.setSessionDate(sessDate);
 //        bs.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
         // //System.out.println("bill item session switch - pre");
         int count = getBillSessions(i, bi.getSessionDate()).size() + 1;
-        System.err.println("COUNT "+count);
+        System.err.println("COUNT " + count);
         bs.setSerialNo(count);
         switch (i.getSessionNumberType()) {
             case ByCategory:
-                    System.out.println("by cat");
+                System.out.println("by cat");
                 if (i.getCategory().getParentCategory() == null) {
-                       System.out.println("by cat only ");
+                    System.out.println("by cat only ");
                     bs.setCategory(i.getCategory());
 //                    bs.setSerialNo(getIdByCat(i.getCategory(), bi.getSessionDate()) + 1);
                 } else {
-                           System.out.println("by parent cat");
+                    System.out.println("by parent cat");
                     bs.setCategory(i.getCategory().getParentCategory());
 //                    bs.setSerialNo(getIdByCat(i.getCategory().getParentCategory(), bi.getSessionDate()) + 1);
                 }
@@ -145,7 +155,8 @@ public class ServiceSessionBean {
             return null;
         }
         String s;
-        s = "select b from BillSession b where b.item=:item and b.sessionDate=:sd "
+        s = "select b from BillSession b where b.item=:item"
+                + " and b.sessionDate=:sd "
                 + " order by b.serialNo";
         Map m = new HashMap();
         m.put("item", i);

@@ -349,7 +349,7 @@ public class BhtSummeryController implements Serializable {
         System.err.println("Total " + tot);
         System.err.println("Total 2 " + tot2);
 
-        if ((tot - tot2) > 0.01) {
+        if ((tot - tot2) > 0.1) {
             UtilityController.addErrorMessage("Please Adjust category amount correctly");
             return true;
         }

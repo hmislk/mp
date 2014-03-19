@@ -245,7 +245,7 @@ public class BillController implements Serializable {
         hash.put("btp1", BillType.PharmacyGrnBill);
         hash.put("btp2", BillType.PharmacyPurchaseBill);
         hash.put("pm", PaymentMethod.Credit);
-        hash.put("val", 0.01);
+        hash.put("val", 0.1);
         hash.put("ins", institution);
         //     hash.put("pm", PaymentMethod.Credit);
         List<Bill> bill = getFacade().findBySQL(sql, hash);
@@ -268,7 +268,7 @@ public class BillController implements Serializable {
         hm = new HashMap();
         hm.put("frm", frmDate);
         hm.put("to", toDate);
-        hm.put("val", 0.01);
+        hm.put("val", 0.1);
         //    hm.put("ins", getS)
         hm.put("tp1", BillType.PharmacyPurchaseBill);
         hm.put("tp2", BillType.PharmacyGrnBill);
@@ -319,7 +319,7 @@ public class BillController implements Serializable {
                 + " and (b.billType=:tp1 or b.billType=:tp2)";
         hm.put("frm", frmDate);
         hm.put("to", toDate);
-        hm.put("val", 0.01);
+        hm.put("val", 0.1);
         hm.put("ins", institution);
         hm.put("tp1", BillType.PharmacyGrnBill);
         hm.put("tp2", BillType.PharmacyPurchaseBill);
@@ -336,7 +336,7 @@ public class BillController implements Serializable {
                 + " (b.fromInstitution=:ins ) "
                 + " and (b.billType=:tp1 or b.billType=:tp2)";
 
-        hm.put("val", 0.01);
+        hm.put("val", 0.1);
         hm.put("ins", institution);
         hm.put("tp1", BillType.PharmacyGrnBill);
         hm.put("tp2", BillType.PharmacyPurchaseBill);

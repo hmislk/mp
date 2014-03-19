@@ -8,12 +8,12 @@
 
     <!-- INTERFACE -->
     <cc:interface>
-         <cc:attribute name="bill" />
+        <cc:attribute name="bill" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-         <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+        <h:outputStylesheet library="css" name="pharmacyA4.css"/>
         <div class="posbill">
 
             <div class="institutionName">
@@ -36,23 +36,41 @@
             </div>
 
             <div class="headingBill">
-                <h:outputLabel value="PURCASE Return Note"   />                           
+                <h:outputLabel value="PURCHASE Return Note"   />                           
             </div>
 
 
             <div >
-                <h:panelGrid columns="2" class="poDetail" >
-                    <h:outputLabel value="Purchase Return No : #{cc.attrs.bill.deptId}"/>
-                    <h:outputLabel value="Purchase No : #{cc.attrs.bill.referenceBill.deptId}"/>
-                    <h:outputLabel value="Purchase Return Date : #{cc.attrs.bill.createdAt}"/>
-                    <h:outputLabel value="Purchase Date : #{cc.attrs.bill.referenceBill.createdAt}"/>
-                    <h:outputLabel value="Invoice No : #{cc.attrs.bill.invoiceNumber}"/>
-                    <h:outputLabel value="Return By : #{cc.attrs.bill.creater.staff.code}"/>
-                    <h:outputLabel value="Supplier : #{cc.attrs.bill.toInstitution.name}"/>
-                    <h:outputLabel value="Location : #{cc.attrs.bill.referenceBill.referenceBill.creater.department.name}"/>
+                <h:panelGrid columns="4" class="poDetail" >
+                    <h:outputLabel value="Purchase:"/>
+                    <h:outputLabel value="#{cc.attrs.bill.deptId}"/>
+                    <h:outputLabel value="Purchase No :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.referenceBill.deptId}"/>
+                    <h:outputLabel value="Purchase Return Date :" />
+                    <h:outputLabel value="#{cc.attrs.bill.createdAt}">
+                        <f:convertDateTime pattern="dd MM YYYY" />
+                    </h:outputLabel>
+                    <h:outputLabel value="Purchase Date :" />
+                    <h:outputLabel value="#{cc.attrs.bill.referenceBill.createdAt}" >
+                        <f:convertDateTime pattern="dd MM YYYY" />
+                    </h:outputLabel>
+                    <h:outputLabel value="Invoice No :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.invoiceNumber}"/>
+                    <h:outputLabel value="Return By :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.creater.staff.code}"/>
+                    
+                    <h:outputLabel value=" "/>
+                    <h:outputLabel value=" "/>
+                    <h:outputLabel value=""/>
+                    <h:outputLabel value=""/>
+                    
+                    <h:outputLabel value="Supplier :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.toInstitution.name}"/>
+                    <h:outputLabel value="Location :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.referenceBill.referenceBill.creater.department.name}"/>
                 </h:panelGrid>
             </div>
-
+            <p:spacer height="50"/>
             <div >
                 <p:dataTable rowIndexVar="rowIndex" styleClass="noBorder normalFont" value="#{cc.attrs.bill.billItems}" var="bip" >
                     <p:column>
@@ -73,24 +91,38 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">Rate</f:facet>
-                            #{bip.pharmaceuticalBillItem.purchaseRate}
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}" >
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>                           
                     </p:column>                                    
                     <p:column>
                         <f:facet name="header">Amount</f:facet>
-                            #{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}" >
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
                     </p:column>
                     <p:column>
                         <f:facet name="header">Expiry</f:facet>
-                            #{bip.referanceBillItem.pharmaceuticalBillItem.doe}
+                        <h:outputLabel value="#{bip.referanceBillItem.pharmaceuticalBillItem.doe}" >
+                            <f:convertDateTime pattern="dd MM YYYY" />
+                        </h:outputLabel>
                     </p:column>
                     <p:columnGroup type="footer">
                         <p:row>
                             <p:column colspan="5" footerText="Total"/>
-                            <p:column footerText="#{0-cc.attrs.bill.total}"/>
+                            <p:column footerText="#{0-cc.attrs.bill.total}">
+                                <f:facet name="footer" >
+                                    <h:outputLabel value="#{0-cc.attrs.bill.total}" >
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </h:outputLabel>
+                                </f:facet>                               
+                            </p:column>
                         </p:row>
                     </p:columnGroup>
                 </p:dataTable>
             </div>
+            
+            <p:spacer height="30"/>
 
             <div class="preparedBy">
                 <h:outputLabel value="Prepared By : #{cc.attrs.bill.creater.webUserPerson.nameWithTitle}"/>

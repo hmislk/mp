@@ -159,10 +159,11 @@ public class DealorDueController implements Serializable {
     private List<Bill> getBills(BillType billType1, BillType billType2, BillType billType3, BillType billType4, Institution institution) {
         String sql;
         HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false and b.createdAt "
+        sql = "Select b From Bill b where b.retired=false and b.createdAt"
                 + "  between :frm and :to and "
                 + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3 or b.billType=:tp4)";
+                + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3 or b.billType=:tp4)"
+                + " order by b.fromInstitution.name,b.toInstitution.name";
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());
         hm.put("ins", institution);

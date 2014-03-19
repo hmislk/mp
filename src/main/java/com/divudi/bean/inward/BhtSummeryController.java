@@ -839,8 +839,12 @@ public class BhtSummeryController implements Serializable {
 
         for (Department dep : deptList) {
             DepartmentBillItems table = new DepartmentBillItems();
-            sql = "SELECT  b FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
-                    + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe and b.bill.toDepartment=:dep ";
+            sql = "SELECT  b FROM BillItem b WHERE b.retired=false"
+                    + "  and b.bill.billType=:btp and"
+                    + " Type(b.item)!=TimedItem  and "
+                    + " b.bill.patientEncounter=:pe and"
+                    + " b.bill.toDepartment=:dep"
+                    + "  order by b.item.name ";
             hm = new HashMap();
             hm.put("btp", BillType.InwardBill);
             hm.put("pe", getPatientEncounter());

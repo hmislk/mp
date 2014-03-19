@@ -15,6 +15,7 @@ import com.divudi.entity.Department;
 public class DepartmentStock {
     private Department department;
     private double stock;
+    private double average;
 
     public Department getDepartment() {
         return department;
@@ -30,6 +31,14 @@ public class DepartmentStock {
 
     public void setStock(double stock) {
         this.stock = stock;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
     }
     
     

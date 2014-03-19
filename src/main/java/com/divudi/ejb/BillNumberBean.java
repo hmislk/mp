@@ -6,6 +6,7 @@ package com.divudi.ejb;
 
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.DepartmentType;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
@@ -474,11 +475,25 @@ public class BillNumberBean {
     }
 
     public String pharmacyItemNumberGenerator() {
-
-        String sql = "SELECT count(b) FROM Amp b where b.retired=false ";
-
+        HashMap hm=new HashMap();
+        String sql = "SELECT count(b) FROM Amp b where b.retired=false and b.departmentType!=:dep ";
+        hm.put("dep", DepartmentType.Store);
         String result;
-        Long dd = getBillFacade().findAggregateLong(sql);
+        Long dd = getBillFacade().findAggregateLong(sql,hm,TemporalType.TIMESTAMP);
+
+        result = dd.toString();
+
+        return result;
+
+
+    }
+    
+     public String storeItemNumberGenerator() {
+        HashMap hm=new HashMap();
+        String sql = "SELECT count(b) FROM Amp b where b.retired=false and b.departmentType=:dep ";
+        hm.put("dep", DepartmentType.Store);
+        String result;
+        Long dd = getBillFacade().findAggregateLong(sql,hm,TemporalType.TIMESTAMP);
 
         result = dd.toString();
 

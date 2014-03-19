@@ -8,6 +8,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.data.DepartmentType;
 import com.divudi.entity.Institution;
 import com.divudi.facade.ItemFacade;
 import com.divudi.entity.Item;
@@ -82,7 +83,7 @@ public class ItemController implements Serializable {
                 + " and c.institution=:ins "
                 + " order by c.item.name";
         hm.put("ins", getInstituion());
-      
+
         //System.out.println(sql);
         suggestions = getFacade().findBySQL(sql, hm, 20);
 
@@ -148,11 +149,36 @@ public class ItemController implements Serializable {
             suggestions = new ArrayList<>();
         } else {
 
-            sql = "select c from Item c where c.retired=false and (type(c)= :amp) "
+            sql = "select c from Item c where c.retired=false "
+                    + " and (type(c)= :amp) and c.departmentType!=:dep  "
                     + " and (upper(c.name) like :str or upper(c.code) like :str or"
                     + " upper(c.barcode) like :str ) order by c.name";
             //System.out.println(sql);
+            tmpMap.put("dep", DepartmentType.Store);
             tmpMap.put("amp", Amp.class);
+            tmpMap.put("str", "%" + query.toUpperCase() + "%");
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
+        }
+        return suggestions;
+
+    }
+
+    public List<Item> completeStoreItem(String query) {
+        List<Item> suggestions;
+        String sql;
+        HashMap tmpMap = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+
+            sql = "select c from Item c where c.retired=false and "
+                    + " (type(c)= :amp) and c.departmentType=:dep "
+                    + " and (upper(c.name) like :str or"
+                    + "  upper(c.code) like :str or"
+                    + " upper(c.barcode) like :str ) order by c.name";
+            //System.out.println(sql);
+            tmpMap.put("amp", Amp.class);
+            tmpMap.put("dep", DepartmentType.Store);
             tmpMap.put("str", "%" + query.toUpperCase() + "%");
             suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 30);
         }

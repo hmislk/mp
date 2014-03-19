@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+
+                <h:form >
+                    <p:panel header="Pharmacy Administration" >
+
+                        <h:panelGrid columns="3" >
+
+                            <p:panel header="Store Item" >
+                                <h:panelGrid columns="1" >                                    
+                                    <p:commandButton ajax="false" value="Item Master" action="store_item_master" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Packs" action="pharmacy_ampp" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Import from Excel" action="pharmacy_item_import" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Fix Categories from Excel" action="pharmacy_importer_category" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Fix Barcodes" action="pharmacy_item_import_barcode" ></p:commandButton>
+
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <p:panel header="Institutions" >
+                                <h:panelGrid columns="1" >
+                                    <p:commandButton ajax="false" value="Manufacturers" action="pharmacy_manufacturer" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Importers" action="pharmacy_importer" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Distributor" action="pharmacy_dealer" ></p:commandButton>                                
+                                    <p:commandButton ajax="false" value="Item Distributors" action="pharmacy_items_distributors" ></p:commandButton>
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <p:panel header="Categories" >
+                                <h:panelGrid columns="1" >
+                                    <p:commandButton ajax="false" value="Discard Categories" action="pharmacy_discard_category" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Adjustment Categories" action="pharmacy_adjustment_category" ></p:commandButton>
+                                    <p:commandButton rendered="false" ajax="false" value="Items Categories" action="pharmacy_items_categories" ></p:commandButton>
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <p:panel header="Other" >
+                                <h:panelGrid columns="1" >
+                                    <p:commandButton ajax="false" value="Measurment Units" action="pharmacy_measurement_unit" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Frequencies" action="pharmacy_frequency_unit" ></p:commandButton>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel header="Check Entered Data">
+                                <h:panelGrid columns="1">
+                                    <p:commandButton ajax="false" value="Item Distributor" action="pharmacy_item_by_distributor" ></p:commandButton>
+                                </h:panelGrid>
+
+                            </p:panel>
+                            <p:panel header="Error Checking">
+                                <h:panelGrid columns="1">
+                                    <p:commandButton ajax="false" value="Error Detection" action="store_error_checking" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Error Detection By Date" action="store_error_checking_date" ></p:commandButton>                                   
+                                    <p:commandButton ajax="false" value="Error Detection Repport" action="pharmacy_report_department_error" ></p:commandButton>                                   
+
+                                    <p:commandButton ajax="false" value="1)Stock Variant Report" 
+                                                     action="pharmacy_variant_category_stock_by_item" />
+                                    <p:commandButton ajax="false" value="2)Stock Variant Adjustment" 
+                                                     action="pharmacy_variant_ajustment_pre_list" />
+
+                                    <p:commandButton ajax="false" value="Reset Bill No" action="#{pharmacyItemExcelManager.resetBillNo()}" />
+                                </h:panelGrid>
+
+                            </p:panel>
+
+                        </h:panelGrid>
+
+                    </p:panel>
+
+
+                </h:form>
+
+
+
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -6,6 +6,7 @@
 package com.divudi.entity;
 
 import com.divudi.data.BillType;
+import com.divudi.data.DepartmentType;
 import com.divudi.data.SessionNumberType;
 import com.divudi.data.SymanticType;
 import com.divudi.data.inward.InwardChargeType;
@@ -118,6 +119,8 @@ public class Item implements Serializable {
 
     @Enumerated(EnumType.STRING)
     SymanticType symanticType;
+    @Enumerated(EnumType.STRING)
+    private DepartmentType departmentType;
 
     public List<WorksheetItem> getWorksheetItems() {
         if (worksheetItems != null) {
@@ -560,6 +563,14 @@ public class Item implements Serializable {
 
     public void setDblValue(double dblValue) {
         this.dblValue = dblValue;
+    }
+
+    public DepartmentType getDepartmentType() {
+        return departmentType;
+    }
+
+    public void setDepartmentType(DepartmentType departmentType) {
+        this.departmentType = departmentType;
     }
 
     static class ReportItemComparator implements Comparator<ReportItem> {

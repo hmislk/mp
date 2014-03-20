@@ -45,7 +45,22 @@
 
                 <h:panelGrid columns="2" class="poDetail" >
                     <h:outputLabel value="Location From : #{cc.attrs.bill.department.name}"/>
-                    <h:outputLabel value="Location To : #{cc.attrs.bill.toDepartment.name}"/>
+                    <h:panelGroup >
+                        <h:outputLabel value="Location To : "/>
+                        <p:autoComplete value="#{cc.attrs.bill.toDepartment}"  
+                                       completeMethod="#{departmentController.completeDept}"
+                                       var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" 
+                                        forceSelection="true" >
+                            <p:column headerText="Department">
+                                <h:outputLabel value="#{dept.name}"/>
+                            </p:column>
+                            <p:column headerText="Institution">
+                                <h:outputLabel value="#{dept.institution.name}"/>
+                            </p:column>
+
+                        </p:autoComplete>
+                    </h:panelGroup>
+                    <h:outputLabel value=".name}"/>
                     <h:outputLabel value="Requested Person : #{cc.attrs.bill.backwardReferenceBill.creater.staff.code}"/>
                     <h:outputLabel value="Issued Person : #{cc.attrs.bill.creater.staff.code}"/>
                     <h:outputLabel value="Issue No : #{cc.attrs.bill.deptId}"/>
@@ -79,9 +94,9 @@
                         <h:outputLabel value="#{bip.item.name}"/>
                     </p:column>
 
-                  
-                    
-                      <p:column>
+
+
+                    <p:column>
                         <f:facet name="header">
                             <h:outputLabel value="QTY"/>
                         </f:facet>

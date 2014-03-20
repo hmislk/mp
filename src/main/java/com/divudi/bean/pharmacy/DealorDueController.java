@@ -7,15 +7,13 @@ package com.divudi.bean.pharmacy;
 import com.divudi.bean.BillController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.table.String1Value5;
 import com.divudi.data.dataStructure.InstitutionBills;
+import com.divudi.data.table.String1Value5;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.InstitutionFacade;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,8 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
+
+
 
 /**
  *

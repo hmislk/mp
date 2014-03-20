@@ -150,9 +150,9 @@ public class PharmacyBillSearch implements Serializable {
     private void calTotalAndUpdate(Bill bill) {
         double tmp = 0;
         for (BillItem b : bill.getBillItems()) {
-            System.err.println("id " + b.getPharmaceuticalBillItem().getId());
-            System.err.println("Qty " + b.getPharmaceuticalBillItem().getQtyInUnit());
-            System.err.println("Pur " + b.getPharmaceuticalBillItem().getPurchaseRateInUnit());
+            if (b.getPharmaceuticalBillItem() == null) {
+                continue;
+            }
             double tmp2 = (b.getPharmaceuticalBillItem().getQtyInUnit() * b.getPharmaceuticalBillItem().getPurchaseRateInUnit());
             System.err.println("Total " + tmp2);
             tmp += tmp2;

@@ -251,7 +251,7 @@
                                             </p:commandButton>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton ajax="false" action="inward_reprint_bill"  value="View Bill" >                                              
+                                            <p:commandButton ajax="false" action="inward_reprint_bill_service"  value="View Bill" >                                              
                                                 <f:setPropertyActionListener value="#{ser.bill}" target="#{inwardSearch.bill}"/>
                                             </p:commandButton>
                                         </p:column>
@@ -406,7 +406,7 @@
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column>
-                                        <h:commandLink action="inward_reprint_bill" value="Remove">
+                                        <h:commandLink action="inward_reprint_bill_professional" value="Remove">
                                             <h:outputLabel  ></h:outputLabel>
                                             <f:setPropertyActionListener value="#{pf.bill}" target="#{inwardSearch.bill}"/>
                                         </h:commandLink>
@@ -443,7 +443,7 @@
                                         #{p.netTotal}
                                     </p:column>
                                     <p:column>
-                                        <p:commandButton ajax="false" action="inward_reprint_bill" value="Remove">
+                                        <p:commandButton ajax="false" action="inward_reprint_bill_payment" value="Remove">
                                             <f:setPropertyActionListener value="#{p}" target="#{billSearch.bill}"/>
                                         </p:commandButton>
                                     </p:column>

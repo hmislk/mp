@@ -447,8 +447,13 @@ public class ItemController implements Serializable {
         }
 
         java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+            java.lang.Long key = 0l;
+            try {
+                key = Long.valueOf(value);
+            } catch (Exception e) {
+
+            }
+
             return key;
         }
 
@@ -504,8 +509,13 @@ public class ItemController implements Serializable {
         }
 
         java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+            java.lang.Long key = 0l;
+            try {
+                key = Long.valueOf(value);
+            } catch (Exception e) {
+
+            }
+
             return key;
         }
 

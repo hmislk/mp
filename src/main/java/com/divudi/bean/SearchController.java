@@ -10,12 +10,14 @@ import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
+import com.divudi.entity.BatchBill;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.lab.PatientInvestigation;
+import com.divudi.facade.BatchBillFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
@@ -212,8 +214,8 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
-    
-      public void createPharmacyTableBht() {
+
+    public void createPharmacyTableBht() {
 
         Map m = new HashMap();
         m.put("bt", BillType.PharmacyBhtPre);
@@ -545,8 +547,8 @@ public class SearchController implements Serializable {
         billItems = getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
-    
-      public void createPharmacyBillItemTableBht() {
+
+    public void createPharmacyBillItemTableBht() {
         //  searchBillItems = null;
         String sql;
         Map m = new HashMap();
@@ -1797,6 +1799,58 @@ public class SearchController implements Serializable {
 
     }
 
+    public void createInwardSurgeryBills() {
+
+        String sql;
+        Map temMap = new HashMap();
+        sql = "select b from Bill b where "
+                + " (b.patientEncounter.paymentFinalized is null "
+                + " or b.patientEncounter.paymentFinalized=false ) and"
+                + " b.billType = :billType and "
+                + " b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
+
+        if (getSearchKeyword().getPatientName() != null && 
+                !getSearchKeyword().getPatientName().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPatientPhone() != null &&
+                !getSearchKeyword().getPatientPhone().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.patient.person.phone) like :patientPhone )";
+            temMap.put("patientPhone", "%" + getSearchKeyword().getPatientPhone().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBhtNo() != null && 
+                !getSearchKeyword().getBhtNo().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.bhtNo) like :bht )";
+            temMap.put("bht", "%" + getSearchKeyword().getBhtNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBillNo() != null && 
+                !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getTotal() != null && 
+                !getSearchKeyword().getTotal().trim().equals("")) {
+            sql += " and  (upper(b.total) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.insId desc  ";
+
+        temMap.put("billType", BillType.SurgeryBill);
+        temMap.put("toDate", toDate);
+        temMap.put("fromDate", fromDate);
+
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
+    }
+
+    
     public void createInwardPaymentBillsDischarged() {
 
         String sql;
@@ -2175,5 +2229,7 @@ public class SearchController implements Serializable {
     public void setPatientInvestigationsSigle(List<PatientInvestigation> patientInvestigationsSigle) {
         this.patientInvestigationsSigle = patientInvestigationsSigle;
     }
+
+   
 
 }

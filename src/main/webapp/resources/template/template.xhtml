@@ -62,12 +62,16 @@
                                         <p:menuitem  ajax="false"  action="inward_room_occupancy" value="Room Occupancy" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
                                         <p:menuitem  ajax="false"  action="inward_room_change" value="Room Change" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
                                     </p:submenu>  
-
+                                    <p:submenu label="Surgery">
+                                        <p:menuitem  ajax="false"  action="inward_bill_surgery" value="Add Surgeries"
+                                                     actionListener="#{surgeryBillController.makeNull()}"
+                                                     rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>   
+                                        <p:menuitem ajax="false" action="inward_search_surgery" value="Search"/>
+                                    </p:submenu>
                                     <p:submenu label="Billing">
                                         <p:menuitem  ajax="false"  action="inward_bill_service" value="Add Services" actionListener="#{billBhtController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                            
                                         <p:menuitem  ajax="false"  action="inward_bill_additional_charge" value="Add Additional Charge" actionListener="#{inwardAdditionalChargeController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
-                                        <p:menuitem  ajax="false"  action="inward_bill_professional" value="Add Professional Fee" actionListener="#{inwardProfessionalBillController.prepareNewBill}"  rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
-                                        <p:menuitem  ajax="false"  action="inward_surgery_add" value="Add Surgeries" actionListener="#{theatreModuleController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
+                                        <p:menuitem  ajax="false"  action="inward_bill_professional" value="Add Professional Fee" actionListener="#{inwardProfessionalBillController.prepareNewBill}"  rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                                                                
                                         <p:menuitem  ajax="false"  action="inward_bill_payment" value="Payment Bill" actionListener="#{inwardPaymentController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  action="inward_bill_refund" value="Payment Refund" actionListener="#{inwardRefundController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                                                                                                        
                                     </p:submenu>

@@ -450,6 +450,34 @@
                                 </p:dataTable>
                             </p:tab>
 
+                            <p:tab  title="Surgery"  >
+                                <p:dataTable  scrollable="true" scrollHeight="300"
+                                              value="#{bhtSummeryController.surgeryBill}" var="pb">
+
+                                    <p:column headerText="Bill No"  >
+                                        <h:outputLabel value="#{pb.insId}" ></h:outputLabel>
+                                    </p:column>
+
+                                    <p:column headerText="Bht NoSurgery Name" >
+                                        <h:outputLabel value="#{pb.procedure.item.name}" ></h:outputLabel>
+                                    </p:column>
+
+                                    <p:column headerText="Client" >
+                                        <h:outputLabel value="#{pb.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
+                                    </p:column>         
+                                    <p:column headerText="Value" >                              
+                                        <h:outputLabel value="#{pb.total}" >
+                                            <f:convertNumber pattern="#,000.00"/>
+                                        </h:outputLabel>                                  
+                                    </p:column>       
+                                    <p:column>
+                                        <p:commandButton ajax="false" value="View Bill" action="inward_bill_surgery">
+                                            <f:setPropertyActionListener value="#{pb}" target="#{surgeryBillController.batchBill}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+
                         </p:tabView>
 
                     </h:panelGrid>

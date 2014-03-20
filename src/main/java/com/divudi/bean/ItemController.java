@@ -150,7 +150,7 @@ public class ItemController implements Serializable {
         } else {
 
             sql = "select c from Item c where c.retired=false "
-                    + " and (type(c)= :amp) and c.departmentType!=:dep  "
+                    + " and (type(c)= :amp) and ( c.departmentType is null or c.departmentType!=:dep ) "
                     + " and (upper(c.name) like :str or upper(c.code) like :str or"
                     + " upper(c.barcode) like :str ) order by c.name";
             //System.out.println(sql);

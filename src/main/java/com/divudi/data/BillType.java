@@ -48,7 +48,11 @@ public enum BillType {
     ChannelProPayment,
     gpBooking,
     gpSettling,
-    Appointment,;
+    Appointment,
+    GrnPaymentBill,
+    GrnPaymentReturn,
+    GrnPaymentCancell,
+    GrnPaymentCancellReturn;
 
     public String getLabel() {
         switch (this) {

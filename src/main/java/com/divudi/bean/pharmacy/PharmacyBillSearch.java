@@ -109,14 +109,41 @@ public class PharmacyBillSearch implements Serializable {
     private WebUserController webUserController;
 
     public void editBill() {
+        if (errorCheckForEdit()) {
+            return;
+        }
         getBillFacade().edit(getBill());
     }
 
     public void editBill(Bill bill) {
+
         getBillFacade().edit(bill);
     }
 
+    private boolean errorCheckForEdit() {
+        if (getBill().isCancelled()) {
+            UtilityController.addErrorMessage("Already Cancelled. Can not cancel again");
+            return true;
+        }
+
+        if (getBill().isRefunded()) {
+            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
+            return true;
+        }
+
+        if (getBill().getPaidAmount() != 0.0) {
+            UtilityController.addErrorMessage("Already Credit Company Paid For This Bill. Can not cancel.");
+            return true;
+        }
+        
+        return false;
+    }
+
     public void editBillItem(BillItem billItem) {
+        if (errorCheckForEdit()) {
+            return;
+        }
+
         getBillItemFacede().edit(billItem);
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
 
@@ -125,7 +152,7 @@ public class PharmacyBillSearch implements Serializable {
 
     public void editBillItem2(BillItem billItem) {
         getBillItemFacede().edit(billItem);
-        billItem.getPharmaceuticalBillItem().setQtyInUnit((double)(0 - billItem.getQty()));
+        billItem.getPharmaceuticalBillItem().setQtyInUnit((double) (0 - billItem.getQty()));
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
 
         calTotalAndUpdate2(billItem.getBill());
@@ -150,16 +177,16 @@ public class PharmacyBillSearch implements Serializable {
     private void calTotalAndUpdate(Bill bill) {
         double tmp = 0;
         for (BillItem b : bill.getBillItems()) {
-            System.err.println("id " + b.getPharmaceuticalBillItem().getId());
-            System.err.println("Qty " + b.getPharmaceuticalBillItem().getQtyInUnit());
-            System.err.println("Pur " + b.getPharmaceuticalBillItem().getPurchaseRateInUnit());
+            if (b.getPharmaceuticalBillItem() == null) {
+                continue;
+            }
             double tmp2 = (b.getPharmaceuticalBillItem().getQtyInUnit() * b.getPharmaceuticalBillItem().getPurchaseRateInUnit());
             System.err.println("Total " + tmp2);
             tmp += tmp2;
         }
 
-        bill.setTotal(tmp);
-        bill.setNetTotal(tmp);
+        bill.setTotal(0 - tmp);
+        bill.setNetTotal(0 - tmp);
         getBillFacade().edit(bill);
     }
 
@@ -1061,12 +1088,12 @@ public class PharmacyBillSearch implements Serializable {
             getPharmaceuticalBillItemFacade().edit(ph);
 
             //System.err.println("Updating QTY " + ph.getQtyInUnit());
-          boolean returnFlag=  getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
+            boolean returnFlag = getPharmacyBean().deductFromStock(ph.getStock(), Math.abs(ph.getQtyInUnit()), ph, getSessionController().getDepartment());
 
-          if(!returnFlag){
-              b.setTmpQty(0);
-              getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
-          }
+            if (!returnFlag) {
+                b.setTmpQty(0);
+                getPharmaceuticalBillItemFacade().edit(b.getPharmaceuticalBillItem());
+            }
 
 //
 //            //    updateRemainingQty(nB);
@@ -1180,8 +1207,8 @@ public class PharmacyBillSearch implements Serializable {
             UtilityController.addErrorMessage("No Bill to cancel");
         }
     }
-    
-      public void pharmacyRetailCancelBillWithStockBht() {
+
+    public void pharmacyRetailCancelBillWithStockBht() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {
                 return;
@@ -1343,9 +1370,9 @@ public class PharmacyBillSearch implements Serializable {
         //System.err.println("Stock Qty" + stockQty);
         //System.err.println("Ph Qty" + pharmaceuticalBillItem.getQtyInUnit());
         if (Math.abs(pharmaceuticalBillItem.getQtyInUnit()) > stockQty) {
-            System.err.println("Check Item : "+pharmaceuticalBillItem.getBillItem().getItem());
-            System.err.println("Item Qty : "+pharmaceuticalBillItem.getQtyInUnit());
-            System.err.println("Check Item : "+stockQty);
+            System.err.println("Check Item : " + pharmaceuticalBillItem.getBillItem().getItem());
+            System.err.println("Item Qty : " + pharmaceuticalBillItem.getQtyInUnit());
+            System.err.println("Check Item : " + stockQty);
             return true;
         } else {
             return false;
@@ -2053,9 +2080,9 @@ public class PharmacyBillSearch implements Serializable {
 
     public double calTot() {
         if (getBillFees() == null) {
-            return 0.0;
+            return 0.0f;
         }
-        double tot = 0.0;
+        double tot = 0.0f;
         for (BillFee f : getBillFees()) {
             //System.out.println("Tot" + f.getFeeValue());
             tot += f.getFeeValue();

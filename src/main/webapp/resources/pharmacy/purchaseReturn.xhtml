@@ -36,7 +36,7 @@
             </div>
 
             <div class="headingBill">
-                <h:outputLabel value="PURCASE Return Note"   />                           
+                <h:outputLabel value="PURCHASE Return Note" style="text-decoration: underline" />                           
             </div>
 
 
@@ -78,6 +78,7 @@
                     <p:column>
                         <f:facet name="header">Amount</f:facet>
                             #{bip.pharmaceuticalBillItem.purchaseRate*bip.pharmaceuticalBillItem.qty}
+                        <f:convertNumber pattern="#0.00" />
                     </p:column>
                     <p:column>
                         <f:facet name="header">Expiry</f:facet>

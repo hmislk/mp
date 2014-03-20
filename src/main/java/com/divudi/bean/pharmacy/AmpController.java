@@ -10,7 +10,9 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.data.DepartmentType;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.entity.Department;
 import com.divudi.facade.AmpFacade;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Vmp;
@@ -91,76 +93,79 @@ public class AmpController implements Serializable {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
+        m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and "
+                    + " c.retired=false and c.departmentType!=dep and "
                     + "(upper(c.name) like :n or upper(c.code)  "
                     + "like :n or upper(c.barcode) like :n) order by c.name", m, 30);
             //System.out.println("a size is " + a.size());
         }
+        
         if (a == null) {
-            a = new ArrayList<Amp>();
+            a = new ArrayList<>();
         }
         return a;
     }
-    
-     public List<Amp> completeAmpByName(String qry) {
+
+    public List<Amp> completeAmpByName(String qry) {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
+         m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and "
+                    + " c.retired=false and c.departmentType!=dep and "
                     + "(upper(c.name) like :n ) order by c.name", m, 30);
             //System.out.println("a size is " + a.size());
         }
         if (a == null) {
-            a = new ArrayList<Amp>();
+            a = new ArrayList<>();
         }
         return a;
     }
-     
-     public List<Amp> completeAmpByCode(String qry) {
+
+    public List<Amp> completeAmpByCode(String qry) {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
+         m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and "
+                    + " c.retired=false and c.departmentType!=dep and "
                     + "(upper(c.code) like :n ) order by c.code", m, 30);
             //System.out.println("a size is " + a.size());
         }
         if (a == null) {
-            a = new ArrayList<Amp>();
+            a = new ArrayList<>();
         }
         return a;
     }
-     
-      public List<Amp> completeAmpByBarCode(String qry) {
+
+    public List<Amp> completeAmpByBarCode(String qry) {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
+         m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and "
+                    + " c.retired=false and c.departmentType!=dep and "
                     + "(upper(c.barcode) like :n ) order by c.barcode", m, 30);
             //System.out.println("a size is " + a.size());
         }
         if (a == null) {
-            a = new ArrayList<Amp>();
+            a = new ArrayList<>();
         }
         return a;
     }
 
-
-
     @EJB
     BillNumberBean billNumberBean;
+
     public void prepareAdd() {
         current = new Amp();
         currentVmp = new Vmp();
         addingVtmInVmp = new VtmsVmps();
-        
         current.setCode(billNumberBean.pharmacyItemNumberGenerator());
     }
 
@@ -284,7 +289,7 @@ public class AmpController implements Serializable {
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
         recreateModel();
-       // getItems();
+        // getItems();
     }
 
     public void setSelectText(String selectText) {

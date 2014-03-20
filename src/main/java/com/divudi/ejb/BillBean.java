@@ -595,7 +595,11 @@ public class BillBean {
 //                
 //                e.getBillItem().setBillSession(getServiceSessionBean().saveBillSession(e.getBillItem()));
 //            }
+
+            
+
             getBillItemFacade().edit(e.getBillItem());
+
         }
     }
 
@@ -748,7 +752,6 @@ public class BillBean {
         return null;
     }
 
-   
     public List<BillFee> billFeefromBillItemPackage(BillItem billItem, Item packege) {
         List<BillFee> t = new ArrayList<>();
         BillFee f;

@@ -31,8 +31,8 @@
                     </p:panelGrid>
                     <p:panel header="Add Item ">
                         <p:autoComplete  value="#{transferRequestController.currentBillItem.item}"
-                                         forceSelection="true"  converter="itemcon"
-                                         completeMethod="#{itemController.completeAmpItem}" 
+                                         forceSelection="true"
+                                         completeMethod="#{itemController.completeStoreItem}" 
                                          var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <p:column headerText="Item" >
                                 <h:outputLabel value="#{vt.name}"></h:outputLabel>

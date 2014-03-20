@@ -61,8 +61,6 @@ public class DealorPaymentBillSearch implements Serializable {
     List<BillItem> billItems;
     List<BillComponent> billComponents;
     List<BillFee> billFees;
-    PaymentMethod paymentMethod;
-    PaymentScheme paymentScheme;
     List<Bill> bills;
     @EJB
     private CommonFunctions commonFunctions;
@@ -113,14 +111,14 @@ public class DealorPaymentBillSearch implements Serializable {
     public List<Bill> getUserBillsOwn() {
         List<Bill> userBills;
         if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
+            userBills = new ArrayList<>();
             //System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
             //System.out.println("user ok");
         }
         if (userBills == null) {
-            userBills = new ArrayList<Bill>();
+            userBills = new ArrayList<>();
         }
         return userBills;
     }
@@ -173,22 +171,6 @@ public class DealorPaymentBillSearch implements Serializable {
 
     public void setCancelledBillFacade(CancelledBillFacade cancelledBillFacade) {
         this.cancelledBillFacade = cancelledBillFacade;
-    }
-
-    public PaymentScheme getPaymentScheme() {
-        return paymentScheme;
-    }
-
-    public void setPaymentScheme(PaymentScheme paymentScheme) {
-        this.paymentScheme = paymentScheme;
-    }
-
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public void recreateModel() {
@@ -255,7 +237,7 @@ public class DealorPaymentBillSearch implements Serializable {
         cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         cb.setCreater(getSessionController().getLoggedUser());
 
-        cb.setPaymentScheme(paymentScheme);
+        cb.setPaymentMethod(getBill().getPaymentMethod());
         cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
         cb.setInstitution(getSessionController().getInstitution());
         cb.setInstitution(getSessionController().getLoggedUser().getInstitution());
@@ -279,10 +261,7 @@ public class DealorPaymentBillSearch implements Serializable {
             UtilityController.addErrorMessage("Doctor Payment Already Paid So Cant Cancel Bill");
             return true;
         }
-        if (getPaymentScheme() == null) {
-            UtilityController.addErrorMessage("Please select a payment scheme.");
-            return true;
-        }
+
         if (getComment() == null || getComment().trim().equals("")) {
             UtilityController.addErrorMessage("Please enter a comment");
             return true;
@@ -416,7 +395,7 @@ public class DealorPaymentBillSearch implements Serializable {
 
             getBillItemFacede().create(b);
 
-            nB.getReferenceBill().setPaidAmount(nB.getReferenceBill().getPaidAmount() + getBill().getNetTotal());
+            nB.getReferenceBill().setPaidAmount(nB.getReferenceBill().getPaidAmount() + nB.getNetValue());
             getBillFacade().edit(nB.getReferenceBill());
         }
     }

@@ -4,13 +4,10 @@
  */
 package com.divudi.entity;
 
-//import static ch.lambdaj.Lambda.on;
-//import static ch.lambdaj.Lambda.sort;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +25,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+
+
 
 /**
  *
@@ -82,21 +81,21 @@ public class Bill implements Serializable {
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
     //Values
-    double total = 0.0;
-    double discount = 0.0;
+    double total;
+    double discount;
     double discountPercent;
-    double netTotal = 0.0;
-    double paidAmount = 0.0;
-    double balance = 0.0;
+    double netTotal;
+    double paidAmount;
+    double balance ;
     Double tax = 0.0;
     Double cashPaid = 0.0;
     Double cashBalance = 0.0;
-    double saleValue = 0.0;
-    double freeValue = 0.0;
+    double saleValue = 0.0f;
+    double freeValue = 0.0f;
     double performInstitutionFee;
     double staffFee;
     double billerFee;
-    double grantTotal = 0.0;
+    double grantTotal;
 
     //Institution
     @ManyToOne

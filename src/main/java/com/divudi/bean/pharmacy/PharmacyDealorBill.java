@@ -37,7 +37,7 @@ import javax.persistence.TemporalType;
  */
 @Named
 @SessionScoped
-public class pharmacyDealorBill implements Serializable {
+public class PharmacyDealorBill implements Serializable {
 
     //Atribtes
     private boolean printPreview;
@@ -62,6 +62,18 @@ public class pharmacyDealorBill implements Serializable {
     @Inject
     private SessionController sessionController;
 
+    public void makeNull() {
+        printPreview = false;
+        current = null;
+        chequeBank = null;
+        slipBank = null;
+        currentBillItem = null;
+        institution = null;
+        index = 0;
+        chequeDate = null;
+        slipDate = null;
+    }
+
     private boolean errorCheckForAdding() {
         if (getCurrentBillItem().getReferenceBill().getFromInstitution() == null) {
             UtilityController.addErrorMessage("U cant add without credit company name");
@@ -85,24 +97,29 @@ public class pharmacyDealorBill implements Serializable {
         return false;
     }
 
-    private double getGrnReturnValue() {
-        String sql = "select sum(b.netTotal) from Bill b where b.retired=false and "
-                + " b.referenceBill=:refBill and b.billType=:bType";
+    public double getGrnReturnValue(Bill refBill) {
+        String sql = "select sum(b.netTotal) from"
+                + " Bill b where b.retired=false and "
+                + " b.referenceBill=:refBill "
+                + " and (b.billType=:bType1 or b.billType=:bType2 )";
 
         HashMap hm = new HashMap();
-        hm.put("refBill", getCurrentBillItem().getReferenceBill());
-        hm.put("bType", BillType.PharmacyGrnReturn);
-
+        hm.put("refBill", refBill);
+        hm.put("bType1", BillType.PharmacyGrnReturn);
+        hm.put("bType2", BillType.PurchaseReturn);
         return getBillFacade().findDoubleByJpql(sql, hm, TemporalType.DATE);
     }
 
     public void selectListener() {
-        double grnReturnTotal = getGrnReturnValue();
+        double grnReturnTotal = getGrnReturnValue(getCurrentBillItem().getReferenceBill());
         getCurrentBillItem().getReferenceBill().setTmpReturnTotal(grnReturnTotal);
 
-        double ballanceAmt = getCurrentBillItem().getReferenceBill().getNetTotal() + grnReturnTotal + getCurrentBillItem().getReferenceBill().getPaidAmount();
+        double ballanceAmt = getCurrentBillItem().getReferenceBill().getNetTotal()
+                + grnReturnTotal
+                + getCurrentBillItem().getReferenceBill().getPaidAmount();
 
-        if (ballanceAmt != 0) {
+        System.err.println("Ballance Amount " + ballanceAmt);
+        if (ballanceAmt < 0.1) {
             getCurrentBillItem().setNetValue(0 - ballanceAmt);
         }
 
@@ -112,7 +129,10 @@ public class pharmacyDealorBill implements Serializable {
     private BillController billController;
 
     public void selectInstitutionListener() {
-        List<Bill> list = getBillController().getGrnBills(institution);
+        Institution ins = institution;
+        makeNull();
+
+        List<Bill> list = getBillController().getDealorBills(ins);
         for (Bill b : list) {
             getCurrentBillItem().setReferenceBill(b);
             selectListener();
@@ -131,8 +151,8 @@ public class pharmacyDealorBill implements Serializable {
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
         if (getCurrentBillItem().getNetValue() != 0) {
-            System.err.println("11 "+getCurrentBillItem().getReferenceBill().getDeptId());
-            System.err.println("aa "+getCurrentBillItem().getNetValue());
+            System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
+            System.err.println("aa " + getCurrentBillItem().getNetValue());
             getBillItems().add(getCurrentBillItem());
         }
 
@@ -275,34 +295,15 @@ public class pharmacyDealorBill implements Serializable {
     }
 
     private void updateReferenceBill(BillItem tmp) {
-
-        tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() - tmp.getNetValue());
-
-        //System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
-//        if (tmp.getReferenceBill().getPaidAmount() != 0.0) {
-//            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
-//        } else {
-//            tmp.getReferenceBill().setPaidAmount(tmp.getNetValue());
-//        }
+        tmp.getReferenceBill().setPaidAmount(0 - tmp.getNetValue());
         getBillFacade().edit(tmp.getReferenceBill());
 
-    }
-
-    public void prepareNewBill() {
-        printPreview = false;
-        current = null;
-        chequeBank = null;
-        chequeDate = null;
-        slipDate = null;
-        currentBillItem = null;
-        index = 0;
-        billItems = null;
     }
 
     /**
      * Creates a new instance of pharmacyDealorBill
      */
-    public pharmacyDealorBill() {
+    public PharmacyDealorBill() {
     }
 
     public boolean isPrintPreview() {

@@ -109,14 +109,41 @@ public class PharmacyBillSearch implements Serializable {
     private WebUserController webUserController;
 
     public void editBill() {
+        if (errorCheckForEdit()) {
+            return;
+        }
         getBillFacade().edit(getBill());
     }
 
     public void editBill(Bill bill) {
+
         getBillFacade().edit(bill);
     }
 
+    private boolean errorCheckForEdit() {
+        if (getBill().isCancelled()) {
+            UtilityController.addErrorMessage("Already Cancelled. Can not cancel again");
+            return true;
+        }
+
+        if (getBill().isRefunded()) {
+            UtilityController.addErrorMessage("Already Returned. Can not cancel.");
+            return true;
+        }
+
+        if (getBill().getPaidAmount() != 0.0) {
+            UtilityController.addErrorMessage("Already Credit Company Paid For This Bill. Can not cancel.");
+            return true;
+        }
+        
+        return false;
+    }
+
     public void editBillItem(BillItem billItem) {
+        if (errorCheckForEdit()) {
+            return;
+        }
+
         getBillItemFacede().edit(billItem);
         getPharmaceuticalBillItemFacade().edit(billItem.getPharmaceuticalBillItem());
 
@@ -2053,9 +2080,9 @@ public class PharmacyBillSearch implements Serializable {
 
     public double calTot() {
         if (getBillFees() == null) {
-            return 0.0;
+            return 0.0f;
         }
-        double tot = 0.0;
+        double tot = 0.0f;
         for (BillFee f : getBillFees()) {
             //System.out.println("Tot" + f.getFeeValue());
             tot += f.getFeeValue();

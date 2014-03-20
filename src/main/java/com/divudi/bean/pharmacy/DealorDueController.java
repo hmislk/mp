@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.BillController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.table.String1Value5;
@@ -23,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.persistence.TemporalType;
 
 /**
@@ -78,171 +80,85 @@ public class DealorDueController implements Serializable {
         this.toDate = toDate;
     }
 
-    private List<Institution> getGrnDealors() {
-        String sql;
-        HashMap hm;
-        sql = "Select b.fromInstitution From Bill b where b.retired=false and b.cancelled=false "
-                + " and b.paidAmount!=(0-b.netTotal) and b.createdAt between :frm and :to "
-                + " and b.billType=:tp order by b.fromInstitution.name  ";
-        hm = new HashMap();
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        //    hm.put("ins", getS)
-        //  hm.put("pm", PaymentMethod.Credit);
-        hm.put("tp", BillType.PharmacyGrnBill);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    private List<Institution> getPurchaseDealors() {
-        String sql;
-        HashMap hm;
-        sql = "Select b.fromInstitution From Bill b where b.retired=false and b.cancelled=false "
-                + " and b.paidAmount!=(0-b.netTotal) and b.createdAt between :frm and :to "
-                + " and b.billType=:tp order by b.fromInstitution.name  ";
-        hm = new HashMap();
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        //    hm.put("ins", getS)
-        //  hm.put("pm", PaymentMethod.Credit);
-        hm.put("tp", BillType.PharmacyPurchaseBill);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    private List<Institution> getGrnReturnDealors() {
-        String sql;
-        HashMap hm;
-        sql = "Select b.toInstitution From Bill b where b.retired=false and b.cancelled=false "
-                + " and b.paidAmount!=(0-b.netTotal) and b.createdAt between :frm and :to "
-                + " and b.billType=:tp order by b.toInstitution.name  ";
-        hm = new HashMap();
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        //  hm.put("pm", PaymentMethod.Credit);
-        hm.put("tp", BillType.PharmacyGrnReturn);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    private List<Institution> getPurchaseReturnDealors() {
-        String sql;
-        HashMap hm;
-        sql = "Select b.toInstitution From Bill b where b.retired=false and b.cancelled=false "
-                + " and b.paidAmount!=(0-b.netTotal) and b.createdAt between :frm and :to "
-                + " and b.billType=:tp order by b.toInstitution.name  ";
-        hm = new HashMap();
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        //  hm.put("pm", PaymentMethod.Credit);
-        hm.put("tp", BillType.PurchaseReturn);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    private List<Bill> getBills(BillType billType1, BillType billType2, Institution institution) {
-        String sql;
-        HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and "
-                + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2)";
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        hm.put("ins", institution);
-        hm.put("tp1", billType1);
-        hm.put("tp2", billType2);
-        return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    private List<Bill> getBills(BillType billType1, BillType billType2, BillType billType3, BillType billType4, Institution institution) {
-        String sql;
-        HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and "
-                + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3 or b.billType=:tp4)";
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        hm.put("ins", institution);
-        hm.put("tp1", billType1);
-        hm.put("tp2", billType2);
-        hm.put("tp3", billType3);
-        hm.put("tp4", billType4);
-        System.out.println("hm = " + hm);
-        System.out.println("sql = " + sql);
-        return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
     private void setValues(Institution inst, String1Value5 dataTable5Value) {
-        String sql;
-        HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false and b.createdAt is not null and "
-                + " b.paidAmount!=abs(b.netTotal) and b.paymentMethod=:pm and "
-                + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2 or b.billType=:tp3)";
-        hm.put("ins", inst);
-        hm.put("pm", PaymentMethod.Credit);
-        hm.put("tp1", BillType.PharmacyGrnBill);
-        hm.put("tp3", BillType.PharmacyPurchaseBill);
-        hm.put("tp2", BillType.PharmacyGrnReturn);
-        List<Bill> lst = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
+        List<Bill> lst = getBillController().getBills(inst);
+        System.err.println("Institution Ins " + inst.getName());
         for (Bill b : lst) {
+            double rt = getPharmacyDealorBill().getGrnReturnValue(b);
+            b.setTmpReturnTotal(rt);
+
             Long dayCount = getCommonFunctions().getDayCountTillNow(b.getInvoiceDate());
+            
+            double finalValue = (b.getNetTotal() + b.getPaidAmount() + b.getTmpReturnTotal());
+
+            System.err.println("DayCount " + dayCount);
+            System.err.println("NetTotal " + b.getNetTotal());
+            System.err.println("Return  " + b.getTmpReturnTotal());
+            System.err.println("Paid " + b.getPaidAmount());
+            System.err.println("Final " + finalValue);
 
             if (dayCount < 30) {
-                dataTable5Value.setValue1(dataTable5Value.getValue1() + (b.getNetTotal() + b.getPaidAmount()));
+                dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
             } else if (dayCount < 60) {
-                dataTable5Value.setValue2(dataTable5Value.getValue2() + (b.getNetTotal() + b.getPaidAmount()));
+                dataTable5Value.setValue2(dataTable5Value.getValue2() + finalValue);
             } else if (dayCount < 90) {
-                dataTable5Value.setValue3(dataTable5Value.getValue3() + (b.getNetTotal() + b.getPaidAmount()));
+                dataTable5Value.setValue3(dataTable5Value.getValue3() + finalValue);
             } else {
-                dataTable5Value.setValue4(dataTable5Value.getValue4() + (b.getNetTotal() + b.getPaidAmount()));
+                dataTable5Value.setValue4(dataTable5Value.getValue4() + finalValue);
             }
 
         }
 
     }
+
+    @Inject
+    private BillController billController;
+    @Inject
+    private PharmacyDealorBill pharmacyDealorBill;
 
     public void fillItems() {
         System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
-        for (Institution ins : getGrnDealors()) {
+        for (Institution ins : getBillController().getDealorFromBills(getFromDate(), getToDate())) {
             //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 
-        for (Institution ins : getGrnReturnDealors()) {
+        for (Institution ins : getBillController().getDealorFromReturnBills(getFromDate(), getToDate())) {
             //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 
-        for (Institution ins : getPurchaseDealors()) {
-            //System.err.println("Ins Nme " + ins.getName());
-            setIns.add(ins);
-        }
-
-        for (Institution ins : getPurchaseReturnDealors()) {
-            //System.err.println("Ins Nme " + ins.getName());
-            setIns.add(ins);
-        }
-
+        System.err.println("size " + setIns.size());
         items = new ArrayList<>();
         for (Institution ins : setIns) {
+            System.err.println("Ins " + ins.getName());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
-            List<Bill> lst = getBills(BillType.PharmacyGrnBill, BillType.PharmacyGrnReturn, BillType.PharmacyPurchaseBill, BillType.PurchaseReturn, ins);
+            List<Bill> lst = getBillController().getBills(ins, getFromDate(), getToDate());
+
             newIns.setBills(lst);
             for (Bill b : lst) {
-                //System.err.println("Bill " + b.getId());
+                double rt = getPharmacyDealorBill().getGrnReturnValue(b);
+                newIns.setReturned(rt);
+                b.setTmpReturnTotal(rt);
+                newIns.setReturned(newIns.getReturned() + b.getTmpReturnTotal());
                 newIns.setTotal(newIns.getTotal() + b.getNetTotal());
                 newIns.setPaidTotal(newIns.getPaidTotal() + b.getPaidAmount());
+
+                System.err.println("Net Total " + b.getNetTotal());
+                System.err.println("Paid " + b.getPaidAmount());
+                System.err.println("Return " + b.getTmpReturnTotal());
+
             }
-            items.add(newIns);
+
+            double finalValue = (newIns.getPaidTotal() + newIns.getTotal() + newIns.getReturned());
+            System.err.println("Final Value " + finalValue);
+            if (finalValue != 0 && finalValue < 0.1) {
+                items.add(newIns);
+            }
         }
     }
 
@@ -254,12 +170,12 @@ public class DealorDueController implements Serializable {
         makeNull();
         Set<Institution> setIns = new HashSet<>();
 
-        for (Institution ins : getGrnDealors()) {
+        for (Institution ins : getBillController().getDealorFromBills(getFromDate(), getToDate())) {
             //   //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
 
-        for (Institution ins : getGrnReturnDealors()) {
+        for (Institution ins : getBillController().getDealorFromReturnBills(getFromDate(), getToDate())) {
             // //System.err.println("Ins Nme " + ins.getName());
             setIns.add(ins);
         }
@@ -269,7 +185,13 @@ public class DealorDueController implements Serializable {
             String1Value5 newRow = new String1Value5();
             newRow.setString(ins.getName());
             setValues(ins, newRow);
-            dealorCreditAge.add(newRow);
+
+            if (newRow.getValue1() != 0
+                    || newRow.getValue2() != 0
+                    || newRow.getValue3() != 0
+                    || newRow.getValue4() != 0) {
+                dealorCreditAge.add(newRow);
+            }
         }
 
     }
@@ -360,5 +282,21 @@ public class DealorDueController implements Serializable {
 
     public void setFilteredList(List<String1Value5> filteredList) {
         this.filteredList = filteredList;
+    }
+
+    public BillController getBillController() {
+        return billController;
+    }
+
+    public void setBillController(BillController billController) {
+        this.billController = billController;
+    }
+
+    public PharmacyDealorBill getPharmacyDealorBill() {
+        return pharmacyDealorBill;
+    }
+
+    public void setPharmacyDealorBill(PharmacyDealorBill pharmacyDealorBill) {
+        this.pharmacyDealorBill = pharmacyDealorBill;
     }
 }

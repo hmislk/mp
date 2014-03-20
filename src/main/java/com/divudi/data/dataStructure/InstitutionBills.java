@@ -13,8 +13,10 @@ import java.util.List;
  * @author safrin
  */
 public class InstitutionBills {
+
     private Institution institution;
     private List<Bill> bills;
+    private double returned;
     private double total;
     private double paidTotal;
 
@@ -48,5 +50,13 @@ public class InstitutionBills {
 
     public void setPaidTotal(double paidTotal) {
         this.paidTotal = paidTotal;
+    }
+
+    public double getReturned() {
+        return returned;
+    }
+
+    public void setReturned(double returned) {
+        this.returned = returned;
     }
 }

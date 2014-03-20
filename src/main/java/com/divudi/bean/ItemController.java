@@ -85,7 +85,7 @@ public class ItemController implements Serializable {
         hm.put("ins", getInstituion());
 
         //System.out.println(sql);
-        suggestions = getFacade().findBySQL(sql, hm, 20);
+        suggestions = getFacade().findBySQL(sql, hm);
 
         return suggestions;
 

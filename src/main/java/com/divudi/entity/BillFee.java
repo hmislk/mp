@@ -62,6 +62,8 @@ public class BillFee implements Serializable {
     Date FeeAt;
     @ManyToOne
     private BillFee referenceBillFee;
+    @ManyToOne
+    private PatientItem patientItem;
     //////////////////
     @ManyToOne
     BillItem billItem;
@@ -501,6 +503,14 @@ public class BillFee implements Serializable {
 
     public void setTransSerial(double transSerial) {
         this.transSerial = transSerial;
+    }
+
+    public PatientItem getPatientItem() {
+        return patientItem;
+    }
+
+    public void setPatientItem(PatientItem patientItem) {
+        this.patientItem = patientItem;
     }
 
 }

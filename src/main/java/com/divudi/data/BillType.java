@@ -11,6 +11,7 @@ package com.divudi.data;
  */
 public enum BillType {
 
+    SurgeryBill,
     LabBill,
     PaymentBill,
     OpdBill,

@@ -6,6 +6,7 @@ package com.divudi.entity;
 
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.inward.SurgeryBillType;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,8 +26,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-
-
 
 /**
  *
@@ -86,7 +85,7 @@ public class Bill implements Serializable {
     double discountPercent;
     double netTotal;
     double paidAmount;
-    double balance ;
+    double balance;
     Double tax = 0.0;
     Double cashPaid = 0.0;
     Double cashBalance = 0.0;
@@ -181,6 +180,8 @@ public class Bill implements Serializable {
     Doctor referredBy;
     @ManyToOne
     PatientEncounter patientEncounter;
+    @ManyToOne
+    private PatientEncounter procedure;
     @Transient
     List<Bill> listOfBill;
 
@@ -198,6 +199,8 @@ public class Bill implements Serializable {
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;
+    
+    private SurgeryBillType surgeryBillType;
 
     public void invertValue(Bill bill) {
         staffFee = 0 - bill.getStaffFee();
@@ -1023,5 +1026,21 @@ public class Bill implements Serializable {
 
     public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
         this.transActiveBillItem = transActiveBillItem;
+    }
+
+    public PatientEncounter getProcedure() {
+        return procedure;
+    }
+
+    public void setProcedure(PatientEncounter procedure) {
+        this.procedure = procedure;
+    }
+
+    public SurgeryBillType getSurgeryBillType() {
+        return surgeryBillType;
+    }
+
+    public void setSurgeryBillType(SurgeryBillType surgeryBillType) {
+        this.surgeryBillType = surgeryBillType;
     }
 }

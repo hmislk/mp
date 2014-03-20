@@ -12,6 +12,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardCalculation;
+import com.divudi.entity.Bill;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
 import com.divudi.facade.PatientItemFacade;
@@ -19,7 +20,6 @@ import com.divudi.facade.TimedItemFeeFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
@@ -66,6 +66,8 @@ public class InwardTimedItemController implements Serializable {
 
         return false;
     }
+    
+
 
     public void save() {
         if (errorCheck()) {
@@ -77,6 +79,7 @@ public class InwardTimedItemController implements Serializable {
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getCurrent().setCreatedAt(Calendar.getInstance().getTime());
         getPatientItemFacade().create(getCurrent());
+      
         PatientEncounter tmp = getCurrent().getPatientEncounter();
         current = new PatientItem();
         current.setPatientEncounter(tmp);
@@ -107,7 +110,8 @@ public class InwardTimedItemController implements Serializable {
     }
 
     public void createPatientItems() {
-        String sql = "SELECT i FROM PatientItem i where type(i.item)=TimedItem and i.retired=false and i.patientEncounter=:pe";
+        String sql = "SELECT i FROM PatientItem i where type(i.item)=TimedItem "
+                + " and i.retired=false and i.patientEncounter=:pe";
         HashMap hm = new HashMap();
         hm.put("pe", getCurrent().getPatientEncounter());
         items = getPatientItemFacade().findBySQL(sql, hm);

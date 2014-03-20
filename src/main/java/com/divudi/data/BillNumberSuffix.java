@@ -67,4 +67,6 @@ public enum BillNumberSuffix {
     PTYCAN,//Cancell
     NONE,//NO Prefix
     PACK,//Package
+    SURG,//Surger Bill
+    TIME,//Timed Service 
 }

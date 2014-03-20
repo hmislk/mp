@@ -48,10 +48,10 @@
                     </p:column>
 
                     <p:column headerText="Item Name" style="width: 250px!important;"  > 
-                    
-                            <h:outputText id="item" value="#{bi.item.name}" >                                   
-                            </h:outputText>
-       
+
+                        <h:outputText id="item" value="#{bi.item.name}" >                                   
+                        </h:outputText>
+
                     </p:column>  
 
                     <p:column headerText="Ordered Qty" >  
@@ -169,21 +169,17 @@
 
                         <p:panelGrid columns="2" id="tot">
                             <p:outputLabel value="Gross Total"/>
-                            <p:outputLabel id="gro"  value="#{grnController.grnBill.total}">
+                            <p:outputLabel id="gro"  value="#{0-grnController.grnBill.total}">
                                 <f:convertNumber pattern="#,##0.00" />
                             </p:outputLabel>
-                            <p:outputLabel value="Tax"/>
-                            <p:inputText id="tx" value="#{grnController.grnBill.tax}" > 
-                                <p:ajax process="gro tx dis" update="net" event="keyup"/>
-                                <f:convertNumber pattern="#,##0.00" />
-                            </p:inputText>
                             <p:outputLabel value="Discount"/>
                             <p:inputText id="dis" value="#{grnController.grnBill.discount}" >
-                                <p:ajax process="gro tx dis" update="net" event="keyup"/>
+                                <p:ajax process="gro @this" update="net" event="blur"
+                                        listener="#{grnController.changeDiscountLitener}"/>
                                 <f:convertNumber pattern="#,##0.00" />
                             </p:inputText>
                             <p:outputLabel value="Net Total"/>
-                            <p:outputLabel id="net"  value="#{grnController.netTotal}" >
+                            <p:outputLabel id="net"  value="#{0-grnController.grnBill.netTotal}" >
                                 <f:convertNumber pattern="#,##0.00" />
                             </p:outputLabel>
                         </p:panelGrid>

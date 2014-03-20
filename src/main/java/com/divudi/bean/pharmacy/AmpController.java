@@ -101,7 +101,7 @@ public class AmpController implements Serializable {
                     + "like :n or upper(c.barcode) like :n) order by c.name", m, 30);
             //System.out.println("a size is " + a.size());
         }
-        
+
         if (a == null) {
             a = new ArrayList<>();
         }
@@ -112,10 +112,10 @@ public class AmpController implements Serializable {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
-         m.put("dep", DepartmentType.Store);
+        m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and c.departmentType!=dep and "
+                    + " c.retired=false and (c.departmentType is null or c.departmentType!=dep )and "
                     + "(upper(c.name) like :n ) order by c.name", m, 30);
             //System.out.println("a size is " + a.size());
         }
@@ -129,10 +129,10 @@ public class AmpController implements Serializable {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
-         m.put("dep", DepartmentType.Store);
+        m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and c.departmentType!=dep and "
+                    + " c.retired=false and (c.departmentType is null or c.departmentType!=dep) and "
                     + "(upper(c.code) like :n ) order by c.code", m, 30);
             //System.out.println("a size is " + a.size());
         }
@@ -146,7 +146,7 @@ public class AmpController implements Serializable {
         List<Amp> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
-         m.put("dep", DepartmentType.Store);
+        m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
                     + " c.retired=false and c.departmentType!=dep and "

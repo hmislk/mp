@@ -89,7 +89,10 @@
                         <h:panelGrid columns="2">
                             <p:panel id='pIxAdd' header="Timed Service Requests" style="min-height: 100px;"  >
 
-                                <p:autoComplete converter="timedIt" id="it" forceSelection="false" value="#{inwardTimedItemController.current.item}" completeMethod="#{timedItemController.completeInvest}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                <p:autoComplete converter="timedIt" id="it" forceSelection="false" 
+                                                value="#{inwardTimedItemController.current.item}"
+                                                completeMethod="#{timedItemController.completeInvest}" var="ix" 
+                                                itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                     <p:ajax event="itemSelect" process="it" update="pDetail"/>
 
                                     <p:column>
@@ -109,7 +112,8 @@
                                     <p:outputLabel value="#{inwardTimedItemController.current.item.name}"/>
 
                                     <p:outputLabel value="StartTime:"/>
-                                    <p:calendar id="startTime" value="#{inwardTimedItemController.current.fromTime}" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar id="startTime" value="#{inwardTimedItemController.current.fromTime}" 
+                                                pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect" execute="pDetail" />
                                     </p:calendar>                                                                      
 

@@ -89,6 +89,12 @@ public class CommonReport implements Serializable {
     private BillsTotals purchaseCancelled;
     private BillsTotals purchaseReturn;
     private BillsTotals purchaseReturnCancel;
+    private BillsTotals GrnPaymentBill;
+    private BillsTotals GrnPaymentReturn;
+    private BillsTotals GrnPaymentCancell;
+    private BillsTotals GrnPaymentCancellReturn;
+    
+    
     //////////////////    
     private List<String1Value1> dataTableData;
     private List<InwardPriceAdjustment> items = null;
@@ -1235,6 +1241,42 @@ public class CommonReport implements Serializable {
         getGrnReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PharmacyGrnReturn, PaymentMethod.Credit, getDepartment()));
 
     }
+    
+    
+    public void createGrnPaymentTable() {
+        recreteModal();
+
+        GrnPaymentBill = new BillsTotals();
+        GrnPaymentCancell = new BillsTotals();
+        GrnPaymentReturn = new BillsTotals();
+        GrnPaymentCancellReturn = new BillsTotals();
+
+        if (getDepartment() == null) {
+            return;
+        }
+
+        //GRN Payment Billed Bills
+        getGrnPaymentBill().setBills(getBills(new BilledBill(), BillType.GrnPaymentBill, getDepartment()));
+        getGrnPaymentBill().setCash(calValue(new BilledBill(), BillType.GrnPaymentBill, PaymentMethod.Cash, getDepartment()));
+        getGrnPaymentBill().setCredit(calValue(new BilledBill(), BillType.GrnPaymentBill, PaymentMethod.Credit, getDepartment()));
+
+        //GRN Payment Cancelled Bill
+        getGrnPaymentCancell().setBills(getBills(new CancelledBill(), BillType.GrnPaymentBill, getDepartment()));
+        getGrnPaymentCancell().setCash(calValue(new CancelledBill(), BillType.GrnPaymentBill, PaymentMethod.Cash, getDepartment()));
+        getGrnPaymentCancell().setCredit(calValue(new CancelledBill(), BillType.GrnPaymentBill, PaymentMethod.Credit, getDepartment()));
+
+        //GRN Payment Refunded Bill
+        getGrnPaymentReturn().setBills(getBills(new BilledBill(), BillType.GrnPaymentReturn, getDepartment()));
+        getGrnPaymentReturn().setCash(calValue(new BilledBill(), BillType.GrnPaymentReturn, PaymentMethod.Cash, getDepartment()));
+        getGrnPaymentReturn().setCredit(calValue(new BilledBill(), BillType.GrnPaymentReturn, PaymentMethod.Credit, getDepartment()));
+
+        //GRN Payment Refunded Bill Cancel
+        getGrnPaymentCancellReturn().setBills(getBills(new CancelledBill(), BillType.GrnPaymentReturn, getDepartment()));
+        getGrnPaymentCancellReturn().setCash(calValue(new CancelledBill(), BillType.GrnPaymentReturn, PaymentMethod.Cash, getDepartment()));
+        getGrnPaymentCancellReturn().setCredit(calValue(new CancelledBill(), BillType.GrnPaymentReturn, PaymentMethod.Credit, getDepartment()));
+
+    }
+    
 
     public void createPurchaseDetailTable() {
         recreteModal();
@@ -1269,6 +1311,9 @@ public class CommonReport implements Serializable {
         getPurchaseReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PurchaseReturn, PaymentMethod.Credit, getDepartment()));
 
     }
+    
+    
+    
 
     public void createGrnDetailTableByDealor() {
         recreateList();
@@ -1704,6 +1749,35 @@ public class CommonReport implements Serializable {
 
         return dataTableData;
     }
+    
+    
+    public List<String1Value1> getGRNPaymentTotal() {
+        List<BillsTotals> list = new ArrayList<>();
+        list.add(getGrnPaymentBill());
+        list.add(getGrnPaymentCancell());
+        list.add(getGrnPaymentReturn());
+        list.add(getGrnPaymentCancellReturn());
+
+        dataTableData = new ArrayList<>();
+        String1Value1 tmp1 = new String1Value1();
+        tmp1.setString("Final Credit Total");
+        tmp1.setValue(getFinalCreditTotal(list));
+
+        String1Value1 tmp5 = new String1Value1();
+        tmp5.setString("Final Cash Total");
+        tmp5.setValue(getFinalCashTotal(list));
+
+        String1Value1 tmp6 = new String1Value1();
+        tmp6.setString("Final Credit & Cash Total");
+        tmp6.setValue(getFinalCashTotal(list) + getFinalCreditTotal(list));
+
+        dataTableData.add(tmp1);
+        dataTableData.add(tmp5);
+        dataTableData.add(tmp6);
+
+        return dataTableData;
+    }
+    
 
     public List<String1Value1> getDataTableDataByType() {
         List<BillsTotals> list = new ArrayList<>();
@@ -2058,5 +2132,37 @@ public class CommonReport implements Serializable {
 
     public void setPurchaseReturnCancel(BillsTotals purchaseReturnCancel) {
         this.purchaseReturnCancel = purchaseReturnCancel;
+    }
+
+    public BillsTotals getGrnPaymentBill() {
+        return GrnPaymentBill;
+    }
+
+    public void setGrnPaymentBill(BillsTotals GrnPaymentBill) {
+        this.GrnPaymentBill = GrnPaymentBill;
+    }
+
+    public BillsTotals getGrnPaymentReturn() {
+        return GrnPaymentReturn;
+    }
+
+    public void setGrnPaymentReturn(BillsTotals GrnPaymentReturn) {
+        this.GrnPaymentReturn = GrnPaymentReturn;
+    }
+
+    public BillsTotals getGrnPaymentCancell() {
+        return GrnPaymentCancell;
+    }
+
+    public void setGrnPaymentCancell(BillsTotals GrnPaymentCancell) {
+        this.GrnPaymentCancell = GrnPaymentCancell;
+    }
+
+    public BillsTotals getGrnPaymentCancellReturn() {
+        return GrnPaymentCancellReturn;
+    }
+
+    public void setGrnPaymentCancellReturn(BillsTotals GrnPaymentCancellReturn) {
+        this.GrnPaymentCancellReturn = GrnPaymentCancellReturn;
     }
 }

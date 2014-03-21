@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
@@ -86,10 +87,13 @@ public class StaffController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
+            sql = "select p from Staff p where p.retired=false and"
+                    + " (upper(p.person.name) like '%" + query.toUpperCase() + "%'or"
+                    + "  upper(p.code) like '%" + query.toUpperCase() + "%' )"
+                    + " order by p.person.name";
 
             //System.out.println(sql);
-            suggestions = getEjbFacade().findBySQL(sql);
+            suggestions = getEjbFacade().findBySQL(sql, 20);
         }
         return suggestions;
     }
@@ -118,8 +122,11 @@ public class StaffController implements Serializable {
         if (getCurrent().getInstitution() == null) {
             return new ArrayList<>();
         } else {
-            String sql = "Select d From Department d where d.retired=false and d.institution.id=" + getCurrent().getInstitution().getId();
-            d = getDepartmentFacade().findBySQL(sql);
+            String sql = "Select d From Department d where d.retired=false and"
+                    + " d.institution=:ins";
+            HashMap hm = new HashMap();
+            hm.put("ins", getCurrent().getInstitution());
+            d = getDepartmentFacade().findBySQL(sql, hm, 20);
         }
 
         return d;
@@ -131,9 +138,14 @@ public class StaffController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select p from Staff p where p.retired=false  and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
+            sql = "select p from Staff p where p.retired=false  and"
+                    + " (upper(p.person.name) like :q or  "
+                    + " upper(p.code) like :q )"
+                    + " order by p.person.name";
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
+            HashMap hm = new HashMap();
+            hm.put("q", "%" + query.toUpperCase() + "%");
+            suggestions = getFacade().findBySQL(sql, hm, 20);
         }
         return suggestions;
     }
@@ -144,9 +156,11 @@ public class StaffController implements Serializable {
         if (speciality == null) {
             ss = new ArrayList<>();
         } else {
-            sql = "select p from Staff p where p.retired=false and  p.speciality.id = " + speciality.getId() + " order by p.person.name";
+            sql = "select p from Staff p where p.retired=false and  "
+                    + "p.speciality.id = " + speciality.getId() + " "
+                    + "order by p.person.name";
 //            //System.out.println(sql);
-            ss = getFacade().findBySQL(sql);
+            ss = getFacade().findBySQL(sql,20);
         }
         return ss;
     }
@@ -157,9 +171,12 @@ public class StaffController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) and type(p) != Doctor order by p.person.name";
+            sql = "select p from Staff p where p.retired=false and "
+                    + "(upper(p.person.name) like '%" + query.toUpperCase() + "%' or "
+                    + " upper(p.code) like '%" + query.toUpperCase() + "%' ) and type(p) != Doctor"
+                    + " order by p.person.name";
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql,20);
+            suggestions = getFacade().findBySQL(sql, 20);
         }
         return suggestions;
     }
@@ -253,7 +270,6 @@ public class StaffController implements Serializable {
         Staff temStaff = getFacade().findFirstBySQL("select s from Staff s where s.baImage != null and s.id = " + stfId);
 
         //System.out.println("Printing");
-
         if (temStaff == null) {
             return new DefaultStreamedContent();
         } else {
@@ -269,16 +285,20 @@ public class StaffController implements Serializable {
 
     public List<Staff> getSelectedItems() {
         if (selectText.trim().equals("")) {
-            selectedItems = getFacade().findBySQL("select c from Staff c where c.retired=false order by c.person.name");
+            selectedItems = getFacade().findBySQL("select c from Staff c where c.retired=false "
+                    + "order by c.person.name");
         } else {
-            selectedItems = getFacade().findBySQL("select c from Staff c where c.retired=false and upper(c.person.name) like '%" + getSelectText().toUpperCase() + "%' order by c.person.name");
+            selectedItems = getFacade().findBySQL("select c from Staff c where c.retired=false"
+                    + " and upper(c.person.name) like '%" + getSelectText().toUpperCase() + "%' "
+                    + " order by c.person.name");
         }
 
         return selectedItems;
     }
 
     public List<Staff> completeItems(String qry) {
-        List<Staff> s = getFacade().findBySQL("select c from Staff c where c.retired=false and upper(c.person.name) like '%" + qry.toUpperCase() + "%' order by c.person.name");
+        List<Staff> s = getFacade().findBySQL("select c from Staff c where c.retired=false and"
+                + " upper(c.person.name) like '%" + qry.toUpperCase() + "%' order by c.person.name",20);
         return s;
     }
 

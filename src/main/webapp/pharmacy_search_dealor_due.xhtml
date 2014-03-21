@@ -12,15 +12,16 @@
                 <h:form>
                     <h:panelGrid columns="6">
                         <h:outputLabel value="From Date"/>
-                        <p:calendar id="fromDate" value="#{dealorDueController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                            <f:ajax event="dateSelect" execute="toDate @this"  render="lst"/>
+                        <p:calendar id="fromDate" value="#{dealorDueController.fromDate}" navigator="false"
+                                    pattern="dd MMMM yyyy hh mm a" >
+
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
                         <p:calendar id="toDate" value="#{dealorDueController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                            <f:ajax event="dateSelect" execute="@this fromDate"  render="lst"/>
+
                         </p:calendar>
                         <p:commandButton value="Process" action="#{dealorDueController.fillItems()}" ajax="false"  ></p:commandButton>
-                        
+
                     </h:panelGrid>
 
                     <p:dataTable id="lst" value="#{dealorDueController.items}" var="i"  style="width: 100%;">
@@ -30,9 +31,11 @@
                                 </p:column>                               
                                 <p:column headerText="Billed Amount">                                    
                                 </p:column>
+                                <p:column headerText="Returned Amount">                                    
+                                </p:column>
                                 <p:column headerText="Paid Amount">                                    
                                 </p:column>
-                                 <p:column headerText="Net Amount">                                    
+                                <p:column headerText="Net Amount">                                    
                                 </p:column>
                             </p:row>
                         </p:columnGroup>
@@ -49,13 +52,18 @@
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>                                 
                             </p:column>
+                            <p:column style="text-align: right;">                                
+                                <h:outputLabel value="#{b.tmpReturnTotal}" >
+                                    <f:convertNumber pattern="#,000.00" />
+                                </h:outputLabel>                                 
+                            </p:column>
                             <p:column style="text-align: right;">                              
                                 <h:outputLabel value="#{b.paidAmount}" >
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>
                             </p:column>
                             <p:column style="text-align: right;">                              
-                                <h:outputLabel value="#{b.netTotal+b.paidAmount}" >
+                                <h:outputLabel value="#{b.tmpReturnTotal+b.netTotal+b.paidAmount}" >
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>
                             </p:column>
@@ -69,6 +77,13 @@
                                             </h:outputLabel>
                                         </f:facet>
                                     </p:column>
+                                    <p:column style="text-align: right;">
+                                        <f:facet name="footer">
+                                            <h:outputLabel value="#{i.returned}">
+                                                <f:convertNumber pattern="#,000.00" />
+                                            </h:outputLabel>
+                                        </f:facet>
+                                    </p:column>
                                     <p:column style="text-align: right;" >
                                         <f:facet name="footer">
                                             <h:outputLabel value="#{i.paidTotal}">
@@ -76,9 +91,9 @@
                                             </h:outputLabel>
                                         </f:facet>
                                     </p:column>
-                                     <p:column style="text-align: right;" >
+                                    <p:column style="text-align: right;" >
                                         <f:facet name="footer">
-                                            <h:outputLabel value="#{i.total+i.paidTotal}">
+                                            <h:outputLabel value="#{i.total+i.paidTotal+i.returned}">
                                                 <f:convertNumber pattern="#,000.00" />
                                             </h:outputLabel>
                                         </f:facet>

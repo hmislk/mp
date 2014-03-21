@@ -315,8 +315,8 @@ public class GrnController implements Serializable {
 
                 PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
                 ph.setBillItem(bi);
-                double tmpQty=bi.getQty();
-                ph.setQtyInUnit((double)tmpQty);
+                double tmpQty = bi.getQty();
+                ph.setQtyInUnit((double) tmpQty);
                 ph.setPurchaseRate(i.getPurchaseRate());
                 ph.setRetailRate(i.getRetailRate());
                 ph.setLastPurchaseRate(getPharmacyBean().getLastPurchaseRate(bi.getItem(), getSessionController().getDepartment()));
@@ -341,13 +341,13 @@ public class GrnController implements Serializable {
         String sql = "select (p.retailRate) from PharmaceuticalBillItem p where p.billItem=:b";
         HashMap hm = new HashMap();
         hm.put("b", billItem.getReferanceBillItem());
-        return (double)getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
+        return (double) getPharmaceuticalBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
     public void onEdit(RowEditEvent event) {
         BillItem tmp = (BillItem) event.getObject();
         onEdit(tmp);
-    //    onEditPurchaseRate(tmp);
+        //    onEditPurchaseRate(tmp);
         setBatch(tmp);
     }
 
@@ -382,7 +382,7 @@ public class GrnController implements Serializable {
     public void onEditPurchaseRate(BillItem tmp) {
 
         double retail = tmp.getPharmaceuticalBillItem().getPurchaseRate() + (tmp.getPharmaceuticalBillItem().getPurchaseRate() * (getPharmacyBean().getMaximumRetailPriceChange() / 100));
-        tmp.getPharmaceuticalBillItem().setRetailRate((double)retail);
+        tmp.getPharmaceuticalBillItem().setRetailRate((double) retail);
 
     }
 
@@ -410,17 +410,20 @@ public class GrnController implements Serializable {
         }
 
         getGrnBill().setTotal(0 - tmp);
-        getNetTotal();
+        ChangeDiscountLitener();
     }
 
-    public double getNetTotal() {
-
-        double tmp = getGrnBill().getTotal() + getGrnBill().getTax() - getGrnBill().getDiscount();
-        getGrnBill().setNetTotal(tmp);
-
-        return tmp;
+    public void ChangeDiscountLitener() {
+        getGrnBill().setNetTotal(getGrnBill().getTotal() + getGrnBill().getDiscount());
     }
 
+//    public double getNetTotal() {
+//
+//        double tmp = getGrnBill().getTotal() + getGrnBill().getTax() - getGrnBill().getDiscount();
+//        getGrnBill().setNetTotal(tmp);
+//
+//        return tmp;
+//    }
     public void setApproveBill(Bill approveBill) {
         this.approveBill = approveBill;
         grnBill = null;

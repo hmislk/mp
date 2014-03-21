@@ -85,7 +85,7 @@ public class ItemController implements Serializable {
         hm.put("ins", getInstituion());
 
         //System.out.println(sql);
-        suggestions = getFacade().findBySQL(sql, hm, 20);
+        suggestions = getFacade().findBySQL(sql, hm);
 
         return suggestions;
 
@@ -150,7 +150,7 @@ public class ItemController implements Serializable {
         } else {
 
             sql = "select c from Item c where c.retired=false "
-                    + " and (type(c)= :amp) and c.departmentType!=:dep  "
+                    + " and (type(c)= :amp) and ( c.departmentType is null or c.departmentType!=:dep ) "
                     + " and (upper(c.name) like :str or upper(c.code) like :str or"
                     + " upper(c.barcode) like :str ) order by c.name";
             //System.out.println(sql);
@@ -447,8 +447,13 @@ public class ItemController implements Serializable {
         }
 
         java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+            java.lang.Long key = 0l;
+            try {
+                key = Long.valueOf(value);
+            } catch (Exception e) {
+
+            }
+
             return key;
         }
 
@@ -504,8 +509,13 @@ public class ItemController implements Serializable {
         }
 
         java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+            java.lang.Long key = 0l;
+            try {
+                key = Long.valueOf(value);
+            } catch (Exception e) {
+
+            }
+
             return key;
         }
 

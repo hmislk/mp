@@ -109,6 +109,7 @@ public class BhtSummeryController implements Serializable {
     private List<DepartmentBillItems> departmentBillItems;
     private List<BillFee> profesionallFee;
     private List<Bill> paymentBill;
+    private List<Bill> surgeryBill;
     private List<BillItem> issues;
     List<PatientItem> patientItems;
     private List<ChargeItemTotal> chargeItemTotals;
@@ -349,10 +350,10 @@ public class BhtSummeryController implements Serializable {
         System.err.println("Total " + tot);
         System.err.println("Total 2 " + tot2);
 
-//        if (tot != tot2) {
-//            UtilityController.addErrorMessage("Please Adjust category amount correctly");
-//            return true;
-//        }
+        if ((tot - tot2) > 0.1) {
+            UtilityController.addErrorMessage("Please Adjust category amount correctly");
+            return true;
+        }
         return false;
     }
 
@@ -504,6 +505,7 @@ public class BhtSummeryController implements Serializable {
         createAdditionalChargeBill();
         createProfesionallFee();
         createPaymentBill();
+        createSurgeryBill();
         createChargeItemTotals();
     }
 
@@ -839,8 +841,12 @@ public class BhtSummeryController implements Serializable {
 
         for (Department dep : deptList) {
             DepartmentBillItems table = new DepartmentBillItems();
-            sql = "SELECT  b FROM BillItem b WHERE b.retired=false  and b.bill.billType=:btp and"
-                    + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe and b.bill.toDepartment=:dep ";
+            sql = "SELECT  b FROM BillItem b WHERE b.retired=false"
+                    + "  and b.bill.billType=:btp and"
+                    + " Type(b.item)!=TimedItem  and "
+                    + " b.bill.patientEncounter=:pe and"
+                    + " b.bill.toDepartment=:dep"
+                    + "  order by b.item.name ";
             hm = new HashMap();
             hm.put("btp", BillType.InwardBill);
             hm.put("pe", getPatientEncounter());
@@ -962,6 +968,23 @@ public class BhtSummeryController implements Serializable {
         }
 
         return paymentBill;
+
+    }
+
+    private List<Bill> createSurgeryBill() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT  b FROM Bill b WHERE b.retired=false  and b.billType=:btp "
+                + " and b.patientEncounter=:pe ";
+        hm.put("btp", BillType.SurgeryBill);
+        hm.put("pe", getPatientEncounter());
+        surgeryBill = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+        if (surgeryBill == null) {
+            return new ArrayList<>();
+        }
+
+        return surgeryBill;
 
     }
 
@@ -1458,5 +1481,13 @@ public class BhtSummeryController implements Serializable {
 
     public void setInwardPaymentController(InwardPaymentController inwardPaymentController) {
         this.inwardPaymentController = inwardPaymentController;
+    }
+
+    public List<Bill> getSurgeryBill() {
+        return surgeryBill;
+    }
+
+    public void setSurgeryBill(List<Bill> surgeryBill) {
+        this.surgeryBill = surgeryBill;
     }
 }

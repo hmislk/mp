@@ -35,6 +35,9 @@
                                                 completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
                                     <p:column>
+                                        <h:outputLabel value="#{cat.id}"/>
+                                    </p:column>
+                                    <p:column>
                                         <h:outputLabel value="#{cat.name}"/>
                                     </p:column>
                                     <p:column>
@@ -89,7 +92,9 @@
                                 </p:autoComplete>
                                     
                                 </p:column>
-                                
+                                 <p:column headerText="From Price">
+                                     <h:outputLabel value="#{a.category.id}" />
+                                </p:column>
 
                                 
                                 <p:column headerText="Category Name">

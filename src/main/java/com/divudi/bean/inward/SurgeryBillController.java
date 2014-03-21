@@ -149,7 +149,7 @@ public class SurgeryBillController implements Serializable {
         }
     }
 
-    private void saveBillItem(BillItem billItem,Bill bill) {
+    private void saveBillItem(BillItem billItem, Bill bill) {
         billItem.setBill(bill);
         billItem.setCreatedAt(new Date());
         billItem.setCreater(getSessionController().getLoggedUser());
@@ -219,7 +219,7 @@ public class SurgeryBillController implements Serializable {
         if (getProfessionalBill().getId() == null) {
             saveBill(getProfessionalBill(), BillNumberSuffix.INWPRO);
             bItem = new BillItem();
-            saveBillItem(bItem,getProfessionalBill());
+            saveBillItem(bItem, getProfessionalBill());
         } else {
             getBillFacade().edit(getProfessionalBill());
             bItem = getFirstBillItem(getProfessionalBill());
@@ -242,7 +242,7 @@ public class SurgeryBillController implements Serializable {
         if (getTimedServiceBill().getId() == null) {
             saveBill(getTimedServiceBill(), BillNumberSuffix.TIME);
             bItem = new BillItem();
-            saveBillItem(bItem,getTimedServiceBill());
+            saveBillItem(bItem, getTimedServiceBill());
         } else {
             getBillFacade().edit(getTimedServiceBill());
             bItem = getFirstBillItem(getTimedServiceBill());
@@ -313,11 +313,19 @@ public class SurgeryBillController implements Serializable {
             return;
         }
 
-        saveBatchBill();
-        saveProfessionalBill();
-        saveTimeServiceBill();
+        if (!getProEncounterComponents().isEmpty() || !getTimedEncounterComponents().isEmpty()) {
+            saveBatchBill();
 
-        updateBatchBill();
+            if (!getProEncounterComponents().isEmpty()) {
+                saveProfessionalBill();
+            }
+
+            if (!getTimedEncounterComponents().isEmpty()) {
+                saveTimeServiceBill();
+            }
+
+            updateBatchBill();
+        }
 
         UtilityController.addSuccessMessage("Surgery Detail Successfull Added");
 

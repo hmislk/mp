@@ -372,7 +372,6 @@ public class PharmacyBean {
         return getItemBatchFacade().findDoubleByJpql(sql, m);
     }
 
-    
     public double getStockByPurchaseValue(Item item, Institution ins) {
         Map m = new HashMap<>();
         String sql;
@@ -381,7 +380,7 @@ public class PharmacyBean {
         sql = "Select sum(s.itemBatch.purcahseRate * s.stock) from Stock s where s.itemBatch.item=:i and s.department.institution=:ins";
         return getItemBatchFacade().findDoubleByJpql(sql, m);
     }
-    
+
     public boolean resetStock(PharmaceuticalBillItem ph, Stock stock, double qty, Department department) {
         if (stock.getId() == null) {
             return false;
@@ -731,7 +730,7 @@ public class PharmacyBean {
 
     public void addToStockHistoryInitial(PharmaceuticalBillItem phItem, Stock stock, Department d) {
         if (phItem == null) {
-              System.err.println("H1");
+            System.err.println("H1");
             return;
         }
 

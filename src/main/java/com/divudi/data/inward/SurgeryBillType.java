@@ -8,14 +8,11 @@ package com.divudi.data.inward;
 
 /**
  *
- * @author Buddhika
+ * @author safrin
  */
-public enum PatientEncounterComponentType {
-    Performed_By,
-    Assisted_by,
-    Ananesthesia_by,
-    Item,
-    Category,
-    
+public enum SurgeryBillType {
+    ProfessionalFee,
+    Service,
+    PharmacyItem,
+    TimedService
 }
-

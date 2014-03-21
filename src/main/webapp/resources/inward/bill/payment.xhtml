@@ -14,9 +14,10 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
+        <h:form>
 
 
-        <p:commandButton ajax="false" action="#{inwardPaymentController.makeNull}" actionListener="#{admissionController.makeNull()}" value="New Payment"/>
+        <p:commandButton ajax="false" action="#{inwardPaymentController.makeNull}" value="New Payment"/>
         <p:commandButton value="Print" styleClass="noPrintButton" ajax="false" action="#" >
             <p:printer target="gpBillPreview" ></p:printer>
         </p:commandButton>
@@ -123,6 +124,8 @@
 
             </h:panelGroup>
         </div>
+        
+        </h:form>
 
     </cc:implementation>
 </html>

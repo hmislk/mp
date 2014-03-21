@@ -9,6 +9,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.inward.AdmissionTypeEnum;
 import com.divudi.data.inward.InwardChargeType;
+import com.divudi.data.inward.PatientEncounterComponentType;
 import com.divudi.entity.PaymentScheme;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -27,6 +28,10 @@ public class EnumController implements Serializable {
 
     public InwardChargeType[] getInwardChargeTypes() {
         return InwardChargeType.values();
+    }
+
+    public PatientEncounterComponentType[] getPatientEncounterComponentTypes() {
+        return PatientEncounterComponentType.values();
     }
 
     public BillType[] getCashFlowBillTypes() {

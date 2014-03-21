@@ -10,10 +10,8 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
-import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.InwardCalculation;
@@ -23,12 +21,9 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
-import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.Patient;
 import com.divudi.entity.PatientEncounter;
-import com.divudi.entity.PaymentScheme;
-import com.divudi.entity.Person;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.pharmacy.Amp;
@@ -63,7 +58,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.TabChangeEvent;
 
 /**
  *
@@ -118,34 +112,12 @@ public class PharmacySaleBhtController implements Serializable {
     Stock stock;
     private PatientEncounter patientEncounter;
     int activeIndex;
-
-    private Patient newPatient;
-    private Patient searchedPatient;
-    private YearMonthDay yearMonthDay;
-    private String patientTabId = "tabNewPt";
-    private String strTenderedValue = "";
     boolean billPreview = false;
     /////////////////
     List<Stock> replaceableStocks;
     //List<BillItem> billItems;
     List<Item> itemsWithoutStocks;
     /////////////////////////
-
-    String creditCardRefNo;
-    Institution creditBank;
-    String chequeRefNo;
-    Institution chequeBank;
-    Date chequeDate;
-    String comment;
-    Institution slipBank;
-    Date slipDate;
-    Institution creditCompany;
-    double cashPaid;
-    double netTotal;
-    double balance;
-    Double editingQty;
-    String cashPaidStr;
-    ///////////////////
     private UserStockContainer userStockContainer;
 
     public void makeNull() {
@@ -159,59 +131,9 @@ public class PharmacySaleBhtController implements Serializable {
         qty = null;
         stock = null;
         activeIndex = 0;
-        newPatient = null;
-        searchedPatient = null;
-        yearMonthDay = null;
-        patientTabId = "tabNewPt";
-        strTenderedValue = "";
         billPreview = false;
         replaceableStocks = null;
         itemsWithoutStocks = null;
-        creditCardRefNo = null;
-        creditBank = null;
-        chequeRefNo = null;
-        chequeBank = null;
-        chequeDate = null;
-        comment = null;
-        slipBank = null;
-        slipDate = null;
-        creditCompany = null;
-        cashPaid = 0;
-        netTotal = 0;
-        balance = 0;
-        editingQty = null;
-        cashPaidStr = null;
-    }
-
-    public String getCashPaidStr() {
-        if (cashPaid == 0.0) {
-            cashPaidStr = "";
-        } else {
-            cashPaidStr = String.format("%1$,.2f", cashPaid);
-        }
-        return cashPaidStr;
-    }
-
-    public void setCashPaidStr(String cashPaidStr) {
-        try {
-            setCashPaid(Double.valueOf(cashPaidStr));
-        } catch (Exception e) {
-            setCashPaid(0);
-        }
-        this.cashPaidStr = cashPaidStr;
-    }
-
-    public Double getEditingQty() {
-        return editingQty;
-    }
-
-    public void setEditingQty(Double editingQty) {
-        this.editingQty = editingQty;
-    }
-
-    public void onTabChange(TabChangeEvent event) {
-        setPatientTabId(event.getTab().getId());
-
     }
 
     public double getOldQty(BillItem bItem) {
@@ -282,24 +204,6 @@ public class PharmacySaleBhtController implements Serializable {
 
         calTotal();
 
-    }
-
-    public void editQty(BillItem bi) {
-        if (bi == null) {
-            //System.out.println("No Bill Item to Edit Qty");
-            return;
-        }
-        if (editingQty == null) {
-            //System.out.println("Editing qty is null");
-            return;
-        }
-
-        bi.setQty(editingQty);
-        bi.getPharmaceuticalBillItem().setQtyInUnit((double) (0 - editingQty));
-        calculateBillItemForEditing(bi);
-
-        calTotal();
-        editingQty = null;
     }
 
     public Title[] getTitle() {
@@ -459,67 +363,9 @@ public class PharmacySaleBhtController implements Serializable {
         this.billItem = billItem;
     }
 
-    private boolean errorCheckForPreBill() {
-        if (getPreBill().getBillItems().isEmpty()) {
-            UtilityController.addErrorMessage("No Items added to bill to sale");
-            return true;
-        }
-        return false;
-    }
-
-//    private boolean checkPaymentScheme(PaymentScheme paymentScheme) {
-//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cheque) {
-//            if (getSaleBill().getBank() == null || getSaleBill().getChequeRefNo() == null || getSaleBill().getChequeDate() == null) {
-//                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-//                return true;
-//            }
-//
-//        }
-//
-//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Slip) {
-//            if (getSaleBill().getBank() == null || getSaleBill().getComments() == null || getSaleBill().getChequeDate() == null) {
-//                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
-//                return true;
-//            }
-//
-//        }
-//
-//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Card) {
-//            if (getSaleBill().getBank() == null || getSaleBill().getCreditCardRefNo() == null) {
-//                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
-//                return true;
-//            }
-//
-////            if (getCreditCardRefNo().trim().length() < 16) {
-////                UtilityController.addErrorMessage("Enter 16 Digit");
-////                return true;
-////            }
-//        }
-//
-//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Credit) {
-//            if (getSaleBill().getCreditCompany() == null) {
-//                UtilityController.addErrorMessage("Please Select Credit Company");
-//                return true;
-//            }
-//
-//        }
-//
-//        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cash) {
-//            if (getPreBill().getCashPaid() == 0.0) {
-//                UtilityController.addErrorMessage("Please select tendered amount correctly");
-//                return true;
-//            }
-//            if (getPreBill().getCashPaid() < getPreBill().getNetTotal()) {
-//                UtilityController.addErrorMessage("Please select tendered amount correctly");
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//
-//    }
-    private void savePreBillFinally(Patient pt, Department currentBhtDepartment) {
-        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), BillType.PharmacyBhtPre, BillNumberSuffix.BHTISSUE));
+    private void savePreBillFinally(Patient pt, Department currentBhtDepartment, BillType billType,BillNumberSuffix billNumberSuffix) {
+        getPreBill().setBillType(billType);
+        getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), billType, billNumberSuffix));
 
         getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -530,7 +376,7 @@ public class PharmacySaleBhtController implements Serializable {
         getPreBill().setPatient(pt);
         getPreBill().setPatientEncounter(getPatientEncounter());
 
-        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), BillType.PharmacyBhtPre, BillNumberSuffix.BHTISSUE));
+        getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getDepartment(), getPreBill(), billType, billNumberSuffix));
 
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
@@ -541,8 +387,6 @@ public class PharmacySaleBhtController implements Serializable {
         getPreBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
         getBillFacade().create(getPreBill());
-
-        savePaymentScheme(getPreBill());
 
     }
 
@@ -559,29 +403,11 @@ public class PharmacySaleBhtController implements Serializable {
 
     }
 
-    private void savePaymentScheme(Bill b) {
-        getPreBill().setCreditCompany(creditCompany);
-        if (b.getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Cheque)) {
-            b.setBank(chequeBank);
-            b.setChequeRefNo(chequeRefNo);
-            b.setChequeDate(chequeDate);
-        }
-        if (b.getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Slip)) {
-            b.setBank(slipBank);
-            b.setChequeDate(slipDate);
-            b.setComments(comment);
-        }
-        if (b.getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Card)) {
-            b.setCreditCardRefNo(creditCardRefNo);
-            b.setBank(creditBank);
-        }
-
-        getBillFacade().edit(b);
-    }
-
-    private void saveSaleBill(Patient tmpPatient, Department currentBhtDepartment) {
+    private void saveSaleBill(Patient tmpPatient, Department currentBhtDepartment,BillType billType) {
         calculateAllRates();
 
+        getSaleBill().setBillType(billType);
+        
         getSaleBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getSaleBill().setInstitution(getSessionController().getLoggedUser().getInstitution());
 
@@ -607,14 +433,10 @@ public class PharmacySaleBhtController implements Serializable {
         getSaleBill().setReferenceBill(getPreBill());
         getSaleBill().setCreatedAt(Calendar.getInstance().getTime());
         getSaleBill().setCreater(getSessionController().getLoggedUser());
-        //       getSaleBill().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), null, BillType.PharmacySale));
-//        getSaleBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(
-//                getSessionController().getInstitution(), new BilledBill(), BillType.PharmacySale, BillNumberSuffix.PHSAL));
         getSaleBill().setInsId(getPreBill().getInsId());
         getSaleBill().setDeptId(getPreBill().getDeptId());
         getBillFacade().create(getSaleBill());
 
-        savePaymentScheme(getSaleBill());
         updatePreBill();
     }
 //
@@ -728,8 +550,16 @@ public class PharmacySaleBhtController implements Serializable {
         return false;
 
     }
+    
+    public void settlePharmacyBhtIssue(){
+        settleBhtIssue(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue,BillNumberSuffix.PHISSUE);
+    }
+    
+     public void settleStoreBhtIssue(){
+        settleBhtIssue(BillType.StoreBhtPre, BillType.StoreBhtIssue,BillNumberSuffix.STISSUE);
+    }
 
-    public void settleBhtIssue() {
+    private void settleBhtIssue(BillType pre,BillType issue,BillNumberSuffix billNumberSuffix) {
 
         if (getPatientEncounter() == null || getPatientEncounter().getPatient() == null) {
 
@@ -737,8 +567,6 @@ public class PharmacySaleBhtController implements Serializable {
             return;
 
         }
-
-        editingQty = null;
 
         if (checkAllBillItem()) {
             return;
@@ -757,10 +585,10 @@ public class PharmacySaleBhtController implements Serializable {
         List<BillItem> tmpBillItems = getPreBill().getBillItems();
         getPreBill().setBillItems(null);
 
-        savePreBillFinally(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment());
+        savePreBillFinally(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment(),pre,billNumberSuffix);
         savePreBillItemsFinally(tmpBillItems);
 
-        saveSaleBill(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment());
+        saveSaleBill(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment(),issue);
         saveSaleBillItems();
 
         // Calculation Margin and Create Billfee 
@@ -835,7 +663,6 @@ public class PharmacySaleBhtController implements Serializable {
     }
 
     public void addBillItem() {
-        editingQty = null;
 
         if (billItem == null) {
             return;
@@ -916,7 +743,6 @@ public class PharmacySaleBhtController implements Serializable {
         getPreBill().setTotal(grossTot);
         getPreBill().setGrantTotal(grossTot);
         getPreBill().setDiscount(discount);
-        setNetTotal(getPreBill().getNetTotal());
 
     }
 
@@ -1039,13 +865,6 @@ public class PharmacySaleBhtController implements Serializable {
     private void clearBill() {
         preBill = null;
         saleBill = null;
-        newPatient = null;
-        searchedPatient = null;
-//        billItems = null;
-        patientTabId = "tabNewPt";
-        cashPaid = 0;
-        netTotal = 0;
-        balance = 0;
         userStockContainer = null;
     }
 
@@ -1055,7 +874,6 @@ public class PharmacySaleBhtController implements Serializable {
         editingBillItem = null;
         qty = null;
         stock = null;
-        editingQty = null;
 
     }
 
@@ -1115,44 +933,10 @@ public class PharmacySaleBhtController implements Serializable {
         this.pharmacyBean = pharmacyBean;
     }
 
-    public Patient getNewPatient() {
-        if (newPatient == null) {
-            newPatient = new Patient();
-            Person p = new Person();
-
-            newPatient.setPerson(p);
-        }
-        return newPatient;
-    }
-
-    public void setNewPatient(Patient newPatient) {
-        this.newPatient = newPatient;
-    }
-
-    public Patient getSearchedPatient() {
-        return searchedPatient;
-    }
-
-    public void setSearchedPatient(Patient searchedPatient) {
-        this.searchedPatient = searchedPatient;
-    }
-
-    public YearMonthDay getYearMonthDay() {
-        if (yearMonthDay == null) {
-            yearMonthDay = new YearMonthDay();
-        }
-        return yearMonthDay;
-    }
-
-    public void setYearMonthDay(YearMonthDay yearMonthDay) {
-        this.yearMonthDay = yearMonthDay;
-    }
-
     public PreBill getPreBill() {
         if (preBill == null) {
             preBill = new PreBill();
-            preBill.setBillType(BillType.PharmacyBhtPre);
-            preBill.setPaymentScheme(getPaymentSchemeController().getItems().get(0));
+            // preBill.setPaymentScheme(getPaymentSchemeController().getItems().get(0));
         }
         return preBill;
     }
@@ -1163,22 +947,13 @@ public class PharmacySaleBhtController implements Serializable {
 
     public Bill getSaleBill() {
         if (saleBill == null) {
-            saleBill = new BilledBill();
-            saleBill.setBillType(BillType.PharmacyBhtIssue);
+            saleBill = new BilledBill();         
         }
         return saleBill;
     }
 
     public void setSaleBill(Bill saleBill) {
         this.saleBill = saleBill;
-    }
-
-    public String getPatientTabId() {
-        return patientTabId;
-    }
-
-    public void setPatientTabId(String patientTabId) {
-        this.patientTabId = patientTabId;
     }
 
     public PersonFacade getPersonFacade() {
@@ -1197,14 +972,6 @@ public class PharmacySaleBhtController implements Serializable {
         this.patientFacade = patientFacade;
     }
 
-    public String getStrTenderedValue() {
-        return strTenderedValue;
-    }
-
-    public void setStrTenderedValue(String strTenderedValue) {
-        this.strTenderedValue = strTenderedValue;
-    }
-
     public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
         return pharmaceuticalBillItemFacade;
     }
@@ -1213,110 +980,12 @@ public class PharmacySaleBhtController implements Serializable {
         this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
     }
 
-    public String getCreditCardRefNo() {
-        return creditCardRefNo;
-    }
-
-    public void setCreditCardRefNo(String creditCardRefNo) {
-        this.creditCardRefNo = creditCardRefNo;
-    }
-
-    public Institution getCreditBank() {
-        return creditBank;
-    }
-
-    public void setCreditBank(Institution creditBank) {
-        this.creditBank = creditBank;
-    }
-
-    public String getChequeRefNo() {
-        return chequeRefNo;
-    }
-
-    public void setChequeRefNo(String chequeRefNo) {
-        this.chequeRefNo = chequeRefNo;
-    }
-
-    public Institution getChequeBank() {
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
-    }
-
-    public Institution getCreditCompany() {
-        return creditCompany;
-    }
-
-    public void setCreditCompany(Institution creditCompany) {
-        this.creditCompany = creditCompany;
-    }
-
-    public double getCashPaid() {
-        return cashPaid;
-    }
-
-    public void setCashPaid(double cashPaid) {
-        balance = cashPaid - netTotal;
-        this.cashPaid = cashPaid;
-    }
-
-    public double getNetTotal() {
-        return netTotal;
-    }
-
-    public void setNetTotal(double netTotal) {
-        balance = cashPaid - netTotal;
-        this.netTotal = netTotal;
-    }
-
     public BillNumberBean getBillNumberBean() {
         return billNumberBean;
     }
 
     public void setBillNumberBean(BillNumberBean billNumberBean) {
         this.billNumberBean = billNumberBean;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
     }
 
     public boolean isBillPreview() {

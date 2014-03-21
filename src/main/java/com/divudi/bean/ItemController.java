@@ -113,18 +113,26 @@ public class ItemController implements Serializable {
             suggestions = new ArrayList<>();
         } else {
 
-            sql = "select c from Item c where c.retired=false and (type(c)= :amp or type(c)= :ampp or type(c)= :vmp or type(c)= :vmpp) and (upper(c.name) like '%" + query.toUpperCase() + "%' or upper(c.code) like '%" + query.toUpperCase() + "%' or upper(c.barcode) like '%" + query.toUpperCase() + "%'  ) order by c.name";
+            sql = "select c from Item c where c.retired=false and "
+                    + " ( c.departmentType is null or c.departmentType!=:dep ) "
+                    + "(type(c)= :amp or type(c)= :ampp or type(c)= :vmp or"
+                    + " type(c)= :vmpp) and (upper(c.name) "
+                    + "like :q or upper(c.code) "
+                    + "like :q or upper(c.barcode) like :q  ) order by c.name";
             //System.out.println(sql);
             tmpMap.put("amp", Amp.class);
             tmpMap.put("ampp", Ampp.class);
             tmpMap.put("vmp", Vmp.class);
             tmpMap.put("vmpp", Vmpp.class);
+            tmpMap.put("dep", DepartmentType.Store);
+            tmpMap.put("q", "%" + query.toUpperCase() + "%");
             suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 10);
         }
         return suggestions;
 
     }
 
+   
     public List<Item> completeAmps(String query) {
         List<Item> suggestions;
         String sql;
@@ -132,9 +140,15 @@ public class ItemController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select c from Item c where c.retired=false and type(c)= :amp and (upper(c.name) like '%" + query.toUpperCase() + "%' or upper(c.code) like '%" + query.toUpperCase() + "%' or upper(c.barcode) like '%" + query.toUpperCase() + "%'  ) order by c.name";
+            sql = "select c from Item c where c.retired=false and type(c)= :amp and "
+                    + " ( c.departmentType is null or c.departmentType!=:dep ) "
+                    + "(upper(c.name) like :q  or "
+                    + " upper(c.code) like :q or "
+                    + " upper(c.barcode) like :q ) order by c.name";
             //System.out.println(sql);
             tmpMap.put("amp", Amp.class);
+            tmpMap.put("dep", DepartmentType.Store);
+            tmpMap.put("q", "%" + query.toUpperCase() + "%");
             suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 10);
         }
         return suggestions;
@@ -150,7 +164,8 @@ public class ItemController implements Serializable {
         } else {
 
             sql = "select c from Item c where c.retired=false "
-                    + " and (type(c)= :amp) and ( c.departmentType is null or c.departmentType!=:dep ) "
+                    + " and (type(c)= :amp) and "
+                    + " ( c.departmentType is null or c.departmentType!=:dep ) "
                     + " and (upper(c.name) like :str or upper(c.code) like :str or"
                     + " upper(c.barcode) like :str ) order by c.name";
             //System.out.println(sql);

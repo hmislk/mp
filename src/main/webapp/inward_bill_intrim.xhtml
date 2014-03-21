@@ -454,10 +454,6 @@
                                 <p:dataTable  scrollable="true" scrollHeight="300"
                                               value="#{bhtSummeryController.surgeryBill}" var="pb">
 
-                                    <p:column headerText="Bill No"  >
-                                        <h:outputLabel value="#{pb.insId}" ></h:outputLabel>
-                                    </p:column>
-
                                     <p:column headerText="Bht NoSurgery Name" >
                                         <h:outputLabel value="#{pb.procedure.item.name}" ></h:outputLabel>
                                     </p:column>

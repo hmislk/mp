@@ -199,7 +199,7 @@ public class Bill implements Serializable {
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;
-    
+    @Enumerated(EnumType.STRING)
     private SurgeryBillType surgeryBillType;
 
     public void invertValue(Bill bill) {

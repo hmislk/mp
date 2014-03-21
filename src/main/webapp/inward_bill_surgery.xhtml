@@ -35,7 +35,7 @@
                                                  completeMethod="#{admissionController.completePatient}"
                                                  var="apt2" itemLabel="#{apt2.patient.person.name}"
                                                  itemValue="#{apt2}" size="30"  style="width: 400px;">
-                                    <p:ajax event="itemSelect"  update="patientDetail"/>
+                                    <p:ajax event="itemSelect"  update="patientDetail" listener="#{surgeryBillController.makeNull()}" />
                                     <p:column >
                                         #{apt2.bhtNo} 
                                     </p:column>
@@ -176,7 +176,7 @@
                                                      action="#{surgeryBillController.addTimedService()}">
                                     </h:commandButton>
                                     <h:commandButton value="Add Time Service"  rendered="#{surgeryBillController.batchBill.id ne null}"
-                                                     action="#{surgeryBillController.addProfessionalFeeAfterSaving()}">
+                                                     action="#{surgeryBillController.addTimedServiceFeeAfterSaving()}">
                                     </h:commandButton>
                                 </p:panel>
                             </p:panel>

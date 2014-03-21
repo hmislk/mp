@@ -149,8 +149,8 @@ public class SurgeryBillController implements Serializable {
         }
     }
 
-    private void saveBillItem(BillItem billItem) {
-        billItem.setBill(getProfessionalBill());
+    private void saveBillItem(BillItem billItem,Bill bill) {
+        billItem.setBill(bill);
         billItem.setCreatedAt(new Date());
         billItem.setCreater(getSessionController().getLoggedUser());
 
@@ -158,7 +158,7 @@ public class SurgeryBillController implements Serializable {
 
     }
 
-    private void saveBillFee(BillFee bf,Bill bill) {
+    private void saveBillFee(BillFee bf, Bill bill) {
         if (bf.getId() == null) {
             bf.setBill(bill);
             bf.setCreatedAt(Calendar.getInstance().getTime());
@@ -179,7 +179,7 @@ public class SurgeryBillController implements Serializable {
     private double savePatientItem(PatientItem patientItem) {
         double serviceTot = getInwardCalculation().calTimedServiceCharge(patientItem, patientItem.getToTime());
         patientItem.setServiceValue(serviceTot);
-
+        patientItem.setPatientEncounter(getBatchBill().getPatientEncounter());
         if (patientItem.getId() == null) {
             patientItem.setCreater(getSessionController().getLoggedUser());
             patientItem.setCreatedAt(Calendar.getInstance().getTime());
@@ -219,14 +219,14 @@ public class SurgeryBillController implements Serializable {
         if (getProfessionalBill().getId() == null) {
             saveBill(getProfessionalBill(), BillNumberSuffix.INWPRO);
             bItem = new BillItem();
-            saveBillItem(bItem);
+            saveBillItem(bItem,getProfessionalBill());
         } else {
             getBillFacade().edit(getProfessionalBill());
             bItem = getFirstBillItem(getProfessionalBill());
         }
 
         for (EncounterComponent ec : getProEncounterComponents()) {
-            saveBillFee(ec.getBillFee(),getProfessionalBill());
+            saveBillFee(ec.getBillFee(), getProfessionalBill());
             saveEncounterComponent(bItem, ec);
         }
 
@@ -242,7 +242,7 @@ public class SurgeryBillController implements Serializable {
         if (getTimedServiceBill().getId() == null) {
             saveBill(getTimedServiceBill(), BillNumberSuffix.TIME);
             bItem = new BillItem();
-            saveBillItem(bItem);
+            saveBillItem(bItem,getTimedServiceBill());
         } else {
             getBillFacade().edit(getTimedServiceBill());
             bItem = getFirstBillItem(getTimedServiceBill());
@@ -254,7 +254,7 @@ public class SurgeryBillController implements Serializable {
             //Set Patient Item Service Value to Bill FeeValue
             ec.getBillFee().setFeeValue(netValue);
 
-            saveBillFee(ec.getBillFee(),getTimedServiceBill());
+            saveBillFee(ec.getBillFee(), getTimedServiceBill());
             saveEncounterComponent(bItem, ec);
         }
 
@@ -368,12 +368,14 @@ public class SurgeryBillController implements Serializable {
         this.batchBill = batchBill;
         for (Bill b : getBillsByForwardRef(batchBill)) {
             if (b.getSurgeryBillType() == SurgeryBillType.ProfessionalFee) {
+                System.err.println(SurgeryBillType.ProfessionalFee);
                 setProfessionalBill(b);
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setProEncounterComponents(enc);
             }
 
             if (b.getSurgeryBillType() == SurgeryBillType.TimedService) {
+                System.err.println(SurgeryBillType.TimedService);
                 setTimedServiceBill(b);
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setTimedEncounterComponents(enc);

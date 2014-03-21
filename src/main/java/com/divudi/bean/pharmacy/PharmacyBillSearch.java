@@ -135,7 +135,7 @@ public class PharmacyBillSearch implements Serializable {
             UtilityController.addErrorMessage("Already Credit Company Paid For This Bill. Can not cancel.");
             return true;
         }
-        
+
         return false;
     }
 
@@ -1209,6 +1209,14 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     public void pharmacyRetailCancelBillWithStockBht() {
+        CancelBillWithStockBht(BillNumberSuffix.PHISSCAN);
+    }
+    
+     public void storeRetailCancelBillWithStockBht() {
+        CancelBillWithStockBht(BillNumberSuffix.STTISSUECAN);
+    }
+
+    private void CancelBillWithStockBht(BillNumberSuffix billNumberSuffix) {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {
                 return;
@@ -1218,8 +1226,8 @@ public class PharmacyBillSearch implements Serializable {
 
             CancelledBill cb = pharmacyCreateCancelBill();
 
-            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.SALCAN));
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.SALCAN));
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), billNumberSuffix));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), billNumberSuffix));
 
             getBillFacade().create(cb);
 

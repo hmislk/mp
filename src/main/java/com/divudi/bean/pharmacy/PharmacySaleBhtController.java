@@ -363,7 +363,7 @@ public class PharmacySaleBhtController implements Serializable {
         this.billItem = billItem;
     }
 
-    private void savePreBillFinally(Patient pt, Department currentBhtDepartment, BillType billType,BillNumberSuffix billNumberSuffix) {
+    private void savePreBillFinally(Patient pt, Department currentBhtDepartment, BillType billType, BillNumberSuffix billNumberSuffix) {
         getPreBill().setBillType(billType);
         getPreBill().setInsId(getBillNumberBean().institutionBillNumberGeneratorByPayment(getSessionController().getInstitution(), getPreBill(), billType, billNumberSuffix));
 
@@ -403,11 +403,11 @@ public class PharmacySaleBhtController implements Serializable {
 
     }
 
-    private void saveSaleBill(Patient tmpPatient, Department currentBhtDepartment,BillType billType) {
+    private void saveSaleBill(Patient tmpPatient, Department currentBhtDepartment, BillType billType) {
         calculateAllRates();
 
         getSaleBill().setBillType(billType);
-        
+
         getSaleBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getSaleBill().setInstitution(getSessionController().getLoggedUser().getInstitution());
 
@@ -550,16 +550,16 @@ public class PharmacySaleBhtController implements Serializable {
         return false;
 
     }
-    
-    public void settlePharmacyBhtIssue(){
-        settleBhtIssue(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue,BillNumberSuffix.PHISSUE);
-    }
-    
-     public void settleStoreBhtIssue(){
-        settleBhtIssue(BillType.StoreBhtPre, BillType.StoreBhtIssue,BillNumberSuffix.STISSUE);
+
+    public void settlePharmacyBhtIssue() {
+        settleBhtIssue(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue, BillNumberSuffix.PHISSUE);
     }
 
-    private void settleBhtIssue(BillType pre,BillType issue,BillNumberSuffix billNumberSuffix) {
+    public void settleStoreBhtIssue() {
+        settleBhtIssue(BillType.StoreBhtPre, BillType.StoreBhtIssue, BillNumberSuffix.STISSUE);
+    }
+
+    private void settleBhtIssue(BillType pre, BillType issue, BillNumberSuffix billNumberSuffix) {
 
         if (getPatientEncounter() == null || getPatientEncounter().getPatient() == null) {
 
@@ -585,10 +585,10 @@ public class PharmacySaleBhtController implements Serializable {
         List<BillItem> tmpBillItems = getPreBill().getBillItems();
         getPreBill().setBillItems(null);
 
-        savePreBillFinally(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment(),pre,billNumberSuffix);
+        savePreBillFinally(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment(), pre, billNumberSuffix);
         savePreBillItemsFinally(tmpBillItems);
 
-        saveSaleBill(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment(),issue);
+        saveSaleBill(pt, currentPatientRoom.getRoomFacilityCharge().getDepartment(), issue);
         saveSaleBillItems();
 
         // Calculation Margin and Create Billfee 
@@ -608,6 +608,8 @@ public class PharmacySaleBhtController implements Serializable {
     private InwardCalculation inwardCalculation;
 
     public void updateFee(List<BillItem> billItems) {
+        double total = 0;
+        double netTotal = 0;
         for (BillItem bi : billItems) {
             double value = bi.getNetValue();
             BillFee marginFee, issueFee = null;
@@ -641,7 +643,18 @@ public class PharmacySaleBhtController implements Serializable {
 
             bi.setAdjustedValue(issueFee.getFeeValue() + marginFee.getFeeValue());
             getBillItemFacade().edit(bi);
+
+            total += bi.getNetValue();
+            netTotal += bi.getAdjustedValue();
         }
+
+        getPreBill().setTotal(total);
+        getPreBill().setNetTotal(netTotal);
+        getBillFacade().edit(getPreBill());
+
+        getSaleBill().setTotal(total);
+        getSaleBill().setNetTotal(netTotal);
+        getBillFacade().edit(getSaleBill());
 
     }
 
@@ -947,7 +960,7 @@ public class PharmacySaleBhtController implements Serializable {
 
     public Bill getSaleBill() {
         if (saleBill == null) {
-            saleBill = new BilledBill();         
+            saleBill = new BilledBill();
         }
         return saleBill;
     }

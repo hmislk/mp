@@ -34,19 +34,16 @@
                                                 forceSelection="true"
                                                 completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
-                                    <p:column>
-                                        <h:outputLabel value="#{cat.id}"/>
-                                    </p:column>
-                                    <p:column>
+                                    <p:column headerText="Category">
                                         <h:outputLabel value="#{cat.name}"/>
                                     </p:column>
-                                    <p:column>
+                                    <p:column headerText="Parent Category">
                                         <h:outputLabel value="#{cat.parentCategory.name}"/>
                                     </p:column> 
 
                                 </p:autoComplete>
-                            
-               
+
+
                                 <h:outputLabel value="From" ></h:outputLabel>
                                 <p:inputText value="#{inwardPriceAdjustmntController.fromPrice}" />
                                 <h:outputLabel value="To" ></h:outputLabel>
@@ -56,59 +53,56 @@
                                 <h:outputLabel value="" ></h:outputLabel>
                                 <p:commandButton id="btnAdd" value="Add" ajax="false" action="#{inwardPriceAdjustmntController.saveSelected}" >
                                 </p:commandButton>
-                                
+
                                 <p:defaultCommand target="btnAdd"/>
                             </p:panelGrid>
                             <p:commandButton actionListener="#{commonReport.createMatrxTabl()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="inwd" fileName="Price_metrix_inward"  />
-                             </p:commandButton>
+                            </p:commandButton>
                             <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createItems()}"/>
                             <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >                                         
-                            <p:printer target="reportPrint"/>
+                                <p:printer target="reportPrint"/>
                             </p:commandButton>
-                            
+
                         </p:panel>
 
                         <p:panel header="Price Matrix" >
 
                             <p:dataTable id="inwd" value="#{inwardPriceAdjustmntController.items}" var="a" editable="true" scrollable="true" scrollHeight="500">
-                                
-                                
+
+
                                 <p:column headerText="Institution Name">
                                     <h:inputText value="#{a.institution.name}" />
                                 </p:column>
 
                                 <p:column headerText="Department Name">
 <!--                                    <h:inputText value="#{a.department.name}" />-->
-                                    
+
                                     <p:autoComplete forceSelection="true" value="#{a.department}" completeMethod="#{departmentController.completeDept}" 
-                                                var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
-                                    <p:column>
-                                        <h:inputText value="#{dep.name}"/>
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputLabel value="#{dep.institution.name}"/>
-                                    </p:column>
-                                </p:autoComplete>
-                                    
-                                </p:column>
-                                 <p:column headerText="From Price">
-                                     <h:outputLabel value="#{a.category.id}" />
-                                </p:column>
+                                                    var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
+                                        <p:column>
+                                            <h:outputLabel value="#{dep.name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{dep.institution.name}"/>
+                                        </p:column>
+                                    </p:autoComplete>
 
-                                
+                                </p:column>
+                           
+
                                 <p:column headerText="Category Name">
-                                         <p:autoComplete forceSelection="true" value="#{a.category}" completeMethod="#{categoryController.completeCategoryMatrix}" 
-                                                         converter="categoryConverter"
-                                                var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
-                                    <p:column>
-                                        <h:outputLabel value="#{cat.name}"/>
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputLabel value="#{cat.parentCategory.name}"/>
-                                    </p:column> 
+                                    <p:autoComplete forceSelection="true" value="#{a.category}" completeMethod="#{categoryController.completeCategoryMatrix}" 
+                                                    converter="categoryConverter"
+                                                    var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" >
+                                        <p:column>
+                                            <h:outputLabel value="#{cat.name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{cat.parentCategory.name}"/>
+                                        </p:column> 
 
-                                </p:autoComplete>
+                                    </p:autoComplete>
                                 </p:column>
                                 <p:column headerText="From Price">
                                     <h:inputText value="#{a.fromPrice}" >

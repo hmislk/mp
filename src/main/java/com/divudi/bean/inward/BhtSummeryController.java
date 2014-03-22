@@ -110,7 +110,8 @@ public class BhtSummeryController implements Serializable {
     private List<BillFee> profesionallFee;
     private List<Bill> paymentBill;
     private List<Bill> surgeryBill;
-    private List<BillItem> issues;
+    private List<Bill> pharmacyIssues;
+    List<Bill> storeIssues;
     List<PatientItem> patientItems;
     private List<ChargeItemTotal> chargeItemTotals;
     //////////////////////////
@@ -868,15 +869,15 @@ public class BhtSummeryController implements Serializable {
     public void createIssueTable() {
         String sql;
         HashMap hm;
-        sql = "SELECT  b FROM BillItem b WHERE b.retired=false "
-                + " and b.bill.billType=:btp  "
-                + " and  b.bill.patientEncounter=:pe"
-                + " and type(b.bill)=:class ";
+        sql = "SELECT  b FROM Bill b WHERE b.retired=false "
+                + " and b.billType=:btp  "
+                + " and  b.patientEncounter=:pe"
+                + " and type(b)=:class ";
         hm = new HashMap();
         hm.put("btp", BillType.PharmacyBhtIssue);
         hm.put("class", BilledBill.class);
         hm.put("pe", getPatientEncounter());
-        issues = getBillItemFacade().findBySQL(sql, hm);
+        pharmacyIssues = getBillFacade().findBySQL(sql, hm);
 
     }
 
@@ -1451,14 +1452,6 @@ public class BhtSummeryController implements Serializable {
         this.roomChargeDatas = roomChargeDatas;
     }
 
-    public List<BillItem> getIssues() {
-        return issues;
-    }
-
-    public void setIssues(List<BillItem> issues) {
-        this.issues = issues;
-    }
-
     public InwardMemberShipDiscount getInwardMemberShipDiscount() {
         return inwardMemberShipDiscount;
     }
@@ -1489,5 +1482,21 @@ public class BhtSummeryController implements Serializable {
 
     public void setSurgeryBill(List<Bill> surgeryBill) {
         this.surgeryBill = surgeryBill;
+    }
+
+    public List<Bill> getPharmacyIssues() {
+        return pharmacyIssues;
+    }
+
+    public void setPharmacyIssues(List<Bill> pharmacyIssues) {
+        this.pharmacyIssues = pharmacyIssues;
+    }
+
+    public List<Bill> getStoreIssues() {
+        return storeIssues;
+    }
+
+    public void setStoreIssues(List<Bill> storeIssues) {
+        this.storeIssues = storeIssues;
     }
 }

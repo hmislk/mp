@@ -76,7 +76,7 @@
 
                     <tr>
                         <td style="width: 15% ;text-align: left;" >
-                            <h:outputLabel value="Inv.No" ></h:outputLabel>
+                            <h:outputLabel value="Issue No" ></h:outputLabel>
                         </td>
                         <td>:</td>
                         <td style="width: 30%;" >
@@ -103,11 +103,11 @@
                     <h:panelGroup rendered="#{cc.attrs.bill.patient ne null}" >
                         <tr>
                             <td style="width: 15% ;text-align: left;" >
-                                <h:outputLabel value="Name" ></h:outputLabel>
+                                <h:outputLabel value="BHT" ></h:outputLabel>
                             </td>
                             <td>:</td>
                             <td style="width: 30%;" >
-                                <h:outputLabel value="#{cc.attrs.bill.patient.person.nameWithTitle}"  >
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.bhtNo}"  >
                                 </h:outputLabel>
                             </td>
                             <td style="width: 10%" >
@@ -142,13 +142,7 @@
                             <h:outputLabel value="QTY"  styleClass="itemHeadings" ></h:outputLabel>
                         </td>
 
-                        <td  style="width:25%;text-align: right; padding-right: 30px;">
-                            <h:outputLabel value="RATE"  styleClass="itemHeadings" ></h:outputLabel>
-                        </td>
-
-                        <td  style="width:30%;text-align: right; padding-right: 30px;">
-                            <h:outputLabel value="VALUE"  styleClass="itemHeadings" ></h:outputLabel>
-                        </td>
+                      
                     </tr>
 
                     <tr>
@@ -157,7 +151,7 @@
                         </td>
                     </tr>
 
-                    <ui:repeat value="#{cc.attrs.bill.transBillItems}" var="bip"   >
+                    <ui:repeat value="#{cc.attrs.bill.billItems}" var="bip"   >
 
                         <tr>
                             <td colspan="4" style="overflow: visible;">
@@ -165,7 +159,7 @@
                                 </h:outputLabel>
                                 -
                                 &nbsp;
-                                <h:outputLabel value="#{bip.searialNo} - #{bip.item.name}"  styleClass="itemsBlock" style="text-transform: capitalize!important;"  >
+                                <h:outputLabel value="#{bip.searialNo+1} - #{bip.item.name}"  styleClass="itemsBlock" style="text-transform: capitalize!important;"  >
                                 </h:outputLabel>
                                 
                                 
@@ -180,17 +174,7 @@
                                     <f:convertNumber integerOnly="true" />
                                 </h:outputLabel>
                             </td>
-                            <td  styleClass="itemsBlockRight"  style="text-align: right; padding-right: 30px;" >
-                                <h:outputLabel    value="#{bip.rate}"     >
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </h:outputLabel>
-                            </td>
-                            <td  styleClass="itemsBlockRight" style="text-align: right; padding-right: 30px;" >
-                                <h:outputLabel    value="#{bip.grossValue}"    >
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </h:outputLabel>
-                            </td>
-
+                          
                         </tr>
 
 
@@ -226,27 +210,7 @@
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputLabel>
                         </td>
-                    </tr>
-                    <tr>
-                        <td  class="totalsBlock" style="text-align: left;">
-                            <h:outputLabel  rendered="#{cc.attrs.bill.discount ne 0.0}" value="Discount (#{cc.attrs.bill.paymentScheme.discountPercentForPharmacy} %)" style="font-weight: bolder!important;"/>
-                        </td>
-                        <td  class="totalsBlock" style="text-align: right!important; ; padding-right: 30px;">
-                            <h:outputLabel rendered="#{cc.attrs.bill.discount ne 0.0}"   value="#{-cc.attrs.bill.discount}" style="font-weight: bolder!important;" >
-                                <f:convertNumber pattern="#,##0.00" />
-                            </h:outputLabel>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  class="totalsBlock" style="text-align: left;">
-                            <h:outputLabel  rendered="#{cc.attrs.bill.discount ne 0.0}"    value="Net Total" />
-                        </td>
-                        <td  class="totalsBlock" style="text-align: right!important;font-weight: bold; ; padding-right: 30px; ">
-                            <h:outputLabel  rendered="#{cc.attrs.bill.discount ne 0.0}"    value="#{cc.attrs.bill.netTotal}">
-                                <f:convertNumber pattern="#,##0.00" />
-                            </h:outputLabel>
-                        </td>
-                    </tr>
+                    </tr>                   
                     <tr>
                         <td  class="totalsBlock" style="text-align: left;">
                             <h:outputLabel   value="Number of Items Count" />
@@ -264,15 +228,7 @@
             </div>
 
 
-            <div class="footer">
-                <br/>
-                THANK YOU. PLEASE COME AGAIN<br/>
-                Returns Accepted only within 3 days<br/>
-                Software by www.lakmedi.com - 0776285007<br/>
-            </div>
-
-
-
+          
         </div>
     </cc:implementation>
 </html>

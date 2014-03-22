@@ -19,8 +19,7 @@
                         <p:panel header="Item Distributor">
 
                             <h:outputLabel value="Search"/>
-                            <p:autoComplete converter="deal"  id="lstSelect"   
-                                            value="#{itemsDistributorsController.currentInstituion}" 
+                            <p:autoComplete converter="deal"  id="lstSelect"   value="#{itemsDistributorsController.currentInstituion}" 
                                             forceSelection="true"
                                             style="min-width: 223px" completeMethod="#{dealerController.completeDealor}"   
                                             var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >

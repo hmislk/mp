@@ -115,7 +115,7 @@ public class AmpController implements Serializable {
         m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and (c.departmentType is null or c.departmentType!=dep )and "
+                    + " c.retired=false and (c.departmentType is null or c.departmentType!=:dep )and "
                     + "(upper(c.name) like :n ) order by c.name", m, 30);
             //System.out.println("a size is " + a.size());
         }
@@ -132,7 +132,7 @@ public class AmpController implements Serializable {
         m.put("dep", DepartmentType.Store);
         if (qry != null) {
             a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and (c.departmentType is null or c.departmentType!=dep) and "
+                    + " c.retired=false and (c.departmentType is null or c.departmentType!=:dep) and "
                     + "(upper(c.code) like :n ) order by c.code", m, 30);
             //System.out.println("a size is " + a.size());
         }
@@ -147,10 +147,15 @@ public class AmpController implements Serializable {
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
         m.put("dep", DepartmentType.Store);
+        String sql="select c from Amp c where "
+                    + " c.retired=false and c.departmentType!=:dep and "
+                    + "(upper(c.barcode) like :n ) order by c.barcode";
+        System.out.println("sql = " + sql);
+        System.out.println("m = " + m);
+        
         if (qry != null) {
-            a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and c.departmentType!=dep and "
-                    + "(upper(c.barcode) like :n ) order by c.barcode", m, 30);
+            a = getFacade().findBySQL(sql, m, 30);
+            System.out.println("a = " + a);
             //System.out.println("a size is " + a.size());
         }
         if (a == null) {

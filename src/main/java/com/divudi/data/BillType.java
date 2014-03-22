@@ -31,6 +31,8 @@ public enum BillType {
     PharmacyIssue,
     PharmacyBhtIssue,
     PharmacyBhtPre,
+    StoreBhtIssue,
+    StoreBhtPre,
     PharmacyPre,
     PharmacyOrder,
     PharmacyOrderApprove,

@@ -216,10 +216,18 @@ public class SearchController implements Serializable {
     }
 
     public void createPharmacyTableBht() {
+        createTableBht(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue);
+    }
+
+    public void createStoreTableBht() {
+        createTableBht(BillType.StoreBhtPre, BillType.StoreBhtIssue);
+    }
+
+    public void createTableBht(BillType pre, BillType issue) {
 
         Map m = new HashMap();
-        m.put("bt", BillType.PharmacyBhtPre);
-        m.put("rBt", BillType.PharmacyBhtIssue);
+        m.put("bt", pre);
+        m.put("rBt", issue);
         m.put("class", PreBill.class);
         m.put("rClass", BilledBill.class);
         m.put("fd", getFromDate());
@@ -549,13 +557,21 @@ public class SearchController implements Serializable {
     }
 
     public void createPharmacyBillItemTableBht() {
+        createBillItemTableBht(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue);
+    }
+    
+     public void createStoreBillItemTableBht() {
+        createBillItemTableBht(BillType.StoreBhtPre, BillType.StoreBhtIssue);
+    }
+
+    public void createBillItemTableBht(BillType pre, BillType issue) {
         //  searchBillItems = null;
         String sql;
         Map m = new HashMap();
         m.put("toDate", toDate);
         m.put("fromDate", fromDate);
-        m.put("bType", BillType.PharmacyBhtPre);
-        m.put("rBType", BillType.PharmacyBhtIssue);
+        m.put("bType", pre);
+        m.put("rBType", issue);
         m.put("ins", getSessionController().getInstitution());
         m.put("class", PreBill.class);
         m.put("rClass", BilledBill.class);
@@ -1810,32 +1826,32 @@ public class SearchController implements Serializable {
                 + " b.createdAt between :fromDate and :toDate "
                 + " and b.retired=false  ";
 
-        if (getSearchKeyword().getPatientName() != null && 
-                !getSearchKeyword().getPatientName().trim().equals("")) {
+        if (getSearchKeyword().getPatientName() != null
+                && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
             temMap.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getPatientPhone() != null &&
-                !getSearchKeyword().getPatientPhone().trim().equals("")) {
+        if (getSearchKeyword().getPatientPhone() != null
+                && !getSearchKeyword().getPatientPhone().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.phone) like :patientPhone )";
             temMap.put("patientPhone", "%" + getSearchKeyword().getPatientPhone().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getBhtNo() != null && 
-                !getSearchKeyword().getBhtNo().trim().equals("")) {
+        if (getSearchKeyword().getBhtNo() != null
+                && !getSearchKeyword().getBhtNo().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.bhtNo) like :bht )";
             temMap.put("bht", "%" + getSearchKeyword().getBhtNo().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getBillNo() != null && 
-                !getSearchKeyword().getBillNo().trim().equals("")) {
+        if (getSearchKeyword().getBillNo() != null
+                && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
             temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getTotal() != null && 
-                !getSearchKeyword().getTotal().trim().equals("")) {
+        if (getSearchKeyword().getTotal() != null
+                && !getSearchKeyword().getTotal().trim().equals("")) {
             sql += " and  (upper(b.total) like :total )";
             temMap.put("total", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
         }
@@ -1850,7 +1866,6 @@ public class SearchController implements Serializable {
 
     }
 
-    
     public void createInwardPaymentBillsDischarged() {
 
         String sql;
@@ -2229,7 +2244,5 @@ public class SearchController implements Serializable {
     public void setPatientInvestigationsSigle(List<PatientInvestigation> patientInvestigationsSigle) {
         this.patientInvestigationsSigle = patientInvestigationsSigle;
     }
-
-   
 
 }

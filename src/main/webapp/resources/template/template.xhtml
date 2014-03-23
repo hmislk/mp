@@ -123,6 +123,10 @@
                                                          value="Search Issue Bill" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>                                        
                                             <p:menuitem  ajax="false" action="pharmacy_search_sale_bill_item_bht" actionListener="#{searchController.makeListNull}"   
                                                          value="Search Sale Bill Items" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>                                        
+                                            <p:menuitem ajax="false" action="pharmacy_search_return_bill_bht" actionListener="#{searchController.makeListNull}" 
+                                                        value="Search Return Bill" 
+                                                        rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>
+                                            
                                         </p:submenu>
                                         <p:submenu label="Return" rendered="#{webUserController.hasPrivilege('PharmacySale')}">
                                             <p:menuitem  ajax="false" action="pharmacy_search_pre_bill_for_return_item_only" actionListener="#{searchController.makeListNull}"   value="Return Item Only" rendered="#{webUserController.hasPrivilege('PharmacySale')}"></p:menuitem>                                                                                    

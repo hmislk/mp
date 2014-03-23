@@ -1280,6 +1280,11 @@ public class PharmacyBillSearch implements Serializable {
                 return;
             }
 
+            if (getBill().checkActiveReturnCashBill()) {
+                UtilityController.addErrorMessage("Payment for this bill Already Paid");
+                return;
+            }
+
             RefundBill cb = pharmacyCreateRefundCancelBill();
             cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.RETCAN));
             cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.RETCAN));
@@ -1323,8 +1328,6 @@ public class PharmacyBillSearch implements Serializable {
 
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
-            getBill().getReferenceBill().setReferenceBill(null);
-            getBillFacade().edit(getBill().getReferenceBill());
             getBillFacade().edit(getBill());
 
             UtilityController.addSuccessMessage("Cancelled");

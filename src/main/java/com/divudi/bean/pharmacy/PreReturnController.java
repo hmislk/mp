@@ -188,6 +188,9 @@ public class PreReturnController implements Serializable {
 
         getBillFacade().edit(getReturnBill());
 
+        getBill().getReturnPreBills().add(getReturnBill());
+        getBillFacade().edit(getBill());
+
         /// setOnlyReturnValue();
         printPreview = true;
         UtilityController.addSuccessMessage("Successfully Returned");

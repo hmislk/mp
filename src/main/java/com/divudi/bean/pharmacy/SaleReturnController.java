@@ -125,6 +125,8 @@ public class SaleReturnController implements Serializable {
 
         getReturnBill().setBillType(BillType.PharmacyPre);
 
+        getReturnBill().setBilledBill(getBill());
+
         getReturnBill().setTotal(0 - getReturnBill().getTotal());
         getReturnBill().setNetTotal(getReturnBill().getTotal());
 
@@ -179,7 +181,7 @@ public class SaleReturnController implements Serializable {
 
     private void savePreComponent() {
         for (BillItem i : getBillItems()) {
-            i.getPharmaceuticalBillItem().setQty((double)(double)i.getQty());
+            i.getPharmaceuticalBillItem().setQty((double) (double) i.getQty());
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
             }
@@ -264,9 +266,13 @@ public class SaleReturnController implements Serializable {
         savePreReturnBill();
         savePreComponent();
 
+        getBill().getReturnPreBills().add(getReturnBill());
+        getBillFacade().edit(getBill());
+
         Bill b = saveSaleReturnBill();
         saveSaleComponent(b);
 
+        getReturnBill().getReturnCashBills().add(b);
         getBillFacade().edit(getReturnBill());
 
         printPreview = true;
@@ -308,8 +314,7 @@ public class SaleReturnController implements Serializable {
             //System.err.println("Refund " + rFund);
 //                //System.err.println("Cancelled "+rCacnelled);
 //                //System.err.println("Net "+(rBilled-rCacnelled));
-
-            tmp.setQtyInUnit((double)(Math.abs(i.getQty()) - Math.abs(rFund)));
+            tmp.setQtyInUnit((double) (Math.abs(i.getQty()) - Math.abs(rFund)));
 
             bi.setPharmaceuticalBillItem(tmp);
 

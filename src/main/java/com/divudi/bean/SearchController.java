@@ -94,7 +94,8 @@ public class SearchController implements Serializable {
         Map temMap = new HashMap();
 
         sql = "select b from RefundBill b where b.billType = :billType "
-                + " and b.institution=:ins and b.cancelled=false "
+                + " and b.institution=:ins and "
+                + " (b.billedBill is null  or type(b.billedBill)=:billedClass ) "
                 + " and b.createdAt between :fromDate and :toDate"
                 + " and b.retired=false and b.deptId is not null ";
 
@@ -125,6 +126,7 @@ public class SearchController implements Serializable {
 
         sql += " order by b.createdAt desc  ";
 //    
+        temMap.put("billedClass", PreBill.class);
         temMap.put("billType", BillType.PharmacyPre);
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
@@ -139,13 +141,17 @@ public class SearchController implements Serializable {
 
         Map m = new HashMap();
         m.put("bt", BillType.PharmacyPre);
+        m.put("billedClass", PreBill.class);
         m.put("fd", getFromDate());
         m.put("td", getToDate());
         m.put("ins", getSessionController().getInstitution());
         String sql;
 
-        sql = "Select b from RefundBill b where  b.retired=false and b.institution=:ins and"
-                + " b.createdAt between :fd and :td and b.billType=:bt ";
+        sql = "Select b from RefundBill b where  b.retired=false "
+                + " and b.institution=:ins and "
+                + " (b.billedBill is null  or type(b.billedBill)=:billedClass ) "
+                + " and b.createdAt between :fd and :td"
+                + " and b.billType=:bt ";
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.deptId) like :billNo )";
@@ -1134,7 +1140,8 @@ public class SearchController implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select b from PreBill b where b.billType = :billType and b.institution=:ins and"
+        sql = "select b from PreBill b where b.billType = :billType and "
+                + " b.institution=:ins and (b.billedBill is null) and "
                 + " b.referenceBill.billType=:refBillType "
                 + " and b.createdAt between :fromDate and :toDate and b.retired=false ";
 
@@ -1176,9 +1183,19 @@ public class SearchController implements Serializable {
 
     public void addToStock() {
         for (Bill b : getSelectedBills()) {
-            getPharmacyBean().reAddToStock(b, getSessionController().getLoggedUser(), getSessionController().getDepartment(), BillNumberSuffix.PRECAN);
+            if (b.checkActiveCashPreBill()) {
+                continue;
+            }
 
+            Bill prebill = getPharmacyBean().reAddToStock(b, getSessionController().getLoggedUser(),
+                    getSessionController().getDepartment(), BillNumberSuffix.PRECAN);
+
+            b.setCancelled(true);
+            b.setCancelledBill(prebill);
+            getBillFacade().edit(b);
         }
+
+        createPreBillsNotPaid();
 
     }
 
@@ -1188,7 +1205,7 @@ public class SearchController implements Serializable {
         Map temMap = new HashMap();
 
         sql = "select b from PreBill b where b.billType = :billType "
-                + " and b.institution=:ins "
+                + " and b.institution=:ins and b.billedBill is null "
                 + " and b.createdAt between :fromDate and :toDate"
                 + " and b.retired=false and b.deptId is not null ";
 

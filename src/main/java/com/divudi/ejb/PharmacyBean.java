@@ -216,7 +216,7 @@ public class PharmacyBean {
 
     public Bill reAddToStock(Bill bill, WebUser user, Department department, BillNumberSuffix billNumberSuffix) {
 
-        if (!bill.getBillItems().isEmpty()) {
+        if (bill.getBillItems().isEmpty() || bill.isCancelled()) {
             return null;
         }
 

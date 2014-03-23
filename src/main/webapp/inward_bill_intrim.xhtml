@@ -40,21 +40,29 @@
                                     <h:outputLabel value="Discharged"  rendered="#{myItem.discharged}"/>
                                 </p:column>
                             </p:autoComplete>   
-                            <h:panelGrid id="panSearch2" columns="2" >
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Name:" />
+                            <h:panelGrid id="panSearch2" columns="2">
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Name : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Sex" />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Age : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.age}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="DOB"  />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Address : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.address}"   />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Admitted : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.createdAt}"   >
+                                    <f:convertDateTime pattern="dd MMMM yyyy hh:mm a" />    
+                                </h:outputLabel>
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Payment Methord : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.paymentMethod}"  /> 
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="DOB : "  />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.dob}"   >
                                     <f:convertDateTime pattern="dd/MM/yy" />
                                 </h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Adress" />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Address : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Date of Admission"  />
+<!--                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Date of Admission"  />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.dateOfAdmission}"   >
-                                    <f:convertDateTime pattern="dd/MM/yy" />
-                                </h:outputLabel>
+                                    <f:convertDateTime pattern="dd/MM/yy " />
+                                </h:outputLabel>-->
                             </h:panelGrid>
                         </p:panel>
 

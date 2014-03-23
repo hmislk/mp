@@ -187,7 +187,8 @@
                             </p:panel>
 
                         </h:panelGrid>
-                    </p:panel>
+                    </p:panel>                    
+
 
                     <p:panel>
                         <f:facet name="header">
@@ -325,12 +326,12 @@
                                     </p:autoComplete>
                                     <p:commandButton ajax="false" value="Add Service"  
                                                      rendered="#{surgeryBillController.serviceBill.id eq null}"
-                                                     action="#{surgeryBillController.addService()}">
-                                    </p:commandButton>
+                                                     action="#{surgeryBillController.addService()}"/>
+
                                     <p:commandButton ajax="false" value="Add Service"  
                                                      rendered="#{surgeryBillController.serviceBill.id ne null}"
-                                                     action="#{surgeryBillController.addProfessionalFeeAfterSaving()}">
-                                    </p:commandButton>
+                                                     action="#{surgeryBillController.addProfessionalFeeAfterSaving()}"/>
+
                                 </p:panelGrid>
                             </p:panel>
                             <p:panel>
@@ -439,6 +440,85 @@
                                 </p:tabView>
                             </p:panel>
 
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:panel>
+                        <f:facet name="header">
+                            <h:outputLabel value="Pharmacy Item Issue"/>
+                            <h:panelGroup rendered="#{surgeryBillController.pharmacyItemBill.id ne null}">
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Bill No  : "/>
+                                    <h:outputLabel value="#{surgeryBillController.pharmacyItemBill.deptId}"/>
+                                    <h:outputLabel value="Bill Total  : "/>
+                                    <h:outputLabel value="#{surgeryBillController.pharmacyItemBill.netTotal}"/>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:panelGrid columns="2">
+                            <p:panel>
+                                <h:panelGrid columns="6" >
+                                    <h:panelGrid columns="1" >
+                                        <p:outputLabel value="Medicines/Devices" />
+                                        <p:autoComplete  forceSelection="true" 
+                                                         value="#{surgeryBillController.pharmacyItemEncounterComponent.billItem.pharmaceuticalBillItem.stock}" 
+                                                         converter="stockCon" 
+                                                         completeMethod="#{pharmacySaleBhtController.completeAvailableStocks}" 
+                                                         var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
+                                                         style="width: 50px!important;">
+                                            <p:column headerText="Item">
+                                                <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Code">
+                                                <h:outputLabel value="#{i.itemBatch.item.code}" ></h:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Stocks">
+                                                <h:outputLabel value="#{i.stock}" >
+                                                    <f:convertNumber pattern="#,###" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Expiary">
+                                                <h:outputLabel value="#{i.itemBatch.dateOfExpire}" >
+                                                    <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
+                                                </h:outputLabel>
+                                            </p:column>                                     
+                                        </p:autoComplete>
+
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="1" >
+                                        <p:outputLabel value="Quentity" ></p:outputLabel>
+                                        <p:inputText  autocomplete="off"
+                                                      value="#{surgeryBillController.pharmacyItemEncounterComponent.billItem.qty}" style="width: 50px!important;"   >                                      
+                                        </p:inputText>
+                                    </h:panelGrid>
+
+                                    <p:commandButton ajax="false" value="Add Pharmacy Item"  
+                                                     rendered="#{surgeryBillController.pharmacyItemBill.id eq null}"
+                                                     action="#{surgeryBillController.addPharmacyBillItem()}"/>
+
+                                    <p:commandButton ajax="false" value="Add Pharmacy Item"  
+                                                     rendered="#{surgeryBillController.pharmacyItemBill.id ne null}"
+                                                     action="#{surgeryBillController.addPharmacyBillItemAfterSaving()}"/>
+
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel>
+                                <p:dataTable value="#{surgeryBillController.pharmacyItemEncounterComponents}"  var="ph" >
+                                    <p:column>
+                                        <h:outputLabel value="#{ph.billItem.item.name}"></h:outputLabel>
+                                    </p:column>                               
+                                    <p:column>
+                                        <h:outputLabel value="#{ph.billItem.qty}" />
+                                    </p:column>
+
+                                    <p:column headerText="Remove">
+                                        <p:commandButton ajax="false" value="Remove"  
+                                                         rendered="#{ph.billItem.id eq null}"
+                                                         action="#{surgeryBillController.removePharmacyEncFromList(ph)}"/>
+
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
                         </h:panelGrid>
                     </p:panel>
 

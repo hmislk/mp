@@ -5,6 +5,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
@@ -216,28 +217,26 @@ public class SearchController implements Serializable {
     }
 
     public void createPharmacyTableBht() {
-        createTableBht(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue);
+        createTableBht(BillType.PharmacyBhtPre);
     }
 
     public void createStoreTableBht() {
-        createTableBht(BillType.StoreBhtPre, BillType.StoreBhtIssue);
+        createTableBht(BillType.StoreBhtPre);
     }
 
-    public void createTableBht(BillType pre, BillType issue) {
+    public void createTableBht(BillType btp) {
 
         Map m = new HashMap();
-        m.put("bt", pre);
-        m.put("rBt", issue);
+        m.put("bt", btp);
         m.put("class", PreBill.class);
-        m.put("rClass", BilledBill.class);
         m.put("fd", getFromDate());
         m.put("td", getToDate());
         m.put("ins", getSessionController().getInstitution());
         String sql;
 
         sql = "Select b from Bill b where b.retired=false and b.createdAt  "
-                + " between :fd and :td and b.billType=:bt and b.institution=:ins and"
-                + " b.referenceBill.billType=:rBt and type(b)=:class and type(b.referenceBill)=:rClass ";
+                + " between :fd and :td and b.billType=:bt and b.institution=:ins "
+                + " and type(b)=:class ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patient.person.name) like :patientName )";
@@ -557,31 +556,28 @@ public class SearchController implements Serializable {
     }
 
     public void createPharmacyBillItemTableBht() {
-        createBillItemTableBht(BillType.PharmacyBhtPre, BillType.PharmacyBhtIssue);
-    }
-    
-     public void createStoreBillItemTableBht() {
-        createBillItemTableBht(BillType.StoreBhtPre, BillType.StoreBhtIssue);
+        createBillItemTableBht(BillType.PharmacyBhtPre);
     }
 
-    public void createBillItemTableBht(BillType pre, BillType issue) {
+    public void createStoreBillItemTableBht() {
+        createBillItemTableBht(BillType.StoreBhtPre);
+    }
+
+    public void createBillItemTableBht(BillType btp) {
         //  searchBillItems = null;
         String sql;
         Map m = new HashMap();
         m.put("toDate", toDate);
         m.put("fromDate", fromDate);
-        m.put("bType", pre);
-        m.put("rBType", issue);
+        m.put("bType", btp);
         m.put("ins", getSessionController().getInstitution());
         m.put("class", PreBill.class);
-        m.put("rClass", BilledBill.class);
 
         sql = "select bi from BillItem bi"
-                + " where  type(bi.bill)=:class and type(bi.bill.referenceBill)=:rClass"
+                + " where  type(bi.bill)=:class "
                 + " and bi.bill.institution=:ins"
                 + " and bi.bill.billType=:bType and "
-                + " bi.bill.referenceBill.billType=:rBType "
-                + " and bi.createdAt between :fromDate and :toDate ";
+                + " bi.createdAt between :fromDate and :toDate ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(bi.bill.patient.person.name) like :patientName )";
@@ -1180,10 +1176,8 @@ public class SearchController implements Serializable {
 
     public void addToStock() {
         for (Bill b : getSelectedBills()) {
-            String msg = getPharmacyBean().reAddToStock(b, getSessionController().getLoggedUser(), getSessionController().getDepartment());
-            if (!msg.isEmpty()) {
-                UtilityController.addErrorMessage(msg);
-            }
+            getPharmacyBean().reAddToStock(b, getSessionController().getLoggedUser(), getSessionController().getDepartment(), BillNumberSuffix.PRECAN);
+
         }
 
     }

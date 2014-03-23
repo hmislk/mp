@@ -61,7 +61,7 @@
                                     <p:autoComplete converter="ampCon"  id="lstSelect3"   size="10" 
                                                     forceSelection="true"
                                                     value="#{ampController.current}" style="min-width: 223px" 
-                                                    completeMethod="#{ampController.completeAmpByBarCode(qry)}" 
+                                                    completeMethod="#{ampController.completeAmpByBarCode}" 
                                                     var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.barcode}" >
                                         <p:column headerText="Item">
                                             <h:outputLabel value="#{myItem.name}" ></h:outputLabel>

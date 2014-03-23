@@ -1174,13 +1174,34 @@ public class PharmacyBillSearch implements Serializable {
         }
     }
 
+    private boolean checkDepartment(Bill bill) {
+        if (bill.getDepartment().getId() != getSessionController().getDepartment().getId()) {
+            UtilityController.addErrorMessage("Billed Department Is Defferent than Logged Department");
+            return true;
+        }
+
+        return false;
+    }
+
     public void pharmacyRetailCancelBillWithStock() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {
                 return;
             }
 
-            getPharmacyBean().reAddToStock(getBill().getReferenceBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
+            if (getBill().getReferenceBill() == null) {
+                return;
+            }
+
+            if (getBill().getReferenceBill().getBillType() != BillType.PharmacyPre) {
+                return;
+            }
+
+            if (checkDepartment(getBill().getReferenceBill())) {
+                return;
+            }
+
+            getPharmacyBean().reAddToStock(getBill().getReferenceBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment(), BillNumberSuffix.PRECAN);
 
             CancelledBill cb = pharmacyCreateCancelBill();
 
@@ -1209,10 +1230,18 @@ public class PharmacyBillSearch implements Serializable {
     }
 
     public void pharmacyRetailCancelBillWithStockBht() {
+        if (getBill().getBillType() != BillType.PharmacyBhtPre) {
+            return;
+        }
+
         CancelBillWithStockBht(BillNumberSuffix.PHISSCAN);
     }
-    
-     public void storeRetailCancelBillWithStockBht() {
+
+    public void storeRetailCancelBillWithStockBht() {
+        if (getBill().getBillType() != BillType.StoreBhtPre) {
+            return;
+        }
+
         CancelBillWithStockBht(BillNumberSuffix.STTISSUECAN);
     }
 
@@ -1222,16 +1251,11 @@ public class PharmacyBillSearch implements Serializable {
                 return;
             }
 
-            getPharmacyBean().reAddToStock(getBill().getReferenceBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment());
+            if (checkDepartment(getBill())) {
+                return;
+            }
 
-            CancelledBill cb = pharmacyCreateCancelBill();
-
-            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), billNumberSuffix));
-            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), billNumberSuffix));
-
-            getBillFacade().create(cb);
-
-            pharmacyCancelBillItems(cb);
+            Bill cb = getPharmacyBean().reAddToStock(getBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment(), billNumberSuffix);
 
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);

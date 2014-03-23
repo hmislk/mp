@@ -39,6 +39,7 @@ public enum BillNumberSuffix {
     PHSAL,//Before Error Sale
     SALE,//After Error
     SALCAN,//Pharmacy Sale Cancel
+    PRECAN,//Pre Cancel
     @Deprecated
     BHTISSUE,//Bht Issue
     @Deprecated

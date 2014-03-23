@@ -23,6 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
@@ -127,6 +128,8 @@ public class Bill implements Serializable {
     Bill refundedBill;
     @ManyToOne
     Bill reactivatedBill;
+  
+   
     @ManyToOne
     Bill referenceBill;
     //Id's

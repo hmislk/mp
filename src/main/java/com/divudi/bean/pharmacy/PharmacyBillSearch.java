@@ -1312,6 +1312,28 @@ public class PharmacyBillSearch implements Serializable {
         }
     }
 
+    public void pharmacyReturnBhtCancel() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+           
+            RefundBill cb = pharmacyCreateRefundCancelBill();
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), BillNumberSuffix.RETCAN));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), BillNumberSuffix.RETCAN));
+            getBillFacade().create(cb);
+
+            pharmacyCancelReturnBillItemsWithReducingStock(cb);
+
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit(getBill());
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+    }
+
     public void pharmacyReturnCashCancel() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (pharmacyErrorCheck()) {

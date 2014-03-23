@@ -39,6 +39,12 @@ public class Bill implements Serializable {
     private List<Bill> forwardReferenceBills;
     @OneToMany(mappedBy = "forwardReferenceBill", fetch = FetchType.LAZY)
     private List<Bill> backwardReferenceBills;
+    @OneToMany(mappedBy = "billedBill", fetch = FetchType.LAZY)
+    private List<Bill> returnPreBills = new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBill", fetch = FetchType.LAZY)
+    private List<Bill> returnCashBills = new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBill", fetch = FetchType.LAZY)
+    private List<Bill> cashBillsPre = new ArrayList<>();
 
     @ManyToOne
     BatchBill batchBill;
@@ -120,7 +126,7 @@ public class Bill implements Serializable {
     @ManyToOne
     Department toDepartment;
     //Bill
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Bill billedBill;
     @ManyToOne
     Bill cancelledBill;
@@ -128,8 +134,7 @@ public class Bill implements Serializable {
     Bill refundedBill;
     @ManyToOne
     Bill reactivatedBill;
-  
-   
+
     @ManyToOne
     Bill referenceBill;
     //Id's
@@ -1046,4 +1051,74 @@ public class Bill implements Serializable {
     public void setSurgeryBillType(SurgeryBillType surgeryBillType) {
         this.surgeryBillType = surgeryBillType;
     }
+
+    public List<Bill> getReturnPreBills() {
+        List<Bill> bills = new ArrayList<>();
+
+        for (Bill b : returnPreBills) {
+            if (b instanceof RefundBill && b.getBillType() == BillType.PharmacyPre) {
+
+                bills.add(b);
+            }
+        }
+        returnPreBills = bills;
+
+        return returnPreBills;
+    }
+
+    public void setReturnPreBills(List<Bill> returnBills) {
+        this.returnPreBills = returnBills;
+    }
+
+    public List<Bill> getReturnCashBills() {
+        List<Bill> bills = new ArrayList<>();
+        for (Bill b : returnCashBills) {
+            if (b instanceof RefundBill && b.getBillType() == BillType.PharmacySale && b.getBilledBill() == null) {
+                bills.add(b);
+            }
+        }
+        returnCashBills = bills;
+
+        return returnCashBills;
+    }
+
+    public boolean checkActiveReturnCashBill() {
+        for (Bill b : getReturnCashBills()) {
+            if (!b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setReturnCashBills(List<Bill> returnCashBills) {
+        this.returnCashBills = returnCashBills;
+    }
+
+    public List<Bill> getCashBillsPre() {
+        List<Bill> bills = new ArrayList<>();
+        for (Bill b : cashBillsPre) {
+            if (b instanceof BilledBill && b.getBillType() == BillType.PharmacySale) {
+
+                bills.add(b);
+            }
+        }
+        cashBillsPre = bills;
+
+        return cashBillsPre;
+    }
+
+    public boolean checkActiveCashPreBill() {
+        for (Bill b : getCashBillsPre()) {
+            if (!b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setCashBillsPre(List<Bill> cashBillsPre) {
+        this.cashBillsPre = cashBillsPre;
+    }
+
 }

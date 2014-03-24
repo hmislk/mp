@@ -8,21 +8,17 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.dataStructure.PharmacyItemData;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
-import com.divudi.entity.BilledBill;
-import com.divudi.entity.CancelledBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,7 +33,7 @@ import javax.inject.Inject;
  */
 @Named
 @SessionScoped
-public class PreReturnController implements Serializable {
+public class BhtIssueReturnController implements Serializable {
 
     private Bill bill;
     private Bill returnBill;
@@ -76,7 +72,7 @@ public class PreReturnController implements Serializable {
     public Bill getReturnBill() {
         if (returnBill == null) {
             returnBill = new RefundBill();
-            returnBill.setBillType(BillType.PharmacyPre);
+            returnBill.setBillType(BillType.PharmacyBhtPre);
 
         }
 

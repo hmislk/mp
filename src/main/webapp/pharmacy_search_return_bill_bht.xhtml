@@ -21,7 +21,7 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createReturnSaleBills}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createReturnBhtBills}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Sale Bill No"/>   
@@ -108,10 +108,11 @@
                                             <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>                                  
                                     </p:column>
-                                    <p:column>
-                                        <p:commandButton ajax="false"  value="Cancel Refund Cash Bill" action="pharmacy_reprint_bill_return_cash" disabled="#{rb.cancelled}">
-                                            <f:setPropertyActionListener value="#{rb}" target="#{pharmacyBillSearch.bill}"/>
-                                        </p:commandButton>     
+                                    <p:column> 
+                                        <p:commandButton ajax="false" value="View Bill" action="pharmacy_reprint_bill_return_bht" 
+                                                         disabled="#{rb.creater eq null}">
+                                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{rb}"/>
+                                        </p:commandButton>
                                     </p:column>
                                 </p:dataTable>
                             </p:column>

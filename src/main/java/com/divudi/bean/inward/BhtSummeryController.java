@@ -38,6 +38,7 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.PreBill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.TimedItemFee;
@@ -502,6 +503,7 @@ public class BhtSummeryController implements Serializable {
         createRoomChargeDatas();
         createPatientItems();
         createIssueTable();
+        createStoreTable();
         createDepartmentBillItems();
         createAdditionalChargeBill();
         createProfesionallFee();
@@ -874,10 +876,25 @@ public class BhtSummeryController implements Serializable {
                 + " and  b.patientEncounter=:pe"
                 + " and type(b)=:class ";
         hm = new HashMap();
-        hm.put("btp", BillType.PharmacyBhtIssue);
-        hm.put("class", BilledBill.class);
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", PreBill.class);
         hm.put("pe", getPatientEncounter());
         pharmacyIssues = getBillFacade().findBySQL(sql, hm);
+
+    }
+
+    public void createStoreTable() {
+        String sql;
+        HashMap hm;
+        sql = "SELECT  b FROM Bill b WHERE b.retired=false "
+                + " and b.billType=:btp  "
+                + " and  b.patientEncounter=:pe"
+                + " and type(b)=:class ";
+        hm = new HashMap();
+        hm.put("btp", BillType.StoreBhtIssue);
+        hm.put("class", BilledBill.class);
+        hm.put("pe", getPatientEncounter());
+        storeIssues = getBillFacade().findBySQL(sql, hm);
 
     }
 
@@ -1279,7 +1296,7 @@ public class BhtSummeryController implements Serializable {
                 + " and b.bill.billType=:btp  "
                 + " and  b.bill.patientEncounter=:pe";
         hm = new HashMap();
-        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("btp", BillType.PharmacyBhtPre);
         hm.put("pe", getPatientEncounter());
         return getBillItemFacade().findDoubleByJpql(sql, hm);
     }

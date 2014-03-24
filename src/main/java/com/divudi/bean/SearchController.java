@@ -173,8 +173,8 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
-    
-       public void createReturnBhtBills() {
+
+    public void createReturnBhtBills() {
 
         Map m = new HashMap();
         m.put("bt", BillType.PharmacyBhtPre);
@@ -190,6 +190,11 @@ public class SearchController implements Serializable {
                 + " and b.createdAt between :fd and :td"
                 + " and b.billType=:bt ";
 
+        if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
+            m.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
+        }
+
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.deptId) like :billNo )";
             m.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
@@ -203,6 +208,11 @@ public class SearchController implements Serializable {
         if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
             sql += " and  (upper(b.netTotal) like :netTotal )";
             m.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBhtNo() != null && !getSearchKeyword().getBhtNo().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.bhtNo) like :bht )";
+            m.put("bht", "%" + getSearchKeyword().getBhtNo().trim().toUpperCase() + "%");
         }
 
         sql += " order by b.createdAt desc  ";
@@ -277,18 +287,25 @@ public class SearchController implements Serializable {
         m.put("ins", getSessionController().getInstitution());
         String sql;
 
-        sql = "Select b from Bill b where b.retired=false and b.createdAt  "
-                + " between :fd and :td and b.billType=:bt and b.institution=:ins "
+        sql = "Select b from Bill b where b.retired=false "
+                + "  and b.billedBill is null and b.createdAt "
+                + " between :fd and :td and b.billType=:bt"
+                + " and b.institution=:ins "
                 + " and type(b)=:class ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
-            sql += " and  (upper(b.patient.person.name) like :patientName )";
+            sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
             m.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
         }
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.deptId) like :billNo )";
             m.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBhtNo() != null && !getSearchKeyword().getBhtNo().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.bhtNo) like :bht )";
+            m.put("bht", "%" + getSearchKeyword().getBhtNo().trim().toUpperCase() + "%");
         }
 
         if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
@@ -645,6 +662,11 @@ public class SearchController implements Serializable {
         if (getSearchKeyword().getCode() != null && !getSearchKeyword().getCode().trim().equals("")) {
             sql += " and  (upper(bi.item.code) like :cde )";
             m.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBhtNo() != null && !getSearchKeyword().getBhtNo().trim().equals("")) {
+            sql += " and  (upper(bi.bill.patientEncounter.bhtNo) like :bht )";
+            m.put("bht", "%" + getSearchKeyword().getBhtNo().trim().toUpperCase() + "%");
         }
 
         sql += " order by bi.id desc  ";
@@ -1467,9 +1489,14 @@ public class SearchController implements Serializable {
             temMap.put("patientPhone", "%" + getSearchKeyword().getPatientPhone().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.insId) like :billNo )";
-            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        if (getSearchKeyword().getInsId() != null && !getSearchKeyword().getInsId().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :insId )";
+            temMap.put("insId", "%" + getSearchKeyword().getInsId().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getDeptId() != null && !getSearchKeyword().getDeptId().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :deptId )";
+            temMap.put("deptId", "%" + getSearchKeyword().getDeptId().trim().toUpperCase() + "%");
         }
 
         if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {

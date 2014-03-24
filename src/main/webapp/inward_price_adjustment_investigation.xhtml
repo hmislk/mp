@@ -13,7 +13,7 @@
 
             <ui:define name="content">
                 <h:form>
-                    <p:panel header="Inward Price Adjustment Matrix" id="reportPrint">
+                    <p:panel header="Inward Price Adjustment Matrix- Invesitagation" id="reportPrint">
 
                         <p:panel header="Add new adjustment" >
                             <p:panelGrid columns="2" >
@@ -32,7 +32,8 @@
                                 <h:outputLabel value="Category/Subcategory" ></h:outputLabel>
                                 <p:autoComplete value="#{inwardPriceAdjustmntController.category}" 
                                                 forceSelection="true"
-                                                completeMethod="#{categoryController.completeCategoryMatrix}" converter="categoryConverter"
+                                                completeMethod="#{categoryController.completeCategoryInvestigation}"
+                                                converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
                                     <p:column headerText="Category">
                                         <h:outputLabel value="#{cat.name}"/>
@@ -56,10 +57,10 @@
 
                                 <p:defaultCommand target="btnAdd"/>
                             </p:panelGrid>
-                            <p:commandButton actionListener="#{commonReport.createMatrxTabl()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
-                                <pe:exporter type="xlsx" target="inwd" fileName="Price_metrix_inward"  />
+                            <p:commandButton actionListener="#{inwardPriceAdjustmntController.createCategroyInvestiagtion()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                                <pe:exporter type="xlsx" target="inwd" fileName="Price_metrix_investigation"  />
                             </p:commandButton>
-                            <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createItems()}"/>
+                            <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createCategroyInvestiagtion()}"/>
                             <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >                                         
                                 <p:printer target="reportPrint"/>
                             </p:commandButton>
@@ -69,11 +70,6 @@
                         <p:panel header="Price Matrix" >
 
                             <p:dataTable id="inwd" value="#{inwardPriceAdjustmntController.items}" var="a" editable="true" scrollable="true" scrollHeight="500">
-
-
-                                <p:column headerText="Institution Name">
-                                    <h:inputText value="#{a.institution.name}" />
-                                </p:column>
 
                                 <p:column headerText="Department Name">
 <!--                                    <h:inputText value="#{a.department.name}" />-->
@@ -92,7 +88,8 @@
                            
 
                                 <p:column headerText="Category Name">
-                                    <p:autoComplete forceSelection="true" value="#{a.category}" completeMethod="#{categoryController.completeCategoryMatrix}" 
+                                    <p:autoComplete forceSelection="true" value="#{a.category}"
+                                                    completeMethod="#{categoryController.completeCategoryInvestigation}" 
                                                     converter="categoryConverter"
                                                     var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" >
                                         <p:column>

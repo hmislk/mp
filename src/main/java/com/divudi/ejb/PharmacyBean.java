@@ -170,9 +170,11 @@ public class PharmacyBean {
     private Bill createPreBill(Bill bill, WebUser user, Department department, BillNumberSuffix billNumberSuffix) {
         Bill newPre = new PreBill();
         newPre.copy(bill);
+        newPre.setBilledBill(bill);
         newPre.setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, bill, bill.getBillType(), billNumberSuffix));
         newPre.setInsId(getBillNumberBean().institutionBillNumberGenerator(department.getInstitution(), bill, bill.getBillType(), billNumberSuffix));
         newPre.setDepartment(department);
+        newPre.setInstitution(department.getInstitution());
         newPre.invertValue(bill);
         newPre.setCreatedAt(new Date());
         newPre.setCreater(user);
@@ -182,7 +184,8 @@ public class PharmacyBean {
         return newPre;
     }
 
-    private void savePreBillItems(Bill bill, Bill preBill, WebUser user, Department department) {
+    private List<BillItem> savePreBillItems(Bill bill, Bill preBill, WebUser user, Department department) {
+        List<BillItem> billItems = new ArrayList<>();
         for (BillItem bItem : bill.getBillItems()) {
             BillItem newBillItem = new BillItem();
             newBillItem.copy(bItem);
@@ -209,8 +212,11 @@ public class PharmacyBean {
             }
 
             addToStock(ph.getStock(), qty, ph, department);
+            billItems.add(newBillItem);
 
         }
+
+        return billItems;
 
     }
 
@@ -221,9 +227,10 @@ public class PharmacyBean {
         }
 
         Bill preBill = createPreBill(bill, user, department, billNumberSuffix);
-        savePreBillItems(bill, preBill, user, department);
+        List<BillItem> list = savePreBillItems(bill, preBill, user, department);
 
         bill.setForwardReferenceBill(preBill);
+        bill.setBillItems(list);
         getBillFacade().edit(bill);
 
         return preBill;

@@ -105,6 +105,68 @@ public class CategoryController implements Serializable {
         return c;
     }
 
+    public List<Category> completeCategoryService(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :service or type(c)= :sub  )"
+                + " and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("service", ServiceCategory.class);
+        temMap.put("sub", ServiceSubCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
+    public List<Category> completeCategoryInvestigation(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :invest ) and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("invest", InvestigationCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
+    public List<Category> completeCategoryPharmacy(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :parm ) and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("parm", PharmaceuticalItemCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
     public List<Category> getItemsForPharmacy() {
         List<Category> c;
         String sql;

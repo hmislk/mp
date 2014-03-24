@@ -15,7 +15,7 @@
                 <h:form>
                     <p:panel header="Reprint" >
                         <f:facet name="header" >
-                            <h:outputLabel value="Reprint" ></h:outputLabel>
+                            <h:outputLabel value="Reprint BHT Issue" ></h:outputLabel>
                             <hr/>
                             <p:commandButton value="Reprint" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
@@ -28,7 +28,7 @@
                                              action="pharmacy_bill_return_bht_issue"   
                                              disabled="#{pharmacyBillSearch.bill.cancelled eq true}">                                
                                 <f:setPropertyActionListener value="#{pharmacyBillSearch.bill}" 
-                                                             target="#{preReturnController.bill}"  />
+                                                             target="#{bhtIssueReturnController.bill}"  />
                             </p:commandButton>
                         </f:facet>
 

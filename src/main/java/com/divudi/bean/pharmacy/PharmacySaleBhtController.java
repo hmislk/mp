@@ -365,7 +365,7 @@ public class PharmacySaleBhtController implements Serializable {
         getPreBill().setBillType(billType);
         getPreBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getPreBill(), billType, billNumberSuffix));
         getPreBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getPreBill(), billType, billNumberSuffix));
-       
+
         getPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
@@ -374,8 +374,6 @@ public class PharmacySaleBhtController implements Serializable {
 
         getPreBill().setPatient(pt);
         getPreBill().setPatientEncounter(getPatientEncounter());
-
-        
 
         getPreBill().setToDepartment(null);
         getPreBill().setToInstitution(null);
@@ -538,7 +536,7 @@ public class PharmacySaleBhtController implements Serializable {
             issueFee = getInwardCalculation().getIssueBillFee(bi, bi.getBill().getInstitution());
             issueFee.setBill(bi.getBill());
             issueFee.setBillItem(bi);
-            issueFee.setFeeValue(value);
+            issueFee.setFeeValue(Math.abs(value));
 
             if (issueFee.getId() != null) {
                 getBillFeeFacade().edit(issueFee);
@@ -550,10 +548,11 @@ public class PharmacySaleBhtController implements Serializable {
 
             /////////////
             marginFee = getInwardCalculation().getBillFeeMatrix(bi, bi.getBill().getInstitution());
-            double matrixValue = getInwardCalculation().calInwardMargin(bi, value, bi.getBill().getFromDepartment());
+            double rate = bi.getRate();
+            double matrixValue = getInwardCalculation().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
             marginFee.setBill(bi.getBill());
             marginFee.setBillItem(bi);
-            marginFee.setFeeValue(matrixValue);
+            marginFee.setFeeValue(Math.abs(matrixValue * bi.getQty()));
 
             if (marginFee.getId() != null) {
                 getBillFeeFacade().edit(marginFee);

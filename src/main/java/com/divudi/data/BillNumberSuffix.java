@@ -46,6 +46,7 @@ public enum BillNumberSuffix {
     BHTISSUECAN,//Bht Issue Cancel
     PHISSUE,//Pharmacy Issue
     PHISSCAN,//Pharmacy Issue Cancel
+    PHISSRET,//Pharmacy Issue Return
     STISSUE,//Store Issue
     STTISSUECAN,//Store Issue can
     PHRET,

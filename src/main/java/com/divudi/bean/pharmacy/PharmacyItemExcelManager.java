@@ -9,12 +9,16 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.InstitutionType;
+import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.Item;
+import com.divudi.entity.Service;
+import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Atm;
@@ -34,6 +38,7 @@ import com.divudi.facade.AmppFacade;
 import com.divudi.facade.AtmFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemsDistributorsFacade;
 import com.divudi.facade.MeasurementUnitFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
@@ -284,6 +289,37 @@ public class PharmacyItemExcelManager implements Serializable {
 
     }
 
+    @EJB
+    private ItemFacade itemFacade;
+
+    public void resetSessionBillNumberType() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Item b where type(b)=:tp ";
+        temMap.put("tp", Service.class);
+        List<Item> list = getItemFacade().findBySQL(sql, temMap);
+
+        for (Item i : list) {
+            i.setSessionNumberType(null);
+            getItemFacade().edit(i);
+        }
+    }
+
+    public void resetInwardChargeType() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Item b where type(b)=:tp ";
+        temMap.put("tp", Investigation.class);
+        List<Item> list = getItemFacade().findBySQL(sql, temMap);
+
+        for (Item i : list) {
+            i.setInwardChargeType(InwardChargeType.Investigations);
+            getItemFacade().edit(i);
+        }
+    }
+
 //    public void resetPharmacyPurhcaseCancelPayentScheme() {
 //        String sql;
 //        Map temMap = new HashMap();
@@ -302,7 +338,6 @@ public class PharmacyItemExcelManager implements Serializable {
 //        }
 //
 //    }
-
     public void resetGrnReference() {
         String sql;
         Map temMap = new HashMap();
@@ -1257,6 +1292,14 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
         this.stockHistoryFacade = stockHistoryFacade;
+    }
+
+    public ItemFacade getItemFacade() {
+        return itemFacade;
+    }
+
+    public void setItemFacade(ItemFacade itemFacade) {
+        this.itemFacade = itemFacade;
     }
 
 }

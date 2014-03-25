@@ -35,6 +35,8 @@ public class SearchKeyword {
     private String bhtNo;
     private String paymentScheme;
     private String paymentmethod;
+    private String insId;
+    private String deptId;
 
     public boolean checkKeyword() {
         if (billNo != null && !billNo.trim().equals("")) {
@@ -251,5 +253,21 @@ public class SearchKeyword {
 
     public void setPaymentmethod(String paymentmethod) {
         this.paymentmethod = paymentmethod;
+    }
+
+    public String getInsId() {
+        return insId;
+    }
+
+    public void setInsId(String insId) {
+        this.insId = insId;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
     }
 }

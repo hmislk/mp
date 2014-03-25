@@ -16,9 +16,14 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.PaymentScheme;
+import com.divudi.entity.ServiceCategory;
+import com.divudi.entity.ServiceSubCategory;
+import com.divudi.entity.lab.InvestigationCategory;
+import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.inject.Named;
@@ -223,6 +228,40 @@ public class InwardPriceAdjustmntController implements Serializable {
         items = getFacade().findBySQL(sql);
     }
 
+    public void createCategroyService() {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "select a from InwardPriceAdjustment a where a.retired=false "
+                + " and type(a.category)=:service or type(a.category)=:sub "
+                + " order by a.department.name,a.category.name,a.fromPrice";
+        hm.put("service", ServiceCategory.class);
+        hm.put("sub", ServiceSubCategory.class);
+        items = getFacade().findBySQL(sql,hm);
+    }
+
+    public void createCategroyInvestiagtion() {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "select a from InwardPriceAdjustment a where a.retired=false "
+                + " and type(a.category)=:cat  "
+                + " order by a.department.name,a.category.name,a.fromPrice";
+        hm.put("cat", InvestigationCategory.class);
+
+        items = getFacade().findBySQL(sql,hm);
+    }
+    
+     public void createCategroyPharmacy() {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "select a from InwardPriceAdjustment a where "
+                + " a.retired=false "
+                + " and type(a.category)=:cat  "
+                + " order by a.department.name,a.category.name,a.fromPrice";
+        hm.put("cat", PharmaceuticalItemCategory.class);
+
+        items = getFacade().findBySQL(sql,hm);
+    }
+
     public void onEdit(InwardPriceAdjustment tmp) {
         //Cheking Minus Value && Null
         getFacade().edit(tmp);
@@ -230,7 +269,7 @@ public class InwardPriceAdjustmntController implements Serializable {
     }
 
     public Category getRoomLocation() {
-        
+
         return roomLocation;
     }
 

@@ -4,8 +4,8 @@
  */
 package com.divudi.ejb;
 
+import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.HistoryType;
 import com.divudi.data.ItemBatchQty;
 import com.divudi.data.StockQty;
 import com.divudi.entity.Bill;
@@ -93,6 +93,16 @@ public class PharmacyBean {
     StockHistoryFacade stockHistoryFacade;
     @EJB
     private UserStockFacade userStockFacade;
+    @EJB
+    BillNumberBean billNumberBean;
+
+    public BillNumberBean getBillNumberBean() {
+        return billNumberBean;
+    }
+
+    public void setBillNumberBean(BillNumberBean billNumberBean) {
+        this.billNumberBean = billNumberBean;
+    }
 
     //check Is there any other user added same stock & exceedintg qty than need for current user
     //ONLY CHECK Within 30 min transaction
@@ -157,33 +167,30 @@ public class PharmacyBean {
 
     }
 
-    public String reAddToStock(Bill bill, WebUser user, Department department) {
-
-        if (bill.getBillItems().size() == 0) {
-            return "There is no item to re Add";
-        }
-
-//        if (bill.getDepartment().getId() != department.getId()) {
-//            return "Sorry You cant add Another Department Stock";
-//        }
-        String msg = "";
-
+    private Bill createPreBill(Bill bill, WebUser user, Department department, BillNumberSuffix billNumberSuffix) {
         Bill newPre = new PreBill();
         newPre.copy(bill);
+        newPre.setBilledBill(bill);
+        newPre.setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, bill, bill.getBillType(), billNumberSuffix));
+        newPre.setInsId(getBillNumberBean().institutionBillNumberGenerator(department.getInstitution(), bill, bill.getBillType(), billNumberSuffix));
         newPre.setDepartment(department);
+        newPre.setInstitution(department.getInstitution());
         newPre.invertValue(bill);
         newPre.setCreatedAt(new Date());
         newPre.setCreater(user);
         newPre.setComments("Re Add To Stock");
         newPre.setBackwardReferenceBill(bill);
         getBillFacade().create(newPre);
+        return newPre;
+    }
 
+    private List<BillItem> savePreBillItems(Bill bill, Bill preBill, WebUser user, Department department) {
+        List<BillItem> billItems = new ArrayList<>();
         for (BillItem bItem : bill.getBillItems()) {
-
             BillItem newBillItem = new BillItem();
             newBillItem.copy(bItem);
             newBillItem.invertValue(bItem);
-            newBillItem.setBill(newPre);
+            newBillItem.setBill(preBill);
             newBillItem.setReferanceBillItem(bItem);
             newBillItem.setCreatedAt(new Date());
             newBillItem.setCreater(user);
@@ -203,18 +210,30 @@ public class PharmacyBean {
             if (bItem.getQty() != null) {
                 qty = Math.abs(bItem.getQty());
             }
-            if (!addToStock(ph.getStock(), qty, ph, department)) {
 
-                msg = "Be Carefull Some Item Are Not Added To Stock.Contact Superior Person";
-
-            }
+            addToStock(ph.getStock(), qty, ph, department);
+            billItems.add(newBillItem);
 
         }
 
-        bill.setForwardReferenceBill(newPre);
+        return billItems;
+
+    }
+
+    public Bill reAddToStock(Bill bill, WebUser user, Department department, BillNumberSuffix billNumberSuffix) {
+
+        if (bill.getBillItems().isEmpty() || bill.isCancelled()) {
+            return null;
+        }
+
+        Bill preBill = createPreBill(bill, user, department, billNumberSuffix);
+        List<BillItem> list = savePreBillItems(bill, preBill, user, department);
+
+        bill.setForwardReferenceBill(preBill);
+        bill.setBillItems(list);
         getBillFacade().edit(bill);
 
-        return msg;
+        return preBill;
     }
 
     @EJB

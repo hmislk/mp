@@ -316,15 +316,21 @@
                                         </h:panelGroup>
                                     </p:column>  
                                     <p:column>
-                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_sale_bht"  value="View Bill" >                                              
-                                            <f:setPropertyActionListener value="#{iss}" target="#{inwardSearch.bill}"/>
+                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_sale_bht" 
+                                                         rendered="#{iss.billClass eq 'class com.divudi.entity.PreBill'}" value="View Issue" >                                              
+                                            <f:setPropertyActionListener value="#{iss}" target="#{pharmacyBillSearch.bill}"/>
+                                        </p:commandButton>
+                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_return_bht" 
+                                                         rendered="#{iss.billClass eq 'class com.divudi.entity.RefundBill'}"
+                                                         value="View Return" >                                              
+                                            <f:setPropertyActionListener value="#{iss}" target="#{pharmacyBillSearch.bill}"/>
                                         </p:commandButton>
                                     </p:column>
                                 </p:dataTable>
                             </p:tab>
-                            
-                             <p:tab title="Store Issue">
-                                 <p:dataTable value="#{bhtSummeryController.storeIssues}" var="iss2" scrollable="true"
+
+                            <p:tab title="Store Issue">
+                                <p:dataTable value="#{bhtSummeryController.storeIssues}" var="iss2" scrollable="true"
                                              scrollHeight="300">
                                     <p:column headerText="Bill No">
                                         #{iss2.deptId}
@@ -371,8 +377,8 @@
                                             </h:outputLabel>
                                         </h:panelGroup>
                                     </p:column>  
-                                    <p:column>
-                                        <p:commandButton ajax="false" action="store_reprint_bill_sale_bht"  value="View Bill" >                                              
+                                    <p:column>                                       
+                                        <p:commandButton ajax="false" action="store_reprint_bill_sale_bht"  value="View Return" >                                              
                                             <f:setPropertyActionListener value="#{iss2}" target="#{inwardSearch.bill}"/>
                                         </p:commandButton>
                                     </p:column>

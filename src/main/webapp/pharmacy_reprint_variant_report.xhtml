@@ -60,43 +60,7 @@
                                     </h:outputLabel>                                  
                                 </p:column>
 
-                                <p:column headerText="Calculated Stock" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Calculated Stock"/>    
-                                    </f:facet>
-                                    <h:outputLabel  value="#{i.calCulatedStock}"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
-                                    </h:outputLabel>                                  
-                                </p:column>
 
-                                <p:column headerText="Physical Stock" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Physical Stock"/>    
-                                    </f:facet>
-                                    <h:outputLabel  value="#{i.physicalStock}"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
-                                    </h:outputLabel>                           
-                                </p:column>
-
-                                <p:column headerText="System - Physical" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="System - Physical"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.systemStock-i.physicalStock}"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
-                                    </h:outputLabel>                    
-                                </p:column>
-
-                                <p:column headerText="Calculated - Physical" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Calculated - Physical"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.calCulatedStock-i.physicalStock}"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
-                                    </h:outputLabel>                            
-                                </p:column>
-
-                              
                             </p:dataTable>
 
 

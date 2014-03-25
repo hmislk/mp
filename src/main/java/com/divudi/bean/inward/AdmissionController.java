@@ -97,7 +97,7 @@ public class AdmissionController implements Serializable {
     }
 
     public PaymentMethod[] getPaymentMethods() {
-        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit};
+        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit, PaymentMethod.Credit };
         return tmp;
     }
 

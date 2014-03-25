@@ -125,11 +125,7 @@
 
                         <h:panelGrid columns="1" >
 
-                            <h:panelGroup id="panelBillItems" >
-
-
-
-                                <p:dataTable value="#{theatreModuleController.procedure.encounterComponents}" var="c" >
+                                 <p:dataTable id="panelBillItems" value="#{theatreModuleController.procedure.encounterComponents}" var="c" >
                                     <p:column>
                                         <h:outputLabel value="#{c.name}"></h:outputLabel>
                                     </p:column>
@@ -143,9 +139,7 @@
 
                                 </p:dataTable>
 
-                            </h:panelGroup>
-
-
+                        
                         </h:panelGrid>
 
 

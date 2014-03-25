@@ -38,6 +38,8 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.PreBill;
+import com.divudi.entity.RefundBill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.TimedItemFee;
@@ -109,7 +111,9 @@ public class BhtSummeryController implements Serializable {
     private List<DepartmentBillItems> departmentBillItems;
     private List<BillFee> profesionallFee;
     private List<Bill> paymentBill;
-    private List<BillItem> issues;
+    private List<Bill> surgeryBill;
+    private List<Bill> pharmacyIssues;
+    List<Bill> storeIssues;
     List<PatientItem> patientItems;
     private List<ChargeItemTotal> chargeItemTotals;
     //////////////////////////
@@ -500,10 +504,12 @@ public class BhtSummeryController implements Serializable {
         createRoomChargeDatas();
         createPatientItems();
         createIssueTable();
+        createStoreTable();
         createDepartmentBillItems();
         createAdditionalChargeBill();
         createProfesionallFee();
         createPaymentBill();
+        createSurgeryBill();
         createChargeItemTotals();
     }
 
@@ -864,17 +870,52 @@ public class BhtSummeryController implements Serializable {
     }
 
     public void createIssueTable() {
+        pharmacyIssues = new ArrayList<>();
         String sql;
         HashMap hm;
-        sql = "SELECT  b FROM BillItem b WHERE b.retired=false "
-                + " and b.bill.billType=:btp  "
-                + " and  b.bill.patientEncounter=:pe"
-                + " and type(b.bill)=:class ";
+        sql = "SELECT  b FROM Bill b WHERE b.retired=false "
+                + " and b.billType=:btp and "
+                + " (b.billedBill is null )  "
+                + " and  b.patientEncounter=:pe"
+                + " and (type(b)=:class) ";
         hm = new HashMap();
-        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", PreBill.class);
+        hm.put("pe", getPatientEncounter());
+
+        List<Bill> bills = getBillFacade().findBySQL(sql, hm);
+
+        hm.clear();
+        sql = "SELECT  b FROM Bill b WHERE b.retired=false "
+                + " and b.billType=:btp"
+                + " and type(b.billedBill)=:billedClass "
+                + " and  b.patientEncounter=:pe"
+                + " and (type(b)=:class) ";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", RefundBill.class);
+        hm.put("billedClass", PreBill.class);
+        hm.put("pe", getPatientEncounter());
+
+        List<Bill> bills2 = getBillFacade().findBySQL(sql, hm);
+
+        pharmacyIssues.addAll(bills);
+        pharmacyIssues.addAll(bills2);
+
+    }
+
+    public void createStoreTable() {
+        String sql;
+        HashMap hm;
+        sql = "SELECT  b FROM Bill b WHERE b.retired=false "
+                + " and b.billType=:btp  "
+                + " and  b.patientEncounter=:pe"
+                + " and type(b)=:class ";
+        hm = new HashMap();
+        hm.put("btp", BillType.StoreBhtIssue);
         hm.put("class", BilledBill.class);
         hm.put("pe", getPatientEncounter());
-        issues = getBillItemFacade().findBySQL(sql, hm);
+        storeIssues = getBillFacade().findBySQL(sql, hm);
 
     }
 
@@ -966,6 +1007,23 @@ public class BhtSummeryController implements Serializable {
         }
 
         return paymentBill;
+
+    }
+
+    private List<Bill> createSurgeryBill() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT  b FROM Bill b WHERE b.retired=false  and b.billType=:btp "
+                + " and b.patientEncounter=:pe ";
+        hm.put("btp", BillType.SurgeryBill);
+        hm.put("pe", getPatientEncounter());
+        surgeryBill = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+        if (surgeryBill == null) {
+            return new ArrayList<>();
+        }
+
+        return surgeryBill;
 
     }
 
@@ -1259,7 +1317,7 @@ public class BhtSummeryController implements Serializable {
                 + " and b.bill.billType=:btp  "
                 + " and  b.bill.patientEncounter=:pe";
         hm = new HashMap();
-        hm.put("btp", BillType.PharmacyBhtIssue);
+        hm.put("btp", BillType.PharmacyBhtPre);
         hm.put("pe", getPatientEncounter());
         return getBillItemFacade().findDoubleByJpql(sql, hm);
     }
@@ -1432,14 +1490,6 @@ public class BhtSummeryController implements Serializable {
         this.roomChargeDatas = roomChargeDatas;
     }
 
-    public List<BillItem> getIssues() {
-        return issues;
-    }
-
-    public void setIssues(List<BillItem> issues) {
-        this.issues = issues;
-    }
-
     public InwardMemberShipDiscount getInwardMemberShipDiscount() {
         return inwardMemberShipDiscount;
     }
@@ -1462,5 +1512,29 @@ public class BhtSummeryController implements Serializable {
 
     public void setInwardPaymentController(InwardPaymentController inwardPaymentController) {
         this.inwardPaymentController = inwardPaymentController;
+    }
+
+    public List<Bill> getSurgeryBill() {
+        return surgeryBill;
+    }
+
+    public void setSurgeryBill(List<Bill> surgeryBill) {
+        this.surgeryBill = surgeryBill;
+    }
+
+    public List<Bill> getPharmacyIssues() {
+        return pharmacyIssues;
+    }
+
+    public void setPharmacyIssues(List<Bill> pharmacyIssues) {
+        this.pharmacyIssues = pharmacyIssues;
+    }
+
+    public List<Bill> getStoreIssues() {
+        return storeIssues;
+    }
+
+    public void setStoreIssues(List<Bill> storeIssues) {
+        this.storeIssues = storeIssues;
     }
 }

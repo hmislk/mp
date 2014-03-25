@@ -15,22 +15,23 @@
                             <h:outputLabel value="BILL  SEARCH "/>                          
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" 
+                                            navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
                                 <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createSearchAll()}"/>
-                               
+
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
-                                <h:outputLabel value="Bill No"/>
-                                <h:outputLabel value="Institution"/>
+                                <h:outputLabel value="Bill No(Ins Id)"/>
+                                <h:outputLabel value="Bill No(Dept Id)"/>                               
                                 <h:outputLabel value="To Institution"/>
                                 <h:outputLabel value="To Department"/>
                                 <h:outputLabel value="From Institution"/>
-                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
-                                <p:inputText value="#{searchController.searchKeyword.institution}" />
+                                <p:inputText  value="#{searchController.searchKeyword.insId}" />
+                                <p:inputText  value="#{searchController.searchKeyword.deptId}" />
                                 <p:inputText  value="#{searchController.searchKeyword.toInstitution}" />
                                 <p:inputText value="#{searchController.searchKeyword.toDepartment}"/>
                                 <p:inputText  value="#{searchController.searchKeyword.fromInstitution}" />
@@ -47,9 +48,11 @@
                                 <p:inputText  value="#{searchController.searchKeyword.patientName}" />
                                 <p:inputText value="#{searchController.searchKeyword.patientPhone}" />
 
+                                <h:outputLabel value="Institution"/>
                                 <h:outputLabel value="Net Total"/>    
                                 <h:outputLabel/><h:outputLabel/>
                                 <h:outputLabel/><h:outputLabel/>
+                                <p:inputText value="#{searchController.searchKeyword.institution}" />
                                 <p:inputText  value="#{searchController.searchKeyword.netTotal}" />
 
 
@@ -67,9 +70,12 @@
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
 
-                            <p:column headerText="Bill No" >                              
+                            <p:column headerText="Bill No(Instiution Id)" >                              
                                 <h:outputLabel  value="#{bill.insId}" ></h:outputLabel>                                    
-                            </p:column>                            
+                            </p:column>       
+                            <p:column headerText="Bill No(Department Id)" >                              
+                                <h:outputLabel  value="#{bill.insId}" ></h:outputLabel>                                    
+                            </p:column>       
                             <p:column headerText="Institution"  >                              
                                 <h:outputLabel value="#{bill.institution.name}"  ></h:outputLabel>                                  
                             </p:column>

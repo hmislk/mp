@@ -15,12 +15,14 @@
                 <h:form>
                     <p:panel header="Reprint" >
                         <f:facet name="header" >
-                            <h:outputLabel value="Return Bill Reprint" ></h:outputLabel>
+                            <h:outputLabel value="Pharmacy Return Item Bill Reprint" ></h:outputLabel>
                             <hr/>
                             <p:commandButton value="Reprint" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton ajax="false" value="Cancel" action="pharmacy_cancel_bill_return_pre" disabled="#{pharmacyBillSearch.bill.cancelled}">                           
+                            <p:commandButton ajax="false" value="Cancel" 
+                                             action="pharmacy_cancel_bill_return_pre" 
+                                             disabled="#{pharmacyBillSearch.bill.cancelled}">                           
                             </p:commandButton>
                           
                         </f:facet>

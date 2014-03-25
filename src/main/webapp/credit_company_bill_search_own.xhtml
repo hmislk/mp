@@ -21,7 +21,7 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false"  action="#{searchController.createCreditTable}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search"  action="#{searchController.createCreditTable}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
@@ -31,7 +31,8 @@
                                 <h:outputLabel value="Check No"/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
                                 <p:inputText value="#{searchController.searchKeyword.fromInstitution}" />
-                                <p:inputText  value="#{searchController.searchKeyword.netTotal}"  />                             <p:inputText  value="#{search.searchKesearchControllerbank}" />
+                                <p:inputText  value="#{searchController.searchKeyword.netTotal}"  />   
+                                <p:inputText  value="#{searchController.searchKeyword.bank}" />
                                 <p:inputText value="#{searchController.searchKeyword.number}"/>
 
                             </h:panelGrid>

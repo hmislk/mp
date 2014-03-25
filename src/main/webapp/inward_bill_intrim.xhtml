@@ -40,21 +40,29 @@
                                     <h:outputLabel value="Discharged"  rendered="#{myItem.discharged}"/>
                                 </p:column>
                             </p:autoComplete>   
-                            <h:panelGrid id="panSearch2" columns="2" >
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Name:" />
+                            <h:panelGrid id="panSearch2" columns="2">
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Name : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Sex" />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Age : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.age}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="DOB"  />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Address : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.address}"   />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Admitted : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.createdAt}"   >
+                                    <f:convertDateTime pattern="dd MMMM yyyy hh:mm a" />    
+                                </h:outputLabel>
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Payment Methord : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.paymentMethod}"  /> 
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="DOB : "  />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.dob}"   >
                                     <f:convertDateTime pattern="dd/MM/yy" />
                                 </h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Adress" />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Address : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Date of Admission"  />
+<!--                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Date of Admission"  />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.dateOfAdmission}"   >
-                                    <f:convertDateTime pattern="dd/MM/yy" />
-                                </h:outputLabel>
+                                    <f:convertDateTime pattern="dd/MM/yy " />
+                                </h:outputLabel>-->
                             </h:panelGrid>
                         </p:panel>
 
@@ -147,7 +155,7 @@
                                     </p:column>
                                     <p:column headerText="Total">
                                         #{pt.serviceValue}
-                                    </p:column>
+                                    </p:column>                                    
                                     <p:column >
                                         <p:commandButton ajax="false" value="Update" 
                                                          action="#{bhtSummeryController.updatePatientItem(pt)}"/>
@@ -251,7 +259,7 @@
                                             </p:commandButton>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton ajax="false" action="inward_reprint_bill"  value="View Bill" >                                              
+                                            <p:commandButton ajax="false" action="inward_reprint_bill_service"  value="View Bill" >                                              
                                                 <f:setPropertyActionListener value="#{ser.bill}" target="#{inwardSearch.bill}"/>
                                             </p:commandButton>
                                         </p:column>
@@ -259,54 +267,119 @@
                                 </p:dataTable>
                             </p:tab>
 
-                            <p:tab title="Madicine">
-                                <p:dataTable value="#{bhtSummeryController.issues}" var="iss" scrollable="true"
+                            <p:tab title="Madicine Issue">
+                                <p:dataTable value="#{bhtSummeryController.pharmacyIssues}" var="iss" scrollable="true"
                                              scrollHeight="300">
-                                    <p:column>
-                                        #{iss.item.name}
+                                    <p:column headerText="Bill No">
+                                        #{iss.deptId}
+                                    </p:column>
+                                    <p:column headerText="Bill Total">
+                                        #{iss.total}
+                                    </p:column>
+                                    <p:column headerText="Bill Total With Matrix">
+                                        #{iss.netTotal}
                                     </p:column>
                                     <p:column>
-                                        #{iss.adjustedValue}
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputLabel value="#{iss.bill.createdAt}">
+                                        <h:outputLabel value="#{iss.createdAt}">
                                             <f:convertDateTime pattern="dd MM yyyy"/>
                                         </h:outputLabel>                                                   
                                         <br/>
-                                        <h:panelGroup rendered="#{iss.bill.cancelled}" >
+                                        <h:panelGroup rendered="#{iss.cancelled}" >
                                             <h:outputLabel style="color: red;" value="Cancelled at " />
-                                            <h:outputLabel style="color: red;" rendered="#{ser.bill.cancelled}" 
-                                                           value="#{ser.bill.cancelledBill.createdAt}" >
+                                            <h:outputLabel style="color: red;" rendered="#{iss.cancelled}" 
+                                                           value="#{iss.cancelledBill.createdAt}" >
                                                 <f:convertDateTime pattern="dd MMM yyyy"/>
                                             </h:outputLabel>
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column >
-                                        <h:outputLabel value="#{iss.bill.createdAt}">
+                                        <h:outputLabel value="#{iss.createdAt}">
                                             <f:convertDateTime pattern="hh mm a"/>
                                         </h:outputLabel>                                                   
                                         <br/>
-                                        <h:panelGroup rendered="#{iss.bill.cancelled}" >
+                                        <h:panelGroup rendered="#{iss.cancelled}" >
                                             <h:outputLabel style="color: red;" value="Cancelled at " />
-                                            <h:outputLabel style="color: red;" rendered="#{iss.bill.cancelled}" 
-                                                           value="#{iss.bill.cancelledBill.createdAt}" >
+                                            <h:outputLabel style="color: red;" rendered="#{iss.cancelled}" 
+                                                           value="#{iss.cancelledBill.createdAt}" >
                                                 <f:convertDateTime pattern="hh mm a"/>
                                             </h:outputLabel>
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column >
-                                        <h:outputLabel value="#{iss.bill.creater.webUserPerson.name}"/>     
+                                        <h:outputLabel value="#{iss.creater.webUserPerson.name}"/>     
                                         <br/>
-                                        <h:panelGroup rendered="#{iss.bill.cancelled}" >
+                                        <h:panelGroup rendered="#{iss.cancelled}" >
                                             <h:outputLabel style="color: red;" value="Cancelled By " />
-                                            <h:outputLabel style="color: red;" rendered="#{ser.bill.cancelled}" 
-                                                           value="#{ser.bill.cancelledBill.creater.webUserPerson.name}" >                                       
+                                            <h:outputLabel style="color: red;" rendered="#{iss.cancelled}" 
+                                                           value="#{iss.cancelledBill.creater.webUserPerson.name}" >                                       
                                             </h:outputLabel>
                                         </h:panelGroup>
                                     </p:column>  
                                     <p:column>
-                                        <p:commandButton ajax="false" action="inward_reprint_bill"  value="View Bill" >                                              
-                                            <f:setPropertyActionListener value="#{iss.bill}" target="#{inwardSearch.bill}"/>
+                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_sale_bht" 
+                                                         rendered="#{iss.billClass eq 'class com.divudi.entity.PreBill'}" value="View Issue" >                                              
+                                            <f:setPropertyActionListener value="#{iss}" target="#{pharmacyBillSearch.bill}"/>
+                                        </p:commandButton>
+                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_return_bht" 
+                                                         rendered="#{iss.billClass eq 'class com.divudi.entity.RefundBill'}"
+                                                         value="View Return" >                                              
+                                            <f:setPropertyActionListener value="#{iss}" target="#{pharmacyBillSearch.bill}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+
+                            <p:tab title="Store Issue">
+                                <p:dataTable value="#{bhtSummeryController.storeIssues}" var="iss2" scrollable="true"
+                                             scrollHeight="300">
+                                    <p:column headerText="Bill No">
+                                        #{iss2.deptId}
+                                    </p:column>
+                                    <p:column headerText="Bill Total">
+                                        #{iss2.total}
+                                    </p:column>
+                                    <p:column headerText="Bill Total With Matrix">
+                                        #{iss2.netTotal}
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{iss2.createdAt}">
+                                            <f:convertDateTime pattern="dd MM yyyy"/>
+                                        </h:outputLabel>                                                   
+                                        <br/>
+                                        <h:panelGroup rendered="#{iss2.cancelled}" >
+                                            <h:outputLabel style="color: red;" value="Cancelled at " />
+                                            <h:outputLabel style="color: red;" rendered="#{iss2.cancelled}" 
+                                                           value="#{iss2.cancelledBill.createdAt}" >
+                                                <f:convertDateTime pattern="dd MMM yyyy"/>
+                                            </h:outputLabel>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputLabel value="#{iss2.createdAt}">
+                                            <f:convertDateTime pattern="hh mm a"/>
+                                        </h:outputLabel>                                                   
+                                        <br/>
+                                        <h:panelGroup rendered="#{iss2.cancelled}" >
+                                            <h:outputLabel style="color: red;" value="Cancelled at " />
+                                            <h:outputLabel style="color: red;" rendered="#{iss2.cancelled}" 
+                                                           value="#{iss2.cancelledBill.createdAt}" >
+                                                <f:convertDateTime pattern="hh mm a"/>
+                                            </h:outputLabel>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputLabel value="#{iss2.creater.webUserPerson.name}"/>     
+                                        <br/>
+                                        <h:panelGroup rendered="#{iss2.cancelled}" >
+                                            <h:outputLabel style="color: red;" value="Cancelled By " />
+                                            <h:outputLabel style="color: red;" rendered="#{iss2.cancelled}" 
+                                                           value="#{iss2.cancelledBill.creater.webUserPerson.name}" >                                       
+                                            </h:outputLabel>
+                                        </h:panelGroup>
+                                    </p:column>  
+                                    <p:column>                                       
+                                        <p:commandButton ajax="false" action="store_reprint_bill_sale_bht"  value="View Return" >                                              
+                                            <f:setPropertyActionListener value="#{iss2}" target="#{inwardSearch.bill}"/>
                                         </p:commandButton>
                                     </p:column>
                                 </p:dataTable>
@@ -406,7 +479,7 @@
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column>
-                                        <h:commandLink action="inward_reprint_bill" value="Remove">
+                                        <h:commandLink action="inward_reprint_bill_professional" value="Remove">
                                             <h:outputLabel  ></h:outputLabel>
                                             <f:setPropertyActionListener value="#{pf.bill}" target="#{inwardSearch.bill}"/>
                                         </h:commandLink>
@@ -443,8 +516,32 @@
                                         #{p.netTotal}
                                     </p:column>
                                     <p:column>
-                                        <p:commandButton ajax="false" action="inward_reprint_bill" value="Remove">
+                                        <p:commandButton ajax="false" action="inward_reprint_bill_payment" value="Remove">
                                             <f:setPropertyActionListener value="#{p}" target="#{billSearch.bill}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+
+                            <p:tab  title="Surgery"  >
+                                <p:dataTable  scrollable="true" scrollHeight="300"
+                                              value="#{bhtSummeryController.surgeryBill}" var="pb">
+
+                                    <p:column headerText="Bht NoSurgery Name" >
+                                        <h:outputLabel value="#{pb.procedure.item.name}" ></h:outputLabel>
+                                    </p:column>
+
+                                    <p:column headerText="Client" >
+                                        <h:outputLabel value="#{pb.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
+                                    </p:column>         
+                                    <p:column headerText="Value" >                              
+                                        <h:outputLabel value="#{pb.total}" >
+                                            <f:convertNumber pattern="#,000.00"/>
+                                        </h:outputLabel>                                  
+                                    </p:column>       
+                                    <p:column>
+                                        <p:commandButton ajax="false" value="View Bill" action="inward_bill_surgery">
+                                            <f:setPropertyActionListener value="#{pb}" target="#{surgeryBillController.batchBill}"/>
                                         </p:commandButton>
                                     </p:column>
                                 </p:dataTable>

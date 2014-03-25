@@ -12,21 +12,26 @@ import com.divudi.data.BillType;
 import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.PreBill;
 import com.divudi.entity.inward.EncounterComponent;
-import com.divudi.facade.BatchBillFacade;
+import com.divudi.entity.inward.PatientRoom;
+import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientItemFacade;
+import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -52,9 +57,11 @@ public class SurgeryBillController implements Serializable {
     private Bill timedServiceBill;
     private EncounterComponent proEncounterComponent;
     private EncounterComponent timedEncounterComponent;
+    private EncounterComponent serviceEncounterComponent;
     //////////
     private List<EncounterComponent> proEncounterComponents;
     private List<EncounterComponent> timedEncounterComponents;
+    private List<EncounterComponent> serviceEncounterComponents;
     //////
     @EJB
     private PatientEncounterFacade patientEncounterFacade;
@@ -72,6 +79,10 @@ public class SurgeryBillController implements Serializable {
     private BillNumberBean billNumberBean;
     @EJB
     private InwardCalculation inwardCalculation;
+    @EJB
+    private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
+    @EJB
+    private PharmacyBean pharmacyBean;
     //////
     @Inject
     private SessionController sessionController;
@@ -98,13 +109,20 @@ public class SurgeryBillController implements Serializable {
         double value = savePatientItem(bf.getPatientItem());
         bf.setFeeValue(value);
         bf.setFeeGrossValue(value);
+        updateBillFee(bf);
+    }
+
+    public void updateService(BillFee bf) {
+        if (generalChecking()) {
+            return;
+        }
 
         updateBillFee(bf);
     }
 
     private void updateBillFee(BillFee bf) {
         getBillFeeFacade().edit(bf);
-        updateBillItem(bf.getBill(), bf.getBillItem());
+        updateBillItem(bf.getBillItem());
         updateBill(bf.getBill());
         updateBatchBill();
     }
@@ -114,21 +132,132 @@ public class SurgeryBillController implements Serializable {
     }
 
     public void removeProEncFromDbase(EncounterComponent encounterComponent) {
+        if (generalChecking()) {
+            return;
+        }
+
         if (encounterComponent.getBillFee().getPaidValue() != 0) {
             UtilityController.addErrorMessage("Staff Payment Already Paid U cant Remove");
             return;
         }
-        removeEncounterComponentFromDBase(encounterComponent);
+
+        retiredEncounterComponent(encounterComponent);
+        retiredBillFee(encounterComponent.getBillFee());
+
+        updateBillItem(encounterComponent.getBillItem());
+        updateBill(encounterComponent.getBillItem().getBill());
+        updateBatchBill();
+
+    }
+
+    private void retiredEncounterComponent(EncounterComponent encounterComponent) {
+        encounterComponent.setRetired(true);
+        encounterComponent.setRetiredAt(new Date());
+        encounterComponent.setRetirer(getSessionController().getLoggedUser());
+        getEncounterComponentFacade().edit(encounterComponent);
+    }
+
+    private void retiredBillFee(BillFee removingFee) {
+
+        if (removingFee != null) {
+            removingFee.setRetired(true);
+            removingFee.setRetiredAt(new Date());
+            removingFee.setRetirer(getSessionController().getLoggedUser());
+            getBillFeeFacade().edit(removingFee);
+
+            PatientItem patientItem = removingFee.getPatientItem();
+            if (patientItem != null) {
+                patientItem.setRetirer(getSessionController().getLoggedUser());
+                patientItem.setRetiredAt(new Date());
+                patientItem.setRetired(true);
+                getPatientItemFacade().edit(patientItem);
+            }
+
+        }
+
+    }
+
+    private void retiredBillItem(BillItem billItem) {
+
+        if (billItem != null) {
+            billItem.setRetired(true);
+            billItem.setRetiredAt(new Date());
+            billItem.setRetirer(getSessionController().getLoggedUser());
+            getBillItemFacade().edit(billItem);
+        }
+
     }
 
     public void removeTimedEncFromList(EncounterComponent encounterComponent) {
         removeEncounterComponentFromList(encounterComponent, getTimedEncounterComponents());
     }
 
-    public void removeTimedEncFromDbase(EncounterComponent encounterComponent) {
-        removeEncounterComponentFromDBase(encounterComponent);
+    public void removeServiceEncFromList(EncounterComponent encounterComponent) {
+        removeEncounterComponentFromList(encounterComponent, getServiceEncounterComponents());
     }
 
+    public void removeTimedEncFromDbase(EncounterComponent encounterComponent) {
+        if (generalChecking()) {
+            return;
+        }
+
+        retiredEncounterComponent(encounterComponent);
+        retiredBillFee(encounterComponent.getBillFee());
+
+        updateBillItem(encounterComponent.getBillItem());
+        updateBill(encounterComponent.getBillItem().getBill());
+        updateBatchBill();
+    }
+
+    public void removeServiceEncFromDbase(EncounterComponent encounterComponent) {
+        if (generalChecking()) {
+            return;
+        }
+
+        retiredEncounterComponent(encounterComponent);
+        retiredBillItem(encounterComponent.getBillItem());
+
+        for (BillFee bf : getBillFees(encounterComponent.getBillItem())) {
+            retiredBillFee(bf);
+        }
+
+        updateBillItem(encounterComponent.getBillItem());
+        updateBill(encounterComponent.getBillItem().getBill());
+        updateBatchBill();
+
+    }
+
+    public List<BillFee> getBillFees(BillItem billItem) {
+        String sql = "Select bf from BillFee bf where retired=false and "
+                + " bf.billItem=:bItm ";
+        HashMap hm = new HashMap();
+        hm.put("bItm", billItem);
+        List<BillFee> lst = getBillFeeFacade().findBySQL(sql, hm);
+
+        if (lst.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return lst;
+    }
+
+//    public void removePharmacyIssueEncFromDbase(EncounterComponent encounterComponent) {
+//        if (generalChecking()) {
+//            return;
+//        }
+//
+//        retiredEncounterComponent(encounterComponent);
+//        retiredBillItem(encounterComponent.getBillItem());
+//
+//        for (BillFee bf : getBillFees(encounterComponent.getBillItem())) {
+//            retiredBillFee(bf);
+//        }
+//
+//        updateBillItem(encounterComponent.getBillItem());
+//        updateBill(encounterComponent.getBillItem().getBill());
+//        updateBatchBill();
+//
+//    }
     private void removeEncounterComponentFromList(EncounterComponent encounterComponent, List<EncounterComponent> list) {
         list.remove(encounterComponent.getOrderNo());
 
@@ -139,48 +268,20 @@ public class SurgeryBillController implements Serializable {
 
     }
 
-    private void removeEncounterComponentFromDBase(EncounterComponent encounterComponent) {
-        if (generalChecking()) {
-            return;
-        }
-
-        encounterComponent.setRetired(true);
-        encounterComponent.setRetiredAt(new Date());
-        encounterComponent.setRetirer(getSessionController().getLoggedUser());
-        getEncounterComponentFacade().edit(encounterComponent);
-
-        BillFee removingFee = encounterComponent.getBillFee();
-        if (removingFee != null) {
-            removingFee.setRetired(true);
-            removingFee.setRetiredAt(new Date());
-            removingFee.setRetirer(getSessionController().getLoggedUser());
-            getBillFeeFacade().edit(removingFee);
-
-            PatientItem patientItem = encounterComponent.getBillFee().getPatientItem();
-            if (patientItem != null) {
-                patientItem.setRetirer(getSessionController().getLoggedUser());
-                patientItem.setRetiredAt(new Date());
-                patientItem.setRetired(true);
-                getPatientItemFacade().edit(patientItem);
-            }
-
-        }
-
-        updateBillItem(encounterComponent.getBillItem().getBill(), encounterComponent.getBillItem());
-        updateBill(encounterComponent.getBillItem().getBill());
-        updateBatchBill();
-
-    }
-
     public void makeNull() {
         batchBill = null;
         professionalBill = null;
-        serviceBill = null;
-        timedServiceBill = null;
         proEncounterComponent = null;
         proEncounterComponents = null;
+        ///////////
+        serviceBill = null;
+        serviceEncounterComponent = null;
+        serviceEncounterComponents = null;
+        /////////////
+        timedServiceBill = null;
         timedEncounterComponent = null;
         timedEncounterComponents = null;
+
     }
 
     public void saveProcedure() {
@@ -216,35 +317,42 @@ public class SurgeryBillController implements Serializable {
     }
 
     private void saveBill(Bill bill, BillNumberSuffix billNumberSuffix) {
-        bill.setForwardReferenceBill(getBatchBill());
-        bill.setCreatedAt(Calendar.getInstance().getTime());
-        bill.setCreater(getSessionController().getLoggedUser());
-        bill.setPatientEncounter(getBatchBill().getPatientEncounter());
-        bill.setProcedure(getBatchBill().getProcedure());
-        bill.setDepartment(getSessionController().getDepartment());
-        bill.setInstitution(getSessionController().getInstitution());
-
-        bill.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), bill.getBillType(), billNumberSuffix));
-        bill.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(),
-                bill, bill.getBillType(), billNumberSuffix));
-
         if (bill.getId() == null) {
+            bill.setForwardReferenceBill(getBatchBill());
+            bill.setCreatedAt(Calendar.getInstance().getTime());
+            bill.setCreater(getSessionController().getLoggedUser());
+            bill.setPatientEncounter(getBatchBill().getPatientEncounter());
+            bill.setProcedure(getBatchBill().getProcedure());
+            bill.setDepartment(getSessionController().getDepartment());
+            bill.setInstitution(getSessionController().getInstitution());
+
+            bill.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), bill.getBillType(), billNumberSuffix));
+            bill.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(),
+                    bill, bill.getBillType(), billNumberSuffix));
+
             getBillFacade().create(bill);
+        } else {
+            getBillFacade().edit(bill);
         }
     }
 
     private void saveBillItem(BillItem billItem, Bill bill) {
-        billItem.setBill(bill);
-        billItem.setCreatedAt(new Date());
-        billItem.setCreater(getSessionController().getLoggedUser());
+        if (billItem.getId() == null) {
+            billItem.setBill(bill);
+            billItem.setCreatedAt(new Date());
+            billItem.setCreater(getSessionController().getLoggedUser());
 
-        getBillItemFacade().create(billItem);
+            getBillItemFacade().create(billItem);
+        } else {
+            getBillItemFacade().edit(billItem);
+        }
 
     }
 
-    private void saveBillFee(BillFee bf, Bill bill, double value) {
+    private void saveBillFee(BillFee bf, Bill bill, BillItem bIllItem, double value) {
         if (bf.getId() == null) {
             bf.setBill(bill);
+            bf.setBillItem(bIllItem);
             bf.setCreatedAt(Calendar.getInstance().getTime());
             bf.setCreater(getSessionController().getLoggedUser());
             bf.setFeeAt(Calendar.getInstance().getTime());
@@ -283,7 +391,9 @@ public class SurgeryBillController implements Serializable {
             ec.setCreatedAt(Calendar.getInstance().getTime());
             ec.setCreater(getSessionController().getLoggedUser());
             ec.setPatientEncounter(getBatchBill().getProcedure());
-            ec.setStaff(ec.getBillFee().getStaff());
+            if (ec.getBillFee() != null) {
+                ec.setStaff(ec.getBillFee().getStaff());
+            }
             getEncounterComponentFacade().create(ec);
         } else {
             getEncounterComponentFacade().edit(ec);
@@ -299,6 +409,15 @@ public class SurgeryBillController implements Serializable {
         return getBillItemFacade().findFirstBySQL(sql, hm);
     }
 
+    public List<BillItem> getBillItems(Bill b) {
+        String sql = "Select b From BillItem b where "
+                + " b.retired=false and b.bill=:bill";
+        HashMap hm = new HashMap();
+        hm.put("bill", b);
+
+        return getBillItemFacade().findBySQL(sql, hm);
+    }
+
     private boolean saveProfessionalBill() {
         BillItem bItem;
         if (getProfessionalBill().getId() == null) {
@@ -311,16 +430,42 @@ public class SurgeryBillController implements Serializable {
         }
 
         for (EncounterComponent ec : getProEncounterComponents()) {
-            saveBillFee(ec.getBillFee(), getProfessionalBill(), ec.getBillFee().getFeeValue());
+            saveBillFee(ec.getBillFee(), getProfessionalBill(), bItem, ec.getBillFee().getFeeValue());
             saveEncounterComponent(bItem, ec);
         }
 
-        updateBillItem(getProfessionalBill(), bItem);
+        updateBillItem(bItem);
         updateBill(getProfessionalBill());
 
         return false;
     }
 
+    private boolean saveServiceBill() {
+
+        saveBill(getServiceBill(), BillNumberSuffix.INWSER);
+
+        for (EncounterComponent ec : getServiceEncounterComponents()) {
+            List<BillFee> billFees = ec.getBillItem().getBillFees();
+            ec.getBillItem().setBillFees(null);
+
+            saveBillItem(ec.getBillItem(), getServiceBill());
+            saveEncounterComponent(ec.getBillItem(), ec);
+
+            for (BillFee bf : billFees) {
+                saveBillFee(bf, getServiceBill(), ec.getBillItem(), bf.getFeeValue());
+            }
+
+            ec.getBillItem().setBillFees(billFees);
+
+            updateBillItem(ec.getBillItem());
+        }
+
+        updateBill(getServiceBill());
+
+        return false;
+    }
+
+ 
     private boolean saveTimeServiceBill() {
         BillItem bItem;
         double netValue = 0;
@@ -336,21 +481,21 @@ public class SurgeryBillController implements Serializable {
         for (EncounterComponent ec : getTimedEncounterComponents()) {
             netValue = savePatientItem(ec.getBillFee().getPatientItem());
 
-            saveBillFee(ec.getBillFee(), getTimedServiceBill(), netValue);
+            saveBillFee(ec.getBillFee(), getTimedServiceBill(), bItem, netValue);
             saveEncounterComponent(bItem, ec);
         }
 
-        updateBillItem(getTimedServiceBill(), bItem);
+        updateBillItem(bItem);
         updateBill(getTimedServiceBill());
 
         return false;
     }
 
-    private double getTotalByBillFee(Bill bill) {
+    private double getTotalByBillFee(BillItem billItem) {
         String sql = "Select sum(bf.feeValue) from BillFee bf where "
-                + " bf.retired=false and bf.bill=:bill";
+                + " bf.retired=false and bf.billItem=:bItm";
         HashMap hm = new HashMap();
-        hm.put("bill", bill);
+        hm.put("bItm", billItem);
         return getBillFeeFacade().findDoubleByJpql(sql, hm);
     }
 
@@ -370,8 +515,8 @@ public class SurgeryBillController implements Serializable {
         return getBillFacade().findDoubleByJpql(sql, hm);
     }
 
-    private void updateBillItem(Bill bill, BillItem billItem) {
-        double value = getTotalByBillFee(bill);
+    private void updateBillItem(BillItem billItem) {
+        double value = getTotalByBillFee(billItem);
         billItem.setNetValue(value);
         getBillItemFacade().edit(billItem);
     }
@@ -396,22 +541,23 @@ public class SurgeryBillController implements Serializable {
         }
 
         saveProcedure();
+        saveBatchBill();
 
-        if (!getProEncounterComponents().isEmpty() || !getTimedEncounterComponents().isEmpty()) {
-            saveBatchBill();
-
-            if (!getProEncounterComponents().isEmpty()) {
-                saveProfessionalBill();
-            }
-
-            if (!getTimedEncounterComponents().isEmpty()) {
-                saveTimeServiceBill();
-            }
-
-            updateBatchBill();
+        if (!getProEncounterComponents().isEmpty()) {
+            saveProfessionalBill();
         }
 
-        UtilityController.addSuccessMessage("Surgery Detail Successfull Added");
+        if (!getTimedEncounterComponents().isEmpty()) {
+            saveTimeServiceBill();
+        }
+
+        if (!getServiceEncounterComponents().isEmpty()) {
+            saveServiceBill();
+        }
+
+        updateBatchBill();
+
+        UtilityController.addSuccessMessage("Surgery Detail Successfull Updated");
 
         makeNull();
     }
@@ -442,7 +588,7 @@ public class SurgeryBillController implements Serializable {
     }
 
     private List<Bill> getBillsByForwardRef(Bill b) {
-        String sql = "Select bf from BilledBill bf where bf.cancelled=false and "
+        String sql = "Select bf from Bill bf where bf.cancelled=false and "
                 + " bf.retired=false and bf.forwardReferenceBill=:bill";
         HashMap hm = new HashMap();
         hm.put("bill", getBatchBill());
@@ -472,6 +618,14 @@ public class SurgeryBillController implements Serializable {
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setTimedEncounterComponents(enc);
             }
+
+            if (b.getSurgeryBillType() == SurgeryBillType.Service) {
+                System.err.println(SurgeryBillType.Service);
+                setServiceBill(b);
+                List<EncounterComponent> enc = getEncounterComponents(b);
+                setServiceEncounterComponents(enc);
+            }
+
         }
     }
 
@@ -565,25 +719,6 @@ public class SurgeryBillController implements Serializable {
         proEncounterComponent = null;
     }
 
-    public void addProfessionalFeeAfterSaving() {
-        if (generalChecking()) {
-            return;
-        }
-
-        if (getProEncounterComponent().getBillFee().getStaff() == null) {
-            UtilityController.addErrorMessage("Select Staff ");
-            return;
-        }
-
-        proEncounterComponent.setPatientEncounter(getBatchBill().getPatientEncounter());
-        proEncounterComponent.setChildEncounter(getBatchBill().getProcedure());
-        proEncounterComponent.setOrderNo(getProEncounterComponents().size());
-
-        saveProfessionalBill();
-
-        proEncounterComponent = null;
-    }
-
     public void addTimedService() {
         if (generalChecking()) {
             return;
@@ -598,25 +733,6 @@ public class SurgeryBillController implements Serializable {
         timedEncounterComponent.setChildEncounter(getBatchBill().getProcedure());
         timedEncounterComponent.setOrderNo(getProEncounterComponents().size());
         getTimedEncounterComponents().add(timedEncounterComponent);
-
-        timedEncounterComponent = null;
-    }
-
-    public void addTimedServiceFeeAfterSaving() {
-        if (generalChecking()) {
-            return;
-        }
-
-        if (getTimedEncounterComponent().getBillFee().getStaff() == null) {
-            UtilityController.addErrorMessage("Select Staff ");
-            return;
-        }
-
-        timedEncounterComponent.setPatientEncounter(getBatchBill().getPatientEncounter());
-        timedEncounterComponent.setChildEncounter(getBatchBill().getProcedure());
-        timedEncounterComponent.setOrderNo(getProEncounterComponents().size());
-
-        saveTimeServiceBill();
 
         timedEncounterComponent = null;
     }
@@ -700,6 +816,66 @@ public class SurgeryBillController implements Serializable {
         return timedEncounterComponent;
     }
 
+    private boolean checkForService() {
+        if (getServiceEncounterComponent().getBillItem().getItem() == null) {
+            UtilityController.addErrorMessage("Select Service ");
+            return true;
+        }
+
+        PatientRoom patientRoom = getInwardCalculation().getCurrentPatientRoom(getBatchBill().getPatientEncounter());
+
+        if (patientRoom == null) {
+            UtilityController.addErrorMessage("Please Set Room or Bed For This Patient");
+            return true;
+        }
+
+        Item item = getServiceEncounterComponent().getBillItem().getItem();
+
+        if (patientRoom.getRoomFacilityCharge().getDepartment() == null) {
+            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoom().getName());
+            return true;
+        }
+
+        if (item.getDepartment() == null) {
+            UtilityController.addErrorMessage("Under administration, "
+                    + " add a Department for this item " + item.getName());
+            return true;
+        } else if (item.getDepartment().getInstitution() == null) {
+            UtilityController.addErrorMessage("Under administration, add an Institution for "
+                    + " the department " + item.getDepartment());
+            return true;
+        } else if (item.getCategory() == null) {
+            UtilityController.addErrorMessage("Under administration, add Category "
+                    + "For Item : " + item.getName());
+            return true;
+        }
+
+        return false;
+    }
+
+    public void addService() {
+        if (generalChecking()) {
+            return;
+        }
+
+        if (checkForService()) {
+            return;
+        }
+
+        List<BillFee> billFees = new ArrayList<>();
+        billFees = getInwardCalculation().billFeeFromBillItemWithMatrix(getServiceEncounterComponent().getBillItem(),
+                getBatchBill().getPatientEncounter(),
+                getServiceEncounterComponent().getBillItem().getItem().getInstitution());
+
+        getServiceEncounterComponent().getBillItem().setBillFees(billFees);
+        getServiceEncounterComponent().setPatientEncounter(getBatchBill().getPatientEncounter());
+        getServiceEncounterComponent().setChildEncounter(getBatchBill().getProcedure());
+        getServiceEncounterComponents().add(getServiceEncounterComponent());
+
+        serviceEncounterComponent = null;
+    }
+
+
     public void setTimedEncounterComponent(EncounterComponent timedEncounterComponent) {
         this.timedEncounterComponent = timedEncounterComponent;
     }
@@ -729,6 +905,45 @@ public class SurgeryBillController implements Serializable {
 
     public void setInwardCalculation(InwardCalculation inwardCalculation) {
         this.inwardCalculation = inwardCalculation;
+    }
+
+    public EncounterComponent getServiceEncounterComponent() {
+        if (serviceEncounterComponent == null) {
+            serviceEncounterComponent = new EncounterComponent();
+            serviceEncounterComponent.setBillItem(new BillItem());
+        }
+        return serviceEncounterComponent;
+    }
+
+    public void setServiceEncounterComponent(EncounterComponent serviceEncounterComponent) {
+        this.serviceEncounterComponent = serviceEncounterComponent;
+    }
+
+    public List<EncounterComponent> getServiceEncounterComponents() {
+        if (serviceEncounterComponents == null) {
+            serviceEncounterComponents = new ArrayList<>();
+        }
+        return serviceEncounterComponents;
+    }
+
+    public void setServiceEncounterComponents(List<EncounterComponent> serviceEncounterComponents) {
+        this.serviceEncounterComponents = serviceEncounterComponents;
+    }
+
+    public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
+        return pharmaceuticalBillItemFacade;
+    }
+
+    public void setPharmaceuticalBillItemFacade(PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade) {
+        this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
+    }
+
+    public PharmacyBean getPharmacyBean() {
+        return pharmacyBean;
+    }
+
+    public void setPharmacyBean(PharmacyBean pharmacyBean) {
+        this.pharmacyBean = pharmacyBean;
     }
 
 }

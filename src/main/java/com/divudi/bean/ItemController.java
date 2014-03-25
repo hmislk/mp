@@ -9,6 +9,7 @@
 package com.divudi.bean;
 
 import com.divudi.data.DepartmentType;
+import com.divudi.data.FeeType;
 import com.divudi.entity.Institution;
 import com.divudi.facade.ItemFacade;
 import com.divudi.entity.Item;
@@ -132,7 +133,6 @@ public class ItemController implements Serializable {
 
     }
 
-   
     public List<Item> completeAmps(String query) {
         List<Item> suggestions;
         String sql;
@@ -241,14 +241,33 @@ public class ItemController implements Serializable {
         List<Item> suggestions;
         String sql;
         HashMap hm = new HashMap();
-        if (query == null) {
-            suggestions = new ArrayList<>();
-        } else {
-            sql = "select c from Item c where c.retired=false and type(c)=Service and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
 
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);
-        }
+        sql = "select c from Item c where c.retired=false and type(c)=:cls"
+                + " and upper(c.name) like :q order by c.name";
+
+        hm.put("cls", Service.class);
+        hm.put("q", "%" + query.toUpperCase() + "%");
+        suggestions = getFacade().findBySQL(sql, hm, 20);
+
+        return suggestions;
+
+    }
+
+    public List<Item> completeServiceWithoutProfessional(String query) {
+        List<Item> suggestions;
+        String sql;
+        HashMap hm = new HashMap();
+
+        sql = "select c from Item c where c.retired=false and type(c)=:cls"
+                + " and upper(c.name) like :q "
+                + " c.id in (Select f.item.id From Itemfee f where f.retired=false "
+                + " and f.feeType!=:ftp ) order by c.name ";
+
+        hm.put("ftp", FeeType.Staff);
+        hm.put("cls", Service.class);
+        hm.put("q", "%" + query.toUpperCase() + "%");
+        suggestions = getFacade().findBySQL(sql, hm, 20);
+
         return suggestions;
 
     }

@@ -40,21 +40,29 @@
                                     <h:outputLabel value="Discharged"  rendered="#{myItem.discharged}"/>
                                 </p:column>
                             </p:autoComplete>   
-                            <h:panelGrid id="panSearch2" columns="2" >
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Name:" />
+                            <h:panelGrid id="panSearch2" columns="2">
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Name : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Sex" />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Age : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.age}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="DOB"  />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Address : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.address}"   />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Admitted : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.createdAt}"   >
+                                    <f:convertDateTime pattern="dd MMMM yyyy hh:mm a" />    
+                                </h:outputLabel>
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Payment Methord : "  />
+                                <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.paymentMethod}"  /> 
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="DOB : "  />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.dob}"   >
                                     <f:convertDateTime pattern="dd/MM/yy" />
                                 </h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Adress" />
+                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Address : " />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Date of Admission"  />
+<!--                                <h:outputLabel  rendered="#{bhtSummeryController.patientEncounter!=null}" value="Date of Admission"  />
                                 <h:outputLabel rendered="#{bhtSummeryController.patientEncounter!=null}" value="#{bhtSummeryController.patientEncounter.dateOfAdmission}"   >
-                                    <f:convertDateTime pattern="dd/MM/yy" />
-                                </h:outputLabel>
+                                    <f:convertDateTime pattern="dd/MM/yy " />
+                                </h:outputLabel>-->
                             </h:panelGrid>
                         </p:panel>
 
@@ -308,15 +316,21 @@
                                         </h:panelGroup>
                                     </p:column>  
                                     <p:column>
-                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_sale_bht"  value="View Bill" >                                              
-                                            <f:setPropertyActionListener value="#{iss}" target="#{inwardSearch.bill}"/>
+                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_sale_bht" 
+                                                         rendered="#{iss.billClass eq 'class com.divudi.entity.PreBill'}" value="View Issue" >                                              
+                                            <f:setPropertyActionListener value="#{iss}" target="#{pharmacyBillSearch.bill}"/>
+                                        </p:commandButton>
+                                        <p:commandButton ajax="false" action="pharmacy_reprint_bill_return_bht" 
+                                                         rendered="#{iss.billClass eq 'class com.divudi.entity.RefundBill'}"
+                                                         value="View Return" >                                              
+                                            <f:setPropertyActionListener value="#{iss}" target="#{pharmacyBillSearch.bill}"/>
                                         </p:commandButton>
                                     </p:column>
                                 </p:dataTable>
                             </p:tab>
-                            
-                             <p:tab title="Store Issue">
-                                 <p:dataTable value="#{bhtSummeryController.storeIssues}" var="iss2" scrollable="true"
+
+                            <p:tab title="Store Issue">
+                                <p:dataTable value="#{bhtSummeryController.storeIssues}" var="iss2" scrollable="true"
                                              scrollHeight="300">
                                     <p:column headerText="Bill No">
                                         #{iss2.deptId}
@@ -363,8 +377,8 @@
                                             </h:outputLabel>
                                         </h:panelGroup>
                                     </p:column>  
-                                    <p:column>
-                                        <p:commandButton ajax="false" action="store_reprint_bill_sale_bht"  value="View Bill" >                                              
+                                    <p:column>                                       
+                                        <p:commandButton ajax="false" action="store_reprint_bill_sale_bht"  value="View Return" >                                              
                                             <f:setPropertyActionListener value="#{iss2}" target="#{inwardSearch.bill}"/>
                                         </p:commandButton>
                                     </p:column>

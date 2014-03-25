@@ -32,7 +32,7 @@
                                 <h:outputLabel value="Category/Subcategory" ></h:outputLabel>
                                 <p:autoComplete value="#{inwardPriceAdjustmntController.category}" 
                                                 forceSelection="true"
-                                                completeMethod="#{categoryController.completeCategoryService}"
+                                                completeMethod="#{categoryController.completeCategoryServicePharmacy}"
                                                 converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" 
                                                 itemValue="#{cat}" >
@@ -53,7 +53,8 @@
                                 <h:outputLabel value="Margin" ></h:outputLabel>
                                 <p:inputText value="#{inwardPriceAdjustmntController.margin}" />
                                 <h:outputLabel value="" ></h:outputLabel>
-                                <p:commandButton id="btnAdd" value="Add" ajax="false" action="#{inwardPriceAdjustmntController.saveSelected}" >
+                                <p:commandButton id="btnAdd" value="Add" ajax="false" 
+                                                 action="#{inwardPriceAdjustmntController.saveSelected}" >
                                 </p:commandButton>
 
                                 <p:defaultCommand target="btnAdd"/>
@@ -70,14 +71,15 @@
 
                         <p:panel header="Price Matrix" >
 
-                            <p:dataTable id="inwd" value="#{inwardPriceAdjustmntController.items}"
+                            <p:dataTable id="inwd" value="#{inwardPriceAdjustmntController.items}" 
                                          filteredValue="#{inwardPriceAdjustmntController.filterItems}"
                                          var="a" editable="true" scrollable="true" scrollHeight="500">
 
                                 <p:column filterBy="#{a.department.name}" filterMatchMode="contains" headerText="Department Name">
 <!--                                    <h:inputText value="#{a.department.name}" />-->
 
-                                    <p:autoComplete forceSelection="true" value="#{a.department}" completeMethod="#{departmentController.completeDept}" 
+                                    <p:autoComplete id="dep" forceSelection="true" value="#{a.department}"
+                                                    completeMethod="#{departmentController.completeDept}" 
                                                     var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" >
                                         <p:column>
                                             <h:outputLabel value="#{dep.name}"/>
@@ -90,11 +92,12 @@
                                 </p:column>
 
 
-                                <p:column filterBy="#{a.category.name}" filterMatchMode="contains" headerText="Category Name">
-                                    <p:autoComplete forceSelection="true" value="#{a.category}" 
-                                                    completeMethod="#{categoryController.completeCategoryService}" 
+                                <p:column filterBy="#{a.category.name}" 
+                                          filterMatchMode="contains" headerText="Category Name">
+                                    <p:autoComplete id="cat" forceSelection="true" value="#{a.category}" 
+                                                    completeMethod="#{categoryController.completeCategoryServicePharmacy}" 
                                                     converter="categoryConverter"
-                                                    var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
+                                                    var="cat" itemLabel="#{cat.name} #{cat.parentCategory.name}" itemValue="#{cat}" >
                                         <p:column>
                                             <h:outputLabel value="#{cat.name}"/>
                                         </p:column>
@@ -105,17 +108,17 @@
                                     </p:autoComplete>
                                 </p:column>
                                 <p:column headerText="From Price">
-                                    <h:inputText value="#{a.fromPrice}" >
+                                    <h:inputText id="frm" value="#{a.fromPrice}" >
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:inputText>
                                 </p:column>
                                 <p:column  headerText="To Price">
-                                    <h:inputText value="#{a.toPrice}" >
+                                    <h:inputText id="to" value="#{a.toPrice}" >
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:inputText>
                                 </p:column>
                                 <p:column  headerText="Margin">
-                                    <h:inputText value="#{a.margin}" >
+                                    <h:inputText id="mg" value="#{a.margin}" >
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:inputText>
                                 </p:column>

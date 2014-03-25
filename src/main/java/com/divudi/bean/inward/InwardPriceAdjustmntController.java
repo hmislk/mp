@@ -102,7 +102,7 @@ public class InwardPriceAdjustmntController implements Serializable {
         getFacade().create(a);
         UtilityController.addSuccessMessage("savedNewSuccessfully");
         recreateModel();
-        createItems();
+//        createItems();
     }
 
     public InwardPriceAdjustmentFacade getEjbFacade() {
@@ -217,6 +217,8 @@ public class InwardPriceAdjustmntController implements Serializable {
         return ejbFacade;
     }
 
+    private List<InwardPriceAdjustment> filterItems;
+    
     public List<InwardPriceAdjustment> getItems() {
 
         return items;
@@ -236,7 +238,20 @@ public class InwardPriceAdjustmntController implements Serializable {
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("service", ServiceCategory.class);
         hm.put("sub", ServiceSubCategory.class);
-        items = getFacade().findBySQL(sql,hm);
+        items = getFacade().findBySQL(sql, hm);
+    }
+
+    public void createCategroyServicePharmacy() {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "select a from InwardPriceAdjustment a where a.retired=false "
+                + " and type(a.category)=:service or type(a.category)=:sub"
+                + " or type(a.category)=:cat "
+                + " order by a.department.name,a.category.name,a.fromPrice";
+        hm.put("service", ServiceCategory.class);
+        hm.put("sub", ServiceSubCategory.class);
+        hm.put("cat", PharmaceuticalItemCategory.class);
+        items = getFacade().findBySQL(sql, hm);
     }
 
     public void createCategroyInvestiagtion() {
@@ -247,10 +262,10 @@ public class InwardPriceAdjustmntController implements Serializable {
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("cat", InvestigationCategory.class);
 
-        items = getFacade().findBySQL(sql,hm);
+        items = getFacade().findBySQL(sql, hm);
     }
-    
-     public void createCategroyPharmacy() {
+
+    public void createCategroyPharmacy() {
         String sql;
         HashMap hm = new HashMap();
         sql = "select a from InwardPriceAdjustment a where "
@@ -259,13 +274,13 @@ public class InwardPriceAdjustmntController implements Serializable {
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("cat", PharmaceuticalItemCategory.class);
 
-        items = getFacade().findBySQL(sql,hm);
+        items = getFacade().findBySQL(sql, hm);
     }
 
     public void onEdit(InwardPriceAdjustment tmp) {
         //Cheking Minus Value && Null
         getFacade().edit(tmp);
-        createItems();
+      //  createItems();
     }
 
     public Category getRoomLocation() {
@@ -275,6 +290,14 @@ public class InwardPriceAdjustmntController implements Serializable {
 
     public void setRoomLocation(Category roomLocation) {
         this.roomLocation = roomLocation;
+    }
+
+    public List<InwardPriceAdjustment> getFilterItems() {
+        return filterItems;
+    }
+
+    public void setFilterItems(List<InwardPriceAdjustment> filterItems) {
+        this.filterItems = filterItems;
     }
 
     /**

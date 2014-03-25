@@ -279,16 +279,22 @@ public class ReportsTransfer implements Serializable {
             m.put("fdept", fromDepartment);
             m.put("tdept", toDepartment);
             sql = "select b from Bill b where b.department=:fdept"
-                    + " and b.toDepartment=:tdept and b.createdAt between :fd "
-                    + "and :td and b.billType=:bt order by b.id";
+                    + " and b.toDepartment=:tdept "
+                    + " and b.createdAt between :fd "
+                    + " and :td and b.billType=:bt"
+                    + " order by b.id";
         } else if (fromDepartment == null && toDepartment != null) {
             m.put("tdept", toDepartment);
-            sql = "select b from Bill b where b.toDepartment=:tdept and b.createdAt "
-                    + " between :fd and :td and b.billType=:bt order by b.id";
+            sql = "select b from Bill b where"
+                    + " b.toDepartment=:tdept and b.createdAt "
+                    + " between :fd and :td and "
+                    + " b.billType=:bt order by b.id";
         } else if (fromDepartment != null && toDepartment == null) {
             m.put("fdept", fromDepartment);
-            sql = "select b from Bill b where b.department=:fdept and b.createdAt "
-                    + " between :fd and :td and b.billType=:bt order by b.id";
+            sql = "select b from Bill b where "
+                    + " b.department=:fdept and b.createdAt "
+                    + " between :fd and :td and"
+                    + "  b.billType=:bt order by b.id";
         } else {
             sql = "select b from Bill b where b.createdAt "
                     + " between :fd and :td and b.billType=:bt order by b.id";

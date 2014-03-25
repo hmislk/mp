@@ -69,9 +69,12 @@
 
                         <p:panel header="Price Matrix" >
 
-                            <p:dataTable id="inwd" value="#{inwardPriceAdjustmntController.items}" var="a" editable="true" scrollable="true" scrollHeight="500">
+                            <p:dataTable id="inwd" value="#{inwardPriceAdjustmntController.items}"
+                                         filteredValue="#{inwardPriceAdjustmntController.filterItems}"
+                                         var="a" editable="true" scrollable="true" scrollHeight="500">
 
-                                <p:column headerText="Department Name">
+                                <p:column headerText="Department Name" 
+                                          filterBy="#{a.department.name}" filterMatchMode="contains">
 <!--                                    <h:inputText value="#{a.department.name}" />-->
 
                                     <p:autoComplete forceSelection="true" value="#{a.department}" completeMethod="#{departmentController.completeDept}" 
@@ -87,7 +90,7 @@
                                 </p:column>
                            
 
-                                <p:column headerText="Category Name">
+                                <p:column headerText="Category Name" filterBy="#{a.category.name}" filterMatchMode="contains">
                                     <p:autoComplete forceSelection="true" value="#{a.category}" 
                                                     completeMethod="#{categoryController.completeCategoryPharmacy}" 
                                                     converter="categoryConverter"

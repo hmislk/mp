@@ -1445,8 +1445,9 @@ public class SearchController implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select b from BilledBill b where "
-                + " b.createdAt between :fromDate and :toDate and b.retired=false ";
+        sql = "select b from Bill b where "
+                + " b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patient.person.name) like :patientName )";

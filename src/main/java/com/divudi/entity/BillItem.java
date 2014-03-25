@@ -27,8 +27,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
-
-
 /**
  *
  * @author buddhika
@@ -111,6 +109,7 @@ public class BillItem implements Serializable {
     public void copy(BillItem billItem) {
         item = billItem.getItem();
         sessionDate = billItem.getSessionDate();
+        patientEncounter = billItem.getPatientEncounter();
         inwardChargeType = billItem.getInwardChargeType();
         agentRefNo = billItem.getAgentRefNo();
         item = billItem.getItem();

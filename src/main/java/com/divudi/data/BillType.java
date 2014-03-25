@@ -11,6 +11,7 @@ package com.divudi.data;
  */
 public enum BillType {
 
+    SurgeryBill,
     LabBill,
     PaymentBill,
     OpdBill,
@@ -28,8 +29,12 @@ public enum BillType {
     @Deprecated
     SandryGrn,
     PharmacyIssue,
+    @Deprecated
     PharmacyBhtIssue,
     PharmacyBhtPre,
+    @Deprecated
+    StoreBhtIssue,
+    StoreBhtPre,
     PharmacyPre,
     PharmacyOrder,
     PharmacyOrderApprove,

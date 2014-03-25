@@ -11,16 +11,12 @@ package com.divudi.bean;
 import com.divudi.facade.CategoryFacade;
 import com.divudi.entity.Category;
 import com.divudi.entity.ConsumableCategory;
-import com.divudi.entity.Item;
 import com.divudi.entity.ServiceCategory;
 import com.divudi.entity.ServiceSubCategory;
 import com.divudi.entity.inward.TimedItemCategory;
 import com.divudi.entity.lab.InvestigationCategory;
-import com.divudi.entity.pharmacy.Amp;
-import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalCategory;
-import com.divudi.entity.pharmacy.Vmp;
-import com.divudi.entity.pharmacy.Vmpp;
+import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -42,7 +37,7 @@ import javax.persistence.TemporalType;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -62,7 +57,7 @@ public class CategoryController implements Serializable {
         List<Category> c;
         c = getFacade().findBySQL("select c from Category c where c.retired=false and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name");
         if (c == null) {
-            c = new ArrayList<Category>();
+            c = new ArrayList<>();
         }
         return c;
     }
@@ -72,7 +67,7 @@ public class CategoryController implements Serializable {
         String sql;
         HashMap tmpMap = new HashMap();
         if (query == null) {
-            suggestions = new ArrayList<Category>();
+            suggestions = new ArrayList<>();
         } else {
 
             sql = "select c from Category c where c.retired=false and (type(c)= :sup or type(c)= :sub) and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
@@ -89,19 +84,85 @@ public class CategoryController implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select c from Category c where c.retired=false and (type(c)= :service or type(c)= :sub or type(c)= :invest or type(c)= :time or type(c)= :parm or type(c)= :con  ) and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name";
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :service or type(c)= :sub or type(c)= :invest or "
+                + "type(c)= :time or type(c)= :parm or type(c)= :con  ) and upper(c.name)"
+                + " like :q order by c.name";
 
-        temMap.put("service", com.divudi.entity.ServiceCategory.class);
+        temMap.put("service", ServiceCategory.class);
         temMap.put("sub", ServiceSubCategory.class);
-        temMap.put("invest", com.divudi.entity.lab.InvestigationCategory.class);
-        temMap.put("time", com.divudi.entity.inward.TimedItemCategory.class);
-        temMap.put("parm", com.divudi.entity.pharmacy.PharmaceuticalCategory.class);
-        temMap.put("con", com.divudi.entity.ConsumableCategory.class);
+        temMap.put("invest", InvestigationCategory.class);
+        temMap.put("time", TimedItemCategory.class);
+        temMap.put("parm", PharmaceuticalItemCategory.class);
+        temMap.put("con", ConsumableCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
 
         c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
 
         if (c == null) {
-            c = new ArrayList<Category>();
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
+    public List<Category> completeCategoryService(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :service or type(c)= :sub  )"
+                + " and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("service", ServiceCategory.class);
+        temMap.put("sub", ServiceSubCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
+    public List<Category> completeCategoryInvestigation(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :invest ) and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("invest", InvestigationCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
+    public List<Category> completeCategoryPharmacy(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :parm ) and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("parm", PharmaceuticalItemCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
         }
         return c;
     }

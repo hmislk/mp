@@ -155,7 +155,7 @@ public class StoreAmpController implements Serializable {
     /**
      *
      */
-    @FacesConverter("ampCon")
+    @FacesConverter("stoAmpCon")
     public static class AmpControllerConverter implements Converter {
 
         @Override
@@ -164,7 +164,7 @@ public class StoreAmpController implements Serializable {
                 return null;
             }
             StoreAmpController controller = (StoreAmpController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "ampController");
+                    getValue(facesContext.getELContext(), null, "storeAmpController");
             return controller.getEjbFacade().find(getKey(value));
         }
 

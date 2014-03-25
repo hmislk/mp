@@ -179,7 +179,7 @@ public class BillBean {
         Map temMap = new HashMap();
         sql = "select b from PreBill b where b.billType = :billType "
                 + " and b.department=:dep and b.referenceBill is null and b.backwardReferenceBill is null "
-                + " and b.forwardReferenceBill is null  "
+                + " and b.forwardReferenceBill is null and b.billedBill is null "
                 + " and b.retired=false and b.netTotal!=0 order by b.id desc ";
 
         temMap.put("billType", type);

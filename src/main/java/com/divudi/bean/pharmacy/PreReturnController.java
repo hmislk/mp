@@ -69,10 +69,21 @@ public class PreReturnController implements Serializable {
 
     public void setBill(Bill bill) {
         makeNull();
+
+        if (bill.getDepartment() == null) {
+            return;
+        }
+
+        if (getSessionController().getDepartment().getId() != bill.getDepartment().getId()) {
+            UtilityController.addErrorMessage("U can't return another department's Issue.please log to specific department");
+            return;
+        }
+
         this.bill = bill;
-        generateBillComponent();
+        generateBillComponent(BillType.PharmacyPre);
     }
 
+   
     public Bill getReturnBill() {
         if (returnBill == null) {
             returnBill = new RefundBill();
@@ -188,6 +199,9 @@ public class PreReturnController implements Serializable {
 
         getBillFacade().edit(getReturnBill());
 
+        getBill().getReturnPreBills().add(getReturnBill());
+        getBillFacade().edit(getBill());
+
         /// setOnlyReturnValue();
         printPreview = true;
         UtilityController.addSuccessMessage("Successfully Returned");
@@ -209,8 +223,8 @@ public class PreReturnController implements Serializable {
         //  return grossTotal;
     }
 
-    public void generateBillComponent() {
-
+    public void generateBillComponent(BillType billType) {
+        System.err.println("Generate");
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getBill())) {
             BillItem bi = new BillItem();
             bi.setBill(getReturnBill());
@@ -223,10 +237,16 @@ public class PreReturnController implements Serializable {
             tmp.setBillItem(bi);
             tmp.copy(i);
 
-            double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre);
+            double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), billType);
 
-            //System.err.println("Refund " + rFund);
-            double tmpQty = Math.abs(i.getQtyInUnit()) - Math.abs(rFund);
+            System.err.println("Refund " + rFund);
+            double tmpQty = (Math.abs(i.getQtyInUnit())) - Math.abs(rFund);
+
+            System.err.println("TMP " + tmpQty);
+            if (tmpQty <= 0) {
+                continue;
+            }
+
             tmp.setQtyInUnit((double) tmpQty);
 
             bi.setPharmaceuticalBillItem(tmp);

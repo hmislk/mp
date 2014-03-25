@@ -45,8 +45,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.TabChangeEvent;
 
-
-
 /**
  *
  * @author Buddhika
@@ -84,7 +82,7 @@ public class PharmacyPreSettleController implements Serializable {
     BillNumberBean billNumberBean;
 /////////////////////////
     Item selectedAlternative;
-        Bill saleReturnBill;
+    Bill saleReturnBill;
 
     private Bill preBill;
     private Bill saleBill;
@@ -125,35 +123,35 @@ public class PharmacyPreSettleController implements Serializable {
         selectedAlternative = null;
         preBill = null;
         saleBill = null;
-        saleReturnBill=null;
+        saleReturnBill = null;
         bill = null;
         billItem = null;
         removingBillItem = null;
         editingBillItem = null;
         qty = 0.0;
         stock = null;
-        newPatient=null;
-        searchedPatient=null;
-        yearMonthDay=null;
+        newPatient = null;
+        searchedPatient = null;
+        yearMonthDay = null;
         patientTabId = "tabNewPt";
         strTenderedValue = "";
         billPreview = false;
-        replaceableStocks=null;
-        billItems=null;
-        itemsWithoutStocks=null;
-        creditCardRefNo="";
-        creditBank=null;
-        chequeRefNo="";
-        chequeBank=null;
-        chequeDate=null;
-        comment="";
-        slipBank=null;
-        slipDate=null;
-        creditCompany=null;
-        cashPaid=0;
-        netTotal=0;
-        balance=0;
-        editingQty=null;
+        replaceableStocks = null;
+        billItems = null;
+        itemsWithoutStocks = null;
+        creditCardRefNo = "";
+        creditBank = null;
+        chequeRefNo = "";
+        chequeBank = null;
+        chequeDate = null;
+        comment = "";
+        slipBank = null;
+        slipDate = null;
+        creditCompany = null;
+        cashPaid = 0;
+        netTotal = 0;
+        balance = 0;
+        editingQty = null;
 
     }
 
@@ -330,13 +328,12 @@ public class PharmacyPreSettleController implements Serializable {
         //System.err.println(getPreBill().getDiscount());
         //System.err.println(getPreBill().getNetTotal());
         //System.err.println(getPreBill().getTotal());
-
         getSaleBill().setGrantTotal(getPreBill().getGrantTotal());
         getSaleBill().setDiscount(getPreBill().getDiscount());
         getSaleBill().setNetTotal(getPreBill().getNetTotal());
         getSaleBill().setTotal(getPreBill().getTotal());
 
-     //   getSaleBill().setRefBill(getPreBill());
+        //   getSaleBill().setRefBill(getPreBill());
         getSaleBill().setPaymentScheme(getPreBill().getPaymentScheme());
 
         if (getSaleBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Cheque)) {
@@ -429,20 +426,18 @@ public class PharmacyPreSettleController implements Serializable {
 //                getSessionController().getInstitution(), getSaleReturnBill(), BillType.PharmacySale, BillNumberSuffix.PHSAL));
         getSaleReturnBill().setInsId(getPreBill().getInsId());
         getSaleReturnBill().setDeptId(getPreBill().getDeptId());
-        
+
         getBillFacade().create(getSaleReturnBill());
 
-        updateSaleReturnPreBill();
-
-    }
-    
-     private void updateSaleReturnPreBill() {
-        getPreBill().setReferenceBill(getSaleReturnBill());
-
-        getBillFacade().edit(getPreBill());
-
+     //   updateSaleReturnPreBill();
+   
     }
 
+//     private void updateSaleReturnPreBill() {
+//        getPreBill().setReferenceBill(getSaleReturnBill());
+//        getBillFacade().edit(getPreBill());
+//    }
+//  
     private void updatePreBill() {
         getPreBill().setReferenceBill(getSaleBill());
 
@@ -451,7 +446,7 @@ public class PharmacyPreSettleController implements Serializable {
     }
 
     private void saveSaleBillItems() {
-         for (BillItem tbi : getPreBill().getBillItems()) {
+        for (BillItem tbi : getPreBill().getBillItems()) {
             BillItem newBil = new BillItem();
             newBil.copy(tbi);
             newBil.setBill(getSaleBill());
@@ -512,6 +507,9 @@ public class PharmacyPreSettleController implements Serializable {
         saveSaleBill(getPreBill().getPatient());
         saveSaleBillItems();
 
+        getPreBill().getCashBillsPre().add(getSaleBill());
+        getBillFacade().edit(getPreBill());
+
         setBill(getBillFacade().find(getSaleBill().getId()));
 
         clearBill();
@@ -525,6 +523,9 @@ public class PharmacyPreSettleController implements Serializable {
 
         saveSaleReturnBill(getPreBill().getPatient());
         saveSaleReturnBillItems();
+
+        getPreBill().getReturnCashBills().add(getSaleReturnBill());
+        getBillFacade().edit(getPreBill());
 
         setBill(getBillFacade().find(getSaleReturnBill().getId()));
 
@@ -672,7 +673,7 @@ public class PharmacyPreSettleController implements Serializable {
         this.preBill = preBill;
         //System.err.println("Setting Bill " + preBill);
         billPreview = false;
-       
+
     }
 
     public Bill getSaleBill() {
@@ -682,7 +683,6 @@ public class PharmacyPreSettleController implements Serializable {
         }
         return saleBill;
     }
-
 
     public Bill getSaleReturnBill() {
         if (saleReturnBill == null) {

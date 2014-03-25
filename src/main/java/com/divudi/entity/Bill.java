@@ -6,6 +6,7 @@ package com.divudi.entity;
 
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.inward.SurgeryBillType;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,11 +23,10 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-
-
 
 /**
  *
@@ -39,6 +39,14 @@ public class Bill implements Serializable {
     private List<Bill> forwardReferenceBills;
     @OneToMany(mappedBy = "forwardReferenceBill", fetch = FetchType.LAZY)
     private List<Bill> backwardReferenceBills;
+    @OneToMany(mappedBy = "billedBill", fetch = FetchType.LAZY)
+    private List<Bill> returnPreBills = new ArrayList<>();
+    @OneToMany(mappedBy = "billedBill", fetch = FetchType.LAZY)
+    private List<Bill> returnBhtIssueBills = new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBill", fetch = FetchType.LAZY)
+    private List<Bill> returnCashBills = new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBill", fetch = FetchType.LAZY)
+    private List<Bill> cashBillsPre = new ArrayList<>();
 
     @ManyToOne
     BatchBill batchBill;
@@ -86,7 +94,7 @@ public class Bill implements Serializable {
     double discountPercent;
     double netTotal;
     double paidAmount;
-    double balance ;
+    double balance;
     Double tax = 0.0;
     Double cashPaid = 0.0;
     Double cashBalance = 0.0;
@@ -120,7 +128,7 @@ public class Bill implements Serializable {
     @ManyToOne
     Department toDepartment;
     //Bill
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Bill billedBill;
     @ManyToOne
     Bill cancelledBill;
@@ -128,6 +136,7 @@ public class Bill implements Serializable {
     Bill refundedBill;
     @ManyToOne
     Bill reactivatedBill;
+
     @ManyToOne
     Bill referenceBill;
     //Id's
@@ -181,6 +190,8 @@ public class Bill implements Serializable {
     Doctor referredBy;
     @ManyToOne
     PatientEncounter patientEncounter;
+    @ManyToOne
+    private PatientEncounter procedure;
     @Transient
     List<Bill> listOfBill;
 
@@ -198,6 +209,8 @@ public class Bill implements Serializable {
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;
+    @Enumerated(EnumType.STRING)
+    private SurgeryBillType surgeryBillType;
 
     public void invertValue(Bill bill) {
         staffFee = 0 - bill.getStaffFee();
@@ -1024,4 +1037,119 @@ public class Bill implements Serializable {
     public void setTransActiveBillItem(List<BillItem> transActiveBillItem) {
         this.transActiveBillItem = transActiveBillItem;
     }
+
+    public PatientEncounter getProcedure() {
+        return procedure;
+    }
+
+    public void setProcedure(PatientEncounter procedure) {
+        this.procedure = procedure;
+    }
+
+    public SurgeryBillType getSurgeryBillType() {
+        return surgeryBillType;
+    }
+
+    public void setSurgeryBillType(SurgeryBillType surgeryBillType) {
+        this.surgeryBillType = surgeryBillType;
+    }
+
+    public List<Bill> getReturnPreBills() {
+        List<Bill> bills = new ArrayList<>();
+
+        for (Bill b : returnPreBills) {
+            if (b instanceof RefundBill && b.getBillType() == BillType.PharmacyPre) {
+
+                bills.add(b);
+            }
+        }
+        returnPreBills = bills;
+
+        return returnPreBills;
+    }
+
+    public List<Bill> getReturnBhtIssueBills() {
+        List<Bill> bills = new ArrayList<>();
+//        System.err.println("Size " + returnBhtIssueBills.size());
+        for (Bill b : returnBhtIssueBills) {
+//            System.err.println("1 " + b);
+//            System.err.println("2 " + b.getBillClass());
+//            System.err.println("3 " + b.getBillType());
+            if (b instanceof RefundBill && b.getBillType() == BillType.PharmacyBhtPre) {
+                bills.add(b);
+            }
+        }
+        returnBhtIssueBills = bills;
+
+        return returnBhtIssueBills;
+    }
+
+    public void setReturnPreBills(List<Bill> returnBills) {
+        this.returnPreBills = returnBills;
+    }
+
+    public List<Bill> getReturnCashBills() {
+        List<Bill> bills = new ArrayList<>();
+        for (Bill b : returnCashBills) {
+            if (b instanceof RefundBill && b.getBillType() == BillType.PharmacySale && b.getBilledBill() == null) {
+                bills.add(b);
+            }
+        }
+        returnCashBills = bills;
+
+        return returnCashBills;
+    }
+
+    public boolean checkActiveReturnBhtIssueBills() {
+        for (Bill b : getReturnBhtIssueBills()) {
+            if (!b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkActiveReturnCashBill() {
+        for (Bill b : getReturnCashBills()) {
+            if (!b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setReturnCashBills(List<Bill> returnCashBills) {
+        this.returnCashBills = returnCashBills;
+    }
+
+    public List<Bill> getCashBillsPre() {
+        List<Bill> bills = new ArrayList<>();
+        for (Bill b : cashBillsPre) {
+            if (b instanceof BilledBill && b.getBillType() == BillType.PharmacySale) {
+
+                bills.add(b);
+            }
+        }
+        cashBillsPre = bills;
+
+        return cashBillsPre;
+    }
+
+    public boolean checkActiveCashPreBill() {
+        for (Bill b : getCashBillsPre()) {
+            if (!b.isCancelled() && !b.isRetired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setCashBillsPre(List<Bill> cashBillsPre) {
+        this.cashBillsPre = cashBillsPre;
+    }
+
+    public void setReturnBhtIssueBills(List<Bill> returnBhtIssueBills) {
+        this.returnBhtIssueBills = returnBhtIssueBills;
+    }
+
 }

@@ -71,6 +71,9 @@
                                     <p:watermark value="MONTH" for="month" />
                                     <p:watermark value="DAYS" for="day" />
                                     <h:outputLabel/>
+                                    <p:outputLabel value="NIC"/>
+                                    <p:inputText value="#{admissionController.newPatient.person.nic}"/>
+                                    
                                     <h:outputLabel value="Age"/>
                                     <h:panelGroup>
                                         <p:inputText  id="year" autocomplete="off" value="#{admissionController.yearMonthDay.year}">

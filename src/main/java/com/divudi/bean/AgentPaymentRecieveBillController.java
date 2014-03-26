@@ -117,7 +117,7 @@ public class AgentPaymentRecieveBillController implements Serializable {
             return;
         }
 
-        getBillBean().setPaymentSchemeData(getCurrent(), getCurrent().getPaymentScheme(), getPaymentMethodData());
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentMethod(), getPaymentMethodData());
 
         getCurrent().setTotal(getCurrent().getNetTotal());
 

@@ -10,10 +10,8 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.Sex;
-import com.divudi.data.Title;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardBean;
@@ -83,6 +81,7 @@ public class AdmissionController implements Serializable {
     private PatientRoom patientRoom;
     private List<Admission> items = null;
     private List<Patient> patientList;
+    private boolean printPreview;
     ///////////////////////////
     String selectText = "";
     private String ageText = "";
@@ -91,25 +90,11 @@ public class AdmissionController implements Serializable {
     private Patient newPatient;
     private YearMonthDay yearMonthDay;
     private Bill appointmentBill;
-    private String creditCardRefNo;
-    private String creditBank;
+    private PaymentMethodData paymentMethodData;
 
     public void dateChangeListen() {
         getNewPatient().getPerson().setDob(getCommonFunctions().guessDob(yearMonthDay));
 
-    }
-
-    public PaymentMethod[] getPaymentMethods() {
-        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit, PaymentMethod.Card};
-        return tmp;
-    }
-
-    public Title[] getTitle() {
-        return Title.values();
-    }
-
-    public Sex[] getSex() {
-        return Sex.values();
     }
 
 //    public List<Admission> completePatientBht(String query) {
@@ -229,7 +214,7 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("NothingToDelete");
         }
         makeNull();
-        getItems();
+//        getItems();
         current = null;
         getCurrent();
     }
@@ -254,7 +239,7 @@ public class AdmissionController implements Serializable {
         selectedItems = null;
         newPatient = null;
         yearMonthDay = null;
-        deposit = 0;
+        printPreview = false;
         bhtNumberCalculation();
     }
 
@@ -359,7 +344,6 @@ public class AdmissionController implements Serializable {
         return false;
     }
 
-    private double deposit;
     @Inject
     private InwardPaymentController inwardPaymentController;
     @EJB
@@ -411,8 +395,9 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
         }
 
-        getInwardBean().savePatientRoom(getPatientRoom(), getCurrent(), getCurrent().getDateOfAdmission(), getSessionController().getLoggedUser());
-
+        PatientRoom currentPatientRoom = getInwardBean().savePatientRoom(getPatientRoom(), getCurrent(), getCurrent().getDateOfAdmission(), getSessionController().getLoggedUser());
+        getCurrent().setCurrentPatientRoom(currentPatientRoom);
+       
         double appointmentFee = 0;
         if (getAppointmentBill() != null) {
             appointmentFee = getAppointmentBill().getTotal();
@@ -429,15 +414,7 @@ public class AdmissionController implements Serializable {
             getInwardPaymentController().makeNull();
         }
 
-        if (getDeposit() != 0) {
-            System.err.println("Deposit ");
-            getInwardPaymentController().pay(getCurrent().getPaymentMethod(), getCurrent(), getDeposit());
-            //     getInwardPaymentController().setPrintPreview(true);
-        }
-
-        if (getDeposit() == 0) {
-            makeNull();
-        }
+        printPreview = true;
 
     }
 
@@ -486,7 +463,7 @@ public class AdmissionController implements Serializable {
             temSql = "SELECT i FROM Admission i where i.retired=false and i.discharged=false order by i.bhtNo";
             items = getFacade().findBySQL(temSql);
             if (items == null) {
-                items = new ArrayList<Admission>();
+                items = new ArrayList<>();
             }
         }
 
@@ -637,14 +614,6 @@ public class AdmissionController implements Serializable {
         this.appointmentBill = appointmentBill;
     }
 
-    public double getDeposit() {
-        return deposit;
-    }
-
-    public void setDeposit(double deposit) {
-        this.deposit = deposit;
-    }
-
     public InwardPaymentController getInwardPaymentController() {
         return inwardPaymentController;
     }
@@ -669,28 +638,31 @@ public class AdmissionController implements Serializable {
         this.billFacade = billFacade;
     }
 
-    public String getCreditCardRefNo() {
-        return creditCardRefNo;
-    }
-
-    public void setCreditCardRefNo(String creditCardRefNo) {
-        this.creditCardRefNo = creditCardRefNo;
-    }
-
-    public String getCreditBank() {
-        return creditBank;
-    }
-
-    public void setCreditBank(String creditBank) {
-        this.creditBank = creditBank;
-    }
-
     public InwardBean getInwardBean() {
         return inwardBean;
     }
 
     public void setInwardBean(InwardBean inwardBean) {
         this.inwardBean = inwardBean;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public boolean isPrintPreview() {
+        return printPreview;
+    }
+
+    public void setPrintPreview(boolean printPreview) {
+        this.printPreview = printPreview;
     }
 
     /**

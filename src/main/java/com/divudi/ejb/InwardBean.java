@@ -60,7 +60,7 @@ public class InwardBean {
         }
     }
 
-    public void savePatientRoom(PatientRoom patientRoom, PatientEncounter patientEncounter, Date admittedAt, WebUser webUser) {
+    public PatientRoom savePatientRoom(PatientRoom patientRoom, PatientEncounter patientEncounter, Date admittedAt, WebUser webUser) {
         patientRoom.setCurrentLinenCharge(patientRoom.getRoomFacilityCharge().getLinenCharge());
         patientRoom.setCurrentMaintananceCharge(patientRoom.getRoomFacilityCharge().getMaintananceCharge());
         patientRoom.setCurrentMoCharge(patientRoom.getRoomFacilityCharge().getMoCharge());
@@ -83,6 +83,8 @@ public class InwardBean {
         if (patientEncounter.getAdmissionType().isRoomChargesAllowed()) {
             makeRoomFilled(patientRoom);
         }
+
+        return patientRoom;
     }
 
     public void makeRoomFilled(PatientRoom pr) {

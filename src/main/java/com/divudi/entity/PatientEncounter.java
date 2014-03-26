@@ -10,6 +10,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.EncounterComponent;
+import com.divudi.entity.inward.PatientRoom;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +51,8 @@ public class PatientEncounter implements Serializable {
     Patient patient;
     @ManyToOne
     Person guardian;
+    @ManyToOne
+    private PatientRoom currentPatientRoom;
     @ManyToOne
     private Item item;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -501,6 +504,14 @@ public class PatientEncounter implements Serializable {
 
     public void setPaymentFinalized(boolean paymentFinalized) {
         this.paymentFinalized = paymentFinalized;
+    }
+
+    public PatientRoom getCurrentPatientRoom() {
+        return currentPatientRoom;
+    }
+
+    public void setCurrentPatientRoom(PatientRoom currentPatientRoom) {
+        this.currentPatientRoom = currentPatientRoom;
     }
 
 }

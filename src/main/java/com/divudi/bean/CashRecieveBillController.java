@@ -193,7 +193,15 @@ public class CashRecieveBillController implements Serializable {
             }
         }
 
-        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme(), getPaymentMethodData())) {
+        if (getCurrent().getPaymentScheme() == null) {
+            return true;
+        }
+
+        if (getCurrent().getPaymentScheme().getPaymentMethod() == null) {
+            return true;
+        }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme().getPaymentMethod(), getPaymentMethodData())) {
             return true;
         }
 

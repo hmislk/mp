@@ -13,6 +13,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -85,27 +86,19 @@ public class AppointmentController implements Serializable {
     private BillFeeFacade billFeeFacade;
     @EJB
     private AppointmentFacade appointmentFacade;
-    //Temprory Variable
-    //   private Patient tmpPatient;
-    private String comment = "";
-    //  Date sessionDate;
+
     private boolean printPreview;
-    //  private Date chequeDate;
-    private Date slipDate;
-    //private PaymentScheme paymentScheme;
+
     private Patient newPatient;
     private Patient searchedPatient;
     //private String creditCardRefNo;
     //  private String chequeRefNo;
     private String patientTabId = "tabNewPt";
     private String ageText = "";
-    private Institution chequeBank;
-    private Institution slipBank;
-    private Institution creditBank;
-    //private BillItem currentBillItem;
     private Bill currentBill;
     private Appointment currentAppointment;
     private YearMonthDay yearMonthDay;
+    private PaymentMethodData paymentMethodData;
 
     public Title[] getTitle() {
         return Title.values();
@@ -206,20 +199,9 @@ public class AppointmentController implements Serializable {
         // getCurrentBill().setAppointment(getCurrentAppointment());
         //     getCurrentBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
         //    getCurrentBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
-        if (getCurrentBill().getPaymentMethod().equals(PaymentMethod.Cheque)) {
-            getCurrentBill().setBank(getChequeBank());
-            //temp.setChequeRefNo(chequeRefNo);          
-        }
 
-        if (getCurrentBill().getPaymentMethod().equals(PaymentMethod.Slip)) {
-            getCurrentBill().setBank(getSlipBank());
-            getCurrentBill().setChequeDate(getSlipDate());
-        }
+        getBillBean().setPaymentMethodData(getCurrentBill(), getCurrentBill().getPaymentScheme().getPaymentMethod(), getPaymentMethodData());
 
-        if (getCurrentBill().getPaymentMethod().equals(PaymentMethod.Card)) {
-            // temp.setCreditCardRefNo(creditCardRefNo);
-            getCurrentBill().setBank(creditBank);
-        }
         getCurrentBill().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrentBill().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         //   getCurrentBill().setPatient(tmpPatient);
@@ -258,6 +240,9 @@ public class AppointmentController implements Serializable {
 
     }
 
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
+
     private boolean errorCheck() {
 
         if (checkPatientAgeSex()) {
@@ -279,35 +264,9 @@ public class AppointmentController implements Serializable {
 
         }
 
-        if (getCurrentBill().getPaymentMethod() != null && getCurrentBill().getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getChequeBank() == null || getCurrentBill().getChequeRefNo() == null || getCurrentBill().getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrentBill().getPaymentScheme(), paymentMethodData)) {
+            return true;
         }
-
-        if (getCurrentBill().getPaymentMethod() != null && getCurrentBill().getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getComment() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
-                return true;
-            }
-
-        }
-
-        if (getCurrentBill().getPaymentMethod() != null && getCurrentBill().getPaymentMethod() == PaymentMethod.Card) {
-            if (getCreditBank() == null || getCurrentBill().getCreditCardRefNo() == null) {
-                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
-                return true;
-            }
-
-            if (getCurrentBill().getCreditCardRefNo().trim().length() < 16) {
-                UtilityController.addErrorMessage("Enter 16 Digit");
-                return true;
-            }
-
-        }
-
 //       
         return false;
     }
@@ -412,15 +371,6 @@ public class AppointmentController implements Serializable {
         this.searchedPatient = searchedPatient;
     }
 
-    public Institution getChequeBank() {
-
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
     public String getAgeText() {
         ageText = getNewPatient().getAge();
         if (ageText.startsWith("0 days")) {
@@ -501,30 +451,6 @@ public class AppointmentController implements Serializable {
 
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public Institution getCreditBank() {
-        return creditBank;
-    }
-
-    public void setCreditBank(Institution creditBank) {
-        this.creditBank = creditBank;
-    }
-
     public Bill getCurrentBill() {
         if (currentBill == null) {
             currentBill = new BilledBill();
@@ -535,14 +461,6 @@ public class AppointmentController implements Serializable {
 
     public void setCurrentBill(Bill currentBill) {
         this.currentBill = currentBill;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
     }
 
     public Appointment getCurrentAppointment() {
@@ -573,6 +491,25 @@ public class AppointmentController implements Serializable {
 
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
     }
 
     /**

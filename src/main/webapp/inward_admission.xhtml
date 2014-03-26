@@ -7,7 +7,7 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
-                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill">
+                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward">
 
 
     <ui:define name="content">
@@ -22,7 +22,7 @@
                     </p:selectOneMenu>
                     <p:inputText id="bh" value="#{admissionController.bhtText}" disabled="true"  />
 
-                    <p:autoComplete  disabled="#{!admissionController.current.admissionType.roomChargesAllowed}" converter="fac" forceSelection="true" id="cmbDoc" value="#{admissionController.patientRoom.roomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoom}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;">
+                    <p:autoComplete  converter="fac" forceSelection="true" id="cmbDoc" value="#{admissionController.patientRoom.roomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoom}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;">
                         <p:column>
                             #{rf.name}
                         </p:column>
@@ -52,7 +52,7 @@
                                     <h:outputLabel value="Title"/>
                                     <p:selectOneMenu  id="cmbTitle" value="#{admissionController.newPatient.person.title}"  >
                                         <f:selectItem itemLabel="Select Title" />
-                                        <f:selectItems value="#{admissionController.title}"/>
+                                        <f:selectItems value="#{enumController.title}"/>
                                     </p:selectOneMenu>
                                     <h:outputLabel value="Name"/>
                                     <p:inputText autocomplete="off" id="txtNewPtName" value="#{admissionController.newPatient.person.name}" style="width: 200px;text-transform:uppercase;">
@@ -60,7 +60,7 @@
                                     <h:outputLabel value="Sex"/>
                                     <p:selectOneMenu id="txtNewSex"  value="#{admissionController.newPatient.person.sex}" style="width: 200px;">
                                         <f:selectItem itemLabel="Select Sex"/>
-                                        <f:selectItems value="#{admissionController.sex}"/>
+                                        <f:selectItems value="#{enumController.sex}"/>
                                     </p:selectOneMenu>
                                     <h:outputLabel value="Date of Birth"/>
                                     <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
@@ -188,22 +188,25 @@
                     <p:panel header="Payment Detail">
 
                         <h:panelGrid columns="2">
-                            <h:outputLabel value="Select Paymentmethod"/>
+                            <h:outputLabel value="Select  Admission Paymentmethod"/>
                             <p:selectOneMenu   id="cmbPs" value="#{admissionController.current.paymentMethod}"  >
                                 <f:selectItem itemLabel="Select Payment Method" />                           
-                                <f:selectItems value="#{admissionController.paymentMethods}" />
-                                <p:ajax process="@this" update="lblCompany cmCompany lblLimit limit" event="change" />
+                                <f:selectItems value="#{enumController.paymentMethodForAdmission}" />
+                                <p:ajax process="@this" update="crd" event="change" />
                             </p:selectOneMenu>
-                            <h:outputLabel id="lblCompany" value="Company Name"  style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; " />                                                       
-                            <p:autoComplete id="cmCompany" forceSelection="true" value="#{admissionController.current.creditCompany}"  
-                                            completeMethod="#{creditCompanyController.completeCredit}" var="ix" itemLabel="#{ix.name}" 
-                                            itemValue="#{ix}" size="30" 
-                                            style="width: 400px;display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">                              
-                            </p:autoComplete> 
-                            <p:outputLabel id="lblLimit" value="Credit Limit" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; "/>
-                            <p:inputText id="limit" value="#{admissionController.current.creditLimit}" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; "/>
-                            <h:outputLabel value="Diposit" />
-                            <p:inputText value="#{admissionController.deposit}"/>
+
+                            <h:panelGroup id="crd" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Company Name"   />                                                       
+                                    <p:autoComplete forceSelection="true" value="#{admissionController.current.creditCompany}"  
+                                                    completeMethod="#{creditCompanyController.completeCredit}" 
+                                                    var="ix" itemLabel="#{ix.name}" 
+                                                    itemValue="#{ix}" size="30" >                              
+                                    </p:autoComplete> 
+                                    <p:outputLabel value="Credit Limit" />
+                                    <p:inputText value="#{admissionController.current.creditLimit}" />
+                                </h:panelGrid>
+                            </h:panelGroup>
                         </h:panelGrid>
 
 
@@ -212,7 +215,8 @@
             </h:panelGrid>
 
             <p:panel rendered="#{inwardPaymentController.printPreview}">
-                <bill:payment bill="#{inwardPaymentController.current}"/>
+                <p:commandButton ajax="false" value="New Admission" actionListener="#{admissionController.makeNull}"/>
+                <bill:bht admission="#{inwardPaymentController.current}"/>
             </p:panel>
 
         </h:form>

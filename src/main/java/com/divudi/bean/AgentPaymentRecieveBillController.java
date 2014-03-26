@@ -79,7 +79,15 @@ public class AgentPaymentRecieveBillController implements Serializable {
             return true;
         }
 
-        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme(), paymentMethodData)) {
+        if (getCurrent().getPaymentScheme() == null) {
+            return true;
+        }
+
+        if (getCurrent().getPaymentScheme().getPaymentMethod() == null) {
+            return true;
+        }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme().getPaymentMethod(), paymentMethodData)) {
             return true;
         }
 

@@ -119,7 +119,10 @@ public class RoomChangeController implements Serializable {
         }
 
         getInwardBean().makeRoomVacant(getCurrent());
-        getInwardBean().savePatientRoom(getNewRoomFacilityCharge(), addLinenCharge, changeAt, current, getSessionController().getLoggedUser());
+
+        PatientRoom cuPatientRoom = getInwardBean().savePatientRoom(getNewRoomFacilityCharge(), addLinenCharge, changeAt, current, getSessionController().getLoggedUser());
+        getCurrent().setCurrentPatientRoom(cuPatientRoom);
+        getEjbFacade().edit(getCurrent());
         recreate();
         UtilityController.addSuccessMessage("Successfully Room Changed");
     }

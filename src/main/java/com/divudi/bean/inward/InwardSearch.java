@@ -461,7 +461,8 @@ public class InwardSearch implements Serializable {
     }
 
     private boolean checkInvestigation() {
-        String sql = "SELECT p FROM PatientInvestigation p where p.retired=false and p.billItem.bill.id=" + getBill().getId();
+        String sql = "SELECT p FROM PatientInvestigation p where p.retired=false "
+                + " and p.billItem.bill.id=" + getBill().getId();
         List<PatientInvestigation> tmp = getPatientInvestigationFacade().findBySQL(sql);
 
         for (PatientInvestigation p : tmp) {

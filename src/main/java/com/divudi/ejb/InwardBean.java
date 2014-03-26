@@ -31,7 +31,7 @@ public class InwardBean {
     @EJB
     private InwardCalculation inwardCalculation;
 
-    public void savePatientRoom(RoomFacilityCharge newRoomFacilityCharge, double addLinenCharge, Date addmittedAt, PatientEncounter patientEncounter, WebUser webUser) {
+    public PatientRoom savePatientRoom(RoomFacilityCharge newRoomFacilityCharge, double addLinenCharge, Date addmittedAt, PatientEncounter patientEncounter, WebUser webUser) {
         PatientRoom pr = new PatientRoom();
 
         pr.setCurrentLinenCharge(newRoomFacilityCharge.getLinenCharge());
@@ -58,6 +58,8 @@ public class InwardBean {
         if (patientEncounter.getAdmissionType().isRoomChargesAllowed()) {
             makeRoomFilled(pr);
         }
+
+        return pr;
     }
 
     public PatientRoom savePatientRoom(PatientRoom patientRoom, PatientEncounter patientEncounter, Date admittedAt, WebUser webUser) {

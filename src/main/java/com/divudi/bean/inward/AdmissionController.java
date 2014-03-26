@@ -397,7 +397,9 @@ public class AdmissionController implements Serializable {
 
         PatientRoom currentPatientRoom = getInwardBean().savePatientRoom(getPatientRoom(), getCurrent(), getCurrent().getDateOfAdmission(), getSessionController().getLoggedUser());
         getCurrent().setCurrentPatientRoom(currentPatientRoom);
-       
+        getFacade().edit(getCurrent());
+        
+        
         double appointmentFee = 0;
         if (getAppointmentBill() != null) {
             appointmentFee = getAppointmentBill().getTotal();

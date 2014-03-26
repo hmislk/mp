@@ -8,13 +8,18 @@ import com.divudi.bean.InstitutionController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.data.DepartmentType;
 import com.divudi.data.InstitutionType;
+import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.Item;
+import com.divudi.entity.Service;
+import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Atm;
@@ -34,6 +39,7 @@ import com.divudi.facade.AmppFacade;
 import com.divudi.facade.AtmFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemsDistributorsFacade;
 import com.divudi.facade.MeasurementUnitFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
@@ -49,6 +55,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,6 +105,10 @@ public class PharmacyItemExcelManager implements Serializable {
     PharmaceuticalItemCategoryFacade pharmaceuticalItemCategoryFacade;
     @EJB
     private PharmacyBean pharmacyBean;
+
+    List<String> itemNotPresent;
+    List<String> itemsWithDifferentGenericName;
+    List<String> itemsWithDifferentCode;
 
     /**
      *
@@ -284,6 +295,37 @@ public class PharmacyItemExcelManager implements Serializable {
 
     }
 
+    @EJB
+    private ItemFacade itemFacade;
+
+    public void resetSessionBillNumberType() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Item b where type(b)=:tp ";
+        temMap.put("tp", Service.class);
+        List<Item> list = getItemFacade().findBySQL(sql, temMap);
+
+        for (Item i : list) {
+            i.setSessionNumberType(null);
+            getItemFacade().edit(i);
+        }
+    }
+
+    public void resetInwardChargeType() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Item b where type(b)=:tp ";
+        temMap.put("tp", Investigation.class);
+        List<Item> list = getItemFacade().findBySQL(sql, temMap);
+
+        for (Item i : list) {
+            i.setInwardChargeType(InwardChargeType.Investigations);
+            getItemFacade().edit(i);
+        }
+    }
+
 //    public void resetPharmacyPurhcaseCancelPayentScheme() {
 //        String sql;
 //        Map temMap = new HashMap();
@@ -302,7 +344,6 @@ public class PharmacyItemExcelManager implements Serializable {
 //        }
 //
 //    }
-
     public void resetGrnReference() {
         String sql;
         Map temMap = new HashMap();
@@ -786,6 +827,185 @@ public class PharmacyItemExcelManager implements Serializable {
         }
     }
 
+    public String importStoreItemsToExcel() {
+        String catName;
+        String catCode;
+        String itenName;
+        String itemCode;
+
+        PharmaceuticalItemCategory cat;
+        Amp amp;
+
+        File inputWorkbook;
+        Workbook w;
+        Cell cell;
+        InputStream in;
+        UtilityController.addSuccessMessage(file.getFileName());
+        try {
+            UtilityController.addSuccessMessage(file.getFileName());
+            in = file.getInputstream();
+            File f;
+            f = new File(Calendar.getInstance().getTimeInMillis() + file.getFileName());
+            FileOutputStream out = new FileOutputStream(f);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            inputWorkbook = new File(f.getAbsolutePath());
+
+            UtilityController.addSuccessMessage("Excel File Opened");
+            w = Workbook.getWorkbook(inputWorkbook);
+            Sheet sheet = w.getSheet(0);
+
+            for (int i = startRow; i < sheet.getRows(); i++) {
+
+                Map m;
+
+                cell = sheet.getCell(0, i);
+                catCode = cell.getContents();
+
+                cell = sheet.getCell(1, i);
+                catName = cell.getContents();
+
+                cell = sheet.getCell(2, i);
+                itenName = cell.getContents();
+
+                cell = sheet.getCell(3, i);
+                itemCode = cell.getContents();
+
+                if (catName == null || catName.trim().equals("") || itenName == null || itenName.trim().equals("")) {
+                    continue;
+                }
+
+                cat = getPharmacyBean().getPharmaceuticalCategoryByName(catName);
+                if (cat == null) {
+                    cat = new PharmaceuticalItemCategory();
+                    cat.setName(catName);
+                    cat.setCode(catCode);
+                    getPharmaceuticalItemCategoryFacade().create(cat);
+                } else {
+                    cat.setName(catName);
+                    cat.setCode(catCode);
+                    getPharmaceuticalItemCategoryFacade().edit(cat);
+                }
+
+                m = new HashMap();
+                m.put("dep", DepartmentType.Store);
+                m.put("n", itenName.toUpperCase());
+
+                amp = ampFacade.findFirstBySQL("SELECT c FROM Amp c Where upper(c.name)=:n AND c.departmentType=:dep ", m);
+
+                if (amp == null) {
+                    amp = new Amp();
+                    amp.setName(itenName);
+                    amp.setCode(itemCode);
+                    amp.setCategory(cat);
+                    getAmpFacade().create(amp);
+                } else {
+                    amp.setRetired(false);
+                    amp.setName(itenName);
+                    amp.setCode(itemCode);
+                    amp.setCategory(cat);
+                    getAmpFacade().edit(amp);
+                }
+            }
+
+            UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
+            return "";
+        } catch (IOException ex) {
+            UtilityController.addErrorMessage(ex.getMessage());
+            return "";
+        } catch (BiffException e) {
+            UtilityController.addErrorMessage(e.getMessage());
+            return "";
+        }
+    }
+
+    public String detectMismatch() {
+        //System.out.println("importing to excel");
+        String itemName;
+        String itemCode;
+        String genericName;
+
+        File inputWorkbook;
+        Workbook w;
+        Cell cell;
+        InputStream in;
+        UtilityController.addSuccessMessage(file.getFileName());
+        try {
+            UtilityController.addSuccessMessage(file.getFileName());
+            in = file.getInputstream();
+            File f;
+            f = new File(Calendar.getInstance().getTimeInMillis() + file.getFileName());
+            FileOutputStream out = new FileOutputStream(f);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            inputWorkbook = new File(f.getAbsolutePath());
+
+            UtilityController.addSuccessMessage("Excel File Opened");
+            w = Workbook.getWorkbook(inputWorkbook);
+            Sheet sheet = w.getSheet(0);
+
+            itemNotPresent = new ArrayList<>();
+            itemsWithDifferentCode = new ArrayList<>();
+            itemsWithDifferentGenericName = new ArrayList<>();
+
+            for (int i = startRow; i < sheet.getRows(); i++) {
+
+                Map m = new HashMap();
+
+                cell = sheet.getCell(0, i);
+                itemName = cell.getContents();
+
+                cell = sheet.getCell(1, i);
+                itemCode = cell.getContents();
+
+                cell = sheet.getCell(2, i);
+                genericName = cell.getContents();
+
+                String sql;
+                m.put("strAmp", itemName.toUpperCase());
+                sql = "Select amp from Amp amp where amp.retired=false and upper(amp.name)=:strAmp";
+                Amp amp = getAmpFacade().findFirstBySQL(sql, m);
+                if (amp != null) {
+                    if (amp.getCode() != null) {
+                        if (!amp.getCode().equalsIgnoreCase(itemCode)) {
+                            itemsWithDifferentCode.add(itemName);
+                        }
+                    }
+                    if (amp.getVmp() != null && amp.getVmp().getName() != null) {
+                        if (amp.getVmp().getName().equalsIgnoreCase(genericName)) {
+                            itemsWithDifferentGenericName.add(itemName);
+                        }
+                    }
+                } else {
+                    itemNotPresent.add(itemName);
+                }
+
+            }
+            UtilityController.addSuccessMessage("Succesful. All the data in Excel File are listed below.");
+            return "";
+        } catch (IOException ex) {
+            UtilityController.addErrorMessage(ex.getMessage());
+            return "";
+        } catch (BiffException e) {
+            UtilityController.addErrorMessage(e.getMessage());
+            return "";
+        }
+    }
+
     public String importToExcelBarcode() {
         //System.out.println("importing to excel");
 
@@ -1257,6 +1477,38 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
         this.stockHistoryFacade = stockHistoryFacade;
+    }
+
+    public List<String> getItemNotPresent() {
+        return itemNotPresent;
+    }
+
+    public void setItemNotPresent(List<String> itemNotPresent) {
+        this.itemNotPresent = itemNotPresent;
+    }
+
+    public List<String> getItemsWithDifferentGenericName() {
+        return itemsWithDifferentGenericName;
+    }
+
+    public void setItemsWithDifferentGenericName(List<String> itemsWithDifferentGenericName) {
+        this.itemsWithDifferentGenericName = itemsWithDifferentGenericName;
+    }
+
+    public List<String> getItemsWithDifferentCode() {
+        return itemsWithDifferentCode;
+    }
+
+    public void setItemsWithDifferentCode(List<String> itemsWithDifferentCode) {
+        this.itemsWithDifferentCode = itemsWithDifferentCode;
+    }
+
+    public ItemFacade getItemFacade() {
+        return itemFacade;
+    }
+
+    public void setItemFacade(ItemFacade itemFacade) {
+        this.itemFacade = itemFacade;
     }
 
 }

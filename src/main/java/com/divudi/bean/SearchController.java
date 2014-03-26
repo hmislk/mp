@@ -221,6 +221,42 @@ public class SearchController implements Serializable {
 
     }
 
+    public void createVariantReportSearch() {
+        String sql = "";
+        HashMap tmp = new HashMap();
+
+        sql = "Select b From PreBill b where b.cancelledBill is null  "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " (upper(b.toInstitution.name) like :str "
+                + " or upper(b.creater.webUserPerson.name) like :str "
+                + "  or upper(b.referenceBill.creater.webUserPerson.name) like :str or "
+                + " upper(b.referenceBill.deptId) like :str "
+                + " or upper(b.netTotal) like :str ) "
+                + "and b.retired=false and b.billType= :bTp ";
+
+        if (getSearchKeyword().getDepartment() != null && !getSearchKeyword().getDepartment().trim().equals("")) {
+            sql += " and  (upper(b.department.name) like :dep )";
+            tmp.put("dep", "%" + getSearchKeyword().getDepartment().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.deptId) like :billNo )";
+            tmp.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+        
+          if (getSearchKeyword().getCategory()!= null && !getSearchKeyword().getCategory().trim().equals("")) {
+            sql += " and  (upper(b.category.name) like :cat )";
+            tmp.put("cat", "%" + getSearchKeyword().getCategory().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.createdAt desc  ";
+
+        tmp.put("toDate", getToDate());
+        tmp.put("fromDate", getFromDate());
+        tmp.put("bTp", BillType.PharmacyMajorAdjustment);
+        List<Bill> lst = getBillFacade().findBySQL(sql, tmp, TemporalType.TIMESTAMP);
+    }
+
     public void createPharmacyTable() {
 
         Map m = new HashMap();

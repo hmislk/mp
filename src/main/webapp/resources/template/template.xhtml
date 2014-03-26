@@ -219,7 +219,7 @@
                                     <p:menuitem  ajax="false" action="pharmacy_search"  value="Search" actionListener="#{billSearch.recreateModel}" rendered="#{webUserController.hasPrivilege('PharmacySearch')}" ></p:menuitem>                                  
                                     <p:menuitem  ajax="false" action="pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('PharmacyReports')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="pharmacy_summery_index"  value="Summery" rendered="#{webUserController.hasPrivilege('PharmacySummery')}" ></p:menuitem>                                    
-                                    <p:menuitem  ajax="false" action="pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
+                                    <p:menuitem  ajax="false" action="store_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                                 </p:submenu>
                                 <p:submenu label="Channeling" rendered="#{webUserController.hasPrivilege('Channelling')}">                                
 

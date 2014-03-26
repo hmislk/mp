@@ -50,6 +50,9 @@ public class Bill implements Serializable {
 
     @ManyToOne
     BatchBill batchBill;
+    
+    @ManyToOne
+    private Category category;
 
     static final long serialVersionUID = 1L;
     @Id
@@ -1150,6 +1153,14 @@ public class Bill implements Serializable {
 
     public void setReturnBhtIssueBills(List<Bill> returnBhtIssueBills) {
         this.returnBhtIssueBills = returnBhtIssueBills;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 }

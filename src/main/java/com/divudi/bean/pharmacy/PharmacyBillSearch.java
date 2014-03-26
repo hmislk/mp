@@ -1071,7 +1071,7 @@ public class PharmacyBillSearch implements Serializable {
             b.copy(nB.getBillItem());
             b.invertValue(nB.getBillItem());
 
-            b.setReferanceBillItem(nB.getBillItem().getReferanceBillItem());
+            b.setReferanceBillItem(nB.getBillItem().getReferanceBillItem());          
             b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             b.setCreater(getSessionController().getLoggedUser());
 
@@ -1357,6 +1357,8 @@ public class PharmacyBillSearch implements Serializable {
             getBillFacade().create(cb);
 
             pharmacyCancelReturnBillItemsWithReducingStock(cb);
+
+            cancelPreBillFees(cb.getBillItems());
 
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);

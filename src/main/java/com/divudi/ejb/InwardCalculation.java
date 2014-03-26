@@ -104,7 +104,7 @@ public class InwardCalculation {
         }
     }
 
-    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter,Institution institution) {
+    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter, Institution institution) {
 
         List<BillFee> billFeeList = new ArrayList<>();
         BillFee billFee;
@@ -144,7 +144,7 @@ public class InwardCalculation {
 
         BillFee bf = null;
 
-        bf = getBillFeeMatrix(billItem,institution);
+        bf = getBillFeeMatrix(billItem, institution);
         double serviceValue = getHospitalFeeByItem(billItem.getItem());
         PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
         bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoomFacilityCharge().getDepartment()));
@@ -410,9 +410,7 @@ public class InwardCalculation {
         long tempDur = tmp.getDurationHours();
         long tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
-        
-        
-        
+
         Date currentTime;
 
         if (date == null) {

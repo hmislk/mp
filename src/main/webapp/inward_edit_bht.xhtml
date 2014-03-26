@@ -45,21 +45,25 @@
                                     </p:selectOneMenu>
                                     <p:outputLabel value="Admission Type "/>
                                     <h:outputLabel value="#{bhtEditController.current.admissionType.name}"/>                               
-                                    <p:outputLabel value="Select PaymentScheme "/>
+                                    <h:outputLabel value="Select  Admission Paymentmethod"/>
                                     <p:selectOneMenu   id="cmbPs" value="#{bhtEditController.current.paymentMethod}"  >
-                                        <f:selectItems value="#{admissionController.paymentMethods}"  />
-                                        <p:ajax process="@this" update="lblCompany cmCompany lblLimit limit" event="change" />
+                                        <f:selectItem itemLabel="Select Payment Method" />                           
+                                        <f:selectItems value="#{enumController.paymentMethodForAdmission}" />
+                                        <p:ajax process="@this" update="crd" event="change" />
                                     </p:selectOneMenu>
 
-                                    <h:outputLabel id="lblCompany" value="Company Name"  style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; " />                                                       
-                                    <p:autoComplete id="cmCompany" forceSelection="true" value="#{bhtEditController.current.creditCompany}"  
-                                                    completeMethod="#{creditCompanyController.completeCredit}" var="ix" itemLabel="#{ix.name}" 
-                                                    itemValue="#{ix}" size="30" 
-                                                    style="width: 400px;display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">                              
-                                    </p:autoComplete> 
-                                    <p:outputLabel id="lblLimit" value="Credit Limit" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; "/>
-                                    <p:inputText id="limit" value="#{bhtEditController.current.creditLimit}" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; "/>
-
+                                    <h:panelGroup id="crd" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">
+                                        <h:panelGrid columns="2">
+                                            <h:outputLabel value="Company Name"   />                                                       
+                                            <p:autoComplete forceSelection="true" value="#{bhtEditController.current.creditCompany}"  
+                                                            completeMethod="#{creditCompanyController.completeCredit}" 
+                                                            var="ix" itemLabel="#{ix.name}" 
+                                                            itemValue="#{ix}" size="30" >                              
+                                            </p:autoComplete> 
+                                            <p:outputLabel value="Credit Limit" />
+                                            <p:inputText value="#{bhtEditController.current.creditLimit}" />
+                                        </h:panelGrid>
+                                    </h:panelGroup>
                                 </h:panelGrid>
                             </p:panel>
 

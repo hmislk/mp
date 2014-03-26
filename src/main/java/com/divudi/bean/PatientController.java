@@ -198,11 +198,12 @@ public class PatientController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<Patient>();
         } else {
-            sql = "select p from Patient p where p.retired=false and upper(p.person.name) like "
+            sql = "select p from Patient p where p.retired=false "
+                    + " and upper(p.person.name) like "
                     + " :q order by p.person.name";
             hm.put("q", "%" + query.toUpperCase() + "%");
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql,hm,30);
+            suggestions = getFacade().findBySQL(sql,hm,20);
         }
         return suggestions;
     }

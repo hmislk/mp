@@ -10,7 +10,6 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.data.inward.InwardChargeType;
@@ -21,7 +20,6 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
-import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.PreBill;
@@ -36,7 +34,6 @@ import com.divudi.facade.StockFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -311,7 +308,12 @@ public class PharmacyIssueController implements Serializable {
     private PaymentSchemeController paymentSchemeController;
 
     private boolean errorCheckForSaleBill() {
-        if (getPaymentSchemeController().errorCheckPaymentScheme(paymentScheme, getPaymentMethodData())) {
+
+        if (getPaymentScheme() == null) {
+            return true;
+        }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getPaymentScheme().getPaymentMethod(), getPaymentMethodData())) {
             return true;
         }
 

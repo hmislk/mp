@@ -52,8 +52,8 @@ public class PaymentSchemeController implements Serializable {
     List<PaymentScheme> billingItems;
     private PaymentMethod[] paymentMethods;
 
-    public boolean errorCheckPaymentScheme(PaymentScheme paymentScheme, PaymentMethodData paymentMethodData) {
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cheque) {
+    public boolean errorCheckPaymentScheme(PaymentMethod paymentMethod, PaymentMethodData paymentMethodData) {
+        if (paymentMethod == PaymentMethod.Cheque) {
             if (paymentMethodData.getCheque().getInstitution() == null
                     || paymentMethodData.getCheque().getNo() == null
                     || paymentMethodData.getCheque().getDate() == null) {
@@ -63,7 +63,7 @@ public class PaymentSchemeController implements Serializable {
 
         }
 
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Slip) {
+        if (paymentMethod == PaymentMethod.Slip) {
             if (paymentMethodData.getSlip().getInstitution() == null
                     || paymentMethodData.getSlip().getComment() == null
                     || paymentMethodData.getSlip().getDate() == null) {
@@ -73,7 +73,7 @@ public class PaymentSchemeController implements Serializable {
 
         }
 
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Card) {
+        if (paymentMethod == PaymentMethod.Card) {
             if (paymentMethodData.getCreditCard().getInstitution() == null
                     || paymentMethodData.getCreditCard().getNo() == null) {
                 UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");

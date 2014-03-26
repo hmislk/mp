@@ -6,8 +6,10 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill"
-                xmlns:in="http://java.sun.com/jsf/composite/inward">
+                xmlns:bill="http://java.sun.com/jsf/composite/inward/bill"
+                xmlns:in="http://java.sun.com/jsf/composite/inward"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
+
 
 
     <ui:define name="content">
@@ -42,17 +44,22 @@
                         <h:panelGrid columns="7">
                             <p:selectOneMenu   id="cmbPs" value="#{inwardPaymentController.current.paymentMethod}"  >
                                 <f:selectItem itemLabel="Select Payment Method" />
-                                <f:selectItems value="#{inwardPaymentController.paymentMethods}"  />
-                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef bank" event="change" />
+                                <f:selectItems value="#{enumController.paymentMethods}"  />
+                                <p:ajax process="cmbPs" update="creditCard cheque slip" event="change" />
                             </p:selectOneMenu>
-                            <p:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{inwardPaymentController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCardRef" value="#{inwardPaymentController.current.creditCardRefNo}" style="display: #{inwardPaymentController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <p:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{inwardPaymentController.current.chequeRefNo}" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:selectOneMenu id="bank" value="#{inwardPaymentController.current.bank}" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </p:selectOneMenu>
+                            <h:panelGroup id="creditCard" style="display: #{inwardPaymentController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{inwardPaymentController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="cheque" style="display: #{inwardPaymentController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{inwardPaymentController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="slip" style="display: #{inwardPaymentController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{inwardPaymentController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+
                             <p:inputText value="#{inwardPaymentController.current.total}"/>
 
                         </h:panelGrid>

@@ -8,6 +8,7 @@ import com.divudi.bean.InstitutionController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.data.DepartmentType;
 import com.divudi.data.InstitutionType;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -827,7 +828,7 @@ public class PharmacyItemExcelManager implements Serializable {
 
             for (int i = startRow; i < sheet.getRows(); i++) {
 
-                Map m = new HashMap();
+                Map m ;
 
                 cell = sheet.getCell(0, i);
                 catCode = cell.getContents();
@@ -841,71 +842,40 @@ public class PharmacyItemExcelManager implements Serializable {
                 cell = sheet.getCell(3, i);
                 itemCode = cell.getContents();
 
+                if (catName == null || catName.trim().equals("") || itenName == null || itenName.trim().equals("")) {
+                    continue;
+                }
+
                 cat = getPharmacyBean().getPharmaceuticalCategoryByName(catName);
                 if (cat == null) {
-                    cat= new PharmaceuticalItemCategory();
+                    cat = new PharmaceuticalItemCategory();
                     cat.setName(catName);
                     cat.setCode(catCode);
                     getPharmaceuticalItemCategoryFacade().create(cat);
-                }else{
+                } else {
                     cat.setName(catName);
                     cat.setCode(catCode);
                     getPharmaceuticalItemCategoryFacade().edit(cat);
                 }
 
                 m = new HashMap();
-                m.put("type", Phar);
-                m.put("n", strAmp);
-                if (!strCat.equals("")) {
-                    amp = ampFacade.findFirstBySQL("SELECT c FROM Amp c Where upper(c.name)=:n AND c.vmp=:v", m);
-                    if (amp == null) {
-                        amp = new Amp();
-                        amp.setName(strAmp);
-                        amp.setMeasurementUnit(strengthUnit);
-                        amp.setDblValue((double) strengthUnitsPerIssueUnit);
-                        amp.setCategory(cat);
-                        amp.setVmp(vmp);
-                        getAmpFacade().create(amp);
-                    } else {
-                        amp.setRetired(false);
-                        getAmpFacade().edit(amp);
-                    }
-                } else {
-                    amp = null;
-                    //System.out.println("amp is null");
-                }
-                if (amp == null) {
-                    continue;
-                }
-                //System.out.println("amp = " + amp.getName());
-                //Ampp
-                ampp = getPharmacyBean().getAmpp(amp, issueUnitsPerPack, packUnit);
+                m.put("dep", DepartmentType.Store);
+                m.put("n", itenName.toUpperCase());
 
-                //Code
-                cell = sheet.getCell(codeCol, i);
-                strCode = cell.getContents();
-                //System.out.println("strCode = " + strCode);
-                amp.setCode(strCode);
-                getAmpFacade().edit(amp);
-                //Code
-                cell = sheet.getCell(barcodeCol, i);
-                strBarcode = cell.getContents();
-                //System.out.println("strBarCode = " + strBarcode);
-                amp.setCode(strBarcode);
-                getAmpFacade().edit(amp);
-                //Distributor
-                cell = sheet.getCell(distributorCol, i);
-                strDistributor = cell.getContents();
-                distributor = getInstitutionController().getInstitutionByName(strDistributor, InstitutionType.Dealer);
-                if (distributor != null) {
-                    //System.out.println("distributor = " + distributor.getName());
-                    ItemsDistributors id = new ItemsDistributors();
-                    id.setInstitution(distributor);
-                    id.setItem(amp);
-                    id.setOrderNo(0);
-                    getItemsDistributorsFacade().create(id);
+                amp = ampFacade.findFirstBySQL("SELECT c FROM Amp c Where upper(c.name)=:n AND c.departmentType=:dep ", m);
+                
+                if (amp == null) {
+                    amp = new Amp();
+                    amp.setName(itenName);
+                    amp.setCode(itemCode);
+                    amp.setCategory(cat);
+                    getAmpFacade().create(amp);
                 } else {
-                    //System.out.println("distributor is null");
+                    amp.setRetired(false);
+                    amp.setName(itenName);
+                    amp.setCode(itemCode);
+                    amp.setCategory(cat);
+                    getAmpFacade().edit(amp);
                 }
             }
 

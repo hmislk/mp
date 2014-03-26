@@ -5,7 +5,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns="http://www.w3.org/1999/xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:in="http://java.sun.com/jsf/composite/inward">
 
 
 
@@ -20,7 +21,7 @@
                     <p:defaultCommand target="btnSettle"/>
 
                     <p:commandButton action="#{billBhtController.makeNull}" ajax="false" value="New Bill"/>
-                    
+
 
                     <h:panelGrid columns="2" >
                         <h:panelGrid columns="1" >
@@ -40,32 +41,15 @@
                                         <p:column >
                                             <h:outputLabel value="#{apt2.patient.person.name}"/> 
                                         </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{apt2.currentPatientRoom.roomFacilityCharge.name}"/>
+                                        </p:column>
                                     </p:autoComplete>  
 
                                     <br/><br/>
-                                    <h:panelGrid id="panSearch2" columns="2" style="min-height: 200px;"  >
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="BHT No : " />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.bhtNo}" ></h:outputLabel>
-
-
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="Patient Name : " />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="Adress : " />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.patient.person.address}" ></h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="Guardian Name : " />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.guardian.nameWithTitle}" ></h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="Age : " />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.patient.age}" ></h:outputLabel>
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="Admitted At : "  />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.dateOfAdmission}"   >
-                                            <f:convertDateTime pattern="dd/MM/yy" />
-                                        </h:outputLabel>
-                                        <h:outputLabel  rendered="#{billBhtController.patientEncounter!=null}" value="Adress" />
-                                        <h:outputLabel rendered="#{billBhtController.patientEncounter!=null}" value="#{billBhtController.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                    </h:panelGrid>
+                                    <h:panelGroup id="panSearch2">
+                                        <in:bhtDetail admission="#{billBhtController.patientEncounter}"/>
+                                    </h:panelGroup>
                                 </p:panel>
                             </h:panelGroup>
 
@@ -188,7 +172,7 @@
                         </h:panelGrid>
                     </h:panelGrid>
                 </p:panel>
-                
+
                 <h:panelGroup rendered="#{billBhtController.printPreview}" >
                     <div class="nonPrintBlock" >
                         <p:commandButton value="Print" ajax="false" action="#" >
@@ -277,7 +261,7 @@
                                                 </h:dataTable>
                                             </div>
 
-                                     
+
                                         </div>
 
                                     </div>

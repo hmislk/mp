@@ -7,6 +7,8 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
@@ -49,10 +51,7 @@ public class CashRecieveBillController implements Serializable {
     private BillItem removingItem;
     private List<BillItem> billItems;
     private int index;
-    private Institution chequeBank;
-    private Institution slipBank;
-    private Date slipDate;
-    private Date chequeDate;
+    private PaymentMethodData paymentMethodData;
 
     public void remove() {
         billItems.remove(index);
@@ -172,6 +171,9 @@ public class CashRecieveBillController implements Serializable {
     public CashRecieveBillController() {
     }
 
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
+
     private boolean errorCheck() {
         if (getBillItems().isEmpty()) {
             UtilityController.addErrorMessage("No Bill Item ");
@@ -191,32 +193,8 @@ public class CashRecieveBillController implements Serializable {
             }
         }
 
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null
-                && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getChequeBank() == null || getCurrent().getChequeRefNo() == null || getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
-        }
-
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getCurrent().getComments() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date");
-                return true;
-            }
-
-        }
-
-        if (getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cash) {
-//            if (getCurrent().getPaidAmount() == 0.0) {
-//                UtilityController.addErrorMessage("Please select tendered amount correctly");
-//                return true;
-//            }
-//            if (getCurrent().getPaidAmount() < getCurrent().getNetTotal()) {
-//                UtilityController.addErrorMessage("Please select tendered amount correctly");
-//                return true;
-//            }
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme(), getPaymentMethodData())) {
+            return true;
         }
 
         return false;
@@ -247,19 +225,16 @@ public class CashRecieveBillController implements Serializable {
 
     }
 
+    @EJB
+    private BillBean billBean;
+
     public void settleBill() {
 
         if (errorCheck()) {
             return;
         }
 
-        if (getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cheque) {
-            getCurrent().setBank(chequeBank);
-            getCurrent().setChequeDate(chequeDate);
-        } else if (getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Slip) {
-            getCurrent().setBank(slipBank);
-            getCurrent().setChequeDate(slipDate);
-        }
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentScheme().getPaymentMethod(), getPaymentMethodData());
 
         getCurrent().setTotal(getCurrent().getNetTotal());
 
@@ -328,11 +303,9 @@ public class CashRecieveBillController implements Serializable {
         //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
         //System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
         //System.err.println("Net Value " + tmp.getNetValue());
-
         refBallance = tmp.getReferenceBill().getNetTotal() - tmp.getReferenceBill().getPaidAmount();
 
         //System.err.println("refBallance " + refBallance);
-
         //   ballance=refBallance-tmp.getNetValue();
         if (refBallance > tmp.getNetValue()) {
             tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
@@ -354,10 +327,7 @@ public class CashRecieveBillController implements Serializable {
         current = null;
         printPreview = false;
         currentBillItem = null;
-        chequeBank = null;
-        slipBank = null;
-        chequeDate = null;
-        slipDate = null;
+        paymentMethodData = null;
         billItems = null;
         tabId = "tabOpd";
 
@@ -466,38 +436,6 @@ public class CashRecieveBillController implements Serializable {
         this.index = index;
     }
 
-    public Institution getChequeBank() {
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
     public List<Bill> getCreditBills() {
         return creditBills;
     }
@@ -506,5 +444,32 @@ public class CashRecieveBillController implements Serializable {
         recreateModel();
         this.creditBills = creditBills;
         addAllBill();
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
     }
 }

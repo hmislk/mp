@@ -7,6 +7,8 @@ package com.divudi.bean;
 
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.Sex;
+import com.divudi.data.Title;
 import com.divudi.data.inward.AdmissionTypeEnum;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.data.inward.PatientEncounterComponentType;
@@ -25,6 +27,19 @@ import javax.inject.Inject;
 public class EnumController implements Serializable {
 
     private PaymentScheme paymentScheme;
+
+    public Title[] getTitle() {
+        return Title.values();
+    }
+
+    public Sex[] getSex() {
+        return Sex.values();
+    }
+
+    public PaymentMethod[] getPaymentMethodForAdmission() {
+        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit};
+        return tmp;
+    }
 
     public InwardChargeType[] getInwardChargeTypes() {
         return InwardChargeType.values();

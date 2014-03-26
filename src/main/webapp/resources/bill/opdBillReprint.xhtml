@@ -92,6 +92,15 @@
                                 <h:dataTable value="#{cc.attrs.controller.billItems}" var="bip" styleClass="items"   >
                                     <h:column >
                                         <h:outputLabel value="#{bip.item.printName}" style="margin: 4px;" />
+                                        <h:panelGroup rendered="#{bip.billSession ne null }"  >
+                                            <br/>
+
+                                            <h:outputLabel value="Session No . " ></h:outputLabel>
+                                            <h:outputLabel value="#{bip.billSession.serialNo}"
+                                                           style="margin: 4px; font-size: 11px!important;" >
+
+                                        </h:panelGroup>
+                                        </h:panelGroup>
                                     </h:column>
                                 </h:dataTable>
 

@@ -9,6 +9,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -22,6 +23,7 @@ import com.divudi.entity.Item;
 import com.divudi.entity.ItemFee;
 import com.divudi.entity.PackageFee;
 import com.divudi.entity.Packege;
+import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.lab.PatientInvestigation;
@@ -78,6 +80,25 @@ public class BillBean {
     PackageFeeFacade packageFeeFacade;
     @EJB
     ServiceSessionBean serviceSessionBean;
+
+    public void setPaymentMethodData(Bill b, PaymentMethod paymentMethod, PaymentMethodData paymentMethodData) {
+
+        if (paymentMethod.equals(PaymentMethod.Cheque)) {
+            b.setBank(paymentMethodData.getCheque().getInstitution());
+            b.setChequeRefNo(paymentMethodData.getCheque().getNo());
+            b.setChequeDate(paymentMethodData.getCheque().getDate());
+        }
+        if (paymentMethod.equals(PaymentMethod.Slip)) {
+            b.setBank(paymentMethodData.getSlip().getInstitution());
+            b.setChequeDate(paymentMethodData.getSlip().getDate());
+            b.setComments(paymentMethodData.getSlip().getComment());
+        }
+        if (paymentMethod.equals(PaymentMethod.Card)) {
+            b.setCreditCardRefNo(paymentMethodData.getCreditCard().getNo());
+            b.setBank(paymentMethodData.getCreditCard().getInstitution());
+        }
+
+    }
 
     public ServiceSessionBean getServiceSessionBean() {
         return serviceSessionBean;
@@ -595,8 +616,6 @@ public class BillBean {
 //                
 //                e.getBillItem().setBillSession(getServiceSessionBean().saveBillSession(e.getBillItem()));
 //            }
-
-            
 
             getBillItemFacade().edit(e.getBillItem());
 

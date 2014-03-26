@@ -8,10 +8,13 @@
  */
 package com.divudi.bean.inward;
 
+import com.divudi.bean.PaymentSchemeController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.ejb.BillBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
@@ -22,7 +25,6 @@ import com.divudi.facade.BillItemFacade;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -49,6 +51,7 @@ public class InwardRefundController implements Serializable {
     private SessionController sessionController;
     private double paidAmount;
     private Bill current;
+    private PaymentMethodData paymentMethodData;
 
     public void makeNull() {
         current = null;
@@ -59,6 +62,9 @@ public class InwardRefundController implements Serializable {
         return PaymentMethod.values();
     }
 
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
+
     private boolean errorCheck() {
         if (getCurrent().getPatientEncounter() == null) {
             UtilityController.addErrorMessage("Select BHT");
@@ -66,6 +72,10 @@ public class InwardRefundController implements Serializable {
         }
         if (getCurrent().getPaymentMethod() == null) {
             UtilityController.addErrorMessage("Select Payment Method");
+            return true;
+        }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentMethod(), paymentMethodData)) {
             return true;
         }
 
@@ -88,7 +98,11 @@ public class InwardRefundController implements Serializable {
         UtilityController.addSuccessMessage("Payment Bill Saved");
     }
 
+    @EJB
+    private BillBean billBean;
+
     private void saveBill() {
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentMethod(), getPaymentMethodData());
         getCurrent().setBillType(BillType.InwardPaymentBill);
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -186,5 +200,32 @@ public class InwardRefundController implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
     }
 }

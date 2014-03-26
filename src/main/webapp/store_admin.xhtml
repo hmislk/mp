@@ -13,7 +13,7 @@
             <ui:define name="content">
 
                 <h:form >
-                    <p:panel header="Pharmacy Administration" >
+                    <p:panel header="Stores Administration" >
 
                         <h:panelGrid columns="3" >
 
@@ -21,10 +21,7 @@
                                 <h:panelGrid columns="1" >                                    
                                     <p:commandButton ajax="false" value="Item Master" action="store_item_master" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Packs" action="pharmacy_ampp" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Import from Excel" action="pharmacy_item_import" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Fix Categories from Excel" action="pharmacy_importer_category" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Fix Barcodes" action="pharmacy_item_import_barcode" ></p:commandButton>
-
+                                    <p:commandButton ajax="false" value="Import from Excel" action="store_item_import" ></p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
 

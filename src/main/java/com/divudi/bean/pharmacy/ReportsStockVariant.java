@@ -48,9 +48,7 @@ public class ReportsStockVariant implements Serializable {
     Department department;
     private Category category;
     double systemStockValue;
-    private double calCulatedStockValue;
-    private double physicalStockValue;
-    List<StockVarientBillItem> records;   
+    List<StockVarientBillItem> records;
     private Bill recordedBill;
 
     /**
@@ -78,8 +76,9 @@ public class ReportsStockVariant implements Serializable {
         String sql;
         Map m = new HashMap();
         m.put("dep", department);
-        m.put("cat",category);
-        sql = "select i.itemBatch.item,sum(i.stock),avg(i.itemBatch.purcahseRate) from Stock i where "
+        m.put("cat", category);
+        sql = "select i.itemBatch.item,sum(i.stock),avg(i.itemBatch.purcahseRate) "
+                + " from Stock i where "
                 + " i.department=:dep and i.itemBatch.item.category=:cat group by i.itemBatch.item order by i.itemBatch.item.name";
 
         return getStockFacade().findAggregates(sql, m);
@@ -97,23 +96,21 @@ public class ReportsStockVariant implements Serializable {
 
         records = new ArrayList<>();
         systemStockValue = 0.0;
-        calCulatedStockValue = 0;
 
         for (Object[] obj : calDepartmentStock()) {
             StockVarientBillItem r = new StockVarientBillItem();
             r.setItem((Item) obj[0]);
             r.setSystemStock((Double) obj[1]);
-            r.setPurchaseRate((Double)obj[2]);
+            r.setPurchaseRate((Double) obj[2]);
             /////////
             getPharmacyErrorChecking().setItem(r.getItem());
             getPharmacyErrorChecking().setDepartment(department);
             getPharmacyErrorChecking().calculateTotals3();
-          //  r.setCalCulatedStock(getPharmacyErrorChecking().getCalculatedStock());
+            //  r.setCalCulatedStock(getPharmacyErrorChecking().getCalculatedStock());
             //////////////
             records.add(r);
 
-            systemStockValue += (r.getSystemStock()*r.getPurchaseRate());
-            calCulatedStockValue += (r.getCalCulatedStock()*r.getPurchaseRate());
+            systemStockValue += (r.getSystemStock() * r.getPurchaseRate());
         }
 
     }
@@ -127,10 +124,11 @@ public class ReportsStockVariant implements Serializable {
     @EJB
     private StockVarientBillItemFacade stockVarientBillItemFacade;
 
-    public void saveRecord() {
+    public String saveRecord() {
 
         getRecordedBill().setCreatedAt(new Date());
         getRecordedBill().setDepartment(department);
+        getRecordedBill().setCategory(getCategory());
         getRecordedBill().setCreater(getSessionController().getLoggedUser());
         getRecordedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));
         getRecordedBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));
@@ -144,14 +142,14 @@ public class ReportsStockVariant implements Serializable {
         UtilityController.addSuccessMessage("Succesfully Saved");
 
         recreateModel();
+
+        return "pharmacy_variant_ajustment_pre_list";
     }
 
     public void recreateModel() {
         department = null;
         category = null;
         systemStockValue = 0;
-        calCulatedStockValue = 0;
-        physicalStockValue = 0;
         records = null;
         recordedBill = null;
 
@@ -216,8 +214,6 @@ public class ReportsStockVariant implements Serializable {
         this.category = category;
     }
 
-  
-
     public PharmacyErrorChecking getPharmacyErrorChecking() {
         return pharmacyErrorChecking;
     }
@@ -226,21 +222,7 @@ public class ReportsStockVariant implements Serializable {
         this.pharmacyErrorChecking = pharmacyErrorChecking;
     }
 
-    public double getCalCulatedStockValue() {
-        return calCulatedStockValue;
-    }
-
-    public void setCalCulatedStockValue(double calCulatedStockValue) {
-        this.calCulatedStockValue = calCulatedStockValue;
-    }
-
-    public double getPhysicalStockValue() {
-        return physicalStockValue;
-    }
-
-    public void setPhysicalStockValue(double physicalStockValue) {
-        this.physicalStockValue = physicalStockValue;
-    }
+  
 
     public SessionController getSessionController() {
         return sessionController;

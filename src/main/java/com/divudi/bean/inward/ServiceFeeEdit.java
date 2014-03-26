@@ -6,6 +6,8 @@
 package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
+import com.divudi.bean.UtilityController;
+import com.divudi.data.FeeType;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
@@ -57,6 +59,13 @@ public class ServiceFeeEdit implements Serializable {
     }
 
     public void updateFee(BillFee billFee) {
+        if (billFee.getFee() != null && billFee.getFee().getFeeType() == FeeType.Staff) {
+            if (billFee.getPaidValue() != 0) {
+                UtilityController.addErrorMessage("Staff Fee Allready Paid");
+                return;
+            }
+        }
+
         billFee.setEditor(getSessionController().getLoggedUser());
         billFee.setEditedAt(new Date());
 

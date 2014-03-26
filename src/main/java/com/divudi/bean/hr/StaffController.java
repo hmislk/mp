@@ -153,15 +153,14 @@ public class StaffController implements Serializable {
     public List<Staff> getSpecialityStaff(Speciality speciality) {
         List<Staff> ss;
         String sql;
-        if (speciality == null) {
-            ss = new ArrayList<>();
-        } else {
-            sql = "select p from Staff p where p.retired=false and  "
-                    + "p.speciality.id = " + speciality.getId() + " "
-                    + "order by p.person.name";
+        HashMap hm = new HashMap();
+        sql = "select p from Staff p where p.retired=false and  "
+                + "p.speciality=:sp "
+                + "order by p.person.name";
 //            //System.out.println(sql);
-            ss = getFacade().findBySQL(sql,20);
-        }
+        hm.put("sp", speciality);
+        ss = getFacade().findBySQL(sql, 20);
+
         return ss;
     }
 
@@ -298,7 +297,7 @@ public class StaffController implements Serializable {
 
     public List<Staff> completeItems(String qry) {
         List<Staff> s = getFacade().findBySQL("select c from Staff c where c.retired=false and"
-                + " upper(c.person.name) like '%" + qry.toUpperCase() + "%' order by c.person.name",20);
+                + " upper(c.person.name) like '%" + qry.toUpperCase() + "%' order by c.person.name", 20);
         return s;
     }
 

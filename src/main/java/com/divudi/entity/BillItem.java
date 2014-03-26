@@ -103,6 +103,8 @@ public class BillItem implements Serializable {
     private double tmpQty;
     @Transient
     private UserStock transUserStock;
+    @Transient
+    private BillItem transBillItem;
     @OneToMany(mappedBy = "billItem")
     private List<BillFee> billFees = new ArrayList<>();
 
@@ -521,6 +523,14 @@ public class BillItem implements Serializable {
 
     public void setAdjustedValue(double adjustedValue) {
         this.adjustedValue = adjustedValue;
+    }
+
+    public BillItem getTransBillItem() {
+        return transBillItem;
+    }
+
+    public void setTransBillItem(BillItem transBillItem) {
+        this.transBillItem = transBillItem;
     }
 
 }

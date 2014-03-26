@@ -790,6 +790,136 @@ public class PharmacyItemExcelManager implements Serializable {
         }
     }
 
+    public String importStoreItemsToExcel() {
+        String catName;
+        String catCode;
+        String itenName;
+        String itemCode;
+
+        PharmaceuticalItemCategory cat;
+        Amp amp;
+
+        File inputWorkbook;
+        Workbook w;
+        Cell cell;
+        InputStream in;
+        UtilityController.addSuccessMessage(file.getFileName());
+        try {
+            UtilityController.addSuccessMessage(file.getFileName());
+            in = file.getInputstream();
+            File f;
+            f = new File(Calendar.getInstance().getTimeInMillis() + file.getFileName());
+            FileOutputStream out = new FileOutputStream(f);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            inputWorkbook = new File(f.getAbsolutePath());
+
+            UtilityController.addSuccessMessage("Excel File Opened");
+            w = Workbook.getWorkbook(inputWorkbook);
+            Sheet sheet = w.getSheet(0);
+
+            for (int i = startRow; i < sheet.getRows(); i++) {
+
+                Map m = new HashMap();
+
+                cell = sheet.getCell(0, i);
+                catCode = cell.getContents();
+
+                cell = sheet.getCell(1, i);
+                catName = cell.getContents();
+
+                cell = sheet.getCell(2, i);
+                itenName = cell.getContents();
+
+                cell = sheet.getCell(3, i);
+                itemCode = cell.getContents();
+
+                cat = getPharmacyBean().getPharmaceuticalCategoryByName(catName);
+                if (cat == null) {
+                    cat= new PharmaceuticalItemCategory();
+                    cat.setName(catName);
+                    cat.setCode(catCode);
+                    getPharmaceuticalItemCategoryFacade().create(cat);
+                }else{
+                    cat.setName(catName);
+                    cat.setCode(catCode);
+                    getPharmaceuticalItemCategoryFacade().edit(cat);
+                }
+
+                m = new HashMap();
+                m.put("type", Phar);
+                m.put("n", strAmp);
+                if (!strCat.equals("")) {
+                    amp = ampFacade.findFirstBySQL("SELECT c FROM Amp c Where upper(c.name)=:n AND c.vmp=:v", m);
+                    if (amp == null) {
+                        amp = new Amp();
+                        amp.setName(strAmp);
+                        amp.setMeasurementUnit(strengthUnit);
+                        amp.setDblValue((double) strengthUnitsPerIssueUnit);
+                        amp.setCategory(cat);
+                        amp.setVmp(vmp);
+                        getAmpFacade().create(amp);
+                    } else {
+                        amp.setRetired(false);
+                        getAmpFacade().edit(amp);
+                    }
+                } else {
+                    amp = null;
+                    //System.out.println("amp is null");
+                }
+                if (amp == null) {
+                    continue;
+                }
+                //System.out.println("amp = " + amp.getName());
+                //Ampp
+                ampp = getPharmacyBean().getAmpp(amp, issueUnitsPerPack, packUnit);
+
+                //Code
+                cell = sheet.getCell(codeCol, i);
+                strCode = cell.getContents();
+                //System.out.println("strCode = " + strCode);
+                amp.setCode(strCode);
+                getAmpFacade().edit(amp);
+                //Code
+                cell = sheet.getCell(barcodeCol, i);
+                strBarcode = cell.getContents();
+                //System.out.println("strBarCode = " + strBarcode);
+                amp.setCode(strBarcode);
+                getAmpFacade().edit(amp);
+                //Distributor
+                cell = sheet.getCell(distributorCol, i);
+                strDistributor = cell.getContents();
+                distributor = getInstitutionController().getInstitutionByName(strDistributor, InstitutionType.Dealer);
+                if (distributor != null) {
+                    //System.out.println("distributor = " + distributor.getName());
+                    ItemsDistributors id = new ItemsDistributors();
+                    id.setInstitution(distributor);
+                    id.setItem(amp);
+                    id.setOrderNo(0);
+                    getItemsDistributorsFacade().create(id);
+                } else {
+                    //System.out.println("distributor is null");
+                }
+            }
+
+            UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
+            return "";
+        } catch (IOException ex) {
+            UtilityController.addErrorMessage(ex.getMessage());
+            return "";
+        } catch (BiffException e) {
+            UtilityController.addErrorMessage(e.getMessage());
+            return "";
+        }
+    }
+
     public String detectMismatch() {
         //System.out.println("importing to excel");
         String itemName;

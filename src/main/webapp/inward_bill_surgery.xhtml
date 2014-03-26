@@ -5,7 +5,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns="http://www.w3.org/1999/xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:in="http://java.sun.com/jsf/composite/inward">
 
 
 
@@ -46,31 +47,13 @@
                                     <p:column >
                                         #{apt2.patient.person.name} 
                                     </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{apt2.currentPatientRoom.roomFacilityCharge.name}"/>
+                                    </p:column>
                                 </p:autoComplete>
-                                <h:panelGrid id="patientDetail" columns="2" 
-                                             rendered="#{surgeryBillController.batchBill.patientEncounter!=null}" >
-                                    <h:outputLabel  value="BHT No : " />
-                                    <h:outputLabel value="#{surgeryBillController.batchBill.patientEncounter.bhtNo}" />
-
-
-                                    <h:outputLabel  value="Patient Name : " />
-                                    <h:outputLabel value="#{surgeryBillController.batchBill.patientEncounter.patient.person.nameWithTitle}" />
-
-                                    <h:outputLabel   value="Adress : " />
-                                    <h:outputLabel  value="#{surgeryBillController.batchBill.patientEncounter.patient.person.address}" />
-
-                                    <h:outputLabel   value="Guardian Name : " />
-                                    <h:outputLabel value="#{surgeryBillController.batchBill.patientEncounter.guardian.nameWithTitle}" />
-
-                                    <h:outputLabel   value="Age : " />
-                                    <h:outputLabel  value="#{surgeryBillController.batchBill.patientEncounter.patient.age}" />
-                                    <h:outputLabel  value="Admitted At : "  />
-                                    <h:outputLabel  value="#{surgeryBillController.batchBill.patientEncounter.dateOfAdmission}"   >
-                                        <f:convertDateTime pattern="dd/MM/yy" />
-                                    </h:outputLabel>
-                                    <h:outputLabel  value="Adress" />
-                                    <h:outputLabel value="#{surgeryBillController.batchBill.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                </h:panelGrid>
+                                <h:panelGroup id="panSearch2">
+                                    <in:bhtDetail admission="#{surgeryBillController.batchBill.patientEncounter}"/>
+                                </h:panelGroup>
                             </p:panel>
                             <p:panel>
                                 <p:panelGrid columns="2" >

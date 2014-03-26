@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -12,25 +13,25 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGrid  columns="2" rendered="#{cc.attrs.admission!=null}" >
-            <h:outputLabel   value="BHT NO" />
-            <h:outputLabel  value="#{cc.attrs.admission.bhtNo}" ></h:outputLabel>
-            <h:outputLabel   value="Room" />
-            <h:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomfacilityCharge.name}" ></h:outputLabel>
-            <h:outputLabel   value="Name:" />
-            <h:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" ></h:outputLabel>
-            <h:outputLabel   value="Sex" />
-            <h:outputLabel value="#{cc.attrs.admission.patient.age}" ></h:outputLabel>
-            <h:outputLabel  value="DOB"  />
-            <h:outputLabel value="#{cc.attrs.admission.patient.person.dob}"   >
+        <p:panelGrid  columns="2" rendered="#{cc.attrs.admission!=null}" >
+            <p:outputLabel   value="BHT NO" />
+            <p:outputLabel  value="#{cc.attrs.admission.bhtNo}" />
+            <p:outputLabel   value="Room" />
+            <p:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomfacilityCharge.name}" />
+            <p:outputLabel   value="Name:" />
+            <p:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" />
+            <p:outputLabel   value="Sex" />
+            <p:outputLabel value="#{cc.attrs.admission.patient.age}" />
+            <p:outputLabel  value="DOB"  />
+            <p:outputLabel value="#{cc.attrs.admission.patient.person.dob}"   >
                 <f:convertDateTime pattern="dd/MM/yy" />
-            </h:outputLabel>
-            <h:outputLabel  value="Adress" />
-            <h:outputLabel  value="#{cc.attrs.admission.patient.person.address}" ></h:outputLabel>
-            <h:outputLabel  value="Date of Admission"  />
-            <h:outputLabel value="#{cc.attrs.admission.dateOfAdmission}"   >
+            </p:outputLabel>
+            <p:outputLabel  value="Adress" />
+            <p:outputLabel  value="#{cc.attrs.admission.patient.person.address}" />
+            <p:outputLabel  value="Date of Admission"  />
+            <p:outputLabel value="#{cc.attrs.admission.dateOfAdmission}"   >
                 <f:convertDateTime pattern="dd/MM/yy" />
-            </h:outputLabel>
-        </h:panelGrid>
+            </p:outputLabel>
+        </p:panelGrid>
     </cc:implementation>
 </html>

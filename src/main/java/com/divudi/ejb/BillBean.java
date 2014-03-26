@@ -93,6 +93,7 @@ public class BillBean {
             b.setChequeDate(paymentMethodData.getSlip().getDate());
             b.setComments(paymentMethodData.getSlip().getComment());
         }
+        
         if (paymentMethod.equals(PaymentMethod.Card)) {
             b.setCreditCardRefNo(paymentMethodData.getCreditCard().getNo());
             b.setBank(paymentMethodData.getCreditCard().getInstitution());

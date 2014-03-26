@@ -59,7 +59,7 @@
                                     <h:outputLabel value="#{i.item.name}" ></h:outputLabel>
                                 </p:column>
 
-                                <p:column headerText="Stock" style="text-align: right;" >
+                                <p:column headerText="Before Stock" style="text-align: right;" >
                                     <f:facet name="header">
                                         <h:outputLabel value="Stock"/>    
                                     </f:facet>
@@ -68,26 +68,7 @@
                                     </h:outputLabel>                                  
                                 </p:column>
 
-                                <p:column headerText="Purchase Rate(Avg)" style="text-align: right;" >
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Purchase Rate(Avg)"/>    
-                                    </f:facet>
-                                    <h:outputLabel id="sysStock" value="#{i.purchaseRate}"  >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>                                  
-                                </p:column>
-
-                                <p:column headerText="Total Value"  style="text-align: right;" >
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Total Value"/>    
-                                    </f:facet>
-                                    <h:outputLabel id="sysStock" 
-                                                   value="#{i.purchaseRate*i.systemStock}"  >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>                                  
-                                </p:column>
-
-                                <p:column headerText="Physical Stock" style="text-align: right;">
+                                <p:column headerText="After Stock" style="text-align: right;">
                                     <f:facet name="header">
                                         <h:outputLabel value="Physical Stock"/>    
                                     </f:facet>
@@ -99,7 +80,7 @@
 
                                 <p:columnGroup type="footer">
                                     <p:row>
-                                        <p:column footerText="Total Value" colspan="3"/>
+                                        <p:column footerText="Total Value"/>
                                         <p:column footerText="#{reportsStockVariant.systemStockValue}">
                                             <f:facet name="footer">
                                                 <h:outputLabel value="#{reportsStockVariant.systemStockValue}">

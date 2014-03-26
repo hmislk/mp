@@ -22,7 +22,7 @@
                     </p:selectOneMenu>
                     <p:inputText id="bh" value="#{admissionController.bhtText}" disabled="true"  />
 
-                    <p:autoComplete  disabled="#{!admissionController.current.admissionType.roomChargesAllowed}" converter="fac" forceSelection="true" id="cmbDoc" value="#{admissionController.patientRoom.roomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoom}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;">
+                    <p:autoComplete  converter="fac" forceSelection="true" id="cmbDoc" value="#{admissionController.patientRoom.roomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoom}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;">
                         <p:column>
                             #{rf.name}
                         </p:column>
@@ -192,8 +192,17 @@
                             <p:selectOneMenu   id="cmbPs" value="#{admissionController.current.paymentMethod}"  >
                                 <f:selectItem itemLabel="Select Payment Method" />                           
                                 <f:selectItems value="#{admissionController.paymentMethods}" />
-                                <p:ajax process="@this" update="lblCompany cmCompany lblLimit limit" event="change" />
+                                <p:ajax process="@this" update="lblCompany cmCompany lblLimit limit
+                                        lblCardRef txtCardRef creditBank  " event="change" />
                             </p:selectOneMenu>
+                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{admissionController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
+                            <p:inputText id="txtCardRef" autocomplete="off"  value="#{admissionController.creditCardRefNo}" style="display: #{admissionController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
+                            <h:selectOneMenu id="creditBank" value="#{admissionController.creditBank}" 
+                                             style="display: #{admissionController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <f:selectItem itemLabel="Select Bank"/>
+                                <f:selectItems value="#{institutionController.banks}" 
+                                               var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
+                            </h:selectOneMenu>
                             <h:outputLabel id="lblCompany" value="Company Name"  style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; " />                                                       
                             <p:autoComplete id="cmCompany" forceSelection="true" value="#{admissionController.current.creditCompany}"  
                                             completeMethod="#{creditCompanyController.completeCredit}" var="ix" itemLabel="#{ix.name}" 

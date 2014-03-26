@@ -16,6 +16,7 @@ import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.Appointment;
 import com.divudi.entity.Bill;
@@ -90,6 +91,8 @@ public class AdmissionController implements Serializable {
     private Patient newPatient;
     private YearMonthDay yearMonthDay;
     private Bill appointmentBill;
+    private String creditCardRefNo;
+    private String creditBank;
 
     public void dateChangeListen() {
         getNewPatient().getPerson().setDob(getCommonFunctions().guessDob(yearMonthDay));
@@ -97,7 +100,7 @@ public class AdmissionController implements Serializable {
     }
 
     public PaymentMethod[] getPaymentMethods() {
-        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit, PaymentMethod.Credit };
+        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit, PaymentMethod.Card};
         return tmp;
     }
 
@@ -380,6 +383,9 @@ public class AdmissionController implements Serializable {
 
     }
 
+    @EJB
+    private InwardBean inwardBean;
+
     public void saveSelected() {
 
         if (errorCheck()) {
@@ -405,7 +411,7 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
         }
 
-        savePatientRoom(getCurrent().getDateOfAdmission());
+        getInwardBean().savePatientRoom(getPatientRoom(), getCurrent(), getCurrent().getDateOfAdmission(), getSessionController().getLoggedUser());
 
         double appointmentFee = 0;
         if (getAppointmentBill() != null) {
@@ -433,36 +439,6 @@ public class AdmissionController implements Serializable {
             makeNull();
         }
 
-    }
-
-    private void makeRoomFilled(PatientRoom pr) {
-
-        pr.getRoom().setFilled(true);
-        getRoomFacade().edit(pr.getRoom());
-
-    }
-
-    private void savePatientRoom(Date admittedAt) {
-        getPatientRoom().setCurrentLinenCharge(getPatientRoom().getRoomFacilityCharge().getLinenCharge());
-        getPatientRoom().setCurrentMaintananceCharge(getPatientRoom().getRoomFacilityCharge().getMaintananceCharge());
-        getPatientRoom().setCurrentMoCharge(getPatientRoom().getRoomFacilityCharge().getMoCharge());
-        getPatientRoom().setCurrentNursingCharge(getPatientRoom().getRoomFacilityCharge().getNursingCharge());
-        getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
-
-        getPatientRoom().setAddmittedBy(getSessionController().getLoggedUser());
-        getPatientRoom().setAdmittedAt(admittedAt);
-        getPatientRoom().setCreatedAt(Calendar.getInstance().getTime());
-        getPatientRoom().setCreater(getSessionController().getLoggedUser());
-        getPatientRoom().setPatientEncounter(getCurrent());
-        getPatientRoom().setRoom(getPatientRoom().getRoomFacilityCharge().getRoom());
-
-        if (getPatientRoom().getId() == null || getPatientRoom().getId() == 0) {
-            getPatientRoomFacade().create(getPatientRoom());
-        } else {
-            getPatientRoomFacade().edit(getPatientRoom());
-        }
-
-        makeRoomFilled(getPatientRoom());
     }
 
     public void setSelectText(String selectText) {
@@ -691,6 +667,30 @@ public class AdmissionController implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public String getCreditCardRefNo() {
+        return creditCardRefNo;
+    }
+
+    public void setCreditCardRefNo(String creditCardRefNo) {
+        this.creditCardRefNo = creditCardRefNo;
+    }
+
+    public String getCreditBank() {
+        return creditBank;
+    }
+
+    public void setCreditBank(String creditBank) {
+        this.creditBank = creditBank;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 
     /**

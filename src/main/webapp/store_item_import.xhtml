@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data">
+            <h:outputLabel value="Import Store Items" ></h:outputLabel>
+            <p>Please make sure the following order of Columns.</p>
+            <p>Leave First Row for Row Headings.</p>
+            <p:panelGrid columns="13" style="border: 1px solid blue;" >
+                <h:outputLabel value ="0. Category Code" ></h:outputLabel>
+                <h:outputLabel value ="1. Category Name " ></h:outputLabel>
+                <h:outputLabel value ="2. Item Name" ></h:outputLabel>
+                <h:outputLabel value ="3. Item Code" ></h:outputLabel>
+            </p:panelGrid>
+
+            <p:fileUpload value="#{pharmacyItemExcelManager.file}" mode="simple"/>
+            <h:commandButton value="Submit" action="#{pharmacyItemExcelManager.importStoreItemsToExcel}"/>
+        </h:form>
+
+        <h:form>
+            <p:commandButton value="Remove All Pharmaceutical Items" ajax="false" action="#{pharmacyItemExcelManager.removeAllPharmaceuticalItems()}" ></p:commandButton>
+            <p:tabView id="tblLists" >
+
+                <p:tab title="Generic Names" >
+
+                    <p:dataTable id="tblVtm"  var="vtm" value="#{pharmacyItemExcelManager.vtms}" >
+                        <p:column>
+                            <f:facet name="header">
+                                Generic Name
+                            </f:facet>
+                            <h:outputText value="#{vtm.name}"/>
+                        </p:column>
+                    </p:dataTable>
+
+                </p:tab>
+
+
+                <p:tab title="Items" >
+                    <p:dataTable id="tblAmp"  var="amp" value="#{pharmacyItemExcelManager.amps}" >
+                        <p:column>
+                            <f:facet name="header">
+                                Item Name
+                            </f:facet>
+                            <h:outputText value="#{amp.name}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                Product
+                            </f:facet>
+                            <h:outputText value="#{amp.vmp.name}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                Strength
+                            </f:facet>
+                            <h:outputText value="#{amp.dblValue} #{amp.measurementUnit.name}"/>
+                        </p:column>
+                        
+                    </p:dataTable>
+
+                </p:tab>
+
+
+                <p:tab title="Packs" >
+
+                    <p:dataTable id="tblAmpp"  var="ampp" value="#{amppController.items}" >
+                        <p:column>
+                            <f:facet name="header">
+                                Pack Name
+                            </f:facet>
+                            <h:outputText value="#{ampp.name}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                Product
+                            </f:facet>
+                            <h:outputText value="#{ampp.amp.name}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                Pack Size
+                            </f:facet>
+                            <h:outputText value="#{ampp.vmpp.dblValue} &nbsp; #{ampp.amp.measurementUnit.name } &nbsp;per #{ampp.vmpp.measurementUnit.name} "/>
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                </p:tab>                
+
+
+            </p:tabView>
+        </h:form>
+
+    </ui:define>
+
+
+</ui:composition>

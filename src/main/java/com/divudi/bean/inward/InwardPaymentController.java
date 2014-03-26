@@ -124,7 +124,7 @@ public class InwardPaymentController implements Serializable {
     private BillBean billBean;
 
     private void saveBill() {
-        billBean.setPaymentMethodData(getCurrent(), getCurrent().getPaymentMethod(), paymentMethodData);
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentMethod(), getPaymentMethodData());
 
         getCurrent().setInstitution(getSessionController().getInstitution());
         getCurrent().setBillType(BillType.InwardPaymentBill);

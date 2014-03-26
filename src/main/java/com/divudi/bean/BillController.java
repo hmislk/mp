@@ -14,6 +14,7 @@ import com.divudi.data.DepartmentType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -99,10 +100,6 @@ public class BillController implements Serializable {
     private double netTotal;
     private double cashPaid;
     private double cashBalance;
-    private String creditCardRefNo;
-    private String chequeRefNo;
-    private Institution chequeBank;
-    private Institution slipBank;
     private BillItem currentBillItem;
     //Bill Items
     private List<BillComponent> lstBillComponents;
@@ -130,15 +127,12 @@ public class BillController implements Serializable {
     private Patient tmpPatient;
     List<Bill> bills;
     boolean foreigner = false;
-    private String comment = "";
+
     Date sessionDate;
-    private Institution creditBank;
-    private Date chequeDate;
-    private Date slipDate;
-//    boolean feeChanged = false;
 
     String strTenderedValue;
     private YearMonthDay yearMonthDay;
+    private PaymentMethodData paymentMethodData;
 
     public boolean findByFilter(String property, String value) {
         String sql = "Select b From Bill b where b.retired=false and upper(b." + property + ") like '%" + value.toUpperCase() + " %'";
@@ -519,22 +513,7 @@ public class BillController implements Serializable {
         temp.setReferredBy(referredBy);
         temp.setCreditCompany(creditCompany);
 
-        if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Cheque)) {
-            temp.setBank(chequeBank);
-            temp.setChequeRefNo(chequeRefNo);
-            temp.setChequeDate(chequeDate);
-        }
-
-        if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Slip)) {
-            temp.setBank(slipBank);
-            temp.setChequeDate(slipDate);
-            temp.setComments(comment);
-        }
-
-        if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Card)) {
-            temp.setCreditCardRefNo(creditCardRefNo);
-            temp.setBank(creditBank);
-        }
+        getBillBean().setPaymentMethodData(temp, getPaymentScheme().getPaymentMethod(), getPaymentMethodData());
 
         temp.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         temp.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -571,6 +550,9 @@ public class BillController implements Serializable {
         return false;
 
     }
+
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
 
     private boolean errorCheck() {
 
@@ -609,32 +591,8 @@ public class BillController implements Serializable {
             }
         }
 
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getChequeBank() == null || getChequeRefNo() == null || getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getComment() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
-                return true;
-            }
-
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Card) {
-            if (getCreditBank() == null || getCreditCardRefNo() == null) {
-                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
-                return true;
-            }
-
-//            if (getCreditCardRefNo().trim().length() < 16) {
-//                UtilityController.addErrorMessage("Enter 16 Digit");
-//                return true;
-//            }
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getPaymentScheme(), getPaymentMethodData())) {
+            return true;
         }
 
         if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Credit) {
@@ -650,15 +608,8 @@ public class BillController implements Serializable {
             return true;
         }
 
-        if (paymentScheme.getPaymentMethod() == PaymentMethod.Cash) {
-            if (cashPaid == 0.0) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
-                return true;
-            }
-            if (cashPaid < getNetTotal()) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
-                return true;
-            }
+        if (getPaymentSchemeController().checkPaid(paymentScheme.getPaymentMethod(), getCashPaid(), getNetTotal())) {
+            return true;
         }
 
         return false;
@@ -764,15 +715,8 @@ public class BillController implements Serializable {
         setCreditCompany(null);
         setYearMonthDay(null);
         setBills(null);
-        setComment("");
-        setChequeBank(null);
         setPaymentScheme(null);
-        setSlipBank(null);
-        setSlipDate(null);
-        setChequeRefNo("");
-        setChequeDate(null);
-        setCreditCardRefNo("");
-
+        paymentMethodData = null;
         currentBillItem = null;
         setLstBillComponents(null);
         setLstBillEntries(null);
@@ -1148,31 +1092,6 @@ public class BillController implements Serializable {
         this.cashBalance = cashBalance;
     }
 
-    public String getCreditCardRefNo() {
-        return creditCardRefNo;
-    }
-
-    public void setCreditCardRefNo(String creditCardRefNo) {
-        this.creditCardRefNo = creditCardRefNo;
-    }
-
-    public String getChequeRefNo() {
-        return chequeRefNo;
-    }
-
-    public void setChequeRefNo(String chequeRefNo) {
-        this.chequeRefNo = chequeRefNo;
-    }
-
-    public Institution getChequeBank() {
-
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
     public BillItem getCurrentBillItem() {
         if (currentBillItem == null) {
             currentBillItem = new BillItem();
@@ -1278,46 +1197,6 @@ public class BillController implements Serializable {
 
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public Institution getCreditBank() {
-        return creditBank;
-    }
-
-    public void setCreditBank(Institution creditBank) {
-        this.creditBank = creditBank;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
-    }
-
     public BatchBillFacade getBatchBillFacade() {
         return batchBillFacade;
     }
@@ -1359,6 +1238,25 @@ public class BillController implements Serializable {
 
     public void setInstitutionFacade(InstitutionFacade institutionFacade) {
         this.institutionFacade = institutionFacade;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
     }
 
     /**

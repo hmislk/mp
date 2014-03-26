@@ -10,6 +10,7 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
@@ -74,7 +75,6 @@ public class DischargeController implements Serializable {
         return selectedItems;
     }
 
-  
     public void prepareAdd() {
         current = new Admission();
     }
@@ -113,6 +113,9 @@ public class DischargeController implements Serializable {
         selectText = "";
     }
 
+    @EJB
+    private InwardBean inwardBean;
+
     public void discharge() {
         if (getCurrent().getId() == null || getCurrent().getId() == 0) {
             UtilityController.addSuccessMessage("No Patient Data Found");
@@ -126,7 +129,7 @@ public class DischargeController implements Serializable {
             UtilityController.addSuccessMessage("Discharged");
 
             updatePatientRoom();
-            makeRoomVacant();
+            getInwardBean().makeRoomVacant(getCurrent());
         }
         makeNull();
     }
@@ -147,16 +150,6 @@ public class DischargeController implements Serializable {
         pr.setDischargedBy(getSessionController().getLoggedUser());
         getPatientRoomFacade().edit(pr);
 
-    }
-
-    private void makeRoomVacant() {
-        if (getPatientRoom().size() <= 0) {
-            return;
-        }
-
-        PatientRoom pr = getPatientRoom().get(getPatientRoom().size() - 1);
-        pr.getRoom().setFilled(false);
-        getRoomFacade().edit(pr.getRoom());
     }
 
     public void setSelectText(String selectText) {
@@ -290,6 +283,14 @@ public class DischargeController implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 
     /**

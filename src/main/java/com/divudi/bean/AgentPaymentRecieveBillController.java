@@ -7,6 +7,8 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
@@ -51,10 +53,7 @@ public class AgentPaymentRecieveBillController implements Serializable {
     private BillItem currentBillItem;
     private List<BillItem> billItems;
     private int index;
-    private Institution chequeBank;
-    private Institution slipBank;
-    private Date slipDate;
-    private Date chequeDate;
+    private PaymentMethodData paymentMethodData;
 
     public void addToBill() {
         getCurrentBillItem().setNetValue(getCurrent().getNetTotal());
@@ -71,36 +70,24 @@ public class AgentPaymentRecieveBillController implements Serializable {
     public AgentPaymentRecieveBillController() {
     }
 
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
+
     private boolean errorCheck() {
         if (getCurrent().getFromInstitution() == null) {
             UtilityController.addErrorMessage("Select Agency");
             return true;
         }
 
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getChequeBank() == null || getCurrent().getChequeRefNo() == null || getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme(), paymentMethodData)) {
+            return true;
         }
-
-
-        if (getCurrent().getPaymentScheme() != null && getCurrent().getPaymentScheme().getPaymentMethod() != null && getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getCurrent().getComments() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date");
-                return true;
-            }
-
-        }
-
-
 
         return false;
     }
 
     private void saveBill(BillType billType) {
-        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),getCurrent(), billType,BillNumberSuffix.AGNPAY));
+        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), billType, BillNumberSuffix.AGNPAY));
         getCurrent().setBillType(billType);
 
         getCurrent().setDepartment(getSessionController().getLoggedUser().getDepartment());
@@ -121,20 +108,16 @@ public class AgentPaymentRecieveBillController implements Serializable {
         }
     }
 
+    @EJB
+    private BillBean billBean;
+
     public void settleBill() {
         addToBill();
         if (errorCheck()) {
             return;
         }
 
-        if (getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cheque) {
-            getCurrent().setBank(chequeBank);
-            getCurrent().setChequeDate(chequeDate);
-        } else if (getCurrent().getPaymentScheme().getPaymentMethod() == PaymentMethod.Slip) {
-            getCurrent().setBank(slipBank);
-            getCurrent().setChequeDate(slipDate);
-        }
-
+        getBillBean().setPaymentSchemeData(getCurrent(), getCurrent().getPaymentScheme(), getPaymentMethodData());
 
         getCurrent().setTotal(getCurrent().getNetTotal());
 
@@ -144,7 +127,7 @@ public class AgentPaymentRecieveBillController implements Serializable {
         //Add to Agent Ballance
         getCurrent().getFromInstitution().setBallance(getCurrent().getFromInstitution().getBallance() + getCurrent().getTotal());
         getInstitutionFacade().edit(getCurrent().getFromInstitution());
-        
+
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
 
@@ -165,10 +148,7 @@ public class AgentPaymentRecieveBillController implements Serializable {
         printPreview = false;
         currentBillItem = null;
         patientEncounter = null;
-        slipBank = null;
-        chequeBank = null;
-        slipDate = null;
-        chequeDate = null;
+        paymentMethodData = null;
         billItems = null;
 
     }
@@ -267,43 +247,38 @@ public class AgentPaymentRecieveBillController implements Serializable {
         this.index = index;
     }
 
-    public Institution getChequeBank() {
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
     public InstitutionFacade getInstitutionFacade() {
         return institutionFacade;
     }
 
     public void setInstitutionFacade(InstitutionFacade institutionFacade) {
         this.institutionFacade = institutionFacade;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
     }
 }

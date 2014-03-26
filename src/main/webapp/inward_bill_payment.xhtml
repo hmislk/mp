@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill">
+                xmlns:bill="http://xmlns.jcp.org/jsf/composite/inward/bill"
+                xmlns:in="http://java.sun.com/jsf/composite/inward">
 
 
     <ui:define name="content">
@@ -29,26 +30,13 @@
                             <p:column>
                                 <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                             </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{myItem.currenPatienRoom.roomFacilityCharge.name}"/>
+                            </p:column>
                         </p:autoComplete>   
-
-
-
-                        <h:panelGrid id="panSearch2" columns="2" >
-                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Name:" />
-                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Sex" />
-                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.age}" ></h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="DOB"  />
-                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.person.dob}"   >
-                                <f:convertDateTime pattern="dd/MM/yy" />
-                            </h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Adress" />
-                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="Date of Admission"  />
-                            <h:outputLabel rendered="#{inwardPaymentController.current.patientEncounter!=null}" value="#{inwardPaymentController.current.patientEncounter.dateOfAdmission}"   >
-                                <f:convertDateTime pattern="dd/MM/yy" />
-                            </h:outputLabel>
-                        </h:panelGrid>
+                        <h:panelGroup id="panSearch2">
+                            <in:bhtDetail admission="#{inwardPaymentController.current.patientEncounter}"/>
+                        </h:panelGroup>
                     </p:panel>
                     <p:panel header="Payment Detail">
                         <h:panelGrid columns="7">

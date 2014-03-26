@@ -3,8 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:p="http://primefaces.org/ui">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -21,7 +20,7 @@
             </p:commandButton>
 
             <h:outputStylesheet library="css" name="printing.css"></h:outputStylesheet>
-            
+            <div  >
                 <h:panelGroup id="gpBillPreview" >
 
                     <div class="fiveinchbill" >
@@ -32,10 +31,10 @@
                         </div>
 
                      
-                    </div>
+
                 </h:panelGroup>
-            
-                     
+            </div>
+
         </h:form>
 
     </cc:implementation>

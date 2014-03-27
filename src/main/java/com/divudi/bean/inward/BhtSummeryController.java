@@ -133,7 +133,7 @@ public class BhtSummeryController implements Serializable {
 
     public void calculateDiscount() {
         for (ChargeItemTotal cit : chargeItemTotals) {
-            InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), cit.getInwardChargeType());
+            InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(),getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
 
             if (ipa == null || ipa.getDiscountPercent() == 0 || cit.getTotal() == 0) {
                 cit.setDiscount(0);

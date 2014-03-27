@@ -4,7 +4,9 @@
  */
 package com.divudi.ejb;
 
+import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
+import com.divudi.data.dataStructure.RoomChargeData;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
@@ -59,6 +61,22 @@ public class InwardCalculation {
     @EJB
     private PatientRoomFacade patientRoomFacade;
 
+ 
+
+    public List<PatientRoom> getPatientRooms(PatientEncounter patientEncounter) {
+        HashMap hm = new HashMap();
+        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
+                + " and pr.patientEncounter=:pe order by pr.createdAt";
+        hm.put("pe", patientEncounter);
+        List<PatientRoom> tmp = getPatientRoomFacade().findBySQL(sql, hm);
+
+        if (tmp == null) {
+            tmp = new ArrayList<>();
+        }
+
+        return tmp;
+    }
+
     public PatientRoom getCurrentPatientRoom(PatientEncounter patientEncounter) {
         String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and "
                 + " pr.patientEncounter=:pe order by pr.admittedAt desc ";
@@ -104,7 +122,7 @@ public class InwardCalculation {
         }
     }
 
-    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter,Institution institution) {
+    public List<BillFee> billFeeFromBillItemWithMatrix(BillItem billItem, PatientEncounter patientEncounter, Institution institution) {
 
         List<BillFee> billFeeList = new ArrayList<>();
         BillFee billFee;
@@ -144,7 +162,7 @@ public class InwardCalculation {
 
         BillFee bf = null;
 
-        bf = getBillFeeMatrix(billItem,institution);
+        bf = getBillFeeMatrix(billItem, institution);
         double serviceValue = getHospitalFeeByItem(billItem.getItem());
         PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
         bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoomFacilityCharge().getDepartment()));
@@ -410,9 +428,7 @@ public class InwardCalculation {
         long tempDur = tmp.getDurationHours();
         long tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
-        
-        
-        
+
         Date currentTime;
 
         if (date == null) {
@@ -451,45 +467,65 @@ public class InwardCalculation {
         this.commonFunctions = commonFunctions;
     }
 
-    public double calTotalLinen(List<PatientRoom> rmc) {
-        long tmp, adm, dis = 0L;
-        double totalLinen = 0.0;
-        int i = 0;
+//    public double calTotalLinen(List<PatientRoom> rmc) {
+//        long tmp, adm, dis = 0L;
+//        double totalLinen = 0.0;
+//        int i = 0;
+//
+//        for (PatientRoom pr : rmc) {
+//
+//            tmp = adm = pr.getAdmittedAt().getTime() / (1000 * 60 * 60 * 24);
+//            if (tmp != adm) {
+//                i = 0;
+//            }
+//
+//            if (pr.getDischargedAt() != null) {
+//                dis = pr.getDischargedAt().getTime() / (1000 * 60 * 60 * 24);
+//            } else {
+//                dis = Calendar.getInstance().getTime().getTime() / (1000 * 60 * 60 * 24);
+//            }
+//
+//            if (adm == dis) {
+//                if (i == 0) {
+//                    if (pr.getRoomFacilityCharge() != null && pr.getRoomFacilityCharge().getLinenCharge() != null) {
+//                        totalLinen += pr.getRoomFacilityCharge().getLinenCharge();
+//                    }
+//                } else {
+//                    totalLinen += pr.getAddedLinenCharge();
+//                }
+//                i++;
+//            }
+//
+//            while (adm < dis) {
+//                totalLinen += pr.getRoomFacilityCharge().getLinenCharge();
+//                //System.out.println("adm : " + adm + " dis : " + dis);
+//                //System.out.println("Linen :" + totalLinen);
+//                adm++;
+//            }
+//
+//        }
+//
+//        return totalLinen;
+//    }
+    public double calTotalLinen(PatientEncounter patientEncounter) {
 
-        for (PatientRoom pr : rmc) {
-
-            tmp = adm = pr.getAdmittedAt().getTime() / (1000 * 60 * 60 * 24);
-            if (tmp != adm) {
-                i = 0;
-            }
-
-            if (pr.getDischargedAt() != null) {
-                dis = pr.getDischargedAt().getTime() / (1000 * 60 * 60 * 24);
-            } else {
-                dis = Calendar.getInstance().getTime().getTime() / (1000 * 60 * 60 * 24);
-            }
-
-            if (adm == dis) {
-                if (i == 0) {
-                    if (pr.getRoomFacilityCharge() != null && pr.getRoomFacilityCharge().getLinenCharge() != null) {
-                        totalLinen += pr.getRoomFacilityCharge().getLinenCharge();
-                    }
-                } else {
-                    totalLinen += pr.getAddedLinenCharge();
-                }
-                i++;
-            }
-
-            while (adm < dis) {
-                totalLinen += pr.getRoomFacilityCharge().getLinenCharge();
-                //System.out.println("adm : " + adm + " dis : " + dis);
-                //System.out.println("Linen :" + totalLinen);
-                adm++;
-            }
-
+        if (patientEncounter == null || patientEncounter.getAdmissionType() == null) {
+            return 0;
         }
 
-        return totalLinen;
+        double linen = 0.0;
+
+        Long dayCount = getCommonFunctions().getDayCount(patientEncounter.getDateOfAdmission(), patientEncounter.getDateOfDischarge());
+
+        for (PatientRoom pr : getPatientRooms(patientEncounter)) {
+            linen += pr.getAddedLinenCharge();
+        }
+
+        if (patientEncounter.getAdmissionType().getDblValue() != null) {
+            linen += (patientEncounter.getAdmissionType().getDblValue() * dayCount);
+        }
+
+        return linen;
     }
 
     public long calCountWithoutOverShoot(TimedItemFee tif, PatientRoom pr) {

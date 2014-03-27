@@ -9,6 +9,7 @@ package com.divudi.data;
  * @author Buddhika
  */
 public enum InstitutionType {
+
     Agency,
     CollectingCentre,
     CreditCompany,
@@ -16,6 +17,7 @@ public enum InstitutionType {
     Lab,
     Hospital,
     Dealer,
+    StoreDealor,
     Importer,
     Manufacturer,
     Company,

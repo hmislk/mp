@@ -42,20 +42,19 @@ public class PharmaceuticalItemCategoryController implements Serializable {
     SessionController sessionController;
     @EJB
     private PharmaceuticalItemCategoryFacade ejbFacade;
-    List<PharmaceuticalItemCategory> selectedItems;
     private PharmaceuticalItemCategory current;
     private List<PharmaceuticalItemCategory> items = null;
-    String selectText = "";
-
+  
     public List<PharmaceuticalItemCategory> completeCategory(String qry) {
         List<PharmaceuticalItemCategory> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
-        if (qry != null) {
-            a = getFacade().findBySQL("select c from PharmaceuticalItemCategory c where "
-                    + " c.retired=false and (upper(c.name) like :n) order by c.name", m, 20);
-            //System.out.println("a size is " + a.size());
-        }
+        String sql = "select c from PharmaceuticalItemCategory c where "
+                + " c.retired=false and (upper(c.name) like :n) order by c.name";
+
+        a = getFacade().findBySQL(sql, m, 20);
+        //System.out.println("a size is " + a.size());
+
         if (a == null) {
             a = new ArrayList<>();
         }
@@ -66,13 +65,8 @@ public class PharmaceuticalItemCategoryController implements Serializable {
         current = new PharmaceuticalItemCategory();
     }
 
-    public void setSelectedItems(List<PharmaceuticalItemCategory> selectedItems) {
-        this.selectedItems = selectedItems;
-    }
-
-    public String getSelectText() {
-        return selectText;
-    }
+   
+    
 
     private void recreateModel() {
         items = null;
@@ -93,10 +87,7 @@ public class PharmaceuticalItemCategoryController implements Serializable {
         getItems();
     }
 
-    public void setSelectText(String selectText) {
-        this.selectText = selectText;
-    }
-
+   
     public PharmaceuticalItemCategoryFacade getEjbFacade() {
         return ejbFacade;
     }
@@ -117,6 +108,9 @@ public class PharmaceuticalItemCategoryController implements Serializable {
     }
 
     public PharmaceuticalItemCategory getCurrent() {
+        if (current == null) {
+            current = new PharmaceuticalItemCategory();
+        }
         return current;
     }
 

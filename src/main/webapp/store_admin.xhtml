@@ -18,29 +18,20 @@
                         <h:panelGrid columns="3" >
 
                             <p:panel header="Store Item" >
-                                <h:panelGrid columns="1" >                                    
+                                <h:panelGrid columns="1" >     
+                                    <p:commandButton ajax="false" value="Categories" action="store_item_category" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Item Master" action="store_item_master" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Packs" action="pharmacy_ampp" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Import from Excel" action="store_item_import" ></p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
 
                             <p:panel header="Institutions" >
-                                <h:panelGrid columns="1" >
-                                    <p:commandButton ajax="false" value="Manufacturers" action="pharmacy_manufacturer" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Importers" action="pharmacy_importer" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Distributor" action="pharmacy_dealer" ></p:commandButton>                                
+                                <h:panelGrid columns="1" >                                
+                                    <p:commandButton ajax="false" value="Distributor" action="store_dealer" ></p:commandButton>                                
                                     <p:commandButton ajax="false" value="Item Distributors" action="store_items_distributors" ></p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
 
-                            <p:panel header="Categories" >
-                                <h:panelGrid columns="1" >
-                                    <p:commandButton ajax="false" value="Discard Categories" action="pharmacy_discard_category" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Adjustment Categories" action="pharmacy_adjustment_category" ></p:commandButton>
-                                    <p:commandButton rendered="false" ajax="false" value="Items Categories" action="pharmacy_items_categories" ></p:commandButton>
-                                </h:panelGrid>
-                            </p:panel>
 
                             <p:panel header="Other" >
                                 <h:panelGrid columns="1" >
@@ -50,7 +41,7 @@
                             </p:panel>
                             <p:panel header="Check Entered Data">
                                 <h:panelGrid columns="1">
-                                    <p:commandButton ajax="false" value="Item Distributor" action="pharmacy_item_by_distributor" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Item Distributor" action="store_item_by_distributor" ></p:commandButton>
                                 </h:panelGrid>
 
                             </p:panel>
@@ -64,7 +55,6 @@
                                     <p:commandButton ajax="false" value="2)Stock Variant Adjustment" 
                                                      action="pharmacy_variant_ajustment_pre_list" />
 
-                                    <p:commandButton ajax="false" value="Reset Bill No" action="#{pharmacyItemExcelManager.resetBillNo()}" />
                                 </h:panelGrid>
 
                             </p:panel>

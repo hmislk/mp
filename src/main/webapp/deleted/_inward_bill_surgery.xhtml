@@ -23,8 +23,7 @@
                                          style="float: right;"/>
                         <p:commandButton value="Save Surgery Detail" ajax="false" 
                                          action="#{surgeryBillController.save()}" 
-                                         style="float: right;" 
-                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                         style="float: right;"/>
 
 
                     </f:facet>
@@ -113,8 +112,8 @@
                                     <p:inputText id="prof" value="#{surgeryBillController.proEncounterComponent.billFee.feeValue}"/>
                                     <p:commandButton ajax="false" update="surgery"  
                                                      value="Add Professional Fee"  
-                                                     action="#{surgeryBillController.addProfessionalFee()}"
-                                                     disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                     action="#{surgeryBillController.addProfessionalFee()}">
+                                    </p:commandButton>                                   
                                 </p:panelGrid>
                             </p:panel>
                             <p:panel>
@@ -151,19 +150,16 @@
                                     </p:column>     
                                     <p:column headerText="Update">
                                         <p:commandButton ajax="false" value="Update"  disabled="#{c.billFee.id eq null}"
-                                                         action="#{surgeryBillController.updateProFee(c.billFee)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                         action="#{surgeryBillController.updateProFee(c.billFee)}"/>
                                     </p:column>
 
                                     <p:column headerText="Remove">
                                         <p:commandButton ajax="false" value="Remove"  
                                                          rendered="#{c.billFee.id eq null}"
-                                                         action="#{surgeryBillController.removeProEncFromList(c)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                         action="#{surgeryBillController.removeProEncFromList(c)}"/>
                                         <p:commandButton ajax="false" value="Remove"  
                                                          rendered="#{c.billFee.id ne null}"
-                                                         action="#{surgeryBillController.removeProEncFromDbase(c)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                         action="#{surgeryBillController.removeProEncFromDbase(c)}"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>
@@ -211,8 +207,8 @@
 
                                     </h:panelGrid>   
                                     <p:commandButton value="Add Time Service"  ajax="false"
-                                                     action="#{surgeryBillController.addTimedService()}"
-                                                     disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                     action="#{surgeryBillController.addTimedService()}">
+                                    </p:commandButton>
                                 </p:panel>
                             </p:panel>
                             <p:panel>
@@ -256,23 +252,166 @@
                                     </p:column>     
                                     <p:column >
                                         <p:commandButton value="Update" ajax="false"  disabled="#{ti.billFee.id eq null}"
-                                                         action="#{surgeryBillController.updateTimedService(ti.billFee)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>                                                                    
+                                                         action="#{surgeryBillController.updateTimedService(ti.billFee)}">                                                                    
+                                        </p:commandButton>
                                     </p:column>
                                     <p:column headerText="Remove">
                                         <p:commandButton ajax="false" value="Remove"  
                                                          rendered="#{c.billFee.id eq null}"
-                                                         action="#{surgeryBillController.removeTimedEncFromList(c)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                         action="#{surgeryBillController.removeTimedEncFromList(c)}"/>
                                         <p:commandButton ajax="false" value="Remove"  
                                                          rendered="#{c.billFee.id ne null}"
-                                                         action="#{surgeryBillController.removeTimedEncFromDbase(c)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                         action="#{surgeryBillController.removeTimedEncFromDbase(c)}"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>
                         </h:panelGrid>
                     </p:panel>
+
+
+                    <p:panel rendered="false">
+                        <f:facet name="header">
+                            <h:outputLabel value="Service Cost"/>
+                            <h:panelGroup rendered="#{surgeryBillController.serviceBill.id ne null}">
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Bill No  : "/>
+                                    <h:outputLabel value="#{surgeryBillController.serviceBill.deptId}"/>
+                                    <h:outputLabel value="Bill Total  : "/>
+                                    <h:outputLabel value="#{surgeryBillController.serviceBill.total}"/>
+                                </h:panelGrid>
+                            </h:panelGroup>
+
+                        </f:facet>
+                        <h:panelGrid columns="2">
+                            <p:panel>
+                                <p:panelGrid columns="2" >
+                                    <p:autoComplete  forceSelection="true"
+                                                     value="#{surgeryBillController.serviceEncounterComponent.billItem.item}" 
+                                                     completeMethod="#{itemController.completeService}" 
+                                                     var="ix" itemLabel="#{ix.name}" itemValue="#{ix}"
+                                                     style="width: 400px;">
+                                        <p:column>
+                                            <h:outputLabel value="#{ix.name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{ix.department.name}"/>
+                                        </p:column>                                   
+                                    </p:autoComplete>
+                                    <p:commandButton ajax="false" value="Add Service"  
+                                                     action="#{surgeryBillController.addService()}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel>
+                                <p:tabView >
+                                    <p:tab  title="Bill Items" >
+                                        <p:dataTable  value="#{surgeryBillController.serviceEncounterComponents}"
+                                                      var="bi" >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Fee Name
+                                                        </f:facet>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Fee Value
+                                                        </f:facet>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Staff
+                                                        </f:facet>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Billed At
+                                                        </f:facet>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Billed By
+                                                        </f:facet>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Update BillItem
+                                                        </f:facet>
+                                                    </p:column>   
+                                                    <p:column >
+                                                        <f:facet name="header">
+                                                            Remove
+                                                        </f:facet>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:columnGroup> 
+                                            <p:subTable value="#{bi.billItem.billFees}" var="bf">
+                                                <f:facet name="header">
+                                                    #{bi.billItem.item.name}
+                                                </f:facet>
+                                                <p:column>
+                                                    #{bf.fee.name}
+                                                </p:column>
+                                                <p:column>
+                                                    <p:inputText value="#{bf.feeValue}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputLabel value="#{bf.staff.person.name}" 
+                                                                   rendered="#{bf.staff!=null and bf.fee.speciality==null}" />
+                                                    <p:selectOneMenu value="#{bf.staff}" 
+                                                                     rendered="#{bf.fee.speciality!=null}" >
+                                                        <f:selectItem itemLabel="Select Staff" />
+                                                        <f:selectItems  
+                                                            value="#{staffController.getSpecialityStaff(bf.fee.speciality) }" 
+                                                            var="bifs" itemLabel="#{bf.person.name}" itemValue="#{bf}" />
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column >
+                                                    <h:outputLabel value="#{bf.createdAt}">
+                                                        <f:convertDateTime pattern="dd MM yyyy"/>
+                                                    </h:outputLabel>                                                   
+                                                    <br/>
+                                                    <h:panelGroup rendered="#{bf.retired}" >
+                                                        <h:outputLabel style="color: red;" value="Deleted at " />
+                                                        <h:outputLabel style="color: red;"  value="#{bf.retiredAt}" >
+                                                            <f:convertDateTime pattern="dd MMM yyyy"/>
+                                                        </h:outputLabel>
+                                                    </h:panelGroup>
+                                                </p:column>
+                                                <p:column >
+                                                    <h:outputLabel value="#{bf.creater.webUserPerson.name}"/>     
+                                                    <br/>
+                                                    <h:panelGroup rendered="#{bf.retired}" >
+                                                        <h:outputLabel style="color: red;" value="Deleted By " />
+                                                        <h:outputLabel style="color: red;"  value="#{bf.retirer.webUserPerson.name}" >                                       
+                                                        </h:outputLabel>
+                                                    </h:panelGroup>
+                                                </p:column>     
+                                                <p:column >
+                                                    <p:commandButton value="Update" ajax="false"  disabled="#{bf.id eq null}"
+                                                                     action="#{surgeryBillController.updateService(bf)}">                                                                    
+                                                    </p:commandButton>
+                                                </p:column>
+                                                <p:column headerText="Remove">
+                                                    <p:commandButton ajax="false" value="Remove"  
+                                                                     rendered="#{bf.id eq null}"
+                                                                     action="#{surgeryBillController.removeServiceEncFromList(bi)}"/>
+                                                    <p:commandButton ajax="false" value="Remove"  
+                                                                     rendered="#{bf.id ne null}"
+                                                                     action="#{surgeryBillController.removeServiceEncFromDbase(bi)}"/>
+                                                </p:column>
+                                            </p:subTable>
+                                        </p:dataTable>
+                                    </p:tab>
+
+                                </p:tabView>
+                            </p:panel>
+
+                        </h:panelGrid>
+                    </p:panel>
+
+
 
                 </p:panel>           
             </h:form>

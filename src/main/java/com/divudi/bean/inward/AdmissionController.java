@@ -168,6 +168,24 @@ public class AdmissionController implements Serializable {
         }
         return suggestions;
     }
+    
+     public List<Admission> completePatientPaymentFinalized(String query) {
+        List<Admission> suggestions;
+        String sql;
+        HashMap h = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            sql = "select c from Admission c where c.retired=false "
+                    + " and ( (upper(c.bhtNo) like :q )or (upper(c.patient.person.name)"
+                    + " like :q) ) order by c.bhtNo";
+            //System.out.println(sql);
+            //      h.put("btp", BillType.InwardPaymentBill);
+            h.put("q", "%" + query.toUpperCase() + "%");
+            suggestions = getFacade().findBySQL(sql, h);
+        }
+        return suggestions;
+    }
 
     public List<Admission> completeDishcahrgedPatient(String query) {
         List<Admission> suggestions;

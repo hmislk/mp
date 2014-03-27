@@ -6,6 +6,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:in="http://java.sun.com/jsf/composite/inward"
                 xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
 
 
@@ -16,38 +17,7 @@
                 <p:panel rendered="#{!bhtSummeryController.printPreview}" >
                     <f:facet name="header" >
                         <h:panelGrid columns="15"  >
-                            <h:outputLabel value="Inward Final Bill" />
-                            <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
-                            <p:selectOneMenu  value="#{bhtSummeryController.current.paymentMethod}">                                                                   
-                                <f:selectItem itemLabel="Select Paymentmethod"/>
-                                <f:selectItems value="#{enumController.paymentMethods}"/>
-                                <p:ajax process="@this" update="lblCardRef txtCardRef creditBank
-                                        lblCheqRef txtCheqRef bank lblSlipRef
-                                        txtSlipRef slipBank tot dList" event="change"
-                                        listener="#{bhtSummeryController.changePaymentmethodListener()}" />
-                            </p:selectOneMenu>
-
-                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{bhtSummeryController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                            <p:inputMask mask="9999-9999-9999-9999" id="txtCardRef" autocomplete="off" maxlength="16" value="#{bhtSummeryController.current.creditCardRefNo}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                            <h:selectOneMenu id="creditBank" value="#{bhtSummeryController.current.bank}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{bhtSummeryController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{bhtSummeryController.current.chequeRefNo}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{bhtSummeryController.current.bank}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-
-                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{bhtSummeryController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtSlipRef" value="#{bhtSummeryController.current.comments}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="slipBank" value="#{bhtSummeryController.current.bank}" style="display: #{bhtSummeryController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-
+                            <h:outputLabel value="Inward Final Bill" />                          
                             <p:commandButton  value="Settle" action="#{bhtSummeryController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:commandButton value="New Bill" ajax="false" action="#{bhtSummeryController.prepareNewBill()}" >
@@ -55,30 +25,15 @@
                         </h:panelGrid>
                     </f:facet>       
 
-                    <p:panel header="BHT">                               
-                        <h:panelGrid id="panSearch2" columns="2" >
-                            <h:outputLabel  value="Name:" />
-                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                            <h:outputLabel  value="Sex" />
-                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.age}" ></h:outputLabel>
-                            <h:outputLabel value="DOB"  />
-                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.person.dob}"   >
-                                <f:convertDateTime pattern="dd/MM/yy" />
-                            </h:outputLabel>
-                            <h:outputLabel  value="Adress" />
-                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.patient.person.address}" ></h:outputLabel>
-                            <h:outputLabel  value="Date of Admission"  />
-                            <h:outputLabel  value="#{bhtSummeryController.patientEncounter.dateOfAdmission}"   >
-                                <f:convertDateTime pattern="dd/MM/yy" />
-                            </h:outputLabel>
-                        </h:panelGrid>
-                    </p:panel>                    
+                    <h:panelGroup id="panSearch2">
+                        <in:bhtDetail admission="#{bhtSummeryController.patientEncounter}"/>
+                    </h:panelGroup>     
 
 
 
                     <p:dataTable id="dList" value="#{bhtSummeryController.chargeItemTotals}" var="c">
                         <p:column headerText="Inward Charge Type" >
-                            #{c.inwardChargeType}
+                            #{c.inwardChargeType.label}
                         </p:column>
                         <p:column headerText="Total">
                             <h:outputLabel value="#{c.total}">

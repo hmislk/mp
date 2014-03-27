@@ -21,7 +21,7 @@
                             <h:outputLabel value="Search"/>
                             <p:autoComplete converter="deal"  id="lstSelect"   value="#{itemsDistributorsController.currentInstituion}" 
                                             forceSelection="true"
-                                            style="min-width: 223px" completeMethod="#{dealerController.completeDealor}"   
+                                            style="min-width: 223px" completeMethod="#{storeDealorController.completeDealor}"   
                                             var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
                                 <p:column headerText="Item">
                                     <h:outputLabel value="#{myItem.name}" ></h:outputLabel>

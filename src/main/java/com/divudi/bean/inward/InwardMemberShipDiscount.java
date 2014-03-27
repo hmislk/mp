@@ -74,11 +74,20 @@ public class InwardMemberShipDiscount implements Serializable {
                 hm.put("m", membershipScheme);
             }
         } else {
-            sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                    + " i.paymentMethod=:p and"
-                    + " i.inwardChargeType=:inw "
-                    + " and i.membershipScheme is null"
-                    + " and i.institution is null ";
+            if (ins != null) {
+                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
+                        + " i.paymentMethod=:p and"
+                        + " i.inwardChargeType=:inw "
+                        + " and i.membershipScheme is null"
+                        + " and i.institution=:ins ";
+                hm.put("ins", ins);
+            } else {
+                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
+                        + " i.paymentMethod=:p and"
+                        + " i.inwardChargeType=:inw "
+                        + " and i.membershipScheme is null"
+                        + " and i.institution is null ";
+            }
         }
 
         hm.put("p", paymentMethod);

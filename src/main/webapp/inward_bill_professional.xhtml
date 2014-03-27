@@ -5,7 +5,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns="http://www.w3.org/1999/xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:in="http://java.sun.com/jsf/composite/inward">
 
 
 
@@ -44,32 +45,15 @@
                                         <p:column >
                                             <h:outputLabel value="#{apt2.patient.person.name}"/>
                                         </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{apt2.currentPatientRoom.roomFacilityCharge.name}"/>
+                                        </p:column>
                                     </p:autoComplete>  
 
                                     <br/><br/>
-                                    <h:panelGrid id="panSearch2" columns="2" >
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="BHT No : " />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.bhtNo}" ></h:outputLabel>
-
-
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="Patient Name : " />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="Adress : " />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="Guardian Name : " />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.guardian.nameWithTitle}" ></h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="Age : " />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.patient.age}" ></h:outputLabel>
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="Admitted At : "  />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.dateOfAdmission}"   >
-                                            <f:convertDateTime pattern="dd/MM/yy" />
-                                        </h:outputLabel>
-                                        <h:outputLabel  rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="Adress" />
-                                        <h:outputLabel rendered="#{inwardProfessionalBillController.current.patientEncounter!=null}" value="#{inwardProfessionalBillController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                    </h:panelGrid>
+                                    <h:panelGroup id="panSearch2">
+                                        <in:bhtDetail admission="#{inwardProfessionalBillController.current.patientEncounter}"/>
+                                    </h:panelGroup>
                                 </p:panel>
                             </h:panelGroup>
 

@@ -67,32 +67,15 @@
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Title"/>
                                     <p:selectOneMenu  id="cmbTitle" value="#{bhtEditController.current.patient.person.title}"  >
-                                        <f:selectItem itemLabel="Mr." itemValue="Mr"/>
-                                        <f:selectItem itemLabel="Mrs." itemValue="Mrs"/>
-                                        <f:selectItem itemLabel="Miss." itemValue="Miss"/>
-                                        <f:selectItem itemLabel="Ms." itemValue="Ms"/>
-                                        <f:selectItem itemLabel="Master." itemValue="Master"/>
-                                        <f:selectItem itemLabel="Baby" itemValue="Baby"/>
-                                        <f:selectItem itemLabel="Rev." itemValue="Rev"/>
-                                        <f:selectItem itemLabel="Rt.Rev" itemValue="RtRev"/>
-                                        <f:selectItem itemLabel="Hon" itemValue="Hon"/>
-                                        <f:selectItem itemLabel="Rt.Hon" itemValue="RtHon"/>
-                                        <f:selectItem itemLabel="Dr." itemValue="Dr"/>
-                                        <f:selectItem itemLabel="Dr.(Mrs)" itemValue="DrMrs"/>
-                                        <f:selectItem itemLabel="Dr.(Ms.)" itemValue="DrMs"/>
-                                        <f:selectItem itemLabel="Dr.(Miss)" itemValue="DrMiss"/>
-                                        <f:selectItem itemLabel="Prof." itemValue="Prof"/>
-                                        <f:selectItem itemLabel="Other" itemValue="Other"/>
+                                        <f:selectItem itemLabel="Select Title" />
+                                        <f:selectItems value="#{enumController.title}"/>
                                     </p:selectOneMenu>
                                     <p:outputLabel   value="Name:" />
                                     <p:inputText  value="#{bhtEditController.current.patient.person.name}" />
                                     <p:outputLabel value="Sex"/>
                                     <p:selectOneMenu  value="#{bhtEditController.current.patient.person.sex}" >
                                         <f:selectItem itemLabel="Select Sex"/>
-                                        <f:selectItem itemLabel="Male" itemValue="Male"/>
-                                        <f:selectItem itemLabel="Female" itemValue="Female"/>
-                                        <f:selectItem itemLabel="Unknown" itemValue="Unknown"/>
-                                        <f:selectItem itemLabel="Other" itemValue="Other"/>
+                                        <f:selectItems value="#{enumController.sex}"/>
                                     </p:selectOneMenu>
                                     <p:outputLabel value="NIC"/>
                                     <p:inputText value="#{bhtEditController.current.patient.person.nic}"/>
@@ -118,7 +101,8 @@
                                     <p:outputLabel value="NIC"/>
                                     <p:inputText value="#{bhtEditController.current.guardian.nic}"/>
                                     <p:outputLabel value="Phone"/>
-                                    <p:inputMask mask="999-9999999"  autocomplete="off" maxlength="11" value="#{bhtEditController.current.guardian.phone}">
+                                    <p:inputMask mask="999-9999999"  autocomplete="off" maxlength="11"
+                                                 value="#{bhtEditController.current.guardian.phone}">
                                     </p:inputMask>
                                     <p:outputLabel   value="Adress" />
                                     <p:inputText value="#{bhtEditController.current.guardian.address}" />

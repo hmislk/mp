@@ -1263,6 +1263,24 @@ public class BillController implements Serializable {
         this.paymentSchemeController = paymentSchemeController;
     }
 
+    public List<Bill> completeAppointmentBill(String query) {
+        List<Bill> suggestions;
+        String sql;
+        HashMap hm = new HashMap();
+
+        sql = "select p from BilledBill p where p.retired=false and "
+                + "p.cancelled=false and p.refunded=false and p.billType=:btp "
+                + " and (upper(p.patient.person.name)  "
+                + "like :q or upper(p.insId)  "
+                + "like :q) order by p.insId";
+        //System.out.println(sql);
+        hm.put("q", "%"+ query.toUpperCase()+"%");
+        hm.put("btp", BillType.InwardAppointmentBill);
+        suggestions = getFacade().findBySQL(sql, hm);
+
+        return suggestions;
+    }
+
     /**
      *
      */

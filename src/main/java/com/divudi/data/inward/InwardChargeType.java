@@ -17,6 +17,7 @@ public enum InwardChargeType {
     Medicine,
     MOCharges,
     MaintainCharges,
+    @Deprecated
     Investigations,
     BloodTransfusioncharges,
     Immunization,
@@ -38,7 +39,12 @@ public enum InwardChargeType {
     ProfessionalCharge,
     DressingCharges,
     OxygenCharges,
-    physiotherapy,;
+    physiotherapy,
+    Laboratory,
+    X_Ray,
+    CT,
+    Scanning,
+    ECG_EEG,;
 
     public String getLabel() {
         switch (this) {
@@ -88,6 +94,16 @@ public enum InwardChargeType {
                 return "Dressing Charges";
             case OxygenCharges:
                 return "Oxygen Charges";
+            case Laboratory:
+                return "Laboratory";
+            case X_Ray:
+                return "X-Ray";
+            case CT:
+                return "CT";
+            case Scanning:
+                return "Scanning";
+            case ECG_EEG:
+                return "ECG-EEG";
 
             default:
                 return this.toString();

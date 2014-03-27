@@ -27,6 +27,7 @@ import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BilledBillFacade;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -55,6 +56,7 @@ public class InwardPaymentController implements Serializable {
     @Inject
     private SessionController sessionController;
     private boolean printPreview;
+    private double due;
 
     public PaymentMethod[] getPaymentMethods() {
         return PaymentMethod.values();
@@ -63,6 +65,45 @@ public class InwardPaymentController implements Serializable {
     @Inject
     private PaymentSchemeController paymentSchemeController;
     private PaymentMethodData paymentMethodData;
+
+    public void bhtListener() {
+        due = getFinalBillDue();
+    }
+
+    private double getFinalBillDue() {
+        String sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false "
+                + " and b.billType=:btp and b.patientEncounter=:pe";
+        HashMap hm = new HashMap();
+        hm.put("btp", BillType.InwardFinalBill);
+        hm.put("pe", getCurrent().getPatientEncounter());
+
+        Bill b = getBilledBillFacade().findFirstBySQL(sql, hm);
+
+        if (b == null) {
+            return 0;
+        }
+
+        return b.getNetTotal() - b.getPaidAmount();
+
+    }
+    
+    @EJB
+    private InwardBean inwardBean;
+
+    private void updateFinalFill() {
+        String sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false "
+                + " and b.billType=:btp and b.patientEncounter=:pe";
+        HashMap hm = new HashMap();
+        hm.put("btp", BillType.InwardFinalBill);
+        hm.put("pe", getCurrent().getPatientEncounter());
+
+        BilledBill b = getBilledBillFacade().findFirstBySQL(sql, hm);
+
+        double paid = getInwardBean().getPaidValue(getCurrent().getPatientEncounter());
+        b.setPaidAmount(paid);
+        getBilledBillFacade().edit(b);
+
+    }
 
     private boolean errorCheck() {
         if (getCurrent().getPatientEncounter() == null) {
@@ -79,6 +120,18 @@ public class InwardPaymentController implements Serializable {
             return true;
         }
 
+        if (due != 0) {
+
+            if ((due < getCurrent().getTotal())) {
+                double different = Math.abs((due - getCurrent().getTotal()));
+
+                if (different > 0.1) {
+                    UtilityController.addErrorMessage("U cant recieve payment thenn due");
+                    return true;
+                }
+            }
+        }
+
         return false;
 
     }
@@ -90,6 +143,11 @@ public class InwardPaymentController implements Serializable {
 
         saveBill();
         saveBillItem();
+
+        if (getCurrent().getPatientEncounter().isPaymentFinalized()) {
+            updateFinalFill();
+        }
+
         UtilityController.addSuccessMessage("Payment Bill Saved");
         printPreview = true;
     }
@@ -237,4 +295,21 @@ public class InwardPaymentController implements Serializable {
     public void setBillBean(BillBean billBean) {
         this.billBean = billBean;
     }
+
+    public double getDue() {
+        return due;
+    }
+
+    public void setDue(double due) {
+        this.due = due;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
+
 }

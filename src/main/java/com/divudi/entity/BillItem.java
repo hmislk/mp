@@ -112,6 +112,8 @@ public class BillItem implements Serializable {
     private BillItem transBillItem;
     @OneToMany(mappedBy = "billItem")
     private List<BillFee> billFees = new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBillItem",fetch = FetchType.LAZY)
+    private List<BillFee> proFees=new ArrayList<>();
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -552,6 +554,14 @@ public class BillItem implements Serializable {
 
     public void setEditedAt(Date editedAt) {
         this.editedAt = editedAt;
+    }
+
+    public List<BillFee> getProFees() {
+        return proFees;
+    }
+
+    public void setProFees(List<BillFee> proFees) {
+        this.proFees = proFees;
     }
 
 }

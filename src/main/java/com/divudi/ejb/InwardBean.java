@@ -5,17 +5,21 @@
  */
 package com.divudi.ejb;
 
+import com.divudi.data.BillType;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.RoomFacilityCharge;
+import com.divudi.facade.BillFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.RoomFacade;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -30,11 +34,26 @@ public class InwardBean {
     private RoomFacade roomFacade;
     @EJB
     private InwardCalculation inwardCalculation;
+    @EJB
+    private BillFacade billFacade;
+
+    public double getPaidValue(PatientEncounter patientEncounter) {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT  sum(b.netTotal) FROM Bill b WHERE b.retired=false  and b.billType=:btp "
+                + " and b.patientEncounter=:pe ";
+        hm.put("btp", BillType.InwardPaymentBill);
+        hm.put("pe",patientEncounter);
+        double dbl = getBillFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
+
+        return dbl;
+
+    }
 
     public PatientRoom savePatientRoom(RoomFacilityCharge newRoomFacilityCharge, double addLinenCharge, Date addmittedAt, PatientEncounter patientEncounter, WebUser webUser) {
         PatientRoom pr = new PatientRoom();
 
-        pr.setCurrentLinenCharge(newRoomFacilityCharge.getLinenCharge());
+        //  pr.setCurrentLinenCharge(newRoomFacilityCharge.getLinenCharge());
         pr.setCurrentMaintananceCharge(newRoomFacilityCharge.getMaintananceCharge());
         pr.setCurrentMoCharge(newRoomFacilityCharge.getMoCharge());
         pr.setCurrentNursingCharge(newRoomFacilityCharge.getNursingCharge());
@@ -63,7 +82,7 @@ public class InwardBean {
     }
 
     public PatientRoom savePatientRoom(PatientRoom patientRoom, PatientEncounter patientEncounter, Date admittedAt, WebUser webUser) {
-        patientRoom.setCurrentLinenCharge(patientRoom.getRoomFacilityCharge().getLinenCharge());
+        //     patientRoom.setCurrentLinenCharge(patientRoom.getRoomFacilityCharge().getLinenCharge());
         patientRoom.setCurrentMaintananceCharge(patientRoom.getRoomFacilityCharge().getMaintananceCharge());
         patientRoom.setCurrentMoCharge(patientRoom.getRoomFacilityCharge().getMoCharge());
         patientRoom.setCurrentNursingCharge(patientRoom.getRoomFacilityCharge().getNursingCharge());
@@ -130,5 +149,13 @@ public class InwardBean {
 
     public void setInwardCalculation(InwardCalculation inwardCalculation) {
         this.inwardCalculation = inwardCalculation;
+    }
+
+    public BillFacade getBillFacade() {
+        return billFacade;
+    }
+
+    public void setBillFacade(BillFacade billFacade) {
+        this.billFacade = billFacade;
     }
 }

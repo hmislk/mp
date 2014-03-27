@@ -8,6 +8,7 @@ import com.divudi.data.FeeType;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -78,6 +79,9 @@ public class BillFee implements Serializable {
     double feeDiscount;
     double feeMargin;
     double paidValue = 0.0;
+  
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BillItem referenceBillItem;
 
     @Transient
     private double transSerial;
@@ -530,6 +534,14 @@ public class BillFee implements Serializable {
 
     public void setEditedAt(Date editedAt) {
         this.editedAt = editedAt;
+    }
+
+    public BillItem getReferenceBillItem() {
+        return referenceBillItem;
+    }
+
+    public void setReferenceBillItem(BillItem referenceBillItem) {
+        this.referenceBillItem = referenceBillItem;
     }
 
 }

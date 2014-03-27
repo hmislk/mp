@@ -159,7 +159,7 @@ public class StaffController implements Serializable {
                 + "order by p.person.name";
 //            //System.out.println(sql);
         hm.put("sp", speciality);
-        ss = getFacade().findBySQL(sql, 20);
+        ss = getFacade().findBySQL(sql,hm, 20);
 
         return ss;
     }

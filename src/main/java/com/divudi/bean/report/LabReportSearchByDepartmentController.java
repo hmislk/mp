@@ -233,7 +233,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
 
         sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and "
                 + " type(f) = :billClass and f.billType = :billType and"
-                + " (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3  or f.paymentScheme.paymentMethod = :pm4) "
+                + " (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3  or f.paymentMethod = :pm4) "
                 + " and f.createdAt between :fromDate and :toDate and f.toDepartment=:dep ";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
@@ -252,7 +252,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         String sql;
         Map tm;
         sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass  "
-                + " and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3  or f.paymentScheme.paymentMethod = :pm4) "
+                + " and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3  or f.paymentMethod = :pm4) "
                 + " and f.billType = :billType and f.createdAt between :fromDate and :toDate and f.toDepartment=:dep ";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
@@ -271,7 +271,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         String sql;
         Map tm;
         sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass "
-                + " and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3  or f.paymentScheme.paymentMethod = :pm4) "
+                + " and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3  or f.paymentMethod = :pm4) "
                 + " and f.billType = :billType and f.createdAt between :fromDate and :toDate and f.toDepartment=:dep";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
@@ -353,7 +353,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
     public List<Bill> getLabBillsWithoutB() {
         if (labBillsB == null) {
             String sql;
-            sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.institution.id=" + getSessionController().getLoggedUser().getInstitution().getId() + " and type(f) = :bt and f.createdAt between :fromDate and :toDate order by  f.insId";
+            sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.institution.id=" + getSessionController().getLoggedUser().getInstitution().getId() + " and type(f) = :bt and f.createdAt between :fromDate and :toDate order by  f.insId";
             Map tm = new HashMap();
 
             tm.put("fromDate", fromDate);
@@ -372,7 +372,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
     public List<Bill> getLabBillsWithoutC() {
         if (labBillsC == null) {
             String sql;
-            sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.institution.id=" + getSessionController().getLoggedUser().getInstitution().getId() + " and type(f) = :bt and f.createdAt between :fromDate and :toDate order by  f.insId";
+            sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.institution.id=" + getSessionController().getLoggedUser().getInstitution().getId() + " and type(f) = :bt and f.createdAt between :fromDate and :toDate order by  f.insId";
             Map tm = new HashMap();
 
             tm.put("fromDate", fromDate);
@@ -391,7 +391,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
     public List<Bill> getLabBillsWithoutR() {
         if (labBillsR == null) {
             String sql;
-            sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.institution.id=" + getSessionController().getLoggedUser().getInstitution().getId() + " and type(f) = :bt and f.createdAt between :fromDate and :toDate order by  f.insId";
+            sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.institution.id=" + getSessionController().getLoggedUser().getInstitution().getId() + " and type(f) = :bt and f.createdAt between :fromDate and :toDate order by  f.insId";
             Map tm = new HashMap();
 
             tm.put("fromDate", fromDate);
@@ -575,7 +575,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
             Map tm;
 
             sql = "select f from Bill f where f.retired=false and f.billType = :billType and "
-                    + "(f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 or f.paymentScheme.paymentMethod = :pm4 ) "
+                    + "(f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 or f.paymentMethod = :pm4 ) "
                     + "and  f.toDepartment=:dep and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
 
             tm = new HashMap();
@@ -604,7 +604,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
 //            Map tm;
 //            if (getInstitution() == null) {
 //                sql = "select f from Bill f where f.retired=false and f.billType = :billType and "
-//                        + "(f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 or f.paymentScheme.paymentMethod = :pm4) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+//                        + "(f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 or f.paymentMethod = :pm4) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
 //                tm = new HashMap();
 //                tm.put("fromDate", fromDate);
 //                tm.put("toDate", toDate);
@@ -616,7 +616,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
 //                labBills = getBillFacade().findBySQL(sql, tm, TemporalType.TIMESTAMP);
 //                calTotalsWithout();
 //            } else {
-//                sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 or f.paymentScheme.paymentMethod = :pm4 ) and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+//                sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 or f.paymentMethod = :pm4 ) and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
 //                tm = new HashMap();
 //                tm.put("fromDate", fromDate);
 //                tm.put("toDate", toDate);
@@ -644,7 +644,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
                 labBills = getBillFacade().findBySQL(sql, tm, TemporalType.TIMESTAMP);
                 calTotals();
             } else {
-                sql = "select f from Bill f where f.retired=false and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+                sql = "select f from Bill f where f.retired=false and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
                 Map tm = new HashMap();
                 tm.put("fromDate", fromDate);
                 tm.put("toDate", toDate);
@@ -664,7 +664,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
             return;
         }
 
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -672,7 +672,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm
                 .put("billClass", BilledBill.class);
         hosTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put(
@@ -682,7 +682,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", CancelledBill.class);
         hosTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);
@@ -691,7 +691,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billClass", RefundBill.class);
         hosTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         hosTot = hosTotB + hosTotC + hosTotR;
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);
@@ -699,7 +699,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", BilledBill.class);
         profTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);
@@ -707,7 +707,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", CancelledBill.class);
         profTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);
@@ -716,7 +716,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billClass", RefundBill.class);
         profTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         profTot = profTotB + profTotC + profTotR;
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);
@@ -724,7 +724,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", BilledBill.class);
         disTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);
@@ -732,7 +732,7 @@ public class LabReportSearchByDepartmentController implements Serializable {
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", CancelledBill.class);
         disTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
 
         tm.put("fromDate", fromDate);

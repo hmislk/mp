@@ -144,7 +144,7 @@ public class PharmacySaleReport1 implements Serializable {
         m.put("class", bill.getClass());
         //  m.put("btp", BillType.PharmacyPre);
         m.put("btp", BillType.PharmacySale);
-        sql = "select sum(i.netTotal) from Bill i where i.paymentScheme.paymentMethod=:pm and "
+        sql = "select sum(i.netTotal) from Bill i where i.paymentMethod=:pm and "
                 + " i.referenceBill.department=:d and type(i)=:class "
                 + " and i.billType=:btp and i.createdAt between :fd and :td ";
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
@@ -166,7 +166,7 @@ public class PharmacySaleReport1 implements Serializable {
         m.put("pm", paymentMethod);
         m.put("class", bill.getClass());
         m.put("btp", BillType.PharmacySale);
-        sql = "select sum(i.netTotal) from Bill i where type(i)=:class and i.paymentScheme.paymentMethod=:pm and "
+        sql = "select sum(i.netTotal) from Bill i where type(i)=:class and i.paymentMethod=:pm and "
                 + " i.referenceBill.department=:d and i.billType=:btp and i.createdAt between :fd and :td ";
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 
@@ -275,7 +275,7 @@ public class PharmacySaleReport1 implements Serializable {
         m.put("toDate", getToDate());
         m.put("class", bill.getClass());
         m.put("btp", BillType.PharmacySale);
-        sql = "select sum(i.netTotal) from Bill i where type(i)=:class and i.paymentScheme.paymentMethod=:pm and "
+        sql = "select sum(i.netTotal) from Bill i where type(i)=:class and i.paymentMethod=:pm and "
                 + " i.referenceBill.department=:d and i.billType=:btp and i.createdAt between :fromDate and :toDate ";
         return getBillItemFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 
@@ -291,7 +291,7 @@ public class PharmacySaleReport1 implements Serializable {
         m.put("toDate", getToDate());
         m.put("class", PreBill.class);
         m.put("btp", BillType.PharmacySale);
-        sql = "select sum(i.netTotal) from Bill i where type(i)!=:class and i.paymentScheme.paymentMethod=:pm and "
+        sql = "select sum(i.netTotal) from Bill i where type(i)!=:class and i.paymentMethod=:pm and "
                 + " i.referenceBill.department=:d and i.billType=:btp and i.createdAt between :fromDate and :toDate ";
         return getBillItemFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 

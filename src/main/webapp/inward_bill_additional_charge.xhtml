@@ -5,7 +5,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:in="http://java.sun.com/jsf/composite/inward">
 
 
     <ui:define name="content">
@@ -35,27 +36,36 @@
                                 <p:column>
                                     <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                                 </p:column>
+                                <p:column>
+                                    <h:outputLabel value="#{myItem.currentPatientRoom.roomFacilityCharge.name}"/>
+                                </p:column>  
+                                <p:column>
+                                    <h:outputLabel value="#{myItem.currentPatientRoom.roomFacilityCharge.name}"/>
+                                </p:column>
                             </p:autoComplete>   
 
-                            <h:panelGrid id="panSearch2" columns="2" >
-                                <h:outputLabel  rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="Name:" />
-                                <h:outputLabel rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="#{inwardAdditionalChargeController.current.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="Sex" />
-                                <h:outputLabel rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="#{inwardAdditionalChargeController.current.patientEncounter.patient.age}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="DOB"  />
-                                <h:outputLabel rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="#{inwardAdditionalChargeController.current.patientEncounter.patient.person.dob}"   >
-                                    <f:convertDateTime pattern="dd/MM/yy" />
-                                </h:outputLabel>
-                                <h:outputLabel  rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="Adress" />
-                                <h:outputLabel rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="#{inwardAdditionalChargeController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
-                                <h:outputLabel  rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="Date of Admission"  />
-                                <h:outputLabel rendered="#{inwardAdditionalChargeController.current.patientEncounter!=null}" value="#{inwardAdditionalChargeController.current.patientEncounter.dateOfAdmission}"   >
-                                    <f:convertDateTime pattern="dd/MM/yy" />
-                                </h:outputLabel>
-                            </h:panelGrid>
+                            <h:panelGroup id="panSearch2">
+                                <in:bhtDetail admission="#{inwardAdditionalChargeController.current.patientEncounter}"/>
+                            </h:panelGroup>
                         </p:panel>
                         <p:panel header="Charge Detail">
                             <h:panelGrid columns="2">
+                                <h:outputLabel value="Inward Charge Type"/>
+                                <p:selectOneMenu  value="#{inwardAdditionalChargeController.inwardChargeType}" >
+                                    <f:selectItem itemLabel="Please select Charge"/>
+                                    <f:selectItems value="#{serviceController.inwardChargeTypes}"/>
+                                </p:selectOneMenu>
+                                <h:outputLabel value="From Institution"/>
+                                <p:autoComplete forceSelection="true" value="#{inwardAdditionalChargeController.current.fromInstitution}"
+                                                completeMethod="#{institutionController.completeIns}"
+                                                var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                    <p:column>
+                                        #{ix.name}
+                                    </p:column>
+                                    <p:column>
+                                        #{ix.institutionCode}
+                                    </p:column>
+                                </p:autoComplete>
                                 <p:outputLabel value="Amount"/>
                                 <p:inputText value="#{inwardAdditionalChargeController.current.total}"/>
                                 <p:outputLabel value="Description"/>

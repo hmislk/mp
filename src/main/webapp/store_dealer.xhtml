@@ -18,50 +18,48 @@
 
 
 
-                <p:panel header="Manage Admission Type" >
+                <p:panel header="Manage Store Distributor" >
                     <h:panelGrid id ="gpVeda" columns="2" >
 
                         <h:panelGrid id="gpSelect" columns="1"  >
                             <p:panel >
                                 <h:panelGrid id="gpSelectText" >
-                                    <h:selectOneListbox  id="lstSelect"   size="10" value="#{admissionTypeController.current}" style="min-width: 223px">
-                                        <f:selectItems  value="#{admissionTypeController.items}" var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" ></f:selectItems>
+                                    <p:autoComplete  id="lstSelect"  value="#{storeDealorController.current}" 
+                                                     forceSelection="true"
+                                                     completeMethod="#{storeDealorController.completeDealor}" 
+                                                     var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                                         <f:ajax render="gpDetail" execute="lstSelect" >
                                         </f:ajax>
-                                    </h:selectOneListbox>
+                                    </p:autoComplete>     
                                 </h:panelGrid>
                                 <h:panelGrid id="gpSelectButtons" columns="3"  >
-                                    <h:commandButton id="btnAdd" value="Add"  action="#{admissionTypeController.prepareAdd()}" styleClass="buttons" >
+                                    <h:commandButton id="btnAdd" value="Add"  action="#{storeDealorController.prepareAdd()}" styleClass="buttons" >
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
                                         </f:ajax>
                                     </h:commandButton>
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
-                                                return false;" action="#{admissionTypeController.delete()}"  value="Delete"  >
+                                                return false;" action="#{storeDealorController.delete()}"  value="Delete"  >
                                     </h:commandButton>
                                 </h:panelGrid>
                             </p:panel>
                         </h:panelGrid  >
 
                         <p:panel>
-                            <h:panelGrid id="gpDetail" columns="1">
+                            <h:panelGrid id="gpDetail" columns="1" >
                                 <h:panelGrid id="gpDetailText" columns="2">
                                     <h:outputText id="lblName" value="Name" ></h:outputText>
-                                    <h:inputText id="txtName" value="#{admissionTypeController.current.name}"  ></h:inputText>
-                                    <h:outputText  value="Admission Type" ></h:outputText>
-                                    <p:selectOneMenu   value="#{admissionTypeController.current.admissionTypeEnum}"  >
-                                        <f:selectItems value="#{enumController.admissionTypeEnum}"  />                                        
-                                    </p:selectOneMenu>
-                                    <h:outputText  value="Code" ></h:outputText>
-                                    <h:inputText  value="#{admissionTypeController.current.code}"  ></h:inputText>
-                                    <h:outputLabel value="Fee"/>
-                                    <h:inputText value="#{admissionTypeController.current.admissionFee}"/>
-                                    <h:outputLabel value="Linen Charge Per Day"/>
-                                    <h:inputText value="#{admissionTypeController.current.dblValue}"/>
-                                    <h:outputLabel value="Room/Bed Allowed"/>
-                                    <p:selectBooleanCheckbox value="#{admissionTypeController.current.roomChargesAllowed}"/>                                  
+                                    <h:inputText id="txtName" value="#{storeDealorController.current.name}"  ></h:inputText>
+                                    <h:outputText id="lblCode" value="Code" ></h:outputText>
+                                    <h:inputText id="txtCode" value="#{storeDealorController.current.institutionCode}"  ></h:inputText>
+                                    <h:outputText  value="Adress" ></h:outputText>
+                                    <h:inputText  value="#{storeDealorController.current.address}"  ></h:inputText>
+                                    <h:outputText  value="Phone" ></h:outputText>
+                                    <h:inputText  value="#{storeDealorController.current.phone}"  ></h:inputText>
+                                    <h:outputText  value="Fax" ></h:outputText>
+                                    <h:inputText  value="#{storeDealorController.current.fax}"  ></h:inputText>
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
-                                    <h:commandButton id="btnSave" value="Save"  action="#{admissionTypeController.saveSelected()}" styleClass="buttons">
+                                    <h:commandButton id="btnSave" value="Save"  action="#{storeDealorController.saveSelected()}" styleClass="buttons">
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>

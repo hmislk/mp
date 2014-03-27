@@ -145,16 +145,16 @@
                     <ui:repeat class="table" value="#{cc.attrs.bill.billItems}" var="bip">
                         <h:panelGroup rendered="#{bip.netValue!=0 and  bip.inwardChargeType eq 'ProfessionalCharge'}">
                              <br></br>
-                            <p:dataTable style="noBorder" value="#{bip.billFees}" var="fe">
+                            <p:dataTable style="noBorder" value="#{bip.proFees}" var="fe">
                                 
                                 <p:column headerText="Consultant Name" style="text-align: left!important; line-height: 2px;"> 
-                                    <h:panelGroup rendered="#{fe.referenceBillFee.feeValue ne 0}">
-                                        <h:outputLabel value="#{fe.referenceBillFee.staff.person.nameWithTitle}"/> 
+                                    <h:panelGroup rendered="#{fe.feeValue ne 0}">
+                                        <h:outputLabel value="#{fe.staff.person.nameWithTitle}"/> 
                                     </h:panelGroup>
                                 </p:column>
                                 <p:column headerText="Amount" style="text-align: right;">
-                                    <h:panelGroup rendered="#{fe.referenceBillFee.feeValue ne 0}">
-                                    <h:outputLabel value="#{fe.referenceBillFee.feeValue}">
+                                    <h:panelGroup rendered="#{fe.feeValue ne 0}">
+                                    <h:outputLabel value="#{fe.feeValue}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                     </h:panelGroup>

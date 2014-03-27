@@ -331,23 +331,7 @@ public class AppointmentController implements Serializable {
         this.billFacade = billFacade;
     }
 
-    public List<Bill> completeAppointment(String query) {
-        List<Bill> suggestions;
-        String sql;
-        HashMap hm = new HashMap();
-        if (query == null) {
-            suggestions = new ArrayList<Bill>();
-        } else {
-            sql = "select p from BilledBill p where p.retired=false and "
-                    + "p.cancelled=false and p.refunded=false and p.billType=:btp and (upper(p.patient.person.name)  "
-                    + "like '%" + query.toUpperCase() + "%' or upper(p.insId)  "
-                    + "like '%" + query.toUpperCase() + "%' ) order by p.insId";
-            //System.out.println(sql);
-            hm.put("btp", BillType.Appointment);
-            suggestions = getFacade().findBySQL(sql, hm);
-        }
-        return suggestions;
-    }
+    
 
     public String getPatientTabId() {
         return patientTabId;

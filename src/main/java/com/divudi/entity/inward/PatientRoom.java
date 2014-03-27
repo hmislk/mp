@@ -64,7 +64,7 @@ public class PatientRoom implements Serializable {
     private PatientRoom previousRoom;
 
     private double currentMaintananceCharge = 0.0;
-    private double currentLinenCharge = 0.0;
+ //   private double currentLinenCharge = 0.0;
     private double currentNursingCharge = 0.0;
     private double currentMoCharge = 0.0;
     private double currentRoomCharge;
@@ -292,13 +292,13 @@ public class PatientRoom implements Serializable {
         this.currentMaintananceCharge = currentMaintananceCharge;
     }
 
-    public double getCurrentLinenCharge() {
-        return currentLinenCharge;
-    }
-
-    public void setCurrentLinenCharge(double currentLinenCharge) {
-        this.currentLinenCharge = currentLinenCharge;
-    }
+//    public double getCurrentLinenCharge() {
+//        return currentLinenCharge;
+//    }
+//
+//    public void setCurrentLinenCharge(double currentLinenCharge) {
+//        this.currentLinenCharge = currentLinenCharge;
+//    }
 
     public double getCurrentNursingCharge() {
         return currentNursingCharge;

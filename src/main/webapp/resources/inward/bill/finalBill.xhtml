@@ -144,16 +144,16 @@
                                             </h:panelGroup>
                                             <h:panelGroup rendered="#{bip.inwardChargeType eq 'ProfessionalCharge' }">
                                                 <table>                                             
-                                                    <ui:repeat value="#{bip.billFees}" var="fe">
+                                                    <ui:repeat value="#{bip.proFees}" var="fe">
                                                         <tr>
                                                             <td style="text-align: left;font-size: 8px!important;">
-                                                                <h:panelGroup rendered="#{fe.referenceBillFee.feeValue ne 0}">                       
-                                                                    #{fe.referenceBillFee.staff.person.nameWithTitle} 
+                                                                <h:panelGroup rendered="#{fe.feeValue ne 0}">                       
+                                                                    #{fe.staff.person.nameWithTitle} 
                                                                 </h:panelGroup>
                                                             </td>
                                                             <td  style="text-align: right;font-size: 8px!important;">
-                                                                <h:panelGroup rendered="#{fe.referenceBillFee.feeValue ne 0}">
-                                                                    <h:outputLabel value="#{fe.referenceBillFee.feeValue}">
+                                                                <h:panelGroup rendered="#{fe.feeValue ne 0}">
+                                                                    <h:outputLabel value="#{fe.feeValue}">
                                                                         <f:convertNumber pattern="#,000.00" />
                                                                     </h:outputLabel>
                                                                 </h:panelGroup>
@@ -181,7 +181,7 @@
                                         </h:panelGroup>                                     
                                     </td>
                                     <td  style="width: 30%;text-align: right;font-size: 13px!important;">                                        
-                                        <h:outputLabel  value="#{bip.netValue}">
+                                        <h:outputLabel  value="#{bip.adjustedValue}">
                                             <f:convertNumber pattern="#,000.00" />
                                         </h:outputLabel>
                                     </td>

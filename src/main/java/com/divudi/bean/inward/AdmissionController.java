@@ -10,12 +10,11 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.Sex;
-import com.divudi.data.Title;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.Appointment;
 import com.divudi.entity.Bill;
@@ -82,6 +81,7 @@ public class AdmissionController implements Serializable {
     private PatientRoom patientRoom;
     private List<Admission> items = null;
     private List<Patient> patientList;
+    private boolean printPreview;
     ///////////////////////////
     String selectText = "";
     private String ageText = "";
@@ -90,23 +90,11 @@ public class AdmissionController implements Serializable {
     private Patient newPatient;
     private YearMonthDay yearMonthDay;
     private Bill appointmentBill;
+    private PaymentMethodData paymentMethodData;
 
     public void dateChangeListen() {
         getNewPatient().getPerson().setDob(getCommonFunctions().guessDob(yearMonthDay));
 
-    }
-
-    public PaymentMethod[] getPaymentMethods() {
-        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit, PaymentMethod.Credit };
-        return tmp;
-    }
-
-    public Title[] getTitle() {
-        return Title.values();
-    }
-
-    public Sex[] getSex() {
-        return Sex.values();
     }
 
 //    public List<Admission> completePatientBht(String query) {
@@ -180,6 +168,24 @@ public class AdmissionController implements Serializable {
         }
         return suggestions;
     }
+    
+     public List<Admission> completePatientPaymentFinalized(String query) {
+        List<Admission> suggestions;
+        String sql;
+        HashMap h = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            sql = "select c from Admission c where c.retired=false "
+                    + " and ( (upper(c.bhtNo) like :q )or (upper(c.patient.person.name)"
+                    + " like :q) ) order by c.bhtNo";
+            //System.out.println(sql);
+            //      h.put("btp", BillType.InwardPaymentBill);
+            h.put("q", "%" + query.toUpperCase() + "%");
+            suggestions = getFacade().findBySQL(sql, h);
+        }
+        return suggestions;
+    }
 
     public List<Admission> completeDishcahrgedPatient(String query) {
         List<Admission> suggestions;
@@ -226,7 +232,7 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("NothingToDelete");
         }
         makeNull();
-        getItems();
+//        getItems();
         current = null;
         getCurrent();
     }
@@ -251,7 +257,7 @@ public class AdmissionController implements Serializable {
         selectedItems = null;
         newPatient = null;
         yearMonthDay = null;
-        deposit = 0;
+        printPreview = false;
         bhtNumberCalculation();
     }
 
@@ -356,7 +362,6 @@ public class AdmissionController implements Serializable {
         return false;
     }
 
-    private double deposit;
     @Inject
     private InwardPaymentController inwardPaymentController;
     @EJB
@@ -379,6 +384,9 @@ public class AdmissionController implements Serializable {
         getBillFacade().edit(getAppointmentBill());
 
     }
+
+    @EJB
+    private InwardBean inwardBean;
 
     public void saveSelected() {
 
@@ -405,8 +413,11 @@ public class AdmissionController implements Serializable {
             UtilityController.addSuccessMessage("Patient Admitted Succesfully");
         }
 
-        savePatientRoom(getCurrent().getDateOfAdmission());
-
+        PatientRoom currentPatientRoom = getInwardBean().savePatientRoom(getPatientRoom(), getCurrent(), getCurrent().getDateOfAdmission(), getSessionController().getLoggedUser());
+        getCurrent().setCurrentPatientRoom(currentPatientRoom);
+        getFacade().edit(getCurrent());
+        
+        
         double appointmentFee = 0;
         if (getAppointmentBill() != null) {
             appointmentFee = getAppointmentBill().getTotal();
@@ -423,46 +434,8 @@ public class AdmissionController implements Serializable {
             getInwardPaymentController().makeNull();
         }
 
-        if (getDeposit() != 0) {
-            System.err.println("Deposit ");
-            getInwardPaymentController().pay(getCurrent().getPaymentMethod(), getCurrent(), getDeposit());
-            //     getInwardPaymentController().setPrintPreview(true);
-        }
+        printPreview = true;
 
-        if (getDeposit() == 0) {
-            makeNull();
-        }
-
-    }
-
-    private void makeRoomFilled(PatientRoom pr) {
-
-        pr.getRoom().setFilled(true);
-        getRoomFacade().edit(pr.getRoom());
-
-    }
-
-    private void savePatientRoom(Date admittedAt) {
-        getPatientRoom().setCurrentLinenCharge(getPatientRoom().getRoomFacilityCharge().getLinenCharge());
-        getPatientRoom().setCurrentMaintananceCharge(getPatientRoom().getRoomFacilityCharge().getMaintananceCharge());
-        getPatientRoom().setCurrentMoCharge(getPatientRoom().getRoomFacilityCharge().getMoCharge());
-        getPatientRoom().setCurrentNursingCharge(getPatientRoom().getRoomFacilityCharge().getNursingCharge());
-        getPatientRoom().setCurrentRoomCharge(getPatientRoom().getRoomFacilityCharge().getRoomCharge());
-
-        getPatientRoom().setAddmittedBy(getSessionController().getLoggedUser());
-        getPatientRoom().setAdmittedAt(admittedAt);
-        getPatientRoom().setCreatedAt(Calendar.getInstance().getTime());
-        getPatientRoom().setCreater(getSessionController().getLoggedUser());
-        getPatientRoom().setPatientEncounter(getCurrent());
-        getPatientRoom().setRoom(getPatientRoom().getRoomFacilityCharge().getRoom());
-
-        if (getPatientRoom().getId() == null || getPatientRoom().getId() == 0) {
-            getPatientRoomFacade().create(getPatientRoom());
-        } else {
-            getPatientRoomFacade().edit(getPatientRoom());
-        }
-
-        makeRoomFilled(getPatientRoom());
     }
 
     public void setSelectText(String selectText) {
@@ -510,7 +483,7 @@ public class AdmissionController implements Serializable {
             temSql = "SELECT i FROM Admission i where i.retired=false and i.discharged=false order by i.bhtNo";
             items = getFacade().findBySQL(temSql);
             if (items == null) {
-                items = new ArrayList<Admission>();
+                items = new ArrayList<>();
             }
         }
 
@@ -661,14 +634,6 @@ public class AdmissionController implements Serializable {
         this.appointmentBill = appointmentBill;
     }
 
-    public double getDeposit() {
-        return deposit;
-    }
-
-    public void setDeposit(double deposit) {
-        this.deposit = deposit;
-    }
-
     public InwardPaymentController getInwardPaymentController() {
         return inwardPaymentController;
     }
@@ -691,6 +656,33 @@ public class AdmissionController implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public boolean isPrintPreview() {
+        return printPreview;
+    }
+
+    public void setPrintPreview(boolean printPreview) {
+        this.printPreview = printPreview;
     }
 
     /**

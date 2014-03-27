@@ -6,7 +6,9 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"                    
-                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+                xmlns:bi="http://java.sun.com/jsf/composite/bill"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
+
     <ui:define name="content">
         <h:panelGroup >
             <h:form  >
@@ -16,32 +18,25 @@
                             <h:outputLabel value="Cash Bill" />
                             <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
                             <p:selectOneMenu   id="cmbPs" value="#{cashRecieveBillController.current.paymentScheme}">                                                                     
-                                <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />
-
+                                <f:selectItems value="#{paymentSchemeController.items}" var="paysch" 
+                                               itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
+                                <p:ajax process="cmbPs" update="creditCard cheque slip" event="change" />
                             </p:selectOneMenu>
-                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCardRef" value="#{cashRecieveBillController.current.creditCardRefNo}" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
 
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{cashRecieveBillController.current.chequeRefNo}" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{cashRecieveBillController.chequeBank}"  style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-                            <p:calendar id="chequeDate"  value="#{cashRecieveBillController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="creditCard" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{cashRecieveBillController.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtSlipRef" value="#{cashRecieveBillController.current.comments}" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="slipBank" value="#{cashRecieveBillController.slipBank}"  style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-                            <p:calendar id="slipDate"  value="#{cashRecieveBillController.slipDate}" pattern="dd MMMM yyyy" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="cheque" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{cashRecieveBillController.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            <h:panelGroup id="slip" style="display: #{cashRecieveBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{cashRecieveBillController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBill}"
+                                             ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
                             <p:commandButton value="New Bill" ajax="false" action="#{cashRecieveBillController.prepareNewBill()}" >
@@ -53,7 +48,7 @@
                         <p:tabView id="tvPt"  >
                             <p:ajax event="tabChange"  process="@this" listener="#{cashRecieveBillController.onTabChange}" />
                             <p:tab id="tabOpd" title="For Opd Bill"  >
-                                <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{cashRecieveBillController.currentBillItem.referenceBill}" completeMethod="#{billController.completeOpdCreditBill}" var="ix" itemLabel="#{ix.patient.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{cashRecieveBillController.currentBillItem.referenceBill}" completeMethod="#{cashRecieveBillController.completeOpdCreditBill}" var="ix" itemLabel="#{ix.patient.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                     <p:column>
                                         <h:outputLabel value="#{ix.patient.person.name}"/>
                                     </p:column>                                  
@@ -113,7 +108,7 @@
                             </f:facet>
                             <p:column>
                                 <f:facet name="header">No</f:facet>
-                                    <h:outputLabel value="#{rowIndex+1}"/>
+                                <h:outputLabel value="#{rowIndex+1}"/>
                             </p:column>
                             <p:column >  
                                 <f:facet name="header">
@@ -146,7 +141,7 @@
                         <p:panelGrid  columns="2">
                             <p:outputLabel value="Net Total" />
                             <p:outputLabel id="tot" value="#{cashRecieveBillController.current.netTotal}"/>  
-                                                     
+
                             <p:outputLabel value="Description"/>
                             <p:inputTextarea value="#{cashRecieveBillController.current.comments}"/>                                                         
                         </p:panelGrid>
@@ -158,7 +153,7 @@
                 <p:panel rendered="#{cashRecieveBillController.printPreview}" >
                     <p:commandButton value="New Bill" ajax="false" action="#{cashRecieveBillController.prepareNewBill()}" >
                     </p:commandButton>
-                    <bi:insRecieve billController ="#{cashRecieveBillController}"  bill="#{cashRecieveBillController.current}" dup="false"/>                       
+                    <bi:insRecieve billController="#{cashRecieveBillController}"  bill="#{cashRecieveBillController.current}" dup="false"/>                       
                 </p:panel>
 
             </h:form>

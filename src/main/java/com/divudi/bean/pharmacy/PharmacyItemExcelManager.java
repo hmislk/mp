@@ -321,7 +321,7 @@ public class PharmacyItemExcelManager implements Serializable {
         List<Item> list = getItemFacade().findBySQL(sql, temMap);
 
         for (Item i : list) {
-            i.setInwardChargeType(InwardChargeType.Investigations);
+            i.setInwardChargeType(InwardChargeType.Laboratory);
             getItemFacade().edit(i);
         }
     }

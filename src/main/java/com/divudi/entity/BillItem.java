@@ -63,6 +63,11 @@ public class BillItem implements Serializable {
     WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date createdAt;
+    //Edited Properties
+    @ManyToOne
+    private WebUser editor;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date editedAt;
     //Retairing properties
     boolean retired;
     @ManyToOne
@@ -107,6 +112,8 @@ public class BillItem implements Serializable {
     private BillItem transBillItem;
     @OneToMany(mappedBy = "billItem")
     private List<BillFee> billFees = new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBillItem",fetch = FetchType.LAZY)
+    private List<BillFee> proFees=new ArrayList<>();
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -531,6 +538,30 @@ public class BillItem implements Serializable {
 
     public void setTransBillItem(BillItem transBillItem) {
         this.transBillItem = transBillItem;
+    }
+
+    public WebUser getEditor() {
+        return editor;
+    }
+
+    public void setEditor(WebUser editor) {
+        this.editor = editor;
+    }
+
+    public Date getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(Date editedAt) {
+        this.editedAt = editedAt;
+    }
+
+    public List<BillFee> getProFees() {
+        return proFees;
+    }
+
+    public void setProFees(List<BillFee> proFees) {
+        this.proFees = proFees;
     }
 
 }

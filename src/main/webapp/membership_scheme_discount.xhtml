@@ -18,6 +18,11 @@
                                      var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" 
                                      forceSelection="true" 
                                      value="#{inwardMemberShipDiscount.currentMembershipScheme}" ></p:autoComplete>
+                    <h:outputLabel value="Select Instiution"/>
+                    <p:autoComplete  completeMethod="#{institutionController.completeCreditCompany}"
+                                     var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" 
+                                     forceSelection="true" 
+                                     value="#{inwardMemberShipDiscount.institution}" ></p:autoComplete>
                     <h:outputLabel value="Select Paymentmethod"/>
                     <p:selectOneMenu    value="#{inwardMemberShipDiscount.currentPaymentMethod}">                                                                   
                         <f:selectItems value="#{enumController.paymentMethods}"/>                      
@@ -34,7 +39,6 @@
                         <p:inputText value="#{prc.discountPercent}">
                             <f:ajax event="blur" listener="#{inwardMemberShipDiscount.edit(prc)}"/>
                         </p:inputText>
-
                     </p:column>
                 </p:dataTable>
 

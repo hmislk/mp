@@ -5,7 +5,10 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:in="http://java.sun.com/jsf/composite/inward"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
+
 
     <ui:define name="content">
 
@@ -16,7 +19,7 @@
                         <p:outputLabel value="Inward Refund Payment"/>
                         <p:commandButton id="btnRefund" ajax="false" value="Refund" action="#{inwardRefundController.pay}"/>
                         <p:defaultCommand target="btnRefund"/>
-                                       
+
                         <p:commandButton ajax="false" value="Clear" action="#{inwardRefundController.makeNull}"/>
                     </f:facet>
                     <p:panel header="BHT">
@@ -33,25 +36,15 @@
                             <p:column>
                                 #{apt2.patient.person.nameWithTitle}
                             </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{apt2.currentPatientRoom.roomFacilityCharge.name}"/>
+                            </p:column>
                         </p:autoComplete>   
 
 
-                        <h:panelGrid id="panSearch2" columns="2" >
-                            <h:outputLabel  rendered="#{inwardRefundController.current.patientEncounter!=null}" value="Name:" />
-                            <h:outputLabel rendered="#{inwardRefundController.current.patientEncounter!=null}" value="#{inwardRefundController.current.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardRefundController.current.patientEncounter!=null}" value="Sex" />
-                            <h:outputLabel rendered="#{inwardRefundController.current.patientEncounter!=null}" value="#{inwardRefundController.current.patientEncounter.patient.age}" ></h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardRefundController.current.patientEncounter!=null}" value="DOB"  />
-                            <h:outputLabel rendered="#{inwardRefundController.current.patientEncounter!=null}" value="#{inwardRefundController.current.patientEncounter.patient.person.dob}"   >
-                                <f:convertDateTime pattern="dd/MM/yy" />
-                            </h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardRefundController.current.patientEncounter!=null}" value="Adress" />
-                            <h:outputLabel rendered="#{inwardRefundController.current.patientEncounter!=null}" value="#{inwardRefundController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
-                            <h:outputLabel  rendered="#{inwardRefundController.current.patientEncounter!=null}" value="Date of Admission"  />
-                            <h:outputLabel rendered="#{inwardRefundController.current.patientEncounter!=null}" value="#{inwardRefundController.current.patientEncounter.dateOfAdmission}"   >
-                                <f:convertDateTime pattern="dd/MM/yy" />
-                            </h:outputLabel>
-                        </h:panelGrid>
+                        <h:panelGroup id="panSearch2">
+                            <in:bhtDetail admission="#{inwardRefundController.current.patientEncounter}"/>
+                        </h:panelGroup>
                     </p:panel>
                     <p:panel header="Paid Amount" id="paid">
                         <p:panelGrid columns="2">
@@ -64,16 +57,20 @@
                             <p:selectOneMenu   id="cmbPs" value="#{inwardRefundController.current.paymentMethod}"  >
                                 <f:selectItem itemLabel="Select Payment Method" />
                                 <f:selectItems value="#{inwardRefundController.paymentMethods}"  />
-                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef bank" event="change" />
+                                <p:ajax process="cmbPs" update="creditCard cheque slip  " event="change" />
                             </p:selectOneMenu>
-                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{inwardRefundController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCardRef" value="#{inwardRefundController.current.creditCardRefNo}" style="display: #{inwardRefundController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{inwardRefundController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{inwardRefundController.current.chequeRefNo}" style="display: #{inwardRefundController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{inwardRefundController.current.bank}" style="display: #{inwardRefundController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
+                            <h:panelGroup id="creditCard" style="display: #{inwardRefundController.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{inwardRefundController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="cheque" style="display: #{inwardRefundController.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{inwardRefundController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="slip" style="display: #{inwardRefundController.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{inwardRefundController.paymentMethodData}"/>
+                            </h:panelGroup>
+
                         </h:panelGrid>
 
                         <h:panelGrid columns="2">

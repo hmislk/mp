@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="admission" />
+
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form>
+
+            <p:commandButton value="Print" styleClass="noPrintButton" ajax="false" action="#" >
+                <p:printer target="gpBillPreview" ></p:printer>
+            </p:commandButton>
+
+            <h:outputStylesheet library="css" name="printing.css"></h:outputStylesheet>
+            <div  >
+                <h:panelGroup id="gpBillPreview" >
+
+                    <div class="fiveinchbill" >
+
+                        <div class="heading">
+                            <h:outputLabel value="ADMISSION DETAIL : "   />   
+                            <h:outputLabel value="#{cc.attrs.admission.patient.person.nameWithTitle}" style="text-transform: capitalize; "  />
+                        </div>
+                        
+                        
+                    </div>
+
+
+                </h:panelGroup>
+            </div>
+
+        </h:form>
+
+    </cc:implementation>
+</html>

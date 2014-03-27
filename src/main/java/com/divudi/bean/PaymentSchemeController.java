@@ -9,6 +9,7 @@
 package com.divudi.bean;
 
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import java.util.TimeZone;
 import com.divudi.facade.PaymentSchemeFacade;
 import com.divudi.entity.PaymentScheme;
@@ -31,7 +32,7 @@ import javax.persistence.TemporalType;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -50,6 +51,55 @@ public class PaymentSchemeController implements Serializable {
     List<PaymentScheme> rcItems;
     List<PaymentScheme> billingItems;
     private PaymentMethod[] paymentMethods;
+
+    public boolean errorCheckPaymentScheme(PaymentMethod paymentMethod, PaymentMethodData paymentMethodData) {
+        if (paymentMethod == PaymentMethod.Cheque) {
+            if (paymentMethodData.getCheque().getInstitution() == null
+                    || paymentMethodData.getCheque().getNo() == null
+                    || paymentMethodData.getCheque().getDate() == null) {
+                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
+                return true;
+            }
+
+        }
+
+        if (paymentMethod == PaymentMethod.Slip) {
+            if (paymentMethodData.getSlip().getInstitution() == null
+                    || paymentMethodData.getSlip().getComment() == null
+                    || paymentMethodData.getSlip().getDate() == null) {
+                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
+                return true;
+            }
+
+        }
+
+        if (paymentMethod == PaymentMethod.Card) {
+            if (paymentMethodData.getCreditCard().getInstitution() == null
+                    || paymentMethodData.getCreditCard().getNo() == null) {
+                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    public boolean checkPaid(PaymentMethod paymentMethod, double paid, double amount) {
+
+        if (paymentMethod == PaymentMethod.Cash) {
+            if (paid == 0.0) {
+                UtilityController.addErrorMessage("Please select tendered amount correctly");
+                return true;
+            }
+            if (paid < amount) {
+                UtilityController.addErrorMessage("Please select tendered amount correctly");
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public List<PaymentScheme> getPayingItems() {
         if (payingItems == null) {
@@ -200,40 +250,40 @@ public class PaymentSchemeController implements Serializable {
 
         String temSql;
         HashMap tm = new HashMap();
-        temSql = "SELECT i FROM PaymentScheme i where (i.paymentMethod= :m1 or i.paymentMethod= :m2 or i.paymentMethod= :m3) and "              
+        temSql = "SELECT i FROM PaymentScheme i where (i.paymentMethod= :m1 or i.paymentMethod= :m2 or i.paymentMethod= :m3) and "
                 + " i.discountPercent=0 and i.retired=false order by i.name";
-        tm.put("m1", PaymentMethod.Cash);    
-        tm.put("m2", PaymentMethod.Cheque);    
-        tm.put("m3", PaymentMethod.Slip);    
+        tm.put("m1", PaymentMethod.Cash);
+        tm.put("m2", PaymentMethod.Cheque);
+        tm.put("m3", PaymentMethod.Slip);
         tmp = getFacade().findBySQL(temSql, tm, TemporalType.TIMESTAMP);
 
         return tmp;
     }
-    
-     public List<PaymentScheme> getSchemeForBooking() {
+
+    public List<PaymentScheme> getSchemeForBooking() {
         List<PaymentScheme> tmp = new ArrayList<PaymentScheme>();
 
         String temSql;
         HashMap tm = new HashMap();
         temSql = "SELECT i FROM PaymentScheme i where (i.paymentMethod= :m1 or i.paymentMethod= :m2 or i.paymentMethod= :m3) and "
                 + "  i.discountPercent=0 and i.retired=false order by i.name";
-        tm.put("m1", PaymentMethod.Cash);    
-        tm.put("m2", PaymentMethod.Agent);    
-        tm.put("m3", PaymentMethod.Credit);    
+        tm.put("m1", PaymentMethod.Cash);
+        tm.put("m2", PaymentMethod.Agent);
+        tm.put("m3", PaymentMethod.Credit);
         tmp = getFacade().findBySQL(temSql, tm, TemporalType.TIMESTAMP);
 
         return tmp;
     }
-     
-      public List<PaymentScheme> getSchemeForBookingSettle() {
+
+    public List<PaymentScheme> getSchemeForBookingSettle() {
         List<PaymentScheme> tmp = new ArrayList<PaymentScheme>();
 
         String temSql;
         HashMap tm = new HashMap();
         temSql = "SELECT i FROM PaymentScheme i where (i.paymentMethod= :m1 or i.paymentMethod= :m2) and "
                 + "  i.discountPercent=0 and i.retired=false order by i.name";
-        tm.put("m1", PaymentMethod.Cash);    
-        tm.put("m2", PaymentMethod.Agent);                
+        tm.put("m1", PaymentMethod.Cash);
+        tm.put("m2", PaymentMethod.Agent);
         tmp = getFacade().findBySQL(temSql, tm, TemporalType.TIMESTAMP);
 
         return tmp;
@@ -246,14 +296,13 @@ public class PaymentSchemeController implements Serializable {
         HashMap tm = new HashMap();
         temSql = "SELECT i FROM PaymentScheme i where (i.paymentMethod= :m1 or i.paymentMethod= :m2) and "
                 + " i.discountPercent=0 and i.retired=false order by i.name";
-        tm.put("m1", PaymentMethod.Cash);    
-        tm.put("m2", PaymentMethod.Cheque);            
+        tm.put("m1", PaymentMethod.Cash);
+        tm.put("m2", PaymentMethod.Cheque);
         tmp = getFacade().findBySQL(temSql, tm, TemporalType.TIMESTAMP);
 
         return tmp;
     }
 
-    
     public PaymentMethod[] getPaymentMethods() {
 
         return PaymentMethod.values();

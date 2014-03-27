@@ -10,20 +10,15 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import java.util.TimeZone;
-import com.divudi.data.InstitutionType;
-import com.divudi.facade.InstitutionFacade;
-import com.divudi.entity.Institution;
-import com.divudi.entity.Item;
-import com.divudi.entity.pharmacy.Amp;
-import com.divudi.entity.pharmacy.Vtm;
+import com.divudi.entity.pharmacy.StoreItemCategory;
+import com.divudi.facade.StoreItemCategoryFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
+import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -40,37 +35,37 @@ import javax.faces.convert.FacesConverter;
  */
 @Named
 @SessionScoped
-public class DealerController implements Serializable {
+public class StoreItemCategoryController implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Inject
     SessionController sessionController;
     @EJB
-    private InstitutionFacade ejbFacade;
-    private Institution current;
-    private List<Institution> items = null;
+    private StoreItemCategoryFacade ejbFacade;
+    private StoreItemCategory current;
+    private List<StoreItemCategory> items = null;
 
-    public List<Institution> completeDealor(String query) {
-        List<Institution> suggestions;
-        String sql;
+    public List<StoreItemCategory> completeCategory(String qry) {
+        List<StoreItemCategory> a = null;
         Map m = new HashMap();
+        m.put("n", "%" + qry + "%");
+        String sql = "select c from StoreItemCategory c where "
+                + " c.retired=false and (upper(c.name) like :n) order by c.name";
 
-        sql = "select c from Institution c where c.retired=false and "
-                + " c.institutionType =:t and upper(c.name) like :q order by c.name";
-        //System.out.println(sql);
-        m.put("t", InstitutionType.Dealer);
-        m.put("q", "%" + query.toUpperCase() + "%");
-        suggestions = getEjbFacade().findBySQL(sql, m, 10);
-        //System.out.println("suggestions = " + suggestions);
+        a = getFacade().findBySQL(sql, m, 20);
+        //System.out.println("a size is " + a.size());
 
-        return suggestions;
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        return a;
     }
 
     public void prepareAdd() {
-        current = new Institution();
-        current.setInstitutionType(InstitutionType.Dealer);
+        current = new StoreItemCategory();
     }
 
+  
     private void recreateModel() {
         items = null;
     }
@@ -87,14 +82,15 @@ public class DealerController implements Serializable {
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
         recreateModel();
-   //     getItems();
+        getItems();
     }
 
-    public InstitutionFacade getEjbFacade() {
+  
+    public StoreItemCategoryFacade getEjbFacade() {
         return ejbFacade;
     }
 
-    public void setEjbFacade(InstitutionFacade ejbFacade) {
+    public void setEjbFacade(StoreItemCategoryFacade ejbFacade) {
         this.ejbFacade = ejbFacade;
     }
 
@@ -106,17 +102,17 @@ public class DealerController implements Serializable {
         this.sessionController = sessionController;
     }
 
-    public DealerController() {
+    public StoreItemCategoryController() {
     }
 
-    public Institution getCurrent() {
+    public StoreItemCategory getCurrent() {
         if (current == null) {
-            current = new Institution();
+            current = new StoreItemCategory();
         }
         return current;
     }
 
-    public void setCurrent(Institution current) {
+    public void setCurrent(StoreItemCategory current) {
         this.current = current;
     }
 
@@ -132,41 +128,33 @@ public class DealerController implements Serializable {
             UtilityController.addSuccessMessage("NothingToDelete");
         }
         recreateModel();
-  //      getItems();
+        getItems();
         current = null;
         getCurrent();
     }
 
-    private InstitutionFacade getFacade() {
+    private StoreItemCategoryFacade getFacade() {
         return ejbFacade;
     }
 
-    public List<Institution> getItems() {
-        // items = getFacade().findAll("name", true);
-        String sql = "SELECT i FROM Institution i where i.retired=false and i.institutionType =:tp"
-                + " order by i.name";
-        HashMap hm = new HashMap();
-        hm.put("tp", InstitutionType.Dealer);
-        items = getEjbFacade().findBySQL(sql, hm);
-        if (items == null) {
-            items = new ArrayList<>();
-        }
+    public List<StoreItemCategory> getItems() {
+        items = getFacade().findAll("name", true);
         return items;
     }
 
     /**
      *
      */
-    @FacesConverter("deal")
-    public static class DealerControllerConverter implements Converter {
+    @FacesConverter(forClass = StoreItemCategory.class)
+    public static class StoreItemCategoryControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            DealerController controller = (DealerController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "dealerController");
+            StoreItemCategoryController controller = (StoreItemCategoryController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "storeItemCategoryController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -187,12 +175,12 @@ public class DealerController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Institution) {
-                Institution o = (Institution) object;
+            if (object instanceof StoreItemCategory) {
+                StoreItemCategory o = (StoreItemCategory) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + DealerController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + StoreItemCategoryController.class.getName());
             }
         }
     }

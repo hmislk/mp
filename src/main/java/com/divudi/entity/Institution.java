@@ -28,9 +28,10 @@ import javax.persistence.Temporal;
  */
 @Entity
 public class Institution implements Serializable {
+
     @ManyToOne(fetch = FetchType.LAZY)
-     Institution institution;
-    
+    Institution institution;
+
     static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,10 +72,10 @@ public class Institution implements Serializable {
     double labBillDiscount;
     double opdBillDiscount;
     double inwardDiscount;
-     double ballance;
-     double allowedCredit;
-    @OneToMany(mappedBy = "institution",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-     List<Institution> branch=new ArrayList<>();
+    double ballance;
+    double allowedCredit;
+    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<Institution> branch = new ArrayList<>();
 
     public double getLabBillDiscount() {
         return labBillDiscount;
@@ -117,7 +118,7 @@ public class Institution implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Institution)) {
             return false;
         }

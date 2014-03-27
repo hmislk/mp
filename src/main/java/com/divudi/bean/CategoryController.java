@@ -17,6 +17,7 @@ import com.divudi.entity.inward.TimedItemCategory;
 import com.divudi.entity.lab.InvestigationCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
+import com.divudi.entity.pharmacy.StoreItemCategory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -181,6 +182,26 @@ public class CategoryController implements Serializable {
                 + " like :q order by c.name";
 
         temMap.put("parm", PharmaceuticalItemCategory.class);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+
+        c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
+
+        if (c == null) {
+            c = new ArrayList<>();
+        }
+        return c;
+    }
+
+    public List<Category> completeCategoryStore(String qry) {
+        List<Category> c;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select c from Category c where c.retired=false"
+                + " and (type(c)= :parm ) and upper(c.name)"
+                + " like :q order by c.name";
+
+        temMap.put("parm", StoreItemCategory.class);
         temMap.put("q", "%" + qry.toUpperCase() + "%");
 
         c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);

@@ -11,6 +11,7 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
@@ -75,8 +76,8 @@ public class RoomChangeController implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date changeAt;
     private double addLinenCharge = 0.0;
-    
-    public void update(PatientRoom pR){
+
+    public void update(PatientRoom pR) {
         getPatientRoomFacade().edit(pR);
     }
 
@@ -102,12 +103,8 @@ public class RoomChangeController implements Serializable {
         return true;
     }
 
-    private void makeRoomVacant() {
-
-        currentPatientRoom.getRoom().setFilled(false);
-        getRoomFacade().edit(currentPatientRoom.getRoom());
-
-    }
+    @EJB
+    private InwardBean inwardBean;
 
     public void change() {
         Date cur = Calendar.getInstance().getTime();
@@ -121,43 +118,13 @@ public class RoomChangeController implements Serializable {
             return;
         }
 
-        makeRoomVacant();
-        savePatientRoom();
+        getInwardBean().makeRoomVacant(getCurrent());
+
+        PatientRoom cuPatientRoom = getInwardBean().savePatientRoom(getNewRoomFacilityCharge(), addLinenCharge, changeAt, current, getSessionController().getLoggedUser());
+        getCurrent().setCurrentPatientRoom(cuPatientRoom);
+        getEjbFacade().edit(getCurrent());
         recreate();
         UtilityController.addSuccessMessage("Successfully Room Changed");
-    }
-
-    private void savePatientRoom() {
-        PatientRoom pr = new PatientRoom();
-
-        pr.setCurrentLinenCharge(newRoomFacilityCharge.getLinenCharge());
-        pr.setCurrentMaintananceCharge(newRoomFacilityCharge.getMaintananceCharge());
-        pr.setCurrentMoCharge(newRoomFacilityCharge.getMoCharge());
-        pr.setCurrentNursingCharge(newRoomFacilityCharge.getNursingCharge());
-        pr.setCurrentRoomCharge(newRoomFacilityCharge.getRoomCharge());
-
-        pr.setAddmittedBy(getSessionController().getLoggedUser());
-
-        pr.setAddedLinenCharge(addLinenCharge);
-        pr.setAdmittedAt(getChangeAt());
-
-        pr.setPreviousRoom(getCurrentPatientRoom());
-        pr.setCreatedAt(Calendar.getInstance().getTime());
-        pr.setCreater(getSessionController().getLoggedUser());
-        pr.setPatientEncounter(getCurrent());
-        pr.setRoomFacilityCharge(newRoomFacilityCharge);
-        pr.setRoom(newRoomFacilityCharge.getRoom());
-
-        getPatientRoomFacade().create(pr);
-
-        makeRoomFilled(pr);
-    }
-
-    private void makeRoomFilled(PatientRoom pr) {
-
-        pr.getRoom().setFilled(true);
-        getRoomFacade().edit(pr.getRoom());
-
     }
 
     public List<Admission> getSelectedItems() {
@@ -389,6 +356,14 @@ public class RoomChangeController implements Serializable {
 
     public void setAddLinenCharge(double addLinenCharge) {
         this.addLinenCharge = addLinenCharge;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 
     /**

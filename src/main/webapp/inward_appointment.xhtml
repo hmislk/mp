@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp">
+                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
 
 
 
@@ -26,41 +27,26 @@
                                 <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
                                 <p:selectOneMenu   id="cmbPs" value="#{appointmentController.currentBill.paymentScheme}">                                                                     
                                     <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                    <p:ajax process="cmbPs wsd wcd" update="pBillDetails  lblCardRef txtCardRef creditBank lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />
+                                    <p:ajax process="cmbPs" update="pBillDetails creditCard cheque slip" event="change" />
                                 </p:selectOneMenu>
 
-                                <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{appointmentController.currentBill.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                                <p:inputMask mask="9999-9999-9999-9999" id="txtCardRef" autocomplete="off" maxlength="16" value="#{appointmentController.currentBill.creditCardRefNo}" style="display: #{appointmentController.currentBill.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                                <h:selectOneMenu id="creditBank" value="#{appointmentController.creditBank}" style="display: #{appointmentController.currentBill.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
+                                <h:panelGroup id="creditCard" style="display: #{appointmentController.currentBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                    <pa:creditCard paymentMethodData="#{appointmentController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{appointmentController.currentBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                <p:inputText  id="txtCheqRef" value="#{appointmentController.currentBill.chequeRefNo}" style="display: #{appointmentController.currentBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="bank" value="#{appointmentController.chequeBank}" style="display: #{appointmentController.currentBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
-                                <p:calendar id="chequeDate"  value="#{appointmentController.currentBill.chequeDate}" pattern="dd MMMM yyyy" style="display: #{appointmentController.currentBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                                </p:calendar>
+                                <h:panelGroup id="cheque" style="display: #{appointmentController.currentBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                    <pa:cheque paymentMethodData="#{appointmentController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{appointmentController.currentBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                <p:inputText  id="txtSlipRef" value="#{appointmentController.currentBill.comments}" style="display: #{appointmentController.currentBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="slipBank" value="#{appointmentController.slipBank}" style="display: #{appointmentController.currentBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
-
-                                <p:calendar id="slipDate"  value="#{appointmentController.slipDate}" pattern="dd MMMM yyyy" style="display: #{appointmentController.currentBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                                </p:calendar>
+                                <h:panelGroup id="slip" style="display: #{appointmentController.currentBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                    <pa:slip paymentMethodData="#{appointmentController.paymentMethodData}"/>
+                                </h:panelGroup>
 
                                 <p:commandButton  value="Settle" action="#{appointmentController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                                 </p:commandButton>
                                 <p:commandButton value="New Bill" ajax="false" action="#{appointmentController.prepareNewBill()}" >
                                 </p:commandButton>
-                                <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
-                                <p:watermark id="wsd" value="Slip Date" for="slipDate"/>
+                               
                             </h:panelGrid>
 
                         </f:facet>
@@ -188,8 +174,8 @@
 
 
                 <h:panelGroup rendered="#{appointmentController.printPreview}" >
-                  
-                    
+
+
                 </h:panelGroup>
 
             </h:form>

@@ -32,7 +32,7 @@ public class RoomFacilityCharge implements Serializable {
     private Long id;
     private Double maintananceCharge = 0.0;
     private Double roomCharge = 0.0;
-    private Double linenCharge = 0.0;
+   // private Double linenCharge = 0.0;
     private Double nursingCharge = 0.0;
     private Double moCharge=0.0;
 //Main Properties
@@ -234,13 +234,13 @@ public class RoomFacilityCharge implements Serializable {
         this.maintananceCharge = maintananceCharge;
     }
 
-    public Double getLinenCharge() {
-        return linenCharge;
-    }
-
-    public void setLinenCharge(Double linenCharge) {
-        this.linenCharge = linenCharge;
-    }
+//    public Double getLinenCharge() {
+//        return linenCharge;
+//    }
+//
+//    public void setLinenCharge(Double linenCharge) {
+//        this.linenCharge = linenCharge;
+//    }
 
     public Double getNursingCharge() {
         return nursingCharge;

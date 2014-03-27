@@ -13,7 +13,7 @@
 
             <ui:define name="content">
                 <h:form>
-                    <p:panel header="Inward Price Adjustment Matrix - Pharmacy" id="reportPrint">
+                    <p:panel header="Inward Price Adjustment Matrix- Store" id="reportPrint">
 
                         <p:panel header="Add new adjustment" >
                             <p:panelGrid columns="2" >
@@ -32,7 +32,7 @@
                                 <h:outputLabel value="Category/Subcategory" ></h:outputLabel>
                                 <p:autoComplete value="#{inwardPriceAdjustmntController.category}" 
                                                 forceSelection="true"
-                                                completeMethod="#{categoryController.completeCategoryPharmacy}" 
+                                                completeMethod="#{categoryController.completeCategoryStore}" 
                                                 converter="categoryConverter"
                                                 var="cat" itemLabel="#{cat.name} #{cat.parentCategory}" itemValue="#{cat}" >
                                     <p:column headerText="Category">
@@ -57,10 +57,10 @@
 
                                 <p:defaultCommand target="btnAdd"/>
                             </p:panelGrid>
-                            <p:commandButton actionListener="#{inwardPriceAdjustmntController.createCategroyPharmacy()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                            <p:commandButton actionListener="#{inwardPriceAdjustmntController.createCategroyStore()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="inwd" fileName="Price_metrix_pharmacy"  />
                             </p:commandButton>
-                            <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createCategroyPharmacy()}"/>
+                            <p:commandButton ajax="false" value="Fill" action="#{inwardPriceAdjustmntController.createCategroyStore()}"/>
                             <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >                                         
                                 <p:printer target="reportPrint"/>
                             </p:commandButton>
@@ -92,7 +92,7 @@
 
                                 <p:column headerText="Category Name" filterBy="#{a.category.name}" filterMatchMode="contains">
                                     <p:autoComplete forceSelection="true" value="#{a.category}" 
-                                                    completeMethod="#{categoryController.completeCategoryPharmacy}" 
+                                                    completeMethod="#{categoryController.completeCategoryStore}" 
                                                     converter="categoryConverter"
                                                     var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" >
                                         <p:column>

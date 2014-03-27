@@ -16,7 +16,6 @@ public class RoomChargeData implements Serializable {
     private PatientRoom patientRoom;
     private Double chargeTot = 0.0;
     Double maintananceTot = 0.0;
-    private Double linenTot = 0.0;
     private Double nursingTot = 0.0;
     private Double moChargeTot = 0.0;
 
@@ -44,14 +43,7 @@ public class RoomChargeData implements Serializable {
         this.patientRoom = patientRoom;
     }
 
-    public Double getLinenTot() {
-        return linenTot;
-    }
-
-    public void setLinenTot(Double linenTot) {
-        this.linenTot = linenTot;
-    }
-
+   
     public Double getNursingTot() {
         return nursingTot;
     }

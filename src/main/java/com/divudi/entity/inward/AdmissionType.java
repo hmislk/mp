@@ -28,6 +28,7 @@ public class AdmissionType extends Category implements Serializable {
     boolean roomChargesAllowed;
     @Enumerated(EnumType.STRING)
     private AdmissionTypeEnum admissionTypeEnum;
+   
 
     public boolean isRoomChargesAllowed() {
         return roomChargesAllowed;
@@ -61,4 +62,6 @@ public class AdmissionType extends Category implements Serializable {
     public void setAdmissionTypeEnum(AdmissionTypeEnum admissionTypeEnum) {
         this.admissionTypeEnum = admissionTypeEnum;
     }
+
+  
 }

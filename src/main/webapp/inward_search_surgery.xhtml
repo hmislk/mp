@@ -26,18 +26,19 @@
                                     <p:commandButton ajax="false" action="#{searchController.createInwardSurgeryBills}" value="Search"/>
                                 </h:panelGrid>
 
-                                <h:panelGrid columns="5">
+                                <h:panelGrid columns="6">
                                     <h:outputLabel value="Bill No"/>
                                     <h:outputLabel value="BHT No"/>
+                                    <h:outputLabel value="Surgery Name"/>
                                     <h:outputLabel value="Patient Name"/>
                                     <h:outputLabel value="Patient Phone"/>
                                     <h:outputLabel value="Total"/>
                                     <p:inputText  value="#{searchController.searchKeyword.billNo}" />
                                     <p:inputText  value="#{searchController.searchKeyword.bhtNo}" />
+                                    <p:inputText  value="#{searchController.searchKeyword.itemName}" />
                                     <p:inputText value="#{searchController.searchKeyword.patientName}" />
                                     <p:inputText  value="#{searchController.searchKeyword.patientPhone}" />
                                     <p:inputText value="#{searchController.searchKeyword.total}"/>
-
                                 </h:panelGrid>                                
                             </h:panelGroup>
                         </f:facet>
@@ -55,6 +56,10 @@
 
                             <p:column headerText="Bht No" >
                                 <h:outputLabel value="#{bb.patientEncounter.bhtNo}" ></h:outputLabel>
+                            </p:column>
+
+                            <p:column headerText="Surgery Name" >
+                                <h:outputLabel value="#{bb.procedure.item.name}" ></h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Client" >

@@ -131,13 +131,13 @@
                                             </h:panelGroup>
                                             <h:panelGroup rendered="#{bip.inwardChargeType eq 'ProfessionalCharge' }">
                                                 <table>                                             
-                                                    <ui:repeat value="#{bip.billFees}" var="fe">
+                                                    <ui:repeat value="#{bip.proFees}" var="fe">
                                                         <tr>
                                                             <td style="text-align: left;font-size: 8px!important;">
-                                                                #{fe.referenceBillFee.staff.person.nameWithTitle} 
+                                                                #{fe.staff.person.nameWithTitle} 
                                                             </td>
                                                             <td  style="text-align: right;font-size: 8px!important;">
-                                                                <h:outputLabel value="#{fe.referenceBillFee.feeValue}">
+                                                                <h:outputLabel value="#{fe.feeValue}">
                                                                     <f:convertNumber pattern="#,000.00" />
                                                                 </h:outputLabel>
                                                             </td>

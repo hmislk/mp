@@ -1932,8 +1932,6 @@ public class SearchController implements Serializable {
         String sql;
         Map temMap = new HashMap();
         sql = "select b from Bill b where "
-                + " (b.patientEncounter.paymentFinalized is null "
-                + " or b.patientEncounter.paymentFinalized=false ) and"
                 + " b.billType = :billType and "
                 + " b.createdAt between :fromDate and :toDate "
                 + " and b.retired=false  ";
@@ -1960,6 +1958,12 @@ public class SearchController implements Serializable {
                 && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
             temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+        
+         if (getSearchKeyword().getItemName()!= null
+                && !getSearchKeyword().getItemName().trim().equals("")) {
+            sql += " and  (upper(b.procedure.item.name) like :itm )";
+            temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
 
         if (getSearchKeyword().getTotal() != null

@@ -8,12 +8,16 @@
  */
 package com.divudi.bean.inward;
 
+import com.divudi.bean.PaymentSchemeController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -56,6 +60,10 @@ public class InwardPaymentController implements Serializable {
         return PaymentMethod.values();
     }
 
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
+    private PaymentMethodData paymentMethodData;
+
     private boolean errorCheck() {
         if (getCurrent().getPatientEncounter() == null) {
             UtilityController.addErrorMessage("Select BHT");
@@ -66,6 +74,11 @@ public class InwardPaymentController implements Serializable {
             UtilityController.addErrorMessage("Select Payment Method");
             return true;
         }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentMethod(), paymentMethodData)) {
+            return true;
+        }
+
         return false;
 
     }
@@ -107,7 +120,12 @@ public class InwardPaymentController implements Serializable {
         printPreview = false;
     }
 
+    @EJB
+    private BillBean billBean;
+
     private void saveBill() {
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentMethod(), getPaymentMethodData());
+
         getCurrent().setInstitution(getSessionController().getInstitution());
         getCurrent().setBillType(BillType.InwardPaymentBill);
         getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), getSessionController().getDepartment(), BillType.InwardPaymentBill));
@@ -191,5 +209,32 @@ public class InwardPaymentController implements Serializable {
 
     public void setPrintPreview(boolean printPreview) {
         this.printPreview = printPreview;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
     }
 }

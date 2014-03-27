@@ -5,6 +5,7 @@
  */
 package com.divudi.bean.inward;
 
+import com.divudi.bean.SessionController;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
@@ -14,9 +15,12 @@ import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.inject.Inject;
+import org.eclipse.persistence.jpa.JpaHelper;
 
 /**
  *
@@ -36,6 +40,8 @@ public class ServiceFeeEdit implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private BillFacade billFacade;
+    @Inject
+    private SessionController sessionController;
 
     /**
      * Creates a new instance of ServiceFeeEdit
@@ -51,6 +57,9 @@ public class ServiceFeeEdit implements Serializable {
     }
 
     public void updateFee(BillFee billFee) {
+        billFee.setEditor(getSessionController().getLoggedUser());
+        billFee.setEditedAt(new Date());
+
         getBillFeeFacade().edit(billFee);
         double serviceValue = 0;
         BillFee marginFee = null;
@@ -62,6 +71,8 @@ public class ServiceFeeEdit implements Serializable {
         marginFee.setFeeValue(matrixValue);
 
         if (marginFee.getId() != null) {
+            marginFee.setEditedAt(new Date());
+            marginFee.setEditor(getSessionController().getLoggedUser());
             getBillFeeFacade().edit(marginFee);
         }
 
@@ -81,6 +92,8 @@ public class ServiceFeeEdit implements Serializable {
         double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
 
         billItem.setNetValue(val);
+        billItem.setEditedAt(new Date());
+        billItem.setEditor(getSessionController().getLoggedUser());
         getBillItemFacade().edit(billItem);
 
     }
@@ -92,6 +105,8 @@ public class ServiceFeeEdit implements Serializable {
         double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
 
         billItem.getBill().setNetTotal(val);
+        billItem.getBill().setEditedAt(new Date());
+        billItem.getBill().setEditor(getSessionController().getLoggedUser());
         getBillFacade().edit(billItem.getBill());
     }
 
@@ -143,6 +158,14 @@ public class ServiceFeeEdit implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public SessionController getSessionController() {
+        return sessionController;
+    }
+
+    public void setSessionController(SessionController sessionController) {
+        this.sessionController = sessionController;
     }
 
 }

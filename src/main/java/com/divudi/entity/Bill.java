@@ -50,7 +50,7 @@ public class Bill implements Serializable {
 
     @ManyToOne
     BatchBill batchBill;
-    
+
     @ManyToOne
     private Category category;
 
@@ -167,6 +167,11 @@ public class Bill implements Serializable {
     WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date createdAt;
+    //Edited Properties
+    @ManyToOne
+    private WebUser editor;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date editedAt;
     //Retairing properties
     boolean retired;
     @ManyToOne
@@ -1161,6 +1166,22 @@ public class Bill implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public WebUser getEditor() {
+        return editor;
+    }
+
+    public void setEditor(WebUser editor) {
+        this.editor = editor;
+    }
+
+    public Date getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(Date editedAt) {
+        this.editedAt = editedAt;
     }
 
 }

@@ -26,7 +26,7 @@
                         </f:facet>
                         <p:autoComplete converter="deal" value="#{purchaseOrderRequestController.currentBill.toInstitution}"  
                                         forceSelection="true"
-                                        completeMethod="#{dealerController.completeDealor}"
+                                        completeMethod="#{storeDealorController.completeDealor}"
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                             <f:ajax event="itemSelect" execute="@this" render="itemList" listener="#{purchaseOrderRequestController.setInsListener}"/>
                         </p:autoComplete>

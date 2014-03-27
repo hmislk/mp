@@ -154,12 +154,12 @@ public class StaffController implements Serializable {
         List<Staff> ss;
         String sql;
         HashMap hm = new HashMap();
-        sql = "select p from Staff p where p.retired=false and  "
-                + "p.speciality=:sp "
+        sql = "select p from Staff p where  "
+                + " p.speciality=:sp "
                 + "order by p.person.name";
 //            //System.out.println(sql);
         hm.put("sp", speciality);
-        ss = getFacade().findBySQL(sql,hm, 20);
+        ss = getFacade().findBySQL(sql,hm);
 
         return ss;
     }

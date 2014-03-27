@@ -87,7 +87,9 @@ public class ItemsDistributorsController implements Serializable {
     }
 
     private boolean checkItem() {
-        String sql = "Select i from ItemsDistributors i where i.retired=false and i.institution.id= " + getCurrentInstituion().getId() + " and i.item.id=" + getCurrentItem().getId();
+        String sql = "Select i from ItemsDistributors i where i.retired=false"
+                + " and i.institution.id= " + getCurrentInstituion().getId() + " and "
+                + " i.item.id=" + getCurrentItem().getId();
         ItemsDistributors tmp = getFacade().findFirstBySQL(sql);
         if (tmp != null) {
             return true;
@@ -214,14 +216,15 @@ public class ItemsDistributorsController implements Serializable {
      */
     public List<ItemsDistributors> getItems() {
         String temSql;
-        if (getCurrentInstituion() != null) {
-            temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and"
-                    + " i.institution.id = " + getCurrentInstituion().getId() + " "
-                    + " order by i.item.name";
-            items = getFacade().findBySQL(temSql);
-        } else {
-            items = null;
-        }
+        HashMap hm = new HashMap();
+
+        temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and"
+                + " i.institution=:ins "
+                + " order by i.item.name";
+
+        hm.put("ins", getCurrentInstituion());
+
+        items = getFacade().findBySQL(temSql,hm);
 
         if (items == null) {
             items = new ArrayList<>();
@@ -237,29 +240,28 @@ public class ItemsDistributorsController implements Serializable {
         sql = " SELECT b FROM ItemsDistributors b where b.item.retired=false "
                 + " and b.institution.retired=false and b.retired=false";
 
-        if (getSearchKeyword().getInstitution()!= null && !getSearchKeyword().getInstitution().trim().equals("")) {
+        if (getSearchKeyword().getInstitution() != null && !getSearchKeyword().getInstitution().trim().equals("")) {
             sql += " and  (upper(b.institution.name) like :ins )";
             tmp.put("ins", "%" + getSearchKeyword().getInstitution().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getItemName()!= null && !getSearchKeyword().getItemName().trim().equals("")) {
+        if (getSearchKeyword().getItemName() != null && !getSearchKeyword().getItemName().trim().equals("")) {
             sql += " and  (upper(b.item.name) like :itm )";
             tmp.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
         }
 
-        if (getSearchKeyword().getCode()!= null && !getSearchKeyword().getCode().trim().equals("")) {
+        if (getSearchKeyword().getCode() != null && !getSearchKeyword().getCode().trim().equals("")) {
             sql += " and  (upper(b.item.code) like :cde )";
             tmp.put("cde", "%" + getSearchKeyword().getCode().trim().toUpperCase() + "%");
         }
-        
-        if (getSearchKeyword().getCategory()!= null && !getSearchKeyword().getCategory().trim().equals("")) {
+
+        if (getSearchKeyword().getCategory() != null && !getSearchKeyword().getCategory().trim().equals("")) {
             sql += " and  (upper(b.item.category.name) like :cat )";
             tmp.put("cat", "%" + getSearchKeyword().getCategory().trim().toUpperCase() + "%");
         }
 
         sql += " order by b.institution.name,b.item.name ";
 
-      
         searchItems = getFacade().findBySQL(sql, tmp);
 
     }

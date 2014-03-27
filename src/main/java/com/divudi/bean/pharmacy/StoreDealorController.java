@@ -14,16 +14,12 @@ import java.util.TimeZone;
 import com.divudi.data.InstitutionType;
 import com.divudi.facade.InstitutionFacade;
 import com.divudi.entity.Institution;
-import com.divudi.entity.Item;
-import com.divudi.entity.pharmacy.Amp;
-import com.divudi.entity.pharmacy.Vtm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -40,7 +36,7 @@ import javax.faces.convert.FacesConverter;
  */
 @Named
 @SessionScoped
-public class DealerController implements Serializable {
+public class StoreDealorController implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Inject
@@ -58,7 +54,7 @@ public class DealerController implements Serializable {
         sql = "select c from Institution c where c.retired=false and "
                 + " c.institutionType =:t and upper(c.name) like :q order by c.name";
         //System.out.println(sql);
-        m.put("t", InstitutionType.Dealer);
+        m.put("t", InstitutionType.StoreDealor);
         m.put("q", "%" + query.toUpperCase() + "%");
         suggestions = getEjbFacade().findBySQL(sql, m, 10);
         //System.out.println("suggestions = " + suggestions);
@@ -68,7 +64,7 @@ public class DealerController implements Serializable {
 
     public void prepareAdd() {
         current = new Institution();
-        current.setInstitutionType(InstitutionType.Dealer);
+        current.setInstitutionType(InstitutionType.StoreDealor);
     }
 
     private void recreateModel() {
@@ -87,7 +83,7 @@ public class DealerController implements Serializable {
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
         recreateModel();
-   //     getItems();
+        //     getItems();
     }
 
     public InstitutionFacade getEjbFacade() {
@@ -106,12 +102,13 @@ public class DealerController implements Serializable {
         this.sessionController = sessionController;
     }
 
-    public DealerController() {
+    public StoreDealorController() {
     }
 
     public Institution getCurrent() {
         if (current == null) {
             current = new Institution();
+            current.setInstitutionType(InstitutionType.StoreDealor);
         }
         return current;
     }
@@ -132,7 +129,7 @@ public class DealerController implements Serializable {
             UtilityController.addSuccessMessage("NothingToDelete");
         }
         recreateModel();
-  //      getItems();
+        //      getItems();
         current = null;
         getCurrent();
     }
@@ -146,7 +143,7 @@ public class DealerController implements Serializable {
         String sql = "SELECT i FROM Institution i where i.retired=false and i.institutionType =:tp"
                 + " order by i.name";
         HashMap hm = new HashMap();
-        hm.put("tp", InstitutionType.Dealer);
+        hm.put("tp", InstitutionType.StoreDealor);
         items = getEjbFacade().findBySQL(sql, hm);
         if (items == null) {
             items = new ArrayList<>();
@@ -157,16 +154,16 @@ public class DealerController implements Serializable {
     /**
      *
      */
-    @FacesConverter("deal")
-    public static class DealerControllerConverter implements Converter {
+    @FacesConverter("storeDeal")
+    public static class StoreDealerControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            DealerController controller = (DealerController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "dealerController");
+            StoreDealorController controller = (StoreDealorController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "storeDealorController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -192,7 +189,7 @@ public class DealerController implements Serializable {
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + DealerController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + StoreDealorController.class.getName());
             }
         }
     }

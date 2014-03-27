@@ -20,6 +20,7 @@ import com.divudi.entity.ServiceCategory;
 import com.divudi.entity.ServiceSubCategory;
 import com.divudi.entity.lab.InvestigationCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
+import com.divudi.entity.pharmacy.StoreItemCategory;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -218,7 +219,7 @@ public class InwardPriceAdjustmntController implements Serializable {
     }
 
     private List<InwardPriceAdjustment> filterItems;
-    
+
     public List<InwardPriceAdjustment> getItems() {
 
         return items;
@@ -231,6 +232,7 @@ public class InwardPriceAdjustmntController implements Serializable {
     }
 
     public void createCategroyService() {
+        filterItems = null;
         String sql;
         HashMap hm = new HashMap();
         sql = "select a from InwardPriceAdjustment a where a.retired=false "
@@ -242,6 +244,7 @@ public class InwardPriceAdjustmntController implements Serializable {
     }
 
     public void createCategroyServicePharmacy() {
+        filterItems = null;
         String sql;
         HashMap hm = new HashMap();
         sql = "select a from InwardPriceAdjustment a where a.retired=false "
@@ -255,6 +258,7 @@ public class InwardPriceAdjustmntController implements Serializable {
     }
 
     public void createCategroyInvestiagtion() {
+        filterItems = null;
         String sql;
         HashMap hm = new HashMap();
         sql = "select a from InwardPriceAdjustment a where a.retired=false "
@@ -266,6 +270,7 @@ public class InwardPriceAdjustmntController implements Serializable {
     }
 
     public void createCategroyPharmacy() {
+        filterItems = null;
         String sql;
         HashMap hm = new HashMap();
         sql = "select a from InwardPriceAdjustment a where "
@@ -277,10 +282,23 @@ public class InwardPriceAdjustmntController implements Serializable {
         items = getFacade().findBySQL(sql, hm);
     }
 
+    public void createCategroyStore() {
+        filterItems = null;
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "select a from InwardPriceAdjustment a where "
+                + " a.retired=false "
+                + " and type(a.category)=:cat  "
+                + " order by a.department.name,a.category.name,a.fromPrice";
+        hm.put("cat", StoreItemCategory.class);
+
+        items = getFacade().findBySQL(sql, hm);
+    }
+
     public void onEdit(InwardPriceAdjustment tmp) {
         //Cheking Minus Value && Null
         getFacade().edit(tmp);
-      //  createItems();
+        //  createItems();
     }
 
     public Category getRoomLocation() {

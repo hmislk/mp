@@ -305,7 +305,7 @@ public class mdReportController implements Serializable {
             sql = "select distinct(bi.item) FROM BillItem bi where  "
                     + " bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                     + " and  bi.bill.createdAt between :fromDate and :toDate "
-                    + " and bi.bill.paymentScheme.paymentMethod=:p ";
+                    + " and bi.bill.paymentMethod=:p ";
 
             temMap.put("p", getPaymentMethod());
 
@@ -359,7 +359,7 @@ public class mdReportController implements Serializable {
 
         } else {
             sql = "select bi FROM BillItem bi where  bi.bill.institution=:ins and bi.item=:item"
-                    + " and bi.bill.paymentScheme.paymentMethod = :pm and bi.bill.billType=:btp and type(bi.bill)=:billClass and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
+                    + " and bi.bill.paymentMethod = :pm and bi.bill.billType=:btp and type(bi.bill)=:billClass and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
 
             temMap.put("pm", getPaymentMethod());
 
@@ -421,7 +421,7 @@ public class mdReportController implements Serializable {
                     + "(SELECT b.id from BillItem b where b.bill.billType=:bTp"
                     + " and b.bill.institution=:ins"
                     + " and b.bill.createdAt between :fromDate and :toDate  and b.item=:item"
-                    + " and  b.bill.paymentScheme.paymentMethod = :pm)";
+                    + " and  b.bill.paymentMethod = :pm)";
 
             temMap.put("pm", getPaymentMethod());
         }

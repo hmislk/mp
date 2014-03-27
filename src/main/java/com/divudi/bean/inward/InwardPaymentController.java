@@ -68,6 +68,7 @@ public class InwardPaymentController implements Serializable {
 
     public void bhtListener() {
         due = getFinalBillDue();
+
     }
 
     private double getFinalBillDue() {
@@ -86,24 +87,9 @@ public class InwardPaymentController implements Serializable {
         return b.getNetTotal() - b.getPaidAmount();
 
     }
-    
+
     @EJB
     private InwardBean inwardBean;
-
-    private void updateFinalFill() {
-        String sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false "
-                + " and b.billType=:btp and b.patientEncounter=:pe";
-        HashMap hm = new HashMap();
-        hm.put("btp", BillType.InwardFinalBill);
-        hm.put("pe", getCurrent().getPatientEncounter());
-
-        BilledBill b = getBilledBillFacade().findFirstBySQL(sql, hm);
-
-        double paid = getInwardBean().getPaidValue(getCurrent().getPatientEncounter());
-        b.setPaidAmount(paid);
-        getBilledBillFacade().edit(b);
-
-    }
 
     private boolean errorCheck() {
         if (getCurrent().getPatientEncounter() == null) {
@@ -145,7 +131,7 @@ public class InwardPaymentController implements Serializable {
         saveBillItem();
 
         if (getCurrent().getPatientEncounter().isPaymentFinalized()) {
-            updateFinalFill();
+            getInwardBean().updateFinalFill(getCurrent().getPatientEncounter());
         }
 
         UtilityController.addSuccessMessage("Payment Bill Saved");

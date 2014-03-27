@@ -9,10 +9,10 @@ import com.divudi.bean.EnumController;
 import com.divudi.bean.SessionController;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.inward.InwardChargeType;
+import com.divudi.entity.Institution;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.MembershipScheme;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
-import static com.lowagie.text.SpecialSymbol.get;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import org.eclipse.persistence.internal.sessions.factories.model.session.SessionConfig;
 
 /**
  *
@@ -34,6 +33,7 @@ public class InwardMemberShipDiscount implements Serializable {
 
     private MembershipScheme currentMembershipScheme;
     private PaymentMethod currentPaymentMethod;
+    private Institution institution;
     private List<InwardPriceAdjustment> items;
     @Inject
     private EnumController enumController;
@@ -52,21 +52,33 @@ public class InwardMemberShipDiscount implements Serializable {
         items = null;
     }
 
-    public InwardPriceAdjustment getMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, InwardChargeType inwardChargeType) {
+    public InwardPriceAdjustment getMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, Institution ins, InwardChargeType inwardChargeType) {
         String sql;
         HashMap hm = new HashMap();
 
         if (membershipScheme != null) {
-            sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                    + "  i.membershipScheme=:m and"
-                    + " i.paymentMethod=:p and"
-                    + " i.inwardChargeType=:inw ";
-            hm.put("m", membershipScheme);
+            if (ins != null) {
+                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
+                        + "  i.membershipScheme=:m and"
+                        + " i.paymentMethod=:p and"
+                        + " i.inwardChargeType=:inw"
+                        + " i.institution=:ins ";
+                hm.put("m", membershipScheme);
+                hm.put("ins", ins);
+            } else {
+                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
+                        + "  i.membershipScheme=:m and"
+                        + " i.paymentMethod=:p and"
+                        + " i.inwardChargeType=:inw"
+                        + " and i.institution is null ";
+                hm.put("m", membershipScheme);
+            }
         } else {
             sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
                     + " i.paymentMethod=:p and"
                     + " i.inwardChargeType=:inw "
-                    + " and i.membershipScheme is null ";
+                    + " and i.membershipScheme is null"
+                    + " and i.institution is null ";
         }
 
         hm.put("p", paymentMethod);
@@ -76,7 +88,7 @@ public class InwardMemberShipDiscount implements Serializable {
     }
 
     private InwardPriceAdjustment getInwardPriceAdjustment(InwardChargeType inwardChargeType) {
-        InwardPriceAdjustment object = getMemberDisCount(getCurrentPaymentMethod(), getCurrentMembershipScheme(), inwardChargeType);
+        InwardPriceAdjustment object = getMemberDisCount(getCurrentPaymentMethod(), getCurrentMembershipScheme(), institution, inwardChargeType);
 
         if (object == null) {
             object = new InwardPriceAdjustment();
@@ -85,6 +97,7 @@ public class InwardMemberShipDiscount implements Serializable {
             object.setInwardChargeType(inwardChargeType);
             object.setMembershipScheme(getCurrentMembershipScheme());
             object.setPaymentMethod(getCurrentPaymentMethod());
+            object.setInstitution(institution);
             getInwardPriceAdjustmentFacade().create(object);
         }
 
@@ -157,6 +170,14 @@ public class InwardMemberShipDiscount implements Serializable {
 
     public void setSessionController(SessionController sessionController) {
         this.sessionController = sessionController;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
 }

@@ -19,22 +19,34 @@ import javax.persistence.InheritanceType;
 public class TimedItemFee extends Fee implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Integer durationHours = 0;
-    private Integer overShootHours = 0;
+    private double durationHours = 0;
+    private double overShootHours = 0;
 
-    public Integer getDurationHours() {
-        return durationHours;
-    }
+    
 
     public void setDurationHours(Integer durationHours) {
         this.durationHours = durationHours;
     }
 
-    public Integer getOverShootHours() {
+   
+
+    public void setOverShootHours(Integer overShootHours) {
+        this.overShootHours = overShootHours;
+    }
+
+    public double getDurationHours() {
+        return durationHours;
+    }
+
+    public void setDurationHours(double durationHours) {
+        this.durationHours = durationHours;
+    }
+
+    public double getOverShootHours() {
         return overShootHours;
     }
 
-    public void setOverShootHours(Integer overShootHours) {
+    public void setOverShootHours(double overShootHours) {
         this.overShootHours = overShootHours;
     }
 }

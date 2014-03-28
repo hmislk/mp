@@ -28,7 +28,9 @@
             </f:facet>
 
             <p:column>
-                <p:commandButton ajax="false" action=""/>
+                <p:commandButton ajax="false" action="pharmacy_reprint_adjustment">
+                    <f:setPropertyActionListener value="#{bill}" target="#{pharmacyBillSearch.bill}"/>
+                </p:commandButton>
             </p:column>
             <p:column headerText="BILL NO"  >                
                 <h:outputLabel value="#{bill.deptId}"  ></h:outputLabel>                    

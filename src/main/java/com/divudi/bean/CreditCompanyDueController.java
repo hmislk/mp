@@ -73,7 +73,7 @@ public class CreditCompanyDueController implements Serializable {
         sql = "Select b.creditCompany From Bill b where b.retired=false "
                 + " and b.paidAmount!=b.netTotal and b.cancelledBill is null and "
                 + " b.refundedBill is null and b.createdAt between :frm and :to "
-                + " and b.paymentScheme.paymentMethod= :pm and b.billType=:tp order by b.creditCompany.name  ";
+                + " and b.paymentMethod= :pm and b.billType=:tp order by b.creditCompany.name  ";
         hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());
@@ -92,7 +92,7 @@ public class CreditCompanyDueController implements Serializable {
             sql = "Select b From Bill b where b.retired=false and b.createdAt "
                     + "  between :frm and :to and b.paidAmount!=b.netTotal and b.cancelledBill is null  "
                     + " and b.refundedBill is null and b.creditCompany=:cc "
-                    + " and b.paymentScheme.paymentMethod= :pm and b.billType=:tp";
+                    + " and b.paymentMethod= :pm and b.billType=:tp";
             hm = new HashMap();
             hm.put("frm", getFromDate());
             hm.put("to", getToDate());
@@ -123,7 +123,7 @@ public class CreditCompanyDueController implements Serializable {
 
         sql = "Select b From Bill b where b.retired=false and b.createdAt "
                 + "  between :frm and :to and b.creditCompany=:cc "
-                + " and b.paymentScheme.paymentMethod= :pm and b.billType=:tp";
+                + " and b.paymentMethod= :pm and b.billType=:tp";
         hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());
@@ -140,7 +140,7 @@ public class CreditCompanyDueController implements Serializable {
 
         sql = "Select sum(b.netTotal) From Bill b where b.retired=false and b.createdAt "
                 + "  between :frm and :to and b.creditCompany=:cc "
-                + " and b.paymentScheme.paymentMethod= :pm and b.billType=:tp";
+                + " and b.paymentMethod= :pm and b.billType=:tp";
         hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());

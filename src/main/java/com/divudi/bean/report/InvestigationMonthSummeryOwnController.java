@@ -185,8 +185,8 @@ public class InvestigationMonthSummeryOwnController implements Serializable {
         String sql;
         Map temMap = new HashMap();
         sql = "select bi FROM BillItem bi where  bi.bill.institution=:ins and type(bi.item) =:ixtype "
-                + " and (bi.bill.paymentScheme.paymentMethod = :pm1 or bi.bill.paymentScheme.paymentMethod = :pm2 or"
-                + " bi.bill.paymentScheme.paymentMethod = :pm3 )    and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
+                + " and (bi.bill.paymentMethod = :pm1 or bi.bill.paymentMethod = :pm2 or"
+                + " bi.bill.paymentMethod = :pm3 )    and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("pm1", PaymentMethod.Cash);
@@ -389,7 +389,7 @@ public class InvestigationMonthSummeryOwnController implements Serializable {
         String sql;
         Map temMap = new HashMap();
         sql = "select distinct ix from BillItem bi join bi.item ix where type(ix) =:ixtype  "
-                + "and (bi.bill.paymentScheme.paymentMethod = :pm1 or bi.bill.paymentScheme.paymentMethod = :pm2 or bi.bill.paymentScheme.paymentMethod = :pm3 ) "
+                + "and (bi.bill.paymentMethod = :pm1 or bi.bill.paymentMethod = :pm2 or bi.bill.paymentMethod = :pm3 ) "
                 + "and bi.bill.billType=:bTp and bi.bill.institution=:ins and bi.bill.createdAt between :fromDate and :toDate order by ix.name";
 
         temMap.put("toDate", getToDate());
@@ -528,7 +528,7 @@ public class InvestigationMonthSummeryOwnController implements Serializable {
         String sql;
         Map temMap = new HashMap();
         sql = "select b from BillItem b where b.bill.billType=:bTp and b.bill.institution=:ins "
-                + " and b.item=:itm and (b.bill.paymentScheme.paymentMethod = :pm1 or b.bill.paymentScheme.paymentMethod = :pm2 or b.bill.paymentScheme.paymentMethod = :pm3 ) and  b.createdAt between :fromDate and :toDate";
+                + " and b.item=:itm and (b.bill.paymentMethod = :pm1 or b.bill.paymentMethod = :pm2 or b.bill.paymentMethod = :pm3 ) and  b.createdAt between :fromDate and :toDate";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("pm1", PaymentMethod.Cash);

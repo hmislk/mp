@@ -69,6 +69,7 @@
                                             <h:outputLabel value="#{ix.department.name}"/>
                                         </p:column>                                   
                                     </p:autoComplete>
+                                    <p:inputTextarea value="#{billBhtController.currentBillItem.descreption}" ></p:inputTextarea>
                                     <h:commandButton id="btnAddIx" value="Add" action="#{billBhtController.addToBill()}">
                                         <f:ajax execute="acIx btnAddIx" render="tblBillItem  pBillDetails pIxAdd" />
                                     </h:commandButton>                              

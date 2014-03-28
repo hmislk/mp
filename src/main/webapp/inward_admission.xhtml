@@ -66,26 +66,28 @@
                                         </p:selectOneMenu>
                                         <h:outputLabel value="Date of Birth"/>
                                         <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
-                                            <f:ajax event="dateSelect" />
+                                            <f:ajax event="dateSelect" execute="calNewPtDob" render="lblAge" />
                                         </p:calendar>
-
+                                        
                                         <p:watermark value="YEAR" for="year" />
                                         <p:watermark value="MONTH" for="month" />
                                         <p:watermark value="DAYS" for="day" />
                                         <h:outputLabel/>
                                         <h:outputLabel value="Age"/>
                                         <h:panelGroup>
-                                            <p:inputText  id="year" autocomplete="off" value="#{admissionController.yearMonthDay.year}">
+                                            <p:inputText  id="year" style="width: 80px;" autocomplete="off" value="#{admissionController.yearMonthDay.year}">
                                                 <f:ajax event="keyup" execute="@this month day" render="calNewPtDob" listener="#{admissionController.dateChangeListen()}"  />
                                             </p:inputText>
 
-                                            <p:inputText id="month"  autocomplete="off" value="#{admissionController.yearMonthDay.month}">
+                                            <p:inputText id="month"  style="width: 80px;"  autocomplete="off" value="#{admissionController.yearMonthDay.month}">
                                                 <f:ajax event="keyup" execute="@this year day" render="calNewPtDob" listener="#{admissionController.dateChangeListen()}"  />
                                             </p:inputText>
 
-                                            <p:inputText id="day"  autocomplete="off" value="#{admissionController.yearMonthDay.day}">
+                                            <p:inputText id="day"  style="width: 80px;"  autocomplete="off" value="#{admissionController.yearMonthDay.day}">
                                                 <f:ajax event="keyup" execute="@this year month" render="calNewPtDob" listener="#{admissionController.dateChangeListen()}" />
                                             </p:inputText>
+                                            <br/>
+                                            <p:outputLabel value="#{admissionController.newPatient.age}" id="lblAge" ></p:outputLabel>
                                         </h:panelGroup>
                                         <h:outputLabel value="Address"/>
                                         <p:inputTextarea  value="#{admissionController.newPatient.person.address}"/>                                  

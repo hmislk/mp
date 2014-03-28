@@ -8,7 +8,7 @@
       xmlns:se="http://java.sun.com/jsf/composite/pharmacy/search">
 
     <body>
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="./resources/template/template.xhtml"
             <ui:define name="content">
                 <h:form>
                     <p:panel id="gpBillPreview">
@@ -76,7 +76,7 @@
                             </h:panelGroup>
 
                             <h:panelGroup rendered="#{searchController.billType eq 'PharmacyAdjustment'}" >
-                                <se:pre_bill />
+                                <se:adjustment />
                             </h:panelGroup>
                         </h:panelGroup>
                     </p:panel>

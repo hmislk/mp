@@ -101,6 +101,8 @@ public class CashSummeryControllerExcel implements Serializable {
     private double inwardProfTot;
     @Inject
     private AdmissionTypeController admissionTypeController;
+    private List<String1Value2> string1Value2s;
+    private List<AdmissionTypeBills> admissionTypeBillses;
 
     public long getCountTotal() {
         long countTotal = 0;
@@ -533,7 +535,8 @@ public class CashSummeryControllerExcel implements Serializable {
 
     private List<Bill> bills(BillType billType) {
         String sql;
-        sql = "SELECT b FROM Bill b WHERE b.retired=false and b.billType = :bTp and b.institution=:ins and b.createdAt between :fromDate and :toDate order by b.id";
+        sql = "SELECT b FROM Bill b WHERE b.retired=false and b.billType = :bTp and "
+                + "b.institution=:ins and b.createdAt between :fromDate and :toDate order by b.id";
 
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
@@ -584,28 +587,28 @@ public class CashSummeryControllerExcel implements Serializable {
         return tmp;
     }
 
-    public List<AdmissionTypeBills> getInwardCollection() {
+    public void createInwardCollection() {
         inwardTot = 0.0;
-        List<AdmissionTypeBills> tmp = new ArrayList<>();
+        admissionTypeBillses = new ArrayList<>();
         for (AdmissionType at : getAdmissionTypeController().getItems()) {
             AdmissionTypeBills admB = new AdmissionTypeBills();
             admB.setAdmissionType(at);
             admB.setBills(getInwardBills(at));
             admB.setTotal(calTotal(admB.getBills()));
             inwardTot += admB.getTotal();
-            tmp.add(admB);
+            admissionTypeBillses.add(admB);
         }
-
-        return tmp;
     }
-    
+
+    public List<AdmissionTypeBills> getInwardCollection() {
+
+        return admissionTypeBillses;
+    }
+
 //    public List<String2Value1> getInwardCollection(){
 //        for(AdmissionTypeBills adm:)
 //    
 //    }
-    
-    
-
     private double calTotal(List<Bill> lst) {
         double tmp = 0.0;
         for (Bill b : lst) {
@@ -616,8 +619,15 @@ public class CashSummeryControllerExcel implements Serializable {
 
     private List<Bill> getInwardBills(AdmissionType admissionType) {
         String sql;
-        sql = "SELECT b FROM Bill b WHERE b.retired=false and b.billType = :bTp and b.patientEncounter.admissionType=:adm  and b.institution=:ins and b.createdAt between :fromDate and :toDate order by b.id";
+        sql = "SELECT b FROM Bill b WHERE "
+                + " (type(b)=:class1 or type(b)=:class2 or type(b)=:class3) and"
+                + " b.retired=false and b.billType = :bTp "
+                + "and b.patientEncounter.admissionType=:adm  and b.institution=:ins"
+                + " and b.createdAt between :fromDate and :toDate order by b.id";
         Map temMap = new HashMap();
+        temMap.put("class1", BilledBill.class);
+        temMap.put("class2", CancelledBill.class);
+          temMap.put("class3", RefundBill.class);
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
         temMap.put("bTp", BillType.InwardPaymentBill);
@@ -749,7 +759,6 @@ public class CashSummeryControllerExcel implements Serializable {
 //    public void setSessionController(SessionController sessionController) {
 //        this.sessionController = sessionController;
 //    }
-
     private List<Department> findDepartment() {
         if (getInstitution() == null) {
             return new ArrayList<>();
@@ -899,8 +908,6 @@ public class CashSummeryControllerExcel implements Serializable {
         return billed - (cancelled + refunded);
 
     }
-    
-    
 
     private long billItemForCount(Bill bill, Item i) {
 
@@ -1039,7 +1046,7 @@ public class CashSummeryControllerExcel implements Serializable {
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
-        temMap.put("ins",getInstitution());
+        temMap.put("ins", getInstitution());
         temMap.put("itm", i.getItem());
         temMap.put("bTp", BillType.OpdBill);
         temMap.put("ftp", feeType);
@@ -1150,9 +1157,14 @@ public class CashSummeryControllerExcel implements Serializable {
         return categoryWithItem;
     }
 
-    public List<String1Value2> getDailyCashExcel() {
+    public void createCashCategoryWithoutPro() {
+        createOPdCategoryTable();
+        createInwardCollection();
 
-        List<String1Value2> list = new ArrayList<>();
+    }
+
+    public void createOPdCategoryTable() {
+        string1Value2s = new ArrayList<>();
 
         for (CategoryWithItem dc : getDailyCash2()) {
 
@@ -1162,18 +1174,22 @@ public class CashSummeryControllerExcel implements Serializable {
                 newD.setValue1(iwf.getCount());
                 newD.setValue2(iwf.getHospitalFee());
                 newD.setSummery(false);
-                list.add(newD);
+                string1Value2s.add(newD);
             }
 
             String1Value2 newD = new String1Value2();
             newD.setString(dc.getCategory().getName() + " Total : ");
             newD.setValue2(dc.getSubHosTotal());
             newD.setSummery(true);
-            list.add(newD);
+            string1Value2s.add(newD);
 
         }
 
-        return list;
+    }
+
+    public List<String1Value2> getDailyCashExcel() {
+
+        return string1Value2s;
     }
 
     private Item service;
@@ -1387,16 +1403,15 @@ public class CashSummeryControllerExcel implements Serializable {
     public double getGrantTotal2Hos() {
         grantTotal = 0.0;
 
-      ///  grantTotal += getOpdHospitalTotal();
+        ///  grantTotal += getOpdHospitalTotal();
         //System.err.println("Pathtotal "+getPathTotal());
         //System.err.println("OPD Hospital "+getOpdHospitalTotal());
         //System.err.println("Credit Com "+getCreditCompanyTotal());
         //System.err.println("Agent "+getAgentCollectionTot());
         //System.err.println("Inward Tot "+getInwardTot());
         //System.err.println("Pharmacy Tot "+getPharmacyTotal());
-
-        grantTotal = getPathTotal() +getOpdHospitalTotal()+
-                getCreditCompanyTotal() + getAgentCollectionTot()
+        grantTotal = getPathTotal() + getOpdHospitalTotal()
+                + getCreditCompanyTotal() + getAgentCollectionTot()
                 + getInwardTot() + getPharmacyTotal();
 
         return grantTotal;
@@ -1537,6 +1552,22 @@ public class CashSummeryControllerExcel implements Serializable {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    public List<String1Value2> getString1Value2s() {
+        return string1Value2s;
+    }
+
+    public void setString1Value2s(List<String1Value2> string1Value2s) {
+        this.string1Value2s = string1Value2s;
+    }
+
+    public List<AdmissionTypeBills> getAdmissionTypeBillses() {
+        return admissionTypeBillses;
+    }
+
+    public void setAdmissionTypeBillses(List<AdmissionTypeBills> admissionTypeBillses) {
+        this.admissionTypeBillses = admissionTypeBillses;
     }
 
 }

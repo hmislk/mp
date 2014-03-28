@@ -180,7 +180,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
         if (qry != null) {
             sql = "select c from BilledBill c where c.paidAmount<c.netTotal and c.billType= :btp "
-                    + " and c.paymentScheme.paymentMethod= :pm and c.cancelledBill is null "
+                    + " and c.paymentMethod= :pm and c.cancelledBill is null "
                     + " and c.refundedBill is null and c.retired=false and ((upper(c.insId) "
                     + " like '%" + qry.trim().toUpperCase() + "%') or"
                     + " (upper(c.patient.person.name)  like '%" + qry.trim().toUpperCase() + "%' )) "

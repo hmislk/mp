@@ -133,7 +133,7 @@ public class BhtSummeryController implements Serializable {
 
     public void calculateDiscount() {
         for (ChargeItemTotal cit : chargeItemTotals) {
-            InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(),getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
+            InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
 
             if (ipa == null || ipa.getDiscountPercent() == 0 || cit.getTotal() == 0) {
                 cit.setDiscount(0);
@@ -1107,18 +1107,31 @@ public class BhtSummeryController implements Serializable {
         }
 
         if (getPatientEncounter() != null) {
-            setKnownChargeTot(chargeItemTotals);
-            setServiceTotCategoryWise(chargeItemTotals);
-            setTimedServiceTotCategoryWise(chargeItemTotals);
-
+            setKnownChargeTot();
+            setServiceTotCategoryWise();
+            setTimedServiceTotCategoryWise();
+            setChargeValueFromAdditional();
         }
 
+        setNetAdjustValue();
+
+    }
+
+    private void setNetAdjustValue() {
         for (ChargeItemTotal cit : chargeItemTotals) {
             cit.setNetTotal(cit.getTotal());
             cit.setAdjustedTotal(cit.getTotal());
 
         }
+    }
 
+    private void setChargeValueFromAdditional() {
+        for (ChargeItemTotal cit : chargeItemTotals) {
+            double adj = getValueFromAdditionalCharge(cit.getInwardChargeType());
+            double tot = cit.getTotal();
+
+            cit.setTotal(tot + adj);
+        }
     }
 
     @EJB
@@ -1185,26 +1198,24 @@ public class BhtSummeryController implements Serializable {
     private List<Bill> createAdditionalChargeBill() {
         additionalChargeBill = new ArrayList<>();
         String sql = "Select i From Bill i where i.retired=false and i.billType=:btp "
-                + "and i.patientEncounter=:pe and i.id in "
-                + "(Select bf.bill.id from BillFee bf where bf.retired=false and bf.patienEncounter=:pe and bf.fee.feeType=:fn)";
+                + " and i.patientEncounter=:pe ";
+
         HashMap m = new HashMap();
-        m.put("btp", BillType.InwardBill);
+        m.put("btp", BillType.InwardAdditionalBill);
         m.put("pe", getPatientEncounter());
-        m.put("fn", FeeType.Additional);
         additionalChargeBill = getBillFacade().findBySQL(sql, m, TemporalType.DATE);
 
         return additionalChargeBill;
     }
 
-    private double calculateAdditionalChargeTotal() {
-        additionalChargeBill = new ArrayList<>();
-        String sql = "Select sum(i.netTotal) From Bill i where i.retired=false and i.billType=:btp "
-                + "and i.patientEncounter=:pe and i.id in "
-                + "(Select bf.bill.id from BillFee bf where bf.retired=false and bf.patienEncounter=:pe and bf.fee.feeType=:fn)";
+    private double getValueFromAdditionalCharge(InwardChargeType inwardChargeType) {
+     //   additionalChargeBill = new ArrayList<>();
+        String sql = "Select sum(i.netValue) From BillItem i where i.retired=false and i.bill.billType=:btp "
+                + "and i.bill.patientEncounter=:pe and i.inwardChargeType=:inwCh ";
         HashMap m = new HashMap();
-        m.put("btp", BillType.InwardBill);
+        m.put("btp", BillType.InwardAdditionalBill);
         m.put("pe", getPatientEncounter());
-        m.put("fn", FeeType.Additional);
+        m.put("inwCh", inwardChargeType);
         double val = getBillFacade().findDoubleByJpql(sql, m, TemporalType.DATE);
 
         return val;
@@ -1212,8 +1223,8 @@ public class BhtSummeryController implements Serializable {
 
     private List<Bill> additionalChargeBill;
 
-    private void setKnownChargeTot(List<ChargeItemTotal> tmp) {
-        for (ChargeItemTotal i : tmp) {
+    private void setKnownChargeTot() {
+        for (ChargeItemTotal i : chargeItemTotals) {
             switch (i.getInwardChargeType()) {
                 case AdmissionFee:
                     if (getPatientEncounter().getAdmissionType() != null) {
@@ -1241,8 +1252,6 @@ public class BhtSummeryController implements Serializable {
                 case ProfessionalCharge:
                     i.setTotal(calculateProfessionalCharges());
                     break;
-                case OtherCharges:
-                    i.setTotal(calculateAdditionalChargeTotal());
 
             }
         }
@@ -1260,10 +1269,10 @@ public class BhtSummeryController implements Serializable {
         return getBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
-    private void setServiceTotCategoryWise(List<ChargeItemTotal> tmp) {
+    private void setServiceTotCategoryWise() {
         for (DepartmentBillItems depB : getDepartmentBillItems()) {
             for (BillItem b : depB.getBillItems()) {
-                for (ChargeItemTotal ch : tmp) {
+                for (ChargeItemTotal ch : chargeItemTotals) {
                     if (b.getItem().getInwardChargeType() != null) {
                         if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
                             ch.setTotal(ch.getTotal() + b.getNetValue());
@@ -1288,9 +1297,9 @@ public class BhtSummeryController implements Serializable {
 
     }
 
-    private void setTimedServiceTotCategoryWise(List<ChargeItemTotal> tmp) {
+    private void setTimedServiceTotCategoryWise() {
         for (PatientItem b : getPatientItems()) {
-            for (ChargeItemTotal ch : tmp) {
+            for (ChargeItemTotal ch : chargeItemTotals) {
                 if (b.getItem().getInwardChargeType() != null) {
                     if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
                         ch.setTotal(ch.getTotal() + b.getServiceValue());

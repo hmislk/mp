@@ -326,6 +326,25 @@ public class PharmacyItemExcelManager implements Serializable {
         }
     }
 
+    public void resetPaymentmethod() {
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b where b.paymentmethod is null";
+
+        List<Bill> list = getBillFacade().findBySQL(sql, temMap);
+
+        int ind = 1;
+        for (Bill i : list) {
+            System.err.println("index " + ind++);
+            System.err.println("Bill  " + i);
+            if (i.getPaymentScheme() != null) {
+                i.setPaymentMethod(i.getPaymentScheme().getPaymentMethod());
+                getBillFacade().edit(i);
+            }
+        }
+    }
+
 //    public void resetPharmacyPurhcaseCancelPayentScheme() {
 //        String sql;
 //        Map temMap = new HashMap();

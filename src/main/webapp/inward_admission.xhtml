@@ -183,22 +183,8 @@
                                 <p:outputLabel value="Admitted Time"/>
                                 <p:calendar value="#{admissionController.current.dateOfAdmission}" pattern="dd MMMM yyyy hh mm a" >                               
                                 </p:calendar>      
-
-                                <h:outputLabel  value="Select Speciality" ></h:outputLabel>
-                                <p:autoComplete forceSelection="true"
-                                                value="#{inwardStaffPaymentBillController.speciality}" id="acSpeciality"
-                                                completeMethod="#{specialityController.completeSpeciality}" 
-                                                var="mysp" itemLabel="#{mysp.name}" itemValue="#{mysp}"
-                                                converter="specilityCon"   >
-                                    <f:ajax event="itemSelect" execute="@this" render="scStaff"/>
-                                </p:autoComplete>
-
-                                <h:outputLabel  value="Select Referring Douctor" ></h:outputLabel>
-                                <p:autoComplete  style="width: 400px;" forceSelection="true" id="scStaff"
-                                                 value="#{admissionController.current.referringDoctor}" 
-                                                 completeMethod="#{inwardStaffPaymentBillController.completeStaff}"
-                                                 var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
-                                                 converter="stfcon"   >
+                                <p:outputLabel value="Referring Doctor"/>                            
+                                <p:autoComplete forceSelection="true" value="#{admissionController.current.referringDoctor}" completeMethod="#{doctorController.completeDoctor}" var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
                                 </p:autoComplete>
 
                             </h:panelGrid>

@@ -150,9 +150,9 @@
                                         </h:panelGroup>
                                     </p:column>     
                                     <p:column headerText="Update">
-                                        <p:commandButton ajax="false" value="Update"  disabled="#{c.billFee.id eq null}"
+                                        <p:commandButton ajax="false" value="Update"  
                                                          action="#{surgeryBillController.updateProFee(c.billFee)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
+                                                         disabled="#{c.billFee.id eq null or surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
                                     </p:column>
 
                                     <p:column headerText="Remove">
@@ -255,9 +255,9 @@
                                         </h:panelGroup>
                                     </p:column>     
                                     <p:column >
-                                        <p:commandButton value="Update" ajax="false"  disabled="#{ti.billFee.id eq null}"
+                                        <p:commandButton value="Update" ajax="false"  
                                                          action="#{surgeryBillController.updateTimedService(ti.billFee)}"
-                                                         disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>                                                                    
+                                                         disabled="#{ti.billFee.id eq null or surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>                                                                    
                                     </p:column>
                                     <p:column headerText="Remove">
                                         <p:commandButton ajax="false" value="Remove"  

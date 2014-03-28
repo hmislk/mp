@@ -206,7 +206,7 @@ public class DealorDueController implements Serializable {
 
         sql = "Select b From Bill b where b.retired=false and b.createdAt "
                 + "  between :frm and :to and b.creditCompany=:cc "
-                + " and b.paymentScheme.paymentMethod= :pm and b.billType=:tp";
+                + " and b.paymentMethod= :pm and b.billType=:tp";
         hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());
@@ -223,7 +223,7 @@ public class DealorDueController implements Serializable {
 
         sql = "Select sum(b.netTotal) From Bill b where b.retired=false and b.createdAt "
                 + "  between :frm and :to and b.creditCompany=:cc "
-                + " and b.paymentScheme.paymentMethod= :pm and b.billType=:tp";
+                + " and b.paymentMethod= :pm and b.billType=:tp";
         hm = new HashMap();
         hm.put("frm", getFromDate());
         hm.put("to", getToDate());

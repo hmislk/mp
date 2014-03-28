@@ -93,7 +93,7 @@ public class CreditSummeryController implements Serializable {
         sql = "select distinct(bi.item.department) FROM BillItem bi where  bi.bill.billType= :bTp "
                 + " and bi.bill.creditCompany=:credit"
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + " and bi.bill.paymentScheme.paymentMethod = :pm ";
+                + " and bi.bill.paymentMethod = :pm ";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //  temMap.put("ins", getSessionController().getInstitution());
@@ -113,7 +113,7 @@ public class CreditSummeryController implements Serializable {
         }
         sql = "select distinct(bi.item.category) FROM BillItem bi where bi.bill.billType= :bTp "
                 + " and bi.item.department=:dep and  bi.bill.createdAt between :fromDate and :toDate "
-                + " and bi.bill.paymentScheme.paymentMethod = :pm and bi.bill.creditCompany=:credit";
+                + " and bi.bill.paymentMethod = :pm and bi.bill.creditCompany=:credit";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //   temMap.put("ins", getSessionController().getInstitution());
@@ -136,7 +136,7 @@ public class CreditSummeryController implements Serializable {
         sql = "select distinct(bi.item) FROM BillItem bi where bi.item.department=:dep "
                 + " and  bi.bill.billType= :bTp  "
                 + " and bi.item.category=:cat and  bi.bill.createdAt between :fromDate and :toDate "
-                + "and  bi.bill.paymentScheme.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
+                + "and  bi.bill.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //     temMap.put("ins", getSessionController().getInstitution());
@@ -157,7 +157,7 @@ public class CreditSummeryController implements Serializable {
         String sql;
 
         sql = "select count(bi) FROM BillItem bi where bi.item=:itm and bi.bill.creditCompany=:credit"
-                + " and bi.bill.paymentScheme.paymentMethod = :pm "
+                + " and bi.bill.paymentMethod = :pm "
                 + "and bi.bill.billType=:btp and type(bi.bill)=:billClass "
                 + "and bi.bill.createdAt between :fromDate and :toDate ";
 
@@ -179,7 +179,7 @@ public class CreditSummeryController implements Serializable {
                 + " bf.bill.billType=:bTp and bf.fee.feeType=:ftp "
                 + " and bf.bill.createdAt between :fromDate and :toDate "
                 + "  and bf.billItem.item=:itm"
-                + " and bf.bill.paymentScheme.paymentMethod = :pm and bf.bill.creditCompany=:credit ";
+                + " and bf.bill.paymentMethod = :pm and bf.bill.creditCompany=:credit ";
 
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());
@@ -279,7 +279,7 @@ public class CreditSummeryController implements Serializable {
         sql = "select bi.bill FROM BillItem bi where bi.item.department=:dep "
                 + " and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + "and  bi.bill.paymentScheme.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
+                + "and  bi.bill.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //     temMap.put("ins", getSessionController().getInstitution());
@@ -302,7 +302,7 @@ public class CreditSummeryController implements Serializable {
         sql = "select sum(bi.bill.discount) FROM BillItem bi where bi.item.department=:dep "
                 + " and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + "and  bi.bill.paymentScheme.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
+                + "and  bi.bill.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //     temMap.put("ins", getSessionController().getInstitution());
@@ -325,7 +325,7 @@ public class CreditSummeryController implements Serializable {
         sql = "select sum(bi.bill.netTotal) FROM BillItem bi where bi.item.department=:dep "
                 + " and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + "and  bi.bill.paymentScheme.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
+                + "and  bi.bill.paymentMethod = :pm and bi.bill.creditCompany=:credit ";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         //     temMap.put("ins", getSessionController().getInstitution());

@@ -153,7 +153,7 @@ public class OpdBillItemSearchController implements Serializable {
                     + " or upper(b.patient.person.phone) like '%" + txtSearch.toUpperCase() + "%' "
                     + "  or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' or "
                     + " upper(b.toInstitution.name) like '%" + txtSearch.toUpperCase() + "%' "
-                    + " or upper(b.paymentScheme.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
+                    + " or upper(b.paymentMethod) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.paymentScheme.name) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.netTotal) like '%" + txtSearch.toUpperCase() + "%' "
                     + " or upper(b.total) like '%" + txtSearch.toUpperCase() + "%' ) "
@@ -361,7 +361,7 @@ public class OpdBillItemSearchController implements Serializable {
         String sql;
         Map tm;
 
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -371,7 +371,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         hosTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -381,7 +381,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         hosTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -393,7 +393,7 @@ public class OpdBillItemSearchController implements Serializable {
         hosTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         hosTot = hosTotB + hosTotC + hosTotR;
 
-        sql = "select sum(f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -403,7 +403,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         profTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -413,7 +413,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         profTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -425,7 +425,7 @@ public class OpdBillItemSearchController implements Serializable {
         profTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         profTot = profTotB + profTotC + profTotR;
 
-        sql = "select sum(f.discount) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -435,7 +435,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         disTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -445,7 +445,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         disTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.institution.id=" + ins.getId() + " and f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -473,7 +473,7 @@ public class OpdBillItemSearchController implements Serializable {
         String sql;
         Map tm;
 
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -483,7 +483,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         hosTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -493,7 +493,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         hosTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -505,7 +505,7 @@ public class OpdBillItemSearchController implements Serializable {
         hosTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         hosTot = hosTotB + hosTotC + hosTotR;
 
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -515,7 +515,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         profTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -525,7 +525,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         profTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -537,7 +537,7 @@ public class OpdBillItemSearchController implements Serializable {
         profTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         profTot = profTotB + profTotC + profTotR;
 
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -547,7 +547,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         disTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -557,7 +557,7 @@ public class OpdBillItemSearchController implements Serializable {
         tm.put("pm2", PaymentMethod.Card);
         tm.put("pm3", PaymentMethod.Cheque);
         disTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -727,7 +727,7 @@ public class OpdBillItemSearchController implements Serializable {
             String sql;
             Map tm;
             if (getInstitution() == null) {
-                sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+                sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and  f.createdAt between :fromDate and :toDate order by type(f), f.insId";
                 tm = new HashMap();
                 tm.put("fromDate", fromDate);
                 tm.put("toDate", toDate);
@@ -738,7 +738,7 @@ public class OpdBillItemSearchController implements Serializable {
                 labBills = getBillFacade().findBySQL(sql, tm, TemporalType.TIMESTAMP);
                 calTotalsWithout();
             } else {
-                sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentScheme.paymentMethod = :pm1 or f.paymentScheme.paymentMethod = :pm2 or f.paymentScheme.paymentMethod = :pm3 ) and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+                sql = "select f from Bill f where f.retired=false and f.billType = :billType and (f.paymentMethod = :pm1 or f.paymentMethod = :pm2 or f.paymentMethod = :pm3 ) and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
                 tm = new HashMap();
                 tm.put("fromDate", fromDate);
                 tm.put("toDate", toDate);
@@ -765,7 +765,7 @@ public class OpdBillItemSearchController implements Serializable {
                 labBills = getBillFacade().findBySQL(sql, tm, TemporalType.TIMESTAMP);
                 calTotals();
             } else {
-                sql = "select f from Bill f where f.retired=false and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+                sql = "select f from Bill f where f.retired=false and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
                 Map tm = new HashMap();
                 tm.put("fromDate", fromDate);
                 tm.put("toDate", toDate);
@@ -785,21 +785,21 @@ public class OpdBillItemSearchController implements Serializable {
             return;
         }
 
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", BilledBill.class);
         hosTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", CancelledBill.class);
         hosTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.total - f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -808,21 +808,21 @@ public class OpdBillItemSearchController implements Serializable {
         hosTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         hosTot = hosTotB + hosTotC + hosTotR;
 
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", BilledBill.class);
         profTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", CancelledBill.class);
         profTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.staffFee) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
@@ -831,21 +831,21 @@ public class OpdBillItemSearchController implements Serializable {
         profTotR = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
         profTot = profTotB + profTotC + profTotR;
 
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", BilledBill.class);
         disTotB = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);
         tm.put("billType", BillType.OpdBill);
         tm.put("billClass", CancelledBill.class);
         disTotC = getBillFacade().findDoubleByJpql(sql, tm, TemporalType.TIMESTAMP);
-        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentScheme.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select sum(f.discount) from Bill f where f.retired=false and type(f) = :billClass and f.billType = :billType and f.paymentMethod!=com.divudi.data.PaymentMethod.Credit and f.institution.id=" + getInstitution().getId() + " and f.createdAt between :fromDate and :toDate order by type(f), f.insId";
         tm = new HashMap();
         tm.put("fromDate", fromDate);
         tm.put("toDate", toDate);

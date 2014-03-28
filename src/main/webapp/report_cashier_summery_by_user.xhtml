@@ -25,11 +25,11 @@
                             <h:outputLabel value="  Casheir Session Report"/>
                             <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" action="#{commonReport.createCashierTableByUser()}" />  
                             <p:defaultCommand target="btnRefresh"/>
-                            
+
                             <p:commandButton actionListener="#{commonReport.createCashierTableByUser()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="sum1,sum2,sum11,sum22" fileName="All_Cashier_Summery"   />
                             </p:commandButton> 
-                            
+
                             <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                                 <p:printer target="reportPrint"  />
                             </p:commandButton>
@@ -137,6 +137,11 @@
                         <ca:inwardPaymentCancel data="#{commonReport.userInwardPaymentCancelBillsOwn}"/>
 
                         <p:spacer height="30"/>
+
+                        <ca:inwardPaymentCancel data="#{commonReport.inwardRefunds}"/>
+
+                        <p:spacer height="30"/>
+
 
                         <p:dataTable id="sum1" value="#{commonReport.creditSlipSum}"  var="i" >
                             <f:facet name="header">

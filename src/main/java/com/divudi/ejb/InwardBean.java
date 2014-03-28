@@ -6,6 +6,7 @@
 package com.divudi.ejb;
 
 import com.divudi.data.BillType;
+import com.divudi.entity.Bill;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.PatientRoom;
@@ -16,10 +17,10 @@ import com.divudi.facade.RoomFacade;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TemporalType;
+import static org.apache.xmlbeans.impl.values.NamespaceContext.getCurrent;
 
 /**
  *
@@ -37,13 +38,28 @@ public class InwardBean {
     @EJB
     private BillFacade billFacade;
 
+    public void updateFinalFill(PatientEncounter patientEncounter) {
+        String sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false "
+                + " and b.billType=:btp and b.patientEncounter=:pe";
+        HashMap hm = new HashMap();
+        hm.put("btp", BillType.InwardFinalBill);
+        hm.put("pe", patientEncounter);
+
+        Bill b = getBillFacade().findFirstBySQL(sql, hm);
+
+        double paid = getPaidValue(patientEncounter);
+        b.setPaidAmount(paid);
+        getBillFacade().edit(b);
+
+    }
+
     public double getPaidValue(PatientEncounter patientEncounter) {
 
         HashMap hm = new HashMap();
         String sql = "SELECT  sum(b.netTotal) FROM Bill b WHERE b.retired=false  and b.billType=:btp "
                 + " and b.patientEncounter=:pe ";
         hm.put("btp", BillType.InwardPaymentBill);
-        hm.put("pe",patientEncounter);
+        hm.put("pe", patientEncounter);
         double dbl = getBillFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
 
         return dbl;

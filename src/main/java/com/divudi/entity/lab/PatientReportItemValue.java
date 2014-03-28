@@ -31,7 +31,7 @@ public class PatientReportItemValue implements Serializable {
     Patient patient;
     @ManyToOne
     PatientEncounter patientEncounter;
-    @ManyToOne(cascade= CascadeType.ALL,fetch= FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     InvestigationItem investigationItem;
     @ManyToOne
     PatientReport patientReport;
@@ -45,6 +45,9 @@ public class PatientReportItemValue implements Serializable {
     Double doubleValue;
 
     public String getStrValue() {
+        if (strValue != null) {
+            strValue = strValue.trim();
+        }
         return strValue;
     }
 
@@ -91,8 +94,6 @@ public class PatientReportItemValue implements Serializable {
     public void setDoubleValue(Double doubleValue) {
         this.doubleValue = doubleValue;
     }
-    
-    
 
     public Patient getPatient() {
         //System.out.println("");
@@ -144,7 +145,7 @@ public class PatientReportItemValue implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof PatientReportItemValue)) {
             return false;
         }

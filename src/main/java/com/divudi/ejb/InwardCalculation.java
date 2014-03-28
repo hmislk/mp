@@ -425,8 +425,8 @@ public class InwardCalculation {
 
     public double calTimedServiceCharge(PatientItem p, Date date) {
         TimedItemFee tmp = getTimedItemFee((TimedItem) p.getItem());
-        long tempDur = tmp.getDurationHours();
-        long tempOve = tmp.getOverShootHours();
+        double tempDur = tmp.getDurationHours();
+        double tempOve = tmp.getOverShootHours();
         double tempFee = tmp.getFee();
 
         Date currentTime;
@@ -438,7 +438,7 @@ public class InwardCalculation {
         }
 
         long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
-        long count = 0l;
+        double count = 0.0;
 
         if (tempServ != 0 && tempDur != 0) {
             count = tempServ / (tempDur * 60);
@@ -528,14 +528,14 @@ public class InwardCalculation {
         return linen;
     }
 
-    public long calCountWithoutOverShoot(TimedItemFee tif, PatientRoom pr) {
+    public double calCountWithoutOverShoot(TimedItemFee tif, PatientRoom pr) {
 
-        long tempDur = tif.getDurationHours();
+        double tempDur = tif.getDurationHours();
         Long tempServ = 0L;
 
         tempServ = getCommonFunctions().calculateDurationMin(pr.getAdmittedAt(), pr.getDischargedAt());
 
-        long count = tempServ / (tempDur * 60);
+        double count = tempServ / (tempDur * 60);
 
         if ((0 != tempServ % (tempDur * 60))) {
             count++;
@@ -544,10 +544,10 @@ public class InwardCalculation {
         return count;
     }
 
-    public long calCount(TimedItemFee tif, Date admittedDate, Date dischargedDate) {
+    public double calCount(TimedItemFee tif, Date admittedDate, Date dischargedDate) {
 
-        long tempDur = tif.getDurationHours();
-        long tempOve = tif.getOverShootHours();
+        double tempDur = tif.getDurationHours();
+        double tempOve = tif.getOverShootHours();
         //  double tempFee = tif.getFee();
         Long tempServ = 0L;
 
@@ -556,7 +556,7 @@ public class InwardCalculation {
         }
 
         tempServ = getCommonFunctions().calculateDurationMin(admittedDate, dischargedDate);
-        long count = 0;
+        double count = 0;
 
         if (tempDur != 0) {
             count = tempServ / (tempDur * 60);

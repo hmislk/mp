@@ -72,7 +72,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Purchase Rate(Avg)"/>    
                                     </f:facet>
-                                    <h:outputLabel id="sysStock" value="#{i.purchaseRate}"  >
+                                    <h:outputLabel id="avg" value="#{i.purchaseRate}"  >
                                         <f:convertNumber pattern="#,000.00"/>
                                     </h:outputLabel>                                  
                                 </p:column>
@@ -81,7 +81,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Total Value"/>    
                                     </f:facet>
-                                    <h:outputLabel id="sysStock" 
+                                    <h:outputLabel id="tots" 
                                                    value="#{i.purchaseRate*i.systemStock}"  >
                                         <f:convertNumber pattern="#,000.00"/>
                                     </h:outputLabel>                                  
@@ -91,8 +91,8 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Physical Stock"/>    
                                     </f:facet>
-                                    <p:inputText   value="----------------"  >
-                                        <f:convertNumber integerOnly="true" ></f:convertNumber>
+                                    <p:inputText   value= "---------------- " >
+                                        <!--<f:convertNumber integerOnly="true" ></f:convertNumber>-->
                                     </p:inputText>                             
                                 </p:column>
 

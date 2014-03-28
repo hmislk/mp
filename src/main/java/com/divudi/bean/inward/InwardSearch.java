@@ -8,11 +8,11 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.bean.WebUserController;
 import com.divudi.data.BillNumberSuffix;
-import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -549,6 +549,9 @@ public class InwardSearch implements Serializable {
 
     }
 
+    @EJB
+    private InwardBean inwardBean;
+
     public void cancelBillPayment() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
 
@@ -556,10 +559,10 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
-            if (getBill().getPatientEncounter().isPaymentFinalized()) {
-                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
-                return;
-            }
+//            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+//                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
+//                return;
+//            }
 
             CancelledBill cb = createCancelBill();
             //Copy & paste
@@ -568,6 +571,12 @@ public class InwardSearch implements Serializable {
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
             getBillFacade().edit((BilledBill) getBill());
+
+            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+                getInwardBean().updateFinalFill(getBill().getPatientEncounter());
+
+            }
+
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -1073,6 +1082,14 @@ public class InwardSearch implements Serializable {
 
     public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
         this.patientEncounterFacade = patientEncounterFacade;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 
 }

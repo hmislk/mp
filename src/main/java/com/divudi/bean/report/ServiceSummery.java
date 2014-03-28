@@ -68,8 +68,8 @@ public class ServiceSummery implements Serializable {
         sql = "select sum(bi.feeValue) FROM BillFee bi where  bi.bill.institution=:ins and "
                 + " bi.bill.billType= :bTp and bi.fee.feeType=:ftp "
                 + " and  bi.bill.createdAt between :fromDate and :toDate and bi.billItem.item=:itm"
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
@@ -91,8 +91,8 @@ public class ServiceSummery implements Serializable {
         Map temMap = new HashMap();
         sql = "select count(bi) FROM BillItem bi where bi.bill.billType=:bType and bi.item=:itm "
                 + " and type(bi.bill)=:billClass and bi.bill.toInstitution=:ins and "
-                + " ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4) "
+                + " ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) "
                 + " and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
@@ -130,8 +130,8 @@ public class ServiceSummery implements Serializable {
 
         sql = "select bi FROM BillItem bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate and bi.item=:itm"
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
@@ -190,8 +190,8 @@ public class ServiceSummery implements Serializable {
 
         sql = "select bi FROM BillItem bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate and bi.item.category=:cat"
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4) "
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) "
                 + " order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
@@ -229,8 +229,8 @@ public class ServiceSummery implements Serializable {
         Map temMap = new HashMap();
         sql = "select count(bi) FROM BillItem bi where bi.bill.billType=:bType and bi.item.category=:cat "
                 + " and type(bi.bill)=:billClass and bi.bill.toInstitution=:ins and "
-                + " ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4) "
+                + " ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) "
                 + " and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
@@ -253,8 +253,8 @@ public class ServiceSummery implements Serializable {
         sql = "select sum(bi.feeValue) FROM BillFee bi where  bi.bill.institution=:ins"
                 + " and  bi.bill.billType= :bTp and bi.fee.feeType=:ftp "
                 + " and  bi.bill.createdAt between :fromDate and :toDate and bi.billItem.item.category=:cat"
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());

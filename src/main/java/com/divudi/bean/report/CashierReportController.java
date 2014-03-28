@@ -217,7 +217,7 @@ public class CashierReportController implements Serializable {
         Map temMap = new HashMap();
 
         sql = "select sum(b.netTotal) from Bill b where type(b)=:bill and b.creater=:cret and "
-                + " b.paymentScheme.paymentMethod= :payMethod  and b.institution=:ins"
+                + " b.paymentMethod= :payMethod  and b.institution=:ins"
                 + " and b.billType= :billTp and b.createdAt between :fromDate and :toDate ";
 
         temMap.put("toDate", getToDate());
@@ -448,7 +448,7 @@ public class CashierReportController implements Serializable {
                     + " and b.billType= :billTp and b.createdAt between :fromDate and :toDate ";
         } else {
             sql = "select b from Bill b where type(b)=:bill and b.creater=:cret and "
-                    + " b.paymentScheme.paymentMethod= :payMethod  and b.institution=:ins"
+                    + " b.paymentMethod= :payMethod  and b.institution=:ins"
                     + " and b.billType= :billTp and b.createdAt between :fromDate and :toDate ";
         }
 
@@ -595,7 +595,7 @@ public class CashierReportController implements Serializable {
         Map temMap = new HashMap();
 
         sql = "select b from Bill b  where type(b)=:bill and b.creater=:web and "
-                + "b.paymentScheme.paymentMethod= :pm "
+                + "b.paymentMethod= :pm "
                 + " and b.billType= :billTp and b.createdAt between :fromDate and :toDate";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());

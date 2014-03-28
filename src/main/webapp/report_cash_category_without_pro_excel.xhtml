@@ -14,7 +14,8 @@
             <p:panel>
                 <f:facet name="header" >
 
-                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" />
+                    <p:commandButton value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;"
+                                     action="#{cashSummeryControllerExcel.createCashCategoryWithoutPro}"/>
 
                     <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
                         <p:printer target="panelPrint" />
@@ -35,9 +36,9 @@
                         <h:outputLabel value="To Date"/>
                         <p:calendar id="toDate" value="#{cashSummeryControllerExcel.toDate}" navigator="true" pattern="dd MM yyyy HH:mm" >
                         </p:calendar>
-                        
+
                         <h:outputLabel value="Select Institution"/>
-                      
+
                         <p:autoComplete completeMethod="#{institutionController.completeCompany}" required="true" 
                                         forceSelection="true"
                                         requiredMessage="Please Select Institution" value="#{cashSummeryControllerExcel.institution}"
@@ -46,7 +47,7 @@
 
                 </f:facet>
             </p:panel>
-<!--            <p:spacer height="30" />-->
+            <!--            <p:spacer height="30" />-->
 
             <p:dataTable id="opd"  value="#{cashSummeryControllerExcel.dailyCashExcel}" var="d" rendered="#{cashSummeryControllerExcel.dailyCashExcel.size()!=0}">                   
                 <f:facet name="header">
@@ -186,7 +187,8 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="inward" value="#{cashSummeryControllerExcel.inwardCollection}" var="inw" rendered="#{cashSummeryControllerExcel.inwardTot!=0}" >
+            <p:dataTable id="inward" value="#{cashSummeryControllerExcel.inwardCollection}"
+                         var="inw" rendered="#{cashSummeryControllerExcel.inwardTot!=0}">
                 <f:facet name="header">
                     Inward Collection
                 </f:facet>
@@ -197,7 +199,7 @@
                         <p:column headerText="Payment"/>                       
                     </p:row>
                 </p:columnGroup>
-                <p:subTable value="#{inw.bills}" var="b"  rendered="#{inw.total!=0}">
+                <p:subTable value="#{inw.bills}" var="b" rendered="#{inw.total!=0}" >
                     <f:facet name="header">
                         #{inw.admissionType.name}
                     </f:facet>
@@ -229,6 +231,7 @@
                         </p:row>
                     </p:columnGroup>
                 </p:subTable>
+
                 <p:columnGroup type="footer" >
                     <p:row>
                         <p:column colspan="2">

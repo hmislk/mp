@@ -17,7 +17,7 @@ import java.util.List;
 public class AdmissionTypeBills {
 
     private AdmissionType admissionType;
-    private List<Bill> bills=new ArrayList<Bill>();
+    private List<Bill> bills=new ArrayList<>();
     private double total;
 
     public AdmissionType getAdmissionType() {

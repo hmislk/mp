@@ -101,6 +101,8 @@ public class CashSummeryControllerExcel implements Serializable {
     private double inwardProfTot;
     @Inject
     private AdmissionTypeController admissionTypeController;
+    private List<String1Value2> string1Value2s;
+    private List<AdmissionTypeBills> admissionTypeBillses;
 
     public long getCountTotal() {
         long countTotal = 0;
@@ -360,8 +362,8 @@ public class CashSummeryControllerExcel implements Serializable {
         for (Department d : getDepartmentOfInstitution()) {
             //System.err.println("DEP " + d.getName());
             String sql = "Select sum(b.netTotal) from Bill b where b.retired=false and  b.billType=:bType and b.referenceBill.department=:dep "
-                    + " and b.createdAt between :fromDate and :toDate and (b.paymentScheme.paymentMethod = :pm1 or  b.paymentScheme.paymentMethod = :pm2 or "
-                    + " b.paymentScheme.paymentMethod = :pm3 or  b.paymentScheme.paymentMethod = :pm4)";
+                    + " and b.createdAt between :fromDate and :toDate and (b.paymentMethod = :pm1 or  b.paymentMethod = :pm2 or "
+                    + " b.paymentMethod = :pm3 or  b.paymentMethod = :pm4)";
             HashMap hm = new HashMap();
             hm.put("bType", BillType.PharmacySale);
             hm.put("dep", d);
@@ -460,7 +462,7 @@ public class CashSummeryControllerExcel implements Serializable {
         String sql;
         Map temMap = new HashMap();
         sql = "select b from Bill b where type(b)!=:type and b.institution=:ins "
-                + " and b.paymentScheme.paymentMethod = :bTp and "
+                + " and b.paymentMethod = :bTp and "
                 + " b.createdAt between :fromDate and :toDate and b.retired=false order by b.id desc  ";
 
         temMap.put("bTp", paymentMethod);
@@ -497,8 +499,8 @@ public class CashSummeryControllerExcel implements Serializable {
         String sql = "SELECT bf FROM BillFee bf WHERE bf.billItem.bill.institution=:ins "
                 + " and bf.billItem.item.institution!=:ins "
                 + " and  bf.createdAt between :fromDate and :toDate  and "
-                + "( bf.billItem.bill.paymentScheme.paymentMethod = :pm1 or  bf.billItem.bill.paymentScheme.paymentMethod = :pm2 or "
-                + " bf.billItem.bill.paymentScheme.paymentMethod = :pm3 or  bf.billItem.bill.paymentScheme.paymentMethod = :pm4)";
+                + "( bf.billItem.bill.paymentMethod = :pm1 or  bf.billItem.bill.paymentMethod = :pm2 or "
+                + " bf.billItem.bill.paymentMethod = :pm3 or  bf.billItem.bill.paymentMethod = :pm4)";
 
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());
@@ -533,7 +535,8 @@ public class CashSummeryControllerExcel implements Serializable {
 
     private List<Bill> bills(BillType billType) {
         String sql;
-        sql = "SELECT b FROM Bill b WHERE b.retired=false and b.billType = :bTp and b.institution=:ins and b.createdAt between :fromDate and :toDate order by b.id";
+        sql = "SELECT b FROM Bill b WHERE b.retired=false and b.billType = :bTp and "
+                + "b.institution=:ins and b.createdAt between :fromDate and :toDate order by b.id";
 
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());
@@ -584,28 +587,28 @@ public class CashSummeryControllerExcel implements Serializable {
         return tmp;
     }
 
-    public List<AdmissionTypeBills> getInwardCollection() {
+    public void createInwardCollection() {
         inwardTot = 0.0;
-        List<AdmissionTypeBills> tmp = new ArrayList<>();
+        admissionTypeBillses = new ArrayList<>();
         for (AdmissionType at : getAdmissionTypeController().getItems()) {
             AdmissionTypeBills admB = new AdmissionTypeBills();
             admB.setAdmissionType(at);
             admB.setBills(getInwardBills(at));
             admB.setTotal(calTotal(admB.getBills()));
             inwardTot += admB.getTotal();
-            tmp.add(admB);
+            admissionTypeBillses.add(admB);
         }
-
-        return tmp;
     }
-    
+
+    public List<AdmissionTypeBills> getInwardCollection() {
+
+        return admissionTypeBillses;
+    }
+
 //    public List<String2Value1> getInwardCollection(){
 //        for(AdmissionTypeBills adm:)
 //    
 //    }
-    
-    
-
     private double calTotal(List<Bill> lst) {
         double tmp = 0.0;
         for (Bill b : lst) {
@@ -616,8 +619,15 @@ public class CashSummeryControllerExcel implements Serializable {
 
     private List<Bill> getInwardBills(AdmissionType admissionType) {
         String sql;
-        sql = "SELECT b FROM Bill b WHERE b.retired=false and b.billType = :bTp and b.patientEncounter.admissionType=:adm  and b.institution=:ins and b.createdAt between :fromDate and :toDate order by b.id";
+        sql = "SELECT b FROM Bill b WHERE "
+                + " (type(b)=:class1 or type(b)=:class2 or type(b)=:class3) and"
+                + " b.retired=false and b.billType = :bTp "
+                + "and b.patientEncounter.admissionType=:adm  and b.institution=:ins"
+                + " and b.createdAt between :fromDate and :toDate order by b.id";
         Map temMap = new HashMap();
+        temMap.put("class1", BilledBill.class);
+        temMap.put("class2", CancelledBill.class);
+          temMap.put("class3", RefundBill.class);
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
         temMap.put("bTp", BillType.InwardPaymentBill);
@@ -749,7 +759,6 @@ public class CashSummeryControllerExcel implements Serializable {
 //    public void setSessionController(SessionController sessionController) {
 //        this.sessionController = sessionController;
 //    }
-
     private List<Department> findDepartment() {
         if (getInstitution() == null) {
             return new ArrayList<>();
@@ -759,7 +768,7 @@ public class CashSummeryControllerExcel implements Serializable {
         Map temMap = new HashMap();
         sql = "select distinct(bi.item.department) FROM BillItem bi where bi.bill.institution=:ins and bi.bill.billType= :bTp and bi.item.institution=:ins "
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4) ";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) ";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -781,7 +790,7 @@ public class CashSummeryControllerExcel implements Serializable {
         }
         sql = "select distinct(bi.item.category) FROM BillItem bi where bi.bill.institution=:ins and bi.bill.billType= :bTp "
                 + " and bi.item.department=:dep and  bi.bill.createdAt between :fromDate and :toDate "
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -802,7 +811,7 @@ public class CashSummeryControllerExcel implements Serializable {
 
         sql = "select distinct(bi.item.category) FROM BillItem bi where bi.bill.institution=:ins and bi.bill.billType= :bTp "
                 + " and bi.bill.createdAt between :fromDate and :toDate and bi.item.department.institution=:ins2 "
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4) order by bi.item.category.name";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) order by bi.item.category.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -825,8 +834,8 @@ public class CashSummeryControllerExcel implements Serializable {
         }
         sql = "select distinct(bi.item) FROM BillItem bi where bi.item.department=:dep and bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and bi.item.category=:cat and  bi.bill.createdAt between :fromDate and :toDate "
-                + "and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + "and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -851,8 +860,8 @@ public class CashSummeryControllerExcel implements Serializable {
         }
         sql = "select distinct(bi.item) FROM BillItem bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and bi.item.category.id=" + d.getId() + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + "and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + "and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -873,7 +882,7 @@ public class CashSummeryControllerExcel implements Serializable {
 
         sql = "select distinct(bi.item) FROM BillItem bi where  bi.item.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and bi.bill.createdAt between :fromDate and :toDate "
-                + "and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + "and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -899,8 +908,6 @@ public class CashSummeryControllerExcel implements Serializable {
         return billed - (cancelled + refunded);
 
     }
-    
-    
 
     private long billItemForCount(Bill bill, Item i) {
 
@@ -908,7 +915,7 @@ public class CashSummeryControllerExcel implements Serializable {
         String sql;
 
         sql = "select count(bi) FROM BillItem bi where  bi.bill.institution=:ins and bi.item=:itm"
-                + " and (bi.bill.paymentScheme.paymentMethod = :pm1 or bi.bill.paymentScheme.paymentMethod = :pm2 or bi.bill.paymentScheme.paymentMethod = :pm3 or bi.bill.paymentScheme.paymentMethod = :pm4) "
+                + " and (bi.bill.paymentMethod = :pm1 or bi.bill.paymentMethod = :pm2 or bi.bill.paymentMethod = :pm3 or bi.bill.paymentMethod = :pm4) "
                 + "and bi.bill.billType=:btp and type(bi.bill)=:billClass "
                 + "and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
 
@@ -936,7 +943,7 @@ public class CashSummeryControllerExcel implements Serializable {
 //        billed = cancelled = refunded = 0.0;
 //        Map temMap = new HashMap();
 //        sql = "select bi FROM BillItem bi where  bi.bill.institution.id=" + getInstitution().getId() + " and bi.item.id=" + i.getItem().getId()
-//                + " and (bi.bill.paymentScheme.paymentMethod = :pm1 or bi.bill.paymentScheme.paymentMethod = :pm2 or bi.bill.paymentScheme.paymentMethod = :pm3 )    and type(bi.bill)=:bTp and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
+//                + " and (bi.bill.paymentMethod = :pm1 or bi.bill.paymentMethod = :pm2 or bi.bill.paymentMethod = :pm3 )    and type(bi.bill)=:bTp and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
 //        temMap.put("toDate", getToDate());
 //        temMap.put("fromDate", getFromDate());
 //        temMap.put("pm1", PaymentMethod.Cash);
@@ -953,7 +960,7 @@ public class CashSummeryControllerExcel implements Serializable {
 //
 //
 //        sql = "select bi FROM BillItem bi where  bi.bill.institution.id=" + getInstitution().getId() + " and bi.item.id=" + i.getItem().getId()
-//                + " and (bi.bill.paymentScheme.paymentMethod = :pm1 or bi.bill.paymentScheme.paymentMethod = :pm2 or bi.bill.paymentScheme.paymentMethod = :pm3 )    and type(bi.bill)=:bTp and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
+//                + " and (bi.bill.paymentMethod = :pm1 or bi.bill.paymentMethod = :pm2 or bi.bill.paymentMethod = :pm3 )    and type(bi.bill)=:bTp and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
 //        temMap.put("toDate", getToDate());
 //        temMap.put("fromDate", getFromDate());
 //        temMap.put("pm1", PaymentMethod.Cash);
@@ -969,7 +976,7 @@ public class CashSummeryControllerExcel implements Serializable {
 //        temMap.clear();
 //
 //        sql = "select bi FROM BillItem bi where  bi.bill.institution.id=" + getInstitution().getId() + " and bi.item.id=" + i.getItem().getId()
-//                + " and (bi.bill.paymentScheme.paymentMethod = :pm1 or bi.bill.paymentScheme.paymentMethod = :pm2 or bi.bill.paymentScheme.paymentMethod = :pm3 )    and type(bi.bill)=:bTp and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
+//                + " and (bi.bill.paymentMethod = :pm1 or bi.bill.paymentMethod = :pm2 or bi.bill.paymentMethod = :pm3 )    and type(bi.bill)=:bTp and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
 //        temMap.put("toDate", getToDate());
 //        temMap.put("fromDate", getFromDate());
 //        temMap.put("pm1", PaymentMethod.Cash);
@@ -1033,13 +1040,13 @@ public class CashSummeryControllerExcel implements Serializable {
                 + " bf.bill.billType=:bTp and bf.fee.feeType=:ftp "
                 + " and bf.bill.institution=:ins and bf.bill.createdAt between :fromDate and :toDate "
                 + "  and bf.billItem.item=:itm"
-                + " and ( bf.bill.paymentScheme.paymentMethod = :pm1 or  bf.bill.paymentScheme.paymentMethod = :pm2"
-                + " or  bf.bill.paymentScheme.paymentMethod = :pm3 or  bf.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bf.bill.paymentMethod = :pm1 or  bf.bill.paymentMethod = :pm2"
+                + " or  bf.bill.paymentMethod = :pm3 or  bf.bill.paymentMethod = :pm4)";
 
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
-        temMap.put("ins",getInstitution());
+        temMap.put("ins", getInstitution());
         temMap.put("itm", i.getItem());
         temMap.put("bTp", BillType.OpdBill);
         temMap.put("ftp", feeType);
@@ -1150,9 +1157,14 @@ public class CashSummeryControllerExcel implements Serializable {
         return categoryWithItem;
     }
 
-    public List<String1Value2> getDailyCashExcel() {
+    public void createCashCategoryWithoutPro() {
+        createOPdCategoryTable();
+        createInwardCollection();
 
-        List<String1Value2> list = new ArrayList<>();
+    }
+
+    public void createOPdCategoryTable() {
+        string1Value2s = new ArrayList<>();
 
         for (CategoryWithItem dc : getDailyCash2()) {
 
@@ -1162,18 +1174,22 @@ public class CashSummeryControllerExcel implements Serializable {
                 newD.setValue1(iwf.getCount());
                 newD.setValue2(iwf.getHospitalFee());
                 newD.setSummery(false);
-                list.add(newD);
+                string1Value2s.add(newD);
             }
 
             String1Value2 newD = new String1Value2();
             newD.setString(dc.getCategory().getName() + " Total : ");
             newD.setValue2(dc.getSubHosTotal());
             newD.setSummery(true);
-            list.add(newD);
+            string1Value2s.add(newD);
 
         }
 
-        return list;
+    }
+
+    public List<String1Value2> getDailyCashExcel() {
+
+        return string1Value2s;
     }
 
     private Item service;
@@ -1184,8 +1200,8 @@ public class CashSummeryControllerExcel implements Serializable {
 
         sql = "select bi FROM BillItem bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate and bi.item=:itm"
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -1218,8 +1234,8 @@ public class CashSummeryControllerExcel implements Serializable {
 
         sql = "select sum(bi.feeValue) FROM BillFee bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate and bi.billItem.item=:itm"
-                + " and ( bi.bill.paymentScheme.paymentMethod = :pm1 or  bi.bill.paymentScheme.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentScheme.paymentMethod = :pm3 or  bi.bill.paymentScheme.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -1271,7 +1287,7 @@ public class CashSummeryControllerExcel implements Serializable {
 
     private double getSumByFee(BillType billType, PaymentMethod paymentMethod) {
         String sql = "SELECT sum(bf.feeValue) FROM BillFee bf WHERE bf.billItem.bill.institution=:ins and  bf.billItem.bill.createdAt between :fromDate and :toDate  and "
-                + " bf.billItem.bill.paymentScheme.paymentMethod = :pm and bf.bill.billType=:btp";
+                + " bf.billItem.bill.paymentMethod = :pm and bf.bill.billType=:btp";
 
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());
@@ -1284,7 +1300,7 @@ public class CashSummeryControllerExcel implements Serializable {
 
     private double getSumByBill(BillType billType, PaymentMethod paymentMethod) {
         String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE b.institution=:ins and  b.createdAt between :fromDate and :toDate  and "
-                + " b.paymentScheme.paymentMethod = :pm and b.billType=:btp";
+                + " b.paymentMethod = :pm and b.billType=:btp";
 
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());
@@ -1387,16 +1403,15 @@ public class CashSummeryControllerExcel implements Serializable {
     public double getGrantTotal2Hos() {
         grantTotal = 0.0;
 
-      ///  grantTotal += getOpdHospitalTotal();
+        ///  grantTotal += getOpdHospitalTotal();
         //System.err.println("Pathtotal "+getPathTotal());
         //System.err.println("OPD Hospital "+getOpdHospitalTotal());
         //System.err.println("Credit Com "+getCreditCompanyTotal());
         //System.err.println("Agent "+getAgentCollectionTot());
         //System.err.println("Inward Tot "+getInwardTot());
         //System.err.println("Pharmacy Tot "+getPharmacyTotal());
-
-        grantTotal = getPathTotal() +getOpdHospitalTotal()+
-                getCreditCompanyTotal() + getAgentCollectionTot()
+        grantTotal = getPathTotal() + getOpdHospitalTotal()
+                + getCreditCompanyTotal() + getAgentCollectionTot()
                 + getInwardTot() + getPharmacyTotal();
 
         return grantTotal;
@@ -1537,6 +1552,22 @@ public class CashSummeryControllerExcel implements Serializable {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    public List<String1Value2> getString1Value2s() {
+        return string1Value2s;
+    }
+
+    public void setString1Value2s(List<String1Value2> string1Value2s) {
+        this.string1Value2s = string1Value2s;
+    }
+
+    public List<AdmissionTypeBills> getAdmissionTypeBillses() {
+        return admissionTypeBillses;
+    }
+
+    public void setAdmissionTypeBillses(List<AdmissionTypeBills> admissionTypeBillses) {
+        this.admissionTypeBillses = admissionTypeBillses;
     }
 
 }

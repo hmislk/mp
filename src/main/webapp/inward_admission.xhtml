@@ -157,20 +157,9 @@
                                             #{apt2.patient.person.nameWithTitle}
                                         </p:column>
                                     </p:autoComplete>   
-                                    <h:panelGrid id="panSearch2" columns="2">
-                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="Name" />
-                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.nameWithTitle}" ></h:outputLabel>
-                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="Sex" />
-                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.sex}" ></h:outputLabel>
-                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="DOB"  />
-
-                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.dob}"   >
-                                            <f:convertDateTime pattern="dd/MM/yy" />
-                                        </h:outputLabel>
-
-                                        <h:outputLabel  rendered="#{admissionController.appointmentBill!=null}" value="Adress" />
-                                        <h:outputLabel rendered="#{admissionController.appointmentBill!=null}" value="#{admissionController.appointmentBill.patient.person.address}" ></h:outputLabel>
-                                    </h:panelGrid>
+                                    <h:panelGroup id="panSearch2">
+                                        <bill:bhtDetail admission="#{billBhtController.patientEncounter}"/>
+                                    </h:panelGroup>
                                 </p:tab>
                             </p:tabView>
                         </p:panel>

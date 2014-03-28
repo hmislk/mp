@@ -235,7 +235,7 @@ public class PatientReportController implements Serializable {
         PatientReportItemValue v = getPirivFacade().find(id);
         //System.out.println("v is " + v);
         //System.out.println("strEnterVal = " + strEnterVal);
-        if (v != null && !strEnterVal.equals("")) {
+        if (v != null && strEnterVal != null & !strEnterVal.trim().equals("")) {
             //System.out.println("v = " + v.getStrValue());
             v.setStrValue(strEnterVal);
             //System.out.println("v = " + v.getStrValue());

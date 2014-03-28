@@ -261,7 +261,7 @@ public class PatientReportController implements Serializable {
 
     public void saveMemoVal(long id) {
         PatientReportItemValue v = getPirivFacade().find(id);
-        if (v != null && memoEnterVal != null) {
+        if (v != null && memoEnterVal != null && !memoEnterVal.trim().equals("") ) {
             v.setLobValue(memoEnterVal);
             getPirivFacade().edit(v);
         } else {

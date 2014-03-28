@@ -91,9 +91,9 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Physical Stock"/>    
                                     </f:facet>
-                                    <p:inputText   value= "---------------- " >
+                                    <p:outputLabel   value= "___________________ " >
                                         <!--<f:convertNumber integerOnly="true" ></f:convertNumber>-->
-                                    </p:inputText>                             
+                                    </p:outputLabel>                             
                                 </p:column>
 
 
@@ -112,9 +112,50 @@
                                 </p:columnGroup>
 
                             </p:dataTable>
+                            
+                            <p:panelGrid columns="5">
+                                <p:column  style="margin: 10%;">
+                                    <h:outputLabel value="______________" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="              " />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="______________" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="              " />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="______________" />
+                                </p:column>
+                                
+                                <p:column>
+                                    <h:outputLabel value="Checked By" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="              " />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="Pharmacist" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="              " />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="Auditor" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="______________" /><br/>
+                                    <h:outputLabel value="Date" />
+                                </p:column>
+                            </p:panelGrid>
 
 
                         </h:panelGroup>
+
+
+                        <!--</h:panelGroup>-->
                     </p:panel>
                 </h:form>
 

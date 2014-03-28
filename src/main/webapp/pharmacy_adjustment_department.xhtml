@@ -11,10 +11,10 @@
         <ui:composition template="./resources/template/template.xhtml">
 
             <ui:define name="content">
-                
-                
-                
-                
+
+
+
+
                 <h:form>
 
                     <p:panel header="Department Stock Adjustment : Quantity" >
@@ -49,7 +49,8 @@
                                 <h:outputLabel value="Comment" ></h:outputLabel>
                                 <p:inputTextarea value="#{pharmacyAdjustmentController.comment}" ></p:inputTextarea>
                                 <h:outputLabel value="" ></h:outputLabel>
-                                <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
+                                <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" 
+                                                 action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
                                 <p:defaultCommand target="btnAdjust"/>
                             </h:panelGrid>
 

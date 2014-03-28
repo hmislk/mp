@@ -6,7 +6,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:bil="http://java.sun.com/jsf/composite/bill"
-      xmlns:phi="http://java.sun.com/jsf/composite/pharmacy">
+      xmlns:phi="http://java.sun.com/jsf/composite/pharmacy"
+      xmlns:bill="http://java.sun.com/jsf/composite/inward">
 
     <body>
 
@@ -72,27 +73,16 @@
                                             <p:column >
                                                 <h:outputLabel value="#{apt2.patient.person.name}"/> 
                                             </p:column>
+                                            <p:column>
+                                                <h:outputLabel value="#{apt2.currentPatientRoom.roomFacilityCharge.name}"/>
+                                            </p:column>
                                             <p:ajax event="itemSelect" process="acPt2" update="#{p:component('gpDetail')}" />
                                         </p:autoComplete>  
 
                                     </p:panel>
 
                                     <p:panel id="gpDetail">
-
-                                        <p:panel header="Patient Detail" >
-                                            <h:panelGrid columns="2">
-                                                <p:outputLabel  value="Name" />
-                                                <p:outputLabel value="#{pharmacySaleBhtController.patientEncounter.patient.person.name}"/>
-                                                <p:outputLabel value="NIC" />
-                                                <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.nic}"  />
-                                                <p:outputLabel value="Age"/>
-                                                <p:outputLabel value="#{pharmacySaleBhtController.patientEncounter.patient.age}"/>
-                                                <p:outputLabel value="Address" />
-                                                <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.address}" />
-                                                <p:outputLabel value="Phone No" />
-                                                <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.phone}"  />
-                                            </h:panelGrid>
-                                        </p:panel>
+                                        <bill:bhtDetail admission="#{pharmacySaleBhtController.patientEncounter}"/>
                                     </p:panel>
 
                                 </p:panel>

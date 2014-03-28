@@ -137,6 +137,10 @@
 
                         <p:spacer height="30"/>
 
+                        <ca:inwardPaymentCancel data="#{commonReport.inwardRefunds}"/>
+
+                        <p:spacer height="30"/>
+
                         <p:dataTable id="sum1" value="#{commonReport.creditSlipSum}"  var="i" >
                             <f:facet name="header">
                                 Credit Summery
@@ -185,6 +189,9 @@
                         <p:spacer height="30"/>
 
                         <ca:pettyCancel data="#{commonReport.userPettyPaymentCancelBills}"/>
+
+
+
                     </p:panel>
 
 

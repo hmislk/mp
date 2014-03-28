@@ -81,6 +81,7 @@ public class CommonReport implements Serializable {
     private BillsTotals agentCancelBill;
     private BillsTotals inwardPayments;
     private BillsTotals inwardPaymentCancel;
+    private BillsTotals inwardRefunds;
     private BillsTotals grnBilled;
     private BillsTotals grnCancelled;
     private BillsTotals grnReturn;
@@ -93,8 +94,7 @@ public class CommonReport implements Serializable {
     private BillsTotals GrnPaymentReturn;
     private BillsTotals GrnPaymentCancell;
     private BillsTotals GrnPaymentCancellReturn;
-    
-    
+
     //////////////////    
     private List<String1Value1> dataTableData;
     private List<InwardPriceAdjustment> items = null;
@@ -665,7 +665,9 @@ public class CommonReport implements Serializable {
     }
 
     public BillsTotals getUserInwardPaymentCancelBillsOwn() {
-
+        if (inwardPaymentCancel == null) {
+            inwardPaymentCancel = new BillsTotals();
+        }
         return inwardPaymentCancel;
     }
 
@@ -877,7 +879,7 @@ public class CommonReport implements Serializable {
         String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
                 + " type(b)=:bill and b.retired=false and "
                 + " b.billType=:btp "
-                + " and (b.paymentMethod=:pm or b.paymentScheme.paymentMethod=:pm)"
+                + " and (b.paymentMethod=:pm or b.paymentMethod=:pm)"
                 + "  and b.institution=:ins"
                 + " and b.createdAt between :fromDate and :toDate";
         Map temMap = new HashMap();
@@ -896,7 +898,7 @@ public class CommonReport implements Serializable {
         String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
                 + " type(b)=:bill and b.retired=false and "
                 + " b.billType=:btp and b.creater=:w "
-                + " and (b.paymentMethod=:pm or b.paymentScheme.paymentMethod=:pm)"
+                + " and (b.paymentMethod=:pm )"
                 + "  and b.institution=:ins"
                 + " and b.createdAt between :fromDate and :toDate";
         Map temMap = new HashMap();
@@ -954,7 +956,7 @@ public class CommonReport implements Serializable {
         String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
                 + " type(b)=:bill and b.retired=false and "
                 + " b.billType=:btp and b.creater=:w "
-                + " and (b.paymentMethod=:pm or b.paymentScheme.paymentMethod=:pm)"
+                + " and (b.paymentMethod=:pm or b.paymentMethod=:pm)"
                 + "  and b.institution!=:ins"
                 + " and b.createdAt between :fromDate and :toDate";
         Map temMap = new HashMap();
@@ -997,7 +999,7 @@ public class CommonReport implements Serializable {
             if (bt != null) {
                 System.err.println("CRDIT " + bt.getCredit());
                 System.err.println("CASH " + bt.getCash());
-             //   System.err.println("Size " + bt.getBills().size());
+                //   System.err.println("Size " + bt.getBills().size());
                 tmp += bt.getCredit();
             }
         }
@@ -1175,6 +1177,14 @@ public class CommonReport implements Serializable {
         getInwardPaymentCancel().setCredit(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Credit, getWebUser()));
         getInwardPaymentCancel().setSlip(calValue(new CancelledBill(), BillType.InwardPaymentBill, PaymentMethod.Slip, getWebUser()));
 
+        //Inward Refund 
+        getInwardRefunds().setBills(userBillsOwn(new RefundBill(), BillType.InwardPaymentBill, getWebUser()));
+        getInwardRefunds().setCard(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Card, getWebUser()));
+        getInwardRefunds().setCash(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Cash, getWebUser()));
+        getInwardRefunds().setCheque(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Cheque, getWebUser()));
+        getInwardRefunds().setCredit(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Credit, getWebUser()));
+        getInwardRefunds().setSlip(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Slip, getWebUser()));
+
         //Phrmacy Bill Other
         getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
         getBilledBillsPh2().setCard(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
@@ -1241,8 +1251,7 @@ public class CommonReport implements Serializable {
         getGrnReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PharmacyGrnReturn, PaymentMethod.Credit, getDepartment()));
 
     }
-    
-    
+
     public void createGrnPaymentTable() {
         recreteModal();
 
@@ -1276,7 +1285,6 @@ public class CommonReport implements Serializable {
         getGrnPaymentCancellReturn().setCredit(calValue(new CancelledBill(), BillType.GrnPaymentReturn, PaymentMethod.Credit, getDepartment()));
 
     }
-    
 
     public void createPurchaseDetailTable() {
         recreteModal();
@@ -1311,9 +1319,6 @@ public class CommonReport implements Serializable {
         getPurchaseReturnCancel().setCredit(calValue(new CancelledBill(), BillType.PurchaseReturn, PaymentMethod.Credit, getDepartment()));
 
     }
-    
-    
-    
 
     public void createGrnDetailTableByDealor() {
         recreateList();
@@ -1369,6 +1374,7 @@ public class CommonReport implements Serializable {
         paymentCancelBills = null;
         inwardPayments = null;
         inwardPaymentCancel = null;
+        inwardRefunds = null;
         grnBilled = null;
         grnCancelled = null;
         grnReturn = null;
@@ -1600,6 +1606,7 @@ public class CommonReport implements Serializable {
         list2.add(agentCancelBill);
         list2.add(inwardPayments);
         list2.add(inwardPaymentCancel);
+        list2.add(inwardRefunds);
         list2.add(cashRecieves);
         list2.add(cashRecieveCancel);
 
@@ -1749,8 +1756,7 @@ public class CommonReport implements Serializable {
 
         return dataTableData;
     }
-    
-    
+
     public List<String1Value1> getGRNPaymentTotal() {
         List<BillsTotals> list = new ArrayList<>();
         list.add(getGrnPaymentBill());
@@ -1777,7 +1783,6 @@ public class CommonReport implements Serializable {
 
         return dataTableData;
     }
-    
 
     public List<String1Value1> getDataTableDataByType() {
         List<BillsTotals> list = new ArrayList<>();
@@ -2164,5 +2169,16 @@ public class CommonReport implements Serializable {
 
     public void setGrnPaymentCancellReturn(BillsTotals GrnPaymentCancellReturn) {
         this.GrnPaymentCancellReturn = GrnPaymentCancellReturn;
+    }
+
+    public BillsTotals getInwardRefunds() {
+        if (inwardRefunds == null) {
+            inwardRefunds = new BillsTotals();
+        }
+        return inwardRefunds;
+    }
+
+    public void setInwardRefunds(BillsTotals inwardRefunds) {
+        this.inwardRefunds = inwardRefunds;
     }
 }

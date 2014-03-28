@@ -12,6 +12,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.BillFee;
@@ -33,7 +34,7 @@ import javax.inject.Inject;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -44,6 +45,7 @@ public class InwardAdditionalChargeController implements Serializable {
     private BillNumberBean billNumberBean;
     @EJB
     private InwardCalculation inwardCalculation;
+    private InwardChargeType inwardChargeType;
     //////////////
     @EJB
     private FeeFacade feeFacade;
@@ -62,6 +64,10 @@ public class InwardAdditionalChargeController implements Serializable {
     private boolean errorCheck() {
         if (getCurrent().getPatientEncounter() == null) {
             UtilityController.addErrorMessage("Select BHT");
+            return true;
+        }
+
+        if (getInwardChargeType() == null) {
             return true;
         }
 
@@ -95,9 +101,9 @@ public class InwardAdditionalChargeController implements Serializable {
     }
 
     private void saveBill() {
-        getCurrent().setBillType(BillType.InwardBill);
+        getCurrent().setBillType(BillType.InwardAdditionalBill);
         getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), getSessionController().getDepartment(), BillType.InwardBill));
-        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), getCurrent().getBillType(),BillNumberSuffix.INWSER));
+        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWSER));
 
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -110,6 +116,7 @@ public class InwardAdditionalChargeController implements Serializable {
     private void saveBillItem() {
         BillItem temBi = new BillItem();
         temBi.setBill(getCurrent());
+        temBi.setInwardChargeType(inwardChargeType);
         temBi.setGrossValue(getCurrent().getTotal());
         temBi.setNetValue(getCurrent().getTotal());
         temBi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -202,5 +209,13 @@ public class InwardAdditionalChargeController implements Serializable {
 
     public void setInwardCalculation(InwardCalculation inwardCalculation) {
         this.inwardCalculation = inwardCalculation;
+    }
+
+    public InwardChargeType getInwardChargeType() {
+        return inwardChargeType;
+    }
+
+    public void setInwardChargeType(InwardChargeType inwardChargeType) {
+        this.inwardChargeType = inwardChargeType;
     }
 }

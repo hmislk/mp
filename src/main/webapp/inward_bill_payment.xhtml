@@ -40,9 +40,6 @@
                                 <p:column>
                                     <h:outputLabel value="Discharged"  rendered="#{myItem.discharged}"/>
                                 </p:column>
-                                <p:column>
-                                    <h:outputLabel value="Fees Finalized" rendered="#{myItem.paymentFinalized}"/>
-                                </p:column>
                             </p:autoComplete>   
                             <h:panelGroup id="panSearch2">
                                 <in:bhtDetail admission="#{inwardPaymentController.current.patientEncounter}"/>
@@ -90,7 +87,6 @@
                 </p:panel>
 
                 <h:panelGroup rendered="#{inwardPaymentController.printPreview}">
-
                     <bill:payment bill="#{inwardPaymentController.current}"/>
                 </h:panelGroup>
 

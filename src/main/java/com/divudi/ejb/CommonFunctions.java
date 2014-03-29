@@ -93,15 +93,20 @@ public class CommonFunctions {
             to = new Date();
         }
 
+        to = getEndOfDay(to);
+        frm = getStartOfDay(frm);
+
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTime(to);
         cal2.setTime(frm);
 
-        System.err.println("cal 1 "+cal1.getTimeInMillis());
-        System.err.println("cal 2 "+cal2.getTimeInMillis());
+        System.err.println("cal 1 " + cal1.getTimeInMillis());
+        System.err.println("cal 2 " + cal2.getTimeInMillis());
+        System.err.println("Frm " + frm);
+        System.err.println("TO " + to);
         Long inDays = (cal1.getTimeInMillis() - cal2.getTimeInMillis()) / (1000 * 60 * 60 * 24);
-        System.err.println("INDAYS "+inDays);
+        System.err.println("INDAYS " + inDays);
         return inDays;
 
     }

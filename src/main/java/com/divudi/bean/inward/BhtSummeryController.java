@@ -176,6 +176,46 @@ public class BhtSummeryController implements Serializable {
         updateTotal();
     }
 
+    public void updateTempPatientRoom(PatientRoom patientRoom) {
+        if (patientRoom.getId() != null) {
+            getPatientRoomFacade().edit(patientRoom);
+        } else {
+            getPatientRoomFacade().create(patientRoom);
+        }
+
+        calCulateRoomCharge(patientRoom);
+
+        updatePaitentRoomAdjustedTotal();
+    }
+
+    private void updatePaitentRoomAdjustedTotal() {
+        for (ChargeItemTotal cit : chargeItemTotals) {
+            if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
+                double dbl = 0;
+                for (PatientRoom pr : cit.getPatientRooms()) {
+                    dbl += pr.getCalculatedRoomCharge();
+                }
+                cit.setAdjustedTotal(dbl);
+            }
+        }
+    }
+
+    private void calCulateRoomCharge(PatientRoom p) {
+        double charge;
+        System.err.println("1 " + p.getRoomFacilityCharge());
+        System.err.println("2 " + p.getCurrentRoomCharge());
+        if (p.getRoomFacilityCharge() == null || p.getCurrentRoomCharge() == 0) {
+            return;
+        }
+
+        TimedItemFee timedFee = p.getRoomFacilityCharge().getTimedItemFee();
+        double roomCharge = p.getCurrentRoomCharge();
+
+        charge = roomCharge * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+
+        p.setCalculatedRoomCharge(charge);
+    }
+
     public void updatePatientRoom(PatientRoom patientRoom) {
 
         if (patientRoom.getId() != null) {
@@ -1157,17 +1197,18 @@ public class BhtSummeryController implements Serializable {
     private void setRoomChargeList() {
         for (ChargeItemTotal cit : chargeItemTotals) {
             if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
-                System.err.println("Inside Room Charges");
+                //  System.err.println("Inside Room Charges");
                 for (RoomChargeData rcd : getRoomChargeDatas()) {
                     PatientRoom pr = new PatientRoom();
                     pr.setReferencePatientRoom(rcd.getPatientRoom());
                     pr.setAdmittedAt(rcd.getPatientRoom().getAdmittedAt());
                     pr.setDischargedAt(rcd.getPatientRoom().getDischargedAt());
                     pr.setCalculatedRoomCharge(rcd.getChargeTot());
+                    pr.setRoomFacilityCharge(rcd.getPatientRoom().getRoomFacilityCharge());
                     cit.getPatientRooms().add(pr);
                 }
 
-                System.err.println("Room Charges Size " + cit.getPatientRooms().size());
+                //  System.err.println("Room Charges Size " + cit.getPatientRooms().size());
             }
         }
     }

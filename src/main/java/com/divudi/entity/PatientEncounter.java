@@ -76,7 +76,9 @@ public class PatientEncounter implements Serializable {
     @ManyToOne
     Institution creditCompany;
     @ManyToOne
-    Doctor referringDoctor;
+    private Staff referringDoctor;
+    @ManyToOne
+    private Staff opdDoctor;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date dateOfAdmission;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -330,13 +332,7 @@ public class PatientEncounter implements Serializable {
         this.patient = patient;
     }
 
-    public Doctor getReferringDoctor() {
-        return referringDoctor;
-    }
-
-    public void setReferringDoctor(Doctor referringDoctor) {
-        this.referringDoctor = referringDoctor;
-    }
+   
 
     public long getBhtLong() {
         return bhtLong;
@@ -532,6 +528,20 @@ public class PatientEncounter implements Serializable {
         this.policyNo = policyNo;
     }
 
+    public Staff getReferringDoctor() {
+        return referringDoctor;
+    }
 
+    public void setReferringDoctor(Staff referringDoctor) {
+        this.referringDoctor = referringDoctor;
+    }
+
+    public Staff getOpdDoctor() {
+        return opdDoctor;
+    }
+
+    public void setOpdDoctor(Staff opdDoctor) {
+        this.opdDoctor = opdDoctor;
+    }
 
 }

@@ -18,10 +18,11 @@
 
                         <h:panelGrid columns="6" >     
 
-                            <p:commandButton value="Print" ajax="false" >
+                            <p:commandButton value="Print" ajax="false" disabled="#{reportsStockVariant.recordedBillAfter.id eq null}" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                            <p:commandButton ajax="false" value="Excel"  styleClass="noPrintButton" style="float: right;"
+                                             disabled="#{reportsStockVariant.recordedBillAfter.id eq null}">
                                 <pe:exporter type="xlsx" target="tbl" fileName="Category_report"  />
                             </p:commandButton>  
                             <p:commandButton ajax="false" value="Save Records"

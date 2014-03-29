@@ -83,6 +83,7 @@
                                     <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{bill.department}"/>
                                     <f:setPropertyActionListener target="#{reportsStockVariant.category}" value="#{bill.category}"/>
                                     <f:setPropertyActionListener target="#{reportsStockVariant.recordedBill}" value="#{bill}"/>       
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.recordedBillAfter}" value="#{null}"/>       
                                     <f:setPropertyActionListener target="#{reportsStockVariant.records}" value="#{bill.stockVarientBillItems}"/>                         
                                 </p:commandButton>
                             </p:column>

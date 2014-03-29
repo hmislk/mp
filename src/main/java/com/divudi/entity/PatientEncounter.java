@@ -106,8 +106,6 @@ public class PatientEncounter implements Serializable {
     @ManyToOne
     BillSession billSession;
     private boolean paymentFinalized;
-    String referanceNo;
-    String policyNo;
 
 //    @OneToOne
 //    PatientRoom lastPatientRoom;
@@ -510,22 +508,6 @@ public class PatientEncounter implements Serializable {
 
     public void setCurrentPatientRoom(PatientRoom currentPatientRoom) {
         this.currentPatientRoom = currentPatientRoom;
-    }
-
-    public String getReferanceNo() {
-        return referanceNo;
-    }
-
-    public void setReferanceNo(String referanceNo) {
-        this.referanceNo = referanceNo;
-    }
-
-    public String getPolicyNo() {
-        return policyNo;
-    }
-
-    public void setPolicyNo(String policyNo) {
-        this.policyNo = policyNo;
     }
 
     public Staff getReferringDoctor() {

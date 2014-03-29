@@ -9,6 +9,10 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
 import com.divudi.data.PaymentMethod;
+import static com.divudi.data.PaymentMethod.Card;
+import static com.divudi.data.PaymentMethod.Cheque;
+import static com.divudi.data.PaymentMethod.Credit;
+import static com.divudi.data.PaymentMethod.Slip;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -23,7 +27,6 @@ import com.divudi.entity.Item;
 import com.divudi.entity.ItemFee;
 import com.divudi.entity.PackageFee;
 import com.divudi.entity.Packege;
-import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.lab.PatientInvestigation;
@@ -48,6 +51,8 @@ import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TemporalType;
+
+
 
 /**
  *

@@ -485,7 +485,7 @@ public class BhtSummeryController implements Serializable {
 
         for (PatientItem pi : patientItems) {
             if (pi.getFinalize() == null) {
-                double serviceTot = getInwardCalculation().calTimedServiceCharge(pi, getPatientEncounter().getDateOfDischarge());
+                double serviceTot = getInwardCalculation().calTimedServiceCharge(pi, pi.getToTime());
                 pi.setServiceValue(serviceTot);
                 pi.setTmpConsumedTime(getDuration(pi.getFromTime(), pi.getToTime()));
             }

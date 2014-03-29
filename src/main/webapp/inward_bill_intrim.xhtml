@@ -52,11 +52,17 @@
                         <p:panel header="Summery" id="ss">
                             <h:panelGrid columns="2" id="tot">
                                 <h:outputLabel  value="Total Charges" style="font-weight: bold"/>
-                                <h:outputLabel id="gtot" value="#{bhtSummeryController.grantTotal}"/>                                                      
+                                <h:outputLabel id="gtot" value="#{bhtSummeryController.grantTotal}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>
                                 <h:outputLabel value="Paid " style="font-weight: bold"/>
-                                <h:outputLabel value="#{bhtSummeryController.paid}"/>
+                                <h:outputLabel value="#{bhtSummeryController.paid}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>
                                 <h:outputLabel value="Due " style="font-weight: bold"/>
-                                <h:outputLabel id="due" value="#{bhtSummeryController.due}"/>
+                                <h:outputLabel id="due" value="#{bhtSummeryController.due}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>
                             </h:panelGrid>
                         </p:panel>
                         <p:panel id="dis" header="Discharge">
@@ -77,6 +83,7 @@
                             </p:column>
                             <p:column style="text-align: right;" >
                                 <h:outputLabel value="#{c.total}">
+                                    <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
                             </p:column>
                         </p:dataTable>                       
@@ -99,16 +106,24 @@
                                                     pattern="dd MMMM yyyy hh mm a" /> 
                                     </p:column>
                                     <p:column headerText="Room Charge">
-                                        #{rm.chargeTot}
+                                        <h:outputLabel value="#{rm.chargeTot}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>                                        
                                     </p:column> 
                                     <p:column headerText="Maintain Charge">
-                                        #{rm.maintananceTot}
+                                        <h:outputLabel value="#{rm.maintananceTot}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>    
                                     <p:column headerText="MO Charge">
-                                        #{rm.moChargeTot}
+                                        <h:outputLabel  value="#{rm.moChargeTot}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>                                        
                                     <p:column headerText="Nursing Charge">
-                                        #{rm.nursingTot}
+                                        <h:outputLabel value="#{rm.nursingTot}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column> 
                                     <p:column>
                                         <p:commandButton ajax="false" value="Update"
@@ -134,7 +149,9 @@
                                                     pattern="dd MMMM yyyy hh mm a" />                                    
                                     </p:column>
                                     <p:column headerText="Total">
-                                        #{pt.serviceValue}
+                                        <h:outputLabel value="#{pt.serviceValue}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>                                    
                                     <p:column >
                                         <p:commandButton ajax="false" value="Update" 
@@ -195,7 +212,9 @@
                                             #{ser.item.name}
                                         </p:column>
                                         <p:column>
-                                            #{ser.netValue}
+                                            <h:outputLabel value="#{ser.netValue}">
+                                                <f:convertNumber pattern="#,##0.00"/>
+                                            </h:outputLabel>
                                         </p:column>
                                         <p:column>
                                             <h:outputLabel value="#{ser.bill.createdAt}">
@@ -277,10 +296,14 @@
                                         #{iss.deptId}
                                     </p:column>
                                     <p:column headerText="Bill Total">
-                                        #{iss.total}
+                                        <h:outputLabel value="#{iss.total}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>
                                     <p:column headerText="Bill Total With Matrix">
-                                        #{iss.netTotal}
+                                        <h:outputLabel  value="#{iss.netTotal}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>
                                     <p:column>
                                         <h:outputLabel value="#{iss.createdAt}">
@@ -339,10 +362,14 @@
                                         #{iss2.deptId}
                                     </p:column>
                                     <p:column headerText="Bill Total">
-                                        #{iss2.total}
+                                        <h:outputLabel  value="#{iss2.total}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>
                                     <p:column headerText="Bill Total With Matrix">
-                                        #{iss2.netTotal}
+                                        <h:outputLabel value="#{iss2.netTotal}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>
                                     <p:column>
                                         <h:outputLabel value="#{iss2.createdAt}">
@@ -395,7 +422,9 @@
                                         #{bil.comments}
                                     </p:column>
                                     <p:column headerText="Cost">
-                                        #{bil.total}
+                                        <h:outputLabel  value="#{bil.total}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>
                                     <p:column headerText="Added Date">
                                         <h:outputLabel value="#{bil.createdAt}">
@@ -451,7 +480,9 @@
                                         #{pf.staff.person.nameWithTitle}
                                     </p:column>
                                     <p:column headerText="Fee Value">
-                                        #{pf.feeValue}
+                                        <h:outputLabel value="#{pf.feeValue}">
+                                            <f:convertNumber pattern="#,##0.00"/>
+                                        </h:outputLabel>
                                     </p:column>
                                     <p:column headerText="Fee At">
                                         <h:outputLabel value="#{pf.feeAt}">

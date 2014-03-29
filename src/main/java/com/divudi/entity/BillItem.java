@@ -21,6 +21,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -44,6 +45,8 @@ public class BillItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     Double qty = 0.0;
+    @Lob
+    String descreption;
     double remainingQty;
     double Rate;
     double discountRate;
@@ -563,5 +566,15 @@ public class BillItem implements Serializable {
     public void setProFees(List<BillFee> proFees) {
         this.proFees = proFees;
     }
+
+    public String getDescreption() {
+        return descreption;
+    }
+
+    public void setDescreption(String descreption) {
+        this.descreption = descreption;
+    }
+
+
 
 }

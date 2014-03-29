@@ -28,14 +28,12 @@
                                     </h:selectOneListbox>
                                 </h:panelGrid>
                                 <h:panelGrid id="gpSelectButtons" columns="3"  >
-                                    <h:commandButton id="btnAdd" value="Add"  action="#{roomFacilityChargeController.prepareAdd()}" styleClass="buttons" >
-                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
-                                        </f:ajax>
-                                    </h:commandButton>
+                                    <p:commandButton ajax="false" id="btnAdd" value="Add"  action="#{roomFacilityChargeController.prepareAdd()}" styleClass="buttons" >
+                                    </p:commandButton>
 
-                                    <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
+                                    <p:commandButton ajax="false" id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{roomFacilityChargeController.delete()}"  value="Delete"  >
-                                    </h:commandButton>
+                                    </p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
                         </h:panelGrid  >
@@ -75,10 +73,9 @@
                                     <h:inputText value="#{roomFacilityChargeController.current.moCharge}"/>
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
-                                    <h:commandButton id="btnSave" value="Save"  action="#{roomFacilityChargeController.saveSelected()}" styleClass="buttons">
-                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
-                                        </f:ajax>
-                                    </h:commandButton>
+                                    <p:commandButton ajax="false" id="btnSave" value="Save"  action="#{roomFacilityChargeController.saveSelected()}" styleClass="buttons">
+                                        
+                                    </p:commandButton>
                                     <p:defaultCommand target="btnSave"/>
                                 </h:panelGrid>
                             </h:panelGrid>

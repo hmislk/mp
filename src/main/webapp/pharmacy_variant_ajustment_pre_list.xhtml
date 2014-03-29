@@ -66,6 +66,7 @@
                             </p:column>
 
                             <p:column headerText="View Before Stock">
+                                
                                 <p:commandButton ajax="false" value="View Before Stock" 
                                                  action="pharmacy_variant_category_stock_by_item"  >
                                     <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{bill.department}"/>
@@ -76,6 +77,7 @@
                             </p:column>
 
                             <p:column headerText="Save After Stock">
+                              
                                 <p:commandButton ajax="false" value="Save After Stock" 
                                                  action="pharmacy_variant_category_stock_by_item_after" actionListener="#{reportsStockVariant.fillCategoryStocksAfter()}">
                                     <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{bill.department}"/>
@@ -99,6 +101,7 @@
                                         #{f.creater.webUserPerson.nameWithTitle}
                                     </p:column>
                                     <p:column headerText="View After Stock">
+                                       
                                         <p:commandButton ajax="false" value="View After Stock" 
                                                          action="pharmacy_variant_category_stock_by_item_after"  >
                                             <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{f.department}"/>

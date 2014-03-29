@@ -12,19 +12,17 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGrid columns="4">         
+        <h:panelGrid columns="3">         
             <h:outputLabel value="Bill No"/>
-            <h:outputLabel value="Net Total"/>
             <h:outputLabel value="Item Name"/>
             <h:outputLabel value="Item Code"/>
             <p:inputText  value="#{searchController.searchKeyword.billNo}" />
-            <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
             <p:inputText value="#{searchController.searchKeyword.itemName}"/>
             <p:inputText value="#{searchController.searchKeyword.code}"/>
         </h:panelGrid>
         <p:dataTable rowIndexVar="i"  value="#{searchController.bills}" var="bill" >
             <f:facet name="header">
-                <h:outputLabel value="PRE BILL SEARCH"/>
+                <h:outputLabel value="ADJUST BILL SEARCH"/>
             </f:facet>
 
             <p:column>
@@ -36,16 +34,12 @@
                 <h:outputLabel value="#{bill.deptId}"  ></h:outputLabel>                    
             </p:column>    
 
-            <p:column headerText="Retired " >           
-                <h:outputLabel  value="#{bill.retired}"></h:outputLabel>               
-            </p:column>    
 
             <p:column headerText="Billed at"  >
 
                 <h:outputLabel value="#{bill.createdAt}" >
                     <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                 </h:outputLabel>
-
                 <br/>
                 <h:panelGroup rendered="#{bill.cancelled}" >
                     <h:outputLabel style="color: red;" value="Cancelled at " />
@@ -60,23 +54,14 @@
                 <br/>
                 <h:panelGroup rendered="#{bill.cancelled}" >
                     <h:outputLabel style="color: red;" value="Cancelled By " />
-                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" >                                       
+                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" 
+                                   value="#{bill.cancelledBill.creater.webUserPerson.name}" >                                       
                     </h:outputLabel>
                 </h:panelGroup>               
             </p:column>       
-            <p:column headerText="Paymentmethod"   >            
-                <h:outputLabel value="#{bill.paymentScheme.paymentMethod}" ></h:outputLabel>                
-            </p:column>                               
-            <p:column headerText="Net Value" style="text-align: right;"  >            
-                <h:outputLabel value="#{bill.netTotal}" >
-                    <f:convertNumber pattern="#,000.00"/>
-                </h:outputLabel>                
-            </p:column>
 
-            <p:column headerText="Comments" >
-                <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
-                </h:outputLabel>
-                <h:outputLabel  rendered="#{bill.cancelledBill ne null}" value="#{bill.cancelledBill.comments}" >
+            <p:column headerText="Comments" >               
+                <h:outputLabel   value="#{bill.comments}" >
                 </h:outputLabel>
             </p:column>
         </p:dataTable>

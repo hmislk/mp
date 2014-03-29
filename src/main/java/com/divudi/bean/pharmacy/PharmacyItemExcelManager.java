@@ -924,12 +924,14 @@ public class PharmacyItemExcelManager implements Serializable {
                     amp.setName(itenName);
                     amp.setCode(itemCode);
                     amp.setCategory(cat);
+                    amp.setDepartmentType(DepartmentType.Store);
                     getAmpFacade().create(amp);
                 } else {
                     amp.setRetired(false);
                     amp.setName(itenName);
                     amp.setCode(itemCode);
                     amp.setCategory(cat);
+                    amp.setDepartmentType(DepartmentType.Store);
                     getAmpFacade().edit(amp);
                 }
             }

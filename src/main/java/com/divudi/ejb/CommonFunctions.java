@@ -98,8 +98,10 @@ public class CommonFunctions {
         cal1.setTime(to);
         cal2.setTime(frm);
 
+        System.err.println("cal 1 "+cal1.getTimeInMillis());
+        System.err.println("cal 2 "+cal2.getTimeInMillis());
         Long inDays = (cal1.getTimeInMillis() - cal2.getTimeInMillis()) / (1000 * 60 * 60 * 24);
-        //System.err.println("INDAYS "+inDays);
+        System.err.println("INDAYS "+inDays);
         return inDays;
 
     }

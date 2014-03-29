@@ -54,7 +54,7 @@ public class RoomFacilityChargeController implements Serializable {
         List<RoomFacilityCharge> suggestions;
         String sql;
         if (query == null) {
-            suggestions = new ArrayList<RoomFacilityCharge>();
+            suggestions = new ArrayList<>();
         } else {
             sql = "select p from RoomFacilityCharge p where p.retired=false and upper(p.name) like '%" + query.toUpperCase() + "%' order by p.name";
             //System.out.println(sql);
@@ -70,7 +70,8 @@ public class RoomFacilityChargeController implements Serializable {
         if (getCurrent() == null || getCurrent().getRoom() == null || query == null) {
             suggestions = new ArrayList<RoomFacilityCharge>();
         } else {
-            sql = "select p from RoomFacilityCharge p where p.retired=false and (p.room.filled=false or p.room=:rm) and upper(p.name) like '%" + query.toUpperCase() + "%' order by p.name";
+            sql = "select p from RoomFacilityCharge p where p.retired=false and "
+                    + " (p.room.filled=false or p.room=:rm) and upper(p.name) like '%" + query.toUpperCase() + "%' order by p.name";
             hm.put("rm", getCurrent().getRoom());
             //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql,hm);

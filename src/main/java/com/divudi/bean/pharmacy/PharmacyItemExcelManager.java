@@ -985,13 +985,13 @@ public class PharmacyItemExcelManager implements Serializable {
 
                 Map m = new HashMap();
 
-                cell = sheet.getCell(0, i);
+                cell = sheet.getCell(2, i);
                 itemName = cell.getContents();
 
-                cell = sheet.getCell(1, i);
+                cell = sheet.getCell(3, i);
                 itemCode = cell.getContents();
 
-                cell = sheet.getCell(2, i);
+                cell = sheet.getCell(5, i);
                 genericName = cell.getContents();
 
                 String sql;

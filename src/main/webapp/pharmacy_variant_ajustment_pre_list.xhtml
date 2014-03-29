@@ -20,15 +20,17 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPharmacyTable}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createVariantReportSearch}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
                                 <h:outputLabel value="Department Name"/>   
                                 <h:outputLabel value="Category"/>
+                                <h:outputLabel/><h:outputLabel/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
                                 <p:inputText  value="#{searchController.searchKeyword.department}" />
                                 <p:inputText  value="#{searchController.searchKeyword.category}" />
+                                <h:outputLabel/><h:outputLabel/>
                             </h:panelGrid>
 
 
@@ -45,20 +47,18 @@
                                 </h:outputLabel>                        
                             </p:column>
 
-                            <p:column headerText="Date">                      
+                            <p:column headerText="Reported At">                      
                                 <h:outputLabel  value="#{bill.createdAt}">
-                                    <f:convertDateTime pattern="dd MM yyyy"/>
+                                    <f:convertDateTime pattern="dd MM yyyy HH:mm a"/>
                                 </h:outputLabel>                        
-                            </p:column>
-
-                            <p:column headerText="Time">                      
-                                <h:outputLabel  value="#{bill.createdAt}">
-                                    <f:convertDateTime pattern="HH:mm a"/>
-                                </h:outputLabel>                          
                             </p:column>
 
                             <p:column headerText="Department" >                      
                                 #{bill.department.name}                         
+                            </p:column> 
+
+                            <p:column headerText="Category" >                      
+                                #{bill.category.name}                         
                             </p:column> 
 
                             <p:column headerText="Reported Person">
@@ -67,18 +67,47 @@
 
                             <p:column headerText="View Before Stock">
                                 <p:commandButton ajax="false" value="View Before Stock" 
-                                                 action="pharmacy_reprint_variant_report" >
-                                    <f:setPropertyActionListener target="#{variantAdjustment.reportedBill}" value="#{bill}"/>
+                                                 action="pharmacy_variant_category_stock_by_item"  >
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{bill.department}"/>
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.category}" value="#{bill.category}"/>
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.recordedBill}" value="#{bill}"/>       
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.records}" value="#{bill.stockVarientBillItems}"/>       
                                 </p:commandButton>
                             </p:column>
 
                             <p:column headerText="Save After Stock">
                                 <p:commandButton ajax="false" value="Save After Stock" 
-                                                 action="pharmacy_variant_category_stock_by_item_after">
+                                                 action="pharmacy_variant_category_stock_by_item_after" actionListener="#{reportsStockVariant.fillCategoryStocksAfter()}">
                                     <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{bill.department}"/>
                                     <f:setPropertyActionListener target="#{reportsStockVariant.category}" value="#{bill.category}"/>
-                                    <f:setPropertyActionListener target="#{variantAdjustment.reportedBill}" value="#{bill}"/>                                    
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.recordedBill}" value="#{bill}"/>       
+                                    <f:setPropertyActionListener target="#{reportsStockVariant.records}" value="#{bill.stockVarientBillItems}"/>                         
                                 </p:commandButton>
+                            </p:column>
+
+                            <p:column>
+                                <p:dataTable value="#{bill.forwardReferenceBills}" var="f">
+                                    <p:column >
+                                        #{f.deptId}
+                                    </p:column>
+                                    <p:column headerText="Reported At">                      
+                                        <h:outputLabel  value="#{f.createdAt}">
+                                            <f:convertDateTime pattern="dd MM yyyy HH:mm a"/>
+                                        </h:outputLabel>                        
+                                    </p:column>
+                                    <p:column headerText="Reported Person">
+                                        #{f.creater.webUserPerson.nameWithTitle}
+                                    </p:column>
+                                    <p:column headerText="View After Stock">
+                                        <p:commandButton ajax="false" value="View After Stock" 
+                                                         action="pharmacy_variant_category_stock_by_item_after"  >
+                                            <f:setPropertyActionListener target="#{reportsStockVariant.department}" value="#{f.department}"/>
+                                            <f:setPropertyActionListener target="#{reportsStockVariant.category}" value="#{f.category}"/>
+                                            <f:setPropertyActionListener target="#{reportsStockVariant.recordedBillAfter}" value="#{f}"/>       
+                                            <f:setPropertyActionListener target="#{reportsStockVariant.recordsAfter}" value="#{f.stockVarientBillItems}"/>       
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
                             </p:column>
 
                         </p:dataTable>

@@ -76,6 +76,18 @@ public class Institution implements Serializable {
     double allowedCredit;
     @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Institution> branch = new ArrayList<>();
+    @Lob
+    String descreption;
+
+    public String getDescreption() {
+        return descreption;
+    }
+
+    public void setDescreption(String descreption) {
+        this.descreption = descreption;
+    }
+    
+    
 
     public double getLabBillDiscount() {
         return labBillDiscount;

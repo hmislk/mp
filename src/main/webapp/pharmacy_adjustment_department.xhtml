@@ -4,26 +4,27 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
 
     <body>
 
         <ui:composition template="./resources/template/template.xhtml">
 
             <ui:define name="content">
-                
-                
-                
-                
-                <h:form>
 
-                    <p:panel header="Department Stock Adjustment : Quantity" >
+
+
+
+                <h:form>
+                    
+                    <p:panel header="Department Stock Adjustment : Quantity" rendered="#{!pharmacyAdjustmentController.printPreview}">
                         <h:panelGrid columns="2" >
                             <h:panelGrid columns="2">
                                 <h:outputLabel value="Item" ></h:outputLabel>
                                 <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacyAdjustmentController.stock}" 
                                                   converter="stockCon" 
-                                                  completeMethod="#{pharmacyAdjustmentController.completeAllStocks}" var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" >
+                                                  completeMethod="#{pharmacyController.completeAllStocks}" var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" >
                                     <p:column headerText="Item">
                                         <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
                                     </p:column>
@@ -49,7 +50,8 @@
                                 <h:outputLabel value="Comment" ></h:outputLabel>
                                 <p:inputTextarea value="#{pharmacyAdjustmentController.comment}" ></p:inputTextarea>
                                 <h:outputLabel value="" ></h:outputLabel>
-                                <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
+                                <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" 
+                                                 action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
                                 <p:defaultCommand target="btnAdjust"/>
                             </h:panelGrid>
 
@@ -82,6 +84,11 @@
 
                             </h:panelGrid>
                         </h:panelGrid>
+                    </p:panel>
+                    
+                    <p:panel rendered="#{pharmacyAdjustmentController.printPreview}">
+                        <p:commandButton ajax="false" action="#{pharmacyAdjustmentController.makeNull()}" value="New Adjustment"/>
+                           <ph:adjustmentBill bill="#{pharmacyAdjustmentController.bill}" />
                     </p:panel>
 
                 </h:form>

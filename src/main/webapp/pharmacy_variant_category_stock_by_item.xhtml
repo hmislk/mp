@@ -16,7 +16,7 @@
 
                     <p:panel header="Department Stock Report by Batch" >
 
-                        <h:panelGrid columns="6" >                           
+                        <h:panelGrid columns="7" >                           
                             <p:autoComplete id="dep" 
                                             completeMethod="#{departmentController.completeDept}" 
                                             var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" 
@@ -29,8 +29,10 @@
                                             forceSelection="true" value="#{reportsStockVariant.category}" >
                             </p:autoComplete>
                             <p:commandButton ajax="false" value="Process" 
-                                             actionListener="#{reportsStockVariant.fillCategoryStocks()}" >
+                                             actionListener="#{reportsStockVariant.fillCategoryStocks()}"
+                                             disabled="#{reportsStockVariant.recordedBill.id ne null}" >
                             </p:commandButton>
+                            <p:commandButton ajax="false" value="Clear" action="#{reportsStockVariant.recreateModel()}"/>
                             <p:commandButton value="Print" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
@@ -38,7 +40,9 @@
                                 <pe:exporter type="xlsx" target="tbl" fileName="Category_report"  />
                             </p:commandButton>  
                             <p:commandButton ajax="false" value="Save Records"
-                                             action="#{reportsStockVariant.saveRecord()}"/>
+                                             action="#{reportsStockVariant.saveRecord()}"
+                                             disabled="#{reportsStockVariant.recordedBill.id ne null}"/>
+
                             <p:watermark for="dep" value="Department"/>
                             <p:watermark for="cat" value="Category"/>
                         </h:panelGrid>
@@ -46,7 +50,13 @@
                         <h:panelGroup id="gpBillPreview" styleClass="noBorder summeryBorder">
                             <p:dataTable id="tbl" value="#{reportsStockVariant.records}" var="i"  >
                                 <f:facet name="header">
+                                    <h:outputLabel value="Note No : #{reportsStockVariant.recordedBill.deptId}" rendered="#{reportsStockVariant.recordedBill.id ne null}"/>
                                     <h:panelGrid columns="2">
+                                        <h:outputLabel value="BEFORE STOCK ADJUSTMENT"/> <br/>                   
+                                        <h:panelGroup>
+                                            <p:clock pattern="HH:mm a - dd MMMM yyyy" mode="server"  rendered="#{reportsStockVariant.recordedBill.id eq null}"/>  
+                                            <h:outputLabel value="#{reportsStockVariant.recordedBill.createdAt}" rendered="#{reportsStockVariant.recordedBill.id ne null}"/>
+                                        </h:panelGroup><br/>                                       
                                         <h:outputLabel value="Department : #{reportsStockVariant.department.name} "/>   <br/>                                 
                                         <h:outputLabel value="Category : #{reportsStockVariant.category.name}"/>
                                     </h:panelGrid>                                                                   
@@ -91,18 +101,20 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Physical Stock"/>    
                                     </f:facet>
-                                    <p:inputText   value= "---------------- " >
-                                        <!--<f:convertNumber integerOnly="true" ></f:convertNumber>-->
-                                    </p:inputText>                             
+                                    <p:outputLabel   value= "___________________ " >
+                                    </p:outputLabel>                             
                                 </p:column>
 
 
                                 <p:columnGroup type="footer">
                                     <p:row>
                                         <p:column footerText="Total Value" colspan="3"/>
-                                        <p:column footerText="#{reportsStockVariant.systemStockValue}">
+                                        <p:column style="text-align: right;" >
                                             <f:facet name="footer">
-                                                <h:outputLabel value="#{reportsStockVariant.systemStockValue}">
+                                                <h:outputLabel value="#{reportsStockVariant.systemStockValue}" rendered="#{reportsStockVariant.recordedBill.id eq null}">
+                                                    <f:convertNumber pattern="#,000.00"/>
+                                                </h:outputLabel>
+                                                <h:outputLabel value="#{reportsStockVariant.recordedBill.total}" rendered="#{reportsStockVariant.recordedBill.id ne null}">
                                                     <f:convertNumber pattern="#,000.00"/>
                                                 </h:outputLabel>
                                             </f:facet>
@@ -112,9 +124,30 @@
                                 </p:columnGroup>
 
                             </p:dataTable>
+                            <p:spacer height="25px" />
+                            <p:panelGrid columns="2" style="min-width: 100%;">                             
+                                <h:outputLabel value="________________________" /> 
+                                <h:outputLabel value="________________________" />                             
+
+                                <h:outputLabel value="Checked By" />                             
+                                <h:outputLabel value="Pharmacist" />
+
+                                <p:spacer height="25"/><p:spacer height="25"/>
+
+
+                                <h:outputLabel value="________________________" />
+                                <h:outputLabel value="________________________" />
+                                <h:outputLabel value="Auditor" />  
+                                <h:outputLabel value="Date" />
+
+                            </p:panelGrid>
+
 
 
                         </h:panelGroup>
+
+
+                        <!--</h:panelGroup>-->
                     </p:panel>
                 </h:form>
 

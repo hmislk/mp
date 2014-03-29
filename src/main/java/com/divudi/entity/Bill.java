@@ -36,7 +36,7 @@ import javax.persistence.Transient;
  */
 @Entity
 public class Bill implements Serializable {
-    @OneToMany(mappedBy = "bill")
+    @OneToMany(mappedBy = "bill",fetch = FetchType.LAZY)
     private List<StockVarientBillItem> stockVarientBillItems=new ArrayList<>();
 
     @OneToMany(mappedBy = "backwardReferenceBill", fetch = FetchType.LAZY)

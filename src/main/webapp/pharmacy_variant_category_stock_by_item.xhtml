@@ -50,7 +50,8 @@
                         <h:panelGroup id="gpBillPreview" styleClass="noBorder summeryBorder">
                             <p:dataTable id="tbl" value="#{reportsStockVariant.records}" var="i"  >
                                 <f:facet name="header">
-                                    <h:outputLabel value="Note No : #{reportsStockVariant.recordedBill.deptId}" rendered="#{reportsStockVariant.recordedBill.id ne null}"/>
+                                    <h:outputLabel value="Note No : #{reportsStockVariant.recordedBill.deptId}" 
+                                                   rendered="#{reportsStockVariant.recordedBill.id ne null}"/>
                                     <h:panelGrid columns="2">
                                         <h:outputLabel value="BEFORE STOCK ADJUSTMENT"/> <br/>                   
                                         <h:panelGroup>

@@ -193,9 +193,11 @@ public class ReportsStockVariant implements Serializable {
 
         for (StockVarientBillItem i : records) {
             i.setBill(getRecordedBill());
-            getRecordedBill().getStockVarientBillItems().add(i);
             getStockVarientBillItemFacade().create(i);
+            getRecordedBill().getStockVarientBillItems().add(i);
         }
+
+        getBillFacade().edit(getRecordedBill());
 
         UtilityController.addSuccessMessage("Succesfully Saved");
 
@@ -220,9 +222,12 @@ public class ReportsStockVariant implements Serializable {
 
         for (StockVarientBillItem i : recordsAfter) {
             i.setBill(getRecordedBillAfter());
-            getRecordedBillAfter().getStockVarientBillItems().add(i);
             getStockVarientBillItemFacade().create(i);
+            getRecordedBillAfter().getStockVarientBillItems().add(i);
+
         }
+        
+        getBillFacade().edit(getRecordedBillAfter());
 
         UtilityController.addSuccessMessage("Succesfully Saved");
 

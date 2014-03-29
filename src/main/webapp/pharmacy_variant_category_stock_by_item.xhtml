@@ -33,10 +33,11 @@
                                              disabled="#{reportsStockVariant.recordedBill.id ne null}" >
                             </p:commandButton>
                             <p:commandButton ajax="false" value="Clear" action="#{reportsStockVariant.recreateModel()}"/>
-                            <p:commandButton value="Print" ajax="false" >
+                            <p:commandButton value="Print" ajax="false" disabled="#{reportsStockVariant.recordedBill.id eq null}" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                            <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;"
+                                             disabled="#{reportsStockVariant.recordedBill.id eq null}">
                                 <pe:exporter type="xlsx" target="tbl" fileName="Category_report"  />
                             </p:commandButton>  
                             <p:commandButton ajax="false" value="Save Records"
@@ -50,7 +51,8 @@
                         <h:panelGroup id="gpBillPreview" styleClass="noBorder summeryBorder">
                             <p:dataTable id="tbl" value="#{reportsStockVariant.records}" var="i"  >
                                 <f:facet name="header">
-                                    <h:outputLabel value="Note No : #{reportsStockVariant.recordedBill.deptId}" rendered="#{reportsStockVariant.recordedBill.id ne null}"/>
+                                    <h:outputLabel value="Note No : #{reportsStockVariant.recordedBill.deptId}" 
+                                                   rendered="#{reportsStockVariant.recordedBill.id ne null}"/>
                                     <h:panelGrid columns="2">
                                         <h:outputLabel value="BEFORE STOCK ADJUSTMENT"/> <br/>                   
                                         <h:panelGroup>

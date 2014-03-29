@@ -131,6 +131,11 @@ public class BhtSummeryController implements Serializable {
     @Inject
     private InwardMemberShipDiscount inwardMemberShipDiscount;
 
+    public void changeDiscountListener(ChargeItemTotal chargeItemTotal) {
+        double net = chargeItemTotal.getTotal() - chargeItemTotal.getDiscount();
+        chargeItemTotal.setNetTotal(net);
+    }
+
     public void calculateDiscount() {
         for (ChargeItemTotal cit : chargeItemTotals) {
             InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
@@ -165,6 +170,20 @@ public class BhtSummeryController implements Serializable {
     public void updatePatientRoom(RoomChargeData roomChargeData) {
 
         getPatientRoomFacade().edit(roomChargeData.getPatientRoom());
+        createRoomChargeDatas();
+        createChargeItemTotals();
+
+        updateTotal();
+    }
+
+    public void updatePatientRoom(PatientRoom patientRoom) {
+
+        if (patientRoom.getId() != null) {
+            getPatientRoomFacade().edit(patientRoom);
+        } else {
+            getPatientRoomFacade().create(patientRoom);
+        }
+
         createRoomChargeDatas();
         createChargeItemTotals();
 
@@ -1111,6 +1130,7 @@ public class BhtSummeryController implements Serializable {
             setServiceTotCategoryWise();
             setTimedServiceTotCategoryWise();
             setChargeValueFromAdditional();
+            setRoomChargeList();
         }
 
         setNetAdjustValue();
@@ -1131,6 +1151,24 @@ public class BhtSummeryController implements Serializable {
             double tot = cit.getTotal();
 
             cit.setTotal(tot + adj);
+        }
+    }
+
+    private void setRoomChargeList() {
+        for (ChargeItemTotal cit : chargeItemTotals) {
+            if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
+                System.err.println("Inside Room Charges");
+                for (RoomChargeData rcd : getRoomChargeDatas()) {
+                    PatientRoom pr = new PatientRoom();
+                    pr.setReferencePatientRoom(rcd.getPatientRoom());
+                    pr.setAdmittedAt(rcd.getPatientRoom().getAdmittedAt());
+                    pr.setDischargedAt(rcd.getPatientRoom().getDischargedAt());
+                    pr.setCalculatedRoomCharge(rcd.getChargeTot());
+                    cit.getPatientRooms().add(pr);
+                }
+
+                System.err.println("Room Charges Size " + cit.getPatientRooms().size());
+            }
         }
     }
 
@@ -1209,7 +1247,7 @@ public class BhtSummeryController implements Serializable {
     }
 
     private double getValueFromAdditionalCharge(InwardChargeType inwardChargeType) {
-     //   additionalChargeBill = new ArrayList<>();
+        //   additionalChargeBill = new ArrayList<>();
         String sql = "Select sum(i.netValue) From BillItem i where i.retired=false and i.bill.billType=:btp "
                 + "and i.bill.patientEncounter=:pe and i.inwardChargeType=:inwCh ";
         HashMap m = new HashMap();

@@ -16,27 +16,6 @@
         <h:outputStylesheet library="css" name="pharmacyA4.css"/>
         <div class="posbill noBorder summeryBorder" >
 
-            <div class="institutionName">
-                <h:outputLabel value="#{cc.attrs.bill.creater.department.printingName}"/>
-            </div>
-            <div class="institutionContact" >
-                <div>
-                    <h:outputLabel value="#{cc.attrs.bill.creater.department.address}"/>
-                </div>
-                <div >
-                    <!--                    <h:outputLabel value="Tel : 0912234059 - 60 , "/>-->
-                    <h:outputLabel value="#{cc.attrs.bill.creater.department.telephone1} "/>
-                    <h:outputLabel value="#{cc.attrs.bill.creater.department.telephone2}"/>
-                </div>
-                <div >
-                    <!--<h:outputLabel value="Fax : 0912234061 "/>-->
-                    <h:outputLabel value="#{cc.attrs.bill.creater.department.fax}"/>                                                 
-                </div>
-                <div >
-                    <!--<h:outputLabel value="Email : ruhunuhos@sltnet.lk "/>-->
-                    <h:outputLabel value="#{cc.attrs.bill.creater.department.email}"/>                                                 
-                </div>
-            </div>
 
             <div class="headingBill">
                 <h:outputLabel value="Adjustment Note" style="text-decoration: underline;"/>                           
@@ -48,16 +27,18 @@
                 <h:outputLabel value="#{cc.attrs.bill.deptId}"/> 
 
 
-                <h:outputLabel value="Adj Date  "/>
+                <h:outputLabel value="Adjusted At  "/>
                 <h:outputLabel value="#{cc.attrs.bill.createdAt}">
-                    <f:convertDateTime pattern="dd MM yyyy"/>
+                    <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                 </h:outputLabel >
 
-                <h:outputLabel value="Adj Time  "/>
-                <h:outputLabel value="#{cc.attrs.bill.createdAt}">
-                    <f:convertDateTime pattern="hh mm a"/>
+                <h:outputLabel value="Adjusted By  "/>
+                <h:outputLabel value="#{cc.attrs.bill.creater.webUserPerson.name}">
                 </h:outputLabel>
 
+                <h:outputLabel value="Department "/>
+                <h:outputLabel value="#{cc.attrs.bill.department.name}">
+                </h:outputLabel>
             </h:panelGrid>
 
 
@@ -84,7 +65,7 @@
                         <f:facet name="header">                           
                             <h:outputLabel value="Before Qty" style="font-weight: bold!important;" />
                         </f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.qty}">
+                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.stockHistory.stockQty}">
                             <f:convertNumber integerOnly="true"/>
                         </h:outputLabel>
                     </p:column>                  
@@ -99,30 +80,6 @@
                         </h:outputLabel>
                     </p:column>                  
 
-                    <p:column style="text-align: right!important;">
-                        <f:facet name="header">                           
-                            <h:outputLabel value="Purchase Rate" style="font-weight: bold!important;" />
-                        </f:facet>
-                        <h:outputLabel value="#{bip.pharmaceuticalBillItem.purchaseRate}">
-                            <f:convertNumber pattern="#,##0.00"/>
-                        </h:outputLabel>
-                    </p:column>
-
-
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column colspan="3" footerText="Total" style="font-weight: bold!important;"/>
-                            <p:column style="text-align: right;" footerText="#{0-cc.attrs.bill.total}">
-                                <f:facet name="footer">
-                                    <br></br>
-                                    <h:outputLabel value="#{0-cc.attrs.bill.total}">
-                                        <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputLabel>
-                                </f:facet>
-                            </p:column>
-                        </p:row>
-
-                    </p:columnGroup>
                 </p:dataTable>
             </div>
 

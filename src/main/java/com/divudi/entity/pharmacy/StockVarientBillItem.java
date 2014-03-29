@@ -33,6 +33,8 @@ public class StockVarientBillItem implements Serializable {
     @ManyToOne
     private Item item;
     @ManyToOne
+    private StockVarientBillItem referenceStockVariantBillItem;
+    @ManyToOne
     private Bill bill;
     private double systemStock;
     private double calCulatedStock;
@@ -172,6 +174,14 @@ public class StockVarientBillItem implements Serializable {
 
     public void setPurchaseRate(double purchaseRate) {
         this.purchaseRate = purchaseRate;
+    }
+
+    public StockVarientBillItem getReferenceStockVariantBillItem() {
+        return referenceStockVariantBillItem;
+    }
+
+    public void setReferenceStockVariantBillItem(StockVarientBillItem referenceStockVariantBillItem) {
+        this.referenceStockVariantBillItem = referenceStockVariantBillItem;
     }
 
 }

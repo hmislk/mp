@@ -19,6 +19,7 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
+import com.divudi.entity.Institution;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFacade;
@@ -48,6 +49,7 @@ public class PharmacySaleReport implements Serializable {
     private Date fromDate;
     private Date toDate;
     private Department department;
+    private Institution institution;
     private double grantNetTotal;
     private double grantDiscount;
     private double grantCashTotal;
@@ -115,6 +117,31 @@ public class PharmacySaleReport implements Serializable {
         m.put("btp", BillType.PharmacySale);
         sql = "select sum(i.netTotal) from Bill i where i.referenceBill.department=:d "
                 + " and i.billType=:btp and type(i)=:cl and i.createdAt between :fd and :td order by i.deptId ";
+        double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+        return saleValue;
+
+    }
+
+    private double getHandOverValue(Date date, Bill bill) {
+
+        String sql;
+
+        sql = "select sum(f.total - f.staffFee - f.discount) from Bill f "
+                + " where f.retired=false and "
+                + " type(f) = :billClass and f.billType = :billType and "
+                + " f.createdAt between :fd and :td and f.toInstitution=:ins ";
+
+        Date fd = getCommonFunctions().getStartOfDay(date);
+        Date td = getCommonFunctions().getEndOfDay(date);
+
+        Map m = new HashMap();
+        m.put("fd", fd);
+        m.put("td", td);
+        m.put("billClass", bill.getClass());
+        m.put("billType", BillType.OpdBill);
+        m.put("ins", institution);
+
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 
         return saleValue;
@@ -255,6 +282,42 @@ public class PharmacySaleReport implements Serializable {
 
     }
 
+    private double calGrantHandOverNetotal(Bill bill) {
+        //   List<Stock> billedSummery;
+        String sql;
+        Map m = new HashMap();
+        m.put("ins", getInstitution());
+        m.put("fromDate", getFromDate());
+        m.put("toDate", getToDate());
+        m.put("class", bill.getClass());
+        // m.put("btp", BillType.PharmacyPre);
+        m.put("btp", BillType.OpdBill);
+        sql = "select sum(i.total - i.staffFee - i.discount) from "
+                + " Bill i where i.toInstitution=:ins and"
+                + " i.billType=:btp and type(i)=:class "
+                + " and i.createdAt between :fromDate and :toDate ";
+        return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calGrantHandOverNetotal() {
+        //   List<Stock> billedSummery;
+        String sql;
+        Map m = new HashMap();
+        m.put("ins", getInstitution());
+        m.put("fromDate", getFromDate());
+        m.put("toDate", getToDate());
+      
+        // m.put("btp", BillType.PharmacyPre);
+        m.put("btp", BillType.OpdBill);
+        sql = "select sum(i.total - i.staffFee - i.discount)  "
+                + " from Bill i where "
+                + " i.toInstitution=:ins and"
+                + " i.billType=:btp and  i.createdAt between :fromDate and :toDate ";
+        return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+    }
+
     private double calGrantTotalByPaymentMethod(PaymentMethod paymentMethod, Bill bill) {
         //   List<Stock> billedSummery;
         String sql;
@@ -353,6 +416,43 @@ public class PharmacySaleReport implements Serializable {
         billedSummery.setRefundedTotal(calGrantNetTotalByDepartment(new RefundBill()));
 
         grantNetTotal = calGrantNetTotalByDepartment();
+
+    }
+
+    public void createLabHadnOverReportByDate() {
+        billedSummery = new PharmacySummery();
+
+        billedSummery.setBills(new ArrayList<String1Value3>());
+
+        Date nowDate = getFromDate();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(nowDate);
+
+        while (nowDate.before(getToDate())) {
+
+            DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+            String formattedDate = df.format(nowDate);
+
+            String1Value3 newRow = new String1Value3();
+            newRow.setString(formattedDate);
+            newRow.setValue1(getHandOverValue(nowDate, new BilledBill()));
+            newRow.setValue2(getHandOverValue(nowDate, new CancelledBill()));
+            newRow.setValue3(getHandOverValue(nowDate, new RefundBill()));
+
+            billedSummery.getBills().add(newRow);
+
+            Calendar nc = Calendar.getInstance();
+            nc.setTime(nowDate);
+            nc.add(Calendar.DATE, 1);
+            nowDate = nc.getTime();
+
+        }
+
+        billedSummery.setBilledTotal(calGrantHandOverNetotal(new BilledBill()));
+        billedSummery.setCancelledTotal(calGrantHandOverNetotal(new CancelledBill()));
+        billedSummery.setRefundedTotal(calGrantHandOverNetotal(new RefundBill()));
+
+        grantNetTotal = calGrantHandOverNetotal();
 
     }
 
@@ -729,6 +829,14 @@ public class PharmacySaleReport implements Serializable {
 
     public void setRefundedDetail(PharmacyDetail refundedDetail) {
         this.refundedDetail = refundedDetail;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
 }

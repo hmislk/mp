@@ -11,6 +11,7 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.entity.Bill;
+import com.divudi.entity.BilledBill;
 import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
@@ -48,8 +49,11 @@ public class ReportsStockVariant implements Serializable {
     Department department;
     private Category category;
     double systemStockValue;
+    private double systemStockValueAfter;
     List<StockVarientBillItem> records;
+    private List<StockVarientBillItem> recordsAfter;
     private Bill recordedBill;
+    private Bill recordedBillAfter;
 
     /**
      * Managed Beans
@@ -85,6 +89,34 @@ public class ReportsStockVariant implements Serializable {
 
     }
 
+    public double calStockByItem(Item item) {
+
+        String sql;
+        Map m = new HashMap();
+        m.put("dep", department);
+        m.put("itm", item);
+        sql = "select sum(i.stock) "
+                + " from Stock i where "
+                + " i.department=:dep and i.itemBatch.item=:itm ";
+
+        return getStockFacade().findDoubleByJpql(sql, m);
+
+    }
+
+    public double calPurchaseByItem(Item item) {
+
+        String sql;
+        Map m = new HashMap();
+        m.put("dep", department);
+        m.put("itm", item);
+        sql = "select avg(i.itemBatch.purcahseRate) "
+                + " from Stock i where "
+                + " i.department=:dep and i.itemBatch.item=:itm ";
+
+        return getStockFacade().findDoubleByJpql(sql, m);
+
+    }
+
     @Inject
     private PharmacyErrorChecking pharmacyErrorChecking;
 
@@ -102,15 +134,39 @@ public class ReportsStockVariant implements Serializable {
             r.setItem((Item) obj[0]);
             r.setSystemStock((Double) obj[1]);
             r.setPurchaseRate((Double) obj[2]);
-            /////////
-            getPharmacyErrorChecking().setItem(r.getItem());
-            getPharmacyErrorChecking().setDepartment(department);
-            getPharmacyErrorChecking().calculateTotals3();
+//            /////////
+//            getPharmacyErrorChecking().setItem(r.getItem());
+//            getPharmacyErrorChecking().setDepartment(department);
+//            getPharmacyErrorChecking().calculateTotals3();
             //  r.setCalCulatedStock(getPharmacyErrorChecking().getCalculatedStock());
             //////////////
             records.add(r);
 
             systemStockValue += (r.getSystemStock() * r.getPurchaseRate());
+        }
+
+    }
+
+    public void fillCategoryStocksAfter() {
+        if (department == null || category == null) {
+            return;
+        }
+
+        recordsAfter = new ArrayList<>();
+        systemStockValue = 0.0;
+        systemStockValueAfter = 0;
+
+        for (StockVarientBillItem stockVarientBillItem : records) {
+            StockVarientBillItem r = new StockVarientBillItem();
+            r.setReferenceStockVariantBillItem(stockVarientBillItem);
+            r.setItem(stockVarientBillItem.getItem());
+            r.setSystemStock(calStockByItem(r.getItem()));
+            r.setPurchaseRate(calPurchaseByItem(r.getItem()));
+
+            recordsAfter.add(r);
+
+            systemStockValue += (r.getReferenceStockVariantBillItem().getSystemStock() * r.getReferenceStockVariantBillItem().getPurchaseRate());
+            systemStockValueAfter += (r.getSystemStock() * r.getPurchaseRate());
         }
 
     }
@@ -128,6 +184,7 @@ public class ReportsStockVariant implements Serializable {
 
         getRecordedBill().setCreatedAt(new Date());
         getRecordedBill().setDepartment(department);
+        getRecordedBill().setTotal(systemStockValue);
         getRecordedBill().setCategory(getCategory());
         getRecordedBill().setCreater(getSessionController().getLoggedUser());
         getRecordedBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBill(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));
@@ -136,14 +193,40 @@ public class ReportsStockVariant implements Serializable {
 
         for (StockVarientBillItem i : records) {
             i.setBill(getRecordedBill());
+            getRecordedBill().getStockVarientBillItems().add(i);
             getStockVarientBillItemFacade().create(i);
         }
 
         UtilityController.addSuccessMessage("Succesfully Saved");
 
-        recreateModel();
+        return "";
+    }
 
-        return "pharmacy_variant_ajustment_pre_list";
+    public String saveRecordAfter() {
+
+        getRecordedBillAfter().setCreatedAt(new Date());
+        getRecordedBillAfter().setDepartment(department);
+        getRecordedBillAfter().setCategory(getCategory());
+        getRecordedBillAfter().setTotal(systemStockValue);
+        getRecordedBillAfter().setNetTotal(systemStockValueAfter);
+        getRecordedBillAfter().setCreater(getSessionController().getLoggedUser());
+        getRecordedBillAfter().setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBillAfter(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));
+        getRecordedBillAfter().setInsId(getBillNumberBean().institutionBillNumberGenerator(department, getRecordedBillAfter(), BillType.PharmacyMajorAdjustment, BillNumberSuffix.MJADJ));
+        getRecordedBillAfter().setBackwardReferenceBill(getRecordedBill());
+        getBillFacade().create(getRecordedBillAfter());
+
+        getRecordedBill().getForwardReferenceBills().add(getRecordedBillAfter());
+        getBillFacade().edit(getRecordedBill());
+
+        for (StockVarientBillItem i : recordsAfter) {
+            i.setBill(getRecordedBillAfter());
+            getRecordedBillAfter().getStockVarientBillItems().add(i);
+            getStockVarientBillItemFacade().create(i);
+        }
+
+        UtilityController.addSuccessMessage("Succesfully Saved");
+
+        return "";
     }
 
     public void recreateModel() {
@@ -152,7 +235,6 @@ public class ReportsStockVariant implements Serializable {
         systemStockValue = 0;
         records = null;
         recordedBill = null;
-
     }
 
     /**
@@ -222,8 +304,6 @@ public class ReportsStockVariant implements Serializable {
         this.pharmacyErrorChecking = pharmacyErrorChecking;
     }
 
-  
-
     public SessionController getSessionController() {
         return sessionController;
     }
@@ -266,6 +346,34 @@ public class ReportsStockVariant implements Serializable {
 
     public void setRecordedBill(Bill recordedBill) {
         this.recordedBill = recordedBill;
+    }
+
+    public List<StockVarientBillItem> getRecordsAfter() {
+        return recordsAfter;
+    }
+
+    public void setRecordsAfter(List<StockVarientBillItem> recordsAfter) {
+        this.recordsAfter = recordsAfter;
+    }
+
+    public double getSystemStockValueAfter() {
+        return systemStockValueAfter;
+    }
+
+    public void setSystemStockValueAfter(double systemStockValueAfter) {
+        this.systemStockValueAfter = systemStockValueAfter;
+    }
+
+    public Bill getRecordedBillAfter() {
+        if (recordedBillAfter == null) {
+            recordedBillAfter = new BilledBill();
+            recordedBillAfter.setBillType(BillType.PharmacyMajorAdjustment);
+        }
+        return recordedBillAfter;
+    }
+
+    public void setRecordedBillAfter(Bill recordedBillAfter) {
+        this.recordedBillAfter = recordedBillAfter;
     }
 
 }

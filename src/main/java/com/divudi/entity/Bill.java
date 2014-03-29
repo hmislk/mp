@@ -7,6 +7,7 @@ package com.divudi.entity;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.inward.SurgeryBillType;
+import com.divudi.entity.pharmacy.StockVarientBillItem;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import javax.persistence.Transient;
  */
 @Entity
 public class Bill implements Serializable {
+    @OneToMany(mappedBy = "bill")
+    private List<StockVarientBillItem> stockVarientBillItems=new ArrayList<>();
 
     @OneToMany(mappedBy = "backwardReferenceBill", fetch = FetchType.LAZY)
     private List<Bill> forwardReferenceBills;
@@ -1182,6 +1185,14 @@ public class Bill implements Serializable {
 
     public void setEditedAt(Date editedAt) {
         this.editedAt = editedAt;
+    }
+
+    public List<StockVarientBillItem> getStockVarientBillItems() {
+        return stockVarientBillItems;
+    }
+
+    public void setStockVarientBillItems(List<StockVarientBillItem> stockVarientBillItems) {
+        this.stockVarientBillItems = stockVarientBillItems;
     }
 
 }

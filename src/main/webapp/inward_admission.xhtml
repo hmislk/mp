@@ -13,7 +13,7 @@
         <h:form>
             <h:panelGroup rendered="#{!admissionController.printPreview}" >
                 <p:panel>
-                    <h:panelGrid columns="5">                   
+                    <h:panelGrid columns="5" styleClass="alignTop" >                   
 
                         <p:selectOneMenu  id="lstSelect"   value="#{admissionController.current.admissionType}" >
                             <f:selectItem itemLabel="Select Admission Type"/>
@@ -41,13 +41,12 @@
                     </h:panelGrid>
                 </p:panel>
                 <h:panelGrid columns="1" id="gpDetail">
-                    <h:panelGrid columns="2" style="min-width: 100%;">
+                    <h:panelGrid columns="2" style="min-width: 100%;" styleClass="alignTop">
 
                         <p:panel header="Patient Detail">
                             <p:tabView id="tvPt" style="min-height: 250px;"  >
                                 <p:ajax event="tabChange"  process="@this" listener="#{admissionController.onTabChange}" />
                                 <p:tab title="New Patient" id="tabNewPt">
-
                                     <h:panelGrid columns="2" >
                                         <h:outputLabel value="Title"/>
                                         <p:selectOneMenu  id="cmbTitle" value="#{admissionController.newPatient.person.title}"  >
@@ -55,7 +54,7 @@
                                             <f:selectItems value="#{enumController.title}"/>
                                         </p:selectOneMenu>
                                         <h:outputLabel value="Name"/>
-                                        <p:inputText autocomplete="off" id="txtNewPtName" value="#{admissionController.newPatient.person.name}" style="width: 200px;text-transform:uppercase;">
+                                        <p:inputText autocomplete="off" id="txtNewPtName" value="#{admissionController.newPatient.person.name}" style="width:300px;text-transform:uppercase;">
                                         </p:inputText>
                                         <p:outputLabel value="NIC"/>
                                         <p:inputText value="#{admissionController.newPatient.person.nic}"/>
@@ -68,7 +67,7 @@
                                         <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
                                             <f:ajax event="dateSelect" execute="calNewPtDob" render="lblAge" />
                                         </p:calendar>
-                                        
+
                                         <p:watermark value="YEAR" for="year" />
                                         <p:watermark value="MONTH" for="month" />
                                         <p:watermark value="DAYS" for="day" />
@@ -175,18 +174,24 @@
                                     </h:panelGrid>
                                 </p:tab>
                             </p:tabView>
+
+
                         </p:panel>
 
-                    </h:panelGrid>
 
-                    <h:panelGrid columns="2" style="min-width: 100%;">
                         <p:panel header="Hospital Use">
                             <h:panelGrid columns="2">
                                 <p:outputLabel value="Admitted Time"/>
                                 <p:calendar value="#{admissionController.current.dateOfAdmission}" pattern="dd MMMM yyyy hh mm a" >                               
                                 </p:calendar>      
                                 <p:outputLabel value="Referring Doctor"/>                            
-                                <p:autoComplete forceSelection="true" value="#{admissionController.current.referringDoctor}" completeMethod="#{doctorController.completeDoctor}" var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                <p:autoComplete  forceSelection="true" 
+                                                 value="#{admissionController.current.referringDoctor}"
+                                                 completeMethod="#{doctorController.completeDoctor}" 
+                                                 var="ix" itemLabel="#{ix.person.name}" 
+                                                 itemValue="#{ix}" size="30"  
+                                                 style="width: 400px;">
+
                                 </p:autoComplete>
 
                             </h:panelGrid>
@@ -195,26 +200,67 @@
                         <p:panel header="Payment Detail">
 
                             <h:panelGrid columns="2">
-                                <h:outputLabel value="Select  Admission Paymentmethod"/>
+                                <h:outputLabel value="BHT Type"/>
                                 <p:selectOneMenu   id="cmbPs" value="#{admissionController.current.paymentMethod}"  >
-                                    <f:selectItem itemLabel="Select Payment Method" />                           
+                                    <f:selectItem itemLabel="Select" />                           
                                     <f:selectItems value="#{enumController.paymentMethodForAdmission}" />
                                     <p:ajax process="@this" update="crd" event="change" />
                                 </p:selectOneMenu>
+                            </h:panelGrid>
 
-                                <h:panelGroup id="crd" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">
-                                    <h:panelGrid columns="2">
+
+                            <h:panelGrid  id="crd" style="display: #{admissionController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">
+                                <p:row>
+                                    <p:column>
                                         <h:outputLabel value="Company Name"   />                                                       
-                                        <p:autoComplete forceSelection="true" value="#{admissionController.current.creditCompany}"  
+                                    </p:column>
+                                    <p:column>
+                                        <p:autoComplete id="acCreditCompany" forceSelection="true" value="#{admissionController.current.creditCompany}"  
                                                         completeMethod="#{creditCompanyController.completeCredit}" 
                                                         var="ix" itemLabel="#{ix.name}" 
-                                                        itemValue="#{ix}" size="30" >                              
+                                                        itemValue="#{ix}" size="30" >  
+                                            <f:ajax event="itemSelect" execute="acCreditCompany" render=":#{p:component('panelCompanyDesc')}" ></f:ajax>
                                         </p:autoComplete> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
                                         <p:outputLabel value="Credit Limit" />
+                                    </p:column>
+                                    <p:column>
                                         <p:inputText value="#{admissionController.current.creditLimit}" />
-                                    </h:panelGrid>
-                                </h:panelGroup>
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:panel rendered="true" id="panelCompanyDesc"  >
+                                            <h:outputText rendered="#{admissionController.current.creditCompany ne null}" value="#{admissionController.current.creditCompany.descreption}" ></h:outputText>
+                                        </p:panel>
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Ploicy Number" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{admissionController.current.policyNo}" />
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Referance Number" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{admissionController.current.referanceNo}" />
+                                    </p:column>
+                                </p:row>
+                                
                             </h:panelGrid>
+
+
 
 
                         </p:panel>

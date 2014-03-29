@@ -60,7 +60,12 @@
                                         <h:outputText value="Code" >                                        
                                         </h:outputText>
                                         <h:inputText  value="#{institutionController.current.institutionCode}"  >
-                                        </h:inputText>                                        
+                                        </h:inputText> 
+                                        <h:outputText value="Descreption" >                                        
+                                        </h:outputText>
+                                        <h:inputTextarea  value="#{institutionController.current.descreption}"  >
+                                        </h:inputTextarea> 
+                                        
                                         <h:outputText id="lblType" value="Institution Type" ></h:outputText>
                                         <h:selectOneMenu value="#{institutionController.current.institutionType}">
                                             <f:selectItem itemLabel="Select Institution Type"/>

@@ -202,6 +202,42 @@ root {
 
 }
 
+.heading{
+    text-align: center!important; 
+    min-width: 90%!important; 
+    /*padding: 5px!important;*/ 
+    padding-top: 30%!important;
+    margin: auto!important; 
+    font-size: 13px!important;
+}
+
+.tbl{
+    text-align: center!important;
+    min-width: 90%!important;
+    padding: 5px!important; 
+    padding-top: 10%!important;
+    margin: auto!important; 
+    border: 1px!important;    
+}
+
+.cashier{
+    position:absolute!important;
+    left:25%!important;
+    bottom:10%!important;
+    
+}
+
+.description{
+    position:absolute!important;
+    left:2.0cm!important;
+    bottom:5%!important;
+    
+}
+
+.mark{
+    font-weight: bold;
+
+}
 
 @media screen{
     .a4bill{

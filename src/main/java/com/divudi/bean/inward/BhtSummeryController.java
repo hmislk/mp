@@ -433,8 +433,8 @@ public class BhtSummeryController implements Serializable {
                 temHosFee += cit.getNetTotal();
             }
 
-            if (cit.getInwardChargeType() == InwardChargeType.OtherCharges) {
-                saveOtherBillFee(temBi);
+            if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
+                saveRoomBillFee(cit.getPatientRooms(),temBi);
             }
 
             getBillItemFacade().edit(temBi);
@@ -470,17 +470,30 @@ public class BhtSummeryController implements Serializable {
 
         //       return bill;
     }
+    
+    private void saveRefencePatientRoom(PatientRoom pr){
+        if(pr.getId()==null){
+            getPatientRoomFacade().create(pr);
+        }else{
+            getPatientRoomFacade().edit(pr);
+        }
+    }
 
-    private void saveOtherBillFee(BillItem bItem) {
-        for (BillFee bf : getAdditionalFee()) {
+    private void saveRoomBillFee(List<PatientRoom> patientRooms,BillItem bItem) {
+        for (PatientRoom pt :patientRooms ) {
             BillFee tmp = new BillFee();
             tmp.setBill(bItem.getBill());
             tmp.setBillItem(bItem);
-            tmp.setReferenceBillFee(bf);
+            
+            saveRefencePatientRoom(pt);
+            
+            tmp.setReferencePatientRoom(pt);
+            
+            getBillFeeFacade().create(tmp);
 
             bItem.getBillFees().add(tmp);
 
-            // getBillFeeFacade().create(tmp);
+            
         }
 
     }

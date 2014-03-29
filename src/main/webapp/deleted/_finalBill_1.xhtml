@@ -24,7 +24,7 @@
                 <div class="a4bill" >
 
 
-                    <table class="heading" >
+                    <table class="patientDetail" >
                         <tr>
                             <td colspan="4">
                                 <h:outputLabel class="mark" value="**Final Bill Original**" 
@@ -40,77 +40,98 @@
                         <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
-                    </table>
-                    <table>
-                        <tr >
-                            <td >
-                                <h:outputLabel value="Patient Name : " />
+                        <tr style=" width: 100%;">
+                            <td style="text-align: left;  width: 20%;  ">
+                                <h:outputLabel value="Patient Name" />
                             </td>
-                            <td >
+                            <td style="text-align: left!important;  width: 40%; ">
                                 <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.person.nameWithTitle}" />
-                            </td>                           
-                        </tr>
-                        <tr>
-                            <td >
-                                <h:outputLabel value="Address : " />
                             </td>
-                            <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.person.address}" />
-                            </td>                           
-                        </tr>
-                        <tr >
-                            <td >
-                                <h:outputLabel value="Gurdian : " />
+                            <td style="text-align: left; width: 20%;">
+                                <h:outputLabel value="Date of Admission" />
                             </td>
-                            <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.guardian.nameWithTitle}" />
-                            </td>                           
-                        </tr>
-
-                        <tr>
-                            <td >
-                                <h:outputLabel value="Time of Admission : " />
-                            </td>
-                            <td >
+                            <td style="text-align: right!important;  width: 20%; ">
                                 <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfAdmission}" >
-                                    <f:convertDateTime pattern="dd MM yyyy h:mm a" />
+                                    <f:convertDateTime pattern="dd MM yyyy" />
                                 </h:outputLabel>
                             </td>
                         </tr>
-                        <tr>
-                            <td >
-                                <h:outputLabel value="Time of Discharged : " />
+                        <tr style=" width: 100%;">
+                            <td style="text-align: left;  width: 20%;  ">
+                                <h:outputLabel value="Age" />
                             </td>
-                            <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
-                                    <f:convertDateTime pattern="dd MM yyyy h:mm a" />
+                            <td style="text-align: left;  width: 40%; ">
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.age}" />
+                            </td>
+                            <td style="text-align: left; width: 20%; ">
+                                <h:outputLabel value="Time of Admission" />
+                            </td>
+                            <td style="text-align: right!important;  width: 20%; ">
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfAdmission}" >
+                                    <f:convertDateTime pattern="h:mm a" />
                                 </h:outputLabel>
                             </td>
-                        </tr>                        
-                        <tr >
-                            <td>
-                                <h:outputLabel value="Company : "  rendered="#{cc.attrs.bill.patientEncounter.creditCompany ne null}"/>
+                        </tr>
+                        <tr style=" width: 100%;">
+                            <td style="text-align: left; ">
+                                <h:outputLabel value="Sex" />
                             </td>
-                            <td >
+                            <td style="text-align: left; ">
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.patient.person.sex}" />
+                            </td>
+                            <td style="text-align: left; ">
+                                <h:outputLabel value="Date of Discharge" />
+                            </td>
+                            <td style="text-align: right!important;">
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
+                                    <f:convertDateTime pattern="dd MM yyyy" />
+                                </h:outputLabel>
+                            </td>
+                        </tr>
+                        <tr style=" width: 100%;">
+                            <td style="text-align: left;">
+                                <h:outputLabel value="Company"  rendered="#{cc.attrs.bill.patientEncounter.creditCompany ne null}"/>
+                            </td>
+                            <td style="text-align: left;   ">
                                 <h:outputLabel value="#{cc.attrs.bill.patientEncounter.creditCompany.name}" />
-                            </td>                            
-                        </tr>      
-                        <tr >
-                            <td >
-                                <h:outputLabel value="BHT : " />
                             </td>
-                            <td >
+                            <td style="text-align: left;  ">
+                                <h:outputLabel value="Time of Discharge" />
+                            </td>
+                            <td style="text-align: right!important;  ">
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
+                                    <f:convertDateTime pattern="h:mm a" />
+                                </h:outputLabel>
+                            </td>
+                        </tr>      
+                        <tr style=" width: 100%;">
+                            <td style="text-align: left;   ">
+                                <h:outputLabel value="BHT" />
+                            </td>
+                            <td style="text-align: left;  ">
                                 <h:outputLabel value="#{cc.attrs.bill.patientEncounter.bhtNo}" />
                             </td>    
-
+                           
                         </tr>      
                     </table>
 
-                    <table class="tbl"  >
+
+
+
+                    <h:outputLabel value="*Consultant fees are not included in the above bill*"
+                                   style="position:absolute;left:25%; bottom:10%;" rendered="#{cc.attrs.withoutPro eq true}"  >
+                    </h:outputLabel>
+
+                    <h:outputLabel value="Cashier : #{cc.attrs.bill.creater.code}"
+                                   style="position:absolute;left:2.0cm; bottom:5%;"  >
+                    </h:outputLabel>
+
+                    <table style="text-align: center; min-width: 90%; padding: 5px; padding-top: 10%; margin: auto; border: 1px;" >
+
+
+
                         <ui:repeat value="#{cc.attrs.bill.billItems}" var="bip">
-                            <h:panelGroup rendered="#{bip.netValue!=0 and 
-                                                      !(cc.attrs.withoutPro eq true and
-                                                      bip.inwardChargeType eq 'ProfessionalCharge')}">
+                            <h:panelGroup rendered="#{bip.netValue!=0 and !(cc.attrs.withoutPro eq true and bip.inwardChargeType eq 'ProfessionalCharge')}">
                                 <tr style="width: 100%;"  >
                                     <td style="text-align: left;font-size: 13px!important;">
                                         <h:outputLabel   value="#{bip.inwardChargeType.label}" style="margin: 4px;" >
@@ -118,8 +139,7 @@
                                     </td>
                                     <td>
                                         <h:panelGroup >
-                                            <h:panelGroup rendered="#{!(bip.inwardChargeType eq 'ProfessionalCharge' 
-                                                                      and bip.inwardChargeType eq 'RoomCharges' )}">
+                                            <h:panelGroup rendered="#{!(bip.inwardChargeType eq 'ProfessionalCharge' and bip.inwardChargeType eq 'OtherCharges' )}">
                                                 &nbsp;
                                             </h:panelGroup>
                                             <h:panelGroup rendered="#{bip.inwardChargeType eq 'ProfessionalCharge' }">
@@ -142,34 +162,15 @@
                                                     </ui:repeat>   
                                                 </table>
                                             </h:panelGroup>
-                                            <h:panelGroup rendered="#{bip.inwardChargeType eq 'RoomCharges' }">
+                                            <h:panelGroup rendered="#{bip.inwardChargeType eq 'OtherCharges' }">
                                                 <table>                                               
                                                     <ui:repeat value="#{bip.billFees}" var="fe">
                                                         <tr>
-                                                            <td >
-                                                                <h:outputLabel value="#{fe.referencePatientRoom.roomFacilityCharge.name}" />
+                                                            <td style="text-align: left;font-size: 8px!important;">
+                                                                <h:outputLabel value="#{fe.referenceBillFee.bill.comments}" ></h:outputLabel> 
                                                             </td>
-                                                            <td>
-                                                                <h:outputLabel value=" || "/>
-                                                            </td>
-                                                            <td >
-                                                                <h:outputLabel value="#{fe.referencePatientRoom.admittedAt}" >
-                                                                    <f:convertDateTime pattern="dd MM yyyy hh mm a" />
-                                                                </h:outputLabel>
-                                                            </td>
-                                                            <td>
-                                                                <h:outputLabel value=" || "/>
-                                                            </td>
-                                                            <td >
-                                                                <h:outputLabel  value="#{fe.referencePatientRoom.dischargedAt}" >
-                                                                    <f:convertDateTime pattern="dd MM yyyy hh mm a" />
-                                                                </h:outputLabel>
-                                                            </td>
-                                                            <td>
-                                                                <h:outputLabel value=" || "/>
-                                                            </td>
-                                                            <td>
-                                                                <h:outputLabel value="#{fe.referencePatientRoom.calculatedRoomCharge}" >
+                                                            <td  style="text-align: right;font-size: 8px!important;">
+                                                                <h:outputLabel value="#{fe.referenceBillFee.bill.total}">
                                                                     <f:convertNumber pattern="#,000.00" />
                                                                 </h:outputLabel>
                                                             </td>
@@ -281,14 +282,6 @@
 
                         </h:panelGroup>
                     </table>
-
-                    <h:outputLabel value="*Consultant fees are not included in the above bill*"
-                                   styleClass="description" rendered="#{cc.attrs.withoutPro eq true}"  >
-                    </h:outputLabel>
-
-                    <h:outputLabel value="Cashier : #{cc.attrs.bill.creater.code}"
-                                   styleClass="cashier"  >
-                    </h:outputLabel>
 
                 </div>
 

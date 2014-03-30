@@ -988,13 +988,13 @@ public class PharmacyItemExcelManager implements Serializable {
 
                 Map m = new HashMap();
 
-                cell = sheet.getCell(2, i);
+                cell = sheet.getCell(1, i);
                 itemName = cell.getContents();
 
-                cell = sheet.getCell(3, i);
+                cell = sheet.getCell(2, i);
                 itemCode = cell.getContents();
 
-                cell = sheet.getCell(5, i);
+                cell = sheet.getCell(4, i);
                 genericName = cell.getContents();
 
                 String sql;
@@ -1019,13 +1019,35 @@ public class PharmacyItemExcelManager implements Serializable {
                     System.out.println("added to list");
                     PharmacyImportCol npi = new PharmacyImportCol();
                     long l ;
+                    double d;
+
+                    npi.setItem1_itemCatName(sheet.getCell(0, i).getContents());
+                    npi.setItem2_ampName(sheet.getCell(1, i).getContents());
+                    npi.setItem3_code(sheet.getCell(2, i).getContents());
+                    npi.setItem4_barcode(sheet.getCell(3, i).getContents());
+                    npi.setItem5_genericName(sheet.getCell(4, i).getContents());
                     try{
-                        l=Long.parseLong(sheet.getCell(5, i).getContents());
-                    }catch(Exception e){
-                        l=0l;
+                        d=Double.parseDouble(sheet.getCell(5, i).getContents());
+                    }catch(NumberFormatException e){
+                        d=0.0;
                         System.out.println("e = " + e);
-                    }
-                    npi.set0_id(l);
+                    }                   
+                    npi.setItem6_StrengthOfIssueUnit(d);
+
+                    npi.setItem7_StrengthUnit(sheet.getCell(6, i).getContents());
+
+                    try{
+                        d=Double.parseDouble(sheet.getCell(7, i).getContents());
+                    }catch(NumberFormatException e){
+                        d=0.0;
+                        System.out.println("e = " + e);
+                    }                   
+                    npi.setItem8_IssueUnitsPerPack(d);
+                    
+                    npi.setItem9_IssueUnit(sheet.getCell(8, i).getContents());
+                    npi.setItem10_PackUnit(sheet.getCell(9, i).getContents());
+                    
+                    itemNotPresent.add(npi);
 
                 }
 
@@ -1538,4 +1560,14 @@ public class PharmacyItemExcelManager implements Serializable {
         this.itemFacade = itemFacade;
     }
 
+    public List<PharmacyImportCol> getItemNotPresent() {
+        return itemNotPresent;
+    }
+
+    public void setItemNotPresent(List<PharmacyImportCol> itemNotPresent) {
+        this.itemNotPresent = itemNotPresent;
+    }
+
+    
+    
 }

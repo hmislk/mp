@@ -571,14 +571,17 @@ public class InwardStaffPaymentBillController implements Serializable {
         Map temMap = new HashMap();
         if (!getSelectText().equals("")) {
             sql = "select b from BillFee b where b.retired=false and"
-                    + " b.bill.billType=:btp and b.bill.cancelled=false"
+                    + " (b.bill.billType=:btp or b.bill.billType=:btp2 )"
+                    + "  and b.bill.cancelled=false"
                     + " and (b.feeValue - b.paidValue) > 0 and  "
                     + " b.bill.billDate between :fromDate and :toDate"
                     + " and upper(b.staff.person.name) like '%" + selectText.toUpperCase() + "%' "
                     + " order by b.staff.id  ";
         } else {
             sql = "select b from BillFee b where b.retired=false and "
-                    + " b.bill.billType=:btp  and b.bill.cancelled=false and (b.feeValue - b.paidValue) > 0 and  b.bill.billDate between :fromDate and :toDate order by b.staff.id  ";
+                    + " (b.bill.billType=:btp or b.bill.billType=:btp2 )  and b.bill.cancelled=false and"
+                    + " (b.feeValue - b.paidValue) > 0 and  "
+                    + " b.bill.billDate between :fromDate and :toDate order by b.staff.id  ";
         }
         System.out.println("sql is " + sql);
         temMap.put("toDate", getToDate());
@@ -586,11 +589,12 @@ public class InwardStaffPaymentBillController implements Serializable {
 //        temMap.put("btp", BillType.ChannelPaid);
 //        temMap.put("btp2", BillType.ChannelCredit);
         temMap.put("btp", BillType.InwardBill);
+        temMap.put("btp2", BillType.InwardProfessional);
         dueBillFeeReport = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
         System.out.println(dueBillFeeReport.size());
 
         if (dueBillFeeReport == null) {
-            dueBillFeeReport = new ArrayList<BillFee>();
+            dueBillFeeReport = new ArrayList<>();
         }
 
         return dueBillFeeReport;

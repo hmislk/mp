@@ -202,6 +202,7 @@ public class TimedItemFeeController implements Serializable {
     public TimedItemFee getCurrentFee() {
         if (currentFee == null) {
             currentFee = new TimedItemFee();
+            currentFee.setBooleanValue(true);
         }
         return currentFee;
     }

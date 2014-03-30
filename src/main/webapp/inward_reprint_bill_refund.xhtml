@@ -12,11 +12,15 @@
 
             <ui:define name="content">
                 <h:form>
-                    <p:panel header="Service Reprint" >
+                    <p:panel header="Refund Reprint" >
                         <h:panelGrid columns="2">
                             <p:panel>
-                                <p:commandButton ajax="false" value="Cancel" action="inward_cancel_bill_service"
+                                <p:commandButton ajax="false" value="Cancel"
+                                                 action="inward_cancel_bill_refund" 
                                                  disabled="#{inwardSearch.bill.cancelled}">                           
+                                </p:commandButton>
+                                <p:commandButton value="RePrint" ajax="false" action="#" >
+                                    <p:printer target="gpBillPreview" ></p:printer>
                                 </p:commandButton>
                             </p:panel>
 
@@ -56,8 +60,9 @@
                         </p:panel>
                     </p:panel>
 
-                  
-
+                    <h:panelGroup id="gpBillPreview">
+                        <bi:paymentRefund bill="#{inwardSearch.bill}" dup="true" />
+                    </h:panelGroup>
                 </h:form>
             </ui:define>
 

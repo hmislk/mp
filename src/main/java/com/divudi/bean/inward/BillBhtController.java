@@ -45,6 +45,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +122,8 @@ public class BillBhtController implements Serializable {
     private List<BillEntry> lstBillEntries;
     private boolean printPreview;
     private List<Bill> bills;
+    
+   
 
     public void makeNull() {
         total = 0.0;

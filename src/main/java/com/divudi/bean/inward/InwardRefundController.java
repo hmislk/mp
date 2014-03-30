@@ -11,10 +11,13 @@ package com.divudi.bean.inward;
 import com.divudi.bean.PaymentSchemeController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
+import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
@@ -52,10 +55,16 @@ public class InwardRefundController implements Serializable {
     private double paidAmount;
     private Bill current;
     private PaymentMethodData paymentMethodData;
+    @EJB
+    private BillNumberBean billNumberBean;
+    private boolean printPreview;
+    @EJB
+    private InwardBean inwardBean;
 
     public void makeNull() {
         current = null;
         paidAmount = 0.0;
+        printPreview = false;
     }
 
     public PaymentMethod[] getPaymentMethods() {
@@ -79,9 +88,13 @@ public class InwardRefundController implements Serializable {
             return true;
         }
 
-        if (getPaidAmount() < getCurrent().getTotal()) {
-            UtilityController.addErrorMessage("Check Refuning Amount");
-            return true;
+        if ((getPaidAmount() < getCurrent().getTotal())) {
+            double different = Math.abs((getPaidAmount() - getCurrent().getTotal()));
+
+            if (different > 0.1) {
+                UtilityController.addErrorMessage("Check Refuning Amount");
+                return true;
+            }
         }
 
         return false;
@@ -94,7 +107,12 @@ public class InwardRefundController implements Serializable {
 
         saveBill();
         saveBillItem();
-        makeNull();
+        printPreview = true;
+
+        if (getCurrent().getPatientEncounter().isPaymentFinalized()) {
+            getInwardBean().updateFinalFill(getCurrent().getPatientEncounter());
+        }
+
         UtilityController.addSuccessMessage("Payment Bill Saved");
     }
 
@@ -106,8 +124,16 @@ public class InwardRefundController implements Serializable {
         getCurrent().setBillType(BillType.InwardPaymentBill);
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().setTotal(0 - getCurrent().getTotal());
-        getCurrent().setNetTotal(getCurrent().getTotal());
+        getCurrent().setInstitution(getSessionController().getInstitution());
+        getCurrent().setDepartment(getSessionController().getDepartment());
+
+        getCurrent().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWREF));
+        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWREF));
+
+        double dbl = Math.abs(getCurrent().getTotal());
+
+        getCurrent().setTotal(0 - dbl);
+        getCurrent().setNetTotal(0 - dbl);
         getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getBillFacade().create(getCurrent());
@@ -185,6 +211,27 @@ public class InwardRefundController implements Serializable {
 
     }
 
+    public void calculteFinalBillMax() {
+        String sql = "Select b From BilledBill b where"
+                + " b.retired=false "
+                + " and b.cancelled=false "
+                + " and b.billType=:btp "
+                + " and b.patientEncounter=:pe";
+        HashMap hm = new HashMap();
+        hm.put("btp", BillType.InwardFinalBill);
+        hm.put("pe", getCurrent().getPatientEncounter());
+
+        Bill b = getBillFacade().findFirstBySQL(sql, hm);
+
+        if (b == null) {
+            paidAmount = 0;
+            return;
+        }
+
+        paidAmount = Math.abs(b.getPaidAmount()) - Math.abs(b.getNetTotal());
+
+    }
+
     public double getPaidAmount() {
 
         return paidAmount;
@@ -227,5 +274,29 @@ public class InwardRefundController implements Serializable {
 
     public void setBillBean(BillBean billBean) {
         this.billBean = billBean;
+    }
+
+    public BillNumberBean getBillNumberBean() {
+        return billNumberBean;
+    }
+
+    public void setBillNumberBean(BillNumberBean billNumberBean) {
+        this.billNumberBean = billNumberBean;
+    }
+
+    public boolean isPrintPreview() {
+        return printPreview;
+    }
+
+    public void setPrintPreview(boolean printPreview) {
+        this.printPreview = printPreview;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 }

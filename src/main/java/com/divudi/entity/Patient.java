@@ -95,7 +95,7 @@ public class Patient implements Serializable {
         LocalDate date = new LocalDate(new Date());
 
         Period period = new Period(dob, date, PeriodType.yearMonthDay());
-        ageYears = period.getDays();
+        ageYears = period.getYears();
         ageMonths = period.getMonths();
         ageDays = period.getDays();
         if (ageYears > 12) {

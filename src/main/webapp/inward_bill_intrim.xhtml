@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:in="http://java.sun.com/jsf/composite/inward"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
 
 
     <ui:define name="content">
@@ -19,7 +20,9 @@
                         <p:commandButton ajax="false"  value="Refresh" style="float:right;" action="#{bhtSummeryController.createTables()}" />                        
                         <p:commandButton ajax="false"  value="Clear" style="float:right;" action="#{bhtSummeryController.makeNull}" />                                                
                         <p:commandButton ajax="false" value="To Settle Bill" style="float:right;" action="#{bhtSummeryController.toSettleBill()}" />
-
+                        <p:commandButton value="Print Intrim" ajax="false" >
+                            <p:printer target="claimablePatientCopy" ></p:printer>
+                        </p:commandButton>
                     </f:facet>
                     <h:panelGrid columns="3" style="min-width: 100%;">
                         <p:panel header="BHT">
@@ -30,7 +33,7 @@
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  >
                                 <p:ajax event="itemSelect" process="acPt" 
-                                        update="panSearch2 tvPt sum tot dis  " 
+                                        update="panSearch2 tvPt sum tot dis  claimablePatientCopy " 
                                         listener="#{bhtSummeryController.createTables()}"/>
                                 <p:column>
                                     #{myItem.bhtNo}
@@ -576,14 +579,20 @@
                     <p:dataGrid id="sum" columns="3"
                                 value="#{bhtSummeryController.chargeItemTotals}" 
                                 style="max-width: 25%;" var="c">
-                        <h:panelGrid columns="2" style="min-width: 100%;">
+
+                        <h:panelGrid columns="2" style="min-width: 100%;"  >
                             <h:outputLabel value="#{c.inwardChargeType}"/>
-                            <h:outputLabel value="#{c.total}" style="float: right;">
+                            <h:outputLabel value="#{c.total}" style="float: right;"  >
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
                         </h:panelGrid>
+
                     </p:dataGrid>
                 </p:panel>
+
+                <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                    <bi:intrimBill   patientEncounter="#{bhtSummeryController.patientEncounter}" items="#{bhtSummeryController.chargeItemTotals}"/>
+                </h:panelGroup>
 
             </h:form>
 

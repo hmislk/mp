@@ -5,6 +5,7 @@
 package com.divudi.entity;
 
 import com.divudi.data.FeeType;
+import com.divudi.entity.inward.PatientRoom;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -85,6 +86,8 @@ public class BillFee implements Serializable {
 
     @Transient
     private double transSerial;
+    @ManyToOne
+    private PatientRoom referencePatientRoom;
 
     public void copy(BillFee billFee) {
         fee = billFee.getFee();
@@ -542,6 +545,14 @@ public class BillFee implements Serializable {
 
     public void setReferenceBillItem(BillItem referenceBillItem) {
         this.referenceBillItem = referenceBillItem;
+    }
+
+    public PatientRoom getReferencePatientRoom() {
+        return referencePatientRoom;
+    }
+
+    public void setReferencePatientRoom(PatientRoom referencePatientRoom) {
+        this.referencePatientRoom = referencePatientRoom;
     }
 
 }

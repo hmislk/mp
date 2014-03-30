@@ -95,8 +95,6 @@ public class PatientController implements Serializable {
                 Barcode bc = BarcodeFactory.createCode128A("0123456789");
                 bc.setBarHeight(5);
                 bc.setBarWidth(3);
-                Font font = 
-                bc.setF
                 bc.setDrawingText(true);
                 BarcodeImageHandler.saveJPEG(bc, barcodeFile);
 

@@ -75,7 +75,9 @@
                                     </p:submenu>
                                     <p:submenu label="Professional Charges" >
                                         <p:menuitem  ajax="false"  value="Pay Doctor"  action="inward_bill_staff_payment"></p:menuitem>
-                                        <p:menuitem  ajax="false"  value="Payment Due Search"  action="inward_search_professional_payment_due" actionListener="#{searchController.makeListNull}" ></p:menuitem>
+                                        <p:menuitem  ajax="false"  value="Payment Due Search"  
+                                                     action="inward_search_professional_payment_due" 
+                                                     actionListener="#{searchController.makeListNull}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  value="Payment Done Search"  action="inward_search_professional_payment_done" actionListener="#{searchController.makeListNull}" ></p:menuitem>
                                     </p:submenu>  
                                     <p:submenu label="Payment">

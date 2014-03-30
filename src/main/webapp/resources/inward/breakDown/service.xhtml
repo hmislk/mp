@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface >
+
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+
+    <cc:implementation>
+        <p:dataTable value="#{bhtSummeryController.inwardBillItemByType}" var="inw" >
+            <p:columnGroup type="header">
+                <p:row>
+                    <p:column headerText="Item Name"/>
+                    <p:column headerText="Cost"/>                    
+                </p:row>
+            </p:columnGroup>
+            <p:subTable value="#{inw.billItems}" var="ser" rendered="#{inw.billItems.size()!=0}">
+                <f:facet name="header">
+                    #{inw.inwardChargeType}
+                </f:facet>
+                <p:column>
+                    #{ser.item.name}
+                </p:column>
+                <p:column>
+                    #{ser.netValue}
+                </p:column>         
+            </p:subTable>
+        </p:dataTable>
+    </cc:implementation>
+</html>

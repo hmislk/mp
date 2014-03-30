@@ -72,8 +72,11 @@ public class InwardPaymentController implements Serializable {
     }
 
     private double getFinalBillDue() {
-        String sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false "
-                + " and b.billType=:btp and b.patientEncounter=:pe";
+        String sql = "Select b From BilledBill b where"
+                + " b.retired=false "
+                + " and b.cancelled=false "
+                + " and b.billType=:btp "
+                + " and b.patientEncounter=:pe";
         HashMap hm = new HashMap();
         hm.put("btp", BillType.InwardFinalBill);
         hm.put("pe", getCurrent().getPatientEncounter());
@@ -84,7 +87,7 @@ public class InwardPaymentController implements Serializable {
             return 0;
         }
 
-        return b.getNetTotal() - b.getPaidAmount();
+        return Math.abs(b.getNetTotal()) - Math.abs(b.getPaidAmount());
 
     }
 
@@ -172,12 +175,15 @@ public class InwardPaymentController implements Serializable {
 
         getCurrent().setInstitution(getSessionController().getInstitution());
         getCurrent().setBillType(BillType.InwardPaymentBill);
-        getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), getSessionController().getDepartment(), BillType.InwardPaymentBill));
+        getCurrent().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWPAY));
         getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWPAY));
 
         getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        getCurrent().setNetTotal(getCurrent().getTotal());
+
+        double dbl = Math.abs(getCurrent().getTotal());
+        getCurrent().setTotal(dbl);
+        getCurrent().setNetTotal(dbl);
         getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getBilledBillFacade().create(getCurrent());

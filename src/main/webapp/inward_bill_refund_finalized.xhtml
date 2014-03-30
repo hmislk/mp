@@ -23,11 +23,11 @@
                     <p:panel header="BHT">
                         <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admis"
                                         value="#{inwardRefundController.current.patientEncounter}" 
-                                        completeMethod="#{admissionController.completePatientDishcargedNotFinalized}"
+                                        completeMethod="#{admissionController.completePatientPaymentMax}"
                                         var="apt2" itemLabel="#{apt2.bhtNo}" 
                                         itemValue="#{apt2}" size="30"  style="width: 400px;">
                             <p:ajax event="itemSelect" process="acPt2" update="panSearch2 paid" 
-                                    listener="#{inwardRefundController.calculatePaidAmount}"/>
+                                    listener="#{inwardRefundController.calculteFinalBillMax}"/>
                             <p:column>
                                 #{apt2.bhtNo}
                             </p:column>
@@ -47,7 +47,9 @@
                     <p:panel header="Paid Amount" id="paid">
                         <p:panelGrid columns="2">
                             <h:outputLabel value="Total Payments"/>
-                            <h:outputLabel value="#{inwardRefundController.paidAmount}"/>                           
+                            <h:outputLabel value="#{inwardRefundController.paidAmount}">
+                                <f:convertNumber pattern="#,000.00" />
+                            </h:outputLabel>
                         </p:panelGrid>
                     </p:panel>
                     <p:panel header="Payment Detail">
@@ -73,7 +75,9 @@
 
                         <h:panelGrid columns="2">
                             <p:outputLabel value="Amount"/>
-                            <p:inputText value="#{inwardRefundController.current.total}"/>
+                            <p:inputText value="#{inwardRefundController.current.total}">
+                                 <f:convertNumber pattern="#,000.00" />
+                            </p:inputText>
                             <p:commandButton id="btnRefund" ajax="false" value="Refund" 
                                              action="#{inwardRefundController.pay}"/>
                             <p:commandButton ajax="false" value="Clear" action="#{inwardRefundController.makeNull}"/>

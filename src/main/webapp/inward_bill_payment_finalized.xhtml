@@ -22,11 +22,12 @@
 
                             <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                             value="#{inwardPaymentController.current.patientEncounter}"
-                                            completeMethod="#{admissionController.completePatientDishcargedNotFinalized}" 
+                                            completeMethod="#{admissionController.completePatientPaymentDue}" 
                                             var="myItem" itemValue="#{myItem}" 
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  style="width: 400px;">
-                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 "/>
+                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 due "
+                                        listener="#{inwardPaymentController.bhtListener()}"/>
                                 <p:column>
                                     <h:outputLabel value="#{myItem.bhtNo}"/>
                                 </p:column>
@@ -47,8 +48,14 @@
 
                         <p:panel id="due">
                             <h:panelGrid columns="2">
+                                <h:outputLabel value="Due"/>
+                                <h:outputLabel value="#{inwardPaymentController.due}">
+                                     <f:convertNumber pattern="#,000.00" />
+                                </h:outputLabel>
                                 <h:outputLabel value="Paying Amount"/>
-                                <p:inputText value="#{inwardPaymentController.current.total}"/>
+                                <p:inputText value="#{inwardPaymentController.current.total}">
+                                     <f:convertNumber pattern="#,000.00" />
+                                </p:inputText>
                             </h:panelGrid>
                         </p:panel>
 

@@ -1814,9 +1814,10 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=false and "
-                + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is not null)"
-                + " and b.createdAt between :fromDate and :toDate and b.retired=false order by b.insId desc  ";
+        sql = "select b from BilledBill b where "
+                + " b.billType = :billType "
+                + " and b.createdAt between :fromDate and :toDate"
+                + " and b.retired=false order by b.insId desc  ";
 
         temMap.put("billType", BillType.InwardBill);
         temMap.put("toDate", toDate);
@@ -1919,10 +1920,55 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.createdAt is not null "
-                + " and b.patientEncounter.discharged=false and"
-                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false  ";
+        sql = "select b from BilledBill b where"
+                + " b.billType = :billType "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
+
+        if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPatientPhone() != null && !getSearchKeyword().getPatientPhone().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.patient.person.phone) like :patientPhone )";
+            temMap.put("patientPhone", "%" + getSearchKeyword().getPatientPhone().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBhtNo() != null && !getSearchKeyword().getBhtNo().trim().equals("")) {
+            sql += " and  (upper(b.patientEncounter.bhtNo) like :bht )";
+            temMap.put("bht", "%" + getSearchKeyword().getBhtNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :netTotal )";
+            temMap.put("netTotal", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.insId desc  ";
+
+        temMap.put("billType", BillType.InwardPaymentBill);
+        temMap.put("toDate", toDate);
+        temMap.put("fromDate", fromDate);
+
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
+    }
+
+    public void createInwardRefundBills() {
+
+        String sql;
+        Map temMap = new HashMap();
+        sql = "select b from RefundBill b where "
+                + " b.billType = :billType "
+                + " and b.billedBill is null "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
@@ -2018,14 +2064,12 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-//        sql = "select b from BilledBill b where b.createdAt is not null and "
-//                + " b.patientEncounter.discharged=true and"
-//                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-//                + "and b.retired=false";
-        sql = "select b from BilledBill b where b.createdAt is not null "
-                + " and b.patientEncounter.discharged=true and"
-                + " b.billType = :billType and b.createdAt between :fromDate and :toDate "
-                + "and b.retired=false  ";
+
+        sql = "select b from BilledBill b where  "
+                + " and b.patientEncounter.paymentFinalized=true"
+                + " and b.billType = :billType "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
@@ -2066,9 +2110,10 @@ public class SearchController implements Serializable {
 
         String sql;
         Map temMap = new HashMap();
-        sql = "select b from BilledBill b where b.createdAt is not null and b.billType = :billType and b.patientEncounter.discharged=false and "
-                + " b.id in(Select bf.bill.id From BillFee bf where bf.retired=false and bf.createdAt between :fromDate and :toDate and bf.billItem is null)"
-                + " and b.createdAt between :fromDate and :toDate and b.retired=false";
+        sql = "select b from BilledBill b where "
+                + " b.billType = :billType "
+                + " and b.createdAt between :fromDate and :toDate"
+                + " and b.retired=false";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patientEncounter.patient.person.name) like :patientName )";
@@ -2097,7 +2142,7 @@ public class SearchController implements Serializable {
 
         sql += " order by b.insId desc";
 
-        temMap.put("billType", BillType.InwardBill);
+        temMap.put("billType", BillType.InwardProfessional);
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
 

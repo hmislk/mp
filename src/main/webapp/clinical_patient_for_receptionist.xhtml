@@ -51,11 +51,8 @@
                                                 <f:convertDateTime pattern="dd MMMM yyyy"/>
                                             </h:outputLabel>
                                         </p:column>
-                                        <p:ajax event="itemSelect" process="acPt" update=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} "/>
+                                        <f:ajax event="itemSelect" execute="acPt" render=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} "/>
                                     </p:autoComplete>
-
-
-
 
                                     <p:panel  id="panelQueue" header="Add to Queue" >
                                         <h:panelGrid columns="3" >
@@ -88,9 +85,11 @@
                             <p:panel id="panelDetails"  >
                                 <f:facet name="header" >
                                     <h:outputLabel value="Details" />
-                                    <p:commandButton style="float: right;" ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
+                                    <p:spacer ></p:spacer>
+                                    <p:commandButton  ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
                                 </f:facet>
-                                <h:panelGrid columns="2" >
+
+                                <h:panelGrid columns="3" >
                                     <h:panelGrid columns="2" >
                                         <h:outputLabel value="Title"/>
                                         <p:selectOneMenu  rendered="#{patientController.current.person ne null}" id="cmbTitle" value="#{patientController.current.person.title}"  >
@@ -109,17 +108,22 @@
 
                                         <h:outputLabel value="Age"/>
                                         <h:panelGrid columns="3">
-                                            <p:inputText  id="year" style="width: 50px;" autocomplete="off" value="#{patientController.yearMonthDay.year}">
+                                            <p:inputText  id="year" style="width: 80px;" autocomplete="off" value="#{patientController.yearMonthDay.year}">
                                                 <f:ajax event="keyup" execute="@this month day" render="calNewPtDob" listener="#{patientController.dateChangeListen()}"  />
                                             </p:inputText>
 
-                                            <p:inputText id="month"   style="width: 50px;" autocomplete="off" value="#{patientController.yearMonthDay.month}">
+                                            <p:inputText id="month"   style="width: 80px;" autocomplete="off" value="#{patientController.yearMonthDay.month}">
                                                 <f:ajax event="keyup" execute="@this year day" render="calNewPtDob" listener="#{patientController.dateChangeListen()}"  />
                                             </p:inputText>
 
-                                            <p:inputText id="day"  style="width: 50px;"  autocomplete="off" value="#{patientController.yearMonthDay.day}">
+                                            <p:inputText id="day"  style="width: 80px;"  autocomplete="off" value="#{patientController.yearMonthDay.day}">
                                                 <f:ajax event="keyup" execute="@this year month" render="calNewPtDob" listener="#{patientController.dateChangeListen()}" />
                                             </p:inputText>
+                                            
+                                            <p:watermark value="#{patientController.current.ageYears} years" for="year" ></p:watermark>
+                                            <p:watermark value="#{patientController.current.ageMonths} months" for="month" ></p:watermark>
+                                            <p:watermark value="#{patientController.current.ageDays} days" for="day" ></p:watermark>
+                                            
                                         </h:panelGrid>
 
                                         <h:outputLabel value="Address"/>
@@ -131,106 +135,109 @@
                                         </p:inputMask>
                                         <h:outputLabel value="Date of Birth"/>
                                         <p:calendar  value="#{patientController.current.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
-                                            <!--<f:ajax event="dateSelect" execute="@this" render="txtNewPtAge"/>-->
+                                            <f:ajax event="dateSelect" execute="calNewPtDob" render="lblPtAge"/>
                                         </p:calendar>
-
+                                        <h:outputLabel value=""/>
+                                        <h:outputLabel id="lblPtAge" value="#{patientController.current.age}"/>
+                                        
                                         <h:outputLabel value="Code"/>
                                         <h:outputLabel value="#{patientController.current.code}" ></h:outputLabel>
                                     </h:panelGrid>
 
                                     <p:panel id="panPhoto" >
-                                        <h:form>  
-
-                                            <h:panelGrid columns="2"> 
-                                                <p:graphicImage  style="border: 1px solid red;" id="photos" rendered="#{patientController.current.baImage ne null}"    value="#{patientController.getPhotoByByte(patientController.current.baImage)  }"  >
-                                                </p:graphicImage>
-                                                <h:panelGroup >
-                                                    <p:photoCam widgetVar="pc" listener="#{photoCamBean.oncapturePatientPhoto}" update="photos"/>  
-                                                    <p:commandButton type="button" value="Capture" onclick="PF('pc').capture()"/>  
-                                                </h:panelGroup>
 
 
-
-                                                <p:panel id="ptCard" header="Patient Card" >
-                                                    <div class="fiveinchbill" >
-                                                        <table>
-                                                            <tr>
-                                                                <td colspan="3" >
-                                                                    <h1>Baddegama Medical Services</h1>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="3" >
-                                                                    <h1>Infront of Bus Stand, Baddegama</h1>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Name
-                                                                </td>
-                                                                <td>
-                                                                    :
-                                                                </td>
-                                                                <td>
-                                                                    #{patientController.current.person.nameWithTitle}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Age
-                                                                </td>
-                                                                <td>
-                                                                    :
-                                                                </td>
-                                                                <td>
-                                                                    #{patientController.current.age}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Sex
-                                                                </td>
-                                                                <td>
-                                                                    :
-                                                                </td>
-                                                                <td>
-                                                                    #{patientController.current.person.sex}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="3" >
-                                                                    
-                                                                    #{patientController.current.id}
-                                                                    
-                                                                    <p:graphicImage rendered="#{patientController.current.id ne null}" value="#{barcodeController.barcodeBy}"  >
-                                                                        <f:param name="code" value="#{patientController.current.id}" />
-                                                                    </p:graphicImage>
-                                                                    
-                                                                    
-                                                                    
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-
-
-                                                    </div>
-
-
-                                                </p:panel>
+                                        <h:panelGrid columns="2"> 
+                                            <p:graphicImage  style="border: 1px solid red;" id="photos" rendered="#{patientController.current.baImage ne null}"    value="#{patientController.getPhotoByByte(patientController.current.baImage)  }"  >
+                                            </p:graphicImage>
+                                            <h:panelGroup >
+                                                <p:photoCam widgetVar="pc" listener="#{photoCamBean.oncapturePatientPhoto}" update="photos"/>  
+                                                <p:commandButton type="button" value="Capture" onclick="PF('pc').capture()"/>  
+                                            </h:panelGroup>
 
 
 
 
-                                            </h:panelGrid>  
+                                        </h:panelGrid>  
 
-                                        </h:form>
+
+                                    </p:panel>
+
+                                    <p:panel >
+
+
+                                        <p:panel id="ptCard" header="Patient Card" >
+                                            <div class="fiveinchbill" >
+                                                <table>
+                                                    <tr>
+                                                        <td colspan="3" >
+                                                            <h1>Baddegama Medical Services</h1>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" >
+                                                            <h1>Infront of Bus Stand, Baddegama</h1>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Name
+                                                        </td>
+                                                        <td>
+                                                            :
+                                                        </td>
+                                                        <td>
+                                                            #{patientController.current.person.nameWithTitle}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Age
+                                                        </td>
+                                                        <td>
+                                                            :
+                                                        </td>
+                                                        <td>
+                                                            #{patientController.current.age}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Sex
+                                                        </td>
+                                                        <td>
+                                                            :
+                                                        </td>
+                                                        <td>
+                                                            #{patientController.current.person.sex}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" >
+
+                                                            #{patientController.current.id}
+
+
+
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+
+
+                                            </div>
+
+
+                                        </p:panel>
+
+
                                     </p:panel>
 
                                 </h:panelGrid>
 
 
-                            </p:panel>
 
+                            </p:panel>
 
 
                         </h:panelGrid>

@@ -35,48 +35,22 @@
                     </div>
 
                     <div class="cel1R1L" >
-                        <h:outputLabel value="Bill No">
-                        </h:outputLabel>
+                        <h:outputLabel value="Bill No"/><h:outputLabel value=":"/>
+                        <h:outputLabel value="#{cc.attrs.bill.insId}"/>
+                        
 
-                    </div>
-
-                    <div class="cel1R1C" >
-                        <h:outputLabel value=":">
-                        </h:outputLabel>
-                    </div>
-
-                    <div class="cel1R1V" >
-                        <h:outputLabel value="#{cc.attrs.bill.insId}">
-                        </h:outputLabel>
                     </div>
 
                     <div class="cel2R1L" >
-                        <h:outputLabel value="BHT No">
-                        </h:outputLabel>
+                        <h:outputLabel value="BHT No"/><h:outputLabel value=":"/>
+                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.bhtNo}"/>
                     </div>
 
-                    <div class="cel2R1C" >
-                        <h:outputLabel value=":">
-                        </h:outputLabel>
-                    </div>
-
-                    <div class="cel2R1V" >
-                        <h:outputLabel value="#{cc.attrs.bill.patientEncounter.bhtNo}">
-                        </h:outputLabel>
-                    </div>
-
-
-                    <div class="cel1R2L" >
+                    <div class="billdate" >
                         <h:outputLabel value="Date">
                         </h:outputLabel>
-                    </div>
-
-                    <div class="cel1R2C" >
                         <h:outputLabel value=":">
                         </h:outputLabel>
-                    </div>
-
-                    <div class="cel1R2V" >
                         <h:outputLabel value="#{cc.attrs.bill.billDate}" >
                             <f:convertDateTime pattern="dd/MM/yy"/>
                         </h:outputLabel>
@@ -84,22 +58,19 @@
 
                     <div Class="cel2R2L" >
                         <h:outputLabel value="Payment" ></h:outputLabel>
-                    </div>
-                    <div Class="cel2R2C" >
                         <h:outputLabel value=":" ></h:outputLabel>
-                    </div>
-                    <div Class="cel2R2V" >
                         <h:outputLabel value="#{cc.attrs.bill.paymentMethod}" >
                         </h:outputLabel>
                     </div>
-
-
-
+                    
                     <div style="position: absolute;left: 5%;top: 50%;min-width: 85%;" >
 
                         <table style="min-width:100%;padding-left: 30px;">
                             <tr>
-                                <td style="min-width: 80%;text-align: left;font-size: 120%;">
+                                <td style="text-align: left; min-width: 3cm; font-weight: bold;">
+                                    <h:outputLabel value="Total:&nbsp;&nbsp;" style="text-align: right!important;  font-size: 15px!important;"/>
+                                    
+                                    
                                     <h:outputLabel value="Rs. "/>
                                     <h:outputLabel value="#{cc.attrs.bill.netTotal}" >
                                         <f:convertNumber integerOnly="true" />
@@ -109,23 +80,26 @@
 
                             </tr>
                         </table>
+                    <br/>
+                    <br/>
+                    <br/>
 
 
 
-                    </div>
+                    
 
                     <div class="cashierBlock" >
                         <h:outputLabel value=".................."  /><br/>
                         <h:outputLabel  value="Cashier : #{cc.attrs.bill.creater.code}"   />
                     </div>
 
-
+</div>
                 </div>
 
             </h:panelGroup>
         </div>
-        
-        </h:form>
 
+
+        </h:form>
     </cc:implementation>
 </html>

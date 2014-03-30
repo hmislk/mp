@@ -13,13 +13,15 @@ import com.divudi.data.Title;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
-import com.divudi.facade.PatientFacade;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
+import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
+import java.awt.Font;
 import java.io.ByteArrayInputStream;
-import java.util.TimeZone;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,14 +29,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Named;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
+import javax.inject.Named;
+import net.sourceforge.barbecue.Barcode;
+import net.sourceforge.barbecue.BarcodeException;
+import net.sourceforge.barbecue.BarcodeFactory;
+import net.sourceforge.barbecue.BarcodeImageHandler;
+import net.sourceforge.barbecue.output.OutputException;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -64,6 +74,38 @@ public class PatientController implements Serializable {
     BillNumberBean billNumberBean;
     @EJB
     CommonFunctions commonFunctions;
+
+    StreamedContent barcode;
+
+    public void createPatientBarcode() {
+        File barcodeFile = new File("ptbarcode");
+        if (current != null && !current.getCode().trim().equals("")) {
+            try {
+                Barcode bc = BarcodeFactory.createCode128A(getCurrent().getCode());
+                bc.setBarHeight(5);
+                bc.setBarWidth(3);
+                bc.setDrawingText(true);
+                BarcodeImageHandler.saveJPEG(bc, barcodeFile);
+                barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
+            } catch (BarcodeException | OutputException | FileNotFoundException ex) {
+                Logger.getLogger(PatientController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                Barcode bc = BarcodeFactory.createCode128A("0123456789");
+                bc.setBarHeight(5);
+                bc.setBarWidth(3);
+                Font font = 
+                bc.setF
+                bc.setDrawingText(true);
+                BarcodeImageHandler.saveJPEG(bc, barcodeFile);
+
+                barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
+            } catch (BarcodeException | OutputException | FileNotFoundException ex) {
+                Logger.getLogger(PatientController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
     public CommonFunctions getCommonFunctions() {
         return commonFunctions;
@@ -203,7 +245,7 @@ public class PatientController implements Serializable {
                     + " :q order by p.person.name";
             hm.put("q", "%" + query.toUpperCase() + "%");
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql,hm,20);
+            suggestions = getFacade().findBySQL(sql, hm, 20);
         }
         return suggestions;
     }
@@ -262,6 +304,7 @@ public class PatientController implements Serializable {
     }
 
     public PatientController() {
+        createPatientBarcode();
     }
 
     public Patient getCurrent() {
@@ -321,6 +364,15 @@ public class PatientController implements Serializable {
         this.billNumberBean = billNumberBean;
     }
 
+    public StreamedContent getBarcode() {
+        createPatientBarcode();
+        return barcode;
+    }
+
+    public void setBarcode(StreamedContent barcode) {
+        this.barcode = barcode;
+    }
+
     /**
      *
      * Set all Patients to null
@@ -338,7 +390,6 @@ public class PatientController implements Serializable {
      *
      */
     @FacesConverter(forClass = Patient.class)
-//    @FacesConverter("PatientConverter")
     public static class PatientControllerConverter implements Converter {
 
         /**
@@ -399,4 +450,67 @@ public class PatientController implements Serializable {
             }
         }
     }
+
+    @FacesConverter("patientConverter")
+    public static class PatientConverter implements Converter {
+
+        /**
+         *
+         * @param facesContext
+         * @param component
+         * @param value
+         * @return
+         */
+        @Override
+        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+            if (value == null || value.length() == 0) {
+                return null;
+            }
+            PatientController controller = (PatientController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "patientController");
+            //System.out.println("value at converter getAsObject is " + value);
+            return controller.getEjbFacade().find(getKey(value));
+        }
+
+        java.lang.Long getKey(String value) {
+            java.lang.Long key;
+            //System.out.println(value);
+            if (value == null || value.equals("null") || value.trim().equals("")) {
+                key = 0l;
+            } else {
+                key = Long.valueOf(value);
+                //System.out.println(key);
+                //System.out.println(value);
+            }
+            return key;
+        }
+
+        String getStringKey(java.lang.Long value) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(value);
+            return sb.toString();
+        }
+
+        /**
+         *
+         * @param facesContext
+         * @param component
+         * @param object
+         * @return
+         */
+        @Override
+        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+            if (object == null) {
+                return null;
+            }
+            if (object instanceof Patient) {
+                Patient o = (Patient) object;
+                return getStringKey(o.getId());
+            } else {
+                throw new IllegalArgumentException("object " + object + " is of type "
+                        + object.getClass().getName() + "; expected type: " + PatientController.class.getName());
+            }
+        }
+    }
+
 }

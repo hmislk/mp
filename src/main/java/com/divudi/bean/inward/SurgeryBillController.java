@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import static org.apache.xmlbeans.impl.values.NamespaceContext.getCurrent;
 
 /**
  *

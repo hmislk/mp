@@ -19,6 +19,8 @@ import javax.persistence.Transient;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
 import org.joda.time.Years;
 
 /**
@@ -61,6 +63,12 @@ public class Patient implements Serializable {
     String fileName;
     String fileType;
     String code;
+    @Transient
+    int ageMonths;
+    @Transient
+    int ageDays;
+    @Transient
+    int ageYears;
 
     public String getCode() {
         return code;
@@ -70,72 +78,68 @@ public class Patient implements Serializable {
         this.code = code;
     }
 
-    public Long getAgeInDays() {
+    public void calAgeFromDob() {
+        age = "";
+        ageInDays = 0l;
+        ageMonths = 0;
+        ageDays = 0;
+        ageYears = 0;
         if (person == null) {
-            //System.out.println("patient is null");
-            age = "";
-            return 0l;
+            return;
         }
         if (person.getDob() == null) {
-            //System.out.println("dob is null");
-            age = "";
-            return 0l;
+            return;
         }
-        LocalDate birthdate = new LocalDate(getPerson().getDob());
-        LocalDate now = new LocalDate();
-        Years ageInYears;
-        Days ageDays;
-        ageDays = Days.daysBetween(birthdate, now);
-        //System.err.println("Days : " + (long) ageDays.getDays());
-        return (long) ageDays.getDays();
-    }
 
-    public void setAgeInDays(Long ageInDays) {
-        this.ageInDays = ageInDays;
-    }
+        LocalDate dob = new LocalDate(person.getDob());
+        LocalDate date = new LocalDate(new Date());
 
-//    public String getAge() {
-//        LocalDate birthdate = new LocalDate(getPerson().getDob());
-//        LocalDate now = new LocalDate();
-//        Years ageInYears;
-//        ageInYears = Years.yearsBetween(birthdate, now);
-//        if (0 < ageInYears.getYears()) {
-//            return ageInYears.getYears() + " Years";
-//        } else {
-//            Months ageInMonths = Months.monthsBetween(birthdate, now);
-//            if (ageInMonths.getMonths() > 0) {
-//                return ageInMonths.getMonths() + " Months";
-//            } else {
-//                Days ageDays = Days.daysBetween(birthdate, now);
-//                return ageDays.getDays() + " Days";
-//            }
-//        }
-//    }
-    
-    
-    public String getAge() {
-       LocalDate birthdate = new LocalDate(getPerson().getDob());
-        LocalDate now = new LocalDate();
-        Years ageInYears;
-        ageInYears = Years.yearsBetween(birthdate, now);
-        if (0 < ageInYears.getYears()) {
-            return ageInYears.getYears() + " Years";
+        Period period = new Period(dob, date, PeriodType.yearMonthDay());
+        ageYears = period.getDays();
+        ageMonths = period.getMonths();
+        ageDays = period.getDays();
+        if (ageYears > 12) {
+            age=period.getYears() + " years.";
+        } else if (ageYears > 0) {
+            age=period.getYears() + " years and " + period.getMonths() + " months.";
         } else {
-            Months ageInMonths = Months.monthsBetween(birthdate, now);
-            if (ageInMonths.getMonths() > 0) {
-                return ageInMonths.getMonths() + " Months";
-            } else {
-                Days ageDays = Days.daysBetween(birthdate, now);
-                return ageDays.getDays() + " Days";
-            }
+            age=period.getMonths() + " months and " + period.getDays() + " days." ;
         }
-   }
-    
-
-    public void setAge(String age) {
-        this.age = age;
+        period = new Period(dob, date, PeriodType.days());
+        ageInDays = (long)period.getDays();
     }
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getAge() {
+        calAgeFromDob();
+        return age;
+    }
+
+    public Long getAgeInDays() {
+        calAgeFromDob();
+        return ageInDays;
+    }
+
+    public int getAgeMonths() {
+        calAgeFromDob();
+        return ageMonths;
+    }
+
+    public int getAgeDays() {
+        calAgeFromDob();
+        return ageDays;
+    }
+
+    public int getAgeYears() {
+        calAgeFromDob();
+        return ageYears;
+    }
+
+    
+    
     public Long getId() {
         return id;
     }

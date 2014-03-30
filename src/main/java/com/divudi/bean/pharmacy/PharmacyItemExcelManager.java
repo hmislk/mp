@@ -10,6 +10,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.InstitutionType;
+import com.divudi.data.dataStructure.PharmacyImportCol;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -106,7 +107,7 @@ public class PharmacyItemExcelManager implements Serializable {
     @EJB
     private PharmacyBean pharmacyBean;
 
-    List<String> itemNotPresent;
+    List<PharmacyImportCol> itemNotPresent;
     List<String> itemsWithDifferentGenericName;
     List<String> itemsWithDifferentCode;
 
@@ -948,7 +949,7 @@ public class PharmacyItemExcelManager implements Serializable {
     }
 
     public String detectMismatch() {
-        //System.out.println("importing to excel");
+        System.out.println("dictecting mismatch");
         String itemName;
         String itemCode;
         String genericName;
@@ -998,8 +999,11 @@ public class PharmacyItemExcelManager implements Serializable {
 
                 String sql;
                 m.put("strAmp", itemName.toUpperCase());
+                System.out.println("m = " + m);
                 sql = "Select amp from Amp amp where amp.retired=false and upper(amp.name)=:strAmp";
+                System.out.println("sql = " + sql);
                 Amp amp = getAmpFacade().findFirstBySQL(sql, m);
+                System.out.println("amp = " + amp);
                 if (amp != null) {
                     if (amp.getCode() != null) {
                         if (!amp.getCode().equalsIgnoreCase(itemCode)) {
@@ -1012,17 +1016,25 @@ public class PharmacyItemExcelManager implements Serializable {
                         }
                     }
                 } else {
-                    itemNotPresent.add(itemName);
+                    System.out.println("added to list");
+                    PharmacyImportCol npi = new PharmacyImportCol();
+                    long l ;
+                    try{
+                        l=Long.parseLong(sheet.getCell(5, i).getContents());
+                    }catch(Exception e){
+                        l=0l;
+                        System.out.println("e = " + e);
+                    }
+                    npi.set0_id(l);
+
                 }
 
             }
-            UtilityController.addSuccessMessage("Succesful. All the data in Excel File are listed below.");
+            UtilityController.addSuccessMessage("Succesful. All Mismatches listed below.");
             return "";
-        } catch (IOException ex) {
+        } catch (IOException | BiffException ex) {
+            System.out.println("ex = " + ex);
             UtilityController.addErrorMessage(ex.getMessage());
-            return "";
-        } catch (BiffException e) {
-            UtilityController.addErrorMessage(e.getMessage());
             return "";
         }
     }
@@ -1500,13 +1512,7 @@ public class PharmacyItemExcelManager implements Serializable {
         this.stockHistoryFacade = stockHistoryFacade;
     }
 
-    public List<String> getItemNotPresent() {
-        return itemNotPresent;
-    }
-
-    public void setItemNotPresent(List<String> itemNotPresent) {
-        this.itemNotPresent = itemNotPresent;
-    }
+   
 
     public List<String> getItemsWithDifferentGenericName() {
         return itemsWithDifferentGenericName;

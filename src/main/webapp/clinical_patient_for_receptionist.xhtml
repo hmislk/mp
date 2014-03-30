@@ -51,10 +51,10 @@
                                                 <f:convertDateTime pattern="dd MMMM yyyy"/>
                                             </h:outputLabel>
                                         </p:column>
-                                        <p:ajax event="itemSelect" process="acPt" update=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} "/>
+                                        <f:ajax event="itemSelect" execute="acPt" render=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} "/>
                                     </p:autoComplete>
 
-
+                                    <h:commandButton value="Display" ></h:commandButton>
 
 
                                     <p:panel  id="panelQueue" header="Add to Queue" >
@@ -202,8 +202,7 @@
                                                                     
                                                                     #{patientController.current.id}
                                                                     
-                                                                    <p:graphicImage rendered="#{patientController.current.id ne null}" value="#{barcodeController.barcodeBy}"  >
-                                                                        <f:param name="code" value="#{patientController.current.id}" />
+                                                                    <p:graphicImage  value="#{patientController.barcode}"  >
                                                                     </p:graphicImage>
                                                                     
                                                                     

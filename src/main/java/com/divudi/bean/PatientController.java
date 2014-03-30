@@ -302,7 +302,6 @@ public class PatientController implements Serializable {
     }
 
     public PatientController() {
-        createPatientBarcode();
     }
 
     public Patient getCurrent() {

@@ -91,7 +91,9 @@
                                     </p:submenu>
                                     <p:submenu label="Professional Payment" >
                                         <p:menuitem  ajax="false"  value="Pay Doctor"  action="inward_bill_staff_payment"></p:menuitem>
-                                        <p:menuitem  ajax="false"  value="Payment Due Search"  action="inward_search_professional_payment_due" actionListener="#{searchController.makeListNull}" ></p:menuitem>
+                                        <p:menuitem  ajax="false"  value="Payment Due Search"  
+                                                     action="inward_search_professional_payment_due" 
+                                                     actionListener="#{searchController.makeListNull}" ></p:menuitem>
                                         <p:menuitem  ajax="false"  value="Payment Done Search"  action="inward_search_professional_payment_done" actionListener="#{searchController.makeListNull}" ></p:menuitem>
                                     </p:submenu>  
                                     <p:menuitem  ajax="false"  action="inward_reports" value="Inward Reports" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>
@@ -243,8 +245,9 @@
                                 </p:submenu>
                                 <p:submenu label="Payment"  rendered="#{webUserController.hasPrivilege('Payment')}">
                                     <p:menuitem  ajax="false"  action="payment_staff_bill" value="Pay Doctor/Staff" rendered="#{webUserController.hasPrivilege('PaymentBilling')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false"  action="payment_search_due_all" actionListener="#{searchController.makeListNull}"  value="Payments-due Search" rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false"  action="payment_search_bill_all" actionListener="#{searchController.makeListNull}"
+                                    <p:menuitem  ajax="false"  action="opd_search_professional_payment_due" actionListener="#{searchController.makeListNull}"  value="Payments-due Search" rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>
+                                    <p:menuitem  ajax="false"  action="opd_search_professional_payment_done"
+                                                 actionListener="#{searchController.makeListNull}"
                                                  value="Payments-done Search"  rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>                                                               
                                     <p:menuitem  ajax="false"  action="petty_cash_bill" value="Petty Cash Payment"  ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="petty_cash_bill_search_own" actionListener="#{searchController.makeListNull}"  value="Petty Cash Bill Search"  ></p:menuitem>

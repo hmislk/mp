@@ -11,104 +11,104 @@ package com.divudi.data.dataStructure;
  */
 public class PharmacyImportCol {
 
-    long _0_id;
-    String _1_itemCatName;
-    String _2_ampName;
-    String _3_code;
-    String _4_barcode;
-    String _5_genericName;
-    double _6_StrengthOfIssueUnit;
-    String _7_StrengthUnit;
-    double _8_IssueUnitsPerPack;
-    String _9_IssueUnit;
-    String _10_PackUnit;
+    long item0_id;
+    String item1_itemCatName;
+    String item2_ampName;
+    String item3_code;
+    String item4_barcode;
+    String item5_genericName;
+    double item6_StrengthOfIssueUnit;
+    String item7_StrengthUnit;
+    double item8_IssueUnitsPerPack;
+    String item9_IssueUnit;
+    String item10_PackUnit;
 
-    public long get0_id() {
-        return _0_id;
+    public long getItem0_id() {
+        return item0_id;
     }
 
-    public void set0_id(long _0_id) {
-        this._0_id = _0_id;
+    public void setItem0_id(long item0_id) {
+        this.item0_id = item0_id;
     }
 
-    public String get1_itemCatName() {
-        return _1_itemCatName;
+    public String getItem1_itemCatName() {
+        return item1_itemCatName;
     }
 
-    public void set1_itemCatName(String _1_itemCatName) {
-        this._1_itemCatName = _1_itemCatName;
+    public void setItem1_itemCatName(String item1_itemCatName) {
+        this.item1_itemCatName = item1_itemCatName;
     }
 
-    public String get2_ampName() {
-        return _2_ampName;
+    public String getItem2_ampName() {
+        return item2_ampName;
     }
 
-    public void set2_ampName(String _2_ampName) {
-        this._2_ampName = _2_ampName;
+    public void setItem2_ampName(String item2_ampName) {
+        this.item2_ampName = item2_ampName;
     }
 
-    public String get3_code() {
-        return _3_code;
+    public String getItem3_code() {
+        return item3_code;
     }
 
-    public void set3_code(String _3_code) {
-        this._3_code = _3_code;
+    public void setItem3_code(String item3_code) {
+        this.item3_code = item3_code;
     }
 
-    public String get4_barcode() {
-        return _4_barcode;
+    public String getItem4_barcode() {
+        return item4_barcode;
     }
 
-    public void set4_barcode(String _4_barcode) {
-        this._4_barcode = _4_barcode;
+    public void setItem4_barcode(String item4_barcode) {
+        this.item4_barcode = item4_barcode;
     }
 
-    public String get5_genericName() {
-        return _5_genericName;
+    public String getItem5_genericName() {
+        return item5_genericName;
     }
 
-    public void set5_genericName(String _5_genericName) {
-        this._5_genericName = _5_genericName;
+    public void setItem5_genericName(String item5_genericName) {
+        this.item5_genericName = item5_genericName;
     }
 
-    public double get6_StrengthOfIssueUnit() {
-        return _6_StrengthOfIssueUnit;
+    public double getItem6_StrengthOfIssueUnit() {
+        return item6_StrengthOfIssueUnit;
     }
 
-    public void set6_StrengthOfIssueUnit(double _6_StrengthOfIssueUnit) {
-        this._6_StrengthOfIssueUnit = _6_StrengthOfIssueUnit;
+    public void setItem6_StrengthOfIssueUnit(double item6_StrengthOfIssueUnit) {
+        this.item6_StrengthOfIssueUnit = item6_StrengthOfIssueUnit;
     }
 
-    public String get7_StrengthUnit() {
-        return _7_StrengthUnit;
+    public String getItem7_StrengthUnit() {
+        return item7_StrengthUnit;
     }
 
-    public void set7_StrengthUnit(String _7_StrengthUnit) {
-        this._7_StrengthUnit = _7_StrengthUnit;
+    public void setItem7_StrengthUnit(String item7_StrengthUnit) {
+        this.item7_StrengthUnit = item7_StrengthUnit;
     }
 
-    public double get8_IssueUnitsPerPack() {
-        return _8_IssueUnitsPerPack;
+    public double getItem8_IssueUnitsPerPack() {
+        return item8_IssueUnitsPerPack;
     }
 
-    public void set8_IssueUnitsPerPack(double _8_IssueUnitsPerPack) {
-        this._8_IssueUnitsPerPack = _8_IssueUnitsPerPack;
+    public void setItem8_IssueUnitsPerPack(double item8_IssueUnitsPerPack) {
+        this.item8_IssueUnitsPerPack = item8_IssueUnitsPerPack;
     }
 
-    public String get9_IssueUnit() {
-        return _9_IssueUnit;
+    public String getItem9_IssueUnit() {
+        return item9_IssueUnit;
     }
 
-    public void set9_IssueUnit(String _9_IssueUnit) {
-        this._9_IssueUnit = _9_IssueUnit;
+    public void setItem9_IssueUnit(String item9_IssueUnit) {
+        this.item9_IssueUnit = item9_IssueUnit;
     }
 
-    public String get10_PackUnit() {
-        return _10_PackUnit;
+    public String getItem10_PackUnit() {
+        return item10_PackUnit;
     }
 
-    public void set10_PackUnit(String _10_PackUnit) {
-        this._10_PackUnit = _10_PackUnit;
+    public void setItem10_PackUnit(String item10_PackUnit) {
+        this.item10_PackUnit = item10_PackUnit;
     }
 
 

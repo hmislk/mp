@@ -68,13 +68,10 @@ public class InwardStaffPaymentBillController implements Serializable {
     @EJB
     private BillFacade billFacade;
     @EJB
-    private BillItemFacade billItemFacade;
-    List<Bill> selectedItems;
+    private BillItemFacade billItemFacade;    
     private Bill current;
     private List<Bill> items = null;
-    String selectText = "";
     Staff currentStaff;
-    private List<BillFee> dueBillFeeReport;
     List<BillFee> dueBillFees;
     List<BillFee> payingBillFees;
     double totalDue;
@@ -124,18 +121,15 @@ public class InwardStaffPaymentBillController implements Serializable {
         billFees = null;
         billItems = null;
         printPreview = false;
-        billItems = null;
-        selectedItems = null;
-        items = null;
-        dueBillFeeReport = null;
+        billItems = null;       
+        items = null;        
         dueBillFees = null;
         payingBillFees = null;
         billFees = null;
         /////////////////////    
         fromDate = null;
         toDate = null;
-        current = null;
-        selectText = "";
+        current = null;       
         currentStaff = null;
         totalDue = 0.0;
         totalPaying = 0.0;
@@ -251,13 +245,17 @@ public class InwardStaffPaymentBillController implements Serializable {
         } else {
             String sql;
             HashMap h = new HashMap();
-            sql = "select b from BillFee b where b.retired=false and"
-                    + " b.bill.billType=:btp and b.bill.cancelled=false"
-                    + " and b.bill.refunded=false and (b.feeValue - b.paidValue) > 0 "
-                    + " and b.staff.id = " + currentStaff.getId();
+            sql = "select b from BillFee b where "
+                    + " b.retired=false "
+                    + " and (b.bill.billType=:btp or b.bill.billType=:btp2 )"
+                    + " and b.bill.cancelled=false "
+                    + " and b.bill.refunded=false "
+                    + " and (b.feeValue - b.paidValue) > 0 "
+                    + " and b.staff=:stf ";
 //            h.put("btp", BillType.ChannelPaid);
-//            h.put("btp2", BillType.ChannelCredit);
+            h.put("stf", currentStaff);
             h.put("btp", BillType.InwardBill);
+            h.put("btp2", BillType.InwardProfessional);
             dueBillFees = getBillFeeFacade().findBySQL(sql, h, TemporalType.TIMESTAMP);
 
         }
@@ -341,23 +339,12 @@ public class InwardStaffPaymentBillController implements Serializable {
 
     }
 
-    public List<Bill> getSelectedItems() {
-        selectedItems = getFacade().findBySQL("select c from Bill c where c.retired=false and upper(c.name) like '%" + getSelectText().toUpperCase() + "%' order by c.name");
-        return selectedItems;
-    }
-
     public void prepareAdd() {
         current = new BilledBill();
     }
 
-    public void setSelectedItems(List<Bill> selectedItems) {
-        this.selectedItems = selectedItems;
-    }
-
-    public String getSelectText() {
-        return selectText;
-    }
-
+  
+  
     private Bill createPaymentBill() {
         BilledBill tmp = new BilledBill();
         tmp.setBillDate(Calendar.getInstance().getTime());
@@ -453,9 +440,7 @@ public class InwardStaffPaymentBillController implements Serializable {
         b.getBillItems().add(i);
     }
 
-    public void setSelectText(String selectText) {
-        this.selectText = selectText;
-    }
+  
 
     public BillFacade getEjbFacade() {
         return billFacade;
@@ -567,62 +552,8 @@ public class InwardStaffPaymentBillController implements Serializable {
         this.commonFunctions = commonFunctions;
     }
 
-    public List<BillFee> getDueBillFeeReport() {
-        String sql;
-        Map temMap = new HashMap();
-        sql = "select b from BillFee b where b.retired=false and b.bill.cancelled=false and (b.feeValue - b.paidValue) > 0 and b.bill.institution.id=" + getSessionController().getInstitution().getId() + " and b.bill.billDate between :fromDate and :toDate order by b.staff.id  ";
-        System.out.println("sql is " + sql);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-
-        dueBillFeeReport = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        System.out.println(dueBillFeeReport.size());
-
-        if (dueBillFeeReport == null) {
-            dueBillFeeReport = new ArrayList<BillFee>();
-        }
-
-        return dueBillFeeReport;
-    }
-
-    public List<BillFee> getDueBillFeeReportAll() {
-
-        String sql;
-        Map temMap = new HashMap();
-        if (!getSelectText().equals("")) {
-            sql = "select b from BillFee b where b.retired=false and"
-                    + " (b.bill.billType=:btp or b.bill.billType=:btp2 )"
-                    + "  and b.bill.cancelled=false"
-                    + " and (b.feeValue - b.paidValue) > 0 and  "
-                    + " b.bill.billDate between :fromDate and :toDate"
-                    + " and upper(b.staff.person.name) like '%" + selectText.toUpperCase() + "%' "
-                    + " order by b.staff.id  ";
-        } else {
-            sql = "select b from BillFee b where b.retired=false and "
-                    + " (b.bill.billType=:btp or b.bill.billType=:btp2 )  and b.bill.cancelled=false and"
-                    + " (b.feeValue - b.paidValue) > 0 and  "
-                    + " b.bill.billDate between :fromDate and :toDate order by b.staff.id  ";
-        }
-        System.out.println("sql is " + sql);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-//        temMap.put("btp", BillType.ChannelPaid);
-//        temMap.put("btp2", BillType.ChannelCredit);
-        temMap.put("btp", BillType.InwardBill);
-        temMap.put("btp2", BillType.InwardProfessional);
-        dueBillFeeReport = getBillFeeFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        System.out.println(dueBillFeeReport.size());
-
-        if (dueBillFeeReport == null) {
-            dueBillFeeReport = new ArrayList<>();
-        }
-
-        return dueBillFeeReport;
-    }
-
-    public void setDueBillFeeReport(List<BillFee> dueBillFeeReport) {
-        this.dueBillFeeReport = dueBillFeeReport;
-    }
+   
+  
 
     public List<BillItem> getBillItems() {
         if (getCurrent() != null) {

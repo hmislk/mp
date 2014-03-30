@@ -19,33 +19,43 @@
                                 <h:panelGrid columns="2" >
 
                                     <h:outputLabel  value="Select Speciality" ></h:outputLabel>
-                                    <p:autoComplete style="min-width: 400px!important;" forceSelection="true" value="#{inwardStaffPaymentBillController.speciality}" id="acSpeciality"
-                                                    completeMethod="#{specialityController.completeSpeciality}" var="mysp" itemLabel="#{mysp.name}" itemValue="#{mysp}"
+                                    <p:autoComplete style="min-width: 400px!important;" 
+                                                    forceSelection="true" 
+                                                    value="#{inwardStaffPaymentBillController.speciality}"
+                                                    id="acSpeciality"
+                                                    completeMethod="#{specialityController.completeSpeciality}" 
+                                                    var="mysp" itemLabel="#{mysp.name}" itemValue="#{mysp}"
                                                     converter="specilityCon"   >
-                                        <f:ajax event="itemSelect" execute="acSpeciality" render="scStaff tblFee" listener="#{inwardStaffPaymentBillController.calculateDueFees}" />
+                                        <f:ajax event="itemSelect" execute="acSpeciality" 
+                                                render="scStaff tblFee" 
+                                                listener="#{inwardStaffPaymentBillController.calculateDueFees}" />
                                     </p:autoComplete>
 
                                     <h:outputLabel  value="Select Staff / Doctor" ></h:outputLabel>
-                                    <p:autoComplete  style="width: 400px;" forceSelection="true" value="#{inwardStaffPaymentBillController.currentStaff}" id="scStaff"
-                                                     completeMethod="#{inwardStaffPaymentBillController.completeStaff}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
+                                    <p:autoComplete  style="width: 400px;" forceSelection="true"
+                                                     value="#{inwardStaffPaymentBillController.currentStaff}" id="scStaff"
+                                                     completeMethod="#{inwardStaffPaymentBillController.completeStaff}"
+                                                     var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"
                                                      converter="stfcon"   >
-                                        <f:ajax event="itemSelect" execute="scStaff" render="tblFee pTotals" listener="#{inwardStaffPaymentBillController.calculateDueFees}" />
+                                        <f:ajax event="itemSelect" execute="scStaff" render="tblFee pTotals"
+                                                listener="#{inwardStaffPaymentBillController.calculateDueFees}" />
                                     </p:autoComplete>
 
 
                                     <h:outputLabel value="Payment Method" ></h:outputLabel>
-                                    <p:selectOneMenu  id="cmbPay" style="width: 400px;" value="#{inwardStaffPaymentBillController.paymentScheme}" >
+                                    <p:selectOneMenu  id="cmbPay" style="width: 400px;"
+                                                      value="#{inwardStaffPaymentBillController.paymentScheme}" >
                                         <f:selectItem itemLabel="Please select a payment scheme" />
-                                        <f:selectItems value="#{paymentSchemeController.payingItems}" var="pi" itemLabel="#{pi.name}" itemValue="#{pi}" />
+                                        <f:selectItems value="#{paymentSchemeController.payingItems}"
+                                                       var="pi" itemLabel="#{pi.name}" itemValue="#{pi}" />
                                     </p:selectOneMenu>
-
-                                    <!--                                    <p:commandButton ajax="false" value="Process" >
-                                                                        </p:commandButton>-->
 
                                 </h:panelGrid>
 
 
-                                <p:dataTable   id="tblFee" value="#{inwardStaffPaymentBillController.dueBillFees}" selection="#{inwardStaffPaymentBillController.payingBillFees}" var="bf" rowKey="#{bf.id}" >
+                                <p:dataTable   id="tblFee" value="#{inwardStaffPaymentBillController.dueBillFees}"
+                                               selection="#{inwardStaffPaymentBillController.payingBillFees}"
+                                               var="bf" rowKey="#{bf.id}" >
 
                                     <f:ajax  event="rowSelectCheckbox" execute="tblFee" listener="#{inwardStaffPaymentBillController.performCalculations()}"   
                                              render=":#{p:component('scStaff')}  :#{p:component('lblDue')} :#{p:component('lblPay')} tblFee"  />  
@@ -62,9 +72,9 @@
                                         <h:outputLabel value="#{bf.bill.patientEncounter.bhtNo}">
                                         </h:outputLabel>
                                     </p:column>
-                                    
-                                   
-                                  
+
+
+
                                     <p:column headerText="Bill Date">
                                         <h:outputLabel value="#{bf.bill.createdAt}">
                                             <f:convertDateTime pattern="dd MMMM yyyy" />
@@ -72,7 +82,7 @@
                                     </p:column>
 
 
-                                   <p:column headerText="Patient">
+                                    <p:column headerText="Patient">
                                         <h:outputLabel value="#{bf.bill.patient.person.nameWithTitle}" rendered="#{bf.bill.patientEncounter eq null}"/>                                    
                                         <h:outputLabel value="#{bf.bill.patientEncounter.patient.person.nameWithTitle}"/>                                    
                                     </p:column> 
@@ -116,7 +126,7 @@
 
 
                     <h:panelGroup rendered="#{inwardStaffPaymentBillController.printPreview}" styleClass="alignTop" >
-                          <p:commandButton ajax="false" value="New Bill" action="#{inwardStaffPaymentBillController.recreateModel}"/>
+                        <p:commandButton ajax="false" value="New Bill" action="#{inwardStaffPaymentBillController.recreateModel}"/>
 
                         <bi:staffBill bill="#{inwardStaffPaymentBillController.current}"/>
                     </h:panelGroup>

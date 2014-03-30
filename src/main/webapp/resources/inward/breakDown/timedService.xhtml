@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface >
+
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+
+    <cc:implementation>
+        <p:dataTable value="#{bhtSummeryController.patientItems}" var="ti">
+            <p:column headerText="Service Name">
+                #{ti.item.name}
+            </p:column>
+            <p:column headerText="Start Time">
+                <h:outputLabel value="#{ti.fromTime}">
+                    <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
+                </h:outputLabel>
+            </p:column>
+
+            <p:column headerText="Stopped Time">
+                <h:outputLabel value="#{ti.toTime}">
+                    <f:convertDateTime pattern="dd MMMM yyyy hh mm a"/>
+                </h:outputLabel>
+            </p:column>
+            <p:column headerText="Charge">
+                #{ti.currentCharge}
+            </p:column> 
+            <p:column headerText="Duration Hour">
+                #{ti.currentDurationHour}
+            </p:column> 
+            <p:column headerText="OverShoot Hour">
+                #{ti.currentOverShootHours}
+            </p:column> 
+            <p:column headerText="Consumed Period in Hour">
+                #{ti.tmpConsumedTime}
+            </p:column>     
+            <p:column headerText="Total Charge">
+                #{ti.serviceValue}
+            </p:column>
+        </p:dataTable>
+    </cc:implementation>
+</html>

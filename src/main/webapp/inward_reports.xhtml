@@ -30,6 +30,14 @@
                                  <p:commandButton styleClass="linkButton" ajax="false" value="BHT Break Down" action="inward_bill_final_break_down" /> 
                             </h:panelGrid>
                         </p:panel>
+                        
+                        <p:panel header="BHT Issuing">
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill Item" action="report_bht_issue_by_bill" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill" action="report_bht_issue_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
+                            </h:panelGrid>
+                        </p:panel>
+                        
                     </h:panelGrid>
                 </h:form>
             </ui:define>

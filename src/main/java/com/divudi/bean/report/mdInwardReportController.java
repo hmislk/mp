@@ -53,6 +53,7 @@ public class mdInwardReportController implements Serializable {
     private List<ItemWithFee> itemWithFees;
     private List<ItemWithFee> fillterItemWithFees;
     private PaymentMethod paymentMethod;
+    List<BillItem> BillItem;
     ////////////////////////////////////
     @EJB
     private CommonFunctions commonFunctions;
@@ -163,7 +164,7 @@ public class mdInwardReportController implements Serializable {
         fillterBill=null;
         fillterItemWithFees=null;
     }
-
+    
     public List<Bill> getBills() {
 
         if (bills == null) {
@@ -200,6 +201,21 @@ public class mdInwardReportController implements Serializable {
 
         return bills;
     }
+    
+    
+    public void listInBhtBillItems(){
+    
+        Map m=new HashMap();
+        String jpql;
+        jpql="select b from BillItem b where b.createdAt between :fd and :td";
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        BillItem=getBillItemFacade().findBySQL(jpql, m);
+        
+        
+    }
+    
+    
 
     public List<Bill> getBillsDischarged() {
 
@@ -644,4 +660,14 @@ public class mdInwardReportController implements Serializable {
     public void setFillterItemWithFees(List<ItemWithFee> fillterItemWithFees) {
         this.fillterItemWithFees = fillterItemWithFees;
     }
+
+    public List<BillItem> getBillItem() {
+        return BillItem;
+    }
+
+    public void setBillItem(List<BillItem> BillItem) {
+        this.BillItem = BillItem;
+    }
+    
+    
 }

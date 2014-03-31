@@ -28,20 +28,15 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
-
-
-
-
-
-
 /**
  *
  * @author buddhika
  */
 @Entity
 public class Bill implements Serializable {
-    @OneToMany(mappedBy = "bill",fetch = FetchType.LAZY)
-    private List<StockVarientBillItem> stockVarientBillItems=new ArrayList<>();
+
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    private List<StockVarientBillItem> stockVarientBillItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "backwardReferenceBill", fetch = FetchType.LAZY)
     private List<Bill> forwardReferenceBills;
@@ -219,9 +214,7 @@ public class Bill implements Serializable {
 
     @ManyToOne
     private Bill backwardReferenceBill;
-    @Transient
     private double hospitalFee;
-    @Transient
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;

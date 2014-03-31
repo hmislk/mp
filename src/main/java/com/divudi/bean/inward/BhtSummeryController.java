@@ -13,7 +13,6 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.ChargeItemTotal;
 import com.divudi.data.dataStructure.DepartmentBillItems;
 import com.divudi.data.dataStructure.InwardBillItem;
@@ -25,7 +24,6 @@ import static com.divudi.data.inward.InwardChargeType.MOCharges;
 import static com.divudi.data.inward.InwardChargeType.MaintainCharges;
 import static com.divudi.data.inward.InwardChargeType.Medicine;
 import static com.divudi.data.inward.InwardChargeType.NursingCharges;
-import static com.divudi.data.inward.InwardChargeType.OtherCharges;
 import static com.divudi.data.inward.InwardChargeType.ProfessionalCharge;
 import static com.divudi.data.inward.InwardChargeType.RoomCharges;
 import com.divudi.ejb.BillNumberBean;
@@ -43,6 +41,7 @@ import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
+import com.divudi.entity.inward.TimedItem;
 import com.divudi.entity.inward.TimedItemFee;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -131,6 +130,11 @@ public class BhtSummeryController implements Serializable {
     @Inject
     private InwardMemberShipDiscount inwardMemberShipDiscount;
 
+    public void changeDiscountListener(ChargeItemTotal chargeItemTotal) {
+        double net = chargeItemTotal.getTotal() - chargeItemTotal.getDiscount();
+        chargeItemTotal.setNetTotal(net);
+    }
+
     public void calculateDiscount() {
         for (ChargeItemTotal cit : chargeItemTotals) {
             InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
@@ -162,13 +166,70 @@ public class BhtSummeryController implements Serializable {
 
     }
 
-    public void updatePatientRoom(RoomChargeData roomChargeData) {
+//    public void updatePatientRoom(PatientRoom patientRoom) {
+//
+//        getPatientRoomFacade().edit(patientRoom);
+//        createRoomChargeDatas();
+//        createChargeItemTotals();
+//
+//        updateTotal();
+//    }
+    public void updatePatientRoom(PatientRoom patientRoom) {
 
-        getPatientRoomFacade().edit(roomChargeData.getPatientRoom());
+        if (patientRoom.getId() != null) {
+            getPatientRoomFacade().edit(patientRoom);
+        } else {
+            getPatientRoomFacade().create(patientRoom);
+        }
+
         createRoomChargeDatas();
         createChargeItemTotals();
 
         updateTotal();
+    }
+
+    public void updateTempPatientRoom(PatientRoom patientRoom) {
+        if (patientRoom.getId() != null) {
+            getPatientRoomFacade().edit(patientRoom);
+        } else {
+            getPatientRoomFacade().create(patientRoom);
+        }
+
+        patientRoom.setCurrentRoomCharge(patientRoom.getRoomFacilityCharge().getRoomCharge());
+        
+        calCulateRoomCharge(patientRoom);
+
+        updatePaitentRoomAdjustedTotal();
+    }
+
+    private void updatePaitentRoomAdjustedTotal() {
+        for (ChargeItemTotal cit : chargeItemTotals) {
+            if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
+                double dbl = 0;
+                for (PatientRoom pr : cit.getPatientRooms()) {
+                    if (pr.getReferencePatientRoom() != null) {
+                        dbl += pr.getReferencePatientRoom().getCalculatedRoomCharge();
+                    }
+                }
+                cit.setAdjustedTotal(dbl);
+            }
+        }
+    }
+
+    private void calCulateRoomCharge(PatientRoom p) {
+        double charge;
+        System.err.println("1 " + p.getRoomFacilityCharge());
+        System.err.println("2 " + p.getCurrentRoomCharge());
+        if (p.getRoomFacilityCharge() == null || p.getCurrentRoomCharge() == 0) {
+            return;
+        }
+
+        TimedItemFee timedFee = p.getRoomFacilityCharge().getTimedItemFee();
+        double roomCharge = p.getCurrentRoomCharge();
+
+        charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+
+        p.setCalculatedRoomCharge(charge);
     }
 
     public void checkDate() {
@@ -374,8 +435,8 @@ public class BhtSummeryController implements Serializable {
                 temHosFee += cit.getNetTotal();
             }
 
-            if (cit.getInwardChargeType() == InwardChargeType.OtherCharges) {
-                saveOtherBillFee(temBi);
+            if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
+                saveRoomBillFee(cit.getPatientRooms(), temBi);
             }
 
             getBillItemFacade().edit(temBi);
@@ -399,63 +460,32 @@ public class BhtSummeryController implements Serializable {
 
     }
 
-    private List<BillFee> getAdditionalFee() {
-
-        String sql = "Select bf from BillFee bf where bf.retired=false"
-                + " and bf.patienEncounter=:pe and bf.bill.billType=:btp and bf.fee.feeType=:fn";
-        HashMap m = new HashMap();
-        m.put("btp", BillType.InwardBill);
-        m.put("pe", getPatientEncounter());
-        m.put("fn", FeeType.Additional);
-        return getBillFeeFacade().findBySQL(sql, m, TemporalType.DATE);
-
-        //       return bill;
+    private void saveRefencePatientRoom(PatientRoom pr) {
+        if (pr.getId() == null) {
+            getPatientRoomFacade().create(pr);
+        } else {
+            getPatientRoomFacade().edit(pr);
+        }
     }
 
-    private void saveOtherBillFee(BillItem bItem) {
-        for (BillFee bf : getAdditionalFee()) {
+    private void saveRoomBillFee(List<PatientRoom> patientRooms, BillItem bItem) {
+        for (PatientRoom pt : patientRooms) {
             BillFee tmp = new BillFee();
             tmp.setBill(bItem.getBill());
             tmp.setBillItem(bItem);
-            tmp.setReferenceBillFee(bf);
+
+            saveRefencePatientRoom(pt);
+
+            tmp.setReferencePatientRoom(pt);
+
+            getBillFeeFacade().create(tmp);
 
             bItem.getBillFees().add(tmp);
 
-            // getBillFeeFacade().create(tmp);
         }
 
     }
 
-//    private void savePayment() {
-//        BilledBill payment = new BilledBill();
-//
-//        payment.setInstitution(getSessionController().getInstitution());
-//
-//        payment.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), BillType.InwardPaymentBill, "inwP"));
-//        payment.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), BillType.InwardPaymentBill, "inwP"));
-//
-//        payment.setBillType(BillType.InwardPaymentBill);
-//        payment.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//        payment.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//        payment.setPatientEncounter(patientEncounter);
-//        payment.setPatient(patientEncounter.getPatient());
-//        payment.setPaymentScheme(getCurrent().getPaymentScheme());
-//        payment.setNetTotal();
-//        getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//        getCurrent().setCreater(sessionController.getLoggedUser());
-//        getBillFacade().create(getCurrent());
-//
-//
-//
-//        BillItem temBi = new BillItem();
-//        temBi.setBill(getCurrent());
-//        temBi.setGrossValue(getCurrent().getTotal());
-//        temBi.setNetValue(getCurrent().getTotal());
-//        temBi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-//        temBi.setCreater(getSessionController().getLoggedUser());
-//        getBillItemFacade().create(temBi);
-//
-//    }
     public void createTables() {
         createRoomChargeDatas();
         createPatientItems();
@@ -485,8 +515,9 @@ public class BhtSummeryController implements Serializable {
 
         for (PatientItem pi : patientItems) {
             if (pi.getFinalize() == null) {
-                double serviceTot = getInwardCalculation().calTimedServiceCharge(pi, pi.getToTime());
-                pi.setServiceValue(serviceTot);
+                TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
+                double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
+                pi.setServiceValue(count * timedItemFee.getFee());
                 pi.setTmpConsumedTime(getDuration(pi.getFromTime(), pi.getToTime()));
             }
         }
@@ -514,11 +545,12 @@ public class BhtSummeryController implements Serializable {
             patientItem.setToTime(Calendar.getInstance().getTime());
         }
 
-        double serviceTot = getInwardCalculation().calTimedServiceCharge(patientItem, patientItem.getToTime());
-        patientItem.setServiceValue(serviceTot);
+        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) patientItem.getItem());
+        double count = getInwardCalculation().calCount(timedItemFee, patientItem.getFromTime(), patientItem.getToTime());
+        patientItem.setServiceValue(count * timedItemFee.getFee());
 
         patientItem.setFinalize(Boolean.TRUE);
-        getPatientItemFacade().edit(tmpPI);
+        getPatientItemFacade().edit(patientItem);
 
         createPatientItems();
 
@@ -654,7 +686,7 @@ public class BhtSummeryController implements Serializable {
         if (p.getDischargedAt() != null) {
             charge = mo * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = mo * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
+            charge = mo * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
         rcd.setMoChargeTot(charge);
     }
@@ -672,7 +704,7 @@ public class BhtSummeryController implements Serializable {
         if (p.getDischargedAt() != null) {
             charge = nursing * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = nursing * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
+            charge = nursing * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
         rcd.setNursingTot(charge);
     }
@@ -690,11 +722,13 @@ public class BhtSummeryController implements Serializable {
 
         rcd.setPatientRoom(p);
 
-        if (p.getDischargedAt() != null) {
-            charge = roomCharge * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
-        } else {
-            charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
-        }
+//        if (p.getDischargedAt() != null) {
+//            charge = roomCharge * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+//        } else {
+//            charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
+//        }
+        charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+
         System.err.println("Room Charge " + roomCharge);
         System.out.println("calculated " + charge);
         rcd.setChargeTot(charge);
@@ -714,7 +748,7 @@ public class BhtSummeryController implements Serializable {
         if (p.getDischargedAt() != null) {
             charge = roomCharge * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
+            charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
 
         return charge;
@@ -733,7 +767,7 @@ public class BhtSummeryController implements Serializable {
         if (p.getDischargedAt() != null) {
             charge = maintanance * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = maintanance * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
+            charge = maintanance * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
         rcd.setMaintananceTot(charge);
     }
@@ -891,10 +925,14 @@ public class BhtSummeryController implements Serializable {
     private List<BillFee> createProfesionallFee() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT bt FROM BillFee bt WHERE bt.retired=false and "
-                + " bt.fee is null and "
-                + " bt.bill.billType=:btp and bt.bill.patientEncounter=:pe ";
+        String sql = "SELECT bt FROM BillFee bt WHERE "
+                + " bt.retired=false "
+                + " and bt.fee.feeType=:ftp "
+                + " and (bt.bill.billType=:btp or bt.bill.billType=:btp2 )"
+                + " and bt.bill.patientEncounter=:pe ";
+        hm.put("ftp", FeeType.Staff);
         hm.put("btp", BillType.InwardBill);
+        hm.put("btp2", BillType.InwardProfessional);
         hm.put("pe", getPatientEncounter());
 
         profesionallFee = getBillFeeFacade().findBySQL(sql, hm, TemporalType.TIME);
@@ -910,9 +948,14 @@ public class BhtSummeryController implements Serializable {
     private double calculateProfessionalCharges() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT sum(bt.feeValue) FROM BillFee bt WHERE bt.retired=false and bt.fee is null and  bt.bill.id in "
-                + "(SELECT  b.id FROM Bill b WHERE b.retired=false  and b.billType=:btp and b.patientEncounter=:pe)";
+        String sql = "SELECT sum(bt.feeValue) FROM BillFee bt WHERE"
+                + " bt.retired=false "
+                + " and bt.fee.feeType=:ftp  "
+                + " and (bt.bill.billType=:btp or bt.bill.billType=:btp2 ) "
+                + " and bt.bill.patientEncounter=:pe";
+        hm.put("ftp", FeeType.Staff);
         hm.put("btp", BillType.InwardBill);
+        hm.put("btp2", BillType.InwardProfessional);
         hm.put("pe", getPatientEncounter());
 
         double val = getBillFeeFacade().findDoubleByJpql(sql, hm, TemporalType.TIME);
@@ -1111,6 +1154,7 @@ public class BhtSummeryController implements Serializable {
             setServiceTotCategoryWise();
             setTimedServiceTotCategoryWise();
             setChargeValueFromAdditional();
+            setRoomChargeList();
         }
 
         setNetAdjustValue();
@@ -1131,6 +1175,26 @@ public class BhtSummeryController implements Serializable {
             double tot = cit.getTotal();
 
             cit.setTotal(tot + adj);
+        }
+    }
+
+    private void setRoomChargeList() {
+        for (ChargeItemTotal cit : chargeItemTotals) {
+            if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
+                //  System.err.println("Inside Room Charges");
+                for (RoomChargeData rcd : getRoomChargeDatas()) {
+                    PatientRoom pr = new PatientRoom();
+                    pr.setReferencePatientRoom(rcd.getPatientRoom());
+                    pr.setAdmittedAt(rcd.getPatientRoom().getAdmittedAt());
+                    pr.setDischargedAt(rcd.getPatientRoom().getDischargedAt());
+                    pr.setCalculatedRoomCharge(rcd.getChargeTot());
+                    pr.setRoomFacilityCharge(rcd.getPatientRoom().getRoomFacilityCharge());
+                    pr.setCurrentRoomCharge(rcd.getPatientRoom().getCurrentRoomCharge());
+                    cit.getPatientRooms().add(pr);
+                }
+
+                //  System.err.println("Room Charges Size " + cit.getPatientRooms().size());
+            }
         }
     }
 
@@ -1209,7 +1273,7 @@ public class BhtSummeryController implements Serializable {
     }
 
     private double getValueFromAdditionalCharge(InwardChargeType inwardChargeType) {
-     //   additionalChargeBill = new ArrayList<>();
+        //   additionalChargeBill = new ArrayList<>();
         String sql = "Select sum(i.netValue) From BillItem i where i.retired=false and i.bill.billType=:btp "
                 + "and i.bill.patientEncounter=:pe and i.inwardChargeType=:inwCh ";
         HashMap m = new HashMap();
@@ -1269,13 +1333,27 @@ public class BhtSummeryController implements Serializable {
         return getBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
+    private double calHosFee(BillItem billItem) {
+        String sql = "Select sum(s.feeValue) From BillFee s"
+                + " where s.retired=false "
+                + " and s.billItem=:bItm "
+                + " and s.fee.feeType!=:st ";
+        HashMap hm = new HashMap();
+        hm.put("bItm", billItem);
+        hm.put("st", FeeType.Staff);
+
+        double dbl = getBillFeeFacade().findDoubleByJpql(sql, hm);
+
+        return dbl;
+    }
+
     private void setServiceTotCategoryWise() {
         for (DepartmentBillItems depB : getDepartmentBillItems()) {
             for (BillItem b : depB.getBillItems()) {
                 for (ChargeItemTotal ch : chargeItemTotals) {
                     if (b.getItem().getInwardChargeType() != null) {
                         if (b.getItem().getInwardChargeType() == ch.getInwardChargeType()) {
-                            ch.setTotal(ch.getTotal() + b.getNetValue());
+                            ch.setTotal(ch.getTotal() + calHosFee(b));
                             break;
                         }
                     }

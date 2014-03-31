@@ -25,6 +25,11 @@
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Report By Item" action="report_md_inward_item_discharged" actionListener="#{mdInwardReportController.makeNull}"/> 
                             </h:panelGrid>
                         </p:panel>
+                        <p:panel header="Reports By Bht">
+                            <h:panelGrid columns="1">
+                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Break Down" action="inward_bill_final_break_down" /> 
+                            </h:panelGrid>
+                        </p:panel>
                     </h:panelGrid>
                 </h:form>
             </ui:define>

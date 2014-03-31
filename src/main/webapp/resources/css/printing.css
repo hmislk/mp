@@ -202,19 +202,62 @@ root {
 
 }
 
+.heading{
+    text-align: center!important; 
+    min-width: 90%!important; 
+    /*padding: 5px!important;*/ 
+    padding-top: 30%!important;
+    margin: auto!important; 
+    font-size: 13px!important;
+}
+
+.tbl{
+    text-align: center!important;
+    min-width: 90%!important;
+    padding: 5px!important; 
+    padding-top: 10%!important;
+    margin: auto!important; 
+    border: 1px!important;    
+}
+
+.cashier{
+    position:absolute!important;
+    left:25%!important;
+    bottom:10%!important;
+
+}
+
+.description{
+    position:absolute!important;
+    left:2.0cm!important;
+    bottom:5%!important;
+
+}
+
+.mark{
+    font-weight: bold;
+
+}
 
 @media screen{
     .a4bill{
-        position: relative!important;
+/*        position: relative!important;
         padding: 5px!important;
         height:800px!important;
-        width:1100px!important; 
-        overflow:hidden!important; 
+        width:1100px!important;        
         font-family: sans-serif!important; 
         font-size: 11px!important; 
         margin: auto!important; 
         background-size: 100% auto!important; 
         border: 1px solid!important;
+        font-size: 100%;*/
+        font-family: sans-serif!important; 
+        font-size: 11px!important; 
+        position: relative!important;  
+        margin: 0px!important; 
+        width: 95%;
+        height: 95%;
+        padding: 0px;
         font-size: 100%;
     }
 
@@ -373,6 +416,179 @@ root {
     width: 180px;
 }
 
+
+.cel1R1L{
+    position: absolute;
+    left: 10%;
+    top: 25%;
+}
+
+
+.cel1R1C{
+    position: absolute;
+    left: 20%;
+    top: 25%;
+
+}
+
+.cel1R1V{
+    position: absolute;
+    left: 25%;
+    top: 25%;
+
+}
+
+.cel2R1L{
+    position: absolute;
+    left: 65%;
+    top: 25%;
+
+}
+
+
+.cel2R1C{
+    position: absolute;
+    left: 75%;
+    top: 25%;
+
+}
+
+.cel2R1V{
+    position: absolute;
+    left: 80%;
+    top: 25%;
+
+}
+
+.cel1R2L{
+    position: absolute;
+    left: 10%;
+    top: 28%;
+
+
+}
+
+.cel1R2C{
+    position: absolute;
+    left: 20%;
+    top: 28%;
+
+}
+.cel1R2V{
+    position: absolute;
+    left: 25%;
+    top: 28%;
+
+}
+
+
+.cel2R2L{
+    position: absolute;
+    left: 65%;
+    top: 28%;
+
+
+}
+
+.cel2R2C{
+    position: absolute;
+    left: 75%;
+    top: 28%;
+
+}
+.cel2R2V{
+    position: absolute;
+    left: 80%;
+    top: 28%;
+
+}
+
+.cel1R3L{
+    position: absolute;
+    left: 10%;
+    top: 31%;
+
+
+}
+
+.cel1R3C{
+    position: absolute;
+    left: 20%;
+    top: 31%;
+
+}
+.cel1R3V{
+    position: absolute;
+    left: 25%;
+    top: 31%;
+
+}
+
+
+.cel2R3L{
+    position: absolute;
+    left: 65%;
+    top: 31%;
+
+
+}
+
+.cel2R3C{
+    position: absolute;
+    left: 75%;
+    top: 31%;
+
+}
+.cel2R3V{
+    position: absolute;
+    left: 80%;
+    top: 31%;
+
+}
+
+
+.cel1R4L{
+    position: absolute;
+    left: 10%;
+    top: 34%;
+
+
+}
+
+.cel1R4C{
+    position: absolute;
+    left: 20%;
+    top: 34%;
+
+}
+.cel1R4V{
+    position: absolute;
+    left: 25%;
+    top: 34%;
+
+}
+
+
+.cel2R4L{
+    position: absolute;
+    left: 65%;
+    top: 34%;
+
+
+}
+
+.cel2R4C{
+    position: absolute;
+    left: 75%;
+    top: 34%;
+
+}
+.cel2R4V{
+    position: absolute;
+    left: 80%;
+    top: 34%;
+
+}
 
 
 

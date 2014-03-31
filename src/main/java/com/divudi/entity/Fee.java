@@ -49,6 +49,7 @@ public class Fee implements Serializable {
     Staff staff;
     @ManyToOne
     ServiceSession serviceSession;
+    private boolean booleanValue;
     //Created Properties
     @ManyToOne
     WebUser creater;
@@ -376,5 +377,13 @@ public class Fee implements Serializable {
 
     public void setProfessionalFfee(double professionalFfee) {
         this.professionalFfee = professionalFfee;
+    }
+
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
+
+    public void setBooleanValue(boolean booleanValue) {
+        this.booleanValue = booleanValue;
     }
 }

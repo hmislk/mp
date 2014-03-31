@@ -61,8 +61,6 @@ public class InwardCalculation {
     @EJB
     private PatientRoomFacade patientRoomFacade;
 
- 
-
     public List<PatientRoom> getPatientRooms(PatientEncounter patientEncounter) {
         HashMap hm = new HashMap();
         String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
@@ -423,34 +421,40 @@ public class InwardCalculation {
         return tmp;
     }
 
-    public double calTimedServiceCharge(PatientItem p, Date date) {
-        TimedItemFee tmp = getTimedItemFee((TimedItem) p.getItem());
-        double tempDur = tmp.getDurationHours();
-        double tempOve = tmp.getOverShootHours();
-        double tempFee = tmp.getFee();
-
-        Date currentTime;
-
-        if (date == null) {
-            currentTime = Calendar.getInstance().getTime();
-        } else {
-            currentTime = date;
-        }
-
-        long tempServ = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
-        double count = 0.0;
-
-        if (tempServ != 0 && tempDur != 0) {
-            count = tempServ / (tempDur * 60);
-            if (((tempOve * 60) < tempServ % (tempDur * 60))) {
-                count++;
-            }
-
-        }
-
-        return (tempFee * count);
-    }
-
+//    public double calTimedServiceCharge(PatientItem p, Date date) {
+//        TimedItemFee tmp = getTimedItemFee((TimedItem) p.getItem());
+//        double duration = tmp.getDurationHours() * 60;
+//        double overShoot = tmp.getOverShootHours() * 60;
+//        double fee = tmp.getFee();
+//
+//        Date currentTime;
+//
+//        if (date == null) {
+//            currentTime = Calendar.getInstance().getTime();
+//        } else {
+//            currentTime = date;
+//        }
+//
+//        double consumed = getCommonFunctions().calculateDurationMin(p.getFromTime(), currentTime);
+//        double count = 0.0;
+//        double calculation = 0;
+//        if (consumed != 0 && duration != 0) {
+//            count = consumed / duration;
+//            calculation = (consumed - (count * duration));
+//            if (overShoot < calculation) {
+//                count++;
+//            }
+//
+//        }
+//
+//        System.err.println("Duration " + duration);
+//        System.err.println("OverShoot " + overShoot);
+//        System.err.println("Consumed " + consumed);
+//        System.err.println("Count " + count);
+//        System.err.println("Mod " + calculation);
+//
+//        return (fee * count);
+//    }
     public TimedItemFeeFacade getTimedItemFeeFacade() {
         return timedItemFeeFacade;
     }
@@ -530,14 +534,26 @@ public class InwardCalculation {
 
     public double calCountWithoutOverShoot(TimedItemFee tif, PatientRoom pr) {
 
-        double tempDur = tif.getDurationHours();
-        Long tempServ = 0L;
+        double duration = tif.getDurationHours() * 60;
+        double consumeTimeM = 0L;
 
-        tempServ = getCommonFunctions().calculateDurationMin(pr.getAdmittedAt(), pr.getDischargedAt());
+        consumeTimeM = getCommonFunctions().calculateDurationMin(pr.getAdmittedAt(), pr.getDischargedAt());
 
-        double count = tempServ / (tempDur * 60);
+        double count = 0;
 
-        if ((0 != tempServ % (tempDur * 60))) {
+        if (tif.isBooleanValue()) {
+            //For Minute Calculation
+            count = (consumeTimeM / duration);
+        } else {
+            //For Hour Calculation
+            count = (long) (consumeTimeM / duration);
+        }
+
+        System.err.println("Min " + duration);
+        System.err.println("Consume " + consumeTimeM);
+        System.err.println("Count " + count);
+
+        if (0 != (consumeTimeM % duration)) {
             count++;
         }
 
@@ -546,24 +562,40 @@ public class InwardCalculation {
 
     public double calCount(TimedItemFee tif, Date admittedDate, Date dischargedDate) {
 
-        double tempDur = tif.getDurationHours();
-        double tempOve = tif.getOverShootHours();
+        double duration = tif.getDurationHours() * 60;
+        double overShoot = tif.getOverShootHours() * 60;
         //  double tempFee = tif.getFee();
-        Long tempServ = 0L;
+        double consumeTime = 0;
 
         if (dischargedDate == null) {
             dischargedDate = new Date();
         }
 
-        tempServ = getCommonFunctions().calculateDurationMin(admittedDate, dischargedDate);
-        double count = 0;
+        consumeTime = getCommonFunctions().calculateDurationMin(admittedDate, dischargedDate);
 
-        if (tempDur != 0) {
-            count = tempServ / (tempDur * 60);
-            if (((tempOve * 60) < tempServ % (tempDur * 60))) {
+        double count = 0;
+        double calculation = 0;
+
+        if (consumeTime != 0 && duration != 0) {
+            if (tif.isBooleanValue()) {
+                //For Minut Calculation (Theatre Charges)
+                count = (consumeTime / duration);
+            } else {
+                //For Room Calculation Hour
+                count = (long) (consumeTime / duration);
+            }
+
+            calculation = (consumeTime - (count * duration));
+            if (overShoot != 0 && overShoot <= (calculation)) {
                 count++;
             }
         }
+
+        System.err.println("Duration " + duration);
+        System.err.println("OverShoot " + overShoot);
+        System.err.println("Consume " + consumeTime);
+        System.err.println("Count " + count);
+        System.err.println("Calcualtion " + calculation);
 
         return count;
     }

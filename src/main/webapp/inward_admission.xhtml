@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bill="http://java.sun.com/jsf/composite/inward">
+                xmlns:bill="http://java.sun.com/jsf/composite/inward"
+                xmlns:in="http://java.sun.com/jsf/composite/patient">
 
 
     <ui:define name="content">
@@ -47,59 +48,8 @@
                             <p:tabView id="tvPt" style="min-height: 250px;"  >
                                 <p:ajax event="tabChange"  process="@this" listener="#{admissionController.onTabChange}" />
                                 <p:tab title="New Patient" id="tabNewPt">
-                                    <h:panelGrid columns="2" >
-                                        <h:outputLabel value="Title"/>
-                                        <p:selectOneMenu  id="cmbTitle" value="#{admissionController.newPatient.person.title}"  >
-                                            <f:selectItem itemLabel="Select Title" />
-                                            <f:selectItems value="#{enumController.title}"/>
-                                        </p:selectOneMenu>
-                                        <h:outputLabel value="Name"/>
-                                        <p:inputText autocomplete="off" id="txtNewPtName" value="#{admissionController.newPatient.person.name}" style="width:300px;text-transform:uppercase;">
-                                        </p:inputText>
-                                        <p:outputLabel value="NIC"/>
-                                        <p:inputText value="#{admissionController.newPatient.person.nic}"/>
-                                        <h:outputLabel value="Sex"/>
-                                        <p:selectOneMenu id="txtNewSex"  value="#{admissionController.newPatient.person.sex}" style="width: 200px;">
-                                            <f:selectItem itemLabel="Select Sex"/>
-                                            <f:selectItems value="#{enumController.sex}"/>
-                                        </p:selectOneMenu>
-                                        <h:outputLabel value="Date of Birth"/>
-                                        <p:calendar  value="#{admissionController.newPatient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
-                                            <f:ajax event="dateSelect" execute="calNewPtDob" render="lblAge" />
-                                        </p:calendar>
-
-                                        <p:watermark value="YEAR" for="year" />
-                                        <p:watermark value="MONTH" for="month" />
-                                        <p:watermark value="DAYS" for="day" />
-                                        <h:outputLabel/>
-                                        <h:outputLabel value="Age"/>
-                                        <h:panelGroup>
-                                            <p:inputText  id="year" style="width: 80px;" autocomplete="off" value="#{admissionController.yearMonthDay.year}">
-                                                <f:ajax event="keyup" execute="@this month day" render="calNewPtDob" listener="#{admissionController.dateChangeListen()}"  />
-                                            </p:inputText>
-
-                                            <p:inputText id="month"  style="width: 80px;"  autocomplete="off" value="#{admissionController.yearMonthDay.month}">
-                                                <f:ajax event="keyup" execute="@this year day" render="calNewPtDob" listener="#{admissionController.dateChangeListen()}"  />
-                                            </p:inputText>
-
-                                            <p:inputText id="day"  style="width: 80px;"  autocomplete="off" value="#{admissionController.yearMonthDay.day}">
-                                                <f:ajax event="keyup" execute="@this year month" render="calNewPtDob" listener="#{admissionController.dateChangeListen()}" />
-                                            </p:inputText>
-                                            <br/>
-                                            <p:outputLabel value="#{admissionController.newPatient.age}" id="lblAge" ></p:outputLabel>
-                                        </h:panelGroup>
-                                        <h:outputLabel value="Address"/>
-                                        <p:inputTextarea  value="#{admissionController.newPatient.person.address}"/>                                  
-
-                                        <h:outputLabel value="Mobile Phone"/>
-                                        <p:inputMask mask="999-9999999" autocomplete="off" maxlength="11" 
-                                                     value="#{admissionController.newPatient.person.mobile}">
-                                        </p:inputMask>
-                                        <h:outputLabel value="Home Phone"/>
-                                        <p:inputMask mask="999-9999999" autocomplete="off" maxlength="11" 
-                                                     value="#{admissionController.newPatient.person.phone}">
-                                        </p:inputMask>
-                                    </h:panelGrid>
+                                    
+                                    <in:inputPatientDetail patient="#{admissionController.newPatient}"/>
 
                                 </p:tab>
                                 <p:tab id="tabSearchPt" title="Search Patient">
@@ -260,7 +210,7 @@
                                                         completeMethod="#{creditCompanyController.completeCredit}" 
                                                         var="ix" itemLabel="#{ix.name}" 
                                                         itemValue="#{ix}" size="30" >  
-                                            <f:ajax event="itemSelect" execute="acCreditCompany" render=":#{p:component('panelCompanyDesc')}" ></f:ajax>
+                                            <f:ajax event="itemSelect" execute="@this" render=":#{p:component('panelCompanyDesc')}" ></f:ajax>
                                         </p:autoComplete> 
                                     </p:column>
                                 </p:row>
@@ -274,10 +224,10 @@
                                 </p:row>
 
                                 <p:row>
-                                    <p:column colspan="2">
-                                        <p:panel rendered="true" id="panelCompanyDesc"  >
-                                            <h:outputText rendered="#{admissionController.current.creditCompany ne null}" value="#{admissionController.current.creditCompany.descreption}" ></h:outputText>
-                                        </p:panel>
+                                    <p:column colspan="2">                                       
+                                        <h:outputText id="panelCompanyDesc" 
+                                                      rendered="#{admissionController.current.creditCompany ne null}" 
+                                                      value="#{admissionController.current.creditCompany.descreption}" ></h:outputText>                                       
                                     </p:column>
                                 </p:row>
 

@@ -127,13 +127,13 @@ public class PharmacySaleReport implements Serializable {
 
         String sql;
 
-        sql = "select sum(f.total - f.staffFee - f.discount) from Bill f "
+        sql = "select sum(abs(f.total) - (abs(f.staffFee) + abs(f.discount))) from Bill f "
                 + " where f.retired=false "
                 + " and type(f) = :billClass "
                 + " and f.billType = :billType "
-                + " and f.createdAt between :fd "
+                + " and f.createdAt between :fd and :td "
                 + " and f.paymentMethod!=:pm "
-                + " and :td and f.toInstitution=:ins ";
+                + " and f.toInstitution=:ins ";
 
         Date fd = getCommonFunctions().getStartOfDay(date);
         Date td = getCommonFunctions().getEndOfDay(date);
@@ -296,7 +296,7 @@ public class PharmacySaleReport implements Serializable {
         m.put("class", bill.getClass());
         m.put("pm", PaymentMethod.Credit);
         m.put("btp", BillType.OpdBill);
-        sql = "select sum(i.total - i.staffFee - i.discount) from "
+        sql = "select sum(abs(f.total) - (abs(f.staffFee) + abs(f.discount))) from "
                 + " Bill i where i.toInstitution=:ins "
                 + " and i.billType=:btp"
                 + " and type(i)=:class "
@@ -316,7 +316,7 @@ public class PharmacySaleReport implements Serializable {
 
         m.put("pm", PaymentMethod.Credit);
         m.put("btp", BillType.OpdBill);
-        sql = "select sum(i.total - i.staffFee - i.discount)  "
+        sql = "select sum(abs(f.total) - (abs(f.staffFee) + abs(f.discount)))  "
                 + " from Bill i where "
                 + " i.toInstitution=:ins "
                 + " and i.billType=:btp "

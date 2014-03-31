@@ -19,6 +19,7 @@ public enum BillType {
     InwardFinalBill,
     InwardAppointmentBill,
     InwardBill,
+    InwardProfessional,
     InwardAdditionalBill,
     AdmissionBill,
     CashRecieveBill,

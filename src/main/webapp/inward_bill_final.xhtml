@@ -38,12 +38,14 @@
                             </h:outputLabel>                            
                         </p:column>
                         <p:column headerText="Discount">
-                            <p:inputText  value="#{c.discount}">
+                            <p:inputText value="#{c.discount}">
                                 <f:convertNumber pattern="#,000.00" />
-                            </h:outputLabel>
+                                <f:ajax execute="@this" render="net" 
+                                        listener="#{bhtSummeryController.changeDiscountListener(c)}"/>
+                            </p:inputText>
                         </p:column>
                         <p:column headerText="NetTotal">
-                            <h:outputLabel value="#{c.netTotal}">
+                            <h:outputLabel id="net" value="#{c.netTotal}">
                                 <f:convertNumber pattern="#,000.00" />
                             </h:outputLabel>
 

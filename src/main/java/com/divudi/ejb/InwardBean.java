@@ -6,12 +6,16 @@
 package com.divudi.ejb;
 
 import com.divudi.data.BillType;
+import com.divudi.data.FeeType;
 import com.divudi.entity.Bill;
+import com.divudi.entity.Fee;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.WebUser;
+import com.divudi.entity.inward.InwardFee;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.RoomFacilityCharge;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.FeeFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.RoomFacade;
 import java.util.Calendar;
@@ -20,7 +24,6 @@ import java.util.HashMap;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TemporalType;
-import static org.apache.xmlbeans.impl.values.NamespaceContext.getCurrent;
 
 /**
  *
@@ -37,6 +40,29 @@ public class InwardBean {
     private InwardCalculation inwardCalculation;
     @EJB
     private BillFacade billFacade;
+    @EJB
+    private FeeFacade feeFacade;
+
+    public Fee getStaffFeeForInward(WebUser webUser) {
+        String sql = "Select f From InwardFee f "
+                + " where f.retired=false "
+                + " and f.feeType=:st ";
+
+        HashMap hm = new HashMap();
+        hm.put("st", FeeType.Staff);
+
+        Fee fee = getFeeFacade().findFirstBySQL(sql, hm);
+        if (fee == null) {
+            fee = new InwardFee();
+            fee.setCreatedAt(new Date());
+            fee.setCreater(webUser);
+            fee.setFeeType(FeeType.Staff);
+            getFeeFacade().create(fee);
+        }
+
+        return fee;
+
+    }
 
     public void updateFinalFill(PatientEncounter patientEncounter) {
         String sql = "Select b From BilledBill b where b.retired=false and b.cancelled=false "
@@ -48,7 +74,10 @@ public class InwardBean {
         Bill b = getBillFacade().findFirstBySQL(sql, hm);
 
         double paid = getPaidValue(patientEncounter);
-        b.setPaidAmount(paid);
+        System.err.println("NET " + b.getNetTotal());
+        System.err.println("PAID " + paid);
+
+        b.setPaidAmount(0-paid);
         getBillFacade().edit(b);
 
     }
@@ -173,5 +202,13 @@ public class InwardBean {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public FeeFacade getFeeFacade() {
+        return feeFacade;
+    }
+
+    public void setFeeFacade(FeeFacade feeFacade) {
+        this.feeFacade = feeFacade;
     }
 }

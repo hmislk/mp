@@ -36,26 +36,15 @@
                                         <f:selectItem itemLabel="Hospital Fee" itemValue="OwnInstitution" />
                                         <f:selectItem itemLabel="Outside Fee" itemValue="OtherInstitution" />
                                     </h:selectOneListbox>
-                                    <h:outputText value="Staff"/>
-                                    <p:autoComplete converter="stfcon" forceSelection="true" id="cmbDoc" value="#{timedItemFeeController.currentFee.staff}" completeMethod="#{staffController.completeStaff}" var="st" itemLabel="#{st.person.name}" itemValue="#{st}" size="30"  style="width: 400px;">
-                                    </p:autoComplete>
-                                    <h:outputText value="Institution"/>
-                                    <h:selectOneListbox id="cmbInstitution" size="1" value="#{timedItemFeeController.currentFee.institution}" >
-                                        <f:selectItem itemLabel="Please select an Institution"/>
-                                        <f:selectItems value="#{institutionController.company}" var="ins" itemLabel="#{ins.name}" itemValue="#{ins}" />
-                                        <f:ajax execute="@this" render="cmbDepartment" event="change"/>    
-                                    </h:selectOneListbox>
-                                    <h:outputText value="Department"/>
-                                    <h:selectOneListbox id="cmbDepartment" size="1" value="#{timedItemFeeController.currentFee.department}" >
-                                        <f:selectItem itemLabel="Please select an Department"/>
-                                        <f:selectItems value="#{timedItemFeeController.institutionDepatrments}" var="dep" itemLabel="#{dep.name}" itemValue="#{dep}" />
-                                    </h:selectOneListbox>
                                     <h:outputText value="Fee"/>
                                     <h:inputText id="txtFee" value="#{timedItemFeeController.currentFee.fee}"/>
                                     <h:outputLabel value="Duration Hour"/>
                                     <h:inputText value="#{timedItemFeeController.currentFee.durationHours}"/>
                                     <h:outputLabel value="Over Shoot Hour"/>
                                     <h:inputText value="#{timedItemFeeController.currentFee.overShootHours}"/>
+                                    <h:outputLabel value=""/>
+                                    <p:selectBooleanCheckbox value="#{timedItemFeeController.currentFee.booleanValue}"
+                                                             itemLabel="Consider Each Unit"/>
                                     <h:outputText value=""/>
                                     <h:commandButton id="btnAddTo" value="Add"  action="#{timedItemFeeController.saveCharge}" styleClass="buttons">
 
@@ -65,9 +54,6 @@
                                 <p:dataTable id="dtbFee" rowIndexVar="rowIndex" value="#{timedItemFeeController.charges}" var="bi" >
                                     <p:column headerText="Fee Name">
                                         #{bi.name}
-                                    </p:column>
-                                    <p:column headerText="Staff">
-                                        #{bi.staff.person.name}
                                     </p:column>
                                     <p:column headerText="Fee">
                                         #{bi.fee}

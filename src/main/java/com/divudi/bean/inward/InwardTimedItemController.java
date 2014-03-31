@@ -15,6 +15,8 @@ import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.inward.TimedItem;
+import com.divudi.entity.inward.TimedItemFee;
 import com.divudi.facade.PatientItemFacade;
 import com.divudi.facade.TimedItemFeeFacade;
 import java.io.Serializable;
@@ -66,24 +68,23 @@ public class InwardTimedItemController implements Serializable {
 
         return false;
     }
-    
-
 
     public void save() {
         if (errorCheck()) {
             return;
         }
+        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) getCurrent().getItem());
+        double count = getInwardCalculation().calCount(timedItemFee, getCurrent().getFromTime(), getCurrent().getToTime());
 
-        double serviceTot = getInwardCalculation().calTimedServiceCharge(getCurrent(), getCurrent().getToTime());
-        getCurrent().setServiceValue(serviceTot);
+        getCurrent().setServiceValue(count * timedItemFee.getFee());
         getCurrent().setCreater(getSessionController().getLoggedUser());
         getCurrent().setCreatedAt(Calendar.getInstance().getTime());
         getPatientItemFacade().create(getCurrent());
-      
+
         PatientEncounter tmp = getCurrent().getPatientEncounter();
         current = new PatientItem();
         current.setPatientEncounter(tmp);
-        
+
         createPatientItems();
     }
 
@@ -99,12 +100,14 @@ public class InwardTimedItemController implements Serializable {
             tmpPI.setToTime(Calendar.getInstance().getTime());
         }
 
-        double serviceTot = getInwardCalculation().calTimedServiceCharge(tmpPI, tmpPI.getToTime());
-        tmpPI.setServiceValue(serviceTot);
+        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) tmpPI.getItem());
+        double count = getInwardCalculation().calCount(timedItemFee, tmpPI.getFromTime(), tmpPI.getToTime());
+
+        tmpPI.setServiceValue(count * timedItemFee.getFee());
 
         tmpPI.setFinalize(Boolean.TRUE);
         getPatientItemFacade().edit(tmpPI);
-        
+
         createPatientItems();
 
     }
@@ -122,13 +125,15 @@ public class InwardTimedItemController implements Serializable {
 
         for (PatientItem pi : items) {
             if (pi.getFinalize() == null) {
-                double serviceTot = getInwardCalculation().calTimedServiceCharge(pi, null);
-                pi.setServiceValue(serviceTot);
+                TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
+                double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
+
+                pi.setServiceValue(count * timedItemFee.getFee());
             }
         }
     }
 
-    public List<PatientItem> getItems() {        
+    public List<PatientItem> getItems() {
         return items;
     }
 

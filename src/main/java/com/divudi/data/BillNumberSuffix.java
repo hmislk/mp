@@ -63,6 +63,7 @@ public enum BillNumberSuffix {
     INWPRO,//Professional
     INWSER,//Service
     INWREF,//Refund
+    INWREFCAN,//Refund Cancel
     INWCAN,//Cancell
     //Agent
     AGNPAY,//Payment 

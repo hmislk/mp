@@ -28,7 +28,7 @@
                         <p:panel header="BHT">
                             <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                             value="#{bhtSummeryController.patientEncounter}"
-                                            completeMethod="#{admissionController.completePatient2}" 
+                                            completeMethod="#{admissionController.completePatientDishcargedNotFinalized}" 
                                             var="myItem" itemValue="#{myItem}" 
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  >
@@ -120,7 +120,7 @@
                                 </p:column> 
                                 <p:column>
                                     <p:commandButton ajax="false" value="Update"
-                                                     action="#{bhtSummeryController.updatePatientRoom(rm)}"/>
+                                                     action="#{bhtSummeryController.updatePatientRoom(rm.patientRoom)}"/>
                                 </p:column>
 
                             </p:dataTable>

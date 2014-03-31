@@ -1088,7 +1088,6 @@ public class BhtSummeryController implements Serializable {
     }
 
     public double getDue() {
-
         return due;
     }
 

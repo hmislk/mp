@@ -7,7 +7,9 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:in="http://java.sun.com/jsf/composite/inward"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
+                xmlns:bi="http://java.sun.com/jsf/composite/inward/bill"
+                xmlns:credit="http://java.sun.com/jsf/composite/inward/creditCompany">
+
 
 
     <ui:define name="content">
@@ -21,7 +23,7 @@
                         <p:commandButton ajax="false"  value="Clear" style="float:right;" action="#{bhtSummeryController.makeNull}" />                                                
                         <p:commandButton ajax="false" value="To Settle Bill" style="float:right;" action="#{bhtSummeryController.toSettleBill()}" />
                         <p:commandButton value="Print Intrim" ajax="false" >
-                            <p:printer target="claimablePatientCopy" ></p:printer>
+                            <p:printer target="intrim" ></p:printer>
                         </p:commandButton>
                     </f:facet>
                     <h:panelGrid columns="3" style="min-width: 100%;">
@@ -33,7 +35,7 @@
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  >
                                 <p:ajax event="itemSelect" process="acPt" 
-                                        update="panSearch2 tvPt sum tot dis  claimablePatientCopy " 
+                                        update="panSearch2 tvPt sum tot dis  intrim " 
                                         listener="#{bhtSummeryController.createTables()}"/>
                                 <p:column>
                                     #{myItem.bhtNo}
@@ -53,27 +55,33 @@
                             </h:panelGroup>
                         </p:panel>
 
-                        <p:panel header="Summery" id="ss">
-                            <h:panelGrid columns="2" id="tot">
-                                <h:outputLabel  value="Total Charges" style="font-weight: bold"/>
-                                <h:outputLabel id="gtot" value="#{bhtSummeryController.grantTotal}">
+                        <p:panel header="Summery" id="tot">
+
+                            <h:panelGroup id="crd" style="display: #{bhtSummeryController.patientEncounter.paymentMethod eq 'Credit' ? 'block' : 'none'} ;min-width: 100%; ">
+                                <credit:outputCredit  patientEncounter="#{bhtSummeryController.patientEncounter}"/>
+                            </h:panelGroup>
+
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel  value="Total Charges : "  style="min-width: 100px;font-weight: bold;"/>
+                                <h:outputLabel value="#{bhtSummeryController.grantTotal}">
                                     <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="Paid " style="font-weight: bold"/>
+                                </h:outputLabel>                               
+                                <h:outputLabel value="Paid By Patient :  " style="min-width: 100px;font-weight: bold;"/>
                                 <h:outputLabel value="#{bhtSummeryController.paid}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
-                                <h:outputLabel value="Due " style="font-weight: bold"/>
-                                <h:outputLabel id="due" value="#{bhtSummeryController.due}">
+                                <h:outputLabel value="Due : " style="min-width: 100px;font-weight: bold;"/>
+                                <h:outputLabel  value="#{bhtSummeryController.due}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
                             </h:panelGrid>
+
                         </p:panel>
                         <p:panel id="dis" header="Discharge">
                             <h:panelGrid columns="2">
                                 <p:outputLabel value="Discharge Time"/>
                                 <p:calendar value="#{bhtSummeryController.patientEncounter.dateOfDischarge}" pattern="dd MMMM yyyy hh mm a" >                               
-                                    <f:ajax execute="@this" render="sum tvPt ss" event="dateSelect" listener="#{bhtSummeryController.checkDate}" />
+                                    <f:ajax execute="@this" render="sum tvPt tot" event="dateSelect" listener="#{bhtSummeryController.checkDate}" />
                                 </p:calendar> 
                                 <p:commandButton ajax="false" style="float: right;" value="Disharge" action="#{bhtSummeryController.discharge}" />
                                 <p:commandButton ajax="false" style="float: right;" value="Disharge Cancel" action="#{bhtSummeryController.dischargeCancel}" />
@@ -590,7 +598,7 @@
                     </p:dataGrid>
                 </p:panel>
 
-                <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                <h:panelGroup id="intrim" styleClass="noBorder">                  
                     <bi:intrimBill   patientEncounter="#{bhtSummeryController.patientEncounter}" items="#{bhtSummeryController.chargeItemTotals}"/>
                 </h:panelGroup>
 

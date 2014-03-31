@@ -81,6 +81,7 @@ public class InwardStaffPaymentBillController implements Serializable {
     private Boolean printPreview = false;
     PaymentScheme paymentScheme;
     Speciality speciality;
+    Speciality referringDoctorSpeciality;
     @EJB
     StaffFacade staffFacade;
 
@@ -183,6 +184,25 @@ public class InwardStaffPaymentBillController implements Serializable {
             }
             System.out.println(sql);
             suggestions = getStaffFacade().findBySQL(sql);
+        }
+        return suggestions;
+    }
+
+    public List<Staff> completeReferringDoctor(String query) {
+        List<Staff> suggestions;
+        String sql;
+        Map m = new HashMap();
+        m.put("rd", getReferringDoctorSpeciality());
+        if (query == null) {
+            suggestions = new ArrayList<Staff>();
+        } else {
+            if (getReferringDoctorSpeciality() != null) {
+                sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) and p.speciality=:rd order by p.person.name";
+                suggestions = getStaffFacade().findBySQL(sql, m);
+            } else {
+                sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
+                suggestions = getStaffFacade().findBySQL(sql);
+            }
         }
         return suggestions;
     }
@@ -585,6 +605,14 @@ public class InwardStaffPaymentBillController implements Serializable {
 
     public void setItems(List<Bill> items) {
         this.items = items;
+    }
+
+    public Speciality getReferringDoctorSpeciality() {
+        return referringDoctorSpeciality;
+    }
+
+    public void setReferringDoctorSpeciality(Speciality referringDoctorSpeciality) {
+        this.referringDoctorSpeciality = referringDoctorSpeciality;
     }
 
 }

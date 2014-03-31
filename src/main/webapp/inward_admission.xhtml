@@ -286,8 +286,8 @@
                 </h:panelGrid>
             </h:panelGroup>
             <p:panel rendered="#{admissionController.printPreview}">
-                <p:commandButton ajax="false" value="New Admission" actionListener="#{admissionController.makeNull}"/>
-                <bill:bht admission="#{inwardPaymentController.current}"/>
+                <p:commandButton ajax="false" value="New Admission" actionListener="#{admissionController.makeNull}"/>                   
+                <bill:bht admission="#{admissionController.current}"/>
             </p:panel>
 
         </h:form>

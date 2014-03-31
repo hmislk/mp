@@ -10,6 +10,7 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
@@ -97,6 +98,56 @@ public class AdmissionController implements Serializable {
 
     }
 
+    public List<Admission> completePatientPaymentDue(String qry) {
+        String sql = "Select b.patientEncounter From "
+                + " BilledBill b where"
+                + " b.retired=false "
+                + " and b.cancelled=false "
+                + " and b.billType=:btp "
+                + " and (abs(b.netTotal)-abs(b.paidAmount)) > :val "
+                + " and (upper(b.patientEncounter.bhtNo) like :q or"
+                + " upper(b.patientEncounter.patient.person.name) like :q ) "
+                + " order by b.patientEncounter.bhtNo";
+        HashMap hm = new HashMap();
+        hm.put("btp", BillType.InwardFinalBill);
+        hm.put("val", 0.1);
+        hm.put("q", "%" + qry.toUpperCase() + "%");
+
+        List<Admission> b = getEjbFacade().findBySQL(sql, hm);
+
+        if (b == null) {
+            return new ArrayList<>();
+        }
+
+        return b;
+
+    }
+    
+     public List<Admission> completePatientPaymentMax(String qry) {
+        String sql = "Select b.patientEncounter From "
+                + " BilledBill b where"
+                + " b.retired=false "
+                + " and b.cancelled=false "
+                + " and b.billType=:btp"
+                + " and (abs(b.paidAmount)- abs(b.netTotal)) > :val "
+                + " and (upper(b.patientEncounter.bhtNo) like :q or"
+                + " upper(b.patientEncounter.patient.person.name) like :q ) "
+                + " order by b.patientEncounter.bhtNo";
+        HashMap hm = new HashMap();
+        hm.put("btp", BillType.InwardFinalBill);
+        hm.put("val", 0.1);
+        hm.put("q", "%" + qry.toUpperCase() + "%");
+
+        List<Admission> b = getEjbFacade().findBySQL(sql, hm);
+
+        if (b == null) {
+            return new ArrayList<>();
+        }
+
+        return b;
+
+    }
+
 //    public List<Admission> completePatientBht(String query) {
 //        List<Admission> suggestions;
 //        String sql;
@@ -150,7 +201,7 @@ public class AdmissionController implements Serializable {
         return suggestions;
     }
 
-    public List<Admission> completePatient2(String query) {
+    public List<Admission> completePatientDishcargedNotFinalized(String query) {
         List<Admission> suggestions;
         String sql;
         HashMap h = new HashMap();
@@ -168,8 +219,8 @@ public class AdmissionController implements Serializable {
         }
         return suggestions;
     }
-    
-     public List<Admission> completePatientPaymentFinalized(String query) {
+
+    public List<Admission> completePatientPaymentFinalized(String query) {
         List<Admission> suggestions;
         String sql;
         HashMap h = new HashMap();
@@ -416,8 +467,7 @@ public class AdmissionController implements Serializable {
         PatientRoom currentPatientRoom = getInwardBean().savePatientRoom(getPatientRoom(), getCurrent(), getCurrent().getDateOfAdmission(), getSessionController().getLoggedUser());
         getCurrent().setCurrentPatientRoom(currentPatientRoom);
         getFacade().edit(getCurrent());
-        
-        
+
         double appointmentFee = 0;
         if (getAppointmentBill() != null) {
             appointmentFee = getAppointmentBill().getTotal();

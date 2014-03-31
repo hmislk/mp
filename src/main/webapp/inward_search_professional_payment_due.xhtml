@@ -11,68 +11,85 @@
             <ui:define name="content">
                 <h:form>
                     <p:panel header="Search Bills" >
-                        <h:panelGroup>
-                            <p:panelGrid columns="5" style="min-width: 100%;">
-                                <h:inputText id="txtSearch" value="#{inwardStaffPaymentBillController.selectText}"  >
-                                        <f:ajax render="tblFee" execute="txtSearch" event="keyup" />
-                                    </h:inputText>                                
+                        <f:facet name="header">
+                            <h:panelGrid columns="7" >
                                 <h:outputLabel value="From Date"/>
-                                <p:calendar id="fromDate" value="#{inwardStaffPaymentBillController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                                    <f:ajax event="dateSelect" execute="tblFee"  render="tblFee toDate fromDate"/>
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
-                                <p:calendar id="toDate" value="#{inwardStaffPaymentBillController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
-                                    <f:ajax event="dateSelect" execute="tblFee"  render="tblFee toDate fromDate"/>
+                                <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                 <p:watermark value="Search by Staff Name" for="txtSearch" />
-                            </p:panelGrid>
-                        </h:panelGroup>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createDueFeeTableInward}"/>
+                                <h:outputLabel/><h:outputLabel/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/>
+                                <h:outputLabel/><h:outputLabel/> <h:outputLabel/><h:outputLabel/>
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="BHT No"/>
+                                <h:outputLabel value="Patient Name"/>
+                                <h:outputLabel value="Speciality"/> 
+                                <h:outputLabel value="Doctor Name"/>      
+                                <h:outputLabel value="Service Name"/>  
+                                <h:outputLabel value="Charges"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText  value="#{searchController.searchKeyword.bhtNo}" />
+                                <p:inputText value="#{searchController.searchKeyword.patientName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.speciality}" />
+                                <p:inputText  value="#{searchController.searchKeyword.staffName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.itemName}" />
+                                <p:inputText value="#{searchController.searchKeyword.total}"/>
+
+                            </h:panelGrid>
+
+                        </f:facet>
                         <br/><br/>
-                        <p:dataTable   id="tblFee" value="#{inwardStaffPaymentBillController.dueBillFeeReportAll}" var="bf" >
-                            <p:column headerText="Doctor">
-                                <h:commandLink action="inward_bill_staff_payment" >
-                                    <h:outputLabel value="#{bf.staff.person.name}">
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bf.staff}" target="#{inwardStaffPaymentBillController.currentStaff}"/>
-                                </h:commandLink>
-                            </p:column>
-                            <p:column headerText="Institution">
-                                <h:commandLink action="inward_bill_staff_payment" >
-                                    <h:outputLabel value="#{bf.institution.name}">
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bf.staff}" target="#{inwardStaffPaymentBillController.currentStaff}"/>
-                                </h:commandLink>
+
+                        <p:defaultCommand target="btnSearch" />
+
+                        <p:dataTable rowIndexVar="i"  id="tblFee" value="#{searchController.billFees}" var="bf"   >
+                            <p:column headerText="No" styleClass="alignTop">
+                                <h:outputLabel value="#{i+1}"/>
                             </p:column>
 
-                            <p:column headerText="Patient">
-                                <h:commandLink action="inward_bill_staff_payment" >
-                                    <h:outputLabel value="#{bf.bill.patient.person.nameWithTitle}" rendered="#{bf.bill.patientEncounter eq null}"/>                                    
-                                    <h:outputLabel value="#{bf.bill.patientEncounter.patient.person.nameWithTitle}"/>                                    
+                            <p:column>
+                                <p:commandButton ajax="false" value="Pay Professional" action="inward_bill_staff_payment">
                                     <f:setPropertyActionListener value="#{bf.staff}" target="#{inwardStaffPaymentBillController.currentStaff}"/>
-                                </h:commandLink>
+                                </p:commandButton>
                             </p:column>
-                            
-                             <p:column headerText="BilledAt">
-                                <h:commandLink action="inward_bill_staff_payment" >
-                                    <h:outputLabel value="#{bf.bill.createdAt}">
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bf.staff}" target="#{inwardStaffPaymentBillController.currentStaff}"/>
-                                </h:commandLink>
+
+                            <p:column headerText="Speciality">
+                                <h:outputLabel value="#{bf.staff.speciality.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Doctor" >
+                                <h:outputLabel value="#{bf.staff.person.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Patient" >
+                                <h:outputLabel value="#{bf.bill.patient.person.nameWithTitle}"/>                                   
+                            </p:column>
+
+                            <p:column headerText="Bill No">
+                                <h:outputLabel value="#{bf.bill.insId}">
+                                </h:outputLabel>
+                            </p:column>
+
+                            <p:column headerText="Bht No">
+                                <h:outputLabel value="#{bf.bill.patientEncounter.bhtNo}">
+                                </h:outputLabel>
+                            </p:column>
+
+                            <p:column headerText="BilledAt" >
+                                <h:outputLabel value="#{bf.bill.createdAt}">
+                                </h:outputLabel>
                             </p:column>
 
 
                             <p:column headerText="Test" >
-                                <h:commandLink action="inward_bill_staff_payment" >
-                                    <h:outputLabel value="#{bf.billItem.item.name}" />
-                                    <f:setPropertyActionListener value="#{bf.staff}" target="#{inwardStaffPaymentBillController.currentStaff}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bf.billItem.item.name}" />
                             </p:column>
 
-                            <p:column headerText="Charge" >
-                                <h:commandLink action="inward_bill_staff_payment" >
-                                    <h:outputLabel value="#{bf.feeValue}" />
-                                    <f:setPropertyActionListener value="#{bf.staff}" target="#{inwardStaffPaymentBillController.currentStaff}"/>
-                                </h:commandLink>
+                            <p:column headerText="Charge">
+                                <h:outputLabel value="#{bf.feeValue}" />
                             </p:column>
 
                         </p:dataTable>

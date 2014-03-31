@@ -5,7 +5,10 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:in="http://java.sun.com/jsf/composite/patient"
+                xmlns:credit="http://java.sun.com/jsf/composite/inward/creditCompany">
+
 
     <ui:define name="content">
         <h:panelGroup >
@@ -14,7 +17,7 @@
                     <p:panel header="BHT">
                         <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                         value="#{bhtEditController.current}"
-                                        completeMethod="#{admissionController.completePatient}" 
+                                        completeMethod="#{bhtEditController.completePatient}" 
                                         var="myItem" itemValue="#{myItem}" 
                                         itemLabel="#{myItem.bhtNo}" 
                                         size="30"  style="width: 400px;">
@@ -67,56 +70,15 @@
                                         <f:selectItems value="#{enumController.paymentMethodForAdmission}" />
                                         <p:ajax process="@this" update="crd" event="change" />
                                     </p:selectOneMenu>
-
-                                    <h:panelGroup id="crd" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">
-                                        <h:panelGrid columns="2">
-                                            <h:outputLabel value="Company Name"   />                                                       
-                                            <p:autoComplete forceSelection="true" value="#{bhtEditController.current.creditCompany}"  
-                                                            completeMethod="#{creditCompanyController.completeCredit}" 
-                                                            var="ix" itemLabel="#{ix.name}" 
-                                                            itemValue="#{ix}" size="30" >                              
-                                            </p:autoComplete> 
-                                            <p:outputLabel value="Credit Limit" />
-                                            <p:inputText value="#{bhtEditController.current.creditLimit}" />
-                                        </h:panelGrid>
-                                    </h:panelGroup>
                                 </h:panelGrid>
+                                <h:panelGroup id="crd" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ;min-width: 100%; ">
+                                    <credit:inputCredit  patientEncounter="#{bhtEditController.current}"/>
+                                </h:panelGroup>
+
                             </p:panel>
 
                             <p:panel header="Patient Detail">
-                                <h:panelGrid columns="2">
-                                    <p:outputLabel value="Title"/>
-                                    <p:selectOneMenu  id="cmbTitle" value="#{bhtEditController.current.patient.person.title}"  >
-                                        <f:selectItem itemLabel="Select Title" />
-                                        <f:selectItems value="#{enumController.title}"/>
-                                    </p:selectOneMenu>
-                                    <p:outputLabel   value="Name:" />
-                                    <p:inputText  value="#{bhtEditController.current.patient.person.name}" />
-                                    <p:outputLabel value="Sex"/>
-                                    <p:selectOneMenu  value="#{bhtEditController.current.patient.person.sex}" >
-                                        <f:selectItem itemLabel="Select Sex"/>
-                                        <f:selectItems value="#{enumController.sex}"/>
-                                    </p:selectOneMenu>
-                                    <p:outputLabel value="NIC"/>
-                                    <p:inputText value="#{bhtEditController.current.patient.person.nic}"/>
-                                    <p:outputLabel value="Age"/>
-                                    <p:inputText  id="txtNewPtAge" autocomplete="off" value="#{bhtEditController.current.patient.age}">
-                                        <f:ajax event="keyup" execute="@this" render="calNewPtDob"  />
-                                    </p:inputText>
-                                    <p:outputLabel value="Date of Birth"/>
-                                    <p:calendar  value="#{bhtEditController.current.patient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
-                                        <f:ajax event="dateSelect" execute="@this" render="txtNewPtAge"/>
-                                    </p:calendar>
-                                    <h:outputLabel value="Address"/>
-                                    <p:inputTextarea  value="#{bhtEditController.current.patient.person.address}"/>                                  
-
-                                    <h:outputLabel value="Mobile Phone"/>
-                                    <p:inputMask mask="999-9999999" autocomplete="off" maxlength="11" 
-                                                 value="#{bhtEditController.current.patient.person.mobile}">
-                                    </p:inputMask>
-                                    <p:outputLabel   value="Adress" />
-                                    <p:outputLabel value="#{bhtEditController.current.patient.person.address}" />
-                                </h:panelGrid>
+                                <in:inputPatientDetail patient="#{bhtEditController.current.patient}"/>
                             </p:panel>
                             <p:panel header="Gardian Detal">
                                 <h:panelGrid columns="2">

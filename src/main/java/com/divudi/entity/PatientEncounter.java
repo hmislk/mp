@@ -4,9 +4,8 @@
  */
 package com.divudi.entity;
 
-//import ch.lambdaj.Lambda;
-import com.divudi.data.inward.PatientEncounterType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.inward.PatientEncounterType;
 import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.EncounterComponent;
@@ -26,7 +25,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-//import org.hamcrest.Matchers;
+
+
 
 /**
  *
@@ -108,7 +108,8 @@ public class PatientEncounter implements Serializable {
     private boolean paymentFinalized;
     String referanceNo;
     String policyNo;
-
+    //@ManyToOne
+    //private PatientEncounter referencePatientEncounter;
 //    @OneToOne
 //    PatientRoom lastPatientRoom;
     @Transient
@@ -543,5 +544,13 @@ public class PatientEncounter implements Serializable {
     public void setOpdDoctor(Staff opdDoctor) {
         this.opdDoctor = opdDoctor;
     }
+
+//    public PatientEncounter getReferencePatientEncounter() {
+//        return referencePatientEncounter;
+//    }
+//
+//    public void setReferencePatientEncounter(PatientEncounter referencePatientEncounter) {
+//        this.referencePatientEncounter = referencePatientEncounter;
+//    }
 
 }

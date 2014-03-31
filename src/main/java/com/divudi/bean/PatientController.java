@@ -17,11 +17,9 @@ import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
-import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,10 +39,8 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import net.sourceforge.barbecue.Barcode;
-import net.sourceforge.barbecue.BarcodeException;
 import net.sourceforge.barbecue.BarcodeFactory;
 import net.sourceforge.barbecue.BarcodeImageHandler;
-import net.sourceforge.barbecue.output.OutputException;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -87,7 +83,7 @@ public class PatientController implements Serializable {
                 bc.setDrawingText(true);
                 BarcodeImageHandler.saveJPEG(bc, barcodeFile);
                 barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
-            } catch (BarcodeException | OutputException | FileNotFoundException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(PatientController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
@@ -99,7 +95,7 @@ public class PatientController implements Serializable {
                 BarcodeImageHandler.saveJPEG(bc, barcodeFile);
 
                 barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
-            } catch (BarcodeException | OutputException | FileNotFoundException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(PatientController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

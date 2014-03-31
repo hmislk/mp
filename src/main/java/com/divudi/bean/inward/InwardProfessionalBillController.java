@@ -15,6 +15,7 @@ import com.divudi.data.BillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillEntry;
 import com.divudi.entity.BillFee;
@@ -347,29 +348,28 @@ public class InwardProfessionalBillController implements Serializable {
     }
 
     private Bill saveBill() {
-        Bill bill = new BilledBill();
-        bill.setBillType(BillType.InwardBill);
-        bill.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), BillType.InwardBill, BillNumberSuffix.INWPRO));
-        bill.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), bill, BillType.InwardBill, BillNumberSuffix.INWPRO));
+        getCurrent().setBillType(BillType.InwardProfessional);
+        getCurrent().setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), getCurrent().getBillType(), BillNumberSuffix.INWPRO));
+        getCurrent().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), getCurrent(), getCurrent().getBillType(), BillNumberSuffix.INWPRO));
 
         /////////
-        bill.setPatientEncounter(getCurrent().getPatientEncounter());
-        bill.setReferredBy(getCurrent().getReferredBy());
-        bill.setCollectingCentre(getCurrent().getCollectingCentre());
-        bill.setStaff(getCurrent().getStaff());
-//        bill.setTotal(bi.getFeeValue());
-//        bill.setNetTotal(bi.getFeeValue());
+        getCurrent().setPatientEncounter(getCurrent().getPatientEncounter());
+        getCurrent().setReferredBy(getCurrent().getReferredBy());
+        getCurrent().setCollectingCentre(getCurrent().getCollectingCentre());
+        getCurrent().setStaff(getCurrent().getStaff());
+//        getCurrent().setTotal(bi.getFeeValue());
+//        getCurrent().setNetTotal(bi.getFeeValue());
 //        ////////////////
 
-        bill.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        bill.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        bill.setPatient(getCurrent().getPatientEncounter().getPatient());
+        getCurrent().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        getCurrent().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        getCurrent().setPatient(getCurrent().getPatientEncounter().getPatient());
 
-        bill.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        bill.setCreater(getSessionController().getLoggedUser());
+        getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        getCurrent().setCreater(getSessionController().getLoggedUser());
 
-        getFacade().create(bill);
-        return bill;
+        getFacade().create(getCurrent());
+        return getCurrent();
     }
 
     private boolean errorCheck() {
@@ -417,9 +417,17 @@ public class InwardProfessionalBillController implements Serializable {
         return b;
     }
 
+    @EJB
+    private InwardBean inwardBean;
+   
+
     private void saveBillFee(Bill b, BillItem bItm, BillFee bf) {
         bf.setBillItem(bItm);
         bf.setBill(b);
+        bf.setFee(getInwardBean().getStaffFeeForInward(getSessionController().getLoggedUser()));
+        if(bf.getFeeAt()==null){
+            bf.setFeeAt(new Date());
+        }
         bf.setPatienEncounter(getCurrent().getPatientEncounter());
         bf.setPatient(getCurrent().getPatientEncounter().getPatient());
         bf.setCreater(getSessionController().getLoggedUser());
@@ -634,6 +642,14 @@ public class InwardProfessionalBillController implements Serializable {
 
     public void setBillBean(BillBean billBean) {
         this.billBean = billBean;
+    }
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 
 }

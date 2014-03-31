@@ -22,12 +22,11 @@
 
                             <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                             value="#{inwardPaymentController.current.patientEncounter}"
-                                            completeMethod="#{admissionController.completePatientPaymentFinalized}" 
+                                            completeMethod="#{admissionController.completePatientDishcargedNotFinalized}" 
                                             var="myItem" itemValue="#{myItem}" 
                                             itemLabel="#{myItem.bhtNo}" 
                                             size="30"  style="width: 400px;">
-                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 :#{p:component('due')}"
-                                        listener="#{inwardPaymentController.bhtListener()}"/>
+                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 "/>
                                 <p:column>
                                     <h:outputLabel value="#{myItem.bhtNo}"/>
                                 </p:column>
@@ -48,9 +47,6 @@
 
                         <p:panel id="due">
                             <h:panelGrid columns="2">
-                                <h:outputLabel value="Due "/>
-                                <h:outputLabel value="#{inwardPaymentController.due}"/>
-
                                 <h:outputLabel value="Paying Amount"/>
                                 <p:inputText value="#{inwardPaymentController.current.total}"/>
                             </h:panelGrid>
@@ -79,15 +75,20 @@
 
                             </h:panelGrid>
                             <p:commandButton id="btnPay" value="Pay" ajax="false" action="#{inwardPaymentController.pay}"/>
-                            <p:defaultCommand target="btnPay"/>
-
                             <p:commandButton value="Clear" ajax="false" action="#{inwardPaymentController.makeNull}"/>
+                            <p:defaultCommand target="btnPay"/>
                         </p:panel>
                     </h:panelGrid>
                 </p:panel>
 
                 <h:panelGroup rendered="#{inwardPaymentController.printPreview}">
-                    <bill:payment bill="#{inwardPaymentController.current}"/>
+                    <p:commandButton value="New Payment" ajax="false" action="#{inwardPaymentController.makeNull}"/>
+                    <p:commandButton value="Print" ajax="false" action="#" >
+                        <p:printer target="gpBillPreview" ></p:printer>
+                    </p:commandButton>
+                    <h:panelGroup id="gpBillPreview">
+                        <bill:payment bill="#{inwardPaymentController.current}"/>
+                    </h:panelGroup>
                 </h:panelGroup>
 
 

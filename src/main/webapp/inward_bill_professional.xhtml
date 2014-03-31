@@ -83,9 +83,8 @@
                                             <f:ajax event="dateSelect"  render="feeAt"/>
                                         </p:calendar>
                                         <h:outputLabel/>
-                                        <h:commandButton value="Add" id="btn" action="#{inwardProfessionalBillController.addToBill()}">
-                                            <f:ajax execute="scStaff prof feeAt  btn" render="panelBillItems panelBillTotals profPanel " />
-                                        </h:commandButton>
+                                        <p:commandButton value="Add" id="btn" action="#{inwardProfessionalBillController.addToBill()}" ajax="false"/>
+                                       
                                     </p:panelGrid>
 
                                 </p:panel>

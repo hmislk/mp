@@ -6,6 +6,9 @@ package com.divudi.data.dataStructure;
 
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.entity.Item;
+import com.divudi.entity.PatientItem;
+import com.divudi.entity.inward.PatientRoom;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +23,7 @@ public class ChargeItemTotal {
     private double discount = 0;
     private double netTotal = 0;
     private double adjustedTotal = 0.0;
+    private List<PatientRoom> patientRooms;
 
     public List<Item> getList() {
         return list;
@@ -27,22 +31,6 @@ public class ChargeItemTotal {
 
     public void setList(List<Item> list) {
         this.list = list;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    public Double getAdjustedTotal() {
-        return adjustedTotal;
-    }
-
-    public void setAdjustedTotal(Double adjustedTotal) {
-        this.adjustedTotal = adjustedTotal;
     }
 
     public InwardChargeType getInwardChargeType() {
@@ -61,12 +49,39 @@ public class ChargeItemTotal {
         this.discount = discount;
     }
 
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
     public double getNetTotal() {
         return netTotal;
     }
 
     public void setNetTotal(double netTotal) {
         this.netTotal = netTotal;
+    }
+
+    public double getAdjustedTotal() {
+        return adjustedTotal;
+    }
+
+    public void setAdjustedTotal(double adjustedTotal) {
+        this.adjustedTotal = adjustedTotal;
+    }
+
+    public List<PatientRoom> getPatientRooms() {
+        if (patientRooms == null) {
+            patientRooms = new ArrayList<>();
+        }
+        return patientRooms;
+    }
+
+    public void setPatientRooms(List<PatientRoom> patientRooms) {
+        this.patientRooms = patientRooms;
     }
 
 }

@@ -72,7 +72,21 @@ public class BhtEditController implements Serializable {
     String selectText = "";
     @EJB
     private BillFacade billFacade;
+    
+    @Inject
+    InwardStaffPaymentBillController inwardStaffPaymentBillController;
 
+    
+    public void resetSpecialities(){
+        if(current==null) return;
+        if(current.getOpdDoctor()!=null){
+            getInwardStaffPaymentBillController().setSpeciality(current.getOpdDoctor().getSpeciality());
+        }
+        if(current.getReferringDoctor()!=null){
+            getInwardStaffPaymentBillController().setReferringDoctorSpeciality(current.getReferringDoctor().getSpeciality());
+        }
+    }
+    
     private boolean checkPaymentIsMade() {
         String sql = "select b from BilledBill b where b.retired=false "
                 + " and b.patientEncounter=:pEnc and b.cancelled=false ";
@@ -329,6 +343,19 @@ public class BhtEditController implements Serializable {
         this.billFacade = billFacade;
     }
 
+    public InwardStaffPaymentBillController getInwardStaffPaymentBillController() {
+        return inwardStaffPaymentBillController;
+    }
+
+    public void setInwardStaffPaymentBillController(InwardStaffPaymentBillController inwardStaffPaymentBillController) {
+        this.inwardStaffPaymentBillController = inwardStaffPaymentBillController;
+    }
+
+    
+
+    
+    
+    
     /**
      *
      */

@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
@@ -22,6 +23,8 @@ import javax.persistence.Transient;
  */
 @Entity
 public class PatientRoom implements Serializable {
+    @OneToOne(mappedBy = "referencePatientRoom")
+    private PatientRoom duplicatePatientRoom;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -68,6 +71,11 @@ public class PatientRoom implements Serializable {
     private double currentNursingCharge = 0.0;
     private double currentMoCharge = 0.0;
     private double currentRoomCharge;
+    private double calculatedRoomCharge;
+    
+    
+    @OneToOne
+    private PatientRoom referencePatientRoom;
 
     @Transient
     private long tmpStayedTime;
@@ -322,5 +330,29 @@ public class PatientRoom implements Serializable {
 
     public void setCurrentRoomCharge(double currentRoomCharge) {
         this.currentRoomCharge = currentRoomCharge;
+    }
+
+    public PatientRoom getReferencePatientRoom() {
+        return referencePatientRoom;
+    }
+
+    public void setReferencePatientRoom(PatientRoom referencePatientRoom) {
+        this.referencePatientRoom = referencePatientRoom;
+    }
+
+    public PatientRoom getDuplicatePatientRoom() {
+        return duplicatePatientRoom;
+    }
+
+    public void setDuplicatePatientRoom(PatientRoom duplicatePatientRoom) {
+        this.duplicatePatientRoom = duplicatePatientRoom;
+    }
+
+    public double getCalculatedRoomCharge() {
+        return calculatedRoomCharge;
+    }
+
+    public void setCalculatedRoomCharge(double calculatedRoomCharge) {
+        this.calculatedRoomCharge = calculatedRoomCharge;
     }
 }

@@ -73,8 +73,6 @@ public class InwardSearch implements Serializable {
     ////////////////////
     private Bill bill;
     private boolean printPreview = false;
-    private double refundAmount;
-    private RefundBill billForRefund;
     @Temporal(TemporalType.TIME)
     private Date fromDate;
     @Temporal(TemporalType.TIME)
@@ -98,8 +96,6 @@ public class InwardSearch implements Serializable {
     public void makeNull() {
         bill = null;
         printPreview = false;
-        refundAmount = 0.0;
-        billForRefund = null;
         fromDate = null;
         toDate = null;
         comment = null;
@@ -147,7 +143,7 @@ public class InwardSearch implements Serializable {
             }
 
         }
-        refundAmount = d;
+
         return true;
     }
 
@@ -190,97 +186,6 @@ public class InwardSearch implements Serializable {
         }
 
         return false;
-    }
-
-    public String refundBill() {
-        if (refundingItems.isEmpty()) {
-            UtilityController.addErrorMessage("There is no item to Refund");
-            return "";
-
-        }
-
-        for (BillItem b : refundingItems) {
-            if (checkInvestigation(b)) {
-                UtilityController.addErrorMessage("Lab Report was already Entered .you cant Cancel");
-                return "";
-            }
-        }
-
-        if (refundAmount == 0.0) {
-            UtilityController.addErrorMessage("There is no item to Refund");
-            return "";
-        }
-        if (comment == null || comment.trim().equals("")) {
-            UtilityController.addErrorMessage("Please enter a comment");
-            return "";
-
-        }
-
-        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
-            if (getBill().isCancelled()) {
-                UtilityController.addErrorMessage("Already Cancelled. Can not Refund again");
-                return "";
-            }
-            if (!calculateRefundTotal()) {
-                return "";
-            }
-
-            RefundBill rb = new RefundBill();
-            rb.setBilledBill(getBill());
-            Date bd = Calendar.getInstance().getTime();
-            rb.setBillDate(bd);
-            rb.setBillTime(bd);
-            rb.setBillType(getBill().getBillType());
-            rb.setBilledBill(getBill());
-            rb.setCatId(getBill().getCatId());
-            rb.setCollectingCentre(getBill().getCollectingCentre());
-            rb.setCreatedAt(bd);
-            rb.setComments(comment);
-            rb.setCreater(getSessionController().getLoggedUser());
-            rb.setCreditCompany(getBill().getCreditCompany());
-            rb.setDepartment(getSessionController().getLoggedUser().getDepartment());
-            rb.setDiscount(0.00);
-            rb.setDiscountPercent(0.0);
-
-            rb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), rb, getBill().getBillType(), BillNumberSuffix.INWREF));
-            rb.setDeptId(getBillNumberBean().departmentRefundBill(getSessionController().getLoggedUser().getDepartment(), getBill().getToDepartment(), BillNumberSuffix.INWREF));
-
-            rb.setToDepartment(getBill().getToDepartment());
-            rb.setToInstitution(getBill().getToInstitution());
-
-            rb.setFromDepartment(getBill().getFromDepartment());
-            rb.setFromInstitution(getBill().getFromInstitution());
-
-            rb.setInstitution(getSessionController().getLoggedUser().getInstitution());
-            rb.setDepartment(getSessionController().getDepartment());
-
-            rb.setNetTotal(refundAmount);
-            rb.setPatient(getBill().getPatient());
-            rb.setPatientEncounter(getBill().getPatientEncounter());
-            rb.setPaymentMethod(getBill().getPaymentMethod());
-            rb.setReferredBy(getBill().getReferredBy());
-            rb.setTotal(0 - refundAmount);
-            rb.setNetTotal(0 - refundAmount);
-
-            getBillFacade().create(rb);
-
-            refundBillItems(rb);
-
-            calculateRefundBillFees(rb);
-
-            getBill().setRefunded(true);
-            getBill().setRefundedBill(rb);
-            getBillFacade().edit((BilledBill) getBill());
-
-            printPreview = true;
-            //UtilityController.addSuccessMessage("Refunded");
-
-        } else {
-            UtilityController.addErrorMessage("No Bill to refund");
-            return "";
-        }
-        //  recreateModel();
-        return "";
     }
 
     public void calculateRefundBillFees(RefundBill rb) {
@@ -369,11 +274,8 @@ public class InwardSearch implements Serializable {
     }
 
     private void recreateModel() {
-        billForRefund = null;
-        refundAmount = 0.0;
         billFees = null;
         billComponents = null;
-        billForRefund = null;
         billItems = null;
         bills = null;
         printPreview = false;
@@ -559,11 +461,16 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
+            double dbl = getInwardBean().getPaidValue(getBill().getPatientEncounter());
+
+            if (dbl < getBill().getNetTotal()) {
+                UtilityController.addErrorMessage("This Bht has No Enough Vallue To Cancel");
+            }
+
 //            if (getBill().getPatientEncounter().isPaymentFinalized()) {
 //                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
 //                return;
 //            }
-
             CancelledBill cb = createCancelBill();
             //Copy & paste
             getBillFacade().create(cb);
@@ -571,6 +478,41 @@ public class InwardSearch implements Serializable {
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
             getBillFacade().edit((BilledBill) getBill());
+
+            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+                getInwardBean().updateFinalFill(getBill().getPatientEncounter());
+
+            }
+
+            UtilityController.addSuccessMessage("Cancelled");
+
+            printPreview = true;
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+            return;
+        }
+
+    }
+
+    public void cancelBillRefund() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            if (check()) {
+                return;
+            }
+
+//            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+//                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
+//                return;
+//            }
+            RefundBill cb = createRefundCancelBill();
+            //Copy & paste
+            getBillFacade().create(cb);
+            cancelBillItems(cb);
+            getBill().setCancelled(true);
+            getBill().setCancelledBill(cb);
+            getBillFacade().edit(getBill());
 
             if (getBill().getPatientEncounter().isPaymentFinalized()) {
                 getInwardBean().updateFinalFill(getBill().getPatientEncounter());
@@ -669,10 +611,37 @@ public class InwardSearch implements Serializable {
         return cb;
     }
 
+    private RefundBill createRefundCancelBill() {
+        RefundBill cb = new RefundBill();
+        cb.copy(getBill());
+        cb.setBilledBill(getBill());
+        cb.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setCreater(getSessionController().getLoggedUser());
+        cb.setPaymentMethod(getBill().getPaymentMethod());
+        cb.setComments(comment);
+        //TODO: Find null Point Exception
+
+        cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
+        cb.setInstitution(getSessionController().getInstitution());
+
+        cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getDepartment(), cb, getBill().getBillType(), BillNumberSuffix.INWREFCAN));
+        cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getLoggedUser().getInstitution(), cb, getBill().getBillType(), BillNumberSuffix.INWREFCAN));
+
+        cb.invertValue(getBill());
+        return cb;
+    }
+
     public void cancelProfessional() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
 
             if (check()) {
+                return;
+            }
+
+            if (getBill().getPatientEncounter().isPaymentFinalized()) {
+                UtilityController.addErrorMessage("Final Payment is Finalized You can't Cancel");
                 return;
             }
 
@@ -838,7 +807,7 @@ public class InwardSearch implements Serializable {
 
     public List<BillFee> getBillFees() {
         if (getBill() != null) {
-            if (billFees == null || billForRefund == null) {
+            if (billFees == null) {
                 String sql = "SELECT b FROM BillFee b WHERE b.retired=false and b.bill.id=" + getBill().getId();
                 billFees = getBillFeeFacade().findBySQL(sql);
                 if (billFees == null) {
@@ -888,52 +857,6 @@ public class InwardSearch implements Serializable {
         this.billCommponentFacade = billCommponentFacade;
     }
 
-    private void setRefundAttribute() {
-        billForRefund.setBalance(getBill().getBalance());
-
-        billForRefund.setBillDate(Calendar.getInstance().getTime());
-        billForRefund.setBillTime(Calendar.getInstance().getTime());
-        billForRefund.setCreater(getSessionController().getLoggedUser());
-        billForRefund.setCreatedAt(Calendar.getInstance().getTime());
-
-        billForRefund.setBillType(getBill().getBillType());
-        billForRefund.setBilledBill(getBill());
-
-        billForRefund.setCatId(getBill().getCatId());
-        billForRefund.setCollectingCentre(getBill().getCollectingCentre());
-        billForRefund.setCreditCardRefNo(getBill().getCreditCardRefNo());
-        billForRefund.setCreditCompany(getBill().getCreditCompany());
-
-        billForRefund.setDepartment(getBill().getDepartment());
-        billForRefund.setDeptId(getBill().getDeptId());
-        billForRefund.setDiscount(getBill().getDiscount());
-
-        billForRefund.setDiscountPercent(getBill().getDiscountPercent());
-        billForRefund.setFromDepartment(getBill().getFromDepartment());
-        billForRefund.setFromInstitution(getBill().getFromInstitution());
-        billForRefund.setFromStaff(getBill().getFromStaff());
-
-        billForRefund.setInsId(getBill().getInsId());
-        billForRefund.setInstitution(getBill().getInstitution());
-
-        billForRefund.setPatient(getBill().getPatient());
-        billForRefund.setPatientEncounter(getBill().getPatientEncounter());
-        billForRefund.setPaymentScheme(getBill().getPaymentScheme());
-        billForRefund.setPaymentSchemeInstitution(getBill().getPaymentSchemeInstitution());
-
-        billForRefund.setReferredBy(getBill().getReferredBy());
-        billForRefund.setReferringDepartment(getBill().getReferringDepartment());
-
-        billForRefund.setStaff(getBill().getStaff());
-
-        billForRefund.setToDepartment(getBill().getToDepartment());
-        billForRefund.setToInstitution(getBill().getToInstitution());
-        billForRefund.setToStaff(getBill().getToStaff());
-        billForRefund.setTotal(calTot());
-        //Need To Add Net Total Logic
-        billForRefund.setNetTotal(billForRefund.getTotal());
-    }
-
     public double calTot() {
         if (getBillFees() == null) {
             return 0.0;
@@ -943,30 +866,8 @@ public class InwardSearch implements Serializable {
             //System.out.println("Tot" + f.getFeeValue());
             tot += f.getFeeValue();
         }
-        getBillForRefund().setTotal(tot);
+
         return tot;
-    }
-
-    public RefundBill getBillForRefund() {
-
-        if (billForRefund == null) {
-            billForRefund = new RefundBill();
-            setRefundAttribute();
-        }
-
-        return billForRefund;
-    }
-
-    public void setBillForRefund(RefundBill billForRefund) {
-        this.billForRefund = billForRefund;
-    }
-
-    public double getRefundAmount() {
-        return refundAmount;
-    }
-
-    public void setRefundAmount(double refundAmount) {
-        this.refundAmount = refundAmount;
     }
 
     public WebUserController getWebUserController() {

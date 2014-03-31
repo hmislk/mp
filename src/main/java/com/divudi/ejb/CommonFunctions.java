@@ -221,9 +221,9 @@ public class CommonFunctions {
         if (dob == null || toDate == null || dob.getTime() > toDate.getTime()) {
             return 0;
         }
-        long durationHours;
-        durationHours = (toDate.getTime() - dob.getTime()) / (1000 * 60);
-        return durationHours;
+        long dMin;
+        dMin = (toDate.getTime() - dob.getTime()) / (1000 * 60);
+        return dMin;
     }
 
     public Date getStartOfDay(Date date) {

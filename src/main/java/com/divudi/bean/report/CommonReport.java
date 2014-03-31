@@ -446,8 +446,12 @@ public class CommonReport implements Serializable {
     }
 
     private List<Bill> userBillsOwn(Bill billClass, BillType billType, WebUser webUser) {
-        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and b.billType = :btp"
-                + " and b.creater=:web and b.institution=:ins and b.createdAt between :fromDate and"
+        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill "
+                + " and b.retired=false"
+                + "  and b.billType = :btp"
+                + " and b.creater=:web "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and"
                 + " :toDate order by b.insId ";
         Map temMap = new HashMap();
         temMap.put("fromDate", getFromDate());

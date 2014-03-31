@@ -20,12 +20,14 @@
             <p:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomFacilityCharge.name}" />
             <p:outputLabel   value="Name:" />
             <p:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" />
-            <p:outputLabel   value="Sex" />
+            <p:outputLabel   value="Age" />
             <p:outputLabel value="#{cc.attrs.admission.patient.age}" />
             <p:outputLabel  value="DOB"  />
             <p:outputLabel value="#{cc.attrs.admission.patient.person.dob}"   >
                 <f:convertDateTime pattern="dd/MM/yy" />
             </p:outputLabel>
+            <p:outputLabel   value="Age" />
+            <p:outputLabel value="#{cc.attrs.admission.patient.age}" />
             <p:outputLabel  value="Adress" />
             <p:outputLabel  value="#{cc.attrs.admission.patient.person.address}" />
             <p:outputLabel  value="Date of Admission"  />

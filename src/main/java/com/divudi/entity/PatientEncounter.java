@@ -108,7 +108,8 @@ public class PatientEncounter implements Serializable {
     private boolean paymentFinalized;
     String referanceNo;
     String policyNo;
-
+    //@ManyToOne
+    //private PatientEncounter referencePatientEncounter;
 //    @OneToOne
 //    PatientRoom lastPatientRoom;
     @Transient
@@ -543,5 +544,13 @@ public class PatientEncounter implements Serializable {
     public void setOpdDoctor(Staff opdDoctor) {
         this.opdDoctor = opdDoctor;
     }
+
+//    public PatientEncounter getReferencePatientEncounter() {
+//        return referencePatientEncounter;
+//    }
+//
+//    public void setReferencePatientEncounter(PatientEncounter referencePatientEncounter) {
+//        this.referencePatientEncounter = referencePatientEncounter;
+//    }
 
 }

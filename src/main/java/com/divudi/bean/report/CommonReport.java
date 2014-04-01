@@ -20,6 +20,7 @@ import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,11 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 
 /**
@@ -53,6 +53,8 @@ public class CommonReport implements Serializable {
     CommonFunctions commonFunctions;
     @EJB
     private InwardPriceAdjustmentFacade inwdPriceAdjFacade;
+    @EJB
+    BillItemFacade billItemFac;
     ////////////////////
     private Institution collectingIns;
     Institution institution;
@@ -2278,6 +2280,16 @@ public class CommonReport implements Serializable {
     public void setPharmacyBhtPreRefunded(BillsTotals PharmacyBhtPreRefunded) {
         this.PharmacyBhtPreRefunded = PharmacyBhtPreRefunded;
     }
+
+    public BillItemFacade getBillItemFac() {
+        return billItemFac;
+    }
+
+    public void setBillItemFac(BillItemFacade billItemFac) {
+        this.billItemFac = billItemFac;
+    }
+    
+    
 
     
     

@@ -327,12 +327,15 @@ public class mdInwardReportController implements Serializable {
     
         Map m=new HashMap();
         String jpql;
-        jpql="select b from BillItem b where b.bill.department =:dept or b.bill.billType=:biTy and b.createdAt between :fd and :td";
+        jpql="select b from BillItem b where"
+                + " b.bill.department =:dept"
+                + " and  b.bill.billType=:biTy "
+                + " and b.createdAt between :fd and :td";
         m.put("fd", fromDate);
         m.put("td", toDate);
         m.put("dept", dept);
         m.put("biTy", BillType.PharmacyBhtPre);
-        billItem=getBillItemFacade().findBySQL(jpql, m);
+        billItem=getBillItemFacade().findBySQL(jpql, m,TemporalType.TIMESTAMP);
         
         
     }
@@ -682,6 +685,14 @@ public class mdInwardReportController implements Serializable {
 
     public void setDept(Department dept) {
         this.dept = dept;
+    }
+
+    public List<BillItem> getBillItem() {
+        return billItem;
+    }
+
+    public void setBillItem(List<BillItem> billItem) {
+        this.billItem = billItem;
     }
     
     

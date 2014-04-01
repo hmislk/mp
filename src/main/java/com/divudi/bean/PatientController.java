@@ -39,7 +39,6 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import net.sourceforge.barbecue.Barcode;
-import net.sourceforge.barbecue.BarcodeException;
 import net.sourceforge.barbecue.BarcodeFactory;
 import net.sourceforge.barbecue.BarcodeImageHandler;
 import org.primefaces.model.DefaultStreamedContent;

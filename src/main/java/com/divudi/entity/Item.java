@@ -121,6 +121,8 @@ public class Item implements Serializable {
     SymanticType symanticType;
     @Enumerated(EnumType.STRING)
     private DepartmentType departmentType;
+    @Transient
+    private double transBillItemCount;
 
     public List<WorksheetItem> getWorksheetItems() {
         if (worksheetItems != null) {
@@ -571,6 +573,14 @@ public class Item implements Serializable {
 
     public void setDepartmentType(DepartmentType departmentType) {
         this.departmentType = departmentType;
+    }
+
+    public double getTransBillItemCount() {
+        return transBillItemCount;
+    }
+
+    public void setTransBillItemCount(double transBillItemCount) {
+        this.transBillItemCount = transBillItemCount;
     }
 
     static class ReportItemComparator implements Comparator<ReportItem> {

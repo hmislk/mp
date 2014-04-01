@@ -159,8 +159,10 @@ public class StaffController implements Serializable {
                 + "order by p.person.name";
 //            //System.out.println(sql);
         hm.put("sp", speciality);
-        ss = getFacade().findBySQL(sql,hm);
+        ss = getFacade().findBySQL(sql, hm);
 
+        System.err.println("Staff List Size " + ss.size());
+        
         return ss;
     }
 

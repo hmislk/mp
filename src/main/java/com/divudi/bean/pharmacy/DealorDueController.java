@@ -136,7 +136,7 @@ public class DealorDueController implements Serializable {
         System.err.println("size " + setIns.size());
         items = new ArrayList<>();
         for (Institution ins : setIns) {
-            System.err.println("Ins " + ins.getName());
+       //     System.err.println("Ins " + ins.getName());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
             List<Bill> lst = getBillController().getBills(ins, getFromDate(), getToDate());

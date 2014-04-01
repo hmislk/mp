@@ -256,7 +256,7 @@ public class BillController implements Serializable {
     public List<Institution> getDealorFromBills(Date frmDate, Date toDate) {
         String sql;
         HashMap hm;
-        sql = "Select b.fromInstitution From Bill b "
+        sql = "Select distinct(b.fromInstitution) From Bill b "
                 + " where b.retired=false and b.cancelled=false "
                 + " and ((b.paidAmount+b.netTotal)< :val) "
                 + " and b.createdAt between :frm and :to "
@@ -275,7 +275,7 @@ public class BillController implements Serializable {
     public List<Institution> getDealorFromReturnBills(Date frmDate, Date toDate) {
         String sql;
         HashMap hm;
-        sql = "Select b.toInstitution From Bill b where "
+        sql = "Select distinct(b.toInstitution) From Bill b where "
                 + " b.retired=false and b.cancelled=false "
                 + " and b.createdAt between :frm and :to "
                 + " and (b.billType=:tp1 or b.billType=:tp2)"

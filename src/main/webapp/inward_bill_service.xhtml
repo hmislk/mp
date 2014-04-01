@@ -148,7 +148,8 @@
                                                 <h:outputLabel value="#{bif.fee.name}" rendered="#{bif.staff eq null}" ></h:outputLabel>
                                                 <p:selectOneMenu value="#{bif.staff}" rendered="#{bif.fee.speciality!=null}" >
                                                     <f:selectItem itemLabel="Select Staff" />
-                                                    <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality)}" var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
+                                                    <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality)}" 
+                                                                    var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
                                                 </p:selectOneMenu>
 
                                             </p:column>

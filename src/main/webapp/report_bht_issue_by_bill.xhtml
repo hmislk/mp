@@ -90,13 +90,6 @@
                             <h:outputLabel value="#{b.deptId}"/>
                         </p:column>
 
-                        <p:column headerText="Invoice No" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Invoice No"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.invoiceNumber}"/>
-                        </p:column>
-
                         <p:column headerText="Created At"  >
                             <f:facet name="header">  
                                 <h:outputLabel value="Created At"/>
@@ -104,21 +97,6 @@
                             <h:outputLabel value="#{b.createdAt}" >
                                 <f:convertDateTime pattern="dd MM yy hh:mm a"/>
                             </h:outputLabel>
-                        </p:column>
-
-<!--                        <p:column headerText="Suplier Name"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Suplier Name"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.fromInstitution.name}"/>
-
-                        </p:column>-->
-
-                        <p:column headerText="Po No" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Po No"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.referenceBill.deptId}"/>
                         </p:column>
 
                         <p:column headerText="Cash" style=" text-align: right"  >
@@ -311,14 +289,6 @@
                                 <f:convertDateTime pattern="dd MM yy hh:mm a"/>
                             </h:outputLabel>
                         </p:column>
-
-<!--                        <p:column headerText="Suplier Name"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Suplier Name"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.fromInstitution.name}"/>
-
-                        </p:column>-->
 
                         <p:column headerText="Cash" style=" text-align: right"  >
                             <f:facet name="header">  

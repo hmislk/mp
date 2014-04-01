@@ -9,7 +9,6 @@
 package com.divudi.bean;
 
 import java.util.TimeZone;
-import com.divudi.bean.UtilityController;
 import com.divudi.entity.Person;
 import com.divudi.facade.DoctorFacade;
 import com.divudi.entity.Doctor;
@@ -18,7 +17,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;

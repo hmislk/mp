@@ -56,16 +56,32 @@
 
                                     <p:panel  id="panelQueue" header="Add to Queue" >
                                         <h:panelGrid columns="3" >
+                                            <h:outputLabel value="Speciality" ></h:outputLabel>
+                                            <p:autoComplete value="#{practiceBookingController.speciality}"
+                                                            id="acSpeciality" 
+                                                            completeMethod="#{specialityController.completeSpeciality}"
+                                                            var="dsp" itemLabel="#{dsp.name}" itemValue="#{dsp}"
+                                                            >
+                                                <f:ajax event="itemSelect" execute="acSpeciality" render="acStaff" ></f:ajax>
+                                            </p:autoComplete>
+                                            <h:outputLabel value="" ></h:outputLabel>
+
                                             <h:outputLabel value="Doctor" ></h:outputLabel>
-                                            <p:selectOneMenu converter="stfcon" id="scStaff" value="#{practiceBookingController.staff}" style="width: 300px; padding: 2px; margin: auto;" >
-                                                <f:selectItems value="#{practiceBookingController.consultants}" var="mys" itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}" />
-                                                <f:ajax  event="change" execute="@this" render="bSession"  />
-                                            </p:selectOneMenu>
+                                            <p:autoComplete value="#{practiceBookingController.doctor}"
+                                                            id="acStaff" converter="conDoc"
+                                                            completeMethod="#{practiceBookingController.completeDoctorsOfSelectedSpeciality}"
+                                                            var="doc"
+                                                            itemLabel="#{doc.person.nameWithTitle}" itemValue="#{doc}"
+                                                            >
+                                                <f:ajax  event="itemSelect" execute="@this" render="bSession"  listener="#{practiceBookingController.listBillSessions}" />                                                
+                                            </p:autoComplete>
+
                                             <p:commandButton   value="Add" ajax="false" style="float: right;" 
                                                                onclick="if (!confirm('Are you sure you want to Add this record?'))
                                                                            return false;" 
                                                                action="#{practiceBookingController.addToQueue()}" >                        
                                             </p:commandButton>
+                                            
                                         </h:panelGrid>
                                         <p:dataTable id="bSession" value="#{practiceBookingController.billSessions}" var='bs'
                                                      selectionMode="single" rowKey="#{bs.id}"
@@ -99,6 +115,10 @@
                                         <h:outputLabel value="Name"/>
                                         <p:inputText autocomplete="off" id="txtNewPtName" value="#{patientController.current.person.name}" style="width: 200px;text-transform:uppercase;">
                                         </p:inputText>
+
+                                        <h:outputLabel value="Code"/>
+                                        <h:outputLabel value="#{patientController.current.code}" ></h:outputLabel>
+
                                         <h:outputLabel value="Sex"/>
                                         <h:outputLabel rendered="#{patientController.current.person eq null}" value=""/>
                                         <p:selectOneMenu rendered="#{patientController.current.person ne null}" id="txtNewSex"  value="#{patientController.current.person.sex}" style="width: 200px;">
@@ -109,21 +129,21 @@
                                         <h:outputLabel value="Age"/>
                                         <h:panelGrid columns="3">
                                             <p:inputText  id="year" style="width: 80px;" autocomplete="off" value="#{patientController.yearMonthDay.year}">
-                                                <f:ajax event="keyup" execute="@this month day" render="calNewPtDob" listener="#{patientController.dateChangeListen()}"  />
+                                                <f:ajax event="keyup" execute="@this month day" render="calNewPtDob lblPtAge" listener="#{patientController.dateChangeListen()}"  />
                                             </p:inputText>
 
                                             <p:inputText id="month"   style="width: 80px;" autocomplete="off" value="#{patientController.yearMonthDay.month}">
-                                                <f:ajax event="keyup" execute="@this year day" render="calNewPtDob" listener="#{patientController.dateChangeListen()}"  />
+                                                <f:ajax event="keyup" execute="@this year day" render="calNewPtDob lblPtAge" listener="#{patientController.dateChangeListen()}"  />
                                             </p:inputText>
 
                                             <p:inputText id="day"  style="width: 80px;"  autocomplete="off" value="#{patientController.yearMonthDay.day}">
-                                                <f:ajax event="keyup" execute="@this year month" render="calNewPtDob" listener="#{patientController.dateChangeListen()}" />
+                                                <f:ajax event="keyup" execute="@this year month" render="calNewPtDob lblPtAge" listener="#{patientController.dateChangeListen()}" />
                                             </p:inputText>
-                                            
+
                                             <p:watermark value="#{patientController.current.ageYears} years" for="year" ></p:watermark>
                                             <p:watermark value="#{patientController.current.ageMonths} months" for="month" ></p:watermark>
                                             <p:watermark value="#{patientController.current.ageDays} days" for="day" ></p:watermark>
-                                            
+
                                         </h:panelGrid>
 
                                         <h:outputLabel value="Address"/>
@@ -139,9 +159,7 @@
                                         </p:calendar>
                                         <h:outputLabel value=""/>
                                         <h:outputLabel id="lblPtAge" value="#{patientController.current.age}"/>
-                                        
-                                        <h:outputLabel value="Code"/>
-                                        <h:outputLabel value="#{patientController.current.code}" ></h:outputLabel>
+
                                     </h:panelGrid>
 
                                     <p:panel id="panPhoto" >
@@ -171,14 +189,17 @@
                                                 <table>
                                                     <tr>
                                                         <td colspan="3" >
-                                                            <h1>Baddegama Medical Services</h1>
+                                                            <h1>
+                                                                <h:outputLabel value="#{sessionController.institution.name}" ></h:outputLabel>
+                                                            </h1>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="3" >
-                                                            <h1>Infront of Bus Stand, Baddegama</h1>
+                                                            <h1><h:outputLabel value="#{sessionController.institution.address}" ></h:outputLabel></h1>
                                                         </td>
                                                     </tr>
+
                                                     <tr>
                                                         <td>
                                                             Name

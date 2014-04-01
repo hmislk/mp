@@ -258,9 +258,16 @@
                                 </p:submenu>
                                 <p:submenu label="Payment Recieve"  rendered="#{webUserController.hasPrivilege('Payment')}">  
                                     <p:submenu  label="Credit Company"  rendered="#{webUserController.hasPrivilege('Payment')}">
-                                        <p:menuitem  ajax="false"  action="credit_company_due_search" value="Opd Due Search"  ></p:menuitem>
-                                        <p:menuitem  ajax="false"  action="credit_compnay_bill" value="Credit Company Payment"  ></p:menuitem>
-                                        <p:menuitem  ajax="false"  action="credit_company_bill_search_own" actionListener="#{searchController.makeListNull}"  value="Payment done Search"  ></p:menuitem>                                     
+                                        <p:submenu label="OPD">
+                                            <p:menuitem  ajax="false"  action="credit_company_opd_due" value="Due Search"  ></p:menuitem>
+                                            <p:menuitem  ajax="false"  action="credit_compnay_opd_bill" value="Credit Company Payment"  ></p:menuitem>
+                                            <p:menuitem  ajax="false"  action="credit_company_bill_search" actionListener="#{searchController.makeListNull}"  value="Payment done Search"  ></p:menuitem>                                     
+                                        </p:submenu>
+                                        <p:submenu label="Inward">
+                                            <p:menuitem  ajax="false"  action="credit_company_due_opd" value="Opd Due Search"  ></p:menuitem>
+                                            <p:menuitem  ajax="false"  action="credit_compnay_bill" value="Credit Company Payment"  ></p:menuitem>
+                                            <p:menuitem  ajax="false"  action="credit_company_bill_search" actionListener="#{searchController.makeListNull}"  value="Payment done Search"  ></p:menuitem>                                     
+                                        </p:submenu>
                                     </p:submenu>
                                     <p:submenu label="Agent"  rendered="#{webUserController.hasPrivilege('Payment')}">
                                         <p:menuitem  ajax="false"  action="agent_bill" value="Agent Payment"  ></p:menuitem>

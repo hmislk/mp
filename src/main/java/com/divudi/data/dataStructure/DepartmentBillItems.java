@@ -8,6 +8,7 @@ package com.divudi.data.dataStructure;
 
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
+import com.divudi.entity.Item;
 import java.util.List;
 
 /**
@@ -16,7 +17,8 @@ import java.util.List;
  */
 public class DepartmentBillItems {
     private Department department;
-    private List<BillItem> billItems;
+    private List<Item> items;
+ 
 
     public Department getDepartment() {
         return department;
@@ -26,11 +28,13 @@ public class DepartmentBillItems {
         this.department = department;
     }
 
-    public List<BillItem> getBillItems() {
-        return billItems;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setBillItems(List<BillItem> billItems) {
-        this.billItems = billItems;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
+
+   
 }

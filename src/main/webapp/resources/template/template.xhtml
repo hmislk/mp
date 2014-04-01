@@ -186,7 +186,11 @@
                                     <p:menuitem  ajax="false" action="pharmacy_summery_index"  value="Summery" rendered="#{webUserController.hasPrivilege('PharmacySummery')}" ></p:menuitem>                                    
                                     <p:menuitem  ajax="false" action="pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                                 </p:submenu>
-
+                                
+                                <p:submenu label="Channelling" >
+                                    <p:menuitem ajax="false" action="channel_shedule" value="Channel Scheduling" ></p:menuitem>
+                                </p:submenu>
+                                
                                 <p:submenu label="Store"  rendered="#{webUserController.hasPrivilege('Pharmacy')}">                                                           
                                     <p:submenu label="Issue" >
                                         <p:menuitem ajax="false" action="store_retail_sale_bht"  value="Inward Billing"

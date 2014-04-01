@@ -17,6 +17,7 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BillSession;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.Doctor;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
 import com.divudi.entity.ServiceSession;
@@ -27,6 +28,7 @@ import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
+import com.divudi.facade.DoctorFacade;
 import com.divudi.facade.InstitutionFacade;
 import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientFacade;
@@ -56,9 +58,9 @@ import javax.persistence.TemporalType;
 public class PracticeBookingController implements Serializable {
 
     private Speciality speciality;
-    private Staff staff;
     private ServiceSession selectedServiceSession;
     private BillSession selectedBillSession;
+    Doctor doctor;
     ////////////////////
     private List<ServiceSession> serviceSessions;
     private List<BillSession> billSessions;
@@ -74,6 +76,8 @@ public class PracticeBookingController implements Serializable {
     @Inject
     private PatientController patientController;
     ///////////////////
+    @EJB
+    DoctorFacade doctorFacade;
     @EJB
     private StaffFacade staffFacade;
     @EJB
@@ -106,6 +110,21 @@ public class PracticeBookingController implements Serializable {
     BillSession billSession;
     PatientEncounter opdVisit;
 
+    public List<Doctor> completeDoctorsOfSelectedSpeciality(String qry) {
+        String sql;
+        Map m = new HashMap();
+        List<Doctor> docs;
+        if (speciality == null) {
+            sql = "select d from Doctor d where d.retired=false order by d.person.name";
+            docs = getDoctorFacade().findBySQL(sql);
+        } else {
+            sql = "select d from Doctor d where d.retired=false and d.speciality=:sp order by d.person.name";
+            m.put("sp", speciality);
+            docs = getDoctorFacade().findBySQL(sql, m);
+        }
+        return docs;
+    }
+
     public PatientEncounterFacade getPatientEncounterFacade() {
         return patientEncounterFacade;
     }
@@ -122,8 +141,6 @@ public class PracticeBookingController implements Serializable {
         this.billSession = billSession;
     }
 
-    
-    
     public PatientEncounter getOpdVisit() {
         return opdVisit;
     }
@@ -131,19 +148,18 @@ public class PracticeBookingController implements Serializable {
     public void setOpdVisit(PatientEncounter opdVisit) {
         this.opdVisit = opdVisit;
     }
-    
-    public String opdVisitFromQueue(){
-        if(billSession==null){
+
+    public String opdVisitFromQueue() {
+        if (billSession == null) {
             UtilityController.addErrorMessage("Please select encounter");
-            opdVisit=null;
+            opdVisit = null;
             return "";
         }
         opdVisitFromServiceSession();
         getPatientEncounterController().setCurrent(opdVisit);
         return "clinical_new_opd_visit";
     }
-    
-    
+
     @Inject
     PatientEncounterController patientEncounterController;
 
@@ -154,34 +170,30 @@ public class PracticeBookingController implements Serializable {
     public void setPatientEncounterController(PatientEncounterController patientEncounterController) {
         this.patientEncounterController = patientEncounterController;
     }
-    
-    
-    
-    
-    
-    public void opdVisitFromServiceSession(){
-        if(billSession==null){
+
+    public void opdVisitFromServiceSession() {
+        if (billSession == null) {
             UtilityController.addErrorMessage("Please select encounter");
-            opdVisit=null;
+            opdVisit = null;
             return;
         }
         Map m = new HashMap();
         m.put("bs", getBillSession());
-        String sql ;
-        sql="select pe from PatientEncounter pe where pe.billSession=:bs";
-        opdVisit=getPatientEncounterFacade().findFirstBySQL(sql, m);
-        if(opdVisit==null){
+        String sql;
+        sql = "select pe from PatientEncounter pe where pe.billSession=:bs";
+        opdVisit = getPatientEncounterFacade().findFirstBySQL(sql, m);
+        if (opdVisit == null) {
             newOpdVisit();
         }
     }
-    
-    public void newOpdVisit(){
-        if(billSession==null){
+
+    public void newOpdVisit() {
+        if (billSession == null) {
             UtilityController.addErrorMessage("Please select encounter");
-            opdVisit=null;
+            opdVisit = null;
             return;
         }
-        opdVisit=new PatientEncounter();
+        opdVisit = new PatientEncounter();
         opdVisit.setCreatedAt(Calendar.getInstance().getTime());
         opdVisit.setCreater(getSessionController().getLoggedUser());
         opdVisit.setPatient(getBillSession().getBill().getPatient());
@@ -189,13 +201,13 @@ public class PracticeBookingController implements Serializable {
         opdVisit.setBillSession(billSession);
         getPatientEncounterFacade().create(opdVisit);
     }
-    
+
     public void addToQueue() {
         if (getPatientController().getCurrent() == null || getPatientController().getCurrent().getId() == null) {
             UtilityController.addErrorMessage("Please select a patient");
             return;
         }
-        if (staff == null) {
+        if (doctor == null) {
             UtilityController.addErrorMessage("Please select a doctor");
             return;
         }
@@ -229,19 +241,17 @@ public class PracticeBookingController implements Serializable {
         bs.setCreater(getSessionController().getLoggedUser());
         bs.setServiceSession(getSelectedServiceSession());
         bs.setSessionDate(getSelectedServiceSession().getSessionDate());
-        int count = getServiceSessionBean().getSessionNumber(getSelectedServiceSession(),Calendar.getInstance().getTime());
+        int count = getServiceSessionBean().getSessionNumber(getSelectedServiceSession(), Calendar.getInstance().getTime());
         bs.setSerialNo(count);
 
         getBillSessionFacade().create(bs);
 
     }
 
-    
-    
     private Bill addToBill() {
         Bill bi = new Bill();
         bi.setBookingId(getBillNumberBean().gpBookingIdGenerator());
-        bi.setStaff(getStaff());
+        bi.setStaff(getDoctor());
         bi.setBillType(BillType.ChannelPaid);
         if (foreigner) {
             bi.setTotal(getSelectedServiceSession().getTotalFfee());
@@ -257,58 +267,6 @@ public class PracticeBookingController implements Serializable {
         return bi;
     }
 
-    public String nurse() {
-        if (preSet()) {
-            return "channel_nurse_view";
-        } else {
-            return "";
-        }
-    }
-
-    public String doctor() {
-        if (preSet()) {
-            return "channel_doctor_view";
-        } else {
-            return "";
-        }
-    }
-
-    public String session() {
-        if (preSet()) {
-            return "channel_session_view";
-        } else {
-            return "";
-        }
-    }
-
-    public String phone() {
-        if (preSet()) {
-            return "channel_phone_view";
-        } else {
-            return "";
-        }
-    }
-
-    public String user() {
-        if (preSet()) {
-            return "channel_user_view";
-        } else {
-            return "";
-        }
-    }
-
-    public String patientToday() {
-
-        return "channel_patient_view_today";
-
-    }
-
-    public String doctorToday() {
-
-        return "channel_doctor_view_today";
-
-    }
-
     public void updatePatient() {
         getBillSessionFacade().edit(getSelectedBillSession());
 
@@ -318,7 +276,7 @@ public class PracticeBookingController implements Serializable {
 
     public void makeNull() {
         speciality = null;
-        staff = null;
+        doctor = null;
         selectedServiceSession = null;
         /////////////////////
         serviceSessions = null;
@@ -373,18 +331,6 @@ public class PracticeBookingController implements Serializable {
         this.speciality = speciality;
     }
 
-    public Staff getStaff() {
-        selectedServiceSession=null;
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        if (this.staff != staff && staff != null) {
-            serviceSessions = null;
-        }
-        this.staff = staff;
-    }
-
     public StaffFacade getStaffFacade() {
         return staffFacade;
     }
@@ -400,10 +346,10 @@ public class PracticeBookingController implements Serializable {
             serviceSessions = new ArrayList<>();
             String sql;
 
-            if (staff != null) {
+            if (doctor != null) {
                 try {
                     //System.out.println("staff is " + staff);
-                    sql = "Select s From ServiceSession s where s.retired=false and s.staff.id=" + getStaff().getId() + " order by s.sessionWeekday";
+                    sql = "Select s From ServiceSession s where s.retired=false and s.staff.id=" + getDoctor().getId() + " order by s.sessionWeekday";
                     List<ServiceSession> tmp = getServiceSessionFacade().findBySQL(sql);
                     //System.out.println("tmp is " + tmp.size());
                     if (!tmp.isEmpty()) {
@@ -436,6 +382,8 @@ public class PracticeBookingController implements Serializable {
         HashMap hh = new HashMap();
         hh.put("ssDate", Calendar.getInstance().getTime());
         hh.put("ss", getSelectedServiceSession());
+        System.out.println("hh = " + hh);
+        System.out.println("sql = " + sql);
         billSessions = getBillSessionFacade().findBySQL(sql, hh, TemporalType.DATE);
     }
 
@@ -451,14 +399,14 @@ public class PracticeBookingController implements Serializable {
         if (selectedServiceSession == null) {
             String sql;
             Map m = new HashMap();
-            m.put("s", staff);
+            m.put("s", doctor);
             m.put("d", Calendar.getInstance().getTime());
             sql = "select ss from ServiceSession ss where ss.staff=:s and ss.sessionDate=:d";
             selectedServiceSession = getServiceSessionFacade().findFirstBySQL(sql, m, TemporalType.DATE);
             if (selectedServiceSession == null) {
                 selectedServiceSession = new ServiceSession();
                 selectedServiceSession.setSessionDate(Calendar.getInstance().getTime());
-                selectedServiceSession.setStaff(staff);
+                selectedServiceSession.setStaff(doctor);
                 selectedServiceSession.setSessionTime(Calendar.getInstance().getTime());
                 getServiceSessionFacade().create(selectedServiceSession);
             }
@@ -632,6 +580,22 @@ public class PracticeBookingController implements Serializable {
 
     public void setServiceSessionBean(ServiceSessionBean serviceSessionBean) {
         this.serviceSessionBean = serviceSessionBean;
+    }
+
+    public DoctorFacade getDoctorFacade() {
+        return doctorFacade;
+    }
+
+    public void setDoctorFacade(DoctorFacade doctorFacade) {
+        this.doctorFacade = doctorFacade;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
 }

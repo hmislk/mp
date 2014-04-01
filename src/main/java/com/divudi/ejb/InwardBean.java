@@ -74,8 +74,8 @@ public class InwardBean {
         Bill b = getBillFacade().findFirstBySQL(sql, hm);
 
         double paid = getPaidValue(patientEncounter);
-        System.err.println("NET " + b.getNetTotal());
-        System.err.println("PAID " + paid);
+//        System.err.println("NET " + b.getNetTotal());
+//        System.err.println("PAID " + paid);
 
         b.setPaidAmount(0-paid);
         getBillFacade().edit(b);

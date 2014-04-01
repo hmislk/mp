@@ -71,7 +71,7 @@ public class PatientEncounterController implements Serializable {
         dx.setLobValue(diagnosisComments);
         current.getClinicalFindingValues().add(dx);
         getFacade().edit(current);
-        diagnosis=null;
+        diagnosis=new ClinicalFindingItem();
         diagnosisComments = "";
         UtilityController.addSuccessMessage("Diagnosis added");
         current=getFacade().find(current.getId());

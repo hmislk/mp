@@ -46,7 +46,6 @@ public class CashRecieveBillController implements Serializable {
     private BillFacade billFacade;
     @EJB
     private BillItemFacade billItemFacade;
-    private String tabId = "tabOpd";
     private BillItem currentBillItem;
     private BillItem removingItem;
     private List<BillItem> billItems;
@@ -150,11 +149,6 @@ public class CashRecieveBillController implements Serializable {
         //System.out.println("AAA : " + n);
     }
 
-    public void onTabChange(TabChangeEvent event) {
-        setTabId(event.getTab().getId());
-
-    }
-
 //    public double getDue() {
 //        if (getPatientEncounter() == null) {
 //            return 0.0;
@@ -185,12 +179,10 @@ public class CashRecieveBillController implements Serializable {
             return true;
         }
 
-        if (getTabId().equals("tabOpd")) {
-            if (getBillItems().get(0).getReferenceBill().getCreditCompany().getId()
-                    != getCurrent().getFromInstitution().getId()) {
-                UtilityController.addErrorMessage("Select same credit company as BillItem ");
-                return true;
-            }
+        if (getBillItems().get(0).getReferenceBill().getCreditCompany().getId()
+                != getCurrent().getFromInstitution().getId()) {
+            UtilityController.addErrorMessage("Select same credit company as BillItem ");
+            return true;
         }
 
         if (getCurrent().getPaymentScheme() == null) {
@@ -249,9 +241,7 @@ public class CashRecieveBillController implements Serializable {
         saveBill(BillType.CashRecieveBill);
         saveBillItem();
 
-        if (getTabId().equals("tabBht")) {
-            savePayments();
-        }
+     //   savePayments();
 
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
@@ -337,7 +327,6 @@ public class CashRecieveBillController implements Serializable {
         currentBillItem = null;
         paymentMethodData = null;
         billItems = null;
-        tabId = "tabOpd";
 
     }
 
@@ -397,14 +386,6 @@ public class CashRecieveBillController implements Serializable {
         this.billItemFacade = billItemFacade;
     }
 
-    public String getTabId() {
-        return tabId;
-    }
-
-    public void setTabId(String tabId) {
-        this.tabId = tabId;
-    }
-
     public BillItem getCurrentBillItem() {
         if (currentBillItem == null) {
             currentBillItem = new BillItem();
@@ -419,7 +400,7 @@ public class CashRecieveBillController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            billItems = new ArrayList<BillItem>();
+            billItems = new ArrayList<>();
         }
         return billItems;
     }

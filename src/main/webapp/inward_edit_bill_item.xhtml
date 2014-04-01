@@ -4,8 +4,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
-
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core">
 
     <body>
 
@@ -44,36 +43,51 @@
                                     </p:panelGrid>
                                 </p:panel>
 
-                                <p:dataTable rowIndexVar="rowIndex" value="#{serviceFeeEdit.billFees}" var="bif" >                                   
-                                    <p:column headerText="Fee Value">                                       
-                                        <h:inputText  value="#{bif.feeValue}" disabled="#{!bif.billItem.item.userChangable or bif.paidValue!=0}" >
-                                            <f:ajax event="blur" />
-                                        </h:inputText>
-                                    </p:column>
+                                <p:dataTable editable="true" value="#{serviceFeeEdit.billFees}" var="bip" >
+                                    <p:ajax event="rowEdit" listener="#{serviceFeeEdit.updateFee}" />  
+                                    <p:ajax event="rowEditCancel" listener="#{serviceFeeEdit.updateFee}" />  
 
-                                    <p:column headerText="Fee Name">
-                                        <h:outputLabel value="#{bif.fee.name}" ></h:outputLabel>
+                                    <p:column headerText="Fee Value">     
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputLabel value="#{bip.feeValue}"/>
+                                            </f:facet>                                      
+                                            <f:facet name="input">
+                                                <p:inputText  value="#{bip.feeValue}" 
+                                                              disabled="#{!bip.billItem.item.userChangable or bip.paidValue!=0}" />
+                                            </f:facet>
+                                        </p:cellEditor>
                                     </p:column>
-
-                                    <p:column headerText="Fee Department">
-                                        <h:outputLabel value="#{bif.department.name}" />
-                                    </p:column>
-                                    <p:column >
+                                    <p:column>
+                                        <f:facet name="header">Item</f:facet>
+                                        <h:outputLabel value="#{bip.billItem.item.name}"/>
+                                    </p:column>                              
+                                    <p:column>
+                                        <f:facet name="header">Fee Name</f:facet>
+                                        <h:outputLabel value="#{bip.fee.name}"/>
+                                    </p:column> 
+                                    <p:column>
                                         <f:facet name="header">Speciality</f:facet>
-                                        <h:outputLabel value="#{bif.speciality.name}"/>
-                                    </p:column>
-                                    <p:column>
-                                        <f:facet name="header">Payee</f:facet>
-                                        <h:outputLabel value="#{bif.fee.name}" rendered="#{bif.staff eq null}" ></h:outputLabel>
-                                        <p:selectOneMenu value="#{bif.staff}" rendered="#{bif.fee.speciality!=null}" >
-                                            <f:selectItem itemLabel="Select Staff" />
-                                            <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality)}" var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
-                                        </p:selectOneMenu>
+                                        <h:outputLabel value="#{bip.fee.speciality.name}"/>
+                                    </p:column> 
+                                    <p:column headerText="Payee">
+                                        <p:cellEditor>  
+                                            <f:facet name="output"> 
+                                                <h:outputLabel value="#{bip.staff.person.name}"  ></h:outputLabel>
+                                            </f:facet>  
+                                            <f:facet name="input">  
+                                                <p:selectOneMenu value="#{bip.staff}" rendered="#{bip.fee.speciality!=null}" disabled="#{bip.paidValue!=0 or !webUserController.hasPrivilege('ChangeProfessionalFee')}" >
+                                                    <f:selectItem itemLabel="Select Staff" />
+                                                    <f:selectItems  value="#{staffController.getSpecialityStaff(bip.fee.speciality)}" var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
+                                                </p:selectOneMenu>
+                                            </f:facet>  
+                                        </p:cellEditor>  
 
                                     </p:column>
-                                    <p:column>
-                                        <p:commandButton ajax="false" value="Update" action="#{serviceFeeEdit.updateFee(bif)}"/>
-                                    </p:column>
+                                    <p:column style="width:6%">  
+                                        <p:rowEditor > 
+                                        </p:rowEditor>
+                                    </p:column>  
                                 </p:dataTable>
                             </p:panelGrid>
 

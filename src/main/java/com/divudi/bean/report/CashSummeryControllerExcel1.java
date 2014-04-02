@@ -679,6 +679,33 @@ public class CashSummeryControllerExcel1 implements Serializable {
         return tmp;
 
     }
+    
+     private List<Category> findCategory() {
+        String sql;
+        Map temMap = new HashMap();
+        
+        sql = "select distinct(bi.item.category) "
+                + " FROM BillItem bi where "
+                + "  bi.bill.institution=:ins "
+                + " and  bi.bill.billType= :bTp  "
+                + " and  bi.bill.createdAt between :fromDate and :toDate "
+                + " and ( bi.bill.paymentMethod = :pm1 "
+                + " or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 "
+                + " or  bi.bill.paymentMethod = :pm4)";
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getInstitution());
+        temMap.put("bTp", BillType.OpdBill);
+        temMap.put("pm1", PaymentMethod.Cash);
+        temMap.put("pm2", PaymentMethod.Card);
+        temMap.put("pm3", PaymentMethod.Cheque);
+        temMap.put("pm4", PaymentMethod.Slip);
+        List<Category> tmp = getCategoryFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        return tmp;
+
+    }
 
     private long getCount(Item i) {
         long billed, cancelled, refunded;

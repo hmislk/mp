@@ -42,7 +42,9 @@
                                 </h:panelGrid>
 
 
-                                <p:dataTable   id="tblFee" value="#{staffPaymentBillController.dueBillFees}" selection="#{staffPaymentBillController.payingBillFees}" var="bf" rowKey="#{bf.id}" >
+                                <p:dataTable   id="tblFee" value="#{staffPaymentBillController.dueBillFees}"
+                                               selection="#{staffPaymentBillController.payingBillFees}"
+                                               var="bf" rowKey="#{bf.id}" >
 
                                     <f:ajax  event="rowSelectCheckbox" execute="tblFee" listener="#{staffPaymentBillController.performCalculations()}"   
                                              render=":#{p:component('scStaff')}  :#{p:component('lblDue')} :#{p:component('lblPay')} tblFee"  />  

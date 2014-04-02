@@ -5,12 +5,14 @@
 package com.divudi.entity;
 
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.SymanticType;
 import com.divudi.data.inward.PatientEncounterType;
 import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.inward.PatientRoom;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -25,8 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-
-
 
 /**
  *
@@ -108,10 +108,6 @@ public class PatientEncounter implements Serializable {
     private boolean paymentFinalized;
     String referanceNo;
     String policyNo;
-    //@ManyToOne
-    //private PatientEncounter referencePatientEncounter;
-//    @OneToOne
-//    PatientRoom lastPatientRoom;
     @Transient
     List<ClinicalFindingValue> diagnosis;
 
@@ -132,7 +128,12 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
-//            diagnosis = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Disease_or_Syndrome)), getClinicalFindingValues());
+            diagnosis = new ArrayList<>();
+            for (ClinicalFindingValue v : clinicalFindingValues) {
+                if (v.getClinicalFindingItem().getSymanticType() == SymanticType.Disease_or_Syndrome) {
+                    diagnosis.add(v);
+                }
+            }
         }
         return diagnosis;
     }
@@ -143,7 +144,13 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getInvestigations() {
         if (investigations == null) {
-//            investigations = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Laboratory_Procedure)), getClinicalFindingValues());
+            investigations = new ArrayList<>();
+            for (ClinicalFindingValue v : clinicalFindingValues) {
+                if (v.getClinicalFindingItem().getSymanticType() == SymanticType.Laboratory_Procedure) {
+                    investigations.add(v);
+                }
+            }
+
         }
         return investigations;
     }
@@ -154,7 +161,13 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getSymptoms() {
         if (symptoms == null) {
-//            symptoms = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Symptom)), getClinicalFindingValues());
+            symptoms = new ArrayList<>();
+            for (ClinicalFindingValue v : clinicalFindingValues) {
+                if (v.getClinicalFindingItem().getSymanticType() == SymanticType.Symptom) {
+                    symptoms.add(v);
+                }
+            }
+
         }
         return symptoms;
     }
@@ -165,7 +178,12 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getSigns() {
         if (signs == null) {
-//            signs = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Sign)), getClinicalFindingValues());
+            signs = new ArrayList<>();
+            for (ClinicalFindingValue v : clinicalFindingValues) {
+                if (v.getClinicalFindingItem().getSymanticType() == SymanticType.Sign) {
+                    signs.add(v);
+                }
+            }
         }
         return signs;
     }
@@ -176,7 +194,12 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getProcedures() {
         if (procedures == null) {
-//            procedures = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Therapeutic_Procedure)), getClinicalFindingValues());
+            procedures= new ArrayList<>();
+            for(ClinicalFindingValue v: clinicalFindingValues){
+                if(v.getClinicalFindingItem().getSymanticType()==SymanticType.Therapeutic_Procedure ){
+                    procedures.add(v);
+                }
+            }
         }
         return procedures;
     }
@@ -187,7 +210,12 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getPlans() {
         if (plans == null) {
-//            plans = Lambda.filter(Lambda.having(Lambda.on(ClinicalFindingValue.class).getClinicalFindingItem().getSymanticType(), Matchers.equalTo(SymanticType.Preventive_Procedure)), getClinicalFindingValues());
+            plans= new ArrayList<>();
+            for(ClinicalFindingValue v: clinicalFindingValues){
+                if(v.getClinicalFindingItem().getSymanticType()==SymanticType.Preventive_Procedure ){
+                    plans.add(v);
+                }
+            }
         }
         return plans;
     }
@@ -332,8 +360,6 @@ public class PatientEncounter implements Serializable {
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
-
-   
 
     public long getBhtLong() {
         return bhtLong;
@@ -552,5 +578,4 @@ public class PatientEncounter implements Serializable {
 //    public void setReferencePatientEncounter(PatientEncounter referencePatientEncounter) {
 //        this.referencePatientEncounter = referencePatientEncounter;
 //    }
-
 }

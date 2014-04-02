@@ -363,9 +363,9 @@ public class InwardCalculation {
             return 0;
         }
 
-        System.err.println(inwardPriceAdjustment);
-        System.err.println(inwardPriceAdjustment.getMargin());
-        System.err.println(serviceValue);
+       // System.err.println(inwardPriceAdjustment);
+      //  System.err.println(inwardPriceAdjustment.getMargin());
+      //  System.err.println(serviceValue);
         return ((inwardPriceAdjustment.getMargin() * serviceValue) / 100);
 
     }
@@ -549,9 +549,9 @@ public class InwardCalculation {
             count = (long) (consumeTimeM / duration);
         }
 
-        System.err.println("Min " + duration);
-        System.err.println("Consume " + consumeTimeM);
-        System.err.println("Count " + count);
+      //  System.err.println("Min " + duration);
+   //     System.err.println("Consume " + consumeTimeM);
+     //   System.err.println("Count " + count);
 
         if (0 != (consumeTimeM % duration)) {
             count++;
@@ -591,11 +591,11 @@ public class InwardCalculation {
             }
         }
 
-        System.err.println("Duration " + duration);
-        System.err.println("OverShoot " + overShoot);
-        System.err.println("Consume " + consumeTime);
-        System.err.println("Count " + count);
-        System.err.println("Calcualtion " + calculation);
+//        System.err.println("Duration " + duration);
+//        System.err.println("OverShoot " + overShoot);
+//        System.err.println("Consume " + consumeTime);
+//        System.err.println("Count " + count);
+//        System.err.println("Calcualtion " + calculation);
 
         return count;
     }

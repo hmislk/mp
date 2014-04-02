@@ -268,6 +268,7 @@ public class ReportsTransfer implements Serializable {
             saleValue = saleValue + (ts.getPharmaceuticalBillItem().getItemBatch().getRetailsaleRate() * ts.getPharmaceuticalBillItem().getQtyInUnit());
         }
     }
+    
 
     public void fillDepartmentTransfersIssueByBill() {
         Map m = new HashMap();

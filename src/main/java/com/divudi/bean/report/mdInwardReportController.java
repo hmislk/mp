@@ -15,6 +15,7 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
+import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import com.divudi.entity.RefundBill;
 import com.divudi.facade.BillFacade;
@@ -23,8 +24,6 @@ import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.DepartmentFacade;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ServiceFacade;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +34,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 
 /**
@@ -48,11 +49,13 @@ public class mdInwardReportController implements Serializable {
 
     private Date fromDate;
     private Date toDate;
+    Department dept;
     List<Bill> bills;
     private List<Bill> fillterBill;
     private List<ItemWithFee> itemWithFees;
     private List<ItemWithFee> fillterItemWithFees;
     private PaymentMethod paymentMethod;
+    List<BillItem> billItem;
     ////////////////////////////////////
     @EJB
     private CommonFunctions commonFunctions;
@@ -163,7 +166,7 @@ public class mdInwardReportController implements Serializable {
         fillterBill=null;
         fillterItemWithFees=null;
     }
-
+    
     public List<Bill> getBills() {
 
         if (bills == null) {
@@ -200,6 +203,11 @@ public class mdInwardReportController implements Serializable {
 
         return bills;
     }
+    
+    
+    
+    
+    
 
     public List<Bill> getBillsDischarged() {
 
@@ -314,6 +322,24 @@ public class mdInwardReportController implements Serializable {
     public void setSessionController(SessionController sessionController) {
         this.sessionController = sessionController;
     }
+    
+    public void listInBhtBillItems(){
+    
+        Map m=new HashMap();
+        String jpql;
+        jpql="select b from BillItem b where"
+                + " b.bill.department =:dept"
+                + " and  b.bill.billType=:biTy "
+                + " and b.createdAt between :fd and :td";
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        m.put("dept", dept);
+        m.put("biTy", BillType.PharmacyBhtPre);
+        billItem=getBillItemFacade().findBySQL(jpql, m,TemporalType.TIMESTAMP);
+        
+        
+    }
+
 
     public List<ItemWithFee> getItemWithFees() {
 
@@ -644,4 +670,30 @@ public class mdInwardReportController implements Serializable {
     public void setFillterItemWithFees(List<ItemWithFee> fillterItemWithFees) {
         this.fillterItemWithFees = fillterItemWithFees;
     }
+
+    public List<BillItem> getbillItem() {
+        return billItem;
+    }
+
+    public void setbillItem(List<BillItem> billItem) {
+        this.billItem = billItem;
+    }
+
+    public Department getDept() {
+        return dept;
+    }
+
+    public void setDept(Department dept) {
+        this.dept = dept;
+    }
+
+    public List<BillItem> getBillItem() {
+        return billItem;
+    }
+
+    public void setBillItem(List<BillItem> billItem) {
+        this.billItem = billItem;
+    }
+    
+    
 }

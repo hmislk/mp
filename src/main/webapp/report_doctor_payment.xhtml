@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:bi="http://java.sun.com/jsf/composite/bill">
+
+    <h:body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panel header="Doctor Payment" >
+                        <p:panel>
+                            <p:outputLabel value="From" />
+                            <p:calendar pattern="dd MMMM yyyy" value="#{inwardStaffPaymentBillController.fromDate}"></p:calendar>
+                            <p:outputLabel value="To" />
+                            <p:calendar pattern="dd MMMM yyyy" value="#{inwardStaffPaymentBillController.toDate}"></p:calendar>
+                            <p:commandButton ajax="false" value="Fill" action="#{inwardStaffPaymentBillController.fillDocPayingBillFee()}" ></p:commandButton>
+                        </p:panel>
+                        <p:panel>
+                            <p:panelGrid columns="3" >
+                                <p:dataTable value="#{inwardStaffPaymentBillController.docPayingBillFee}" var="bf" >
+                                    <p:column headerText="Date">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Date" />
+                                        </f:facet>
+                                        <p:outputLabel value="#{bf.createdAt}" >
+                                            <f:convertDateTime pattern="dd MM yyyy" />
+                                        </p:outputLabel>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Paid Amount">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Paid Amount" />
+                                        </f:facet>
+                                        <p:outputLabel value="#{bf.paidValue}" ></p:outputLabel>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </h:body>
+</html>

@@ -14,7 +14,7 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <p:autoComplete widgetVar="aPt" id="acPt" forceSelection="true" 
-                        value="#{cc.attrs.patient}" 
+                        value="#{cc.attrs.patient}" converter="patientConverter"
                         completeMethod="#{patientController.completePatient}" 
                         var="apt" itemLabel="#{apt.person.nameWithTitle}" 
                         itemValue="#{apt}" size="30"  style="width: 400px;">

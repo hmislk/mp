@@ -44,7 +44,9 @@ public enum InwardChargeType {
     X_Ray,
     CT,
     Scanning,
-    ECG_EEG,;
+    ECG_EEG,
+    MedicalServices,
+    ;
 
     public String getLabel() {
         switch (this) {

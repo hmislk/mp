@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:in="http://java.sun.com/jsf/composite/patient">
+                xmlns:in="http://java.sun.com/jsf/composite/patient"
+                xmlns:credit="http://java.sun.com/jsf/composite/inward/creditCompany">
 
 
     <ui:define name="content">
@@ -70,55 +71,10 @@
                                         <p:ajax process="@this" update="crd" event="change" />
                                     </p:selectOneMenu>
                                 </h:panelGrid>
-                                <h:panelGrid  id="crd" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ; ">
-                                    <p:row>
-                                        <p:column>
-                                            <h:outputLabel value="Company Name"   />                                                       
-                                        </p:column>
-                                        <p:column>
-                                            <p:autoComplete id="acCreditCompany" forceSelection="true" value="#{bhtEditController.current.creditCompany}"  
-                                                            completeMethod="#{creditCompanyController.completeCredit}" 
-                                                            var="ix" itemLabel="#{ix.name}" 
-                                                            itemValue="#{ix}" size="30" >  
-                                                <f:ajax event="itemSelect" execute="acCreditCompany" render=":#{p:component('panelCompanyDesc')}" ></f:ajax>
-                                            </p:autoComplete> 
-                                        </p:column>
-                                    </p:row>
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel value="Credit Limit" />
-                                        </p:column>
-                                        <p:column>
-                                            <p:inputText value="#{bhtEditController.current.creditLimit}" />
-                                        </p:column>
-                                    </p:row>
+                                <h:panelGroup id="crd" style="display: #{bhtEditController.current.paymentMethod eq 'Credit' ? 'block' : 'none'} ;min-width: 100%; ">
+                                    <credit:inputCredit  patientEncounter="#{bhtEditController.current}"/>
+                                </h:panelGroup>
 
-                                    <p:row>
-                                        <p:column colspan="2">
-                                            <h:outputText id="panelCompanyDesc"  rendered="#{bhtEditController.current.creditCompany ne null}" value="#{bhtEditController.current.creditCompany.descreption}" ></h:outputText>
-                                        </p:column>
-                                    </p:row>
-
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel value="Ploicy Number" />
-                                        </p:column>
-                                        <p:column>
-                                            <p:inputText value="#{bhtEditController.current.policyNo}" />
-                                        </p:column>
-                                    </p:row>
-
-                                    <p:row>
-                                        <p:column>
-                                            <p:outputLabel value="Referance Number" />
-                                        </p:column>
-                                        <p:column>
-                                            <p:inputText value="#{bhtEditController.current.referanceNo}" />
-                                        </p:column>
-                                    </p:row>
-
-
-                                </h:panelGrid>
                             </p:panel>
 
                             <p:panel header="Patient Detail">

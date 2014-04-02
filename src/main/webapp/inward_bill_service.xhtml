@@ -67,12 +67,26 @@
                                         </p:column>
                                         <p:column>
                                             <h:outputLabel value="#{ix.department.name}"/>
-                                        </p:column>                                   
+                                        </p:column>     
+                                        <f:ajax event="itemSelect" execute="acIx" render="txtRate txtQty" ></f:ajax>
                                     </p:autoComplete>
-                                    <p:inputTextarea value="#{billBhtController.currentBillItem.descreption}" ></p:inputTextarea>
+
+                                    <p:inputText id="txtRate" rendered="#{billBhtController.currentBillItem.item.chargesVisibleForInward}" value="#{billBhtController.currentBillItem.rate}" >
+                                    </p:inputText>
+
+                                    <p:inputText id="txtQty" rendered="#{billBhtController.currentBillItem.item.requestForQuentity}" value="#{billBhtController.currentBillItem.qty}" >
+                                    </p:inputText>
+
+
+                                    <p:inputTextarea id="txtDesc" value="#{billBhtController.currentBillItem.descreption}" ></p:inputTextarea>
                                     <h:commandButton id="btnAddIx" value="Add" action="#{billBhtController.addToBill()}">
                                         <f:ajax execute="acIx btnAddIx" render="tblBillItem  pBillDetails pIxAdd" />
-                                    </h:commandButton>                              
+                                    </h:commandButton> 
+                                    
+                                    <p:watermark for="txtRate" value="Rate" ></p:watermark>
+                                    <p:watermark for="txtQty" value="Quentity" ></p:watermark>
+                                    <p:watermark for="txtDesc" value="Description" ></p:watermark>
+                                    
                                 </p:panel>
                             </h:panelGroup>
 
@@ -148,7 +162,8 @@
                                                 <h:outputLabel value="#{bif.fee.name}" rendered="#{bif.staff eq null}" ></h:outputLabel>
                                                 <p:selectOneMenu value="#{bif.staff}" rendered="#{bif.fee.speciality!=null}" >
                                                     <f:selectItem itemLabel="Select Staff" />
-                                                    <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality)}" var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
+                                                    <f:selectItems  value="#{staffController.getSpecialityStaff(bif.fee.speciality)}" 
+                                                                    var="bifs" itemLabel="#{bifs.person.name}" itemValue="#{bifs}" />
                                                 </p:selectOneMenu>
 
                                             </p:column>

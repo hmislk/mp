@@ -216,7 +216,8 @@ public class PharmacyErrorCheckingEjb {
                 + " and (bi.bill.billType=:btp1 or bi.bill.billType=:btp2 or "
                 + " bi.bill.billType=:btp3 or bi.bill.billType=:btp4 or "
                 + " bi.bill.billType=:btp5 or bi.bill.billType=:btp6 or"
-                + " bi.bill.billType=:btp7  or bi.bill.billType=:btp8 ) order by bi.pharmaceuticalBillItem.stock.id,bi.createdAt ";
+                + " bi.bill.billType=:btp7  or bi.bill.billType=:btp8 ) "
+                + " order by bi.pharmaceuticalBillItem.stock.id,bi.createdAt ";
         return getBillItemFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
     }
 

@@ -9,7 +9,6 @@
 package com.divudi.bean.clinical;
 
 import com.divudi.bean.*;
-import com.divudi.entity.Vocabulary;
 import com.divudi.entity.clinical.ClinicalFindingItem;
 import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.PatientEncounter;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Named;
-import javax.ejb.EJB;
 import javax.ejb.EJB;
 
 import javax.inject.Inject;
@@ -53,6 +51,8 @@ public class PatientEncounterController implements Serializable {
     String diagnosisComments;
     Investigation investigation;
     
+    ClinicalFindingValue removingCfv;
+    
     public void addDx(){
         if(diagnosis==null){
             UtilityController.addErrorMessage("Please select a diagnosis");
@@ -71,7 +71,7 @@ public class PatientEncounterController implements Serializable {
         dx.setLobValue(diagnosisComments);
         current.getClinicalFindingValues().add(dx);
         getFacade().edit(current);
-        diagnosis=null;
+        diagnosis=new ClinicalFindingItem();
         diagnosisComments = "";
         UtilityController.addSuccessMessage("Diagnosis added");
         current=getFacade().find(current.getId());
@@ -90,6 +90,19 @@ public class PatientEncounterController implements Serializable {
             suggestions = getFacade().findBySQL(sql, m);
         }
         return suggestions;
+    }
+    
+    public void removeCfv(){
+        if(current==null){
+            UtilityController.addErrorMessage("No Patient Encounter");
+            return;
+        }
+        if(removingCfv==null){
+            UtilityController.addErrorMessage("No Finding selected to remove");
+            return;
+        }
+        current.getClinicalFindingValues().remove(removingCfv);
+        UtilityController.addSuccessMessage("Removed");
     }
 
     public ClinicalFindingItem getDiagnosis() {
@@ -215,6 +228,14 @@ public class PatientEncounterController implements Serializable {
 
     public void setDiagnosisComments(String diagnosisComments) {
         this.diagnosisComments = diagnosisComments;
+    }
+
+    public ClinicalFindingValue getRemovingCfv() {
+        return removingCfv;
+    }
+
+    public void setRemovingCfv(ClinicalFindingValue removingCfv) {
+        this.removingCfv = removingCfv;
     }
     
     

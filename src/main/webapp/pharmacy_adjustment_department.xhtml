@@ -17,7 +17,7 @@
 
 
                 <h:form>
-                    
+
                     <p:panel header="Department Stock Adjustment : Quantity" rendered="#{!pharmacyAdjustmentController.printPreview}">
                         <h:panelGrid columns="2" >
                             <h:panelGrid columns="2">
@@ -59,6 +59,10 @@
                                 <f:facet name="header">
                                     <h:outputLabel value="DETAIL"/>
                                 </f:facet>
+                                <h:outputLabel value="Stock Id"/>
+                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.id}" ></h:outputLabel>
+                                <h:outputLabel value="ItemBatch ID"/>
+                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.id}" ></h:outputLabel>
                                 <h:outputLabel value="Name"/>
                                 <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.item.name}" ></h:outputLabel>
                                 <h:outputLabel value="Retail Sale Rate"/>
@@ -85,10 +89,10 @@
                             </h:panelGrid>
                         </h:panelGrid>
                     </p:panel>
-                    
+
                     <p:panel rendered="#{pharmacyAdjustmentController.printPreview}">
                         <p:commandButton ajax="false" action="#{pharmacyAdjustmentController.makeNull()}" value="New Adjustment"/>
-                           <ph:adjustmentBill bill="#{pharmacyAdjustmentController.bill}" />
+                        <ph:adjustmentBill bill="#{pharmacyAdjustmentController.bill}" />
                     </p:panel>
 
                 </h:form>

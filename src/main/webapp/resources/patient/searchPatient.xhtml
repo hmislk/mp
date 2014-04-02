@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="patient" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:autoComplete widgetVar="aPt" id="acPt" forceSelection="true" 
+                        value="#{cc.attrs.patient}" 
+                        completeMethod="#{patientController.completePatient}" 
+                        var="apt" itemLabel="#{apt.person.nameWithTitle}" 
+                        itemValue="#{apt}" size="30"  style="width: 400px;">
+            <p:ajax event="itemSelect" process="acPt" update="panSearch"/>
+        </p:autoComplete>   
+
+        <h:panelGrid id="panSearch" columns="2" rendered="#{cc.attrs.patient!=null}">
+            <h:outputLabel value="Name" />
+            <h:outputLabel value="#{cc.attrs.patient.person.nameWithTitle}" />
+            <h:outputLabel value="Sex" />
+            <h:outputLabel value="#{cc.attrs.patient.person.sex}" />
+            <h:outputLabel  value="DOB"  />
+            <h:outputLabel value="#{cc.attrs.patient.person.dob}"   >
+                <f:convertDateTime pattern="dd/MM/yy" />
+            </h:outputLabel>
+            <h:outputLabel  value="Adress" />
+            <h:outputLabel  value="#{cc.attrs.patient.person.address}" />
+        </h:panelGrid>
+    </cc:implementation>
+</html>

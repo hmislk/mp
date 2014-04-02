@@ -296,7 +296,7 @@ public class PharmacySaleReport implements Serializable {
         m.put("class", bill.getClass());
         m.put("pm", PaymentMethod.Credit);
         m.put("btp", BillType.OpdBill);
-        sql = "select sum(abs(f.total) - (abs(f.staffFee) + abs(f.discount))) from "
+        sql = "select sum(abs(i.total) - (abs(i.staffFee) + abs(i.discount))) from "
                 + " Bill i where i.toInstitution=:ins "
                 + " and i.billType=:btp"
                 + " and type(i)=:class "
@@ -316,7 +316,7 @@ public class PharmacySaleReport implements Serializable {
 
         m.put("pm", PaymentMethod.Credit);
         m.put("btp", BillType.OpdBill);
-        sql = "select sum(abs(f.total) - (abs(f.staffFee) + abs(f.discount)))  "
+        sql = "select sum(abs(i.total) - (abs(i.staffFee) + abs(i.discount)))  "
                 + " from Bill i where "
                 + " i.toInstitution=:ins "
                 + " and i.billType=:btp "

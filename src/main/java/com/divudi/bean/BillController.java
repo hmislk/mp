@@ -179,14 +179,20 @@ public class BillController implements Serializable {
         String sql;
         HashMap hash = new HashMap();
         if (qry != null) {
-            sql = "select c from BilledBill c where c.paidAmount<c.netTotal and c.billType= :btp "
-                    + " and c.paymentMethod= :pm and c.cancelledBill is null "
-                    + " and c.refundedBill is null and c.retired=false and ((upper(c.insId) "
-                    + " like '%" + qry.trim().toUpperCase() + "%') or"
-                    + " (upper(c.patient.person.name)  like '%" + qry.trim().toUpperCase() + "%' )) "
+            sql = "select c from BilledBill c "
+                    + " where (abs(c.netTotal)-abs(c.paidAmount))>:val "
+                    + " and c.billType= :btp "
+                    + " and c.paymentMethod= :pm "
+                    + " and c.cancelledBill is null "
+                    + " and c.refundedBill is null "
+                    + " and c.retired=false "
+                    + " and ((upper(c.insId) like :q) or"
+                    + " (upper(c.patient.person.name) like :q )) "
                     + " order by c.creditCompany.name";
             hash.put("btp", BillType.OpdBill);
             hash.put("pm", PaymentMethod.Credit);
+            hash.put("val", 0.1);
+            hash.put("q", "%" + qry.toUpperCase() + "%");
             a = getFacade().findBySQL(sql, hash);
         }
         if (a == null) {
@@ -194,8 +200,6 @@ public class BillController implements Serializable {
         }
         return a;
     }
-    
-    
 
     public List<Bill> completeBillFromDealor(String qry) {
         List<Bill> a = null;
@@ -253,42 +257,6 @@ public class BillController implements Serializable {
         return bill;
     }
 
-    public List<Institution> getDealorFromBills(Date frmDate, Date toDate) {
-        String sql;
-        HashMap hm;
-        sql = "Select b.fromInstitution From Bill b "
-                + " where b.retired=false and b.cancelled=false "
-                + " and ((b.paidAmount+b.netTotal)< :val) "
-                + " and b.createdAt between :frm and :to "
-                + " and (b.billType=:tp1 or b.billType=:tp2) ";
-        hm = new HashMap();
-        hm.put("frm", frmDate);
-        hm.put("to", toDate);
-        hm.put("val", 0.1);
-        //    hm.put("ins", getS)
-        hm.put("tp1", BillType.PharmacyPurchaseBill);
-        hm.put("tp2", BillType.PharmacyGrnBill);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    public List<Institution> getDealorFromReturnBills(Date frmDate, Date toDate) {
-        String sql;
-        HashMap hm;
-        sql = "Select b.toInstitution From Bill b where "
-                + " b.retired=false and b.cancelled=false "
-                + " and b.createdAt between :frm and :to "
-                + " and (b.billType=:tp1 or b.billType=:tp2)"
-                + " order by b.toInstitution.name  ";
-        hm = new HashMap();
-        hm.put("frm", frmDate);
-        hm.put("to", toDate);
-        hm.put("tp1", BillType.PharmacyGrnReturn);
-        hm.put("tp2", BillType.PurchaseReturn);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
     public List<Bill> getBills(Date fromDate, Date toDate, BillType billType1, BillType billType2, Institution institution) {
         String sql;
         HashMap hm = new HashMap();
@@ -301,41 +269,6 @@ public class BillController implements Serializable {
         hm.put("ins", institution);
         hm.put("tp1", billType1);
         hm.put("tp2", billType2);
-        return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    public List<Bill> getBills(Institution institution, Date frmDate, Date toDate) {
-        String sql;
-        HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and  "
-                + " ((b.paidAmount+b.netTotal)< :val) and"
-                + " (b.fromInstitution=:ins ) "
-                + " and (b.billType=:tp1 or b.billType=:tp2)";
-        hm.put("frm", frmDate);
-        hm.put("to", toDate);
-        hm.put("val", 0.1);
-        hm.put("ins", institution);
-        hm.put("tp1", BillType.PharmacyGrnBill);
-        hm.put("tp2", BillType.PharmacyPurchaseBill);
-        return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-    }
-
-    public List<Bill> getBills(Institution institution) {
-        String sql;
-        HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false "
-                + " and b.createdAt is not null and "
-                + " ((b.paidAmount+b.netTotal)< :val) and"
-                + " (b.fromInstitution=:ins ) "
-                + " and (b.billType=:tp1 or b.billType=:tp2)";
-
-        hm.put("val", 0.1);
-        hm.put("ins", institution);
-        hm.put("tp1", BillType.PharmacyGrnBill);
-        hm.put("tp2", BillType.PharmacyPurchaseBill);
         return getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
     }
@@ -1276,7 +1209,7 @@ public class BillController implements Serializable {
                 + "like :q or upper(p.insId)  "
                 + "like :q) order by p.insId";
         //System.out.println(sql);
-        hm.put("q", "%"+ query.toUpperCase()+"%");
+        hm.put("q", "%" + query.toUpperCase() + "%");
         hm.put("btp", BillType.InwardAppointmentBill);
         suggestions = getFacade().findBySQL(sql, hm);
 

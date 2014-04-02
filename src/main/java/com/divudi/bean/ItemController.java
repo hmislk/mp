@@ -115,7 +115,7 @@ public class ItemController implements Serializable {
         } else {
 
             sql = "select c from Item c where c.retired=false and "
-                    + " ( c.departmentType is null or c.departmentType!=:dep ) "
+                    + " ( c.departmentType is null or c.departmentType!=:dep ) and"
                     + "(type(c)= :amp or type(c)= :ampp or type(c)= :vmp or"
                     + " type(c)= :vmpp) and (upper(c.name) "
                     + "like :q or upper(c.code) "

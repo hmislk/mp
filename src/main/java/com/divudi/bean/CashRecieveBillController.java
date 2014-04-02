@@ -10,6 +10,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CreditBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -52,6 +53,11 @@ public class CashRecieveBillController implements Serializable {
     private int index;
     private PaymentMethodData paymentMethodData;
 
+    public void selectBillListener() {
+        double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
+        getCurrentBillItem().setNetValue(dbl);
+    }
+
     public void remove() {
         billItems.remove(index);
         calTotal();
@@ -60,6 +66,13 @@ public class CashRecieveBillController implements Serializable {
     private boolean errorCheckForAdding() {
         if (getCurrentBillItem().getReferenceBill().getCreditCompany() == null) {
             UtilityController.addErrorMessage("U cant add without credit company name");
+            return true;
+        }
+
+        double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
+
+        if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
+            UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
             return true;
         }
 
@@ -99,6 +112,22 @@ public class CashRecieveBillController implements Serializable {
         }
 
         return false;
+    }
+
+    public void remove(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
+        calTotalWithResetingIndex();
+    }
+
+    public void calTotalWithResetingIndex() {
+        double n = 0.0;
+        int index = 0;
+        for (BillItem b : billItems) {
+            b.setSearialNo(index++);
+            n += b.getNetValue();
+        }
+        getCurrent().setNetTotal(n);
+        // //System.out.println("AAA : " + n);
     }
 
     public void addToBill() {
@@ -241,8 +270,7 @@ public class CashRecieveBillController implements Serializable {
         saveBill(BillType.CashRecieveBill);
         saveBillItem();
 
-     //   savePayments();
-
+        //   savePayments();
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
 
@@ -294,32 +322,44 @@ public class CashRecieveBillController implements Serializable {
         }
 
     }
+    @EJB
+    private CreditBean creditBean;
 
     private void updateReferenceBill(BillItem tmp) {
-        double ballance, refBallance = 0;
+        double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.CashRecieveBill);
 
-        //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
-        //System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
-        //System.err.println("Net Value " + tmp.getNetValue());
-        refBallance = tmp.getReferenceBill().getNetTotal() - tmp.getReferenceBill().getPaidAmount();
-
-        //System.err.println("refBallance " + refBallance);
-        //   ballance=refBallance-tmp.getNetValue();
-        if (refBallance > tmp.getNetValue()) {
-            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
-        } else {
-            tmp.getReferenceBill().setPaidAmount(refBallance - tmp.getNetValue());
-        }
-        //System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
-
-//        if (tmp.getReferenceBill().getPaidAmount() != 0.0) {
-//            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
-//        } else {
-//            tmp.getReferenceBill().setPaidAmount(tmp.getNetValue());
-//        }
+        tmp.getReferenceBill().setPaidAmount(0 - dbl);
         getBillFacade().edit(tmp.getReferenceBill());
 
     }
+    
+    
+
+//    private void updateReferenceBill(BillItem tmp) {
+//        double ballance, refBallance = 0;
+//
+//        //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
+//        //System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
+//        //System.err.println("Net Value " + tmp.getNetValue());
+//        refBallance = tmp.getReferenceBill().getNetTotal() - tmp.getReferenceBill().getPaidAmount();
+//
+//        //System.err.println("refBallance " + refBallance);
+//        //   ballance=refBallance-tmp.getNetValue();
+//        if (refBallance > tmp.getNetValue()) {
+//            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
+//        } else {
+//            tmp.getReferenceBill().setPaidAmount(refBallance - tmp.getNetValue());
+//        }
+//        //System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
+//
+////        if (tmp.getReferenceBill().getPaidAmount() != 0.0) {
+////            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
+////        } else {
+////            tmp.getReferenceBill().setPaidAmount(tmp.getNetValue());
+////        }
+//        getBillFacade().edit(tmp.getReferenceBill());
+//
+//    }
 
     public void recreateModel() {
         current = null;
@@ -460,5 +500,13 @@ public class CashRecieveBillController implements Serializable {
 
     public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
         this.paymentSchemeController = paymentSchemeController;
+    }
+
+    public CreditBean getCreditBean() {
+        return creditBean;
+    }
+
+    public void setCreditBean(CreditBean creditBean) {
+        this.creditBean = creditBean;
     }
 }

@@ -115,8 +115,8 @@ public class BillItem implements Serializable {
     private BillItem transBillItem;
     @OneToMany(mappedBy = "billItem")
     private List<BillFee> billFees = new ArrayList<>();
-    @OneToMany(mappedBy = "referenceBillItem",fetch = FetchType.LAZY)
-    private List<BillFee> proFees=new ArrayList<>();
+    @OneToMany(mappedBy = "referenceBillItem", fetch = FetchType.LAZY)
+    private List<BillFee> proFees = new ArrayList<>();
 
     public void copy(BillItem billItem) {
         item = billItem.getItem();
@@ -135,6 +135,7 @@ public class BillItem implements Serializable {
         netRate = billItem.getNetRate();
         searialNo = billItem.getSearialNo();
         tmpQty = billItem.tmpQty;
+        referenceBill = billItem.getReferenceBill();
         //  referanceBillItem=billItem.getReferanceBillItem();
     }
 
@@ -574,7 +575,5 @@ public class BillItem implements Serializable {
     public void setDescreption(String descreption) {
         this.descreption = descreption;
     }
-
-
 
 }

@@ -44,7 +44,8 @@ public enum InwardChargeType {
     X_Ray,
     CT,
     Scanning,
-    ECG_EEG,;
+    ECG_EEG,
+    MedicalServices,;
 
     public String getLabel() {
         switch (this) {
@@ -104,6 +105,8 @@ public enum InwardChargeType {
                 return "Scanning";
             case ECG_EEG:
                 return "ECG-EEG";
+            case MedicalServices:
+                return "Medical Services";
 
             default:
                 return this.toString();

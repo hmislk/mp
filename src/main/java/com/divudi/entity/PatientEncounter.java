@@ -11,7 +11,6 @@ import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.inward.PatientRoom;
-import com.sun.jmx.remote.internal.ArrayQueue;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

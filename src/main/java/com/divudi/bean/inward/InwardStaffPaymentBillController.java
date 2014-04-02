@@ -84,7 +84,25 @@ public class InwardStaffPaymentBillController implements Serializable {
     Speciality referringDoctorSpeciality;
     @EJB
     StaffFacade staffFacade;
+    List<BillFee> docPayingBillFee;
+    
+    public void fillDocPayingBillFee(){
+    
+        String sql;
+        Map m = new HashMap();
+        
+        sql = "select bf from BillFee bf where bf.bill.billDate :fd and :td and bf.retired=false and bf.bill.billType=:btp";
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        m.put("btp", BillType.InwardProfessional);
+        
+        docPayingBillFee=getBillFeeFacade().findBySQL(sql, m);
+        
+        
+    }
 
+
+    
     public List<BillComponent> getBillComponents() {
         if (getCurrent() != null) {
             String sql = "SELECT b FROM BillComponent b WHERE b.retired=false and b.bill.id=" + getCurrent().getId();
@@ -614,5 +632,16 @@ public class InwardStaffPaymentBillController implements Serializable {
     public void setReferringDoctorSpeciality(Speciality referringDoctorSpeciality) {
         this.referringDoctorSpeciality = referringDoctorSpeciality;
     }
+
+    public List<BillFee> getDocPayingBillFee() {
+        return docPayingBillFee;
+    }
+
+    public void setDocPayingBillFee(List<BillFee> docPayingBillFee) {
+        this.docPayingBillFee = docPayingBillFee;
+    }
+
+    
+    
 
 }

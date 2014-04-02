@@ -175,8 +175,8 @@
                                         <p:menuitem  ajax="false" action="pharmacy_search_dealor_due"  value="Dealor Due Search"  rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}" ></p:menuitem>
                                         <p:menuitem ajax="false" action="pharmacy_search_dealor_due_age" actionListener="#{dealorDueController.makeNull}" value="Dealor Due By Age" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>
                                         <p:submenu label="Payment">
-                                            <p:menuitem ajax="false" action="pharmacy_bill_dealor" value="GRN Payment" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
-                                            <p:menuitem ajax="false" action="pharmacy_bill_dealor_all" value="GRN Payment(Select)" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
+                                            <p:menuitem ajax="false" action="pharmacy_bill_dealor" value="By Grn " rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
+                                            <p:menuitem ajax="false" action="pharmacy_bill_dealor_all" value="By Dealor" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
                                         </p:submenu>
                                         <p:menuitem ajax="false" action="pharmacy_search_dealor_payment" value="GRN Payment Done Search"  actionListener="#{billSearch.recreateModel2()}" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
 
@@ -186,11 +186,11 @@
                                     <p:menuitem  ajax="false" action="pharmacy_summery_index"  value="Summery" rendered="#{webUserController.hasPrivilege('PharmacySummery')}" ></p:menuitem>                                    
                                     <p:menuitem  ajax="false" action="pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                                 </p:submenu>
-                                
+
                                 <p:submenu label="Channelling" >
                                     <p:menuitem ajax="false" action="channel_shedule" value="Channel Scheduling" ></p:menuitem>
                                 </p:submenu>
-                                
+
                                 <p:submenu label="Store"  rendered="#{webUserController.hasPrivilege('Pharmacy')}">                                                           
                                     <p:submenu label="Issue" >
                                         <p:menuitem ajax="false" action="store_retail_sale_bht"  value="Inward Billing"
@@ -264,7 +264,10 @@
                                     <p:submenu  label="Credit Company"  rendered="#{webUserController.hasPrivilege('Payment')}">
                                         <p:submenu label="OPD">
                                             <p:menuitem  ajax="false"  action="credit_company_opd_due" value="Due Search"  ></p:menuitem>
-                                            <p:menuitem  ajax="false"  action="credit_compnay_opd_bill" value="Credit Company Payment"  ></p:menuitem>
+                                            <p:submenu label="Payment">
+                                                <p:menuitem  ajax="false"  action="credit_compnay_opd_bill" value="By Opd Bill"  ></p:menuitem>
+                                                <p:menuitem  ajax="false"  action="credit_compnay_opd_bill" value="By Credit Company"  ></p:menuitem>
+                                            </p:submenu>                                            
                                             <p:menuitem  ajax="false"  action="credit_company_bill_search" actionListener="#{searchController.makeListNull}"  value="Payment done Search"  ></p:menuitem>                                     
                                         </p:submenu>
                                         <p:submenu label="Inward">

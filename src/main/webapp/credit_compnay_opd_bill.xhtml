@@ -44,67 +44,63 @@
 
                         </h:panelGrid>
                     </f:facet>
-                    <p:panelGrid columns="3" style="min-width: 100%;">
-
-                        <p:autoComplete widgetVar="aIx" id="acIx" 
-                                        forceSelection="true" 
-                                        value="#{cashRecieveBillController.currentBillItem.referenceBill}" 
-                                        completeMethod="#{cashRecieveBillController.completeOpdCreditBill}" 
-                                        var="ix" itemLabel="#{ix.patient.person.name}"
-                                        itemValue="#{ix}" size="30"  style="width: 400px;">
-                            <p:column>
-                                <h:outputLabel value="#{ix.patient.person.name}"/>
-                            </p:column>                                  
-                            <p:column>
-                                <h:outputLabel value="#{ix.creditCompany.name}"/>
-                            </p:column>
-                            <p:column>
-                                <h:outputLabel value="#{ix.createdAt}">
-                                    <f:convertDateTime pattern="dd MM YYYY"/>
-                                </h:outputLabel>
-                            </p:column>
-                            <p:column>
-                                <h:outputLabel value="#{ix.paidAmount}">
-                                    <f:convertNumber pattern="#,000.00" />
-                                </h:outputLabel>
-                            </p:column>
-                            <p:column>
-                                <h:outputLabel value="#{ix.netTotal}">
-                                    <f:convertNumber pattern="#,000.00" />
-                                </h:outputLabel>
-                            </p:column>
-                        </p:autoComplete>
-                        <p:inputText value="#{cashRecieveBillController.currentBillItem.netValue}"/>
-                        <p:commandButton id="btnAddIx" value="Add" action="#{cashRecieveBillController.addToBill()}" ajax="false"/>
-
+                    <p:panelGrid columns="2" style="min-width: 100%;">
+                        <h:panelGroup>
+                            <p:autoComplete widgetVar="aIx" id="acIx" 
+                                            forceSelection="true" 
+                                            value="#{cashRecieveBillController.currentBillItem.referenceBill}" 
+                                            completeMethod="#{billController.completeOpdCreditBill}" 
+                                            var="ix" itemLabel="#{ix.patient.person.name}"
+                                            itemValue="#{ix}" size="30"  style="width: 400px;">
+                                <p:column>
+                                    <h:outputLabel value="#{ix.patient.person.name}"/>
+                                </p:column>                                  
+                                <p:column>
+                                    <h:outputLabel value="#{ix.creditCompany.name}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="#{ix.createdAt}">
+                                        <f:convertDateTime pattern="dd MM YYYY"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="#{ix.paidAmount}">
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="#{ix.netTotal}">
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <f:ajax execute="@this" event="itemSelect" render="val" listener="#{cashRecieveBillController.selectBillListener()}"/>
+                            </p:autoComplete>
+                            <p:inputText id="val" value="#{cashRecieveBillController.currentBillItem.netValue}"/>
+                            <p:commandButton id="btnAddIx" value="Add" action="#{cashRecieveBillController.addToBill()}" ajax="false"/>
+                        </h:panelGroup>
                         <p:dataTable value="#{cashRecieveBillController.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
                             <f:facet name="header">
                                 <h:outputLabel value="Items For Billing"/>
-                            </f:facet>
-                            <p:column>
-                                <f:facet name="header">No</f:facet>
-                                <h:outputLabel value="#{rowIndex+1}"/>
-                            </p:column>
+                            </f:facet>                           
                             <p:column >  
                                 <f:facet name="header">
-                                    <h:outputLabel value="Bill No" rendered="#{b.patientEncounter eq null}"/>
-                                    <h:outputLabel value="Bht No" rendered="#{b.patientEncounter ne null}"/>
-                                </f:facet>
-                                <p:outputLabel value="#{b.patientEncounter.bhtNo}" rendered="#{b.patientEncounter ne null}"/>
-                                <p:outputLabel value="#{b.referenceBill.insId}" rendered="#{b.patientEncounter eq null}"/>
+                                    <h:outputLabel value="Bill No"/>                                    
+                                </f:facet>                               
+                                <p:outputLabel value="#{b.referenceBill.insId}"/>
                             </p:column>
                             <p:column headerText="Patient Name">
-                                <p:outputLabel value="#{b.referenceBill.patient.person.name}" rendered="#{b.patientEncounter eq null}"/>
-                                <p:outputLabel value="#{b.patientEncounter.patient.person.name}" rendered="#{b.patientEncounter ne null}"/>
+                                <p:outputLabel value="#{b.referenceBill.patient.person.name}"/>                               
                             </p:column>
                             <p:column headerText="Credit Company">     
-                                <p:outputLabel value="#{b.patientEncounter.creditCompany.name}" rendered="#{b.patientEncounter ne null}"/>
-                                <p:outputLabel value="#{b.referenceBill.creditCompany.name}" rendered="#{b.patientEncounter eq null}"/>                                
+                                <p:outputLabel value="#{b.referenceBill.creditCompany.name}" />                                
                             </p:column>
-                            <p:column headerText="Net Total">#{b.netValue}</p:column>
+                            <p:column headerText="Net Total">
+                                <h:outputLabel value="#{b.netValue}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </h:outputLabel>
+                            </p:column>
                             <p:column headerText="Remove">
                                 <p:commandButton ajax="false" action="#{cashRecieveBillController.remove}" value="X">
-                                    <f:setPropertyActionListener target="#{cashRecieveBillController.index}" value="#{rowIndex}"/>
                                 </p:commandButton>
                             </p:column>
                         </p:dataTable>

@@ -31,6 +31,7 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.StockHistory;
+import com.divudi.entity.pharmacy.StoreItemCategory;
 import com.divudi.entity.pharmacy.Vmp;
 import com.divudi.entity.pharmacy.Vmpp;
 import com.divudi.entity.pharmacy.Vtm;
@@ -47,6 +48,7 @@ import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.PharmaceuticalItemFacade;
 import com.divudi.facade.StockHistoryFacade;
+import com.divudi.facade.StoreItemCategoryFacade;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VmppFacade;
 import com.divudi.facade.VtmFacade;
@@ -63,9 +65,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 import jxl.Cell;
 import jxl.Sheet;
@@ -106,6 +108,8 @@ public class PharmacyItemExcelManager implements Serializable {
     PharmaceuticalItemCategoryFacade pharmaceuticalItemCategoryFacade;
     @EJB
     private PharmacyBean pharmacyBean;
+    @EJB
+            StoreItemCategoryFacade storeItemCategoryFacade;
 
     List<PharmacyImportCol> itemNotPresent;
     List<String> itemsWithDifferentGenericName;
@@ -853,7 +857,7 @@ public class PharmacyItemExcelManager implements Serializable {
         String itenName;
         String itemCode;
 
-        PharmaceuticalItemCategory cat;
+        StoreItemCategory cat;
         Amp amp;
 
         File inputWorkbook;
@@ -902,16 +906,16 @@ public class PharmacyItemExcelManager implements Serializable {
                     continue;
                 }
 
-                cat = getPharmacyBean().getPharmaceuticalCategoryByName(catName);
+                cat = getPharmacyBean().getStoreItemCategoryByName(catName);
                 if (cat == null) {
-                    cat = new PharmaceuticalItemCategory();
+                    cat = new StoreItemCategory();
                     cat.setName(catName);
                     cat.setCode(catCode);
-                    getPharmaceuticalItemCategoryFacade().create(cat);
+                    getStoreItemCategoryFacade().create(cat);
                 } else {
                     cat.setName(catName);
                     cat.setCode(catCode);
-                    getPharmaceuticalItemCategoryFacade().edit(cat);
+                    getStoreItemCategoryFacade().edit(cat);
                 }
 
                 m = new HashMap();
@@ -1565,5 +1569,15 @@ public class PharmacyItemExcelManager implements Serializable {
     public void setItemNotPresent(List<PharmacyImportCol> itemNotPresent) {
         this.itemNotPresent = itemNotPresent;
     }
+
+    public StoreItemCategoryFacade getStoreItemCategoryFacade() {
+        return storeItemCategoryFacade;
+    }
+
+    public void setStoreItemCategoryFacade(StoreItemCategoryFacade storeItemCategoryFacade) {
+        this.storeItemCategoryFacade = storeItemCategoryFacade;
+    }
+
+
 
 }

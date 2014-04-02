@@ -659,16 +659,22 @@ public class CashSummeryControllerExcel1 implements Serializable {
         if (d == null) {
             return new ArrayList<>();
         }
-        sql = "select distinct(bi.item) FROM BillItem bi where "
+        sql = "select distinct(bi.item) "
+                + " FROM BillItem bi where "
                 + "  bi.bill.institution=:ins "
+                + " and bi.item.department.institution=:ins "
                 + " and  bi.bill.billType= :bTp  "
-                + " and bi.item.category.id=" + d.getId() + ""
+                + " and bi.item.category=:cat"
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
-                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
+                + " and ( bi.bill.paymentMethod = :pm1 "
+                + " or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 "
+                + " or  bi.bill.paymentMethod = :pm4)"
+                + " order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
+        temMap.put("cat", d);
         temMap.put("bTp", BillType.OpdBill);
         temMap.put("pm1", PaymentMethod.Cash);
         temMap.put("pm2", PaymentMethod.Card);
@@ -679,20 +685,22 @@ public class CashSummeryControllerExcel1 implements Serializable {
         return tmp;
 
     }
-    
-     private List<Category> findCategory() {
+
+    private List<Category> findCategory() {
         String sql;
         Map temMap = new HashMap();
-        
+
         sql = "select distinct(bi.item.category) "
                 + " FROM BillItem bi where "
                 + "  bi.bill.institution=:ins "
+                + " and bi.item.department.institution=:ins "
                 + " and  bi.bill.billType= :bTp  "
                 + " and  bi.bill.createdAt between :fromDate and :toDate "
                 + " and ( bi.bill.paymentMethod = :pm1 "
                 + " or  bi.bill.paymentMethod = :pm2 "
                 + " or  bi.bill.paymentMethod = :pm3 "
-                + " or  bi.bill.paymentMethod = :pm4)";
+                + " or  bi.bill.paymentMethod = :pm4)"
+                + " order by bi.item.category.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -885,8 +893,11 @@ public class CashSummeryControllerExcel1 implements Serializable {
     public void createOPdCategoryTable() {
         System.err.println("createOPdCategoryTable");
         string1Value2s = new ArrayList<>();
-        for (Category cat : getCategoryController().getServiceCategory()) {          
-            for (Item i : findItem(cat)) {              
+        for (Category cat : findCategory()) {
+            System.err.println("Cat " + cat.getName() + " TIME " + new Date());
+            System.err.println("##################");
+            for (Item i : findItem(cat)) {
+                //   System.err.println("Item " + i.getName() + " TIME " + new Date());
                 double count = getCount(i);
                 double hos = getFee(i, FeeType.OwnInstitution);
                 //     double pro = getFee(i, FeeType.Staff);
@@ -901,11 +912,15 @@ public class CashSummeryControllerExcel1 implements Serializable {
                 }
             }
 
-            String1Value2 newD = new String1Value2();
-            newD.setString(cat.getName() + " Total : ");
-            newD.setValue2(getFee(cat, FeeType.OwnInstitution));
-            newD.setSummery(true);
-            string1Value2s.add(newD);
+            double catDbl = getFee(cat, FeeType.OwnInstitution);
+
+            if (catDbl != 0) {
+                String1Value2 newD = new String1Value2();
+                newD.setString(cat.getName() + " Total : ");
+                newD.setValue2(catDbl);
+                newD.setSummery(true);
+                string1Value2s.add(newD);
+            }
 
         }
 

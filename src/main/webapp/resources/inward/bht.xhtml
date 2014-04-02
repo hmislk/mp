@@ -21,79 +21,41 @@
             </p:commandButton>
 
             <h:outputStylesheet library="css" name="printing.css"></h:outputStylesheet>
-            
+
             <div>
-                    <h:panelGroup id="gpBillPreview" >
+                <h:panelGroup id="gpBillPreview" >
 
-                <div class="fiveinchbill" >
-                    
-                    <div class="heading">
-                        <p:outputLabel   value="Name:" />
-                        <p:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" />
-                        
+                    <div class="fiveinchbill" >
+
+                        <div class="heading">
+                            <p:outputLabel   value="Name:" />
+                            <p:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" />
+
+                        </div>
+
+                        <div class="cel1R1L" >
+                            <p:outputLabel   value="Room: " />
+                            <p:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomFacilityCharge.name}" />
+                        </div>
+
+                        <div class="cel2R1L" >
+                            <p:outputLabel   value="BHT NO: " />
+                            <p:outputLabel  value="#{cc.attrs.admission.bhtNo}" />
+                        </div>
+
+                        <div class="BillDate">
+                            <h:outputLabel value="Date of Admission: ">
+                            </h:outputLabel>
+
+                            <h:outputLabel value="#{cc.attrs.admission.dateOfAdmission}" >
+                                <f:convertDateTime pattern="dd/MM/yy"/>
+                            </h:outputLabel>
+                        </div>
+
+                      
+
+
                     </div>
-                    
-                    <div class="cel1R1L" >
-                        <p:outputLabel   value="Room: " />
-                        <p:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomFacilityCharge.name}" />
-                    </div>
-                    
-                    <div class="cel2R1L" >
-                        <p:outputLabel   value="BHT NO: " />
-                        <p:outputLabel  value="#{cc.attrs.admission.bhtNo}" />
-                    </div>
-                    
-                    <div class="BillDate">
-                        <h:outputLabel value="Date of Admission: ">
-                        </h:outputLabel>
-                        
-                        <h:outputLabel value="#{cc.attrs.admission.dateOfAdmission}" >
-                            <f:convertDateTime pattern="dd/MM/yy"/>
-                        </h:outputLabel>
-                    </div>
-                    
-                    <div Class="cel2R2L" >
-                        <h:outputLabel value="Payment" ></h:outputLabel>
-                        <h:outputLabel value=":" ></h:outputLabel>
-                        <h:outputLabel value="#{cc.attrs.admission.paymentMethod}" >
-                        </h:outputLabel>
-                    </div>
-                    
-                    
-                    <div style="position: absolute;left: 5%;top: 50%;min-width: 85%;" >
-
-                        <table style="min-width:100%;padding-left: 30px;">
-                            <tr>
-                                <td style="text-align: left; min-width: 3cm; font-weight: bold;">
-                                    <h:outputLabel value="Total:&nbsp;&nbsp;" style="text-align: right!important;  font-size: 15px!important;"/>
-                                    
-                                    
-                                    <h:outputLabel value="Rs. "/>
-                                    <h:outputLabel value="#{cc.attrs.admission.netTotal}" >
-                                        <f:convertNumber integerOnly="true" />
-                                    </h:outputLabel>
-                                    <h:outputLabel value=" /="/>
-                                </td>
-
-                            </tr>
-                        </table>
-                    <br/>
-                    <br/>
-                    <br/>
-
-
-
-                    
-
-                    <div class="cashierBlock" >
-                        <h:outputLabel value=".................."  /><br/>
-                        <h:outputLabel  value="Cashier : #{cc.attrs.bill.creater.code}"   />
-                    </div>
-
-</div>
-                    
-                    
-                </div>
                 </h:panelGroup>
             </div>
 

@@ -218,6 +218,8 @@ public class Bill implements Serializable {
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;
+    @Transient
+    private boolean transBoolean;
     @Enumerated(EnumType.STRING)
     private SurgeryBillType surgeryBillType;
 
@@ -1191,6 +1193,19 @@ public class Bill implements Serializable {
 
     public void setStockVarientBillItems(List<StockVarientBillItem> stockVarientBillItems) {
         this.stockVarientBillItems = stockVarientBillItems;
+    }
+
+    public boolean isTransBoolean() {
+        return transBoolean;
+    }
+    
+    
+    public boolean getTransBoolean() {
+        return transBoolean;
+    }
+
+    public void setTransBoolean(boolean transBoolean) {
+        this.transBoolean = transBoolean;
     }
 
 }

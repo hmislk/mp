@@ -122,8 +122,6 @@ public class BillBhtController implements Serializable {
     private List<BillEntry> lstBillEntries;
     private boolean printPreview;
     private List<Bill> bills;
-    
-   
 
     public void makeNull() {
         total = 0.0;
@@ -329,8 +327,17 @@ public class BillBhtController implements Serializable {
         addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter(), getCurrentBillItem().getItem().getInstitution()));
         addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
         lstBillEntries.add(addingEntry);
+
         getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
-        getCurrentBillItem().setQty(1.0);
+
+        if (getCurrentBillItem().getItem().isRequestForQuentity()) {
+
+        } else {
+            getCurrentBillItem().setQty(1.0);
+        }
+
+        
+        
         getCurrentBillItem().setNetValue(getCurrentBillItem().getRate() * getCurrentBillItem().getQty()); // Price == Rate as Qty is 1 here
 
         calTotals();

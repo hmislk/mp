@@ -28,20 +28,15 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
-
-
-
-
-
-
 /**
  *
  * @author buddhika
  */
 @Entity
 public class Bill implements Serializable {
-    @OneToMany(mappedBy = "bill",fetch = FetchType.LAZY)
-    private List<StockVarientBillItem> stockVarientBillItems=new ArrayList<>();
+
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    private List<StockVarientBillItem> stockVarientBillItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "backwardReferenceBill", fetch = FetchType.LAZY)
     private List<Bill> forwardReferenceBills;
@@ -219,12 +214,12 @@ public class Bill implements Serializable {
 
     @ManyToOne
     private Bill backwardReferenceBill;
-    @Transient
     private double hospitalFee;
-    @Transient
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;
+    @Transient
+    private boolean transBoolean;
     @Enumerated(EnumType.STRING)
     private SurgeryBillType surgeryBillType;
 
@@ -1198,6 +1193,19 @@ public class Bill implements Serializable {
 
     public void setStockVarientBillItems(List<StockVarientBillItem> stockVarientBillItems) {
         this.stockVarientBillItems = stockVarientBillItems;
+    }
+
+    public boolean isTransBoolean() {
+        return transBoolean;
+    }
+    
+    
+    public boolean getTransBoolean() {
+        return transBoolean;
+    }
+
+    public void setTransBoolean(boolean transBoolean) {
+        this.transBoolean = transBoolean;
     }
 
 }

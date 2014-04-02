@@ -6,12 +6,15 @@
 package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.BillController;
+import com.divudi.bean.PaymentSchemeController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CreditBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -20,7 +23,6 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
@@ -28,8 +30,6 @@ import javax.inject.Inject;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import java.util.ArrayList;
-import java.util.HashMap;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -42,15 +42,12 @@ public class PharmacyDealorBill implements Serializable {
     //Atribtes
     private boolean printPreview;
     private Bill current;
-    private Institution chequeBank;
-    private Institution slipBank;
-    private Date chequeDate;
-    private Date slipDate;
+    private PaymentMethodData paymentMethodData;
     private BillItem currentBillItem;
     private Institution institution;
-    private int index;
     //List
     private List<BillItem> billItems;
+    private List<BillItem> selectedBillItems;
     //EJB
     @EJB
     private BillNumberBean billNumberBean;
@@ -65,13 +62,11 @@ public class PharmacyDealorBill implements Serializable {
     public void makeNull() {
         printPreview = false;
         current = null;
-        chequeBank = null;
-        slipBank = null;
         currentBillItem = null;
         institution = null;
-        index = 0;
-        chequeDate = null;
-        slipDate = null;
+        paymentMethodData = null;
+        selectedBillItems = null;
+        billItems = null;
     }
 
     private boolean errorCheckForAdding() {
@@ -97,21 +92,11 @@ public class PharmacyDealorBill implements Serializable {
         return false;
     }
 
-    public double getGrnReturnValue(Bill refBill) {
-        String sql = "select sum(b.netTotal) from"
-                + " Bill b where b.retired=false and "
-                + " b.referenceBill=:refBill "
-                + " and (b.billType=:bType1 or b.billType=:bType2 )";
-
-        HashMap hm = new HashMap();
-        hm.put("refBill", refBill);
-        hm.put("bType1", BillType.PharmacyGrnReturn);
-        hm.put("bType2", BillType.PurchaseReturn);
-        return getBillFacade().findDoubleByJpql(sql, hm, TemporalType.DATE);
-    }
+   @EJB
+   CreditBean creditBean;
 
     public void selectListener() {
-        double grnReturnTotal = getGrnReturnValue(getCurrentBillItem().getReferenceBill());
+        double grnReturnTotal =getCreditBean().getGrnReturnValue(getCurrentBillItem().getReferenceBill());
         getCurrentBillItem().getReferenceBill().setTmpReturnTotal(grnReturnTotal);
 
         double ballanceAmt = getCurrentBillItem().getReferenceBill().getNetTotal()
@@ -151,8 +136,9 @@ public class PharmacyDealorBill implements Serializable {
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
         if (getCurrentBillItem().getNetValue() != 0) {
-            System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
-            System.err.println("aa " + getCurrentBillItem().getNetValue());
+            //  System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
+            //   System.err.println("aa " + getCurrentBillItem().getNetValue());
+            getCurrentBillItem().setSearialNo(getBillItems().size());
             getBillItems().add(getCurrentBillItem());
         }
 
@@ -180,10 +166,41 @@ public class PharmacyDealorBill implements Serializable {
         // //System.out.println("AAA : " + n);
     }
 
-    public void remove() {
-        getBillItems().remove(index);
-        calTotal();
+    public void calTotalWithResetingIndex() {
+        double n = 0.0;
+        int index = 0;
+        for (BillItem b : billItems) {
+            b.setSearialNo(index++);
+            n += b.getNetValue();
+        }
+        getCurrent().setNetTotal(0 - n);
+        // //System.out.println("AAA : " + n);
     }
+
+    public void removeAll() {
+        for (BillItem b : selectedBillItems) {
+
+            System.err.println("Removing Index " + b.getSearialNo());
+            System.err.println("Grn No " + b.getReferenceBill().getDeptId());
+            remove(b);
+        }
+
+        calTotalWithResetingIndex();
+        selectedBillItems = null;
+    }
+
+    public void remove(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
+        calTotalWithResetingIndex();
+    }
+
+    public void removeWithoutIndex(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
+
+    }
+
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
 
     private boolean errorCheck() {
         if (getBillItems().isEmpty()) {
@@ -196,20 +213,12 @@ public class PharmacyDealorBill implements Serializable {
             return true;
         }
 
-        if (getCurrent().getPaymentMethod() != null && getCurrent().getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getChequeBank() == null || getCurrent().getChequeRefNo() == null || getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
+        if (getCurrent().getPaymentMethod() == null) {
+            return true;
         }
 
-        if (getCurrent().getPaymentMethod() != null && getCurrent().getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getCurrent().getComments() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date");
-                return true;
-            }
-
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentMethod(), getPaymentMethodData())) {
+            return true;
         }
 
         return false;
@@ -240,18 +249,15 @@ public class PharmacyDealorBill implements Serializable {
 
     }
 
+    @EJB
+    private BillBean billBean;
+
     public void settleBill() {
         if (errorCheck()) {
             return;
         }
 
-        if (getCurrent().getPaymentMethod() == PaymentMethod.Cheque) {
-            getCurrent().setBank(getChequeBank());
-            getCurrent().setChequeDate(getChequeDate());
-        } else if (getCurrent().getPaymentMethod() == PaymentMethod.Slip) {
-            getCurrent().setBank(getSlipBank());
-            getCurrent().setChequeDate(getSlipDate());
-        }
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentMethod(), getPaymentMethodData());
 
         getCurrent().setTotal(getCurrent().getNetTotal());
 
@@ -294,8 +300,11 @@ public class PharmacyDealorBill implements Serializable {
         return false;
     }
 
+   
     private void updateReferenceBill(BillItem tmp) {
-        tmp.getReferenceBill().setPaidAmount(0 - tmp.getNetValue());
+        double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.GrnPayment);
+        
+        tmp.getReferenceBill().setPaidAmount(0 - dbl);
         getBillFacade().edit(tmp.getReferenceBill());
 
     }
@@ -325,30 +334,6 @@ public class PharmacyDealorBill implements Serializable {
         this.current = current;
     }
 
-    public Institution getChequeBank() {
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
-    }
-
     public BillItem getCurrentBillItem() {
         if (currentBillItem == null) {
             currentBillItem = new BillItem();
@@ -360,14 +345,6 @@ public class PharmacyDealorBill implements Serializable {
         this.currentBillItem = currentBillItem;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public List<BillItem> getBillItems() {
         if (billItems == null) {
             billItems = new ArrayList<>();
@@ -377,14 +354,6 @@ public class PharmacyDealorBill implements Serializable {
 
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
     }
 
     public BillNumberBean getBillNumberBean() {
@@ -433,6 +402,49 @@ public class PharmacyDealorBill implements Serializable {
 
     public void setBillController(BillController billController) {
         this.billController = billController;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
+    }
+
+    public List<BillItem> getSelectedBillItems() {
+        return selectedBillItems;
+    }
+
+    public void setSelectedBillItems(List<BillItem> selectedBillItems) {
+        this.selectedBillItems = selectedBillItems;
+    }
+
+    public CreditBean getCreditBean() {
+        return creditBean;
+    }
+
+    public void setCreditBean(CreditBean creditBean) {
+        this.creditBean = creditBean;
     }
 
 }

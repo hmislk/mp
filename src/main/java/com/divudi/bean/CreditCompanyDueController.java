@@ -8,6 +8,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.InstitutionBills;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.CreditBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
 import com.divudi.facade.BillFacade;
@@ -46,8 +47,8 @@ public class CreditCompanyDueController implements Serializable {
     }
 
     public Date getFromDate() {
-        if(fromDate==null){
-            fromDate=getCommonFunctions().getStartOfMonth(new Date());
+        if (fromDate == null) {
+            fromDate = getCommonFunctions().getStartOfMonth(new Date());
         }
         return fromDate;
     }
@@ -67,39 +68,14 @@ public class CreditCompanyDueController implements Serializable {
         this.toDate = toDate;
     }
 
-    public List<InstitutionBills> getItems() {
-        String sql;
-        HashMap hm;
-        sql = "Select b.creditCompany From Bill b where b.retired=false "
-                + " and b.paidAmount!=b.netTotal and b.cancelledBill is null and "
-                + " b.refundedBill is null and b.createdAt between :frm and :to "
-                + " and b.paymentMethod= :pm and b.billType=:tp order by b.creditCompany.name  ";
-        hm = new HashMap();
-        hm.put("frm", getFromDate());
-        hm.put("to", getToDate());
-        hm.put("pm", PaymentMethod.Credit);
-        hm.put("tp", BillType.OpdBill);
-        List<Institution> tmp = getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-        Set<Institution> setIns = new HashSet<>();
+    @EJB
+    private CreditBean creditBean;
 
-        for (Institution ins : tmp) {
-            setIns.add(ins);
-        }
-
+    public void createOpdCreditDue() {
+        List<Institution> setIns = getCreditBean().getCreditInstitution(BillType.OpdBill, getFromDate(), getToDate());
         items = new ArrayList<>();
         for (Institution ins : setIns) {
-
-            sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                    + "  between :frm and :to and b.paidAmount!=b.netTotal and b.cancelledBill is null  "
-                    + " and b.refundedBill is null and b.creditCompany=:cc "
-                    + " and b.paymentMethod= :pm and b.billType=:tp";
-            hm = new HashMap();
-            hm.put("frm", getFromDate());
-            hm.put("to", getToDate());
-            hm.put("cc", ins);
-            hm.put("pm", PaymentMethod.Credit);
-            hm.put("tp", BillType.OpdBill);
-            List<Bill> bills = getBillFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+            List<Bill> bills = getCreditBean().getCreditBills(ins, BillType.OpdBill, getFromDate(), getToDate());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
             newIns.setBills(bills);
@@ -112,6 +88,9 @@ public class CreditCompanyDueController implements Serializable {
             items.add(newIns);
         }
 
+    }
+
+    public List<InstitutionBills> getItems() {
         return items;
     }
 
@@ -185,5 +164,13 @@ public class CreditCompanyDueController implements Serializable {
 
     public void setCommonFunctions(CommonFunctions commonFunctions) {
         this.commonFunctions = commonFunctions;
+    }
+
+    public CreditBean getCreditBean() {
+        return creditBean;
+    }
+
+    public void setCreditBean(CreditBean creditBean) {
+        this.creditBean = creditBean;
     }
 }

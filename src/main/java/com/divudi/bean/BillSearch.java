@@ -116,10 +116,6 @@ public class BillSearch implements Serializable {
     @EJB
     private BillItemFacade billItemFacade;
 
-   
-
-  
-
     public void createCashReturnBills() {
         bills = null;
         Map m = new HashMap();
@@ -147,8 +143,6 @@ public class BillSearch implements Serializable {
         bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
-
-   
 
     public String preSettle(String b) {
         //System.err.println("Bill " + b);
@@ -334,10 +328,6 @@ public class BillSearch implements Serializable {
         lazyBills = new LazyBill(lst);
     }
 
-  
-
-    
-
     public void createDealorPaymentTable() {
         bills = null;
         String sql;
@@ -382,19 +372,9 @@ public class BillSearch implements Serializable {
 
     }
 
-   
-
     public void makeKeywodNull() {
         searchKeyword = null;
     }
-
-   
-
-   
-
-   
-
-    
 
     public List<BillItem> getRefundingItems() {
         return refundingItems;
@@ -800,7 +780,7 @@ public class BillSearch implements Serializable {
             return true;
         }
 
-        if (getBill().getPaidAmount() != 0.0) {
+        if (getBill().getPaymentMethod() == PaymentMethod.Credit && getBill().getPaidAmount() != 0.0) {
             UtilityController.addErrorMessage("Already Credit Company Paid For This Bill. Can not cancel.");
             return true;
         }
@@ -1059,9 +1039,9 @@ public class BillSearch implements Serializable {
                 b.setReferanceBillItem(nB.getReferanceBillItem());
             }
 
-            b.setNetValue(0-nB.getNetValue());
-            b.setGrossValue(0-nB.getGrossValue());
-            b.setRate(0-nB.getRate());
+            b.setNetValue(0 - nB.getNetValue());
+            b.setGrossValue(0 - nB.getGrossValue());
+            b.setRate(0 - nB.getRate());
 
             b.setCatId(nB.getCatId());
             b.setDeptId(nB.getDeptId());
@@ -1137,8 +1117,6 @@ public class BillSearch implements Serializable {
         showAllBills = false;
         return bills;
     }
-
-  
 
     public List<Bill> getPos() {
         if (bills == null) {
@@ -1227,8 +1205,6 @@ public class BillSearch implements Serializable {
 
     }
 
-    
-
     public List<Bill> getUserBills() {
         List<Bill> userBills;
         //System.out.println("getting user bills");
@@ -1278,7 +1254,7 @@ public class BillSearch implements Serializable {
 
     public void setBill(BilledBill bill) {
         recreateModel();
-        System.err.println("Bill "+bill);
+        System.err.println("Bill " + bill);
         this.bill = bill;
     }
 

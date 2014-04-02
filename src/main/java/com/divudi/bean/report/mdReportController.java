@@ -285,7 +285,8 @@ public class mdReportController implements Serializable {
     public void setSessionController(SessionController sessionController) {
         this.sessionController = sessionController;
     }
-
+    
+    
     private List<Item> item() {
         String sql;
         List<Item> tmp;

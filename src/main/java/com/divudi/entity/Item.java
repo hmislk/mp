@@ -113,6 +113,8 @@ public class Item implements Serializable {
     boolean billable;
     boolean formatable;
     boolean patientNotRequired;
+    boolean chargesVisibleForInward;
+    boolean requestForQuentity;
 
     @Lob
     String descreption;
@@ -121,6 +123,8 @@ public class Item implements Serializable {
     SymanticType symanticType;
     @Enumerated(EnumType.STRING)
     private DepartmentType departmentType;
+    @Transient
+    private double transBillItemCount;
 
     public List<WorksheetItem> getWorksheetItems() {
         if (worksheetItems != null) {
@@ -573,6 +577,33 @@ public class Item implements Serializable {
         this.departmentType = departmentType;
     }
 
+    public double getTransBillItemCount() {
+        return transBillItemCount;
+    }
+
+    public void setTransBillItemCount(double transBillItemCount) {
+        this.transBillItemCount = transBillItemCount;
+    }
+
+    public boolean isChargesVisibleForInward() {
+        return chargesVisibleForInward;
+    }
+
+    public void setChargesVisibleForInward(boolean chargesVisibleForInward) {
+        this.chargesVisibleForInward = chargesVisibleForInward;
+    }
+
+    public boolean isRequestForQuentity() {
+        return requestForQuentity;
+    }
+
+    public void setRequestForQuentity(boolean requestForQuentity) {
+        this.requestForQuentity = requestForQuentity;
+    }
+
+
+    
+    
     static class ReportItemComparator implements Comparator<ReportItem> {
 
         @Override

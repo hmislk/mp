@@ -72,7 +72,7 @@
                                         <f:selectItem itemLabel="General" itemValue="General"/>
                                         <f:selectItem itemLabel="Microbiology" itemValue="Microbiology"/>
                                     </h:selectOneListbox>
-                                     
+
                                     <h:outputText value="Invesitgation Category" ></h:outputText>
                                     <h:selectOneListbox id="cmbCat"  size="1" value="#{investigationController.current.investigationCategory}" >
                                         <f:selectItem itemLabel="Please select a category"/>
@@ -129,6 +129,13 @@
 
                                     <h:outputText value="" ></h:outputText>
                                     <p:selectBooleanCheckbox value="#{investigationController.current.userChangable}" itemLabel="Can change Rate"/>
+
+                                    <h:outputText value="" ></h:outputText>
+                                    <p:selectBooleanCheckbox value="#{investigationController.current.chargesVisibleForInward}" itemLabel="Charges Visible for Inward Billing"/>
+
+                                    <h:outputText value="" ></h:outputText>
+                                    <p:selectBooleanCheckbox value="#{investigationController.current.requestForQuentity}" itemLabel="Request for Quentity"/>
+
 
                                     <h:outputText value="" ></h:outputText>
                                     <p:selectBooleanCheckbox value="#{investigationController.current.discountAllowed}" itemLabel="Discount Allowed"/>

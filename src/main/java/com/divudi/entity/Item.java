@@ -113,6 +113,8 @@ public class Item implements Serializable {
     boolean billable;
     boolean formatable;
     boolean patientNotRequired;
+    boolean chargesVisibleForInward;
+    boolean requestForQuentity;
 
     @Lob
     String descreption;
@@ -583,6 +585,25 @@ public class Item implements Serializable {
         this.transBillItemCount = transBillItemCount;
     }
 
+    public boolean isChargesVisibleForInward() {
+        return chargesVisibleForInward;
+    }
+
+    public void setChargesVisibleForInward(boolean chargesVisibleForInward) {
+        this.chargesVisibleForInward = chargesVisibleForInward;
+    }
+
+    public boolean isRequestForQuentity() {
+        return requestForQuentity;
+    }
+
+    public void setRequestForQuentity(boolean requestForQuentity) {
+        this.requestForQuentity = requestForQuentity;
+    }
+
+
+    
+    
     static class ReportItemComparator implements Comparator<ReportItem> {
 
         @Override

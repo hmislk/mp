@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
@@ -14,26 +15,42 @@
                 <p:panel header="New Visit" >
                     <p:panelGrid columns="3" >
                         <p:panelGrid columns="1" >
-                            <p:panel header="Diagnosis" >
+                            <p:panel header="Diagnosis" styleClass="alignTop" >
                                 <h:form>
-                                    <p:autoComplete id="acDx" value="#{patientEncounterController.diagnosis}"
-                                                    completeMethod="#{diagnosisController.completeDiagnosis}"
-                                                    var="dx" forceSelection="true"
-                                                    itemLabel="#{dx.name}" 
-                                                    itemValue="#{dx}"
-                                                    converter="diagnosisConverter"></p:autoComplete>
-                                    <p:inputTextarea id="txtDx" value="#{patientEncounterController.diagnosisComments}" ></p:inputTextarea>
-                                    <p:commandButton ajax="false" id="btnAddDx" value="Add Diagnosis" action="#{patientEncounterController.addDx()}" process="acDx txtDx" update="tblDx" >
-                                    </p:commandButton>
-                                    <p:dataTable id="tblDx" value="#{patientEncounterController.current.diagnosis}" var="edx" >
-                                        <p:column >
-                                            <h:outputLabel value="#{edx.clinicalFindingItem.name}" ></h:outputLabel>
-                                        </p:column>
-                                        <p:column >
-                                            <h:outputLabel value="#{edx.lobValue}" ></h:outputLabel>
-                                        </p:column>
 
-                                    </p:dataTable>
+                                    <p:panelGrid columns="1" styleClass="alignTop" >
+
+                                        <p:autoComplete id="acDx" value="#{patientEncounterController.diagnosis}"
+                                                        completeMethod="#{diagnosisController.completeDiagnosis}"
+                                                        var="dx" forceSelection="true"
+                                                        itemLabel="#{dx.name}" 
+                                                        itemValue="#{dx}"
+                                                        converter="diagnosisConverter"></p:autoComplete>
+                                        <h:panelGroup styleClass="alignTop" >
+                                            <p:inputTextarea id="txtDx" value="#{patientEncounterController.diagnosisComments}" ></p:inputTextarea>
+                                            <p:commandButton ajax="false" id="btnAddDx" value="Add Diagnosis" 
+                                                             action="#{patientEncounterController.addDx()}" 
+                                                             process="acDx txtDx" 
+                                                             update="tblDx" >
+                                            </p:commandButton>
+                                        </h:panelGroup>
+                                        <p:dataTable id="tblDx" value="#{patientEncounterController.current.diagnosis}" var="edx" >
+                                            <p:column >
+                                                <h:outputLabel value="#{edx.clinicalFindingItem.name}" ></h:outputLabel>
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputLabel value="#{edx.lobValue}" ></h:outputLabel>
+                                            </p:column>
+                                            <p:column  >
+                                                <p:commandButton ajax="false" value="X" update="tblDx" action="#{patientEncounterController.removingCfv}"> 
+                                                    <f:setPropertyActionListener value="#{edx}" target="#{patientEncounterController.removingCfv}" />
+                                                </p:commandButton>
+                                            </p:column>
+
+                                        </p:dataTable>
+
+                                    </p:panelGrid>
+
                                 </h:form>
 
                             </p:panel>

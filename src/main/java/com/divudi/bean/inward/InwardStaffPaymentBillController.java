@@ -91,12 +91,14 @@ public class InwardStaffPaymentBillController implements Serializable {
         String sql;
         Map m = new HashMap();
         
-        sql = "select bf from BillFee bf where bf.bill.billDate :fd and :td and bf.retired=false and bf.bill.billType=:btp";
+        sql = "select bf from BillFee bf where bf.bill.billDate :fd "
+                + "and :td and bf.retired=false "
+                +"and bf.bill.billType=:btp";
         m.put("fd", fromDate);
         m.put("td", toDate);
         m.put("btp", BillType.InwardProfessional);
         
-        docPayingBillFee=getBillFeeFacade().findBySQL(sql, m);
+        docPayingBillFee=getBillFeeFacade().findBySQL(sql, m,TemporalType.TIMESTAMP);
         
         
     }

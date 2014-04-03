@@ -13,6 +13,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
@@ -28,6 +29,7 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
+import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.facade.BatchBillFacade;
@@ -35,6 +37,7 @@ import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.FeeFacade;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import com.divudi.facade.ItemFeeFacade;
@@ -115,6 +118,7 @@ public class BillBhtController implements Serializable {
     private Integer index;
     private PatientEncounter patientEncounter;
     private PaymentScheme paymentScheme;
+    private Bill batchBill;
     /////////////////////
     private List<BillComponent> lstBillComponents;
     private List<BillFee> lstBillFees;
@@ -122,6 +126,10 @@ public class BillBhtController implements Serializable {
     private List<BillEntry> lstBillEntries;
     private boolean printPreview;
     private List<Bill> bills;
+
+    public void selectSurgeryBillListener() {
+        patientEncounter = getBatchBill().getPatientEncounter();
+    }
 
     public void makeNull() {
         total = 0.0;
@@ -141,6 +149,7 @@ public class BillBhtController implements Serializable {
         lstBillItems = null;
         lstBillEntries = null;
         printPreview = false;
+        batchBill = null;
     }
 
     public CommonFunctions getCommonFunctions() {
@@ -229,6 +238,50 @@ public class BillBhtController implements Serializable {
 
     }
 
+    public void settleBillSurgery() {
+        if (getBatchBill() == null) {
+            return;
+        }
+
+        if (getBatchBill().getProcedure() == null) {
+            return;
+        }
+
+        settleBill();
+        saveEncounterComponents();
+        getBillBean().updateBatchBill(getBatchBill());
+
+    }
+
+    @EJB
+    private EncounterComponentFacade encounterComponentFacade;
+
+    private void saveEncounterComponent(BillFee bf) {
+        EncounterComponent ec = new EncounterComponent();
+        ec.setPatientEncounter(getBatchBill().getPatientEncounter());
+        ec.setChildEncounter(getBatchBill().getProcedure());
+        ec.setBillFee(bf);
+        ec.setBillItem(bf.getBillItem());
+        ec.setCreatedAt(Calendar.getInstance().getTime());
+        ec.setCreater(getSessionController().getLoggedUser());
+        ec.setPatientEncounter(getBatchBill().getProcedure());
+        if (ec.getBillFee() != null) {
+            ec.setStaff(ec.getBillFee().getStaff());
+        }
+
+        getEncounterComponentFacade().create(ec);
+
+    }
+
+    private void saveEncounterComponents() {
+        for (BillFee bf : getBillBean().getBillFeeFromBills(bills)) {
+
+            saveEncounterComponent(bf);
+
+        }
+
+    }
+
     private Bill saveBill(Department bt, BilledBill temp) {
 
         temp.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), bt, BillType.InwardBill));
@@ -236,6 +289,9 @@ public class BillBhtController implements Serializable {
         //getCurrent().setCashBalance(cashBalance);
         //getCurrent().setCashPaid(cashPaid);
         temp.setBillType(BillType.InwardBill);
+        if (batchBill != null) {
+            temp.setSurgeryBillType(SurgeryBillType.Service);
+        }
 
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -245,6 +301,8 @@ public class BillBhtController implements Serializable {
 
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
+
+        temp.setForwardReferenceBill(batchBill);
 
         temp.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         temp.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -328,16 +386,13 @@ public class BillBhtController implements Serializable {
         addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
         lstBillEntries.add(addingEntry);
 
-    //    getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
-
+        //    getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
         if (getCurrentBillItem().getItem().isRequestForQuentity()) {
-            
+
         } else {
             getCurrentBillItem().setQty(1.0);
         }
 
-        
-        
         getCurrentBillItem().setNetValue(getCurrentBillItem().getRate() * getCurrentBillItem().getQty()); // Price == Rate as Qty is 1 here
 
         calTotals();
@@ -743,6 +798,22 @@ public class BillBhtController implements Serializable {
 
     public void setBillSearch(BillSearch billSearch) {
         this.billSearch = billSearch;
+    }
+
+    public Bill getBatchBill() {
+        return batchBill;
+    }
+
+    public void setBatchBill(Bill batchBill) {
+        this.batchBill = batchBill;
+    }
+
+    public EncounterComponentFacade getEncounterComponentFacade() {
+        return encounterComponentFacade;
+    }
+
+    public void setEncounterComponentFacade(EncounterComponentFacade encounterComponentFacade) {
+        this.encounterComponentFacade = encounterComponentFacade;
     }
 
     /**

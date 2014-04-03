@@ -14,7 +14,7 @@
             <ui:define name="content">
                 <h:form>
 
-                    <p:panel header="Detailed BHT Issuing Bill Items" >
+                    <p:panel header="Detailed Inward Payment Bill Items" >
 
                         <h:panelGrid columns="6" >
                             
@@ -79,7 +79,7 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Item Description"/>
                                     </f:facet>
-                                    <h:outputLabel value="#{i.bill.billItems}"  >                                      
+                                    <h:outputLabel value="#{i.item.name}"  >                                      
                                     </h:outputLabel>
                                 </p:column>
                                 

@@ -67,25 +67,25 @@
                         </f:facet>
                         <h:outputLabel value="#{i.string}" />
                     </p:column>
-                    <p:column headerText="Billed" style="text-align: right;">
+                    <p:column headerText="Gross" style="text-align: right;">
                         <f:facet name="header">
-                            <h:outputLabel value="Billed" />
+                            <h:outputLabel value="Gross" />
                         </f:facet>
                         <h:outputLabel value="#{i.value1}">
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                     </p:column>
-                    <p:column headerText="Cancelled" style="text-align: right;">
+                    <p:column headerText="Discount " style="text-align: right;">
                         <f:facet name="header">
-                            <h:outputLabel value="Cancelled" />
+                            <h:outputLabel value="Discount" />
                         </f:facet>
                         <h:outputLabel value="#{i.value2}">
                             <f:convertNumber pattern="#,000.00" />
                         </h:outputLabel>
                     </p:column>
-                    <p:column headerText="Refunded" style="text-align: right;">
+                    <p:column headerText="Professional" style="text-align: right;">
                         <f:facet name="header">
-                            <h:outputLabel value="Refunded" />
+                            <h:outputLabel value="Professional" />
                         </f:facet>
                         <h:outputLabel value="#{i.value3}">
                             <f:convertNumber pattern="#,000.00" />

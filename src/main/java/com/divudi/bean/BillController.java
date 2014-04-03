@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.ejb.EJB;
@@ -228,6 +229,28 @@ public class BillController implements Serializable {
             a = new ArrayList<>();
         }
         return a;
+    }
+
+    public List<Bill> completeSurgeryBills(String qry) {
+
+        String sql;
+        Map temMap = new HashMap();
+        sql = "select b from Bill b "
+                + " where b.billType = :billType "
+                + " and b.retired=false "
+                + " and b.patientEncounter.paymentFinalized=false ";
+
+        sql += " and  ((upper(b.patientEncounter.patient.person.name) like :q )";
+        sql += " or  (upper(b.patientEncounter.bhtNo) like :q )";
+        sql += " or  (upper(b.insId) like :q )";
+        sql += " or  (upper(b.procedure.item.name) like :q ))";
+        sql += " order by b.insId desc  ";
+
+        temMap.put("billType", BillType.SurgeryBill);
+        temMap.put("q", "%" + qry.toUpperCase() + "%");
+        List<Bill> tmps = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 20);
+
+        return tmps;
     }
 
     public List<Bill> getDealorBills(Institution institution) {
@@ -1214,6 +1237,7 @@ public class BillController implements Serializable {
         suggestions = getFacade().findBySQL(sql, hm);
 
         return suggestions;
+
     }
 
     /**

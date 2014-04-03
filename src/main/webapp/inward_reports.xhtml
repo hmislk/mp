@@ -11,7 +11,7 @@
 
             <ui:define name="content">
                 <h:form>
-                    <h:panelGrid columns="2" >    
+                    <h:panelGrid columns="3" >    
                         <p:panel header="By Service Added Date" >
                             <h:panelGrid columns="1">
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Report By Bill" action="report_md_inward_bill_added_date" actionListener="#{mdInwardReportController.makeNull}"/> 
@@ -35,6 +35,13 @@
                             <h:panelGrid columns="1">
                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill Item" action="report_bht_issue_by_bill" actionListener="#{mdInwardReportController.makeNull}"/> 
                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill" action="report_bht_issue_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
+                            </h:panelGrid>
+                        </p:panel>
+                        
+                        <p:panel header="Doctor Payment Report">
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Doctor Payment" action="report_doctor_payment" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                 
                             </h:panelGrid>
                         </p:panel>
                         

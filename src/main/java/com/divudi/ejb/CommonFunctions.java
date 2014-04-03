@@ -59,6 +59,8 @@ public class CommonFunctions {
         return dateRange;
     }
 
+  
+
     public Date getAddedDate(Date date, int range) {
 
         Calendar cal = Calendar.getInstance();

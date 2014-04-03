@@ -4,11 +4,10 @@
  */
 package com.divudi.ejb;
 
-import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
-import com.divudi.data.dataStructure.RoomChargeData;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
+import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Fee;
 import com.divudi.entity.Institution;
@@ -16,7 +15,6 @@ import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.Item;
 import com.divudi.entity.ItemFee;
 import com.divudi.entity.PatientEncounter;
-import com.divudi.entity.PatientItem;
 import com.divudi.entity.inward.AdmissionType;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.TimedItem;
@@ -163,6 +161,7 @@ public class InwardCalculation {
         bf = getBillFeeMatrix(billItem, institution);
         double serviceValue = getHospitalFeeByItem(billItem.getItem());
         PatientRoom currentRoom = getCurrentPatientRoom(patientEncounter);
+        System.err.println("BillFee Frm Margin");
         bf.setFeeValue(calInwardMargin(billItem, serviceValue, currentRoom.getRoomFacilityCharge().getDepartment()));
 
         if (bf != null && bf.getFeeValue() != 0.0) {
@@ -335,38 +334,48 @@ public class InwardCalculation {
         return billtItemFee;
     }
 
+    private InwardPriceAdjustment getInwardPriceAdjustment(Department department, double dbl, Category category) {
+        String sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
+                + " and  a.department=:dep and (a.fromPrice< :frPrice and a.toPrice >:tPrice)";
+        HashMap hm = new HashMap();
+        hm.put("dep", department);
+        hm.put("frPrice", dbl);
+        hm.put("tPrice", dbl);
+        hm.put("cat", category);
+
+        return getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
+    }
+
     public double calInwardMargin(BillItem billItem, double serviceValue, Department department) {
 
         String sql;
         HashMap hm = new HashMap();
-
+        InwardPriceAdjustment inwardPriceAdjustment;
         if (billItem.getItem() instanceof Investigation) {
-            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
-                    + " and  a.department=:dep and (a.fromPrice< :frPrice and a.toPrice >:tPrice)";
-
-            hm.put("cat", ((Investigation) billItem.getItem()).getInvestigationCategory());
-
+            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, ((Investigation) billItem.getItem()).getInvestigationCategory());
         } else {
-            sql = "select a from InwardPriceAdjustment a where a.retired=false and a.category=:cat "
-                    + " and  a.department=:dep and (a.fromPrice< :frPrice and a.toPrice >:tPrice)";
-
-            hm.put("cat", billItem.getItem().getCategory());
+            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, billItem.getItem().getCategory());
         }
 
-        hm.put("dep", department);
-        hm.put("frPrice", serviceValue);
-        hm.put("tPrice", serviceValue);
-
-        InwardPriceAdjustment inwardPriceAdjustment = getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
+        System.err.println("Inward Margin 1 ");
 
         if (inwardPriceAdjustment == null) {
-            return 0;
+
+            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, billItem.getItem().getCategory().getParentCategory());
+
+            if (inwardPriceAdjustment == null) {
+                return 0;
+            }
         }
 
-       // System.err.println(inwardPriceAdjustment);
-      //  System.err.println(inwardPriceAdjustment.getMargin());
-      //  System.err.println(serviceValue);
-        return ((inwardPriceAdjustment.getMargin() * serviceValue) / 100);
+        // System.err.println(inwardPriceAdjustment);
+        //  System.err.println(inwardPriceAdjustment.getMargin());
+        //  System.err.println(serviceValue);
+        double dbl = ((inwardPriceAdjustment.getMargin() * serviceValue) / 100);
+
+        System.err.println("Inward Margin " + dbl);
+
+        return dbl;
 
     }
 
@@ -526,7 +535,11 @@ public class InwardCalculation {
         }
 
         if (patientEncounter.getAdmissionType().getDblValue() != null) {
-            linen += (patientEncounter.getAdmissionType().getDblValue() * dayCount);
+            if (dayCount != 0) {
+                linen += (patientEncounter.getAdmissionType().getDblValue() * dayCount);
+            } else {
+                linen += (patientEncounter.getAdmissionType().getDblValue() * 1);
+            }
         }
 
         return linen;
@@ -549,10 +562,9 @@ public class InwardCalculation {
             count = (long) (consumeTimeM / duration);
         }
 
-      //  System.err.println("Min " + duration);
-   //     System.err.println("Consume " + consumeTimeM);
-     //   System.err.println("Count " + count);
-
+        //  System.err.println("Min " + duration);
+        //     System.err.println("Consume " + consumeTimeM);
+        //   System.err.println("Count " + count);
         if (0 != (consumeTimeM % duration)) {
             count++;
         }
@@ -596,7 +608,6 @@ public class InwardCalculation {
 //        System.err.println("Consume " + consumeTime);
 //        System.err.println("Count " + count);
 //        System.err.println("Calcualtion " + calculation);
-
         return count;
     }
 

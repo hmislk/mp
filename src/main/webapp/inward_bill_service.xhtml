@@ -67,14 +67,17 @@
                                         </p:column>
                                         <p:column>
                                             <h:outputLabel value="#{ix.department.name}"/>
-                                        </p:column>     
-                                        <f:ajax event="itemSelect" execute="acIx" render="txtRate txtQty" ></f:ajax>
+                                        </p:column>  
+                                        <p:column>
+                                            <h:outputLabel value="#{ix.total}" 
+                                                           rendered="#{ix.chargesVisibleForInward}"/>
+                                        </p:column>  
+                                        <f:ajax event="itemSelect" execute="acIx" render="txtQty" ></f:ajax>
                                     </p:autoComplete>
 
-                                    <p:inputText id="txtRate" rendered="#{billBhtController.currentBillItem.item.chargesVisibleForInward}" value="#{billBhtController.currentBillItem.rate}" >
-                                    </p:inputText>
-
-                                    <p:inputText id="txtQty" rendered="#{billBhtController.currentBillItem.item.requestForQuentity}" value="#{billBhtController.currentBillItem.qty}" >
+                                    <p:inputText id="txtQty"
+                                                 rendered="#{billBhtController.currentBillItem.item.requestForQuentity}"
+                                                 value="#{billBhtController.currentBillItem.qty}" >
                                     </p:inputText>
 
 
@@ -82,11 +85,11 @@
                                     <h:commandButton id="btnAddIx" value="Add" action="#{billBhtController.addToBill()}">
                                         <f:ajax execute="acIx btnAddIx" render="tblBillItem  pBillDetails pIxAdd" />
                                     </h:commandButton> 
+
                                     
-                                    <p:watermark for="txtRate" value="Rate" ></p:watermark>
                                     <p:watermark for="txtQty" value="Quentity" ></p:watermark>
                                     <p:watermark for="txtDesc" value="Description" ></p:watermark>
-                                    
+
                                 </p:panel>
                             </h:panelGroup>
 
@@ -139,7 +142,7 @@
                                     </p:tab>
                                     <p:tab id="tabBillFee" title="Fees" >
                                         <p:dataTable rowIndexVar="rowIndex" value="#{billBhtController.lstBillFees}" var="bif" 
-                                                     rowStyleClass="#{bif.fee.feeType ne 'Staff' ?'noDisplayRow':''}">
+                                                     rowStyleClass="#{(bif.billItem.item.chargesVisibleForInward) and (bif.fee.feeType ne 'Matrix') ? '':'noDisplayRow'}">
                                             <p:column>
                                                 <f:facet name="header">No</f:facet>
                                                 <h:outputLabel value="#{rowIndex+1}"/>

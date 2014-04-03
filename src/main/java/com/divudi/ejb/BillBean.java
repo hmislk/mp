@@ -52,8 +52,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TemporalType;
 
-
-
 /**
  *
  * @author Buddhika
@@ -98,7 +96,7 @@ public class BillBean {
             b.setChequeDate(paymentMethodData.getSlip().getDate());
             b.setComments(paymentMethodData.getSlip().getComment());
         }
-        
+
         if (paymentMethod.equals(PaymentMethod.Card)) {
             b.setCreditCardRefNo(paymentMethodData.getCreditCard().getNo());
             b.setBank(paymentMethodData.getCreditCard().getInstitution());
@@ -625,7 +623,22 @@ public class BillBean {
 
             getBillItemFacade().edit(e.getBillItem());
 
+            System.err.println("1 " + e.getBillItem());
+            updateMatrix(e.getBillItem());
+
         }
+
+        calBillTotal(b);
+    }
+
+    private void calBillTotal(Bill b) {
+        String sql = "SELECT sum(b.feeValue) FROM BillFee b WHERE b.retired=false and b.bill=:bill ";
+        HashMap hm = new HashMap();
+        hm.put("bill", b);
+        double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
+
+        b.setNetTotal(val);
+        getBillFacade().edit(b);
     }
 
     public void saveBillItems(Bill b, BillEntry e, WebUser wu) {
@@ -660,6 +673,49 @@ public class BillBean {
             bf.setBill(b);
             getBillFeeFacade().create(bf);
         }
+
+    }
+
+    @EJB
+    private InwardCalculation inwardCalculation;
+
+    private void updateMatrix(BillItem billItem) {
+        double serviceValue = 0;
+        BillFee marginFee = null;
+        marginFee = getInwardCalculation().getBillFeeMatrix(billItem, billItem.getBill().getInstitution());
+        serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billItem);
+
+        double matrixValue = getInwardCalculation().calInwardMargin(billItem, serviceValue, billItem.getBill().getFromDepartment());
+        marginFee.setBill(billItem.getBill());
+        marginFee.setFeeValue(matrixValue);
+
+        if (marginFee.getId() != null) {
+            getBillFeeFacade().edit(marginFee);
+        }
+
+        if (marginFee.getId() == null && marginFee.getFeeValue() != 0) {
+            getBillFeeFacade().create(marginFee);
+        }
+
+        System.err.println("2 " + billItem);
+        calBillItemTotal(billItem);
+
+    }
+
+    private void calBillItemTotal(BillItem billItem) {
+        String sql = "SELECT sum(b.feeValue) "
+                + " FROM BillFee b "
+                + " WHERE b.retired=false "
+                + " and b.billItem=:bItm ";
+        HashMap hm = new HashMap();
+        hm.put("bItm", billItem);
+        double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
+
+        billItem.setNetValue(val);
+
+        System.err.println("3 " + billItem);
+        getBillItemFacade().edit(billItem);
+
     }
 
     private void savePatientInvestigation(BillEntry e, BillComponent bc, WebUser wu) {
@@ -1060,5 +1116,13 @@ public class BillBean {
 
         return "";
 
+    }
+
+    public InwardCalculation getInwardCalculation() {
+        return inwardCalculation;
+    }
+
+    public void setInwardCalculation(InwardCalculation inwardCalculation) {
+        this.inwardCalculation = inwardCalculation;
     }
 }

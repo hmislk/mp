@@ -809,9 +809,17 @@ public class CashSummeryControllerExcel implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select distinct(bi.item.category) FROM BillItem bi where bi.bill.institution=:ins and bi.bill.billType= :bTp "
-                + " and bi.bill.createdAt between :fromDate and :toDate and bi.item.department.institution=:ins2 "
-                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) order by bi.item.category.name";
+        sql = "select distinct(bi.item.category)"
+                + "  FROM BillItem bi where "
+                + " bi.bill.institution=:ins"
+                + "  and bi.bill.billType= :bTp "
+                + " and bi.bill.createdAt between :fromDate and :toDate "
+                + " and bi.item.department.institution=:ins2 "
+                + " and ( bi.bill.paymentMethod = :pm1 or"
+                + "   bi.bill.paymentMethod = :pm2 or"
+                + "   bi.bill.paymentMethod = :pm3 or  "
+                + " bi.bill.paymentMethod = :pm4) "
+                + " order by bi.item.category.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());
@@ -861,7 +869,8 @@ public class CashSummeryControllerExcel implements Serializable {
         sql = "select distinct(bi.item) FROM BillItem bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
                 + " and bi.item.category.id=" + d.getId() + " and  bi.bill.createdAt between :fromDate and :toDate "
                 + "and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
+                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)"
+                + " order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getInstitution());

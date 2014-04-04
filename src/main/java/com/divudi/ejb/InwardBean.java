@@ -113,7 +113,7 @@ public class InwardBean {
                 + "  and b.bill.billType=:btp ";
 
         if (forwardBill != null) {
-            sql += " and b.bill.forwardReferenceBill=:rB";
+            sql += " and b.bill.forwardReferenceBill=:fB";
             hm.put("fB", forwardBill);
         }
 

@@ -187,8 +187,9 @@ public class BillController implements Serializable {
                     + " and c.cancelledBill is null "
                     + " and c.refundedBill is null "
                     + " and c.retired=false "
-                    + " and ((upper(c.insId) like :q) or"
-                    + " (upper(c.patient.person.name) like :q )) "
+                    + " and (upper(c.insId) like :q or"
+                    + " upper(c.patient.person.name) like :q "
+                    + " or upper(c.creditCompany.name) like :q ) "
                     + " order by c.creditCompany.name";
             hash.put("btp", BillType.OpdBill);
             hash.put("pm", PaymentMethod.Credit);
@@ -208,7 +209,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
         if (qry != null) {
             sql = "select c from BilledBill c where "
-                    + " ((c.paidAmount+c.netTotal)< :val) "
+                    + " abs(c.netTotal)-abs(c.paidAmount))>:val "
                     + " and (c.billType= :btp1 or c.billType= :btp2  )"
                     + " and c.createdAt is not null "
                     + " and c.deptId is not null "
@@ -220,7 +221,7 @@ public class BillController implements Serializable {
             hash.put("btp1", BillType.PharmacyGrnBill);
             hash.put("btp2", BillType.PharmacyPurchaseBill);
             hash.put("pm", PaymentMethod.Credit);
-            hash.put("val", 0);
+            hash.put("val", 0.1);
             hash.put("q", "%" + qry.toUpperCase() + "%");
             //     hash.put("pm", PaymentMethod.Credit);
             a = getFacade().findBySQL(sql, hash, 10);
@@ -257,16 +258,46 @@ public class BillController implements Serializable {
         String sql;
         HashMap hash = new HashMap();
 
-        sql = "select c from BilledBill c where ((c.paidAmount+c.netTotal)< :val) "
+        sql = "select c from BilledBill c where "
+                + " abs(c.netTotal)-abs(c.paidAmount))>:val"
                 + " and (c.billType= :btp1 or c.billType= :btp2 )"
                 + " and c.createdAt is not null "
                 + " and c.deptId is not null "
-                + " and c.cancelledBill is null and "
-                + " c.retired=false and c.paymentMethod=:pm  and"
-                + " c.fromInstitution=:ins "
+                + " and c.cancelled=false"
+                + " and c.retired=false"
+                + " and c.paymentMethod=:pm  "
+                + " and c.fromInstitution=:ins "
                 + " order by c.id ";
         hash.put("btp1", BillType.PharmacyGrnBill);
         hash.put("btp2", BillType.PharmacyPurchaseBill);
+        hash.put("pm", PaymentMethod.Credit);
+        hash.put("val", 0.1);
+        hash.put("ins", institution);
+        //     hash.put("pm", PaymentMethod.Credit);
+        List<Bill> bill = getFacade().findBySQL(sql, hash);
+
+        if (bill == null) {
+            bill = new ArrayList<>();
+        }
+
+        return bill;
+    }
+    
+     public List<Bill> getCreditBills(Institution institution) {
+        String sql;
+        HashMap hash = new HashMap();
+
+        sql = "select c from BilledBill c  where"
+                + " abs(c.netTotal)-abs(c.paidAmount))>:val "
+                + " and c.billType= :btp"
+                + " and c.createdAt is not null "
+                + " and c.deptId is not null "
+                + " and c.cancelled=false"
+                + " and c.retired=false"
+                + " and c.paymentMethod=:pm  "
+                + " and c.fromInstitution=:ins "
+                + " order by c.id ";
+        hash.put("btp", BillType.OpdBill);
         hash.put("pm", PaymentMethod.Credit);
         hash.put("val", 0.1);
         hash.put("ins", institution);
@@ -283,10 +314,13 @@ public class BillController implements Serializable {
     public List<Bill> getBills(Date fromDate, Date toDate, BillType billType1, BillType billType2, Institution institution) {
         String sql;
         HashMap hm = new HashMap();
-        sql = "Select b From Bill b where b.retired=false and b.createdAt "
-                + "  between :frm and :to and "
-                + " (b.fromInstitution=:ins or b.toInstitution=:ins) "
-                + " and (b.billType=:tp1 or b.billType=:tp2)";
+        sql = "Select b From Bill b where"
+                + "  b.retired=false"
+                + "  and b.createdAt between :frm and :to"
+                + " and (b.fromInstitution=:ins "
+                + " or b.toInstitution=:ins) "
+                + " and (b.billType=:tp1"
+                + " or b.billType=:tp2)";
         hm.put("frm", fromDate);
         hm.put("to", toDate);
         hm.put("ins", institution);

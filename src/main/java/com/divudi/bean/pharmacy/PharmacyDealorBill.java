@@ -92,11 +92,11 @@ public class PharmacyDealorBill implements Serializable {
         return false;
     }
 
-   @EJB
-   CreditBean creditBean;
+    @EJB
+    CreditBean creditBean;
 
     public void selectListener() {
-        double grnReturnTotal =getCreditBean().getGrnReturnValue(getCurrentBillItem().getReferenceBill());
+        double grnReturnTotal = getCreditBean().getGrnReturnValue(getCurrentBillItem().getReferenceBill());
         getCurrentBillItem().getReferenceBill().setTmpReturnTotal(grnReturnTotal);
 
         double ballanceAmt = getCurrentBillItem().getReferenceBill().getNetTotal()
@@ -283,27 +283,25 @@ public class PharmacyDealorBill implements Serializable {
     }
 
     private boolean checkPaidAmount(BillItem tmp) {
-        double ballance, refBallance = 0;
 
-        //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
-        //System.err.println("GRN Value " + tmp.getReferenceBill().getNetTotal());
-        //System.err.println("GRN Return Value " + tmp.getReferenceBill().getTmpReturnTotal());
-        //System.err.println("Entered Amount " + tmp.getNetValue());
-        refBallance = tmp.getReferenceBill().getTmpReturnTotal() + tmp.getReferenceBill().getNetTotal() + tmp.getReferenceBill().getPaidAmount();
+        double ballance, refBallance = 0;
+        double neTotal = Math.abs(tmp.getReferenceBill().getNetTotal());
+        double paidAmt = Math.abs(tmp.getReferenceBill().getPaidAmount());
+        double returned = Math.abs(tmp.getReferenceBill().getTmpReturnTotal());
+        refBallance = neTotal - (paidAmt + returned);
 
         //System.err.println("refBallance " + refBallance);
         //   ballance=refBallance-tmp.getNetValue();
-        if (refBallance <= (0 - tmp.getNetValue())) {
+        if ((refBallance >= Math.abs(tmp.getNetValue())) || (Math.abs(tmp.getNetValue() - refBallance) < 0.1)) {
             return true;
         }
 
         return false;
     }
 
-   
     private void updateReferenceBill(BillItem tmp) {
         double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.GrnPayment);
-        
+
         tmp.getReferenceBill().setPaidAmount(0 - dbl);
         getBillFacade().edit(tmp.getReferenceBill());
 

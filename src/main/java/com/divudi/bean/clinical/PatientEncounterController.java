@@ -9,6 +9,8 @@
 package com.divudi.bean.clinical;
 
 import com.divudi.bean.*;
+import com.divudi.bean.pharmacy.PharmacySaleController;
+import com.divudi.data.inward.PatientEncounterType;
 import com.divudi.entity.clinical.ClinicalFindingItem;
 import com.divudi.entity.clinical.ClinicalFindingValue;
 import com.divudi.entity.PatientEncounter;
@@ -18,6 +20,7 @@ import com.divudi.facade.PatientEncounterFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +34,7 @@ import javax.enterprise.context.SessionScoped;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -45,24 +48,27 @@ public class PatientEncounterController implements Serializable {
     List<PatientEncounter> selectedItems;
     private PatientEncounter current;
     private List<PatientEncounter> items = null;
+    List<PatientEncounter> currentPatientEncounters;
     String selectText = "";
 
     ClinicalFindingItem diagnosis;
     String diagnosisComments;
     Investigation investigation;
-    
+
     ClinicalFindingValue removingCfv;
-    
-    public void addDx(){
-        if(diagnosis==null){
+    @Inject
+    PharmacySaleController pharmacySaleController;
+
+    public void addDx() {
+        if (diagnosis == null) {
             UtilityController.addErrorMessage("Please select a diagnosis");
             return;
         }
-        if(current==null){
+        if (current == null) {
             UtilityController.addErrorMessage("Please select a visit");
             return;
         }
-        ClinicalFindingValue dx=new ClinicalFindingValue();
+        ClinicalFindingValue dx = new ClinicalFindingValue();
         dx.setItemValue(diagnosis);
         dx.setClinicalFindingItem(diagnosis);
         dx.setEncounter(current);
@@ -71,33 +77,35 @@ public class PatientEncounterController implements Serializable {
         dx.setLobValue(diagnosisComments);
         current.getClinicalFindingValues().add(dx);
         getFacade().edit(current);
-        diagnosis=new ClinicalFindingItem();
+        diagnosis = new ClinicalFindingItem();
         diagnosisComments = "";
         UtilityController.addSuccessMessage("Diagnosis added");
-        current=getFacade().find(current.getId());
+        current = getFacade().find(current.getId());
     }
-    
-    
-    public List<PatientEncounter> completeAgency(String query) {
-        List<PatientEncounter> suggestions;
+
+    public List<PatientEncounter> getCurrentPatientEncounters() {
+        return currentPatientEncounters;
+    }
+
+    public void setCurrentPatientEncounters(List<PatientEncounter> currentPatientEncounters) {
+        this.currentPatientEncounters = currentPatientEncounters;
+    }
+
+    public void fillCurrentPatientEncounters() {
+        Map m = new HashMap();
+        m.put("p", current.getPatient());
+        m.put("pe", current);
         String sql;
-        if (query == null) {
-            suggestions = new ArrayList<>();
-        } else {
-            Map m = new HashMap();
-            sql = "select p from PatientEncounter p where p.retired=false and p.institutionType=:it and ((upper(p.name) like '%" + query.toUpperCase() + "%') or (upper(p.institutionCode) like '%" + query.toUpperCase() + "%') ) order by p.name";
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql, m);
-        }
-        return suggestions;
+        sql = "Select e from PatientEncounter e where e.patient=:p and e!=:pe order by e.id desc";
+        currentPatientEncounters = getFacade().findBySQL(sql, m);
     }
-    
-    public void removeCfv(){
-        if(current==null){
+
+    public void removeCfv() {
+        if (current == null) {
             UtilityController.addErrorMessage("No Patient Encounter");
             return;
         }
-        if(removingCfv==null){
+        if (removingCfv == null) {
             UtilityController.addErrorMessage("No Finding selected to remove");
             return;
         }
@@ -121,9 +129,6 @@ public class PatientEncounterController implements Serializable {
         this.investigation = investigation;
     }
 
-    
-    
-    
     public List<PatientEncounter> getSelectedItems() {
         selectedItems = getFacade().findBySQL("select c from PatientEncounter c where c.retired=false and i.institutionType = com.divudi.data.PatientEncounterType.Agency and upper(c.name) like '%" + getSelectText().toUpperCase() + "%' order by c.name");
         return selectedItems;
@@ -151,6 +156,7 @@ public class PatientEncounterController implements Serializable {
             getFacade().edit(current);
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
+            current.setDateTime(new Date());
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
@@ -158,6 +164,16 @@ public class PatientEncounterController implements Serializable {
         }
         recreateModel();
         getItems();
+    }
+
+    public String issueItems() {
+        if (current == null) {
+            return "";
+        }
+        getPharmacySaleController().setSearchedPatient(current.getPatient());
+//        getPharmacySaleController().getBill().setPatientEncounter(current);
+//        getPharmacySaleController().getBill().setPatient(current.getPatient());
+        return "pharmacy_retail_sale";
     }
 
     public void setSelectText(String selectText) {
@@ -189,6 +205,7 @@ public class PatientEncounterController implements Serializable {
 
     public void setCurrent(PatientEncounter current) {
         this.current = current;
+        fillCurrentPatientEncounters();
     }
 
     public void delete() {
@@ -213,11 +230,12 @@ public class PatientEncounterController implements Serializable {
     }
 
     public List<PatientEncounter> getItems() {
-        // items = getFacade().findAll("name", true);
-        String sql = "SELECT i FROM PatientEncounter i where i.retired=false and i.institutionType = com.divudi.data.PatientEncounterType.Agency order by i.name";
+        Map m = new HashMap();
+        m.put("pet", PatientEncounterType.OpdVisit);
+        String sql = "SELECT i FROM PatientEncounter i where i.retired=false order by i.id desc";
         items = getEjbFacade().findBySQL(sql);
         if (items == null) {
-            items = new ArrayList<PatientEncounter>();
+            items = new ArrayList<>();
         }
         return items;
     }
@@ -237,11 +255,15 @@ public class PatientEncounterController implements Serializable {
     public void setRemovingCfv(ClinicalFindingValue removingCfv) {
         this.removingCfv = removingCfv;
     }
-    
-    
-    
-    
-    
+
+    public PharmacySaleController getPharmacySaleController() {
+        return pharmacySaleController;
+    }
+
+    public void setPharmacySaleController(PharmacySaleController pharmacySaleController) {
+        this.pharmacySaleController = pharmacySaleController;
+    }
+
     /**
      *
      */

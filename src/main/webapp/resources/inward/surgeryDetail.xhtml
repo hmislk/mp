@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="procedure" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:panelGrid  columns="2" style="min-width: 100%!important;" rendered="#{cc.attrs.procedure!=null}" >            
+            <h:outputLabel   value="Surgery Name : " />
+            <h:outputLabel  value="#{cc.attrs.procedure.item.name}" />
+            <h:outputLabel   value="From Time : " />
+            <h:outputLabel value="#{cc.attrs.procedure.fromTime}">
+                <f:convertDateTime pattern="dd MMMM yyyy hh:mm"/>
+            </h:outputLabel>
+            <h:outputLabel   value="To Time : " />
+            <h:outputLabel value="#{cc.attrs.procedure.toTime}">
+                <f:convertDateTime pattern="dd MMMM yyyy hh:mm"/>
+            </h:outputLabel>
+        </h:panelGrid>
+    </cc:implementation>
+</html>

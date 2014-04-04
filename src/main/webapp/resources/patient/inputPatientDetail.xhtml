@@ -29,11 +29,7 @@
                 <f:selectItem itemLabel="Select Sex"/>
                 <f:selectItems value="#{enumController.sex}"/>
             </p:selectOneMenu>
-            <h:outputLabel value="Date of Birth"/>
-            <p:calendar  value="#{cc.attrs.patient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
-                <f:ajax event="dateSelect" execute="calNewPtDob" render="lblAge" />
-            </p:calendar>
-
+            
             <p:watermark value="YEAR" for="year" />
             <p:watermark value="MONTH" for="month" />
             <p:watermark value="DAYS" for="day" />
@@ -54,6 +50,11 @@
                 <br/>
                 <p:outputLabel value="#{cc.attrs.patient.age}" id="lblAge" ></p:outputLabel>
             </h:panelGroup>
+            <h:outputLabel value="Date of Birth"/>
+            <p:calendar  value="#{cc.attrs.patient.person.dob}" id="calNewPtDob"  navigator="true" pattern="dd/MM/yyyy" >
+                <f:ajax event="dateSelect" execute="calNewPtDob" render="lblAge" />
+            </p:calendar>
+            
             <h:outputLabel value="Address"/>
             <p:inputTextarea  value="#{cc.attrs.patient.person.address}"/>                                  
 

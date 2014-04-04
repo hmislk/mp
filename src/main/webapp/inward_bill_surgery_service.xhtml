@@ -16,7 +16,7 @@
         <h:panelGroup rendered="true" styleClass="opdPanel" >
             <h:form id="form">     
                 <p:panel rendered="#{!billBhtController.printPreview}">
-                    <p:commandButton id="btnSettle" value="Settle" action="#{billBhtController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                    <p:commandButton id="btnSettle" value="Settle" action="#{billBhtController.settleBillSurgery}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                     </p:commandButton>
                     <p:defaultCommand target="btnSettle"/>
 
@@ -27,28 +27,39 @@
                         <h:panelGrid columns="1" >
 
                             <h:panelGroup id="panelPatient" >
+
                                 <p:panel header="Patient Details">
-                                    <h:outputLabel value="Type Patinet Name or BHT : "/>
-                                    <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admis"
-                                                    value="#{billBhtController.patientEncounter}" 
-                                                    completeMethod="#{admissionController.completePatient}"
+                                    <h:outputLabel value="Type Surgery Name or BHT : "/>
+                                    <p:autoComplete forceSelection="true" 
+                                                    value="#{billBhtController.batchBill}" 
+                                                    completeMethod="#{billController.completeSurgeryBills}"
                                                     var="apt2" itemLabel="#{amp2.bhtNo}"
                                                     itemValue="#{apt2}" size="30"  style="width: 400px;">
-                                        <p:ajax event="itemSelect" process="acPt2" update="panSearch2"/>
-                                        <p:column >
-                                            <h:outputLabel value="#{apt2.bhtNo}"/> 
+                                        <p:ajax event="itemSelect" process="@this" update="panSearch1 panSearch2" listener="#{billBhtController.selectSurgeryBillListener()}"/>
+                                        <p:column headerText="Surgery Name">
+                                            <h:outputLabel value="#{apt2.procedure.item.name}"/> 
                                         </p:column>
-                                        <p:column >
-                                            <h:outputLabel value="#{apt2.patient.person.name}"/> 
+                                        <p:column headerText="BHT NO">
+                                            <h:outputLabel value="#{apt2.patientEncounter.bhtNo}"/> 
                                         </p:column>
-                                        <p:column>
-                                            <h:outputLabel value="#{apt2.currentPatientRoom.roomFacilityCharge.name}"/>
+                                        <p:column headerText="From Time" >
+                                            <h:outputLabel value="#{apt2.procedure.fromTime}">
+                                                <f:convertDateTime pattern="dd MMMM yyyy hh:mm"/>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="To Time" >
+                                            <h:outputLabel value="#{apt2.procedure.toTime}">
+                                                <f:convertDateTime pattern="dd MMMM yyyy hh:mm"/>
+                                            </h:outputLabel>
                                         </p:column>
                                     </p:autoComplete>  
 
-                                    <br/><br/>
+                                    <br/>
+                                    <h:panelGroup id="panSearch1">
+                                        <in:bhtDetail admission="#{billBhtController.batchBill.patientEncounter}"/>
+                                    </h:panelGroup>    <br/>                                
                                     <h:panelGroup id="panSearch2">
-                                        <in:bhtDetail admission="#{billBhtController.patientEncounter}"/>
+                                        <in:surgeryDetail procedure="#{billBhtController.batchBill.procedure}"/>
                                     </h:panelGroup>
                                 </p:panel>
                             </h:panelGroup>
@@ -60,36 +71,40 @@
 
 
                                 <p:panel id='pIxAdd' header="Items Requests"   >
-                                    <h:panelGrid columns="4">
-                                        <p:autoComplete  widgetVar="aIx" id="acIx" forceSelection="true" 
-                                                        value="#{billBhtController.currentBillItem.item}"
-                                                        completeMethod="#{itemController.completeItemWithoutPack}"
-                                                        var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" 
-                                                        size="30"  style="width: 400px;">
-                                            <p:column>
-                                                <h:outputLabel value="#{ix.name}"/>
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputLabel value="#{ix.department.name}"/>
-                                            </p:column>  
-                                            <p:column>
-                                                <h:outputLabel value="#{ix.total}" 
-                                                               rendered="#{ix.chargesVisibleForInward}"/>
-                                            </p:column>  
-                                            <p:ajax event="itemSelect" process="acIx" update="@all" />
-                                        </p:autoComplete>
+                                    <p:focus  context="acIx"/>
+                                    <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" 
+                                                    value="#{billBhtController.currentBillItem.item}"
+                                                    completeMethod="#{itemController.completeItemWithoutPack}"
+                                                    var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" 
+                                                    size="30"  style="width: 400px;">
+                                        <p:column>
+                                            <h:outputLabel value="#{ix.name}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{ix.department.name}"/>
+                                        </p:column>  
+                                        <p:column>
+                                            <h:outputLabel value="#{ix.total}" 
+                                                           rendered="#{ix.chargesVisibleForInward}"/>
+                                        </p:column>  
+                                        <f:ajax event="itemSelect" execute="acIx" render="txtQty" ></f:ajax>
+                                    </p:autoComplete>
 
-                                        <h:inputText id="txtQty"
-                                                     rendered="#{billBhtController.currentBillItem.item.requestForQuentity}"
-                                                     value="#{billBhtController.currentBillItem.qty}" >
-                                        </h:inputText>
-
-
-                                        <p:inputTextarea id="txtDesc" value="#{billBhtController.currentBillItem.descreption}" ></p:inputTextarea>
-                                        <p:commandButton id="btnAddIx" ajax="false" value="Add" action="#{billBhtController.addToBill()}"/>
+                                    <p:inputText id="txtQty"
+                                                 rendered="#{billBhtController.currentBillItem.item.requestForQuentity}"
+                                                 value="#{billBhtController.currentBillItem.qty}" >
+                                    </p:inputText>
 
 
-                                    </h:panelGrid>
+                                    <p:inputTextarea id="txtDesc" value="#{billBhtController.currentBillItem.descreption}" ></p:inputTextarea>
+                                    <h:commandButton id="btnAddIx" value="Add" action="#{billBhtController.addToBill()}">
+                                        <f:ajax execute="acIx btnAddIx" render="tblBillItem  pBillDetails pIxAdd" />
+                                    </h:commandButton> 
+
+
+                                    <p:watermark for="txtQty" value="Quentity" ></p:watermark>
+                                    <p:watermark for="txtDesc" value="Description" ></p:watermark>
+
                                 </p:panel>
                             </h:panelGroup>
 
@@ -99,7 +114,9 @@
                             <h:panelGroup id="panelBillItems" >
                                 <p:tabView id="tblBillItem" >
                                     <p:tab id="tabBillItems" title="Bill Items" >
-                                        <p:dataTable id="tblRequests" rowIndexVar="rowIndex" value="#{billBhtController.lstBillEntries}" var="bi" >
+                                        <p:dataTable id="tblRequests" rowIndexVar="rowIndex"
+                                                     value="#{billBhtController.lstBillEntries}" 
+                                                     var="bi" >
                                             <p:column>
                                                 <f:facet name="header">No</f:facet>
                                                 <h:outputLabel value="#{rowIndex+1}"/>

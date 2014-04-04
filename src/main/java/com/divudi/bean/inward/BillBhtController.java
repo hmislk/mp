@@ -13,6 +13,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
@@ -28,6 +29,7 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
+import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.facade.BatchBillFacade;
@@ -35,6 +37,7 @@ import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.FeeFacade;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import com.divudi.facade.ItemFeeFacade;
@@ -115,6 +118,7 @@ public class BillBhtController implements Serializable {
     private Integer index;
     private PatientEncounter patientEncounter;
     private PaymentScheme paymentScheme;
+    private Bill batchBill;
     /////////////////////
     private List<BillComponent> lstBillComponents;
     private List<BillFee> lstBillFees;
@@ -122,6 +126,10 @@ public class BillBhtController implements Serializable {
     private List<BillEntry> lstBillEntries;
     private boolean printPreview;
     private List<Bill> bills;
+
+    public void selectSurgeryBillListener() {
+        patientEncounter = getBatchBill().getPatientEncounter();
+    }
 
     public void makeNull() {
         total = 0.0;
@@ -141,6 +149,7 @@ public class BillBhtController implements Serializable {
         lstBillItems = null;
         lstBillEntries = null;
         printPreview = false;
+        batchBill = null;
     }
 
     public CommonFunctions getCommonFunctions() {
@@ -229,6 +238,24 @@ public class BillBhtController implements Serializable {
 
     }
 
+    public void settleBillSurgery() {
+        if (getBatchBill() == null) {
+            return;
+        }
+
+        if (getBatchBill().getProcedure() == null) {
+            return;
+        }
+
+        settleBill();
+        getBillBean().saveEncounterComponents(bills, batchBill, getSessionController().getLoggedUser());
+        getBillBean().updateBatchBill(getBatchBill());
+
+    }
+
+    @EJB
+    private EncounterComponentFacade encounterComponentFacade;
+
     private Bill saveBill(Department bt, BilledBill temp) {
 
         temp.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), bt, BillType.InwardBill));
@@ -236,6 +263,8 @@ public class BillBhtController implements Serializable {
         //getCurrent().setCashBalance(cashBalance);
         //getCurrent().setCashPaid(cashPaid);
         temp.setBillType(BillType.InwardBill);
+
+        getBillBean().setSurgeryData(temp, getBatchBill(), SurgeryBillType.Service);
 
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -320,31 +349,34 @@ public class BillBhtController implements Serializable {
 
         }
 
-        BillEntry addingEntry = new BillEntry();
-        addingEntry.setBillItem(getCurrentBillItem());
-        addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(getCurrentBillItem()));
-        System.err.println("Add To Bill");
-        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter(), getCurrentBillItem().getItem().getInstitution()));
-        addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
-        lstBillEntries.add(addingEntry);
-
-    //    getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
-
         if (getCurrentBillItem().getItem().isRequestForQuentity()) {
-            
+
         } else {
             getCurrentBillItem().setQty(1.0);
         }
 
-        
-        
-        getCurrentBillItem().setNetValue(getCurrentBillItem().getRate() * getCurrentBillItem().getQty()); // Price == Rate as Qty is 1 here
+        for (int i = 0; i < getCurrentBillItem().getQty(); i++) {
+            BillEntry addingEntry = new BillEntry();
+            BillItem billItem = new BillItem();
 
-        calTotals();
-        if (getCurrentBillItem().getNetValue() == 0.0) {
-            UtilityController.addErrorMessage("Please enter the rate");
-            return;
+            billItem.copy(currentBillItem);
+            billItem.setQty(1.0);
+            addingEntry.setBillItem(billItem);
+            addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(billItem));
+            System.err.println("Add To Bill");
+            addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(billItem, getPatientEncounter(), billItem.getItem().getInstitution()));
+            addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(billItem));
+            lstBillEntries.add(addingEntry);
+
+            billItem.setRate(getBillBean().billItemRate(addingEntry));
+
+            calTotals();
+            if (billItem.getNetValue() == 0.0) {
+                UtilityController.addErrorMessage("Please enter the rate");
+                return;
+            }
         }
+
         clearBillItemValues();
         //UtilityController.addSuccessMessage("Item Added");
     }
@@ -743,6 +775,22 @@ public class BillBhtController implements Serializable {
 
     public void setBillSearch(BillSearch billSearch) {
         this.billSearch = billSearch;
+    }
+
+    public Bill getBatchBill() {
+        return batchBill;
+    }
+
+    public void setBatchBill(Bill batchBill) {
+        this.batchBill = batchBill;
+    }
+
+    public EncounterComponentFacade getEncounterComponentFacade() {
+        return encounterComponentFacade;
+    }
+
+    public void setEncounterComponentFacade(EncounterComponentFacade encounterComponentFacade) {
+        this.encounterComponentFacade = encounterComponentFacade;
     }
 
     /**

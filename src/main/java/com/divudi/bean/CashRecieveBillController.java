@@ -47,11 +47,45 @@ public class CashRecieveBillController implements Serializable {
     private BillFacade billFacade;
     @EJB
     private BillItemFacade billItemFacade;
+    @Inject
+    private BillController billController;
     private BillItem currentBillItem;
     private BillItem removingItem;
     private List<BillItem> billItems;
-    private int index;
     private PaymentMethodData paymentMethodData;
+    private Institution institution;
+
+    public void makeNull() {
+        printPreview = false;
+        currentBillItem = null;
+        removingItem = null;
+        billItems = null;
+        paymentMethodData = null;
+        institution = null;
+    }
+
+    public void selectInstitutionListener() {
+        Institution ins = institution;
+        makeNull();
+
+        List<Bill> list = getBillController().getCreditBills(ins);
+        for (Bill b : list) {
+            getCurrentBillItem().setReferenceBill(b);
+            selectBillListener();
+            addToBill();
+        }
+    }
+    
+     public void changeNetValueListener(BillItem billItem) {
+
+//        if (!checkPaidAmount(billItem)) {
+//            billItem.setNetValue(0);
+////            UtilityController.addSuccessMessage("U cant add more than ballance");
+////            return;
+//        }
+
+        calTotal();
+    }
 
     public void selectBillListener() {
         double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
@@ -59,7 +93,6 @@ public class CashRecieveBillController implements Serializable {
     }
 
     public void remove() {
-        billItems.remove(index);
         calTotal();
     }
 
@@ -332,8 +365,6 @@ public class CashRecieveBillController implements Serializable {
         getBillFacade().edit(tmp.getReferenceBill());
 
     }
-    
-    
 
 //    private void updateReferenceBill(BillItem tmp) {
 //        double ballance, refBallance = 0;
@@ -360,7 +391,6 @@ public class CashRecieveBillController implements Serializable {
 //        getBillFacade().edit(tmp.getReferenceBill());
 //
 //    }
-
     public void recreateModel() {
         current = null;
         printPreview = false;
@@ -457,14 +487,6 @@ public class CashRecieveBillController implements Serializable {
         this.removingItem = removingItem;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public List<Bill> getCreditBills() {
         return creditBills;
     }
@@ -508,5 +530,21 @@ public class CashRecieveBillController implements Serializable {
 
     public void setCreditBean(CreditBean creditBean) {
         this.creditBean = creditBean;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public BillController getBillController() {
+        return billController;
+    }
+
+    public void setBillController(BillController billController) {
+        this.billController = billController;
     }
 }

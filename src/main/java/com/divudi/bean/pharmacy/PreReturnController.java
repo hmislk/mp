@@ -83,7 +83,6 @@ public class PreReturnController implements Serializable {
         generateBillComponent(BillType.PharmacyPre);
     }
 
-   
     public Bill getReturnBill() {
         if (returnBill == null) {
             returnBill = new RefundBill();
@@ -134,8 +133,10 @@ public class PreReturnController implements Serializable {
 
         getReturnBill().copy(getBill());
 
-        getReturnBill().setTotal(0 - getReturnBill().getTotal());
-        getReturnBill().setNetTotal(getReturnBill().getTotal());
+        double dbl = 0 - getReturnBill().getTotal();
+
+        getReturnBill().setTotal(dbl);
+        getReturnBill().setNetTotal(dbl);
 
         getReturnBill().setCreater(getSessionController().getLoggedUser());
         getReturnBill().setCreatedAt(Calendar.getInstance().getTime());

@@ -248,39 +248,13 @@ public class BillBhtController implements Serializable {
         }
 
         settleBill();
-        saveEncounterComponents();
+        getBillBean().saveEncounterComponents(bills, batchBill, getSessionController().getLoggedUser());
         getBillBean().updateBatchBill(getBatchBill());
 
     }
 
     @EJB
     private EncounterComponentFacade encounterComponentFacade;
-
-    private void saveEncounterComponent(BillFee bf) {
-        EncounterComponent ec = new EncounterComponent();
-        ec.setPatientEncounter(getBatchBill().getPatientEncounter());
-        ec.setChildEncounter(getBatchBill().getProcedure());
-        ec.setBillFee(bf);
-        ec.setBillItem(bf.getBillItem());
-        ec.setCreatedAt(Calendar.getInstance().getTime());
-        ec.setCreater(getSessionController().getLoggedUser());
-        ec.setPatientEncounter(getBatchBill().getProcedure());
-        if (ec.getBillFee() != null) {
-            ec.setStaff(ec.getBillFee().getStaff());
-        }
-
-        getEncounterComponentFacade().create(ec);
-
-    }
-
-    private void saveEncounterComponents() {
-        for (BillFee bf : getBillBean().getBillFeeFromBills(bills)) {
-
-            saveEncounterComponent(bf);
-
-        }
-
-    }
 
     private Bill saveBill(Department bt, BilledBill temp) {
 
@@ -289,9 +263,8 @@ public class BillBhtController implements Serializable {
         //getCurrent().setCashBalance(cashBalance);
         //getCurrent().setCashPaid(cashPaid);
         temp.setBillType(BillType.InwardBill);
-        if (batchBill != null) {
-            temp.setSurgeryBillType(SurgeryBillType.Service);
-        }
+
+        getBillBean().setSurgeryData(temp, getBatchBill(), SurgeryBillType.Service);
 
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -301,8 +274,6 @@ public class BillBhtController implements Serializable {
 
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
-
-        temp.setForwardReferenceBill(batchBill);
 
         temp.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         temp.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -378,28 +349,34 @@ public class BillBhtController implements Serializable {
 
         }
 
-        BillEntry addingEntry = new BillEntry();
-        addingEntry.setBillItem(getCurrentBillItem());
-        addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(getCurrentBillItem()));
-        System.err.println("Add To Bill");
-        addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(getCurrentBillItem(), getPatientEncounter(), getCurrentBillItem().getItem().getInstitution()));
-        addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(getCurrentBillItem()));
-        lstBillEntries.add(addingEntry);
-
-        //    getCurrentBillItem().setRate(getBillBean().billItemRate(addingEntry));
         if (getCurrentBillItem().getItem().isRequestForQuentity()) {
 
         } else {
             getCurrentBillItem().setQty(1.0);
         }
 
-        getCurrentBillItem().setNetValue(getCurrentBillItem().getRate() * getCurrentBillItem().getQty()); // Price == Rate as Qty is 1 here
+        for (int i = 0; i < getCurrentBillItem().getQty(); i++) {
+            BillEntry addingEntry = new BillEntry();
+            BillItem billItem = new BillItem();
 
-        calTotals();
-        if (getCurrentBillItem().getNetValue() == 0.0) {
-            UtilityController.addErrorMessage("Please enter the rate");
-            return;
+            billItem.copy(currentBillItem);
+            billItem.setQty(1.0);
+            addingEntry.setBillItem(billItem);
+            addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(billItem));
+            System.err.println("Add To Bill");
+            addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(billItem, getPatientEncounter(), billItem.getItem().getInstitution()));
+            addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(billItem));
+            lstBillEntries.add(addingEntry);
+
+            billItem.setRate(getBillBean().billItemRate(addingEntry));
+
+            calTotals();
+            if (billItem.getNetValue() == 0.0) {
+                UtilityController.addErrorMessage("Please enter the rate");
+                return;
+            }
         }
+
         clearBillItemValues();
         //UtilityController.addSuccessMessage("Item Added");
     }

@@ -71,6 +71,9 @@
                                         <p:menuitem  ajax="false"  action="inward_bill_surgery" value="Add Surgeries"
                                                      actionListener="#{surgeryBillController.makeNull()}"
                                                      rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>   
+                                                       <p:menuitem  ajax="false"  action="inward_bill_surgery_service" value="Add Service To Surgery"
+                                                     actionListener="#{surgeryBillController.makeNull()}"
+                                                     rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                         
                                         <p:menuitem ajax="false" action="inward_search_surgery" value="Search" actionListener="#{searchController.makeListNull}" />
                                     </p:submenu>
                                     <p:submenu label="Professional Charges" >

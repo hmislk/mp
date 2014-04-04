@@ -13,27 +13,25 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid  columns="2" rendered="#{cc.attrs.admission!=null}" >
-            <p:outputLabel   value="BHT NO" />
-            <p:outputLabel  value="#{cc.attrs.admission.bhtNo}" />
-            <p:outputLabel   value="Room" />
-            <p:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomFacilityCharge.name}" />
-            <p:outputLabel   value="Name:" />
-            <p:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" />
-            <p:outputLabel   value="Age" />
-            <p:outputLabel value="#{cc.attrs.admission.patient.age}" />
-            <p:outputLabel  value="DOB"  />
+        <h:panelGrid  columns="2" style="min-width: 100%!important;" rendered="#{cc.attrs.admission!=null}" >
+            <h:outputLabel   value="BHT NO : " />
+            <h:outputLabel  value="#{cc.attrs.admission.bhtNo}" />
+            <h:outputLabel   value="Room : " />
+            <h:outputLabel  value="#{cc.attrs.admission.currentPatientRoom.roomFacilityCharge.name}" />
+            <h:outputLabel   value="Name : " />
+            <h:outputLabel  value="#{cc.attrs.admission.patient.person.nameWithTitle}" />
+            <h:outputLabel   value="Age : " />
+            <h:outputLabel value="#{cc.attrs.admission.patient.age}" />
+            <h:outputLabel  value="DOB : "  />
             <p:outputLabel value="#{cc.attrs.admission.patient.person.dob}"   >
                 <f:convertDateTime pattern="dd/MM/yy" />
-            </p:outputLabel>
-            <p:outputLabel   value="Age" />
-            <p:outputLabel value="#{cc.attrs.admission.patient.age}" />
-            <p:outputLabel  value="Adress" />
-            <p:outputLabel  value="#{cc.attrs.admission.patient.person.address}" />
-            <p:outputLabel  value="Date of Admission"  />
-            <p:outputLabel value="#{cc.attrs.admission.dateOfAdmission}"   >
+            </p:outputLabel>           
+            <h:outputLabel  value="Adress : " />
+            <h:outputLabel  value="#{cc.attrs.admission.patient.person.address}" />
+            <h:outputLabel  value="Date of Admission : "  />
+            <h:outputLabel value="#{cc.attrs.admission.dateOfAdmission}"   >
                 <f:convertDateTime pattern="dd/MM/yy" />
-            </p:outputLabel>
-        </p:panelGrid>
+            </h:outputLabel>
+        </h:panelGrid>
     </cc:implementation>
 </html>

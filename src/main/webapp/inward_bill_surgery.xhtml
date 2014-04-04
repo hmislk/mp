@@ -68,11 +68,11 @@
                                     </p:autoComplete>
                                     <h:outputLabel value="Start Time" >
                                     </h:outputLabel>
-                                    <p:calendar value="#{surgeryBillController.batchBill.procedure.fromTime}" pattern="dd MMMM yyyy hh:mm" >
+                                    <p:calendar value="#{surgeryBillController.batchBill.procedure.fromTime}" pattern="dd MMMM yyyy hh mm a">
                                     </p:calendar>
                                     <h:outputLabel value="End Time" >
                                     </h:outputLabel>
-                                    <p:calendar value="#{surgeryBillController.batchBill.procedure.toTime}" pattern="dd MMMM yyyy hh:mm" >
+                                    <p:calendar value="#{surgeryBillController.batchBill.procedure.toTime}" pattern="dd MMMM yyyy hh mm a" >
                                     </p:calendar>
                                 </p:panelGrid>
                             </p:panel>

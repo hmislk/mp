@@ -502,7 +502,7 @@ public class BhtSummeryController implements Serializable {
         createPatientItems();
         createIssueTable();
         createStoreTable();
-        createDepartmentBillItems();
+        getInwardBean().createDepartmentBillItems(patientEncounter,null);
         createAdditionalChargeBill();
         createProfesionallFee();
         createPaymentBill();
@@ -811,75 +811,6 @@ public class BhtSummeryController implements Serializable {
     private DepartmentFacade departmentFacade;
     @EJB
     private ItemFacade itemFacade;
-
-    private double calBillItemCount(Bill bill, Item item) {
-        String sql = "SELECT  count(b) FROM BillItem b "
-                + " WHERE b.retired=false "
-                + "  and b.bill.billType=:btp "
-                + " and b.bill.patientEncounter=:pe "
-                + " and b.item=:itm "
-                + " and type(b.bill)=:cls";
-        HashMap hm = new HashMap();
-        hm.put("btp", BillType.InwardBill);
-        hm.put("pe", getPatientEncounter());
-        hm.put("itm", item);
-        hm.put("cls", bill.getClass());
-        double dbl = getBillItemFacade().countBySql(sql, hm, TemporalType.TIME);
-
-        return dbl;
-    }
-
-    private List<DepartmentBillItems> createDepartmentBillItems() {
-        departmentBillItems = new ArrayList<>();
-
-        String sql;
-        HashMap hm;
-
-        sql = "SELECT  distinct(b.bill.toDepartment) FROM BillItem b WHERE "
-                + "  b.retired=false  and b.bill.billType=:btp and"
-                + " Type(b.item)!=TimedItem  and b.bill.patientEncounter=:pe ";
-        hm = new HashMap();
-        hm.put("btp", BillType.InwardBill);
-        hm.put("pe", getPatientEncounter());
-
-        List<Department> deptList = getDepartmentFacade().findBySQL(sql, hm, TemporalType.TIME);
-        hm.clear();
-
-        for (Department dep : deptList) {
-            DepartmentBillItems table = new DepartmentBillItems();
-            sql = "SELECT  distinct(b.item) FROM BillItem b WHERE b.retired=false"
-                    + "  and b.bill.billType=:btp and"
-                    + " Type(b.item)!=TimedItem  and "
-                    + " b.bill.patientEncounter=:pe and"
-                    + " b.bill.toDepartment=:dep"
-                    + "  order by b.item.name ";
-            hm = new HashMap();
-            hm.put("btp", BillType.InwardBill);
-            hm.put("pe", getPatientEncounter());
-            hm.put("dep", dep);
-            List<Item> items = getItemFacade().findBySQL(sql, hm, TemporalType.TIME);
-
-            for (Item itm : items) {
-                double billed = calBillItemCount(new BilledBill(), itm);
-                double cancelld = calBillItemCount(new CancelledBill(), itm);
-                double refund = calBillItemCount(new RefundBill(), itm);
-                System.err.println("Billed " + billed);
-                System.err.println("Cancelled " + cancelld);
-                System.err.println("Refun " + refund);
-                itm.setTransBillItemCount(billed - (cancelld + refund));
-            }
-
-            table.setDepartment(dep);
-            table.setItems(items);
-
-            departmentBillItems.add(table);
-
-        }
-
-//        calServiceTot(departmentBillItems);
-        return departmentBillItems;
-
-    }
 
     public void createIssueTable() {
         pharmacyIssues = new ArrayList<>();
@@ -1547,7 +1478,7 @@ public class BhtSummeryController implements Serializable {
 
     public List<DepartmentBillItems> getDepartmentBillItems() {
         if (departmentBillItems == null) {
-            departmentBillItems = createDepartmentBillItems();
+            departmentBillItems = getInwardBean().createDepartmentBillItems(patientEncounter, null);
         }
         return departmentBillItems;
     }

@@ -51,9 +51,15 @@
                                 <f:convertDateTime pattern="dd/MM/yy"/>
                             </h:outputLabel>
                         </div>
+                        
+                        <div class="BillDate">
+                            <h:outputLabel value="Name of Gurdian: ">
+                            </h:outputLabel>
 
-                      
-
+                            <h:outputLabel value="#{cc.attrs.admission.guardian.name}" >
+                                <f:convertDateTime pattern="dd/MM/yy"/>
+                            </h:outputLabel>
+                        </div>
 
                     </div>
                 </h:panelGroup>

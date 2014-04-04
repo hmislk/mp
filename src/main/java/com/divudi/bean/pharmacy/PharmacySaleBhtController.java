@@ -13,13 +13,14 @@ import com.divudi.data.BillType;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.data.inward.InwardChargeType;
+import com.divudi.data.inward.SurgeryBillType;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
-import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import com.divudi.entity.Patient;
@@ -49,7 +50,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -118,6 +118,29 @@ public class PharmacySaleBhtController implements Serializable {
     List<Item> itemsWithoutStocks;
     /////////////////////////
     private UserStockContainer userStockContainer;
+
+    private Bill batchBill;
+    @EJB
+    private BillBean billBean;
+
+    public void selectSurgeryBillListener() {
+        patientEncounter = getBatchBill().getPatientEncounter();
+    }
+
+    public void settleSurgeryBhtIssue() {
+        if (getBatchBill() == null) {
+            return;
+        }
+
+        if (getBatchBill().getProcedure() == null) {
+            return;
+        }
+
+        settlePharmacyBhtIssue();
+        getBillBean().saveEncounterComponents(getPrintBill(), getBatchBill(), getSessionController().getLoggedUser());
+        getBillBean().updateBatchBill(getBatchBill());
+
+    }
 
     public void makeNull() {
         selectedAlternative = null;
@@ -382,6 +405,8 @@ public class PharmacySaleBhtController implements Serializable {
 
         getPreBill().setFromDepartment(currentBhtDepartment);
         getPreBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
+
+        getBillBean().setSurgeryData(getPreBill(), getBatchBill(), SurgeryBillType.PharmacyItem);
 
         getBillFacade().create(getPreBill());
 
@@ -1003,6 +1028,22 @@ public class PharmacySaleBhtController implements Serializable {
 
     public void setInwardCalculation(InwardCalculation inwardCalculation) {
         this.inwardCalculation = inwardCalculation;
+    }
+
+    public Bill getBatchBill() {
+        return batchBill;
+    }
+
+    public void setBatchBill(Bill batchBill) {
+        this.batchBill = batchBill;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
     }
 
 }

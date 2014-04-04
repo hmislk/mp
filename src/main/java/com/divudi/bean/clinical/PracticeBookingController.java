@@ -199,6 +199,7 @@ public class PracticeBookingController implements Serializable {
         opdVisit.setPatient(getBillSession().getBill().getPatient());
         opdVisit.setPatientEncounterType(PatientEncounterType.OpdVisit);
         opdVisit.setBillSession(billSession);
+        opdVisit.setOpdDoctor(doctor);
         getPatientEncounterFacade().create(opdVisit);
     }
 

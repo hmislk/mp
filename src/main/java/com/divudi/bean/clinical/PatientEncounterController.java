@@ -11,11 +11,14 @@ package com.divudi.bean.clinical;
 import com.divudi.bean.*;
 import com.divudi.bean.pharmacy.PharmacySaleController;
 import com.divudi.data.inward.PatientEncounterType;
+import com.divudi.entity.Department;
+import com.divudi.entity.Doctor;
+import com.divudi.entity.Institution;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.clinical.ClinicalFindingItem;
 import com.divudi.entity.clinical.ClinicalFindingValue;
-import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.lab.Investigation;
-import java.util.TimeZone;
+import com.divudi.facade.ClinicalFindingItemFacade;
 import com.divudi.facade.PatientEncounterFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,12 +27,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Named;
+import java.util.TimeZone;
 import javax.ejb.EJB;
-
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  *
@@ -45,6 +47,8 @@ public class PatientEncounterController implements Serializable {
     SessionController sessionController;
     @EJB
     private PatientEncounterFacade ejbFacade;
+    @EJB
+    ClinicalFindingItemFacade clinicalFindingItemFacade;
     List<PatientEncounter> selectedItems;
     private PatientEncounter current;
     private List<PatientEncounter> items = null;
@@ -58,6 +62,36 @@ public class PatientEncounterController implements Serializable {
     ClinicalFindingValue removingCfv;
     @Inject
     PharmacySaleController pharmacySaleController;
+
+    Date fromDate;
+    Date toDate;
+    Institution institution;
+    Department department;
+    Doctor doctor;
+
+    public String listAllEncounters() {
+        String jpql;
+        Map m = new HashMap();
+        jpql = "select pe from PatientEncounter pe where pe.retired=false and pe.createdAt between :fd and :td ";
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        if (institution != null) {
+            jpql = jpql + " and pe.department.institution=:ins ";
+            m.put("ins", institution);
+
+        } else if (department != null) {
+            jpql = jpql + " and pe.department=:dep ";
+            m.put("dep", department);
+        }
+        if (doctor != null) {
+            jpql = jpql + " and pe.opdDoctor=:doc ";
+            m.put("doc", doctor);
+        }
+        System.out.println("m = " + m);
+        System.out.println("sql = " + jpql);
+        items = getFacade().findBySQL(jpql, m);
+        return "/clinical/clinical_reports_all_opd_visits";
+    }
 
     public void addDx() {
         if (diagnosis == null) {
@@ -110,6 +144,7 @@ public class PatientEncounterController implements Serializable {
             return;
         }
         current.getClinicalFindingValues().remove(removingCfv);
+        saveSelected();
         UtilityController.addSuccessMessage("Removed");
     }
 
@@ -151,12 +186,13 @@ public class PatientEncounterController implements Serializable {
     }
 
     public void saveSelected() {
-
+        current.setDateTime(new Date());
+        current.setDepartment(sessionController.getDepartment());
         if (getCurrent().getId() != null && getCurrent().getId() > 0) {
             getFacade().edit(current);
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
-            current.setDateTime(new Date());
+
             current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             current.setCreater(getSessionController().getLoggedUser());
             getFacade().create(current);
@@ -173,7 +209,7 @@ public class PatientEncounterController implements Serializable {
         getPharmacySaleController().setSearchedPatient(current.getPatient());
 //        getPharmacySaleController().getBill().setPatientEncounter(current);
 //        getPharmacySaleController().getBill().setPatient(current.getPatient());
-        return "pharmacy_retail_sale";
+        return "/pharmacy_retail_sale";
     }
 
     public void setSelectText(String selectText) {
@@ -264,7 +300,60 @@ public class PatientEncounterController implements Serializable {
         this.pharmacySaleController = pharmacySaleController;
     }
 
-    /**
-     *
-     */
+    public Date getFromDate() {
+        if (fromDate == null) {
+            fromDate = new Date();
+        }
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        if (toDate == null) {
+            toDate = new Date();
+        }
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public ClinicalFindingItemFacade getClinicalFindingItemFacade() {
+        return clinicalFindingItemFacade;
+    }
+
+    public void setClinicalFindingItemFacade(ClinicalFindingItemFacade clinicalFindingItemFacade) {
+        this.clinicalFindingItemFacade = clinicalFindingItemFacade;
+    }
+
+
+
 }

@@ -23,6 +23,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -92,7 +93,6 @@ public class PatientEncounter implements Serializable {
     Date dateOfDischarge;
     double creditLimit;
     double creditUsedAmount;
-    private double creditPaidAmount;
     @Enumerated(EnumType.STRING)
     PatientEncounterType patientEncounterType;
     @OneToMany(mappedBy = "parentEncounter")
@@ -109,8 +109,12 @@ public class PatientEncounter implements Serializable {
     private boolean paymentFinalized;
     String referanceNo;
     String policyNo;
+    @Lob
+    String comments;
     @Transient
     List<ClinicalFindingValue> diagnosis;
+    @ManyToOne
+    Department department;
 
     @Transient
     List<ClinicalFindingValue> investigations;
@@ -572,19 +576,22 @@ public class PatientEncounter implements Serializable {
         this.opdDoctor = opdDoctor;
     }
 
-//    public PatientEncounter getReferencePatientEncounter() {
-//        return referencePatientEncounter;
-//    }
-//
-//    public void setReferencePatientEncounter(PatientEncounter referencePatientEncounter) {
-//        this.referencePatientEncounter = referencePatientEncounter;
-//    }
-
-    public double getCreditPaidAmount() {
-        return creditPaidAmount;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setCreditPaidAmount(double creditPaidAmount) {
-        this.creditPaidAmount = creditPaidAmount;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    
+    
 }

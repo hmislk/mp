@@ -49,7 +49,7 @@
                             <p:autoComplete widgetVar="aIx" id="acIx" 
                                             forceSelection="true" 
                                             value="#{cashRecieveBillController.institution}" 
-                                            completeMethod="#{instiutionController.completeCreditCompany}" 
+                                            completeMethod="#{institutionController.completeCreditCompany}" 
                                             var="ix" itemLabel="#{ix.name}"
                                             itemValue="#{ix}" size="30"  style="width: 400px;">
                                 <p:column>
@@ -58,15 +58,24 @@
                                 <p:column>
                                     <h:outputLabel value="#{ix.institutionCode}"/>
                                 </p:column>
-                                <f:ajax execute="@this" event="itemSelect" render=":#{p:component('items')} tot" 
+                                <f:ajax execute="@this" event="itemSelect" render="#{p:component('items')} tot" 
                                         listener="#{cashRecieveBillController.selectInstitutionListener()}"/>
                             </p:autoComplete>                           
                         </h:panelGroup>
                         <p:dataTable value="#{cashRecieveBillController.billItems}"
-                                     rowIndexVar="rowIndex"   var="b" id="items">
+                                     rowIndexVar="rowIndex"   var="b" id="items"
+                                     rowKey="#{b.searialNo}" selection="#{cashRecieveBillController.selectedBillItems}">
                             <f:facet name="header">
-                                <h:outputLabel value="Items For Billing"/>
-                            </f:facet>                           
+                                <h:outputLabel value="Paying Institution : "/>
+                                <h:outputLabel value="#{cashRecieveBillController.institution.name}"/>
+                                <p:commandButton ajax="false" action="#{cashRecieveBillController.removeAll()}" value="Remove Selected"/>
+                            </f:facet>       
+
+                            <p:column selectionMode="multiple" />                                        
+                            <f:facet name="header">
+                                <h:outputLabel value="Index No"/>                                  
+                            </f:facet>                              
+                                                      
                             <p:column >  
                                 <f:facet name="header">
                                     <h:outputLabel value="Bill No"/>                                    
@@ -76,18 +85,26 @@
                             <p:column headerText="Patient Name">
                                 <p:outputLabel value="#{b.referenceBill.patient.person.name}"/>                               
                             </p:column>
-                            <p:column headerText="Credit Company">     
-                                <p:outputLabel value="#{b.referenceBill.creditCompany.name}" />                                
+                            <p:column headerText="Value">
+                                <p:outputLabel value="#{b.referenceBill.netTotal}">  
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
                             </p:column>
+                            <p:column headerText="Paid">
+                                <p:outputLabel value="#{b.referenceBill.paidAmount}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                            </p:column>
+
                             <p:column headerText="Net Total">
                                 <p:inputText value="#{b.netValue}">
                                     <f:convertNumber pattern="#,000.00" />
-                                     <f:ajax event="blur" execute="@this" render="@all" 
-                                             listener="#{cashRecieveBillController.changeNetValueListener(b)}"/>
+                                    <f:ajax event="blur" execute="@this" render="@all" 
+                                            listener="#{cashRecieveBillController.changeNetValueListener(b)}"/>
                                 </p:inputText>
                             </p:column>
                             <p:column headerText="Remove">
-                                <p:commandButton ajax="false" action="#{cashRecieveBillController.remove}" value="X">
+                                <p:commandButton ajax="false" action="#{cashRecieveBillController.remove(b)}" value="X">
                                 </p:commandButton>
                             </p:column>
                         </p:dataTable>

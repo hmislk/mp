@@ -63,7 +63,7 @@
                                     <h:panelGrid columns="4">
                                         <p:autoComplete  widgetVar="aIx" id="acIx" forceSelection="true" 
                                                         value="#{billBhtController.currentBillItem.item}"
-                                                        completeMethod="#{itemController.completeItemWithoutPack}"
+                                                        completeMethod="#{itemController.completeInwardItems}"
                                                         var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" 
                                                         size="30"  style="width: 400px;">
                                             <p:column>

@@ -181,7 +181,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
         if (qry != null) {
             sql = "select c from BilledBill c "
-                    + " where (abs(c.netTotal)-abs(c.paidAmount))>:val "
+                    + " where abs(c.netTotal)-abs(c.paidAmount)>:val "
                     + " and c.billType= :btp "
                     + " and c.paymentMethod= :pm "
                     + " and c.cancelledBill is null "
@@ -209,7 +209,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
         if (qry != null) {
             sql = "select c from BilledBill c where "
-                    + " abs(c.netTotal)-abs(c.paidAmount))>:val "
+                    + " abs(c.netTotal)-abs(c.paidAmount)>:val "
                     + " and (c.billType= :btp1 or c.billType= :btp2  )"
                     + " and c.createdAt is not null "
                     + " and c.deptId is not null "
@@ -259,7 +259,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
 
         sql = "select c from BilledBill c where "
-                + " abs(c.netTotal)-abs(c.paidAmount))>:val"
+                + " abs(c.netTotal)-abs(c.paidAmount)>:val"
                 + " and (c.billType= :btp1 or c.billType= :btp2 )"
                 + " and c.createdAt is not null "
                 + " and c.deptId is not null "
@@ -288,14 +288,14 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
 
         sql = "select c from BilledBill c  where"
-                + " abs(c.netTotal)-abs(c.paidAmount))>:val "
+                + " abs(c.netTotal)-abs(c.paidAmount)>:val "
                 + " and c.billType= :btp"
                 + " and c.createdAt is not null "
                 + " and c.deptId is not null "
                 + " and c.cancelled=false"
                 + " and c.retired=false"
                 + " and c.paymentMethod=:pm  "
-                + " and c.fromInstitution=:ins "
+                + " and c.creditCompany=:ins "
                 + " order by c.id ";
         hash.put("btp", BillType.OpdBill);
         hash.put("pm", PaymentMethod.Credit);

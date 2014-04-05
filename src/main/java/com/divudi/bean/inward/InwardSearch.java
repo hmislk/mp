@@ -581,10 +581,6 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
-            if (cancelBillPayment(getBill().getReferenceBill())) {
-                return;
-            }
-
             CancelledBill cb = createCancelBill();
             //Copy & paste
             getBillFacade().create(cb);
@@ -594,6 +590,7 @@ public class InwardSearch implements Serializable {
             getBillFacade().edit((BilledBill) getBill());
 
             getBill().getPatientEncounter().setPaymentFinalized(false);
+            getBill().getPatientEncounter().setCreditUsedAmount(0);
             getPatientEncounterFacade().edit(getBill().getPatientEncounter());
 
             UtilityController.addSuccessMessage("Cancelled");

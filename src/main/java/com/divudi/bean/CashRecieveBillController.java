@@ -52,6 +52,7 @@ public class CashRecieveBillController implements Serializable {
     private BillItem currentBillItem;
     private BillItem removingItem;
     private List<BillItem> billItems;
+    private List<BillItem> selectedBillItems;
     private PaymentMethodData paymentMethodData;
     private Institution institution;
 
@@ -68,32 +69,69 @@ public class CashRecieveBillController implements Serializable {
         Institution ins = institution;
         makeNull();
 
+        System.err.println("Select Listener");
         List<Bill> list = getBillController().getCreditBills(ins);
+        System.err.println("Size "+list.size());
         for (Bill b : list) {
             getCurrentBillItem().setReferenceBill(b);
             selectBillListener();
             addToBill();
         }
     }
-    
-     public void changeNetValueListener(BillItem billItem) {
 
-//        if (!checkPaidAmount(billItem)) {
-//            billItem.setNetValue(0);
-////            UtilityController.addSuccessMessage("U cant add more than ballance");
-////            return;
-//        }
+    public void changeNetValueListener(BillItem billItem) {
 
+        if (!isPaidAmountOk(billItem)) {
+            billItem.setNetValue(0);
+//            UtilityController.addSuccessMessage("U cant add more than ballance");
+//            return;
+        }
         calTotal();
+    }
+
+    private boolean isPaidAmountOk(BillItem tmp) {
+
+        double refBallance = getReferenceBallance(tmp);
+        double netValue = Math.abs(tmp.getNetValue());
+
+        System.err.println("RefBallance " + refBallance);
+        System.err.println("Net Value " + tmp.getNetValue());
+
+        if (refBallance >= netValue) {
+            System.err.println("1");
+            return true;
+        }
+
+        if (netValue - refBallance < 0.1) {
+            System.err.println("2");
+            return true;
+        }
+        return false;
+    }
+
+    private double getReferenceBallance(BillItem billItem) {
+        double refBallance = 0;
+        double neTotal = Math.abs(billItem.getReferenceBill().getNetTotal());
+        double paidAmt = Math.abs(getCreditBean().getPaidAmount(billItem.getReferenceBill(), BillType.CashRecieveBill));
+
+        refBallance = neTotal - (paidAmt);
+
+        return refBallance;
     }
 
     public void selectBillListener() {
-        double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
-        getCurrentBillItem().setNetValue(dbl);
+        double dbl = getReferenceBallance(getCurrentBillItem());
+
+        System.err.println("Ballance Amount " + dbl);
+        if (dbl > 0.1) {
+            getCurrentBillItem().setNetValue(dbl);
+        }
+
     }
 
-    public void remove() {
-        calTotal();
+    public void remove(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
+        calTotalWithResetingIndex();
     }
 
     private boolean errorCheckForAdding() {
@@ -102,7 +140,7 @@ public class CashRecieveBillController implements Serializable {
             return true;
         }
 
-        double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
+        double dbl = getReferenceBallance(getCurrentBillItem());
 
         if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
             UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
@@ -147,11 +185,6 @@ public class CashRecieveBillController implements Serializable {
         return false;
     }
 
-    public void remove(BillItem billItem) {
-        getBillItems().remove(billItem.getSearialNo());
-        calTotalWithResetingIndex();
-    }
-
     public void calTotalWithResetingIndex() {
         double n = 0.0;
         int index = 0;
@@ -172,6 +205,7 @@ public class CashRecieveBillController implements Serializable {
         //     getCurrentBillItem().getBill().setNetTotal(getCurrentBillItem().getNetValue());
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
+        getCurrentBillItem().setSearialNo(getBillItems().size());
         getBillItems().add(getCurrentBillItem());
 
         currentBillItem = null;
@@ -333,6 +367,15 @@ public class CashRecieveBillController implements Serializable {
         return tmp;
     }
 
+    public void removeAll() {
+        for (BillItem b : selectedBillItems) {
+            remove(b);
+        }
+
+        //  calTotalWithResetingIndex();
+        selectedBillItems = null;
+    }
+
     private void saveBhtBillItem(Bill b) {
         BillItem temBi = new BillItem();
         temBi.setBill(b);
@@ -397,7 +440,7 @@ public class CashRecieveBillController implements Serializable {
         currentBillItem = null;
         paymentMethodData = null;
         billItems = null;
-
+        selectedBillItems = null;
     }
 
     public String prepareNewBill() {
@@ -546,5 +589,16 @@ public class CashRecieveBillController implements Serializable {
 
     public void setBillController(BillController billController) {
         this.billController = billController;
+    }
+
+    public List<BillItem> getSelectedBillItems() {
+        if (selectedBillItems == null) {
+            selectedBillItems = new ArrayList<>();
+        }
+        return selectedBillItems;
+    }
+
+    public void setSelectedBillItems(List<BillItem> selectedBillItems) {
+        this.selectedBillItems = selectedBillItems;
     }
 }

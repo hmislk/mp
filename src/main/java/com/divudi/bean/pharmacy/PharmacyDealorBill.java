@@ -75,7 +75,7 @@ public class PharmacyDealorBill implements Serializable {
             return true;
         }
 
-        if (!checkPaidAmount(getCurrentBillItem())) {
+        if (!isPaidAmountOk(getCurrentBillItem())) {
             UtilityController.addSuccessMessage("U cant add more than ballance");
             return true;
         }
@@ -95,17 +95,24 @@ public class PharmacyDealorBill implements Serializable {
     @EJB
     CreditBean creditBean;
 
-    public void selectListener() {
-        double grnReturnTotal = getCreditBean().getGrnReturnValue(getCurrentBillItem().getReferenceBill());
-        getCurrentBillItem().getReferenceBill().setTmpReturnTotal(grnReturnTotal);
+    private double getReferenceBallance(BillItem billItem) {
+        double refBallance = 0;
+        double neTotal = Math.abs(billItem.getReferenceBill().getNetTotal());
+        double returned = Math.abs(billItem.getReferenceBill().getTmpReturnTotal());
+        double paidAmt = Math.abs(getCreditBean().getPaidAmount(billItem.getReferenceBill(), BillType.GrnPayment));
 
-        double ballanceAmt = getCurrentBillItem().getReferenceBill().getNetTotal()
-                + grnReturnTotal
-                + getCurrentBillItem().getReferenceBill().getPaidAmount();
+        refBallance = neTotal - (paidAmt + returned);
+
+        return refBallance;
+    }
+
+    public void selectListener() {
+
+        double ballanceAmt = getReferenceBallance(getCurrentBillItem());
 
         System.err.println("Ballance Amount " + ballanceAmt);
-        if (ballanceAmt < 0.1) {
-            getCurrentBillItem().setNetValue(0 - ballanceAmt);
+        if (ballanceAmt > 0.1) {
+            getCurrentBillItem().setNetValue(ballanceAmt);
         }
 
     }
@@ -120,6 +127,9 @@ public class PharmacyDealorBill implements Serializable {
         List<Bill> list = getBillController().getDealorBills(ins);
         for (Bill b : list) {
             getCurrentBillItem().setReferenceBill(b);
+            double returned = Math.abs(getCreditBean().getGrnReturnValue(getCurrentBillItem().getReferenceBill()));
+            getCurrentBillItem().getReferenceBill().setTmpReturnTotal(returned);
+
             selectListener();
             addToBill();
         }
@@ -148,7 +158,7 @@ public class PharmacyDealorBill implements Serializable {
 
     public void changeNetValueListener(BillItem billItem) {
 
-        if (!checkPaidAmount(billItem)) {
+        if (!isPaidAmountOk(billItem)) {
             billItem.setNetValue(0);
 //            UtilityController.addSuccessMessage("U cant add more than ballance");
 //            return;
@@ -185,7 +195,7 @@ public class PharmacyDealorBill implements Serializable {
             remove(b);
         }
 
-        calTotalWithResetingIndex();
+        //   calTotalWithResetingIndex();
         selectedBillItems = null;
     }
 
@@ -282,17 +292,21 @@ public class PharmacyDealorBill implements Serializable {
 
     }
 
-    private boolean checkPaidAmount(BillItem tmp) {
+    private boolean isPaidAmountOk(BillItem tmp) {
 
-        double ballance, refBallance = 0;
-        double neTotal = Math.abs(tmp.getReferenceBill().getNetTotal());
-        double paidAmt = Math.abs(tmp.getReferenceBill().getPaidAmount());
-        double returned = Math.abs(tmp.getReferenceBill().getTmpReturnTotal());
-        refBallance = neTotal - (paidAmt + returned);
+        double refBallance = getReferenceBallance(tmp);
+        double netValue = Math.abs(tmp.getNetValue());
 
-        //System.err.println("refBallance " + refBallance);
+        System.err.println("RefBallance " + refBallance);
+        System.err.println("Net Value " + tmp.getNetValue());
         //   ballance=refBallance-tmp.getNetValue();
-        if ((refBallance >= Math.abs(tmp.getNetValue())) || (Math.abs(tmp.getNetValue() - refBallance) < 0.1)) {
+        if (refBallance >= netValue) {
+            System.err.println("1");
+            return true;
+        }
+
+        if (netValue - refBallance < 0.1) {
+            System.err.println("2");
             return true;
         }
 

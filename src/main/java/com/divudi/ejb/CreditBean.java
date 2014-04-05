@@ -9,9 +9,11 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.InstitutionFacade;
+import com.divudi.facade.PatientEncounterFacade;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,8 @@ public class CreditBean {
     private InstitutionFacade institutionFacade;
     @EJB
     private BillFacade billFacade;
+    @EJB
+    PatientEncounterFacade patientEncounterFacade;
 
     public List<Bill> getCreditBills(Institution ins, BillType billType, Date fromDate, Date toDate) {
         String sql = "Select b From BilledBill b"
@@ -74,6 +78,50 @@ public class CreditBean {
         hm.put("to", toDate);
         hm.put("pm", PaymentMethod.Credit);
         hm.put("tp", billType);
+        hm.put("val", 0.1);
+        List<Institution> setIns = getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+        return setIns;
+    }
+
+    public List<PatientEncounter> getCreditPatientEncounter(Institution institution, Date fromDate, Date toDate) {
+        String sql;
+        HashMap hm;
+        sql = "Select b From PatientEncounter b "
+                + " where b.retired=false "
+                + " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount)) >:val "
+                + " and b.dateOfDischarge between :frm and :to "
+                + " and b.paymentFinalized = true "
+                + " and b.paymentMethod= :pm "
+                + " order by b.creditCompany=:ins  ";
+
+        hm = new HashMap();
+        hm.put("frm", fromDate);
+        hm.put("to", toDate);
+        hm.put("pm", PaymentMethod.Credit);
+        hm.put("ins", institution);
+        hm.put("val", 0.1);
+        List<PatientEncounter> lst = getPatientEncounterFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+        return lst;
+    }
+
+    public List<Institution> getCreditInstitutionByPatientEncounter(Date fromDate, Date toDate) {
+        String sql;
+        HashMap hm;
+        sql = "Select distinct(b.creditCompany)"
+                + " From PatientEncounter b "
+                + " where b.retired=false "
+                + " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount)) >:val "
+                + " and b.dateOfDischarge between :frm and :to "
+                + " and b.paymentFinalized = true "
+                + " and b.paymentMethod= :pm "
+                + " order by b.creditCompany.name  ";
+
+        hm = new HashMap();
+        hm.put("frm", fromDate);
+        hm.put("to", toDate);
+        hm.put("pm", PaymentMethod.Credit);
         hm.put("val", 0.1);
         List<Institution> setIns = getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
 
@@ -188,6 +236,22 @@ public class CreditBean {
         return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
     }
 
+    public List<Institution> getCreditCompanyFromBht() {
+        String sql;
+        HashMap hm;
+        sql = "Select distinct(b.creditCompany) "
+                + " From PatientEncounter b "
+                + " where b.retired=false "
+                + " and b.paymentFinalized=true "
+                + " and b.paymentMethod=:pm "
+                + " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount))> :val) ";
+
+        hm = new HashMap();
+        hm.put("val", 0.1);
+        hm.put("pm", PaymentMethod.Credit);
+        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+
     public List<Institution> getDealorFromReturnBills() {
         String sql;
         HashMap hm;
@@ -247,6 +311,22 @@ public class CreditBean {
 
     }
 
+    public List<PatientEncounter> getCreditPatientEncounters(Institution institution) {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "Select b From PatientEncounter b "
+                + " where b.retired=false "
+                + " and b.paymentFinalized=true "
+                + " and b.paymentMethod=:pm "
+                + " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount))> :val) "
+                + " and (b.creditCompany=:ins ) ";
+
+        hm.put("val", 0.1);
+        hm.put("ins", institution);
+        hm.put("pm", PaymentMethod.Credit);
+        return getPatientEncounterFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+
     public List<Institution> getDealorFromBills(Date frmDate, Date toDate) {
         String sql;
         HashMap hm;
@@ -294,4 +374,13 @@ public class CreditBean {
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
     }
+
+    public PatientEncounterFacade getPatientEncounterFacade() {
+        return patientEncounterFacade;
+    }
+
+    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
+        this.patientEncounterFacade = patientEncounterFacade;
+    }
+
 }

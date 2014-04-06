@@ -892,7 +892,7 @@ public class BhtSummeryController implements Serializable {
                 + " and type(b)=:class ";
         hm = new HashMap();
         hm.put("btp", BillType.StoreBhtPre);
-        hm.put("class", BilledBill.class);
+        hm.put("class", PreBill.class);
         hm.put("pe", getPatientEncounter());
         storeIssues = getBillFacade().findBySQL(sql, hm);
 

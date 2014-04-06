@@ -219,9 +219,12 @@ public class CreditCompanyDueController implements Serializable {
 
     public void createInwardCreditDue() {
         List<Institution> setIns = getCreditBean().getCreditInstitutionByPatientEncounter(getFromDate(), getToDate());
+        System.err.println("SIze  Ins " + setIns.size());
         institutionEncounters = new ArrayList<>();
         for (Institution ins : setIns) {
             List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounter(ins, getFromDate(), getToDate());
+            
+             System.err.println("SIze  Pe " + lst.size());
             InstitutionEncounters newIns = new InstitutionEncounters();
             newIns.setInstitution(ins);
             newIns.setPatientEncounters(lst);

@@ -21,24 +21,24 @@ import javax.persistence.Transient;
 @Entity
 public class PatientItem implements Serializable {
 
-     static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     //Main Properties
-     Long id;
-     String name;
+    Long id;
+    String name;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
+    Date retiredAt;
+    String retireComments;
     @ManyToOne
     Patient patient;
     @ManyToOne
@@ -55,12 +55,10 @@ public class PatientItem implements Serializable {
     Date fromTime;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date toTime;
-     Double serviceValue;
-  //   Boolean finalize=false;
-     Boolean finalize;
-     @Transient
-     private long tmpConsumedTime;
-    
+    Double serviceValue;
+    //   Boolean finalize=false;
+    @Transient
+    private long tmpConsumedTime;
 
     public Item getItem() {
         return item;
@@ -85,10 +83,7 @@ public class PatientItem implements Serializable {
     public void setToTime(Date toTime) {
         this.toTime = toTime;
     }
-    
 
-    
-    
     public Patient getPatient() {
         return patient;
     }
@@ -146,7 +141,7 @@ public class PatientItem implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof PatientItem)) {
             return false;
         }
@@ -226,13 +221,6 @@ public class PatientItem implements Serializable {
         this.serviceValue = serviceValue;
     }
 
-    public Boolean getFinalize() {
-        return finalize;
-    }
-
-    public void setFinalize(Boolean finalize) {
-        this.finalize = finalize;
-    }
 
     public long getTmpConsumedTime() {
         return tmpConsumedTime;
@@ -242,9 +230,4 @@ public class PatientItem implements Serializable {
         this.tmpConsumedTime = tmpConsumedTime;
     }
 
-  
-
-
-  
-    
 }

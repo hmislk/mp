@@ -32,6 +32,7 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Patient;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
@@ -42,6 +43,7 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
 import com.divudi.facade.InstitutionFacade;
+import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientInvestigationFacade;
 import com.divudi.facade.PersonFacade;
@@ -84,6 +86,8 @@ public class BillController implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private InstitutionFacade institutionFacade;
+    @EJB
+    private PatientEncounterFacade patientEncounterFacade;
     @Inject
     private EnumController enumController;
     private boolean printPreview;
@@ -203,6 +207,7 @@ public class BillController implements Serializable {
         return a;
     }
 
+
     public List<Bill> completeBillFromDealor(String qry) {
         List<Bill> a = null;
         String sql;
@@ -282,8 +287,8 @@ public class BillController implements Serializable {
 
         return bill;
     }
-    
-     public List<Bill> getCreditBills(Institution institution) {
+
+    public List<Bill> getCreditBills(Institution institution) {
         String sql;
         HashMap hash = new HashMap();
 
@@ -310,6 +315,8 @@ public class BillController implements Serializable {
 
         return bill;
     }
+
+   
 
     public List<Bill> getBills(Date fromDate, Date toDate, BillType billType1, BillType billType2, Institution institution) {
         String sql;
@@ -1272,6 +1279,14 @@ public class BillController implements Serializable {
 
         return suggestions;
 
+    }
+
+    public PatientEncounterFacade getPatientEncounterFacade() {
+        return patientEncounterFacade;
+    }
+
+    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
+        this.patientEncounterFacade = patientEncounterFacade;
     }
 
     /**

@@ -72,7 +72,7 @@
                                 <h:outputLabel value="Time of Admission : " />
                             </td>
                             <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfAdmission}" >
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.printingAdmissionTime}" >
                                     <f:convertDateTime pattern="dd MM yyyy h:mm a" />
                                 </h:outputLabel>
                             </td>
@@ -82,7 +82,7 @@
                                 <h:outputLabel value="Time of Discharged : " />
                             </td>
                             <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.printingDischargeTime}" >
                                     <f:convertDateTime pattern="dd MM yyyy h:mm a" />
                                 </h:outputLabel>
                             </td>

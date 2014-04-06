@@ -35,7 +35,7 @@
                         <p:panel header="Select Item For Distributor">
                             <p:autoComplete converter="itemcon" value="#{itemsDistributorsController.currentItem}" 
                                             forceSelection="true"
-                                            completeMethod="#{itemController.completePharmacyItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                            completeMethod="#{itemController.completeStoreItem}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                                 <p:column headerText="Name" >
                                     <h:outputLabel value="#{vt.name}" ></h:outputLabel>
                                 </p:column>

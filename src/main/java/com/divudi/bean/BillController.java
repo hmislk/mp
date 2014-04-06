@@ -11,6 +11,7 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
+import com.divudi.data.InstitutionType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
@@ -207,25 +208,59 @@ public class BillController implements Serializable {
         return a;
     }
 
-
     public List<Bill> completeBillFromDealor(String qry) {
         List<Bill> a = null;
         String sql;
         HashMap hash = new HashMap();
         if (qry != null) {
-            sql = "select c from BilledBill c where "
-                    + " abs(c.netTotal)-abs(c.paidAmount)>:val "
+            sql = "select c from BilledBill c "
+                    + "where  abs(c.netTotal)-abs(c.paidAmount)>:val "
                     + " and (c.billType= :btp1 or c.billType= :btp2  )"
                     + " and c.createdAt is not null "
                     + " and c.deptId is not null "
-                    + " and c.cancelledBill is null and "
-                    + " c.retired=false and c.paymentMethod=:pm  and"
-                    + " ((upper(c.deptId) like :q ) or "
-                    + " (upper(c.fromInstitution.name)  like :q ))"
+                    + " and c.cancelledBill is null "
+                    + " and c.retired=false "
+                    + " and c.paymentMethod=:pm  "
+                    + " and c.fromInstitution.institutionType=:insTp  "
+                    + " and ((upper(c.deptId) like :q ) "
+                    + " or (upper(c.fromInstitution.name)  like :q ))"
                     + " order by c.fromInstitution.name";
             hash.put("btp1", BillType.PharmacyGrnBill);
             hash.put("btp2", BillType.PharmacyPurchaseBill);
             hash.put("pm", PaymentMethod.Credit);
+            hash.put("insTp", InstitutionType.Dealer);
+            hash.put("val", 0.1);
+            hash.put("q", "%" + qry.toUpperCase() + "%");
+            //     hash.put("pm", PaymentMethod.Credit);
+            a = getFacade().findBySQL(sql, hash, 10);
+        }
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        return a;
+    }
+
+    public List<Bill> completeBillFromDealorStore(String qry) {
+        List<Bill> a = null;
+        String sql;
+        HashMap hash = new HashMap();
+        if (qry != null) {
+            sql = "select c from BilledBill c "
+                    + "where  abs(c.netTotal)-abs(c.paidAmount)>:val "
+                    + " and (c.billType= :btp1 or c.billType= :btp2  )"
+                    + " and c.createdAt is not null "
+                    + " and c.deptId is not null "
+                    + " and c.cancelledBill is null "
+                    + " and c.retired=false "
+                    + " and c.paymentMethod=:pm  "
+                    + " and c.fromInstitution.institutionType=:insTp  "
+                    + " and ((upper(c.deptId) like :q ) "
+                    + " or (upper(c.fromInstitution.name)  like :q ))"
+                    + " order by c.fromInstitution.name";
+            hash.put("btp1", BillType.PharmacyGrnBill);
+            hash.put("btp2", BillType.PharmacyPurchaseBill);
+            hash.put("pm", PaymentMethod.Credit);
+            hash.put("insTp", InstitutionType.StoreDealor);
             hash.put("val", 0.1);
             hash.put("q", "%" + qry.toUpperCase() + "%");
             //     hash.put("pm", PaymentMethod.Credit);
@@ -315,8 +350,6 @@ public class BillController implements Serializable {
 
         return bill;
     }
-
-   
 
     public List<Bill> getBills(Date fromDate, Date toDate, BillType billType1, BillType billType2, Institution institution) {
         String sql;
@@ -838,12 +871,12 @@ public class BillController implements Serializable {
         calTotals();
     }
 
-    public String prepareNewBill() {
+    public void prepareNewBill() {
         clearBillItemValues();
         clearBillValues();
         setPrintPreview(true);
         printPreview = false;
-        return "opd_bill";
+        //  return "opd_bill";
     }
 
     public String prepareLabBill() {

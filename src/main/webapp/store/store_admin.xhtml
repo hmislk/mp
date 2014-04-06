@@ -8,7 +8,7 @@
 
     <body>
 
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="/resources/template/template.xhtml">
 
             <ui:define name="content">
 
@@ -35,8 +35,8 @@
 
                             <p:panel header="Other" >
                                 <h:panelGrid columns="1" >
-                                    <p:commandButton ajax="false" value="Measurment Units" action="pharmacy_measurement_unit" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="Frequencies" action="pharmacy_frequency_unit" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Measurment Units" action="/pharmacy_measurement_unit" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Frequencies" action="/pharmacy_frequency_unit" ></p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
                             <p:panel header="Check Entered Data">
@@ -51,9 +51,9 @@
                                     <p:commandButton ajax="false" value="Error Detection By Date" action="store_error_checking_date" ></p:commandButton>                                   
 
                                     <p:commandButton ajax="false" value="1)Stock Variant Report" 
-                                                     action="pharmacy_variant_category_stock_by_item" />
+                                                     action="/pharmacy_variant_category_stock_by_item" />
                                     <p:commandButton ajax="false" value="2)Stock Variant Adjustment" 
-                                                     action="pharmacy_variant_ajustment_pre_list" />
+                                                     action="/pharmacy_variant_ajustment_pre_list" />
 
                                 </h:panelGrid>
 

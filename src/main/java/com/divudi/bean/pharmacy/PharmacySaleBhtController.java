@@ -10,6 +10,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.DepartmentType;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.data.inward.InwardChargeType;
@@ -333,18 +334,20 @@ public class PharmacySaleBhtController implements Serializable {
         Map m = new HashMap<>();
         List<Item> items;
         String sql;
-        sql = "select i from Item i where i.retired=false and upper(i.name) like :n and type(i)=:t and i.id not in(select ibs.id from Stock ibs where ibs.stock >:s and ibs.department=:d and upper(ibs.itemBatch.item.name) like :n ) order by i.name ";
-        m
-                .put("t", Amp.class
-                );
-        m.put(
-                "d", getSessionController().getLoggedUser().getDepartment());
-        m.put(
-                "n", "%" + qry + "%");
+        sql = "select i from Item i"
+                + " where i.retired=false "
+                + " and upper(i.name) like :n "
+                + " and type(i)=:t and i.id not "
+                + " in(select ibs.id from Stock ibs "
+                + " where ibs.stock >:s "
+                + " and ibs.department=:d "
+                + " and upper(ibs.itemBatch.item.name) like :n )"
+                + " order by i.name ";
+        m.put("t", Amp.class);
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        m.put("n", "%" + qry + "%");
         double s = 0.0;
-
-        m.put(
-                "s", s);
+        m.put("s", s);
         items = getItemFacade().findBySQL(sql, m, 10);
         return items;
     }
@@ -356,14 +359,63 @@ public class PharmacySaleBhtController implements Serializable {
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         double d = 0.0;
         m.put("s", d);
+        m.put("depTp", DepartmentType.Store);
         m.put("n", "%" + qry.toUpperCase() + "%");
         if (qry.length() > 4) {
-            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n )  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+            sql = "select i from Stock i"
+                    + " where i.stock >:s"
+                    + " and i.department=:d "
+                    + " and i.itemBatch.item.departmentType is null "
+                    + " or i.itemBatch.item.departmentType!=:depTp "
+                    + " and (upper(i.itemBatch.item.name) like :n "
+                    + " or upper(i.itemBatch.item.code) like :n "
+                    + " or upper(i.itemBatch.item.barcode) like :n )  "
+                    + " order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         } else {
-            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+            sql = "select i from Stock i "
+                    + " where i.stock >:s "
+                    + " and i.department=:d"
+                    + " and i.itemBatch.item.departmentType is null "
+                    + " or i.itemBatch.item.departmentType!=:depTp "
+                    + "  and (upper(i.itemBatch.item.name) like :n "
+                    + " or upper(i.itemBatch.item.code) like :n)  "
+                    + " order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
         items = getStockFacade().findBySQL(sql, m, 20);
         itemsWithoutStocks = completeRetailSaleItems(qry);
+        //System.out.println("selectedSaleitems = " + itemsWithoutStocks);
+        return items;
+    }
+
+    public List<Stock> completeAvailableStocksStore(String qry) {
+        List<Stock> items;
+        String sql;
+        Map m = new HashMap();
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        double d = 0.0;
+        m.put("s", d);
+        m.put("depTp", DepartmentType.Store);
+        m.put("n", "%" + qry.toUpperCase() + "%");
+        if (qry.length() > 4) {
+            sql = "select i from Stock i"
+                    + " where i.stock >:s"
+                    + " and i.department=:d "
+                    + " and i.itemBatch.item.departmentType=:depTp "
+                    + " and (upper(i.itemBatch.item.name) like :n "
+                    + " or upper(i.itemBatch.item.code) like :n "
+                    + " or upper(i.itemBatch.item.barcode) like :n )  "
+                    + " order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        } else {
+            sql = "select i from Stock i "
+                    + " where i.stock >:s "
+                    + " and i.department=:d"
+                    + " and i.itemBatch.item.departmentType=:depTp "
+                    + "  and (upper(i.itemBatch.item.name) like :n "
+                    + " or upper(i.itemBatch.item.code) like :n)  "
+                    + " order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        }
+        items = getStockFacade().findBySQL(sql, m, 20);
+      //  itemsWithoutStocks = completeRetailSaleItems(qry);
         //System.out.println("selectedSaleitems = " + itemsWithoutStocks);
         return items;
     }

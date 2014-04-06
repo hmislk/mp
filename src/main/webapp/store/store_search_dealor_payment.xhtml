@@ -44,26 +44,20 @@
 
 
                         <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill"  >
+                            <p:commandButton ajax="false" value="View Bill" action="/pharmacy_reprint_bill_dealor">
+                                <f:setPropertyActionListener  value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
+                            </p:commandButton>
                             <p:column headerText="Bill No" >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" value="#{bill.insId}">
-                                    <h:outputLabel  ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.insId}" ></h:outputLabel>
                             </p:column>
                             <p:column headerText="Dealor Name"   >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.toInstitution.name}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.toInstitution.name}" ></h:outputLabel>
                             </p:column>                          
 
                             <p:column headerText="Billed at"  >
-                                <h:commandLink action="bill_reprint" >
-                                    <h:outputLabel value="#{bill.createdAt}" >
-                                        <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.createdAt}" >
+                                    <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
+                                </h:outputLabel>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled at " />
@@ -79,15 +73,13 @@
                                 </h:panelGroup>
                             </p:column>  
                             <p:column headerText="Billed by" >
-                                <h:commandLink action="bill_reprint" >
-                                    <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.creater.webUserPerson.name}" >                                      
+                                </h:outputLabel>
                                 <br/>
                                 <h:panelGroup rendered="#{bill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled By " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.creater.webUserPerson.name}" >                                       
+                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}"
+                                                   value="#{bill.cancelledBill.creater.webUserPerson.name}" >                                       
                                     </h:outputLabel>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{bill.refunded}" >
@@ -98,48 +90,30 @@
                                 </h:panelGroup>
                             </p:column> 
                             <p:column headerText="PaymentScheme"  >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.paymentScheme.name}" >                                       
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.paymentScheme.name}" >                                       
+                                </h:outputLabel>
                             </p:column>
                             <p:column headerText="Paymentmethod" >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.paymentMethod}" >                                       
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.paymentMethod}" >                                       
+                                </h:outputLabel>
                             </p:column>
                             <p:column headerText="Net Value" >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.netTotal}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.netTotal}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
                             </p:column>
                             <p:column headerText="Bank" >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.bank.name}" >                                        
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.bank.name}" >                                        
+                                </h:outputLabel>
                             </p:column>
                             <p:column headerText="Cheque No" >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.chequeRefNo}" >                                       
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.chequeRefNo}" >                                       
+                                </h:outputLabel>
                             </p:column>
                             <p:column headerText="Cheque Date"  >
-                                <h:commandLink action="pharmacy_reprint_bill_dealor" >
-                                    <h:outputLabel value="#{bill.chequeDate}" >
-                                        <f:convertDateTime pattern="dd MM yyyy"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bill.chequeDate}" >
+                                    <f:convertDateTime pattern="dd MM yyyy"/>
+                                </h:outputLabel>
                             </p:column>                           
                             <p:column headerText="Comments" >
                                 <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >

@@ -12,23 +12,25 @@
                 <h:form>
                     <p:panel>
                         <f:facet name="header" >
-                            <h:outputLabel value="SEARCH  PHARMACY ISSUE BILL ITEM "/>                                                          
-                            <h:panelGrid columns="5" >
+                            <h:outputLabel value="SEARCH PHARMACY BILL ITEM "/>                                                          
+                            <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createStoreBillItemTableBht()}"/>
-                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPharmacyBillItemTableBht()}"/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="BHT No"/>
                                 <h:outputLabel value="Item Name"/>    
                                 <h:outputLabel value="Item Value"/>   
                                 <h:outputLabel value="Patient"/>           
                                 <h:outputLabel  value="Item Code"/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText  value="#{searchController.searchKeyword.bhtNo}" />
                                 <p:inputText value="#{searchController.searchKeyword.itemName}" />
                                 <p:inputText  value="#{searchController.searchKeyword.total}" />
                                 <p:inputText  value="#{searchController.searchKeyword.patientName}" />
@@ -45,12 +47,16 @@
                             </p:column>
                             <p:column headerText="View">
                                 <p:commandButton ajax="false" value="View Bill"
-                                                 action="store_reprint_bill_sale_bht">
-                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>                                     
+                                                 action="pharmacy_reprint_bill_sale">
+                                    <f:setPropertyActionListener value="#{pi.bill.referenceBill}"
+                                                                 target="#{pharmacyBillSearch.bill}"/>                                     
                                 </p:commandButton>
                             </p:column>
                             <p:column headerText="Bill No" styleClass="alignTop"  >
                                 <h:outputLabel value="#{pi.bill.deptId}"/>
+                            </p:column>
+                             <p:column headerText="BHT No" styleClass="alignTop"  >
+                                 <h:outputLabel value="#{pi.bill.patientEncounter.bhtNo}"/>
                             </p:column>
                             <p:column headerText="Item Name"  styleClass="alignTop" >
                                 <h:outputLabel value="#{pi.item.name}" />    
@@ -60,7 +66,8 @@
                                 <f:facet name="header">
                                     <h:outputLabel value="Code"/>
                                 </f:facet>
-                                <h:outputLabel value="#{pi.item.code}" style="width: 100px!important;" ></h:outputLabel>
+                                <h:outputLabel value="#{pi.item.code}"
+                                               style="width: 100px!important;" ></h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Billed At"  >

@@ -27,7 +27,7 @@
                         </h:panelGrid>
                     </f:facet>       
 
-                    <h:panelGrid columns="2">
+                    <h:panelGrid columns="3">
                         <h:panelGroup id="panSearch2">
                             <in:bhtDetail admission="#{bhtSummeryController.patientEncounter}"/>
                         </h:panelGroup>  
@@ -62,6 +62,14 @@
                                 </h:outputLabel>
                             </p:panelGrid>      
                         </h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Printing Admission Time"/>
+                            <p:calendar value="#{admissionController.current.printingAdmissionTime}" pattern="dd MMMM yyyy hh mm a" >                               
+                            </p:calendar>     
+                            <h:outputLabel value="Printing Discharge Time"/>
+                            <p:calendar value="#{admissionController.current.printingDischargeTime}" pattern="dd MMMM yyyy hh mm a" >                               
+                            </p:calendar>    
+                        </h:panelGrid>
                     </h:panelGrid>
                     <p:dataTable id="dList" value="#{bhtSummeryController.chargeItemTotals}" var="c">
                         <p:column headerText="Inward Charge Type" >

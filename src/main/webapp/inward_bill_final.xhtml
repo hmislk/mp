@@ -52,8 +52,12 @@
                                 <h:outputLabel value="#{bhtSummeryController.paid}">
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>
-                                <h:outputLabel value="Due " style="font-weight: bold"/>
-                                <h:outputLabel value="#{bhtSummeryController.due}">
+                                <h:outputLabel value="Due " style="font-weight: bold"
+                                               rendered="#{bhtSummeryController.patientEncounter.paymentMethod ne 'Credit' 
+                                                           and bhtSummeryController.due > 0 }"/>
+                                <h:outputLabel value="#{bhtSummeryController.due}"
+                                               rendered="#{bhtSummeryController.patientEncounter.paymentMethod ne 'Credit' 
+                                                           and bhtSummeryController.due > 0 }">
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>
                             </p:panelGrid>      

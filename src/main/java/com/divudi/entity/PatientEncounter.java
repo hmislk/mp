@@ -29,6 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+
 /**
  *
  * @author buddhika
@@ -93,6 +94,7 @@ public class PatientEncounter implements Serializable {
     Date dateOfDischarge;
     double creditLimit;
     double creditUsedAmount;
+    private double creditPaidAmount;
     @Enumerated(EnumType.STRING)
     PatientEncounterType patientEncounterType;
     @OneToMany(mappedBy = "parentEncounter")
@@ -590,6 +592,14 @@ public class PatientEncounter implements Serializable {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public double getCreditPaidAmount() {
+        return creditPaidAmount;
+    }
+
+    public void setCreditPaidAmount(double creditPaidAmount) {
+        this.creditPaidAmount = creditPaidAmount;
     }
 
     

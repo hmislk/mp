@@ -6,6 +6,7 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.BillController;
 import com.divudi.data.BillType;
+import com.divudi.data.InstitutionType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.InstitutionBills;
 import com.divudi.data.table.String1Value5;
@@ -90,7 +91,7 @@ public class DealorDueController implements Serializable {
         for (Bill b : lst) {
             double rt = getCreditBean().getGrnReturnValue(b);
 
-         //   double dbl = Math.abs(b.getNetTotal()) - (Math.abs(b.getTmpReturnTotal()) + Math.abs(b.getPaidAmount()));
+            //   double dbl = Math.abs(b.getNetTotal()) - (Math.abs(b.getTmpReturnTotal()) + Math.abs(b.getPaidAmount()));
             b.setTmpReturnTotal(rt);
 
             Long dayCount = getCommonFunctions().getDayCountTillNow(b.getInvoiceDate());
@@ -126,8 +127,52 @@ public class DealorDueController implements Serializable {
         System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
-        List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate());
-        list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate()));
+        List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate(), InstitutionType.Dealer);
+        list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate(), InstitutionType.Dealer));
+
+        setIns.addAll(list);
+        System.err.println("size " + setIns.size());
+        items = new ArrayList<>();
+        for (Institution ins : setIns) {
+            //     System.err.println("Ins " + ins.getName());
+            InstitutionBills newIns = new InstitutionBills();
+            newIns.setInstitution(ins);
+            List<Bill> lst = getCreditBean().getBills(ins, getFromDate(), getToDate());
+
+            newIns.setBills(lst);
+
+            for (Bill b : lst) {
+                double rt = getCreditBean().getGrnReturnValue(b);
+                b.setTmpReturnTotal(rt);
+
+                double dbl = Math.abs(b.getNetTotal()) - (Math.abs(b.getTmpReturnTotal()) + Math.abs(b.getPaidAmount()));
+
+                if (dbl > 0.1) {
+                    b.setTransBoolean(true);
+                    newIns.setReturned(newIns.getReturned() + b.getTmpReturnTotal());
+                    newIns.setTotal(newIns.getTotal() + b.getNetTotal());
+                    newIns.setPaidTotal(newIns.getPaidTotal() + b.getPaidAmount());
+
+                    //    System.err.println("Net Total " + b.getNetTotal());
+                    //     System.err.println("Paid " + b.getPaidAmount());
+                    System.err.println("Return " + b.getTmpReturnTotal());
+                }
+            }
+
+            double finalValue = (newIns.getPaidTotal() + newIns.getTotal() + newIns.getReturned());
+            System.err.println("Final Value " + finalValue);
+            if (finalValue != 0 && finalValue < 0.1) {
+                items.add(newIns);
+            }
+        }
+    }
+
+    public void fillItemsStore() {
+        System.err.println("Fill Items");
+        Set<Institution> setIns = new HashSet<>();
+
+        List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate(), InstitutionType.StoreDealor);
+        list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate(), InstitutionType.StoreDealor));
 
         setIns.addAll(list);
         System.err.println("size " + setIns.size());
@@ -175,8 +220,39 @@ public class DealorDueController implements Serializable {
         System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
-        List<Institution> list = getCreditBean().getDealorFromBills();
-        list.addAll(getCreditBean().getDealorFromReturnBills());
+        List<Institution> list = getCreditBean().getDealorFromBills(InstitutionType.Dealer);
+        list.addAll(getCreditBean().getDealorFromReturnBills(InstitutionType.Dealer));
+
+        setIns.addAll(list);
+        System.err.println("size " + setIns.size());
+
+        dealorCreditAge = new ArrayList<>();
+        for (Institution ins : setIns) {
+            if (ins == null) {
+                continue;
+            }
+
+            String1Value5 newRow = new String1Value5();
+            newRow.setString(ins.getName());
+            setValues(ins, newRow);
+
+            if (newRow.getValue1() != 0
+                    || newRow.getValue2() != 0
+                    || newRow.getValue3() != 0
+                    || newRow.getValue4() != 0) {
+                dealorCreditAge.add(newRow);
+            }
+        }
+
+    }
+    
+    public void createAgeTableStore() {
+        makeNull();
+        System.err.println("Fill Items");
+        Set<Institution> setIns = new HashSet<>();
+
+        List<Institution> list = getCreditBean().getDealorFromBills(InstitutionType.StoreDealor);
+        list.addAll(getCreditBean().getDealorFromReturnBills(InstitutionType.StoreDealor));
 
         setIns.addAll(list);
         System.err.println("size " + setIns.size());

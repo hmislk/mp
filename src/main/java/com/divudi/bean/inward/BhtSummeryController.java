@@ -249,9 +249,46 @@ public class BhtSummeryController implements Serializable {
         p.setCalculatedRoomCharge(charge);
     }
 
-    public void checkDate() {
+    private boolean checkRoomDischarge(Date date) {
+        HashMap hm = new HashMap();
+        String sql = "SELECT pr FROM PatientRoom pr "
+                + " where pr.retired=false"
+                + " and pr.dischargedAt>:dt "
+                + " and pr.patientEncounter=:pe ";
+        hm.put("pe", getPatientEncounter());
+        hm.put("dt", date);
+        PatientRoom tmp = getPatientRoomFacade().findFirstBySQL(sql, hm);
+
+        if (tmp != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean checkDischargeTime() {
         if (getPatientEncounter() != null && getPatientEncounter().getDateOfAdmission().after(getPatientEncounter().getDateOfDischarge())) {
             UtilityController.addErrorMessage("Check Discharge Time should be after Admitted Time");
+            return true;
+        }
+
+        if (checkRoomIsDischarged()) {
+            UtilityController.addErrorMessage("Please Discharged From Room");
+            return true;
+        }
+
+        if (checkRoomDischarge(getPatientEncounter().getDateOfDischarge())) {
+            UtilityController.addErrorMessage("Check Discharge Time should be after Room Discharge Time");
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public void checkDate() {
+        if (checkDischargeTime()) {
+            return;
         }
 
         makeNull();
@@ -307,8 +344,10 @@ public class BhtSummeryController implements Serializable {
     }
 
     private boolean checkPatientItems() {
-        for (PatientItem pi : getPatientItems()) {
-            if (pi.getFinalize() == false) {
+        List<PatientItem> lst = createPatientItems();
+
+        for (PatientItem pi : lst) {
+            if (pi != null && pi.getToTime() == null) {
                 return true;
             }
         }
@@ -328,8 +367,7 @@ public class BhtSummeryController implements Serializable {
             return;
         }
 
-        if (checkRoomIsDischarged()) {
-            UtilityController.addErrorMessage("Please Discharged From Room");
+        if (checkDischargeTime()) {
             return;
         }
 
@@ -502,7 +540,7 @@ public class BhtSummeryController implements Serializable {
         createPatientItems();
         createIssueTable();
         createStoreTable();
-        getInwardBean().createDepartmentBillItems(patientEncounter,null);
+        getInwardBean().createDepartmentBillItems(patientEncounter, null);
         createAdditionalChargeBill();
         createProfesionallFee();
         createPaymentBill();
@@ -521,16 +559,15 @@ public class BhtSummeryController implements Serializable {
         patientItems = getPatientItemFacade().findBySQL(sql, hm);
 
         if (patientItems == null) {
-            return new ArrayList<>();
+            patientItems = new ArrayList<>();
         }
 
         for (PatientItem pi : patientItems) {
-            if (pi.getFinalize() == null) {
-                TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
-                double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
-                pi.setServiceValue(count * timedItemFee.getFee());
-                pi.setTmpConsumedTime(getDuration(pi.getFromTime(), pi.getToTime()));
-            }
+            TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
+            double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
+            pi.setServiceValue(count * timedItemFee.getFee());
+            pi.setTmpConsumedTime(getDuration(pi.getFromTime(), pi.getToTime()));
+
         }
 
         return patientItems;
@@ -560,7 +597,6 @@ public class BhtSummeryController implements Serializable {
         double count = getInwardCalculation().calCount(timedItemFee, patientItem.getFromTime(), patientItem.getToTime());
         patientItem.setServiceValue(count * timedItemFee.getFee());
 
-        patientItem.setFinalize(Boolean.TRUE);
         getPatientItemFacade().edit(patientItem);
 
         createPatientItems();
@@ -856,7 +892,7 @@ public class BhtSummeryController implements Serializable {
                 + " and type(b)=:class ";
         hm = new HashMap();
         hm.put("btp", BillType.StoreBhtPre);
-        hm.put("class", BilledBill.class);
+        hm.put("class", PreBill.class);
         hm.put("pe", getPatientEncounter());
         storeIssues = getBillFacade().findBySQL(sql, hm);
 

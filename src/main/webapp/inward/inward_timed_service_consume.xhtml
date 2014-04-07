@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+
+    <ui:define name="content">
+
+        <h:panelGroup >
+            <h:form  >
+                <p:panel >
+                    <f:facet name="header" >
+                        <h:panelGrid columns="10"  >
+                            <h:outputLabel value="Inward Timed Service" />
+                            <p:commandButton id="btnAddService" ajax="false" value="Add Service" action="#{inwardTimedItemController.save}" />
+                            <p:defaultCommand target="btnAddService"/>
+
+                            <p:commandButton ajax="false" value="Clear" action="#{inwardTimedItemController.makeNull}" />
+                        </h:panelGrid>
+                    </f:facet>
+                    <h:panelGrid columns="2" style="min-width: 100%;">
+                        <p:panel header="BHT">
+                            <p:autoComplete  converter="admis"
+                                             widgetVar="aPt" id="acPt" forceSelection="true" 
+                                             value="#{inwardTimedItemController.current.patientEncounter}"
+                                             completeMethod="#{admissionController.completePatient}" 
+                                             var="myItem" itemValue="#{myItem}" 
+                                             itemLabel="#{myItem.bhtNo}" 
+                                             size="30"  style="width: 400px;">
+                                <p:ajax event="itemSelect" process="acPt" update="panSearch2 con" listener="#{inwardTimedItemController.createPatientItems()}"/>
+                                <p:column>
+                                    #{myItem.bhtNo}
+                                </p:column>
+                                <p:column>
+                                    #{myItem.patient.person.nameWithTitle}
+                                </p:column>
+                            </p:autoComplete>    
+
+                            <h:panelGrid id="panSearch2" columns="2" >
+                                <h:outputLabel  value="Name:" />
+                                <h:outputLabel value="#{inwardTimedItemController.current.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
+                                <h:outputLabel  value="Sex" />
+                                <h:outputLabel value="#{inwardTimedItemController.current.patientEncounter.patient.age}" ></h:outputLabel>
+                                <h:outputLabel  value="DOB"  />
+                                <h:outputLabel value="#{inwardTimedItemController.current.patientEncounter.patient.person.dob}"   >
+                                    <f:convertDateTime pattern="dd/MM/yy" />
+                                </h:outputLabel>
+                                <h:outputLabel  value="Adress" />
+                                <h:outputLabel value="#{inwardTimedItemController.current.patientEncounter.patient.person.address}" ></h:outputLabel>
+                                <h:outputLabel  value="Date of Admission"  />
+                                <h:outputLabel value="#{inwardTimedItemController.current.patientEncounter.dateOfAdmission}"   >
+                                    <f:convertDateTime pattern="dd/MM/yy" />
+                                </h:outputLabel>
+                            </h:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Consumed Timed Sevice" id="con">                          
+                            <p:dataTable value="#{inwardTimedItemController.items}" var="ti">
+                                <p:column headerText="Service Name">
+                                    #{ti.item.name}
+                                </p:column>
+                                <p:column headerText="Start Time">
+                                    <p:calendar navigator="true"  
+                                                value="#{ti.fromTime}" 
+                                                pattern="dd MMMM yyyy hh mm a" />                                      
+                                </p:column>                               
+                                <p:column headerText="Stopped Time">
+                                    <p:calendar navigator="true"  
+                                                value="#{ti.toTime}" 
+                                                pattern="dd MMMM yyyy hh mm a" />  
+                                </p:column>
+                                <p:column headerText="Total">
+                                    #{ti.serviceValue}
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton value="Save" ajax="false" action="#{inwardTimedItemController.finalizeService(ti)}">                                                                    
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+
+                    </h:panelGrid>
+
+                    <p:panel header="Timed Item">
+                        <h:panelGrid columns="2">
+                            <p:panel id='pIxAdd' header="Timed Service Requests" style="min-height: 100px;"  >
+
+                                <p:autoComplete converter="timedIt" id="it" forceSelection="false" 
+                                                value="#{inwardTimedItemController.current.item}"
+                                                completeMethod="#{timedItemController.completeInvest}" var="ix" 
+                                                itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                    <p:ajax event="itemSelect" process="it" update="pDetail"/>
+
+                                    <p:column>
+                                        #{ix.name}
+                                    </p:column>
+                                    <p:column>
+                                        #{ix.total}
+                                    </p:column>
+
+                                </p:autoComplete>
+
+                            </p:panel>
+
+                            <p:panel header="Timed Item Detail" id="pDetail" >
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Name :"/>
+                                    <p:outputLabel value="#{inwardTimedItemController.current.item.name}"/>
+
+                                    <p:outputLabel value="StartTime:"/>
+                                    <p:calendar id="startTime" value="#{inwardTimedItemController.current.fromTime}" 
+                                                pattern="dd MMMM yyyy hh mm a" >
+                                        <f:ajax event="dateSelect" execute="pDetail" />
+                                    </p:calendar>                                                                      
+
+
+                                </h:panelGrid>                                
+                            </p:panel>
+                        </h:panelGrid>
+                    </p:panel> 
+
+                </p:panel>
+            </h:form>
+
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

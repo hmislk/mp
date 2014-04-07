@@ -7,10 +7,13 @@ package com.divudi.bean;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.InstitutionBills;
+import com.divudi.data.dataStructure.InstitutionEncounters;
+import com.divudi.data.table.String1Value5;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.CreditBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.InstitutionFacade;
 import javax.inject.Named;
@@ -36,12 +39,136 @@ public class CreditCompanyDueController implements Serializable {
     private Date fromDate;
     private Date toDate;
     private List<InstitutionBills> items;
+    private List<InstitutionEncounters> institutionEncounters;
     @EJB
     private InstitutionFacade institutionFacade;
     @EJB
     private BillFacade billFacade;
     @EJB
     private CommonFunctions commonFunctions;
+    private List<String1Value5> creditCompanyAge;
+    private List<String1Value5> filteredList;
+
+    public void makeNull() {
+        fromDate = null;
+        toDate = null;
+        items = null;
+        creditCompanyAge = null;
+        filteredList = null;
+    }
+
+    public void createAgeTable() {
+        makeNull();
+        System.err.println("Fill Items");
+        Set<Institution> setIns = new HashSet<>();
+
+        List<Institution> list = getCreditBean().getCreditCompanyFromBills();
+
+        setIns.addAll(list);
+        System.err.println("size " + setIns.size());
+
+        creditCompanyAge = new ArrayList<>();
+        for (Institution ins : setIns) {
+            if (ins == null) {
+                continue;
+            }
+
+            String1Value5 newRow = new String1Value5();
+            newRow.setString(ins.getName());
+            setValues(ins, newRow);
+
+            if (newRow.getValue1() != 0
+                    || newRow.getValue2() != 0
+                    || newRow.getValue3() != 0
+                    || newRow.getValue4() != 0) {
+                creditCompanyAge.add(newRow);
+            }
+        }
+
+    }
+
+    public void createInwardAgeTable() {
+        makeNull();
+        System.err.println("Fill Items");
+        Set<Institution> setIns = new HashSet<>();
+
+        List<Institution> list = getCreditBean().getCreditCompanyFromBht();
+
+        setIns.addAll(list);
+        System.err.println("size " + setIns.size());
+
+        creditCompanyAge = new ArrayList<>();
+        for (Institution ins : setIns) {
+            if (ins == null) {
+                continue;
+            }
+
+            String1Value5 newRow = new String1Value5();
+            newRow.setString(ins.getName());
+            setInwardValues(ins, newRow);
+
+            if (newRow.getValue1() != 0
+                    || newRow.getValue2() != 0
+                    || newRow.getValue3() != 0
+                    || newRow.getValue4() != 0) {
+                creditCompanyAge.add(newRow);
+            }
+        }
+
+    }
+
+    private void setValues(Institution inst, String1Value5 dataTable5Value) {
+
+        List<Bill> lst = getCreditBean().getCreditBills(inst);
+        System.err.println("Institution Ins " + inst.getName());
+        for (Bill b : lst) {
+
+            Long dayCount = getCommonFunctions().getDayCountTillNow(b.getCreatedAt());
+
+            double finalValue = (b.getNetTotal() + b.getPaidAmount());
+
+            System.err.println("DayCount " + dayCount);
+            System.err.println("NetTotal " + b.getNetTotal());
+            System.err.println("Paid " + b.getPaidAmount());
+            System.err.println("Final " + finalValue);
+
+            if (dayCount < 30) {
+                dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
+            } else if (dayCount < 60) {
+                dataTable5Value.setValue2(dataTable5Value.getValue2() + finalValue);
+            } else if (dayCount < 90) {
+                dataTable5Value.setValue3(dataTable5Value.getValue3() + finalValue);
+            } else {
+                dataTable5Value.setValue4(dataTable5Value.getValue4() + finalValue);
+            }
+
+        }
+
+    }
+
+    private void setInwardValues(Institution inst, String1Value5 dataTable5Value) {
+
+        List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounters(inst);
+        System.err.println("Institution Ins " + inst.getName());
+        for (PatientEncounter b : lst) {
+
+            Long dayCount = getCommonFunctions().getDayCountTillNow(b.getCreatedAt());
+
+            double finalValue = (Math.abs(b.getCreditUsedAmount()) - Math.abs(b.getCreditPaidAmount()));
+
+            if (dayCount < 30) {
+                dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
+            } else if (dayCount < 60) {
+                dataTable5Value.setValue2(dataTable5Value.getValue2() + finalValue);
+            } else if (dayCount < 90) {
+                dataTable5Value.setValue3(dataTable5Value.getValue3() + finalValue);
+            } else {
+                dataTable5Value.setValue4(dataTable5Value.getValue4() + finalValue);
+            }
+
+        }
+
+    }
 
     public CreditCompanyDueController() {
     }
@@ -86,6 +213,28 @@ public class CreditCompanyDueController implements Serializable {
             }
 
             items.add(newIns);
+        }
+
+    }
+
+    public void createInwardCreditDue() {
+        List<Institution> setIns = getCreditBean().getCreditInstitutionByPatientEncounter(getFromDate(), getToDate());
+        System.err.println("SIze  Ins " + setIns.size());
+        institutionEncounters = new ArrayList<>();
+        for (Institution ins : setIns) {
+            List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounter(ins, getFromDate(), getToDate());
+            
+             System.err.println("SIze  Pe " + lst.size());
+            InstitutionEncounters newIns = new InstitutionEncounters();
+            newIns.setInstitution(ins);
+            newIns.setPatientEncounters(lst);
+
+            for (PatientEncounter b : lst) {
+                newIns.setTotal(newIns.getTotal() + b.getCreditUsedAmount());
+                newIns.setPaidTotal(newIns.getPaidTotal() + b.getCreditPaidAmount());
+            }
+
+            institutionEncounters.add(newIns);
         }
 
     }
@@ -172,5 +321,29 @@ public class CreditCompanyDueController implements Serializable {
 
     public void setCreditBean(CreditBean creditBean) {
         this.creditBean = creditBean;
+    }
+
+    public List<String1Value5> getCreditCompanyAge() {
+        return creditCompanyAge;
+    }
+
+    public void setCreditCompanyAge(List<String1Value5> creditCompanyAge) {
+        this.creditCompanyAge = creditCompanyAge;
+    }
+
+    public List<String1Value5> getFilteredList() {
+        return filteredList;
+    }
+
+    public void setFilteredList(List<String1Value5> filteredList) {
+        this.filteredList = filteredList;
+    }
+
+    public List<InstitutionEncounters> getInstitutionEncounters() {
+        return institutionEncounters;
+    }
+
+    public void setInstitutionEncounters(List<InstitutionEncounters> institutionEncounters) {
+        this.institutionEncounters = institutionEncounters;
     }
 }

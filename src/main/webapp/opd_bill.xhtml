@@ -151,7 +151,11 @@
 
                                     <p:panel id='pIxAdd' header="Items Requests" style="min-height: 350px;"  >
                                         <p:focus  context="acIx"/>
-                                        <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true" value="#{billController.currentBillItem.item}" completeMethod="#{itemController.completeItemWithoutPack}" var="ix" itemLabel="#{ix.name}" itemValue="#{ix}" size="30"  style="width: 400px;" >
+                                        <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true"
+                                                        value="#{billController.currentBillItem.item}" 
+                                                        completeMethod="#{itemController.completeOpdItems}"
+                                                        var="ix" itemLabel="#{ix.name}" itemValue="#{ix}"
+                                                        size="30"  style="width: 400px;" >
                                             <p:column>
                                                 #{ix.name}
                                             </p:column>

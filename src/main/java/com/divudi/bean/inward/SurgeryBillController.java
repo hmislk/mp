@@ -23,6 +23,8 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.Item;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.PreBill;
+import com.divudi.entity.RefundBill;
 import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.inward.TimedItem;
 import com.divudi.entity.inward.TimedItemFee;
@@ -579,7 +581,51 @@ public class SurgeryBillController implements Serializable {
                 departmentBillItems = getInwardBean().createDepartmentBillItems(batchBill.getPatientEncounter(), getBatchBill());
             }
 
+            if (b.getSurgeryBillType() == SurgeryBillType.PharmacyItem) {
+                createIssueTable();
+            }
+
         }
+    }
+
+    private List<Bill> pharmacyIssues;
+
+    public void createIssueTable() {
+        pharmacyIssues = new ArrayList<>();
+        String sql;
+        HashMap hm;
+        sql = "SELECT  b FROM Bill b "
+                + " WHERE b.retired=false "
+                + " and b.forwardReferenceBill=:bil "
+                + " and b.billType=:btp "
+                + " and b.billedBill is null "
+                + " and (type(b)=:class) ";
+        hm = new HashMap();
+        hm.put("bil", getBatchBill());
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", PreBill.class);
+
+        List<Bill> bills = getBillFacade().findBySQL(sql, hm);
+
+        hm.clear();
+        sql = "SELECT  b FROM Bill b "
+                + " WHERE b.retired=false "
+                + " and b.billType=:btp"
+                + " and b.forwardReferenceBill=:bil "
+                + " and type(b.billedBill)=:billedClass "
+                + " and  b.patientEncounter=:pe"
+                + " and (type(b)=:class) ";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", RefundBill.class);
+        hm.put("billedClass", PreBill.class);
+        hm.put("bil", getBatchBill());
+
+        List<Bill> bills2 = getBillFacade().findBySQL(sql, hm);
+
+        pharmacyIssues.addAll(bills);
+        pharmacyIssues.addAll(bills2);
+
     }
 
     public Bill getProfessionalBill() {
@@ -828,6 +874,14 @@ public class SurgeryBillController implements Serializable {
 
     public void setDepartmentBillItems(List<DepartmentBillItems> departmentBillItems) {
         this.departmentBillItems = departmentBillItems;
+    }
+
+    public List<Bill> getPharmacyIssues() {
+        return pharmacyIssues;
+    }
+
+    public void setPharmacyIssues(List<Bill> pharmacyIssues) {
+        this.pharmacyIssues = pharmacyIssues;
     }
 
 }

@@ -68,7 +68,7 @@ public class InwardStaffPaymentBillController implements Serializable {
     @EJB
     private BillFacade billFacade;
     @EJB
-    private BillItemFacade billItemFacade;    
+    private BillItemFacade billItemFacade;
     private Bill current;
     private List<Bill> items = null;
     Staff currentStaff;
@@ -85,26 +85,23 @@ public class InwardStaffPaymentBillController implements Serializable {
     @EJB
     StaffFacade staffFacade;
     List<BillFee> docPayingBillFee;
-    
-    public void fillDocPayingBillFee(){
-    
+
+    public void fillDocPayingBillFee() {
+
         String sql;
         Map m = new HashMap();
-        
+
         sql = "select bf from BillFee bf where bf.bill.billDate :fd "
                 + "and :td and bf.retired=false "
-                +"and bf.bill.billType=:btp";
+                + "and bf.bill.billType=:btp";
         m.put("fd", fromDate);
         m.put("td", toDate);
         m.put("btp", BillType.InwardProfessional);
-        
-        docPayingBillFee=getBillFeeFacade().findBySQL(sql, m,TemporalType.TIMESTAMP);
-        
-        
+
+        docPayingBillFee = getBillFeeFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
+
     }
 
-
-    
     public List<BillComponent> getBillComponents() {
         if (getCurrent() != null) {
             String sql = "SELECT b FROM BillComponent b WHERE b.retired=false and b.bill.id=" + getCurrent().getId();
@@ -141,15 +138,15 @@ public class InwardStaffPaymentBillController implements Serializable {
         billFees = null;
         billItems = null;
         printPreview = false;
-        billItems = null;       
-        items = null;        
+        billItems = null;
+        items = null;
         dueBillFees = null;
         payingBillFees = null;
         billFees = null;
         /////////////////////    
         fromDate = null;
         toDate = null;
-        current = null;       
+        current = null;
         currentStaff = null;
         totalDue = 0.0;
         totalPaying = 0.0;
@@ -260,25 +257,23 @@ public class InwardStaffPaymentBillController implements Serializable {
     }
 
     public void calculateDueFees() {
-        if (currentStaff == null || currentStaff.getId() == null) {
-            dueBillFees = new ArrayList<>();
-        } else {
-            String sql;
-            HashMap h = new HashMap();
-            sql = "select b from BillFee b where "
-                    + " b.retired=false "
-                    + " and (b.bill.billType=:btp or b.bill.billType=:btp2 )"
-                    + " and b.bill.cancelled=false "
-                    + " and b.bill.refunded=false "
-                    + " and (b.feeValue - b.paidValue) > 0 "
-                    + " and b.staff=:stf ";
-//            h.put("btp", BillType.ChannelPaid);
-            h.put("stf", currentStaff);
-            h.put("btp", BillType.InwardBill);
-            h.put("btp2", BillType.InwardProfessional);
-            dueBillFees = getBillFeeFacade().findBySQL(sql, h, TemporalType.TIMESTAMP);
 
-        }
+        String sql;
+        HashMap h = new HashMap();
+        sql = "select b from BillFee b where "
+                + " b.retired=false "
+                + " and (b.bill.billType=:btp"
+                + " or b.bill.billType=:btp2 )"
+                + " and b.bill.cancelled=false "
+                + " and b.bill.refunded=false "
+                + " and (b.feeValue - b.paidValue) > 0 "
+                + " and b.staff=:stf ";
+//            h.put("btp", BillType.ChannelPaid);
+        h.put("stf", currentStaff);
+        h.put("btp", BillType.InwardBill);
+        h.put("btp2", BillType.InwardProfessional);
+        dueBillFees = getBillFeeFacade().findBySQL(sql, h, TemporalType.TIMESTAMP);
+
     }
 
     public void calculateTotalDue() {
@@ -363,8 +358,6 @@ public class InwardStaffPaymentBillController implements Serializable {
         current = new BilledBill();
     }
 
-  
-  
     private Bill createPaymentBill() {
         BilledBill tmp = new BilledBill();
         tmp.setBillDate(Calendar.getInstance().getTime());
@@ -439,11 +432,11 @@ public class InwardStaffPaymentBillController implements Serializable {
         BillItem i = new BillItem();
         i.setReferanceBillItem(bf.getBillItem());
         i.setReferenceBill(bf.getBill());
-        System.err.println("SS : " + bf.getPatienEncounter().getName());
-        System.err.println("SS : " + bf.getPatienEncounter().getDateTime());
-        System.err.println("SS : " + bf.getPatienEncounter().getFromTime());
-        System.err.println("SS : " + bf.getPatienEncounter().getToTime());
-        System.err.println("SS : " + bf.getPatienEncounter().getId());
+//        System.err.println("SS : " + bf.getPatienEncounter().getName());
+//        System.err.println("SS : " + bf.getPatienEncounter().getDateTime());
+//        System.err.println("SS : " + bf.getPatienEncounter().getFromTime());
+//        System.err.println("SS : " + bf.getPatienEncounter().getToTime());
+//        System.err.println("SS : " + bf.getPatienEncounter().getId());
         i.setPaidForBillFee(bf);
         i.setBill(b);
         i.setCreatedAt(Calendar.getInstance().getTime());
@@ -459,8 +452,6 @@ public class InwardStaffPaymentBillController implements Serializable {
         getBillItemFacade().create(i);
         b.getBillItems().add(i);
     }
-
-  
 
     public BillFacade getEjbFacade() {
         return billFacade;
@@ -572,9 +563,6 @@ public class InwardStaffPaymentBillController implements Serializable {
         this.commonFunctions = commonFunctions;
     }
 
-   
-  
-
     public List<BillItem> getBillItems() {
         if (getCurrent() != null) {
             String sql = "SELECT b FROM BillItem b WHERE b.retired=false and b.bill.id=" + getCurrent().getId();
@@ -642,8 +630,5 @@ public class InwardStaffPaymentBillController implements Serializable {
     public void setDocPayingBillFee(List<BillFee> docPayingBillFee) {
         this.docPayingBillFee = docPayingBillFee;
     }
-
-    
-    
 
 }

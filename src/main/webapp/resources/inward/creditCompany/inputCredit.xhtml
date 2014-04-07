@@ -22,15 +22,15 @@
                             itemValue="#{ix}" size="30" >  
                 <f:ajax event="itemSelect" execute="@this" render=":#{p:component('panelCompanyDesc')}" ></f:ajax>
             </p:autoComplete>
-            <p:outputLabel value="Credit Limit : " style="min-width: 100px;" />
+            <h:outputLabel value="Credit Limit : " style="min-width: 100px;" />
             <p:inputText value="#{cc.attrs.patientEncounter.creditLimit}" />
-            <h:outputLabel/>                            
+            <h:outputLabel value="Description "  rendered="#{cc.attrs.patientEncounter.creditCompany ne null}" />                            
             <h:outputText id="panelCompanyDesc"  
                           rendered="#{cc.attrs.patientEncounter.creditCompany ne null}" 
                           value="#{cc.attrs.patientEncounter.creditCompany.descreption}" />
-            <p:outputLabel value="Ploicy Number : " style="min-width: 100px;" />
+            <h:outputLabel value="Ploicy Number : " style="min-width: 100px;" />
             <p:inputText value="#{cc.attrs.patientEncounter.policyNo}" />
-            <p:outputLabel value="Referance Number : " style="min-width: 100px;" />
+            <h:outputLabel value="Referance Number : " style="min-width: 100px;" />
             <p:inputText value="#{cc.attrs.patientEncounter.referanceNo}" />
 
 

@@ -132,6 +132,8 @@ public class BhtIssueReturnController implements Serializable {
         getReturnBill().copy(getBill());
 
         getReturnBill().setBilledBill(getBill());
+        
+        getReturnBill().setForwardReferenceBill(getBill().getForwardReferenceBill());
 
         getReturnBill().setTotal(0 - getReturnBill().getTotal());
         getReturnBill().setNetTotal(getReturnBill().getTotal());

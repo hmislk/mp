@@ -7,10 +7,10 @@
       xmlns:f="http://java.sun.com/jsf/core">
 
     <body>
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="/resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>            
-                    <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{creditCompanyDueController.createInwardAgeTable()}" />
+                    <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{creditCompanyDueController.createAgeTable()}" />
                     <p:defaultCommand target="btnSearch"/>
                     
                     <p:dataTable id="lst" value="#{creditCompanyDueController.creditCompanyAge}" var="i"

@@ -14,6 +14,7 @@ import static com.divudi.data.PaymentMethod.Cheque;
 import static com.divudi.data.PaymentMethod.Credit;
 import static com.divudi.data.PaymentMethod.Slip;
 import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -85,6 +86,47 @@ public class BillBean {
     PackageFeeFacade packageFeeFacade;
     @EJB
     ServiceSessionBean serviceSessionBean;
+
+    public void saveEncounterComponents(List<Bill> bills, Bill batchBill, WebUser user) {
+        for (BillFee bf : getBillFeeFromBills(bills)) {
+            saveEncounterComponent(bf, batchBill, user);
+        }
+
+    }
+
+    public void saveEncounterComponents(Bill bill, Bill batchBill, WebUser user) {
+        for (BillFee bf : getBillFee(bill)) {
+            saveEncounterComponent(bf, batchBill, user);
+        }
+
+    }
+
+    public void setSurgeryData(Bill bill, Bill batchBill, SurgeryBillType surgeryBillType) {
+        if (batchBill == null) {
+            return;
+        }
+
+        bill.setForwardReferenceBill(batchBill);
+        bill.setSurgeryBillType(surgeryBillType);
+
+    }
+
+    public void saveEncounterComponent(BillFee bf, Bill batchBill, WebUser user) {
+        EncounterComponent ec = new EncounterComponent();
+        ec.setPatientEncounter(batchBill.getPatientEncounter());
+        ec.setChildEncounter(batchBill.getProcedure());
+        ec.setBillFee(bf);
+        ec.setBillItem(bf.getBillItem());
+        ec.setCreatedAt(Calendar.getInstance().getTime());
+        ec.setCreater(user);
+        ec.setPatientEncounter(batchBill.getProcedure());
+        if (ec.getBillFee() != null) {
+            ec.setStaff(ec.getBillFee().getStaff());
+        }
+
+        getEncounterComponentFacade().create(ec);
+
+    }
 
     public void updateBatchBill(Bill b) {
         double value = getTotalByBill(b);

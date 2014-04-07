@@ -351,21 +351,23 @@ public class InwardCalculation {
         String sql;
         HashMap hm = new HashMap();
         InwardPriceAdjustment inwardPriceAdjustment;
+        Category category;
         if (billItem.getItem() instanceof Investigation) {
-            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, ((Investigation) billItem.getItem()).getInvestigationCategory());
+            category = ((Investigation) billItem.getItem()).getInvestigationCategory();
         } else {
-            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, billItem.getItem().getCategory());
+            category = billItem.getItem().getCategory();
         }
 
-        System.err.println("Inward Margin 1 ");
+        inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, category);
+
+        if (inwardPriceAdjustment == null && category != null) {
+
+            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, category.getParentCategory());
+
+        }
 
         if (inwardPriceAdjustment == null) {
-
-            inwardPriceAdjustment = getInwardPriceAdjustment(department, serviceValue, billItem.getItem().getCategory().getParentCategory());
-
-            if (inwardPriceAdjustment == null) {
-                return 0;
-            }
+            return 0;
         }
 
         // System.err.println(inwardPriceAdjustment);

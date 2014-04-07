@@ -23,6 +23,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -92,6 +93,7 @@ public class PatientEncounter implements Serializable {
     Date dateOfDischarge;
     double creditLimit;
     double creditUsedAmount;
+    private double creditPaidAmount;
     @Enumerated(EnumType.STRING)
     PatientEncounterType patientEncounterType;
     @OneToMany(mappedBy = "parentEncounter")
@@ -108,8 +110,12 @@ public class PatientEncounter implements Serializable {
     private boolean paymentFinalized;
     String referanceNo;
     String policyNo;
+    @Lob
+    String comments;
     @Transient
     List<ClinicalFindingValue> diagnosis;
+    @ManyToOne
+    Department department;
 
     @Transient
     List<ClinicalFindingValue> investigations;
@@ -125,6 +131,11 @@ public class PatientEncounter implements Serializable {
 
     @Transient
     List<ClinicalFindingValue> plans;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date printingAdmissionTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date printingDischargeTime;
 
     public List<ClinicalFindingValue> getDiagnosis() {
         if (diagnosis == null) {
@@ -194,9 +205,9 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getProcedures() {
         if (procedures == null) {
-            procedures= new ArrayList<>();
-            for(ClinicalFindingValue v: clinicalFindingValues){
-                if(v.getClinicalFindingItem().getSymanticType()==SymanticType.Therapeutic_Procedure ){
+            procedures = new ArrayList<>();
+            for (ClinicalFindingValue v : clinicalFindingValues) {
+                if (v.getClinicalFindingItem().getSymanticType() == SymanticType.Therapeutic_Procedure) {
                     procedures.add(v);
                 }
             }
@@ -210,9 +221,9 @@ public class PatientEncounter implements Serializable {
 
     public List<ClinicalFindingValue> getPlans() {
         if (plans == null) {
-            plans= new ArrayList<>();
-            for(ClinicalFindingValue v: clinicalFindingValues){
-                if(v.getClinicalFindingItem().getSymanticType()==SymanticType.Preventive_Procedure ){
+            plans = new ArrayList<>();
+            for (ClinicalFindingValue v : clinicalFindingValues) {
+                if (v.getClinicalFindingItem().getSymanticType() == SymanticType.Preventive_Procedure) {
                     plans.add(v);
                 }
             }
@@ -571,11 +582,50 @@ public class PatientEncounter implements Serializable {
         this.opdDoctor = opdDoctor;
     }
 
-//    public PatientEncounter getReferencePatientEncounter() {
-//        return referencePatientEncounter;
-//    }
-//
-//    public void setReferencePatientEncounter(PatientEncounter referencePatientEncounter) {
-//        this.referencePatientEncounter = referencePatientEncounter;
-//    }
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public double getCreditPaidAmount() {
+        return creditPaidAmount;
+    }
+
+    public void setCreditPaidAmount(double creditPaidAmount) {
+        this.creditPaidAmount = creditPaidAmount;
+    }
+
+    public Date getPrintingAdmissionTime() {
+        if (printingAdmissionTime == null) {
+            printingAdmissionTime = dateOfAdmission;
+        }
+        return printingAdmissionTime;
+    }
+
+    public void setPrintingAdmissionTime(Date printingAdmissionTime) {
+        this.printingAdmissionTime = printingAdmissionTime;
+    }
+
+    public Date getPrintingDischargeTime() {
+        if (printingDischargeTime == null) {
+            printingDischargeTime = dateOfDischarge;
+        }
+        return printingDischargeTime;
+    }
+
+    public void setPrintingDischargeTime(Date printingDischargeTime) {
+        this.printingDischargeTime = printingDischargeTime;
+    }
+
 }

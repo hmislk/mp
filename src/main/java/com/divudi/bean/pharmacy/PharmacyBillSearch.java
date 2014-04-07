@@ -780,6 +780,7 @@ public class PharmacyBillSearch implements Serializable {
         cb.setBilledBill(getBill());
         cb.copy(getBill());
         cb.setReferenceBill(getBill().getReferenceBill());
+        cb.setForwardReferenceBill(getBill().getForwardReferenceBill());
         cb.invertValue(getBill());
 
         cb.setPaymentScheme(getBill().getPaymentScheme());
@@ -1071,7 +1072,7 @@ public class PharmacyBillSearch implements Serializable {
             b.copy(nB.getBillItem());
             b.invertValue(nB.getBillItem());
 
-            b.setReferanceBillItem(nB.getBillItem().getReferanceBillItem());          
+            b.setReferanceBillItem(nB.getBillItem().getReferanceBillItem());
             b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             b.setCreater(getSessionController().getLoggedUser());
 
@@ -1286,6 +1287,8 @@ public class PharmacyBillSearch implements Serializable {
             }
 
             Bill cb = getPharmacyBean().reAddToStock(getBill(), getSessionController().getLoggedUser(), getSessionController().getDepartment(), billNumberSuffix);
+            cb.setForwardReferenceBill(getBill().getForwardReferenceBill());
+            getBillFacade().edit(cb);
 
             cancelPreBillFees(cb.getBillItems());
 

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                template="./resources/template/template.xhtml"
+                template="/resources/template/template.xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
@@ -35,7 +35,7 @@
                                 <pa:slip paymentMethodData="#{cashRecieveBillController.paymentMethodData}"/>
                             </h:panelGroup>
 
-                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBillBht}"
+                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBill}"
                                              ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
@@ -59,7 +59,7 @@
                                     <h:outputLabel value="#{ix.institutionCode}"/>
                                 </p:column>
                                 <f:ajax execute="@this" event="itemSelect" render="#{p:component('items')} tot" 
-                                        listener="#{cashRecieveBillController.selectInstitutionListenerBht()}"/>
+                                        listener="#{cashRecieveBillController.selectInstitutionListener()}"/>
                             </p:autoComplete>                           
                         </h:panelGroup>
                         <p:dataTable value="#{cashRecieveBillController.billItems}"
@@ -80,18 +80,18 @@
                                 <f:facet name="header">
                                     <h:outputLabel value="Bill No"/>                                    
                                 </f:facet>                               
-                                <p:outputLabel value="#{b.patientEncounter.bhtNo}"/>
+                                <p:outputLabel value="#{b.referenceBill.insId}"/>
                             </p:column>
                             <p:column headerText="Patient Name">
-                                <p:outputLabel value="#{b.patientEncounter.patient.person.name}"/>                               
+                                <p:outputLabel value="#{b.referenceBill.patient.person.name}"/>                               
                             </p:column>
                             <p:column headerText="Value">
-                                <p:outputLabel value="#{b.patientEncounter.creditUsedAmount}">  
+                                <p:outputLabel value="#{b.referenceBill.netTotal}">  
                                     <f:convertNumber pattern="#,000.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Paid">
-                                <p:outputLabel value="#{b.patientEncounter.creditPaidAmount}">
+                                <p:outputLabel value="#{b.referenceBill.paidAmount}">
                                     <f:convertNumber pattern="#,000.00" />
                                 </p:outputLabel>
                             </p:column>
@@ -100,7 +100,7 @@
                                 <p:inputText value="#{b.netValue}">
                                     <f:convertNumber pattern="#,000.00" />
                                     <f:ajax event="blur" execute="@this" render="@all" 
-                                            listener="#{cashRecieveBillController.changeNetValueListenerBht(b)}"/>
+                                            listener="#{cashRecieveBillController.changeNetValueListener(b)}"/>
                                 </p:inputText>
                             </p:column>
                             <p:column headerText="Remove">

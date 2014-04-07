@@ -27,16 +27,16 @@
 
                     <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                     value="#{bhtSummeryController.patientEncounter}"
-                                    completeMethod="#{admissionController.completePatient}" 
+                                    completeMethod="#{admissionController.completePatientPaymentFinalized}" 
                                     var="myItem" itemValue="#{myItem}" 
                                     itemLabel="#{myItem.bhtNo}" 
                                     size="30"  >
                         <p:ajax event="itemSelect" process="@this" update="data"/>
                         <p:column>
-                            #{myItem.bhtNo}
+                            <h:outputLabel  value="#{myItem.bhtNo}"/>
                         </p:column>
                         <p:column>
-                            #{myItem.patient.person.nameWithTitle}
+                            <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                         </p:column>
                         <p:column>
                             <h:outputLabel value="Discharged"  rendered="#{myItem.discharged}"/>

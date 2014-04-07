@@ -1330,13 +1330,18 @@ public class BhtSummeryController implements Serializable {
     private double calCostOfMadicine() {
         String sql;
         HashMap hm;
-        sql = "SELECT  sum(b.adjustedValue) FROM BillItem b WHERE b.retired=false "
-                + " and b.bill.billType=:btp  "
+        sql = "SELECT  sum(b.adjustedValue)"
+                + " FROM BillItem b "
+                + " WHERE b.retired=false "
+                + " and (b.bill.billType=:btp1 "
+                + " or  b.bill.billType=:btp2) "
                 + " and  b.bill.patientEncounter=:pe";
         hm = new HashMap();
-        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("btp1", BillType.PharmacyBhtPre);
+        hm.put("btp2", BillType.StoreBhtPre);
         hm.put("pe", getPatientEncounter());
         return getBillItemFacade().findDoubleByJpql(sql, hm);
+
     }
 
 //    private double calHosFee(BillItem billItem) {

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                template="./resources/template/template.xhtml"
+                template="/resources/template/template.xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
@@ -35,7 +35,7 @@
                                 <pa:slip paymentMethodData="#{cashRecieveBillController.paymentMethodData}"/>
                             </h:panelGroup>
 
-                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBillBht}"
+                            <p:commandButton id="btnSettle" value="Settle" action="#{cashRecieveBillController.settleBill}"
                                              ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
@@ -48,10 +48,9 @@
                         <h:panelGroup>
                             <p:autoComplete widgetVar="aIx" id="acIx" 
                                             forceSelection="true" 
-                                            converter="admis"
-                                            value="#{cashRecieveBillController.currentBillItem.patientEncounter}" 
-                                            completeMethod="#{admissionController.completeBhtCredit}" 
-                                            var="ix" itemLabel="#{ix.bhtNo}"
+                                            value="#{cashRecieveBillController.currentBillItem.referenceBill}" 
+                                            completeMethod="#{billController.completeOpdCreditBill}" 
+                                            var="ix" itemLabel="#{ix.patient.person.name}"
                                             itemValue="#{ix}" size="30"  style="width: 400px;">
                                 <p:column>
                                     <h:outputLabel value="#{ix.patient.person.name}"/>
@@ -60,26 +59,26 @@
                                     <h:outputLabel value="#{ix.creditCompany.name}"/>
                                 </p:column>
                                 <p:column>
-                                    <h:outputLabel value="#{ix.bhtNo}">
+                                    <h:outputLabel value="#{ix.createdAt}">
                                         <f:convertDateTime pattern="dd MM YYYY"/>
                                     </h:outputLabel>
                                 </p:column>
                                 <p:column>
-                                    <h:outputLabel value="#{ix.creditUsedAmount}">
+                                    <h:outputLabel value="#{ix.paidAmount}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
                                 <p:column>
-                                    <h:outputLabel value="#{ix.creditPaidAmount}">
+                                    <h:outputLabel value="#{ix.netTotal}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
-                                <f:ajax execute="@this" event="itemSelect" render="val" listener="#{cashRecieveBillController.selectBhtListener()}"/>
+                                <f:ajax execute="@this" event="itemSelect" render="val" listener="#{cashRecieveBillController.selectBillListener()}"/>
                             </p:autoComplete>
                             <p:inputText id="val" value="#{cashRecieveBillController.currentBillItem.netValue}">
                                 <f:convertNumber pattern="#,000.00" />
                             </p:inputText>
-                            <p:commandButton id="btnAddIx" value="Add" action="#{cashRecieveBillController.addToBht()}" ajax="false"/>
+                            <p:commandButton id="btnAddIx" value="Add" action="#{cashRecieveBillController.addToBill()}" ajax="false"/>
                         </h:panelGroup>
                         <p:dataTable value="#{cashRecieveBillController.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
                             <f:facet name="header">
@@ -87,15 +86,15 @@
                             </f:facet>                           
                             <p:column >  
                                 <f:facet name="header">
-                                    <h:outputLabel value="Bht No"/>                                    
+                                    <h:outputLabel value="Bill No"/>                                    
                                 </f:facet>                               
-                                <p:outputLabel value="#{b.patientEncounter.bhtNo}"/>
+                                <p:outputLabel value="#{b.referenceBill.insId}"/>
                             </p:column>
                             <p:column headerText="Patient Name">
-                                <p:outputLabel value="#{b.patientEncounter.patient.person.name}"/>                               
+                                <p:outputLabel value="#{b.referenceBill.patient.person.name}"/>                               
                             </p:column>
                             <p:column headerText="Credit Company">     
-                                <p:outputLabel value="#{b.patientEncounter.creditCompany.name}" />                                
+                                <p:outputLabel value="#{b.referenceBill.creditCompany.name}" />                                
                             </p:column>
                             <p:column headerText="Net Total">
                                 <h:outputLabel value="#{b.netValue}">

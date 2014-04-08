@@ -5,9 +5,9 @@
  */
 package com.divudi.bean.report;
 
+import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.table.String1Value1;
 import com.divudi.data.dataStructure.DatedBills;
 import com.divudi.data.dataStructure.PharmacyDetail;
 import com.divudi.data.dataStructure.PharmacyPaymetMethodSummery;
@@ -36,7 +36,9 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.jpa.JpaHelper;
 
 /**
  *
@@ -51,6 +53,8 @@ public class PharmacySaleReport implements Serializable {
     private Department department;
     private Institution institution;
     private double grantNetTotal;
+    private double grantTotal;
+    private double grantProfessional;
     private double grantDiscount;
     private double grantCashTotal;
     private double grantCreditTotal;
@@ -123,17 +127,62 @@ public class PharmacySaleReport implements Serializable {
 
     }
 
-    private double getHandOverValue(Date date, Bill bill) {
+    @Inject
+    private SessionController sessionController;
+
+    private double getHandOverGrossValue(Date date) {
 
         String sql;
 
-        sql = "select sum(f.total - f.staffFee - f.discount) from Bill f "
+        sql = "select sum(f.total)"
+                + " from Bill f "
                 + " where f.retired=false "
-                + " and type(f) = :billClass "
                 + " and f.billType = :billType "
-                + " and f.createdAt between :fd "
-                + " and f.paymentMethod!=:pm "
-                + " and :td and f.toInstitution=:ins ";
+                + " and f.createdAt between :fd and :td "
+                + " and( f.paymentMethod=:pm1"
+                + " or f.paymentMethod=:pm2"
+                + " or f.paymentMethod=:pm3"
+                + " or f.paymentMethod=:pm4 )"
+                + " and f.toInstitution=:ins "
+                + " and f.institution=:billedIns ";
+
+        Date fd = getCommonFunctions().getStartOfDay(date);
+        Date td = getCommonFunctions().getEndOfDay(date);
+
+        System.err.println("From " + fd);
+        System.err.println("To " + td);
+
+        Map m = new HashMap();
+        m.put("fd", fd);
+        m.put("td", td);
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
+        m.put("billType", BillType.OpdBill);
+        m.put("ins", institution);
+        m.put("billedIns", getSessionController().getInstitution());
+        double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+        return saleValue;
+
+    }
+
+    private double getHandOverDiscountValue(Date date) {
+
+        String sql;
+
+        sql = "select sum(f.discount)"
+                + " from Bill f "
+                + " where f.retired=false "
+                + " and f.billType = :billType "
+                + " and f.createdAt between :fd and :td "
+                + " and( f.paymentMethod=:pm1"
+                + " or f.paymentMethod=:pm2"
+                + " or f.paymentMethod=:pm3"
+                + " or f.paymentMethod=:pm4 )"
+                + " and f.toInstitution=:ins "
+                + " and f.institution=:billedIns ";
 
         Date fd = getCommonFunctions().getStartOfDay(date);
         Date td = getCommonFunctions().getEndOfDay(date);
@@ -141,10 +190,49 @@ public class PharmacySaleReport implements Serializable {
         Map m = new HashMap();
         m.put("fd", fd);
         m.put("td", td);
-        m.put("pm", PaymentMethod.Credit);
-        m.put("billClass", bill.getClass());
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
         m.put("billType", BillType.OpdBill);
         m.put("ins", institution);
+        m.put("billedIns", getSessionController().getInstitution());
+
+        double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+        return saleValue;
+
+    }
+
+    private double getHandOverProfValue(Date date) {
+
+        String sql;
+
+        sql = "select sum(f.staffFee)"
+                + " from Bill f "
+                + " where f.retired=false "
+                + " and f.billType = :billType "
+                + " and f.createdAt between :fd and :td "
+                + " and( f.paymentMethod=:pm1"
+                + " or f.paymentMethod=:pm2"
+                + " or f.paymentMethod=:pm3"
+                + " or f.paymentMethod=:pm4 )"
+                + " and f.toInstitution=:ins "
+                + " and f.institution=:billedIns ";
+
+        Date fd = getCommonFunctions().getStartOfDay(date);
+        Date td = getCommonFunctions().getEndOfDay(date);
+
+        Map m = new HashMap();
+        m.put("fd", fd);
+        m.put("td", td);
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
+        m.put("billType", BillType.OpdBill);
+        m.put("ins", institution);
+        m.put("billedIns", getSessionController().getInstitution());
 
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 
@@ -294,13 +382,19 @@ public class PharmacySaleReport implements Serializable {
         m.put("fromDate", getFromDate());
         m.put("toDate", getToDate());
         m.put("class", bill.getClass());
-        m.put("pm", PaymentMethod.Credit);
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
         m.put("btp", BillType.OpdBill);
-        sql = "select sum(i.total - i.staffFee - i.discount) from "
+        sql = "select sum(abs(i.total) - (abs(i.staffFee) + abs(i.discount))) from "
                 + " Bill i where i.toInstitution=:ins "
                 + " and i.billType=:btp"
                 + " and type(i)=:class "
-                + " and i.paymentMethod!=:pm "
+                + " and( i.paymentMethod=:pm1 "
+                + " or i.paymentMethod=:pm2 "
+                + " or i.paymentMethod=:pm3 "
+                + " or i.paymentMethod=:pm4 )"
                 + " and i.createdAt between :fromDate and :toDate ";
         return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 
@@ -313,15 +407,101 @@ public class PharmacySaleReport implements Serializable {
         m.put("ins", getInstitution());
         m.put("fromDate", getFromDate());
         m.put("toDate", getToDate());
-
-        m.put("pm", PaymentMethod.Credit);
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
         m.put("btp", BillType.OpdBill);
-        sql = "select sum(i.total - i.staffFee - i.discount)  "
+        sql = "select sum(abs(i.netTotal) - abs(i.staffFee))  "
                 + " from Bill i where "
                 + " i.toInstitution=:ins "
                 + " and i.billType=:btp "
-                + " and i.paymentMethod!=:pm "
-                + " and  i.createdAt between :fromDate and :toDate ";
+                + " and (i.paymentMethod=:pm1 "
+                + " or i.paymentMethod=:pm2 "
+                + " or i.paymentMethod=:pm3 "
+                + " or i.paymentMethod=:pm4 )"
+                + " and i.createdAt between :fromDate and :toDate ";
+        return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calGrantHandOverTotal() {
+        //   List<Stock> billedSummery;
+        String sql;
+        Map m = new HashMap();
+        m.put("ins", getInstitution());
+        m.put("fromDate", getFromDate());
+        m.put("toDate", getToDate());
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
+        m.put("btp", BillType.OpdBill);
+        m.put("billedIns", getSessionController().getInstitution());
+        sql = "select sum(i.total)  "
+                + " from Bill i where "
+                + " i.toInstitution=:ins "
+                + " and i.institution=:billedIns "
+                + " and i.billType=:btp "
+                + " and (i.paymentMethod=:pm1 "
+                + " or i.paymentMethod=:pm2 "
+                + " or i.paymentMethod=:pm3 "
+                + " or i.paymentMethod=:pm4 )"
+                + " and i.createdAt between :fromDate and :toDate ";
+        return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calGrantHandOverProf() {
+        //   List<Stock> billedSummery;
+        String sql;
+        Map m = new HashMap();
+        m.put("ins", getInstitution());
+        m.put("fromDate", getFromDate());
+        m.put("toDate", getToDate());
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
+        m.put("btp", BillType.OpdBill);
+        m.put("billedIns", getSessionController().getInstitution());
+        sql = "select sum(i.staffFee)  "
+                + " from Bill i where "
+                + " i.toInstitution=:ins "
+                + " and i.institution=:billedIns "
+                + " and i.billType=:btp "
+                + " and (i.paymentMethod=:pm1 "
+                + " or i.paymentMethod=:pm2 "
+                + " or i.paymentMethod=:pm3 "
+                + " or i.paymentMethod=:pm4 )"
+                + " and i.createdAt between :fromDate and :toDate ";
+        return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calGrantHandOverDiscount() {
+        //   List<Stock> billedSummery;
+        String sql;
+        Map m = new HashMap();
+        m.put("ins", getInstitution());
+        m.put("fromDate", getFromDate());
+        m.put("toDate", getToDate());
+        m.put("pm1", PaymentMethod.Cash);
+        m.put("pm2", PaymentMethod.Card);
+        m.put("pm3", PaymentMethod.Cheque);
+        m.put("pm4", PaymentMethod.Slip);
+        m.put("btp", BillType.OpdBill);
+        m.put("billedIns", getSessionController().getInstitution());
+        sql = "select sum(i.discount)  "
+                + " from Bill i where "
+                + " i.toInstitution=:ins "
+                + " and i.institution=:billedIns "
+                + " and i.billType=:btp "
+                + " and (i.paymentMethod=:pm1 "
+                + " or i.paymentMethod=:pm2 "
+                + " or i.paymentMethod=:pm3 "
+                + " or i.paymentMethod=:pm4 )"
+                + " and i.createdAt between :fromDate and :toDate ";
         return getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
 
     }
@@ -443,9 +623,9 @@ public class PharmacySaleReport implements Serializable {
 
             String1Value3 newRow = new String1Value3();
             newRow.setString(formattedDate);
-            newRow.setValue1(getHandOverValue(nowDate, new BilledBill()));
-            newRow.setValue2(getHandOverValue(nowDate, new CancelledBill()));
-            newRow.setValue3(getHandOverValue(nowDate, new RefundBill()));
+            newRow.setValue1(getHandOverGrossValue(nowDate));
+            newRow.setValue2(getHandOverDiscountValue(nowDate));
+            newRow.setValue3(getHandOverProfValue(nowDate));
 
             billedSummery.getBills().add(newRow);
 
@@ -456,11 +636,9 @@ public class PharmacySaleReport implements Serializable {
 
         }
 
-        billedSummery.setBilledTotal(calGrantHandOverNetotal(new BilledBill()));
-        billedSummery.setCancelledTotal(calGrantHandOverNetotal(new CancelledBill()));
-        billedSummery.setRefundedTotal(calGrantHandOverNetotal(new RefundBill()));
-
-        grantNetTotal = calGrantHandOverNetotal();
+        billedSummery.setBilledTotal(calGrantHandOverTotal());
+        billedSummery.setCancelledTotal(calGrantHandOverDiscount());
+        billedSummery.setRefundedTotal(calGrantHandOverProf());
 
     }
 
@@ -845,6 +1023,30 @@ public class PharmacySaleReport implements Serializable {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    public double getGrantTotal() {
+        return grantTotal;
+    }
+
+    public void setGrantTotal(double grantTotal) {
+        this.grantTotal = grantTotal;
+    }
+
+    public double getGrantProfessional() {
+        return grantProfessional;
+    }
+
+    public void setGrantProfessional(double grantProfessional) {
+        this.grantProfessional = grantProfessional;
+    }
+
+    public SessionController getSessionController() {
+        return sessionController;
+    }
+
+    public void setSessionController(SessionController sessionController) {
+        this.sessionController = sessionController;
     }
 
 }

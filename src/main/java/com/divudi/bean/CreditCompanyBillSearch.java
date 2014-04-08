@@ -10,6 +10,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.CreditBean;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -18,6 +19,7 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
@@ -26,6 +28,7 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BilledBillFacade;
 import com.divudi.facade.CancelledBillFacade;
+import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.RefundBillFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -70,6 +73,8 @@ public class CreditCompanyBillSearch implements Serializable {
     CancelledBillFacade cancelledBillFacade;
     @EJB
     private BillItemFacade billItemFacede;
+    @EJB
+    private PatientEncounterFacade patientEncounterFacade;
     @EJB
     BilledBillFacade billedBillFacade;
     @EJB
@@ -414,17 +419,41 @@ public class CreditCompanyBillSearch implements Serializable {
             b.setBill(can);
             b.copy(nB);
             b.invertValue(nB);
-            b.setReferenceBill(nB.getReferenceBill());          
-            
+
             b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             b.setCreater(getSessionController().getLoggedUser());
 
             getBillItemFacede().create(b);
 
-            nB.getReferenceBill().setPaidAmount(nB.getReferenceBill().getPaidAmount() - getBill().getNetTotal());
-            getBillFacade().edit(nB.getReferenceBill());
+            if (b.getReferenceBill() != null) {
+                updateReferenceBill(b);
+            }
+
+            if (b.getPatientEncounter() != null) {
+                updateReferenceBht(b);
+            }
         }
     }
+
+    @EJB
+    private CreditBean creditBean;
+
+    private void updateReferenceBill(BillItem tmp) {
+        double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.CashRecieveBill);
+
+        tmp.getReferenceBill().setPaidAmount(0 - dbl);
+        getBillFacade().edit(tmp.getReferenceBill());
+
+    }
+
+    private void updateReferenceBht(BillItem tmp) {
+        double dbl = getCreditBean().getPaidAmount(tmp.getPatientEncounter(), BillType.CashRecieveBill);
+
+        tmp.getPatientEncounter().setCreditPaidAmount(0 - dbl);
+        getPatientEncounterFacade().edit(tmp.getPatientEncounter());
+
+    }
+
     @EJB
     private BillBean billBean;
 
@@ -737,5 +766,21 @@ public class CreditCompanyBillSearch implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public CreditBean getCreditBean() {
+        return creditBean;
+    }
+
+    public void setCreditBean(CreditBean creditBean) {
+        this.creditBean = creditBean;
+    }
+
+    public PatientEncounterFacade getPatientEncounterFacade() {
+        return patientEncounterFacade;
+    }
+
+    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
+        this.patientEncounterFacade = patientEncounterFacade;
     }
 }

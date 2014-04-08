@@ -28,20 +28,15 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
-
-
-
-
-
-
 /**
  *
  * @author buddhika
  */
 @Entity
 public class Bill implements Serializable {
-    @OneToMany(mappedBy = "bill",fetch = FetchType.LAZY)
-    private List<StockVarientBillItem> stockVarientBillItems=new ArrayList<>();
+
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    private List<StockVarientBillItem> stockVarientBillItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "backwardReferenceBill", fetch = FetchType.LAZY)
     private List<Bill> forwardReferenceBills;
@@ -106,6 +101,7 @@ public class Bill implements Serializable {
     double netTotal;
     double paidAmount;
     double balance;
+    double serviceCharge;
     Double tax = 0.0;
     Double cashPaid = 0.0;
     Double cashBalance = 0.0;
@@ -219,12 +215,12 @@ public class Bill implements Serializable {
 
     @ManyToOne
     private Bill backwardReferenceBill;
-    @Transient
     private double hospitalFee;
-    @Transient
     private double professionalFee;
     @Transient
     private double tmpReturnTotal;
+    @Transient
+    private boolean transBoolean;
     @Enumerated(EnumType.STRING)
     private SurgeryBillType surgeryBillType;
 
@@ -260,6 +256,7 @@ public class Bill implements Serializable {
         patientEncounter = bill.getPatientEncounter();
         referredBy = bill.getReferredBy();
         referringDepartment = bill.getReferringDepartment();
+        surgeryBillType = bill.getSurgeryBillType();
         //      referenceBill=bill.getReferenceBill();
         //  paymentScheme=bill.getPaymentScheme();
         //   paymentMethod=bill.getPaymentMethod();
@@ -1199,5 +1196,27 @@ public class Bill implements Serializable {
     public void setStockVarientBillItems(List<StockVarientBillItem> stockVarientBillItems) {
         this.stockVarientBillItems = stockVarientBillItems;
     }
+
+    public boolean isTransBoolean() {
+        return transBoolean;
+    }
+
+    public boolean getTransBoolean() {
+        return transBoolean;
+    }
+
+    public void setTransBoolean(boolean transBoolean) {
+        this.transBoolean = transBoolean;
+    }
+
+    public double getServiceCharge() {
+        return serviceCharge;
+    }
+
+    public void setServiceCharge(double serviceCharge) {
+        this.serviceCharge = serviceCharge;
+    }
+
+
 
 }

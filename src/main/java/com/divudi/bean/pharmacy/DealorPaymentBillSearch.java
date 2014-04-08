@@ -11,6 +11,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.CreditBean;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -395,10 +396,22 @@ public class DealorPaymentBillSearch implements Serializable {
 
             getBillItemFacede().create(b);
 
-            nB.getReferenceBill().setPaidAmount(nB.getReferenceBill().getPaidAmount() + nB.getNetValue());
-            getBillFacade().edit(nB.getReferenceBill());
+            updateReferenceBill(b);
         }
     }
+    
+     @EJB
+    private CreditBean creditBean;
+
+    
+    private void updateReferenceBill(BillItem tmp) {
+        double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.GrnPayment);
+        
+        tmp.getReferenceBill().setPaidAmount(0 - dbl);
+        getBillFacade().edit(tmp.getReferenceBill());
+
+    }
+    
     @EJB
     private BillBean billBean;
 
@@ -711,5 +724,13 @@ public class DealorPaymentBillSearch implements Serializable {
 
     public void setBillFacade(BillFacade billFacade) {
         this.billFacade = billFacade;
+    }
+
+    public CreditBean getCreditBean() {
+        return creditBean;
+    }
+
+    public void setCreditBean(CreditBean creditBean) {
+        this.creditBean = creditBean;
     }
 }

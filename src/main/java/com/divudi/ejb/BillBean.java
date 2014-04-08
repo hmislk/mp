@@ -14,6 +14,7 @@ import static com.divudi.data.PaymentMethod.Cheque;
 import static com.divudi.data.PaymentMethod.Credit;
 import static com.divudi.data.PaymentMethod.Slip;
 import com.divudi.data.dataStructure.PaymentMethodData;
+import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -28,6 +29,7 @@ import com.divudi.entity.ItemFee;
 import com.divudi.entity.PackageFee;
 import com.divudi.entity.Packege;
 import com.divudi.entity.WebUser;
+import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillComponentFacade;
@@ -35,6 +37,7 @@ import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
+import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.FeeFacade;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemFeeFacade;
@@ -51,8 +54,6 @@ import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TemporalType;
-
-
 
 /**
  *
@@ -86,6 +87,62 @@ public class BillBean {
     @EJB
     ServiceSessionBean serviceSessionBean;
 
+    public void saveEncounterComponents(List<Bill> bills, Bill batchBill, WebUser user) {
+        for (BillFee bf : getBillFeeFromBills(bills)) {
+            saveEncounterComponent(bf, batchBill, user);
+        }
+
+    }
+
+    public void saveEncounterComponents(Bill bill, Bill batchBill, WebUser user) {
+        for (BillFee bf : getBillFee(bill)) {
+            saveEncounterComponent(bf, batchBill, user);
+        }
+
+    }
+
+    public void setSurgeryData(Bill bill, Bill batchBill, SurgeryBillType surgeryBillType) {
+        if (batchBill == null) {
+            return;
+        }
+
+        bill.setForwardReferenceBill(batchBill);
+        bill.setSurgeryBillType(surgeryBillType);
+
+    }
+
+    public void saveEncounterComponent(BillFee bf, Bill batchBill, WebUser user) {
+        EncounterComponent ec = new EncounterComponent();
+        ec.setPatientEncounter(batchBill.getPatientEncounter());
+        ec.setChildEncounter(batchBill.getProcedure());
+        ec.setBillFee(bf);
+        ec.setBillItem(bf.getBillItem());
+        ec.setCreatedAt(Calendar.getInstance().getTime());
+        ec.setCreater(user);
+        ec.setPatientEncounter(batchBill.getProcedure());
+        if (ec.getBillFee() != null) {
+            ec.setStaff(ec.getBillFee().getStaff());
+        }
+
+        getEncounterComponentFacade().create(ec);
+
+    }
+
+    public void updateBatchBill(Bill b) {
+        double value = getTotalByBill(b);
+        b.setTotal(value);
+
+        getBillFacade().edit(b);
+    }
+
+    private double getTotalByBill(Bill b) {
+        String sql = "Select sum(bf.netTotal) from Bill bf where "
+                + " bf.retired=false and bf.forwardReferenceBill=:bill";
+        HashMap hm = new HashMap();
+        hm.put("bill", b);
+        return getBillFacade().findDoubleByJpql(sql, hm);
+    }
+
     public void setPaymentMethodData(Bill b, PaymentMethod paymentMethod, PaymentMethodData paymentMethodData) {
 
         if (paymentMethod.equals(PaymentMethod.Cheque)) {
@@ -98,7 +155,7 @@ public class BillBean {
             b.setChequeDate(paymentMethodData.getSlip().getDate());
             b.setComments(paymentMethodData.getSlip().getComment());
         }
-        
+
         if (paymentMethod.equals(PaymentMethod.Card)) {
             b.setCreditCardRefNo(paymentMethodData.getCreditCard().getNo());
             b.setBank(paymentMethodData.getCreditCard().getInstitution());
@@ -625,7 +682,22 @@ public class BillBean {
 
             getBillItemFacade().edit(e.getBillItem());
 
+            System.err.println("1 " + e.getBillItem());
+            updateMatrix(e.getBillItem());
+
         }
+
+        calBillTotal(b);
+    }
+
+    private void calBillTotal(Bill b) {
+        String sql = "SELECT sum(b.feeValue) FROM BillFee b WHERE b.retired=false and b.bill=:bill ";
+        HashMap hm = new HashMap();
+        hm.put("bill", b);
+        double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
+
+        b.setNetTotal(val);
+        getBillFacade().edit(b);
     }
 
     public void saveBillItems(Bill b, BillEntry e, WebUser wu) {
@@ -660,6 +732,49 @@ public class BillBean {
             bf.setBill(b);
             getBillFeeFacade().create(bf);
         }
+
+    }
+
+    @EJB
+    private InwardCalculation inwardCalculation;
+
+    private void updateMatrix(BillItem billItem) {
+        double serviceValue = 0;
+        BillFee marginFee = null;
+        marginFee = getInwardCalculation().getBillFeeMatrix(billItem, billItem.getBill().getInstitution());
+        serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billItem);
+
+        double matrixValue = getInwardCalculation().calInwardMargin(billItem, serviceValue, billItem.getBill().getFromDepartment());
+        marginFee.setBill(billItem.getBill());
+        marginFee.setFeeValue(matrixValue);
+
+        if (marginFee.getId() != null) {
+            getBillFeeFacade().edit(marginFee);
+        }
+
+        if (marginFee.getId() == null && marginFee.getFeeValue() != 0) {
+            getBillFeeFacade().create(marginFee);
+        }
+
+        System.err.println("2 " + billItem);
+        calBillItemTotal(billItem);
+
+    }
+
+    private void calBillItemTotal(BillItem billItem) {
+        String sql = "SELECT sum(b.feeValue) "
+                + " FROM BillFee b "
+                + " WHERE b.retired=false "
+                + " and b.billItem=:bItm ";
+        HashMap hm = new HashMap();
+        hm.put("bItm", billItem);
+        double val = getBillFeeFacade().findDoubleByJpql(sql, hm);
+
+        billItem.setNetValue(val);
+
+        System.err.println("3 " + billItem);
+        getBillItemFacade().edit(billItem);
+
     }
 
     private void savePatientInvestigation(BillEntry e, BillComponent bc, WebUser wu) {
@@ -1061,4 +1176,55 @@ public class BillBean {
         return "";
 
     }
+
+    public InwardCalculation getInwardCalculation() {
+        return inwardCalculation;
+    }
+
+    public void setInwardCalculation(InwardCalculation inwardCalculation) {
+        this.inwardCalculation = inwardCalculation;
+    }
+
+    public List<BillFee> getBillFee(Bill b) {
+        String sql = "Select bf From BillFee bf "
+                + " where bf.retired=false"
+                + " and bf.bill=:b ";
+
+        HashMap hm = new HashMap();
+        hm.put("b", b);
+        return getBillFeeFacade().findBySQL(sql, hm);
+    }
+
+    public List<BillFee> getBillFeeFromBills(List<Bill> list) {
+        List<BillFee> billFees = new ArrayList<>();
+        for (Bill b : list) {
+            billFees.addAll(getBillFee(b));
+        }
+
+        return billFees;
+    }
+
+    @EJB
+    private EncounterComponentFacade encounterComponentFacade;
+
+    public List<EncounterComponent> getEncounterBillComponents(BillItem billItem) {
+
+        String sql = "SELECT b FROM EncounterComponent b "
+                + " WHERE b.retired=false "
+                + " and b.billItem=:b ";
+        HashMap hs = new HashMap();
+        hs.put("itm", billItem);
+        List<EncounterComponent> list = getEncounterComponentFacade().findBySQL(sql, hs);
+
+        return list;
+    }
+
+    public EncounterComponentFacade getEncounterComponentFacade() {
+        return encounterComponentFacade;
+    }
+
+    public void setEncounterComponentFacade(EncounterComponentFacade encounterComponentFacade) {
+        this.encounterComponentFacade = encounterComponentFacade;
+    }
+
 }

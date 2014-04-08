@@ -31,6 +31,7 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.StockHistory;
+import com.divudi.entity.pharmacy.StoreItemCategory;
 import com.divudi.entity.pharmacy.Vmp;
 import com.divudi.entity.pharmacy.Vmpp;
 import com.divudi.entity.pharmacy.Vtm;
@@ -47,6 +48,7 @@ import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.PharmaceuticalItemFacade;
 import com.divudi.facade.StockHistoryFacade;
+import com.divudi.facade.StoreItemCategoryFacade;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VmppFacade;
 import com.divudi.facade.VtmFacade;
@@ -63,9 +65,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 import jxl.Cell;
 import jxl.Sheet;
@@ -106,6 +108,8 @@ public class PharmacyItemExcelManager implements Serializable {
     PharmaceuticalItemCategoryFacade pharmaceuticalItemCategoryFacade;
     @EJB
     private PharmacyBean pharmacyBean;
+    @EJB
+            StoreItemCategoryFacade storeItemCategoryFacade;
 
     List<PharmacyImportCol> itemNotPresent;
     List<String> itemsWithDifferentGenericName;
@@ -280,14 +284,14 @@ public class PharmacyItemExcelManager implements Serializable {
             //Reset Institution ID
             if (b.getInsId() != null) {
                 str = b.getInsId().replace('\\', '/');
-                System.err.println("Ins No " + b.getInsId() + " : " + str);
+                //  System.err.println("Ins No " + b.getInsId() + " : " + str);
                 b.setInsId(str);
             }
 
             //Reset Department ID
             if (b.getDeptId() != null) {
                 str = b.getDeptId().replace('\\', '/');
-                System.err.println("Dept No " + b.getDeptId() + " : " + str);
+                //    System.err.println("Dept No " + b.getDeptId() + " : " + str);
                 b.setDeptId(str);
             }
 
@@ -331,14 +335,14 @@ public class PharmacyItemExcelManager implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select b from Bill b where b.paymentmethod is null";
+        sql = "select b from Bill b where b.paymentMethod is null";
 
         List<Bill> list = getBillFacade().findBySQL(sql, temMap);
-
-        int ind = 1;
+        System.err.println("Size  " + list.size());
+        //  int ind = 1;
         for (Bill i : list) {
-            System.err.println("index " + ind++);
-            System.err.println("Bill  " + i);
+            //   System.err.println("index " + ind++);
+            //    System.err.println("Bill  " + i);
             if (i.getPaymentScheme() != null) {
                 i.setPaymentMethod(i.getPaymentScheme().getPaymentMethod());
                 getBillFacade().edit(i);
@@ -853,7 +857,7 @@ public class PharmacyItemExcelManager implements Serializable {
         String itenName;
         String itemCode;
 
-        PharmaceuticalItemCategory cat;
+        StoreItemCategory cat;
         Amp amp;
 
         File inputWorkbook;
@@ -902,16 +906,16 @@ public class PharmacyItemExcelManager implements Serializable {
                     continue;
                 }
 
-                cat = getPharmacyBean().getPharmaceuticalCategoryByName(catName);
+                cat = getPharmacyBean().getStoreItemCategoryByName(catName);
                 if (cat == null) {
-                    cat = new PharmaceuticalItemCategory();
+                    cat = new StoreItemCategory();
                     cat.setName(catName);
                     cat.setCode(catCode);
-                    getPharmaceuticalItemCategoryFacade().create(cat);
+                    getStoreItemCategoryFacade().create(cat);
                 } else {
                     cat.setName(catName);
                     cat.setCode(catCode);
-                    getPharmaceuticalItemCategoryFacade().edit(cat);
+                    getStoreItemCategoryFacade().edit(cat);
                 }
 
                 m = new HashMap();
@@ -1018,7 +1022,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 } else {
                     System.out.println("added to list");
                     PharmacyImportCol npi = new PharmacyImportCol();
-                    long l ;
+                    long l;
                     double d;
 
                     npi.setItem1_itemCatName(sheet.getCell(0, i).getContents());
@@ -1026,27 +1030,27 @@ public class PharmacyItemExcelManager implements Serializable {
                     npi.setItem3_code(sheet.getCell(2, i).getContents());
                     npi.setItem4_barcode(sheet.getCell(3, i).getContents());
                     npi.setItem5_genericName(sheet.getCell(4, i).getContents());
-                    try{
-                        d=Double.parseDouble(sheet.getCell(5, i).getContents());
-                    }catch(NumberFormatException e){
-                        d=0.0;
+                    try {
+                        d = Double.parseDouble(sheet.getCell(5, i).getContents());
+                    } catch (NumberFormatException e) {
+                        d = 0.0;
                         System.out.println("e = " + e);
-                    }                   
+                    }
                     npi.setItem6_StrengthOfIssueUnit(d);
 
                     npi.setItem7_StrengthUnit(sheet.getCell(6, i).getContents());
 
-                    try{
-                        d=Double.parseDouble(sheet.getCell(7, i).getContents());
-                    }catch(NumberFormatException e){
-                        d=0.0;
+                    try {
+                        d = Double.parseDouble(sheet.getCell(7, i).getContents());
+                    } catch (NumberFormatException e) {
+                        d = 0.0;
                         System.out.println("e = " + e);
-                    }                   
+                    }
                     npi.setItem8_IssueUnitsPerPack(d);
-                    
+
                     npi.setItem9_IssueUnit(sheet.getCell(8, i).getContents());
                     npi.setItem10_PackUnit(sheet.getCell(9, i).getContents());
-                    
+
                     itemNotPresent.add(npi);
 
                 }
@@ -1534,8 +1538,6 @@ public class PharmacyItemExcelManager implements Serializable {
         this.stockHistoryFacade = stockHistoryFacade;
     }
 
-   
-
     public List<String> getItemsWithDifferentGenericName() {
         return itemsWithDifferentGenericName;
     }
@@ -1568,6 +1570,14 @@ public class PharmacyItemExcelManager implements Serializable {
         this.itemNotPresent = itemNotPresent;
     }
 
-    
-    
+    public StoreItemCategoryFacade getStoreItemCategoryFacade() {
+        return storeItemCategoryFacade;
+    }
+
+    public void setStoreItemCategoryFacade(StoreItemCategoryFacade storeItemCategoryFacade) {
+        this.storeItemCategoryFacade = storeItemCategoryFacade;
+    }
+
+
+
 }

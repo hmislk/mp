@@ -37,6 +37,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.persistence.TemporalType;
 import com.divudi.entity.Packege;
+import com.divudi.entity.inward.InwardService;
 
 /**
  *
@@ -115,7 +116,7 @@ public class ItemController implements Serializable {
         } else {
 
             sql = "select c from Item c where c.retired=false and "
-                    + " ( c.departmentType is null or c.departmentType!=:dep ) "
+                    + " ( c.departmentType is null or c.departmentType!=:dep ) and"
                     + "(type(c)= :amp or type(c)= :ampp or type(c)= :vmp or"
                     + " type(c)= :vmpp) and (upper(c.name) "
                     + "like :q or upper(c.code) "
@@ -286,18 +287,50 @@ public class ItemController implements Serializable {
 
     }
 
-    public List<Item> completeItemWithoutPack(String query) {
+    public List<Item> completeInwardItems(String query) {
         List<Item> suggestions;
         HashMap m = new HashMap();
         String sql;
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select c from Item c where c.retired=false and type(c)!=:pac "
-                    + " and (type(c)=:ser or type(c)=:ins)  and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
+            sql = "select c from Item c "
+                    + " where c.retired=false "
+                    + " and type(c)!=:pac "
+                    + " and (type(c)=:ser "
+                    + " or type(c)=:inv)  "
+                    + " and upper(c.name) like :q"
+                    + " order by c.name";
             m.put("pac", Packege.class);
             m.put("ser", Service.class);
-            m.put("ins", Investigation.class);
+            m.put("inv", Investigation.class);
+            m.put("q", "%" + query.toUpperCase() + "%");
+            //    //System.out.println(sql);
+            suggestions = getFacade().findBySQL(sql, m, 20);
+        }
+        return suggestions;
+    }
+
+    public List<Item> completeOpdItems(String query) {
+        List<Item> suggestions;
+        HashMap m = new HashMap();
+        String sql;
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            sql = "select c from Item c "
+                    + " where c.retired=false "
+                    + " and type(c)!=:pac "
+                    + " and type(c)!=:inw "
+                    + " and (type(c)=:ser "
+                    + " or type(c)=:inv)  "
+                    + " and upper(c.name) like :q"
+                    + " order by c.name";
+            m.put("pac", Packege.class);
+            m.put("inw", InwardService.class);
+            m.put("ser", Service.class);
+            m.put("inv", Investigation.class);
+            m.put("q", "%" + query.toUpperCase() + "%");
             //    //System.out.println(sql);
             suggestions = getFacade().findBySQL(sql, m, 20);
         }

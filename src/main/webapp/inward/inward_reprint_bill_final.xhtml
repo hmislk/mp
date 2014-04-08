@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:bi="http://java.sun.com/jsf/composite/inward/bill">
+
+    <body>
+
+        <ui:composition template="/resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <p:panel header="Reprint" styleClass="alignTop" >
+                        <h:panelGrid columns="3">
+                            <p:panel>
+                                <p:commandButton ajax="false" value="Cancel" action="inward_cancel_bill_final" disabled="#{inwardSearch.bill.cancelled}"/>
+                            </p:panel>
+                            <p:panel>
+                                <f:facet name="header" >   
+                                    <h:outputLabel value="Claimable"/>
+                                </f:facet>
+                                <h:panelGrid columns="1">
+                                    <p:commandButton value="Patient Copy" ajax="false" >
+                                        <p:printer target="claimablePatientCopy" ></p:printer>
+                                    </p:commandButton>
+                                    <p:commandButton value="Hospital Copy" ajax="false" >
+                                        <p:printer target="claimableHospitalCopy" ></p:printer>
+                                    </p:commandButton>
+                                    <p:commandButton value="Duplicate Copy" ajax="false" >
+                                        <p:printer target="claimableDuplicate" ></p:printer>
+                                    </p:commandButton> 
+
+                                </h:panelGrid>
+
+                            </p:panel>
+                            <p:panel header="Not Claimable">
+
+                                <h:panelGrid columns="1">
+
+                                    <p:commandButton value="Patient Copy without Professional" ajax="false" >
+                                        <p:printer target="notClaimablePatientCopy" ></p:printer>
+                                    </p:commandButton>
+                                    <p:commandButton value="Hospital Copy wihout Professional" ajax="false" >
+                                        <p:printer target="notClaimableHospitalCopy" ></p:printer>
+                                    </p:commandButton>
+                                    <p:commandButton value="Duplicate wihout Professional" ajax="false" >
+                                        <p:printer target="notClaimableDuplicate" ></p:printer>
+                                    </p:commandButton>  
+                                    <p:commandButton value="Professional Fees" ajax="false" >
+                                        <p:printer target="professional" ></p:printer>
+                                    </p:commandButton>
+
+
+                                </h:panelGrid>
+
+                            </p:panel>
+                        </h:panelGrid>
+                        <p:panel>
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <p:panel header="Patient Detail">
+                                    <p:panelGrid columns="2">
+                                        <h:outputLabel value="Patient ​Name:" ></h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.patient.person.nameWithTitle }" ></h:outputLabel>
+                                        <h:outputLabel value="Age" />
+                                        <h:outputLabel value="#{inwardSearch.bill.patient.age}"  />
+                                        <h:outputLabel value="Sex" >
+                                        </h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.patient.person.sex}" >
+                                        </h:outputLabel>
+                                        <h:outputLabel value="Phone" >
+                                        </h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.patient.person.phone}" >
+                                        </h:outputLabel>
+                                    </p:panelGrid>
+                                </p:panel>
+                                <p:panel header="Bill Detail">
+                                    <p:panelGrid columns="2">
+                                        <h:outputLabel value="Bill No :" ></h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.insId}" ></h:outputLabel>
+                                        <h:outputLabel value="Payment Type : " ></h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.paymentScheme.name}" ></h:outputLabel>
+
+                                        <h:outputLabel value="Total :" ></h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.total}" ></h:outputLabel>
+                                        <h:outputLabel value="Discount :" ></h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.discount}" ></h:outputLabel>
+                                        <h:outputLabel value="Net Total :" ></h:outputLabel>
+                                        <h:outputLabel value="#{inwardSearch.bill.netTotal}" ></h:outputLabel>
+                                    </p:panelGrid>
+                                </p:panel>
+                            </p:panelGrid>
+
+                        </p:panel>
+                    </p:panel>
+
+
+
+
+                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                        <bi:finalBill   bill="#{inwardSearch.bill}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
+                        <bi:finalBill  hosCopy="true"                                       
+                                             bill="#{inwardSearch.bill}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
+                        <bi:finalBill duplicate="true"                                   
+                                            bill="#{inwardSearch.bill}" />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
+                        <bi:finalBill  bill="#{inwardSearch.bill}"
+                                             withoutPro="true" showProfessionalOnly="true"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
+                        <bi:finalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
+                                             bill="#{inwardSearch.bill}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="professional" styleClass="noBorder">       
+                        <bi:finalProfessionalBill bill="#{inwardSearch.bill}"  />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
+                        <bi:finalBill duplicate="true"                                   
+                                            bill="#{inwardSearch.bill}" withoutPro="true" showProfessionalOnly="true" />
+                    </h:panelGroup>
+
+                   
+
+                </h:form>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+</html>

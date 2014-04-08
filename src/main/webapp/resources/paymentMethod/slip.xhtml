@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core">
 
@@ -13,10 +13,10 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid columns="3">
-            <p:outputLabel  value="Slip Memo"  />
-            <p:outputLabel  value="Slip Bank"  />
-            <p:outputLabel  value="Slip Date"  />
+        <h:panelGrid columns="3">
+            <h:outputLabel  value="Slip Memo"  />
+            <h:outputLabel  value="Slip Bank"  />
+            <h:outputLabel  value="Slip Date"  />
             <p:inputText  value="#{cc.attrs.paymentMethodData.slip.comment}"/>
             <p:selectOneMenu value="#{cc.attrs.paymentMethodData.slip.institution}">
                 <f:selectItem itemLabel="Select Bank"/>
@@ -24,6 +24,6 @@
             </p:selectOneMenu>
             <p:calendar  value="#{cc.attrs.paymentMethodData.slip.date}" pattern="dd MMMM yyyy" >                            
             </p:calendar>
-        </p:panelGrid>
+        </h:panelGrid>
     </cc:implementation>
 </html>

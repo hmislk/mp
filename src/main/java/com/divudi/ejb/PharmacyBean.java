@@ -25,6 +25,7 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.StockHistory;
+import com.divudi.entity.pharmacy.StoreItemCategory;
 import com.divudi.entity.pharmacy.UserStock;
 import com.divudi.entity.pharmacy.UserStockContainer;
 import com.divudi.entity.pharmacy.Vmp;
@@ -44,6 +45,7 @@ import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
+import com.divudi.facade.StoreItemCategoryFacade;
 import com.divudi.facade.UserStockContainerFacade;
 import com.divudi.facade.UserStockFacade;
 import com.divudi.facade.VmpFacade;
@@ -95,6 +97,8 @@ public class PharmacyBean {
     private UserStockFacade userStockFacade;
     @EJB
     BillNumberBean billNumberBean;
+    @EJB
+    StoreItemCategoryFacade storeItemCategoryFacade;
 
     public BillNumberBean getBillNumberBean() {
         return billNumberBean;
@@ -1202,8 +1206,33 @@ public class PharmacyBean {
         return cat;
     }
 
+    
+    public StoreItemCategory getStoreItemCategoryByName(String name, boolean createNew) {
+        if (name == null || name.trim().equals("")) {
+            return null;
+        }
+        name = name.trim();
+        StoreItemCategory cat;
+        cat = getStoreItemCategoryFacade().findFirstBySQL("SELECT c FROM StoreItemCategory c Where upper(c.name) = '" + name.toUpperCase() + "' ");
+        if (cat == null && createNew == true) {
+            cat = new StoreItemCategory();
+            cat.setName(name);
+            getStoreItemCategoryFacade().create(cat);
+        } else if (cat != null) {
+            cat.setRetired(false);
+            cat.setName(name);
+            getStoreItemCategoryFacade().edit(cat);
+        }
+        return cat;
+    }
+
+    
     public PharmaceuticalItemCategory getPharmaceuticalCategoryByName(String name) {
         return getPharmaceuticalCategoryByName(name, true);
+    }
+    
+    public StoreItemCategory getStoreItemCategoryByName(String name) {
+        return getStoreItemCategoryByName(name, true);
     }
 
     public MeasurementUnit getUnitByName(String name, boolean createNew) {
@@ -1618,5 +1647,16 @@ public class PharmacyBean {
     public void setUserStockContainerFacade(UserStockContainerFacade userStockContainerFacade) {
         this.userStockContainerFacade = userStockContainerFacade;
     }
+
+    public StoreItemCategoryFacade getStoreItemCategoryFacade() {
+        return storeItemCategoryFacade;
+    }
+
+    public void setStoreItemCategoryFacade(StoreItemCategoryFacade storeItemCategoryFacade) {
+        this.storeItemCategoryFacade = storeItemCategoryFacade;
+    }
+
+
+
 
 }

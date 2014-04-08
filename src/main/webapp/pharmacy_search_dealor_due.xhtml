@@ -20,7 +20,7 @@
                         <p:calendar id="toDate" value="#{dealorDueController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
 
                         </p:calendar>
-                        <p:commandButton value="Process" action="#{dealorDueController.fillItems()}" ajax="false"  ></p:commandButton>
+                        <p:commandButton value="Process" action="#{dealorDueController.fillItems()}" ajax="false"  />
 
                     </h:panelGrid>
 
@@ -43,29 +43,39 @@
                             <f:facet name="header">
                                 <h:outputLabel  value="#{i.institution.name}"/>
                             </f:facet>
-                            <p:column>                              
-                                <h:outputLabel value="#{b.deptId}" />   
-                                <h:outputText value="( #{b.billType} )"></h:outputText>
+                            <p:column>        
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.deptId}" />   
+                                    <h:outputText value="( #{b.billType} )"></h:outputText>
+                                </h:panelGroup>
                             </p:column>                           
-                            <p:column style="text-align: right;">                                
-                                <h:outputLabel value="#{b.netTotal}" >
-                                    <f:convertNumber pattern="#,000.00" />
-                                </h:outputLabel>                                 
+                            <p:column style="text-align: right;">   
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.netTotal}" >
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>   
+                                </h:panelGroup>
                             </p:column>
-                            <p:column style="text-align: right;">                                
-                                <h:outputLabel value="#{b.tmpReturnTotal}" >
-                                    <f:convertNumber pattern="#,000.00" />
-                                </h:outputLabel>                                 
+                            <p:column style="text-align: right;">     
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.tmpReturnTotal}" >
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>    
+                                </h:panelGroup>
                             </p:column>
-                            <p:column style="text-align: right;">                              
-                                <h:outputLabel value="#{b.paidAmount}" >
-                                    <f:convertNumber pattern="#,000.00" />
-                                </h:outputLabel>
+                            <p:column style="text-align: right;">    
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.paidAmount}" >
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </h:panelGroup>
                             </p:column>
-                            <p:column style="text-align: right;">                              
-                                <h:outputLabel value="#{b.tmpReturnTotal+b.netTotal+b.paidAmount}" >
-                                    <f:convertNumber pattern="#,000.00" />
-                                </h:outputLabel>
+                            <p:column style="text-align: right;">    
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.tmpReturnTotal+b.netTotal+b.paidAmount}" >
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </h:panelGroup>
                             </p:column>
                             <p:columnGroup type="footer">
                                 <p:row>

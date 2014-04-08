@@ -72,7 +72,7 @@
                                 <h:outputLabel value="Time of Admission : " />
                             </td>
                             <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfAdmission}" >
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.printingAdmissionTime}" >
                                     <f:convertDateTime pattern="dd MM yyyy h:mm a" />
                                 </h:outputLabel>
                             </td>
@@ -82,7 +82,7 @@
                                 <h:outputLabel value="Time of Discharged : " />
                             </td>
                             <td >
-                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.dateOfDischarge}" >
+                                <h:outputLabel value="#{cc.attrs.bill.patientEncounter.printingDischargeTime}" >
                                     <f:convertDateTime pattern="dd MM yyyy h:mm a" />
                                 </h:outputLabel>
                             </td>
@@ -214,25 +214,6 @@
 
                         </h:panelGroup>
 
-
-                        <h:panelGroup>
-                            <tr>
-                                <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
-                                    <h:outputLabel   value="Paid" rendered="#{cc.attrs.bill.patientEncounter.creditCompany eq null}"/>
-                                    <h:outputLabel   value="To Be Claimed" rendered="#{cc.attrs.bill.patientEncounter.creditCompany ne null}"/>
-                                </td>
-                                <td>&nbsp;</td>
-                                <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
-                                    <h:outputLabel  value="(#{cc.attrs.bill.paidAmount})" rendered="#{cc.attrs.bill.patientEncounter.creditCompany eq null}"  >
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>
-                                    <h:outputLabel  value="(#{cc.attrs.bill.patientEncounter.creditUsedAmount})"  rendered="#{cc.attrs.bill.patientEncounter.creditCompany ne null}" >
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>                                    
-                                </td>
-                            </tr>
-                        </h:panelGroup>
-
                         <h:panelGroup >
                             <tr>
                                 <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
@@ -247,7 +228,7 @@
                             </tr>
                         </h:panelGroup>
 
-                        <h:panelGroup>
+                        <h:panelGroup >
                             <tr>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -255,31 +236,57 @@
                             </tr>
                             <tr>
                                 <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
-                                    <h:outputLabel value="Balance" rendered="#{cc.attrs.bill.patientEncounter.creditCompany eq null}"/>   
-                                    <h:outputLabel value="Paid By Patient" rendered="#{cc.attrs.bill.patientEncounter.creditCompany ne null}" />        
+                                    <h:outputLabel  value="Net Total"/>
                                 </td>
                                 <td>&nbsp;</td>
                                 <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
-
-
                                     <h:outputLabel rendered="#{!cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.netTotal}" >
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>  
 
-                                    <h:outputLabel rendered="#{cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.hospitalFee - cc.attrs.bill.paidAmount}" >
+                                    <h:outputLabel rendered="#{cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.hospitalFee}" >
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>  
 
-
                                 </td>
                             </tr>
+
                             <tr>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <td style="text-align: right;"><h:outputLabel value="==========="/></td>
                             </tr>
+                        </h:panelGroup>
+
+
+                        <h:panelGroup>
+                            <tr>
+                                <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
+                                    <h:outputLabel   value="Paid By Patient " rendered="#{cc.attrs.bill.paidAmount !=0}"/>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
+                                    <h:outputLabel  value="(#{cc.attrs.bill.paidAmount})" rendered="#{cc.attrs.bill.paidAmount !=0}" >
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
+                                    <h:outputLabel   value="To Be Claimed" rendered="#{cc.attrs.bill.patientEncounter.creditUsedAmount != 0}"/>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
+                                    <h:outputLabel  value="(#{cc.attrs.bill.patientEncounter.creditUsedAmount})" 
+                                                    rendered="#{cc.attrs.bill.patientEncounter.creditUsedAmount != 0}" >
+                                        <f:convertNumber pattern="#,000.00" />
+                                    </h:outputLabel>                                    
+                                </td>
+                            </tr>
 
                         </h:panelGroup>
+
                     </table>
 
                     <h:outputLabel value="*Consultant fees are not included in the above bill*"

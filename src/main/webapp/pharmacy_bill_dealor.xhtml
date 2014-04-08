@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"                    
-                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+                xmlns:bi="http://java.sun.com/jsf/composite/bill"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
     <ui:define name="content">
         <h:panelGroup >
             <h:form  >
@@ -18,37 +19,28 @@
                             <p:selectOneMenu   id="cmbPs" value="#{pharmacyDealorBill.current.paymentMethod}">                                                                     
                                 <f:selectItems value="#{enumController.paymentMethods}"  />
                                 <p:ajax process="cmbPs" 
-                                        update="lblCardRef txtCardRef lblCheqRef txtCheqRef 
-                                        chequeDate bank lblSlipRef txtSlipRef
-                                        slipBank slipDate" event="change" />
+                                        update="creditCard cheque slip " 
+                                        event="change" />
 
                             </p:selectOneMenu>
-                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCardRef" value="#{pharmacyDealorBill.current.creditCardRefNo}" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+                            <h:panelGroup id="creditCard" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{pharmacyDealorBill.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{pharmacyDealorBill.current.chequeRefNo}" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{pharmacyDealorBill.chequeBank}"  style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-                            <p:calendar id="chequeDate"  value="#{pharmacyDealorBill.chequeDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="cheque" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{pharmacyDealorBill.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtSlipRef" value="#{pharmacyDealorBill.current.comments}" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="slipBank" value="#{pharmacyDealorBill.slipBank}"  style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-                            <p:calendar id="slipDate"  value="#{pharmacyDealorBill.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="slip" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{pharmacyDealorBill.paymentMethodData}"/>
+                            </h:panelGroup>
+
 
                             <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
 
-                            <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
+                            <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.makeNull()}" >
                             </p:commandButton>
 
                         </h:panelGrid>
@@ -128,7 +120,7 @@
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Recievable Amount">
-                                <p:outputLabel value="#{-(b.referenceBill.netTotal+b.referenceBill.tmpReturnTotal+b.referenceBill.paidAmount)}">
+                                <p:outputLabel value="#{0-(b.referenceBill.netTotal+b.referenceBill.tmpReturnTotal+b.referenceBill.paidAmount)}">
                                     <f:convertNumber pattern="#,000.00" />
                                 </p:outputLabel>
                             </p:column>
@@ -138,9 +130,7 @@
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Remove">
-                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.remove}" value="X">
-                                    <f:setPropertyActionListener target="#{pharmacyDealorBill.index}" value="#{rowIndex}"/>
-                                </p:commandButton>
+                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.remove}" value="X"/>
                             </p:column>
                         </p:dataTable>
 
@@ -162,7 +152,7 @@
 
 
                 <p:panel rendered="#{pharmacyDealorBill.printPreview}" >
-                    <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.prepareNewBill()}" >
+                    <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.makeNull()}" >
                     </p:commandButton>
                     <bi:insRecieve billController ="#{pharmacyDealorBill}"  bill="#{pharmacyDealorBill.current}" dup="false"/>                       
                 </p:panel>

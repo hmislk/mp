@@ -105,7 +105,6 @@ public class InwardTimedItemController implements Serializable {
 
         tmpPI.setServiceValue(count * timedItemFee.getFee());
 
-        tmpPI.setFinalize(Boolean.TRUE);
         getPatientItemFacade().edit(tmpPI);
 
         createPatientItems();
@@ -124,12 +123,9 @@ public class InwardTimedItemController implements Serializable {
         }
 
         for (PatientItem pi : items) {
-            if (pi.getFinalize() == null) {
-                TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
-                double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
-
-                pi.setServiceValue(count * timedItemFee.getFee());
-            }
+            TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
+            double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
+            pi.setServiceValue(count * timedItemFee.getFee());
         }
     }
 

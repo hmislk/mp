@@ -701,11 +701,17 @@ public class LabReportSearchByInstitutionController implements Serializable {
         String sql;
         Map tm;
 
-        sql = "select f from Bill f where f.retired=false and f.billType = :billType and "
-                + "(f.paymentMethod = :pm1 or f.paymentMethod = :pm2 "
-                + " or f.paymentMethod = :pm3 or f.paymentMethod = :pm4 ) "
-                + " and f.institution=:ins and f.toInstitution=:toIns and f.createdAt "
-                + " between :fromDate and :toDate order by type(f), f.insId";
+        sql = "select f from Bill f where "
+                + " f.retired=false "
+                + " and f.billType = :billType"
+                + " and (f.paymentMethod = :pm1 "
+                + " or f.paymentMethod = :pm2 "
+                + " or f.paymentMethod = :pm3 "
+                + " or f.paymentMethod = :pm4 ) "
+                + " and f.institution=:ins "
+                + " and f.toInstitution=:toIns "
+                + " and f.createdAt  between :fromDate and :toDate"
+                + " order by type(f), f.insId";
 
         tm = new HashMap();
         tm.put("fromDate", fromDate);

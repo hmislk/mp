@@ -50,20 +50,20 @@
 
                         <p:panel header="Edit Details">
                             <f:facet name="header" >
-                                
+
                                 <h:outputLabel value="Edit Details" ></h:outputLabel>
                                 <p:commandButton style="float:right;" id="btnSave" value="Save"   action="#{serviceController.saveSelected()}" styleClass="buttons"
                                                  ajax="false" >
                                 </p:commandButton>
                                 <p:defaultCommand target="btnSave"/>
-                                
+
                             </f:facet>
                             <h:panelGrid id="gpDetail" columns="1">
                                 <h:panelGrid id="gpDetailText" columns="2">
                                     <p:calendar   value="#{serviceController.current.createdAt}" pattern="hh mm a" />
                                     <p:calendar   value="#{serviceController.current.createdAt}" pattern="dd MMMM yyyy " />
-                                        
-                                    
+
+
                                     <h:outputText id="lblName" value="Name" ></h:outputText>
                                     <h:inputText id="txtName" value="#{serviceController.current.name}" required="true" ></h:inputText>
                                     <h:outputText id="lblAddress" value="Printing Name" ></h:outputText>
@@ -121,9 +121,16 @@
                                     <p:selectBooleanCheckbox value="#{serviceController.current.userChangable}" itemLabel="Can change Rate"/>
 
                                     <h:outputText value="" ></h:outputText>
+                                    <p:selectBooleanCheckbox value="#{serviceController.current.chargesVisibleForInward}" itemLabel="Charges Visible for inward billing"/>
+
+                                    <h:outputText value="" ></h:outputText>
+                                    <p:selectBooleanCheckbox value="#{serviceController.current.requestForQuentity}" itemLabel="Request for Quentity"/>
+
+
+                                    <h:outputText value="" ></h:outputText>
                                     <p:selectBooleanCheckbox value="#{serviceController.current.discountAllowed}" itemLabel="Discount Allowed"/>
-                                      <h:outputText value="" ></h:outputText>
-                                      <p:selectBooleanCheckbox value="#{serviceController.current.patientNotRequired}" itemLabel="Patient Not Required"/>
+                                    <h:outputText value="" ></h:outputText>
+                                    <p:selectBooleanCheckbox value="#{serviceController.current.patientNotRequired}" itemLabel="Patient Not Required"/>
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>

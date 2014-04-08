@@ -9,7 +9,9 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.DepartmentBillItems;
 import com.divudi.data.inward.SurgeryBillType;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.InwardCalculation;
@@ -21,8 +23,9 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.Item;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
+import com.divudi.entity.PreBill;
+import com.divudi.entity.RefundBill;
 import com.divudi.entity.inward.EncounterComponent;
-import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.TimedItem;
 import com.divudi.entity.inward.TimedItemFee;
 import com.divudi.facade.BillFacade;
@@ -53,15 +56,13 @@ public class SurgeryBillController implements Serializable {
 
     private Bill batchBill;
     private Bill professionalBill;
-    private Bill serviceBill;
     private Bill timedServiceBill;
     private EncounterComponent proEncounterComponent;
     private EncounterComponent timedEncounterComponent;
-    private EncounterComponent serviceEncounterComponent;
     //////////
     private List<EncounterComponent> proEncounterComponents;
     private List<EncounterComponent> timedEncounterComponents;
-    private List<EncounterComponent> serviceEncounterComponents;
+    private List<DepartmentBillItems> departmentBillItems;
     //////
     @EJB
     private PatientEncounterFacade patientEncounterFacade;
@@ -120,11 +121,14 @@ public class SurgeryBillController implements Serializable {
         updateBillFee(bf);
     }
 
+    @EJB
+    private BillBean billBean;
+
     private void updateBillFee(BillFee bf) {
         getBillFeeFacade().edit(bf);
         updateBillItem(bf.getBillItem());
         updateBill(bf.getBill());
-        updateBatchBill();
+        getBillBean().updateBatchBill(getBatchBill());
     }
 
     public void removeProEncFromList(EncounterComponent encounterComponent) {
@@ -146,7 +150,7 @@ public class SurgeryBillController implements Serializable {
 
         updateBillItem(encounterComponent.getBillItem());
         updateBill(encounterComponent.getBillItem().getBill());
-        updateBatchBill();
+        getBillBean().updateBatchBill(getBatchBill());
 
     }
 
@@ -192,10 +196,6 @@ public class SurgeryBillController implements Serializable {
         removeEncounterComponentFromList(encounterComponent, getTimedEncounterComponents());
     }
 
-    public void removeServiceEncFromList(EncounterComponent encounterComponent) {
-        removeEncounterComponentFromList(encounterComponent, getServiceEncounterComponents());
-    }
-
     public void removeTimedEncFromDbase(EncounterComponent encounterComponent) {
         if (generalChecking()) {
             return;
@@ -206,7 +206,7 @@ public class SurgeryBillController implements Serializable {
 
         updateBillItem(encounterComponent.getBillItem());
         updateBill(encounterComponent.getBillItem().getBill());
-        updateBatchBill();
+        getBillBean().updateBatchBill(getBatchBill());
     }
 
     public void removeServiceEncFromDbase(EncounterComponent encounterComponent) {
@@ -223,7 +223,7 @@ public class SurgeryBillController implements Serializable {
 
         updateBillItem(encounterComponent.getBillItem());
         updateBill(encounterComponent.getBillItem().getBill());
-        updateBatchBill();
+        getBillBean().updateBatchBill(getBatchBill());
 
     }
 
@@ -273,14 +273,11 @@ public class SurgeryBillController implements Serializable {
         professionalBill = null;
         proEncounterComponent = null;
         proEncounterComponents = null;
-        ///////////
-        serviceBill = null;
-        serviceEncounterComponent = null;
-        serviceEncounterComponents = null;
         /////////////
         timedServiceBill = null;
         timedEncounterComponent = null;
         timedEncounterComponents = null;
+        departmentBillItems = null;
 
     }
 
@@ -446,31 +443,6 @@ public class SurgeryBillController implements Serializable {
         return false;
     }
 
-    private boolean saveServiceBill() {
-
-        saveBill(getServiceBill(), BillNumberSuffix.INWSER);
-
-        for (EncounterComponent ec : getServiceEncounterComponents()) {
-            List<BillFee> billFees = ec.getBillItem().getBillFees();
-            ec.getBillItem().setBillFees(null);
-
-            saveBillItem(ec.getBillItem(), getServiceBill());
-            saveEncounterComponent(ec.getBillItem(), ec);
-
-            for (BillFee bf : billFees) {
-                saveBillFee(bf, getServiceBill(), ec.getBillItem(), bf.getFeeValue());
-            }
-
-            ec.getBillItem().setBillFees(billFees);
-
-            updateBillItem(ec.getBillItem());
-        }
-
-        updateBill(getServiceBill());
-
-        return false;
-    }
-
     private boolean saveTimeServiceBill() {
         BillItem bItem;
         double netValue = 0;
@@ -512,14 +484,6 @@ public class SurgeryBillController implements Serializable {
         return getBillItemFacade().findDoubleByJpql(sql, hm);
     }
 
-    private double getTotalByBill() {
-        String sql = "Select sum(bf.netTotal) from Bill bf where "
-                + " bf.retired=false and bf.forwardReferenceBill=:bill";
-        HashMap hm = new HashMap();
-        hm.put("bill", getBatchBill());
-        return getBillFacade().findDoubleByJpql(sql, hm);
-    }
-
     private void updateBillItem(BillItem billItem) {
         double value = getTotalByBillFee(billItem);
         billItem.setNetValue(value);
@@ -531,13 +495,6 @@ public class SurgeryBillController implements Serializable {
         bill.setTotal(value);
         bill.setNetTotal(value);
         getBillFacade().edit(bill);
-    }
-
-    private void updateBatchBill() {
-        double value = getTotalByBill();
-        getBatchBill().setTotal(value);
-
-        getBillFacade().edit(getBatchBill());
     }
 
     public void save() {
@@ -556,11 +513,7 @@ public class SurgeryBillController implements Serializable {
             saveTimeServiceBill();
         }
 
-        if (!getServiceEncounterComponents().isEmpty()) {
-            saveServiceBill();
-        }
-
-        updateBatchBill();
+        getBillBean().updateBatchBill(getBatchBill());
 
         UtilityController.addSuccessMessage("Surgery Detail Successfull Updated");
 
@@ -611,27 +564,68 @@ public class SurgeryBillController implements Serializable {
         this.batchBill = batchBill;
         for (Bill b : getBillsByForwardRef(batchBill)) {
             if (b.getSurgeryBillType() == SurgeryBillType.ProfessionalFee) {
-                System.err.println(SurgeryBillType.ProfessionalFee);
+                // System.err.println(SurgeryBillType.ProfessionalFee);
                 setProfessionalBill(b);
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setProEncounterComponents(enc);
             }
 
             if (b.getSurgeryBillType() == SurgeryBillType.TimedService) {
-                System.err.println(SurgeryBillType.TimedService);
+                // System.err.println(SurgeryBillType.TimedService);
                 setTimedServiceBill(b);
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setTimedEncounterComponents(enc);
             }
 
             if (b.getSurgeryBillType() == SurgeryBillType.Service) {
-                System.err.println(SurgeryBillType.Service);
-                setServiceBill(b);
-                List<EncounterComponent> enc = getEncounterComponents(b);
-                setServiceEncounterComponents(enc);
+                departmentBillItems = getInwardBean().createDepartmentBillItems(batchBill.getPatientEncounter(), getBatchBill());
+            }
+
+            if (b.getSurgeryBillType() == SurgeryBillType.PharmacyItem) {
+                createIssueTable();
             }
 
         }
+    }
+
+    private List<Bill> pharmacyIssues;
+
+    public void createIssueTable() {
+        pharmacyIssues = new ArrayList<>();
+        String sql;
+        HashMap hm;
+        sql = "SELECT  b FROM Bill b "
+                + " WHERE b.retired=false "
+                + " and b.forwardReferenceBill=:bil "
+                + " and b.billType=:btp "
+                + " and b.billedBill is null "
+                + " and (type(b)=:class) ";
+        hm = new HashMap();
+        hm.put("bil", getBatchBill());
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", PreBill.class);
+
+        List<Bill> bills = getBillFacade().findBySQL(sql, hm);
+
+        hm.clear();
+        sql = "SELECT  b FROM Bill b "
+                + " WHERE b.retired=false "
+                + " and b.billType=:btp"
+                + " and b.forwardReferenceBill=:bil "
+                + " and type(b.billedBill)=:billedClass "
+                + " and  b.patientEncounter=:pe"
+                + " and (type(b)=:class) ";
+        hm = new HashMap();
+        hm.put("btp", BillType.PharmacyBhtPre);
+        hm.put("class", RefundBill.class);
+        hm.put("billedClass", PreBill.class);
+        hm.put("bil", getBatchBill());
+
+        List<Bill> bills2 = getBillFacade().findBySQL(sql, hm);
+
+        pharmacyIssues.addAll(bills);
+        pharmacyIssues.addAll(bills2);
+
     }
 
     public Bill getProfessionalBill() {
@@ -647,19 +641,6 @@ public class SurgeryBillController implements Serializable {
     public void setProfessionalBill(Bill professionalBill) {
 
         this.professionalBill = professionalBill;
-    }
-
-    public Bill getServiceBill() {
-        if (serviceBill == null) {
-            serviceBill = new BilledBill();
-            serviceBill.setBillType(BillType.InwardBill);
-            serviceBill.setSurgeryBillType(SurgeryBillType.Service);
-        }
-        return serviceBill;
-    }
-
-    public void setServiceBill(Bill serviceBill) {
-        this.serviceBill = serviceBill;
     }
 
     public Bill getTimedServiceBill() {
@@ -821,65 +802,6 @@ public class SurgeryBillController implements Serializable {
         return timedEncounterComponent;
     }
 
-    private boolean checkForService() {
-        if (getServiceEncounterComponent().getBillItem().getItem() == null) {
-            UtilityController.addErrorMessage("Select Service ");
-            return true;
-        }
-
-        PatientRoom patientRoom = getInwardCalculation().getCurrentPatientRoom(getBatchBill().getPatientEncounter());
-
-        if (patientRoom == null) {
-            UtilityController.addErrorMessage("Please Set Room or Bed For This Patient");
-            return true;
-        }
-
-        Item item = getServiceEncounterComponent().getBillItem().getItem();
-
-        if (patientRoom.getRoomFacilityCharge().getDepartment() == null) {
-            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoom().getName());
-            return true;
-        }
-
-        if (item.getDepartment() == null) {
-            UtilityController.addErrorMessage("Under administration, "
-                    + " add a Department for this item " + item.getName());
-            return true;
-        } else if (item.getDepartment().getInstitution() == null) {
-            UtilityController.addErrorMessage("Under administration, add an Institution for "
-                    + " the department " + item.getDepartment());
-            return true;
-        } else if (item.getCategory() == null) {
-            UtilityController.addErrorMessage("Under administration, add Category "
-                    + "For Item : " + item.getName());
-            return true;
-        }
-
-        return false;
-    }
-
-    public void addService() {
-        if (generalChecking()) {
-            return;
-        }
-
-        if (checkForService()) {
-            return;
-        }
-
-        List<BillFee> billFees = new ArrayList<>();
-        billFees = getInwardCalculation().billFeeFromBillItemWithMatrix(getServiceEncounterComponent().getBillItem(),
-                getBatchBill().getPatientEncounter(),
-                getServiceEncounterComponent().getBillItem().getItem().getInstitution());
-
-        getServiceEncounterComponent().getBillItem().setBillFees(billFees);
-        getServiceEncounterComponent().setPatientEncounter(getBatchBill().getPatientEncounter());
-        getServiceEncounterComponent().setChildEncounter(getBatchBill().getProcedure());
-        getServiceEncounterComponents().add(getServiceEncounterComponent());
-
-        serviceEncounterComponent = null;
-    }
-
     public void setTimedEncounterComponent(EncounterComponent timedEncounterComponent) {
         this.timedEncounterComponent = timedEncounterComponent;
     }
@@ -911,29 +833,6 @@ public class SurgeryBillController implements Serializable {
         this.inwardCalculation = inwardCalculation;
     }
 
-    public EncounterComponent getServiceEncounterComponent() {
-        if (serviceEncounterComponent == null) {
-            serviceEncounterComponent = new EncounterComponent();
-            serviceEncounterComponent.setBillItem(new BillItem());
-        }
-        return serviceEncounterComponent;
-    }
-
-    public void setServiceEncounterComponent(EncounterComponent serviceEncounterComponent) {
-        this.serviceEncounterComponent = serviceEncounterComponent;
-    }
-
-    public List<EncounterComponent> getServiceEncounterComponents() {
-        if (serviceEncounterComponents == null) {
-            serviceEncounterComponents = new ArrayList<>();
-        }
-        return serviceEncounterComponents;
-    }
-
-    public void setServiceEncounterComponents(List<EncounterComponent> serviceEncounterComponents) {
-        this.serviceEncounterComponents = serviceEncounterComponents;
-    }
-
     public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
         return pharmaceuticalBillItemFacade;
     }
@@ -956,6 +855,33 @@ public class SurgeryBillController implements Serializable {
 
     public void setInwardBean(InwardBean inwardBean) {
         this.inwardBean = inwardBean;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
+    }
+
+    public List<DepartmentBillItems> getDepartmentBillItems() {
+        if (departmentBillItems == null) {
+            departmentBillItems = getInwardBean().createDepartmentBillItems(getBatchBill().getPatientEncounter(), getBatchBill());
+        }
+        return departmentBillItems;
+    }
+
+    public void setDepartmentBillItems(List<DepartmentBillItems> departmentBillItems) {
+        this.departmentBillItems = departmentBillItems;
+    }
+
+    public List<Bill> getPharmacyIssues() {
+        return pharmacyIssues;
+    }
+
+    public void setPharmacyIssues(List<Bill> pharmacyIssues) {
+        this.pharmacyIssues = pharmacyIssues;
     }
 
 }

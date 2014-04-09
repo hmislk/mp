@@ -17,6 +17,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
@@ -124,6 +125,17 @@ public class InwardPaymentController implements Serializable {
         return false;
 
     }
+    
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
 
     public void pay() {
         if (errorCheck()) {
@@ -136,6 +148,8 @@ public class InwardPaymentController implements Serializable {
         if (getCurrent().getPatientEncounter().isPaymentFinalized()) {
             getInwardBean().updateFinalFill(getCurrent().getPatientEncounter());
         }
+        
+        getCashTransactionBean().saveBillCashInTransaction(getCurrent(), getSessionController().getLoggedUser());
 
         UtilityController.addSuccessMessage("Payment Bill Saved");
         printPreview = true;

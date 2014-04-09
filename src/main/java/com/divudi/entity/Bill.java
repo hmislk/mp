@@ -24,6 +24,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
@@ -35,6 +36,8 @@ import javax.persistence.Transient;
 @Entity
 public class Bill implements Serializable {
 
+    @OneToOne
+    private CashTransaction cashTransaction;
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     private List<StockVarientBillItem> stockVarientBillItems = new ArrayList<>();
 
@@ -50,10 +53,6 @@ public class Bill implements Serializable {
     private List<Bill> returnCashBills = new ArrayList<>();
     @OneToMany(mappedBy = "referenceBill", fetch = FetchType.LAZY)
     private List<Bill> cashBillsPre = new ArrayList<>();
-
-    @ManyToOne
-    BatchBill batchBill;
-
     @ManyToOne
     private Category category;
 
@@ -222,6 +221,10 @@ public class Bill implements Serializable {
     private boolean transBoolean;
     @Enumerated(EnumType.STRING)
     private SurgeryBillType surgeryBillType;
+    @ManyToOne
+    private WebUser toWebUser;
+    @ManyToOne
+    private WebUser fromWebUser;
 
     public void invertValue(Bill bill) {
         staffFee = 0 - bill.getStaffFee();
@@ -966,14 +969,6 @@ public class Bill implements Serializable {
         this.bookingId = bookingId;
     }
 
-    public BatchBill getBatchBill() {
-        return batchBill;
-    }
-
-    public void setBatchBill(BatchBill batchBill) {
-        this.batchBill = batchBill;
-    }
-
     @Transient
     private Bill tmpRefBill;
 
@@ -1206,6 +1201,30 @@ public class Bill implements Serializable {
 
     public void setTransBoolean(boolean transBoolean) {
         this.transBoolean = transBoolean;
+    }
+
+    public WebUser getToWebUser() {
+        return toWebUser;
+    }
+
+    public void setToWebUser(WebUser toWebUser) {
+        this.toWebUser = toWebUser;
+    }
+
+    public WebUser getFromWebUser() {
+        return fromWebUser;
+    }
+
+    public void setFromWebUser(WebUser fromWebUser) {
+        this.fromWebUser = fromWebUser;
+    }
+
+    public CashTransaction getCashTransaction() {
+        return cashTransaction;
+    }
+
+    public void setCashTransaction(CashTransaction cashTransaction) {
+        this.cashTransaction = cashTransaction;
     }
 
 }

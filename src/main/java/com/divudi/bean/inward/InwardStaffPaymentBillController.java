@@ -4,6 +4,7 @@ import com.divudi.bean.*;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -401,6 +402,9 @@ public class InwardStaffPaymentBillController implements Serializable {
         return false;
     }
 
+    @EJB
+    private CashTransactionBean cashTransactionBean;
+
     public void settleBill() {
         if (errorCheck()) {
             return;
@@ -412,6 +416,9 @@ public class InwardStaffPaymentBillController implements Serializable {
         saveBillCompo(b);
         getBillFacade().edit(b);
         printPreview = true;
+
+        getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
+
         UtilityController.addSuccessMessage("Successfully Paid");
         System.out.println("Paid");
     }
@@ -629,6 +636,14 @@ public class InwardStaffPaymentBillController implements Serializable {
 
     public void setDocPayingBillFee(List<BillFee> docPayingBillFee) {
         this.docPayingBillFee = docPayingBillFee;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 
 }

@@ -166,19 +166,22 @@ public class BillBhtController implements Serializable {
     private BillSearch billSearch;
 
     private void saveBatchBill() {
-        BatchBill tmp = new BatchBill();
+        Bill tmp = new BilledBill();
         tmp.setCreatedAt(new Date());
         tmp.setCreater(getSessionController().getLoggedUser());
-        for (Bill b : bills) {
-            tmp.getListBill().add(b);
-        }
-
-        getBatchBillFacade().create(tmp);
+        getBillFacade().create(tmp);
 
         for (Bill b : bills) {
-            b.setBatchBill(tmp);
+            b.setBackwardReferenceBill(tmp);
             getBillFacade().edit(b);
         }
+
+        for (Bill b : bills) {
+            tmp.getForwardReferenceBills().add(b);
+        }
+
+        getBillFacade().edit(tmp);
+
     }
 
     public void cancellAll() {

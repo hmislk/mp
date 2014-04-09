@@ -8,21 +8,19 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.dataStructure.PharmacyItemData;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
-import com.divudi.entity.BilledBill;
-import com.divudi.entity.CancelledBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,6 +60,18 @@ public class SaleReturnController implements Serializable {
     private PharmacyBean pharmacyBean;
     @EJB
     private BillItemFacade billItemFacade;
+    PaymentMethodData paymentMethodData;
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
 
     public Bill getBill() {
         return bill;
@@ -262,6 +272,17 @@ public class SaleReturnController implements Serializable {
 //        getPharmaceuticalBillItemFacade().edit(po);
 //
 //    }
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
+
     public void settle() {
         savePreReturnBill();
         savePreComponent();
@@ -274,6 +295,8 @@ public class SaleReturnController implements Serializable {
 
         getReturnBill().getReturnCashBills().add(b);
         getBillFacade().edit(getReturnBill());
+
+        getCashTransactionBean().saveBillCashOutTransaction(getReturnBill(), getSessionController().getLoggedUser());
 
         printPreview = true;
         UtilityController.addSuccessMessage("Successfully Returned");

@@ -12,6 +12,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.ejb.PharmacyBean;
@@ -1141,6 +1142,24 @@ public class PharmacyBillSearch implements Serializable {
 //    }
     @EJB
     private ItemBatchFacade itemBatchFacade;
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public LazyDataModel<Bill> getLazyBills() {
+        return lazyBills;
+    }
+
+    public void setLazyBills(LazyDataModel<Bill> lazyBills) {
+        this.lazyBills = lazyBills;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
 
     public void pharmacyRetailCancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
@@ -1165,6 +1184,8 @@ public class PharmacyBillSearch implements Serializable {
                 getBill().getReferenceBill().setReferenceBill(null);
                 getBillFacade().edit(getBill().getReferenceBill());
             }
+
+            getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
 
             UtilityController.addSuccessMessage("Cancelled");
 
@@ -1192,6 +1213,8 @@ public class PharmacyBillSearch implements Serializable {
 
         return false;
     }
+    
+    
 
     public void pharmacyRetailCancelBillWithStock() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
@@ -1230,6 +1253,9 @@ public class PharmacyBillSearch implements Serializable {
 //                getBill().getReferenceBill().setReferenceBill(null);
 //                getBillFacade().edit(getBill().getReferenceBill());
 //            }
+            
+            getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+            
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -1392,6 +1418,8 @@ public class PharmacyBillSearch implements Serializable {
             getBill().setCancelled(true);
             getBill().setCancelledBill(cb);
             getBillFacade().edit(getBill());
+
+            getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
 
             UtilityController.addSuccessMessage("Cancelled");
 

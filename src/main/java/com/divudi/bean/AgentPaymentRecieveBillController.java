@@ -9,6 +9,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -115,6 +116,16 @@ public class AgentPaymentRecieveBillController implements Serializable {
 
     @EJB
     private BillBean billBean;
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
 
     public void settleBill() {
         addToBill();
@@ -132,6 +143,9 @@ public class AgentPaymentRecieveBillController implements Serializable {
         //Add to Agent Ballance
         getCurrent().getFromInstitution().setBallance(getCurrent().getFromInstitution().getBallance() + getCurrent().getTotal());
         getInstitutionFacade().edit(getCurrent().getFromInstitution());
+
+        ///////////////////
+        getCashTransactionBean().saveBillCashInTransaction(getCurrent(), getSessionController().getLoggedUser());
 
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;

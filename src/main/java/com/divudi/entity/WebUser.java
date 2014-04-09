@@ -18,8 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
-
-
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
@@ -28,52 +26,62 @@ import javax.persistence.Temporal;
 @Entity
 public class WebUser implements Serializable {
 
-     static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-     Long id;
+    Long id;
     @ManyToOne
-     WebTheme userWebTheme;
-     String webUserPassword;
+    Drawer drawer;
+
+    public Drawer getDrawer() {
+        return drawer;
+    }
+
+    public void setDrawer(Drawer drawer) {
+        this.drawer = drawer;
+    }
+    @ManyToOne
+    WebTheme userWebTheme;
+    String webUserPassword;
     @OneToOne
-     Person webUserPerson;
+    Person webUserPerson;
     //Main Properties
     @Column(unique = true, nullable = false)
-     String name;
-     String description;
+    String name;
+    String description;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
+    Date retiredAt;
+    String retireComments;
     //Activation properties
-     boolean activated;
+    boolean activated;
     @ManyToOne
-     WebUser activator;
+    WebUser activator;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date activatedAt;
-     String activateComments;
+    Date activatedAt;
+    String activateComments;
     @ManyToOne
-     WebUserRole role;
-     String primeTheme;
-     String defLocale;
-     String email;
-     String telNo;
+    WebUserRole role;
+    String primeTheme;
+    String defLocale;
+    String email;
+    String telNo;
     @ManyToOne
-     Institution institution;
+    Institution institution;
     @ManyToOne
-     Department department;
+    Department department;
     @ManyToOne
-     Staff staff;
+    Staff staff;
 
-     String code;
+    String code;
 
     public Staff getStaff() {
         return staff;
@@ -302,4 +310,5 @@ public class WebUser implements Serializable {
     public void setCode(String code) {
         this.code = code;
     }
+
 }

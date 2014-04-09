@@ -6,12 +6,16 @@
 package com.divudi.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
@@ -19,16 +23,15 @@ import javax.persistence.Temporal;
  * @author safrin
  */
 @Entity
-public class CashierDrawer implements Serializable {
+public class Drawer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne
-    private WebUser webUser;
-    private double runningBallance;
-    //Created Properties
+    @OneToMany(mappedBy = "drawer", fetch = FetchType.LAZY)
+    private List<WebUser> webUsers = new ArrayList<>();
+    String name;
     @ManyToOne
     private WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -40,6 +43,18 @@ public class CashierDrawer implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date retiredAt;
     private String retireComments;
+    private double runningBallance;
+    private double creditCardBallance;
+    private double slipBallance;
+    private double chequeBallance;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -59,10 +74,10 @@ public class CashierDrawer implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CashierDrawer)) {
+        if (!(object instanceof Drawer)) {
             return false;
         }
-        CashierDrawer other = (CashierDrawer) object;
+        Drawer other = (Drawer) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -71,15 +86,15 @@ public class CashierDrawer implements Serializable {
 
     @Override
     public String toString() {
-        return "com.divudi.entity.CashierDrawer[ id=" + id + " ]";
+        return "com.divudi.entity.Drawer[ id=" + id + " ]";
     }
 
-    public WebUser getWebUser() {
-        return webUser;
+    public List<WebUser> getWebUsers() {
+        return webUsers;
     }
 
-    public void setWebUser(WebUser webUser) {
-        this.webUser = webUser;
+    public void setWebUsers(List<WebUser> webUsers) {
+        this.webUsers = webUsers;
     }
 
     public double getRunningBallance() {
@@ -136,6 +151,30 @@ public class CashierDrawer implements Serializable {
 
     public void setRetireComments(String retireComments) {
         this.retireComments = retireComments;
+    }
+
+    public double getCreditCardBallance() {
+        return creditCardBallance;
+    }
+
+    public void setCreditCardBallance(double creditCardBallance) {
+        this.creditCardBallance = creditCardBallance;
+    }
+
+    public double getSlipBallance() {
+        return slipBallance;
+    }
+
+    public void setSlipBallance(double slipBallance) {
+        this.slipBallance = slipBallance;
+    }
+
+    public double getChequeBallance() {
+        return chequeBallance;
+    }
+
+    public void setChequeBallance(double chequeBallance) {
+        this.chequeBallance = chequeBallance;
     }
 
 }

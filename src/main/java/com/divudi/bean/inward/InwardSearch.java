@@ -10,6 +10,7 @@ import com.divudi.bean.WebUserController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.ejb.InwardBean;
@@ -471,6 +472,8 @@ public class InwardSearch implements Serializable {
 
     @EJB
     private InwardBean inwardBean;
+    @EJB
+    CashTransactionBean cashTransactionBean;
 
     public void cancelBillPayment() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
@@ -502,6 +505,8 @@ public class InwardSearch implements Serializable {
 
             }
 
+            getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -511,6 +516,14 @@ public class InwardSearch implements Serializable {
             return;
         }
 
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 
     public void cancelBillRefund() {
@@ -536,6 +549,8 @@ public class InwardSearch implements Serializable {
                 getInwardBean().updateFinalFill(getBill().getPatientEncounter());
 
             }
+
+            getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
 
             UtilityController.addSuccessMessage("Cancelled");
 
@@ -674,6 +689,8 @@ public class InwardSearch implements Serializable {
             getBill().setCancelledBill(cb);
             getBillFacade().edit((BilledBill) getBill());
             UtilityController.addSuccessMessage("Cancelled");
+
+            getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
 
             printPreview = true;
 

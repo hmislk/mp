@@ -11,6 +11,7 @@ package com.divudi.data;
  */
 public enum BillType {
 
+    OpdBathcBill,
     SurgeryBill,
     LabBill,
     PaymentBill,
@@ -59,7 +60,9 @@ public enum BillType {
     GrnPaymentBill,
     GrnPaymentReturn,
     GrnPaymentCancell,
-    GrnPaymentCancellReturn;
+    GrnPaymentCancellReturn,
+    CashIn,
+    CashOut;
 
     public String getLabel() {
         switch (this) {

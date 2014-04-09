@@ -4,6 +4,7 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -383,6 +384,17 @@ public class StaffPaymentBillController implements Serializable {
         return false;
     }
 
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
+    
     public void settleBill() {
         if (errorCheck()) {
             return;
@@ -393,6 +405,9 @@ public class StaffPaymentBillController implements Serializable {
         getBillFacade().create(b);
         saveBillCompo(b);
         printPreview = true;
+        
+        getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
+        
         UtilityController.addSuccessMessage("Successfully Paid");
         //System.out.println("Paid");
     }

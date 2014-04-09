@@ -10,6 +10,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
@@ -318,6 +319,17 @@ public class PettyCashBillSearch implements Serializable {
 
         return false;
     }
+    
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
 
     public void cancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
@@ -336,6 +348,9 @@ public class PettyCashBillSearch implements Serializable {
                 getBill().setCancelledBill(cb);
                 getBilledBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
+                
+                
+                getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
 
                 printPreview = true;
             } else {

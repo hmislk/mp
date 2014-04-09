@@ -6,7 +6,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:bi="http://java.sun.com/jsf/composite/bill">
+                xmlns:bi="http://java.sun.com/jsf/composite/bill"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
 
     <ui:define name="content">
         <h:panelGroup >
@@ -21,14 +22,19 @@
                                 <p:ajax process="cmbPs" update="lblCheqRef txtCheqRef bank chequeDate" event="change" />
                             </p:selectOneMenu>                                   
 
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{pettyCashBillController.current.chequeRefNo}" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{pettyCashBillController.current.bank}" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-                            <p:calendar id="chequeDate"  value="#{pettyCashBillController.current.chequeDate}" pattern="dd MMMM yyyy" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="creditCard" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{pettyCashBillController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="cheque" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{pettyCashBillController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="slip" style="display: #{pettyCashBillController.current.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{pettyCashBillController.paymentMethodData}"/>
+                            </h:panelGroup>
+
+
                             <p:commandButton  value="Settle" action="#{pettyCashBillController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:commandButton value="New Bill" ajax="false" action="#{pettyCashBillController.prepareNewBill()}" >

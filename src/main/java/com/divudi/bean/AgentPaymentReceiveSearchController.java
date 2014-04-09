@@ -9,6 +9,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -255,6 +256,17 @@ public class AgentPaymentReceiveSearchController implements Serializable {
         return false;
     }
 
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
+
     public void cancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (errorCheck()) {
@@ -273,6 +285,7 @@ public class AgentPaymentReceiveSearchController implements Serializable {
                 getBilledBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
 
+                getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

@@ -63,6 +63,8 @@ public class Patient implements Serializable {
     String fileName;
     String fileType;
     String code;
+    @Lob
+    String comments;
     @Transient
     int ageMonths;
     @Transient
@@ -268,4 +270,16 @@ public class Patient implements Serializable {
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+    
+    
+    
+    
 }

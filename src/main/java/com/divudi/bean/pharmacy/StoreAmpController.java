@@ -60,13 +60,12 @@ public class StoreAmpController implements Serializable {
     BillNumberBean billNumberBean;
 
     public void prepareAdd() {
-        current = new Amp();
-        current.setDepartmentType(DepartmentType.Store);
-        current.setCode(billNumberBean.storeItemNumberGenerator());
+        current = null;
     }
 
     private void recreateModel() {
         items = null;
+        current = null;
     }
 
     public void saveSelected() {
@@ -75,9 +74,9 @@ public class StoreAmpController implements Serializable {
             getFacade().edit(current);
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
-            current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            current.setCreater(getSessionController().getLoggedUser());
-            getFacade().create(current);
+            getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            getCurrent().setCreater(getSessionController().getLoggedUser());
+            getFacade().create(getCurrent());
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
         recreateModel();
@@ -106,6 +105,8 @@ public class StoreAmpController implements Serializable {
     public Amp getCurrent() {
         if (current == null) {
             current = new Amp();
+            current.setDepartmentType(DepartmentType.Store);
+            current.setCode(billNumberBean.storeItemNumberGenerator());
         }
         return current;
     }

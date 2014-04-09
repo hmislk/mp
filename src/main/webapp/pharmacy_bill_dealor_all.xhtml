@@ -70,10 +70,10 @@
                                       selection="#{pharmacyDealorBill.selectedBillItems}" 
                                       var="b" id="itms" rowKey="#{b.searialNo}">
                             <f:facet name="header">
-                                <h:outputLabel value="Paying GRN : "/>
+                                <h:outputLabel value="Paying Institution : "/>
                                 <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
-                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.removeAll()}" value="Remove Selected">
-                                </p:commandButton>
+                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.removeAll()}" value="Remove Selected"/>
+                                
                             </f:facet>
 
                             <p:column selectionMode="multiple" />                                        

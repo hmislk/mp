@@ -256,6 +256,7 @@ public class Bill implements Serializable {
         patientEncounter = bill.getPatientEncounter();
         referredBy = bill.getReferredBy();
         referringDepartment = bill.getReferringDepartment();
+        surgeryBillType = bill.getSurgeryBillType();
         //      referenceBill=bill.getReferenceBill();
         //  paymentScheme=bill.getPaymentScheme();
         //   paymentMethod=bill.getPaymentMethod();
@@ -1199,8 +1200,7 @@ public class Bill implements Serializable {
     public boolean isTransBoolean() {
         return transBoolean;
     }
-    
-    
+
     public boolean getTransBoolean() {
         return transBoolean;
     }

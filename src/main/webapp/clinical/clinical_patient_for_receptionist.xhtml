@@ -119,6 +119,11 @@
                                         <p:inputText autocomplete="off" id="txtNewPtName" value="#{patientController.current.person.name}" style="width: 200px;text-transform:uppercase;">
                                         </p:inputText>
 
+                                        <h:outputLabel value="Comments"/>
+                                        <p:inputTextarea id="txtNewPtComments" value="#{patientController.current.comments}" style="width: 200px;">
+                                        </p:inputTextarea>
+
+
                                         <h:outputLabel value="Code"/>
                                         <h:outputLabel value="#{patientController.current.code}" ></h:outputLabel>
 

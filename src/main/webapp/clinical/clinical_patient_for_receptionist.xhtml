@@ -11,6 +11,9 @@
         <ui:composition template="/resources/template/template.xhtml">
 
             <ui:define name="content">
+
+                <h:outputStylesheet library="css" name="printing.css" ></h:outputStylesheet>
+
                 <h:form>
 
                     <p:panel header="Patient" styleClass="alignTop" >
@@ -51,7 +54,7 @@
                                                 <f:convertDateTime pattern="dd MMMM yyyy"/>
                                             </h:outputLabel>
                                         </p:column>
-                                        <f:ajax event="itemSelect" execute="acPt" render=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} "/>
+                                        <f:ajax event="itemSelect" execute="acPt" render=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} " listener="#{patientController.createPatientBarcode}"/>
                                     </p:autoComplete>
 
                                     <p:panel  id="panelQueue" header="Add to Queue" >
@@ -131,7 +134,7 @@
                                         </h:selectOneMenu>
 
 
-                                       
+
 
                                         <h:outputLabel value="Sex"/>
                                         <h:outputLabel rendered="#{patientController.current.person eq null}" value=""/>
@@ -198,70 +201,90 @@
                                     <p:panel >
 
 
-                                        <p:panel id="ptCard" header="Patient Card" >
-                                            <div class="fiveinchbill" >
-                                                <table>
-                                                    <tr>
-                                                        <td colspan="3" >
-                                                            <h1>
+                                        <p:panel header="Patient Card" >
+                                            <f:facet name="header" >
+                                                <p:commandButton style="nonPrintBlock" value="Print Patient Card" >
+                                                    <p:printer target="ptCard" ></p:printer>
+                                                </p:commandButton>
+                                            </f:facet>
+
+                                            <p:panel id="ptCard" >
+
+                                                <div class="patientCard" >
+                                                    <table>
+                                                        <tr>
+                                                            <td colspan="3" style="text-align: center; vertical-align: middle; padding: 10px; font-family: Arial" >
+
                                                                 <h:outputLabel value="#{sessionController.institution.name}" ></h:outputLabel>
-                                                            </h1>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="3" >
-                                                            <h1><h:outputLabel value="#{sessionController.institution.address}" ></h:outputLabel></h1>
-                                                        </td>
-                                                    </tr>
 
-                                                    <tr>
-                                                        <td>
-                                                            Name
-                                                        </td>
-                                                        <td>
-                                                            :
-                                                        </td>
-                                                        <td>
-                                                            #{patientController.current.person.nameWithTitle}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Age
-                                                        </td>
-                                                        <td>
-                                                            :
-                                                        </td>
-                                                        <td>
-                                                            #{patientController.current.age}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Sex
-                                                        </td>
-                                                        <td>
-                                                            :
-                                                        </td>
-                                                        <td>
-                                                            #{patientController.current.person.sex}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="3" >
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3" >
+                                                                <h1><h:outputLabel value="#{sessionController.institution.address}" ></h:outputLabel></h1>
+                                                            </td>
+                                                        </tr>
 
-                                                            #{patientController.current.id}
+                                                        <tr>
+                                                            <td>
+                                                                Name
+                                                            </td>
+                                                            <td>
+                                                                :
+                                                            </td>
+                                                            <td>
+                                                                #{patientController.current.person.nameWithTitle}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Address
+                                                            </td>
+                                                            <td>
+                                                                :
+                                                            </td>
+                                                            <td>
+                                                                #{patientController.current.person.address}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Date of Issue
+                                                            </td>
+                                                            <td>
+                                                                :
+                                                            </td>
+                                                            <td>
+                                                                <h:outputLabel value="#{patientController.current.createdAt}" >
+                                                                    <f:convertDateTime parent="dd MMM yyyy" ></f:convertDateTime>
+                                                                </h:outputLabel>
+
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Code
+                                                            </td>
+                                                            <td>
+                                                                :
+                                                            </td>
+                                                            <td>
+                                                                <h:outputLabel value="#{patientController.current.code}" >
+                                                                </h:outputLabel>
+
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3" style="text-align: center; vertical-align: middle;" >
+                                                                <p:graphicImage value="#{patientController.barcode}" style="max-width: 7.5cm; padding: 10px; margin: 10px;" ></p:graphicImage>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
 
 
+                                                </div>
 
-
-                                                        </td>
-                                                    </tr>
-                                                </table>
-
-
-                                            </div>
-
+                                            </p:panel>
 
                                         </p:panel>
 

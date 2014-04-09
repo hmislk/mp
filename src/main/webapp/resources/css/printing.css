@@ -55,6 +55,12 @@ root {
 
 
 @media screen{
+    .patientCard{
+        width: 8.56cm;
+        height: 5.398cm;
+        border: 1px solid black;
+    }
+
     .fiveinchbill{
         position: relative!important;
         padding: 5px!important;
@@ -93,6 +99,14 @@ root {
 
 
 @media print{
+
+    .patientCard{
+        width: 8.56cm;
+        height: 5.398cm;
+        border: 1px solid black;
+    }
+
+
     .summery{
         // page-break-after:always!important; 
         font-family: sans-serif!important; 
@@ -241,16 +255,16 @@ root {
 
 @media screen{
     .a4bill{
-/*        position: relative!important;
-        padding: 5px!important;
-        height:800px!important;
-        width:1100px!important;        
-        font-family: sans-serif!important; 
-        font-size: 11px!important; 
-        margin: auto!important; 
-        background-size: 100% auto!important; 
-        border: 1px solid!important;
-        font-size: 100%;*/
+        /*        position: relative!important;
+                padding: 5px!important;
+                height:800px!important;
+                width:1100px!important;        
+                font-family: sans-serif!important; 
+                font-size: 11px!important; 
+                margin: auto!important; 
+                background-size: 100% auto!important; 
+                border: 1px solid!important;
+                font-size: 100%;*/
         font-family: sans-serif!important; 
         font-size: 11px!important; 
         position: relative!important;  

@@ -74,29 +74,32 @@ public class PatientController implements Serializable {
     StreamedContent barcode;
 
     public void createPatientBarcode() {
+
+        //Barcode  
+        System.out.println("creating pt bar code");
         File barcodeFile = new File("ptbarcode");
-        if (current != null && !current.getCode().trim().equals("")) {
+        System.out.println("current = " + current);
+        if (current != null && current.getCode() != null && !current.getCode().trim().equals("")) {
+            System.out.println("getCurrent().getCode() = " + getCurrent().getCode());
             try {
-                Barcode bc = BarcodeFactory.createCode128A(getCurrent().getCode());
-                bc.setBarHeight(5);
-                bc.setBarWidth(3);
-                bc.setDrawingText(true);
-                BarcodeImageHandler.saveJPEG(bc, barcodeFile);
+                BarcodeImageHandler.saveJPEG(BarcodeFactory.createCode128(getCurrent().getCode()), barcodeFile);
                 barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
+
             } catch (Exception ex) {
-                Logger.getLogger(PatientController.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("ex = " + ex.getMessage());
             }
         } else {
+            System.out.println("else = ");
             try {
-                Barcode bc = BarcodeFactory.createCode128A("0123456789");
+                Barcode bc = BarcodeFactory.createCode128A("0000");
                 bc.setBarHeight(5);
                 bc.setBarWidth(3);
                 bc.setDrawingText(true);
                 BarcodeImageHandler.saveJPEG(bc, barcodeFile);
-
+                System.out.println("12");
                 barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
             } catch (Exception ex) {
-                Logger.getLogger(PatientController.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("ex = " + ex.getMessage());
             }
         }
     }
@@ -358,7 +361,6 @@ public class PatientController implements Serializable {
     }
 
     public StreamedContent getBarcode() {
-        createPatientBarcode();
         return barcode;
     }
 

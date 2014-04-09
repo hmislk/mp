@@ -10,6 +10,8 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.Barcode39;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +19,10 @@ import java.util.logging.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import net.sourceforge.barbecue.Barcode;
+import net.sourceforge.barbecue.BarcodeFactory;
+import net.sourceforge.barbecue.BarcodeImageHandler;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -28,10 +34,52 @@ import org.primefaces.model.StreamedContent;
 @RequestScoped
 public class BarcodeController {
 
+    @Inject
+    PatientController patientController;
+
     /**
      * Creates a new instance of BarcodeController
      */
     public BarcodeController() {
+    }
+
+    public PatientController getPatientController() {
+        return patientController;
+    }
+
+    public void setPatientController(PatientController patientController) {
+        this.patientController = patientController;
+    }
+
+    public StreamedContent getCreatePatientBarcode() {
+        StreamedContent barcode = null;
+        //Barcode  
+        System.out.println("creating pt bar code");
+        File barcodeFile = new File("ptbarcode");
+        System.out.println("current = " + getPatientController().getCurrent());
+        if (getPatientController().getCurrent() != null && getPatientController().getCurrent().getCode() != null && !getPatientController().getCurrent().getCode().trim().equals("")) {
+            System.out.println("getCurrent().getCode() = " + getPatientController().getCurrent().getCode());
+            try {
+                BarcodeImageHandler.saveJPEG(BarcodeFactory.createCode128(getPatientController().getCurrent().getCode()), barcodeFile);
+                barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
+            } catch (Exception ex) {
+                System.out.println("ex = " + ex.getMessage());
+            }
+        } else {
+            System.out.println("else = ");
+            try {
+                Barcode bc = BarcodeFactory.createCode128A("0000");
+                bc.setBarHeight(5);
+                bc.setBarWidth(3);
+                bc.setDrawingText(true);
+                BarcodeImageHandler.saveJPEG(bc, barcodeFile);
+                System.out.println("12");
+                barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
+            } catch (Exception ex) {
+                System.out.println("ex = " + ex.getMessage());
+            }
+        }
+        return barcode;
     }
 
     public StreamedContent getBarcodeBy() {

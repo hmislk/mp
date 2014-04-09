@@ -45,6 +45,7 @@ public class Institution implements Serializable {
     String phone;
     String mobile;
     String web;
+    
     @Lob
     String labBillHeading;
     @Lob

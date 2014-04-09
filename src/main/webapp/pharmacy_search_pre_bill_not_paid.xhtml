@@ -59,8 +59,8 @@
                             </p:column>  
 
                             <p:column >
-                                <p:commandButton ajax="false"  value="ViewBill" action="pharmacy_preBill_settle"  disabled="#{bill.referenceBill ne null}">                                
-                                    <f:setPropertyActionListener  value="#{bill}" target="#{pharmacyPreSettleController.preBill}" />
+                                <p:commandButton ajax="false"  value="ViewBill" action="pharmacy_reprint_bill_pre"  disabled="#{bill.referenceBill ne null}">                                
+                                    <f:setPropertyActionListener  value="#{bill}" target="#{pharmacyBillSearch.bill}" />
                                 </p:commandButton>
                             </p:column>
 

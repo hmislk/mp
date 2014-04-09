@@ -37,6 +37,7 @@ public enum Privileges {
     InwardCancel,
     InwardReturn,
     InwardReactivate,
+    ShowInwardFee,
     LabBilling,
     LabBillSearch,
     LabBillItemSearch,

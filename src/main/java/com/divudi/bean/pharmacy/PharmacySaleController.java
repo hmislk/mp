@@ -927,6 +927,9 @@ public class PharmacySaleController implements Serializable {
             discount = discount + b.getDiscount();
             getPreBill().setTotal(getPreBill().getTotal() + b.getNetValue());
         }
+
+        netTot = netTot + getPreBill().getServiceCharge();
+
         getPreBill().setNetTotal(netTot);
         getPreBill().setTotal(grossTot);
         getPreBill().setGrantTotal(grossTot);

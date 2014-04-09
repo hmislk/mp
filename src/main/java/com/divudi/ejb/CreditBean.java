@@ -106,6 +106,22 @@ public class CreditBean {
 
         return lst;
     }
+    
+     public List<Institution> getCreditCompanyFromBht() {
+        String sql;
+        HashMap hm;
+        sql = "Select distinct(b.creditCompany) "
+                + " From PatientEncounter b "
+                + " where b.retired=false "
+                + " and b.paymentFinalized=true "
+                + " and b.paymentMethod=:pm "
+                + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)> :val ";
+
+        hm = new HashMap();
+        hm.put("val", 0.1);
+        hm.put("pm", PaymentMethod.Credit);
+        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
 
     public List<Institution> getCreditInstitutionByPatientEncounter(Date fromDate, Date toDate) {
         String sql;
@@ -255,21 +271,7 @@ public class CreditBean {
         return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
     }
 
-    public List<Institution> getCreditCompanyFromBht() {
-        String sql;
-        HashMap hm;
-        sql = "Select distinct(b.creditCompany) "
-                + " From PatientEncounter b "
-                + " where b.retired=false "
-                + " and b.paymentFinalized=true "
-                + " and b.paymentMethod=:pm "
-                + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)> :val ";
-
-        hm = new HashMap();
-        hm.put("val", 0.1);
-        hm.put("pm", PaymentMethod.Credit);
-        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-    }
+   
 
     public List<Institution> getDealorFromReturnBills() {
         String sql;

@@ -87,7 +87,9 @@
 
                                         <p:inputTextarea id="txtDesc" value="#{billBhtController.currentBillItem.descreption}" ></p:inputTextarea>
                                         <p:commandButton id="btnAddIx" ajax="false" value="Add" action="#{billBhtController.addToBill()}"/>
-
+                                        
+                                        <p:calendar value="#{billBhtController.date}" pattern="dd MMMM yyyy hh mm a" >                               
+                                        </p:calendar>
 
                                     </h:panelGrid>
                                 </p:panel>
@@ -142,7 +144,10 @@
                                     </p:tab>
                                     <p:tab id="tabBillFee" title="Fees" >
                                         <p:dataTable rowIndexVar="rowIndex" value="#{billBhtController.lstBillFees}" var="bif" 
-                                                     rowStyleClass="#{(bif.billItem.item.chargesVisibleForInward) and (bif.fee.feeType ne 'Matrix') ? '':'noDisplayRow'}">
+                                                     rowStyleClass="#{(bif.billItem.item.chargesVisibleForInward) 
+                                                                      and (bif.fee.feeType ne 'Matrix') 
+                                                                      or(webUserController.hasPrivilege('ShowInwardFee'))
+                                                                      ? '':'noDisplayRow'}">
                                             <p:column>
                                                 <f:facet name="header">No</f:facet>
                                                 <h:outputLabel value="#{rowIndex+1}"/>

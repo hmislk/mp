@@ -81,6 +81,7 @@ public class UserPrivilageController implements Serializable {
         TreeNode node15 = new PrivilageNode("Cancel", node1, Privileges.InwardCancel);
         TreeNode node16 = new PrivilageNode("Return", node1, Privileges.InwardReturn);
         TreeNode node17 = new PrivilageNode("Reactivate", node1, Privileges.InwardReactivate);
+        TreeNode node18 = new PrivilageNode("Show Inward Fee", node1, Privileges.ShowInwardFee);
 
         TreeNode node2 = new PrivilageNode("Lab", tmproot);
         TreeNode node200 = new PrivilageNode("Lab Menu", node2, Privileges.Lab);

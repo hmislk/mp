@@ -101,6 +101,7 @@ public class Bill implements Serializable {
     double netTotal;
     double paidAmount;
     double balance;
+    double serviceCharge;
     Double tax = 0.0;
     Double cashPaid = 0.0;
     Double cashBalance = 0.0;
@@ -1207,5 +1208,15 @@ public class Bill implements Serializable {
     public void setTransBoolean(boolean transBoolean) {
         this.transBoolean = transBoolean;
     }
+
+    public double getServiceCharge() {
+        return serviceCharge;
+    }
+
+    public void setServiceCharge(double serviceCharge) {
+        this.serviceCharge = serviceCharge;
+    }
+
+
 
 }

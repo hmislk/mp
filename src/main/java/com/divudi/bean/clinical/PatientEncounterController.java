@@ -209,7 +209,7 @@ public class PatientEncounterController implements Serializable {
         getPharmacySaleController().setSearchedPatient(current.getPatient());
 //        getPharmacySaleController().getBill().setPatientEncounter(current);
 //        getPharmacySaleController().getBill().setPatient(current.getPatient());
-        return "/pharmacy_retail_sale";
+        return "/clinical/clinical_pharmacy_sale";
     }
 
     public void setSelectText(String selectText) {

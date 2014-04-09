@@ -11,6 +11,7 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
+import com.divudi.data.InstitutionType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
@@ -32,6 +33,7 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Patient;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
@@ -42,6 +44,7 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
 import com.divudi.facade.InstitutionFacade;
+import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientInvestigationFacade;
 import com.divudi.facade.PersonFacade;
@@ -84,6 +87,8 @@ public class BillController implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private InstitutionFacade institutionFacade;
+    @EJB
+    private PatientEncounterFacade patientEncounterFacade;
     @Inject
     private EnumController enumController;
     private boolean printPreview;
@@ -181,7 +186,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
         if (qry != null) {
             sql = "select c from BilledBill c "
-                    + " where (abs(c.netTotal)-abs(c.paidAmount))>:val "
+                    + " where abs(c.netTotal)-abs(c.paidAmount)>:val "
                     + " and c.billType= :btp "
                     + " and c.paymentMethod= :pm "
                     + " and c.cancelledBill is null "
@@ -208,19 +213,54 @@ public class BillController implements Serializable {
         String sql;
         HashMap hash = new HashMap();
         if (qry != null) {
-            sql = "select c from BilledBill c where "
-                    + " abs(c.netTotal)-abs(c.paidAmount))>:val "
+            sql = "select c from BilledBill c "
+                    + "where  abs(c.netTotal)-abs(c.paidAmount)>:val "
                     + " and (c.billType= :btp1 or c.billType= :btp2  )"
                     + " and c.createdAt is not null "
                     + " and c.deptId is not null "
-                    + " and c.cancelledBill is null and "
-                    + " c.retired=false and c.paymentMethod=:pm  and"
-                    + " ((upper(c.deptId) like :q ) or "
-                    + " (upper(c.fromInstitution.name)  like :q ))"
+                    + " and c.cancelledBill is null "
+                    + " and c.retired=false "
+                    + " and c.paymentMethod=:pm  "
+                    + " and c.fromInstitution.institutionType=:insTp  "
+                    + " and ((upper(c.deptId) like :q ) "
+                    + " or (upper(c.fromInstitution.name)  like :q ))"
                     + " order by c.fromInstitution.name";
             hash.put("btp1", BillType.PharmacyGrnBill);
             hash.put("btp2", BillType.PharmacyPurchaseBill);
             hash.put("pm", PaymentMethod.Credit);
+            hash.put("insTp", InstitutionType.Dealer);
+            hash.put("val", 0.1);
+            hash.put("q", "%" + qry.toUpperCase() + "%");
+            //     hash.put("pm", PaymentMethod.Credit);
+            a = getFacade().findBySQL(sql, hash, 10);
+        }
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        return a;
+    }
+
+    public List<Bill> completeBillFromDealorStore(String qry) {
+        List<Bill> a = null;
+        String sql;
+        HashMap hash = new HashMap();
+        if (qry != null) {
+            sql = "select c from BilledBill c "
+                    + "where  abs(c.netTotal)-abs(c.paidAmount)>:val "
+                    + " and (c.billType= :btp1 or c.billType= :btp2  )"
+                    + " and c.createdAt is not null "
+                    + " and c.deptId is not null "
+                    + " and c.cancelledBill is null "
+                    + " and c.retired=false "
+                    + " and c.paymentMethod=:pm  "
+                    + " and c.fromInstitution.institutionType=:insTp  "
+                    + " and ((upper(c.deptId) like :q ) "
+                    + " or (upper(c.fromInstitution.name)  like :q ))"
+                    + " order by c.fromInstitution.name";
+            hash.put("btp1", BillType.PharmacyGrnBill);
+            hash.put("btp2", BillType.PharmacyPurchaseBill);
+            hash.put("pm", PaymentMethod.Credit);
+            hash.put("insTp", InstitutionType.StoreDealor);
             hash.put("val", 0.1);
             hash.put("q", "%" + qry.toUpperCase() + "%");
             //     hash.put("pm", PaymentMethod.Credit);
@@ -259,7 +299,7 @@ public class BillController implements Serializable {
         HashMap hash = new HashMap();
 
         sql = "select c from BilledBill c where "
-                + " abs(c.netTotal)-abs(c.paidAmount))>:val"
+                + " abs(c.netTotal)-abs(c.paidAmount)>:val"
                 + " and (c.billType= :btp1 or c.billType= :btp2 )"
                 + " and c.createdAt is not null "
                 + " and c.deptId is not null "
@@ -282,20 +322,20 @@ public class BillController implements Serializable {
 
         return bill;
     }
-    
-     public List<Bill> getCreditBills(Institution institution) {
+
+    public List<Bill> getCreditBills(Institution institution) {
         String sql;
         HashMap hash = new HashMap();
 
         sql = "select c from BilledBill c  where"
-                + " abs(c.netTotal)-abs(c.paidAmount))>:val "
+                + " abs(c.netTotal)-abs(c.paidAmount)>:val "
                 + " and c.billType= :btp"
                 + " and c.createdAt is not null "
                 + " and c.deptId is not null "
                 + " and c.cancelled=false"
                 + " and c.retired=false"
                 + " and c.paymentMethod=:pm  "
-                + " and c.fromInstitution=:ins "
+                + " and c.creditCompany=:ins "
                 + " order by c.id ";
         hash.put("btp", BillType.OpdBill);
         hash.put("pm", PaymentMethod.Credit);
@@ -831,12 +871,12 @@ public class BillController implements Serializable {
         calTotals();
     }
 
-    public String prepareNewBill() {
+    public void prepareNewBill() {
         clearBillItemValues();
         clearBillValues();
         setPrintPreview(true);
         printPreview = false;
-        return "opd_bill";
+        //  return "opd_bill";
     }
 
     public String prepareLabBill() {
@@ -1272,6 +1312,14 @@ public class BillController implements Serializable {
 
         return suggestions;
 
+    }
+
+    public PatientEncounterFacade getPatientEncounterFacade() {
+        return patientEncounterFacade;
+    }
+
+    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
+        this.patientEncounterFacade = patientEncounterFacade;
     }
 
     /**

@@ -4,9 +4,9 @@
  */
 package com.divudi.bean;
 
+import com.divudi.bean.inward.AdmissionController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -15,19 +15,21 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
+import com.divudi.entity.PatientEncounter;
+import com.divudi.entity.inward.Admission;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.PatientEncounterFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import org.primefaces.event.TabChangeEvent;
 
 /**
  *
@@ -52,6 +54,7 @@ public class CashRecieveBillController implements Serializable {
     private BillItem currentBillItem;
     private BillItem removingItem;
     private List<BillItem> billItems;
+    private List<BillItem> selectedBillItems;
     private PaymentMethodData paymentMethodData;
     private Institution institution;
 
@@ -68,32 +71,136 @@ public class CashRecieveBillController implements Serializable {
         Institution ins = institution;
         makeNull();
 
+        System.err.println("Select Listener");
         List<Bill> list = getBillController().getCreditBills(ins);
+        System.err.println("Size " + list.size());
         for (Bill b : list) {
             getCurrentBillItem().setReferenceBill(b);
             selectBillListener();
             addToBill();
         }
     }
-    
-     public void changeNetValueListener(BillItem billItem) {
 
-//        if (!checkPaidAmount(billItem)) {
-//            billItem.setNetValue(0);
-////            UtilityController.addSuccessMessage("U cant add more than ballance");
-////            return;
-//        }
+    @Inject
+    private AdmissionController admissionController;
 
+    public void selectInstitutionListenerBht() {
+        Institution ins = institution;
+        makeNull();
+
+        System.err.println("Select Listener");
+        List<Admission> list = getAdmissionController().getCreditBillsBht(ins);
+        System.err.println("Size " + list.size());
+        for (PatientEncounter b : list) {
+            getCurrentBillItem().setPatientEncounter(b);
+            selectBhtListener();
+            addToBht();
+        }
+    }
+
+    public void changeNetValueListener(BillItem billItem) {
+
+        if (!isPaidAmountOk(billItem)) {
+            billItem.setNetValue(0);
+//            UtilityController.addSuccessMessage("U cant add more than ballance");
+//            return;
+        }
         calTotal();
+    }
+
+    public void changeNetValueListenerBht(BillItem billItem) {
+
+        if (!isBhtPaidAmountOk(billItem)) {
+            billItem.setNetValue(0);
+//            UtilityController.addSuccessMessage("U cant add more than ballance");
+//            return;
+        }
+        calTotal();
+    }
+
+    private boolean isPaidAmountOk(BillItem tmp) {
+
+        double refBallance = getReferenceBallance(tmp);
+        double netValue = Math.abs(tmp.getNetValue());
+
+        System.err.println("RefBallance " + refBallance);
+        System.err.println("Net Value " + tmp.getNetValue());
+
+        if (refBallance >= netValue) {
+            System.err.println("1");
+            return true;
+        }
+
+        if (netValue - refBallance < 0.1) {
+            System.err.println("2");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isBhtPaidAmountOk(BillItem tmp) {
+
+        double refBallance = getReferenceBhtBallance(tmp);
+        double netValue = Math.abs(tmp.getNetValue());
+
+        System.err.println("RefBallance " + refBallance);
+        System.err.println("Net Value " + tmp.getNetValue());
+
+        if (refBallance >= netValue) {
+            System.err.println("1");
+            return true;
+        }
+
+        if (netValue - refBallance < 0.1) {
+            System.err.println("2");
+            return true;
+        }
+        return false;
+    }
+
+    private double getReferenceBallance(BillItem billItem) {
+        double refBallance = 0;
+        double neTotal = Math.abs(billItem.getReferenceBill().getNetTotal());
+        double paidAmt = Math.abs(getCreditBean().getPaidAmount(billItem.getReferenceBill(), BillType.CashRecieveBill));
+
+        refBallance = neTotal - (paidAmt);
+
+        return refBallance;
+    }
+
+    private double getReferenceBhtBallance(BillItem billItem) {
+        double refBallance = 0;
+        double used = Math.abs(billItem.getPatientEncounter().getCreditUsedAmount());
+        double paidAmt = Math.abs(getCreditBean().getPaidAmount(billItem.getPatientEncounter(), BillType.CashRecieveBill));
+
+        refBallance = used - (paidAmt);
+
+        return refBallance;
     }
 
     public void selectBillListener() {
-        double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
-        getCurrentBillItem().setNetValue(dbl);
+        double dbl = getReferenceBallance(getCurrentBillItem());
+
+        System.err.println("Ballance Amount " + dbl);
+        if (dbl > 0.1) {
+            getCurrentBillItem().setNetValue(dbl);
+        }
+
     }
 
-    public void remove() {
-        calTotal();
+    public void selectBhtListener() {
+        double dbl = getReferenceBhtBallance(getCurrentBillItem());
+
+        System.err.println("Ballance Amount " + dbl);
+        if (dbl > 0.1) {
+            getCurrentBillItem().setNetValue(dbl);
+        }
+
+    }
+
+    public void remove(BillItem billItem) {
+        getBillItems().remove(billItem.getSearialNo());
+        calTotalWithResetingIndex();
     }
 
     private boolean errorCheckForAdding() {
@@ -102,7 +209,7 @@ public class CashRecieveBillController implements Serializable {
             return true;
         }
 
-        double dbl = Math.abs(getCurrentBillItem().getReferenceBill().getNetTotal()) - Math.abs(getCurrentBillItem().getReferenceBill().getPaidAmount());
+        double dbl = getReferenceBallance(getCurrentBillItem());
 
         if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
             UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
@@ -111,7 +218,7 @@ public class CashRecieveBillController implements Serializable {
 
         for (BillItem b : getBillItems()) {
             if (b.getReferenceBill() != null && b.getReferenceBill().getCreditCompany() != null) {
-                if (getCurrentBillItem().getReferenceBill().getCreditCompany().getId() != b.getReferenceBill().getCreditCompany().getId()) {
+                if (!Objects.equals(getCurrentBillItem().getReferenceBill().getCreditCompany().getId(), b.getReferenceBill().getCreditCompany().getId())) {
                     UtilityController.addErrorMessage("U can add only one type Credit companies at Once");
                     return true;
                 }
@@ -121,35 +228,29 @@ public class CashRecieveBillController implements Serializable {
         return false;
     }
 
-    private boolean errorCheckForBht() {
-        if (getCurrentBillItem().getPatientEncounter() == null) {
-            UtilityController.addErrorMessage("Select Bht");
+    private boolean errorCheckForAddingBht() {
+        if (getCurrentBillItem().getPatientEncounter().getCreditCompany() == null) {
+            UtilityController.addErrorMessage("U cant add without credit company name");
             return true;
         }
 
-        if (getCurrentBillItem().getPatientEncounter().getCreditUsedAmount() == 0.0) {
-            UtilityController.addErrorMessage("No Due to Add");
-            return true;
-        }
+        double dbl = getReferenceBhtBallance(getCurrentBillItem());
 
-        if (getCurrentBillItem().getPatientEncounter().getCreditCompany() != null) {
-            UtilityController.addErrorMessage("U cant add Without credit company");
+        if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
+            UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
             return true;
         }
 
         for (BillItem b : getBillItems()) {
-            if (getCurrentBillItem().getPatientEncounter().getCreditCompany().getId() != b.getPatientEncounter().getCreditCompany().getId()) {
-                UtilityController.addErrorMessage("U can add only one type Credit companies at Once");
-                return true;
+            if (b.getPatientEncounter() != null && b.getPatientEncounter().getCreditCompany() != null) {
+                if (!Objects.equals(getCurrentBillItem().getPatientEncounter().getCreditCompany().getId(), b.getPatientEncounter().getCreditCompany().getId())) {
+                    UtilityController.addErrorMessage("U can add only one type Credit companies at Once");
+                    return true;
+                }
             }
         }
 
         return false;
-    }
-
-    public void remove(BillItem billItem) {
-        getBillItems().remove(billItem.getSearialNo());
-        calTotalWithResetingIndex();
     }
 
     public void calTotalWithResetingIndex() {
@@ -172,6 +273,24 @@ public class CashRecieveBillController implements Serializable {
         //     getCurrentBillItem().getBill().setNetTotal(getCurrentBillItem().getNetValue());
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
+        getCurrentBillItem().setSearialNo(getBillItems().size());
+        getBillItems().add(getCurrentBillItem());
+
+        currentBillItem = null;
+        calTotal();
+
+    }
+
+    public void addToBht() {
+        if (errorCheckForAddingBht()) {
+            return;
+        }
+
+        getCurrent().setFromInstitution(getCurrentBillItem().getPatientEncounter().getCreditCompany());
+        //     getCurrentBillItem().getBill().setNetTotal(getCurrentBillItem().getNetValue());
+        //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
+
+        getCurrentBillItem().setSearialNo(getBillItems().size());
         getBillItems().add(getCurrentBillItem());
 
         currentBillItem = null;
@@ -187,19 +306,6 @@ public class CashRecieveBillController implements Serializable {
             getCurrentBillItem().setReferenceBill(b);
             addToBill();
         }
-    }
-
-    public void addBhtToBill() {
-        if (errorCheckForBht()) {
-            return;
-        }
-
-        getCurrent().setFromInstitution(getCurrentBillItem().getPatientEncounter().getCreditCompany());
-        getCurrentBillItem().setNetValue(getCurrentBillItem().getPatientEncounter().getCreditUsedAmount());
-        getBillItems().add(getCurrentBillItem());
-
-        currentBillItem = null;
-        calTotal();
     }
 
     private void calTotal() {
@@ -241,8 +347,38 @@ public class CashRecieveBillController implements Serializable {
             return true;
         }
 
-        if (getBillItems().get(0).getReferenceBill().getCreditCompany().getId()
-                != getCurrent().getFromInstitution().getId()) {
+        if (!Objects.equals(getBillItems().get(0).getReferenceBill().getCreditCompany().getId(), getCurrent().getFromInstitution().getId())) {
+            UtilityController.addErrorMessage("Select same credit company as BillItem ");
+            return true;
+        }
+
+        if (getCurrent().getPaymentScheme() == null) {
+            return true;
+        }
+
+        if (getCurrent().getPaymentScheme().getPaymentMethod() == null) {
+            return true;
+        }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getCurrent().getPaymentScheme().getPaymentMethod(), getPaymentMethodData())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean errorCheckBht() {
+        if (getBillItems().isEmpty()) {
+            UtilityController.addErrorMessage("No Bill Item ");
+            return true;
+        }
+
+        if (getCurrent().getFromInstitution() == null) {
+            UtilityController.addErrorMessage("Select Credit Company");
+            return true;
+        }
+
+        if (!Objects.equals(getBillItems().get(0).getPatientEncounter().getCreditCompany().getId(), getCurrent().getFromInstitution().getId())) {
             UtilityController.addErrorMessage("Select same credit company as BillItem ");
             return true;
         }
@@ -309,6 +445,25 @@ public class CashRecieveBillController implements Serializable {
 
     }
 
+    public void settleBillBht() {
+
+        if (errorCheckBht()) {
+            return;
+        }
+
+        getBillBean().setPaymentMethodData(getCurrent(), getCurrent().getPaymentScheme().getPaymentMethod(), getPaymentMethodData());
+
+        getCurrent().setTotal(getCurrent().getNetTotal());
+
+        saveBill(BillType.CashRecieveBill);
+        saveBillItemBht();
+
+        //   savePayments();
+        UtilityController.addSuccessMessage("Bill Saved");
+        printPreview = true;
+
+    }
+
     private void savePayments() {
         for (BillItem b : getBillItems()) {
             Bill bil = saveBhtPaymentBill(b);
@@ -333,6 +488,15 @@ public class CashRecieveBillController implements Serializable {
         return tmp;
     }
 
+    public void removeAll() {
+        for (BillItem b : selectedBillItems) {
+            remove(b);
+        }
+
+        //  calTotalWithResetingIndex();
+        selectedBillItems = null;
+    }
+
     private void saveBhtBillItem(Bill b) {
         BillItem temBi = new BillItem();
         temBi.setBill(b);
@@ -353,8 +517,22 @@ public class CashRecieveBillController implements Serializable {
             updateReferenceBill(tmp);
 
         }
+    }
+
+    private void saveBillItemBht() {
+        for (BillItem tmp : getBillItems()) {
+            tmp.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            tmp.setCreater(getSessionController().getLoggedUser());
+            tmp.setBill(getCurrent());
+            tmp.setNetValue(tmp.getNetValue());
+            getBillItemFacade().create(tmp);
+
+            updateReferenceBht(tmp);
+
+        }
 
     }
+
     @EJB
     private CreditBean creditBean;
 
@@ -364,6 +542,16 @@ public class CashRecieveBillController implements Serializable {
         tmp.getReferenceBill().setPaidAmount(0 - dbl);
         getBillFacade().edit(tmp.getReferenceBill());
 
+    }
+
+    @EJB
+    private PatientEncounterFacade patientEncounterFacade;
+
+    private void updateReferenceBht(BillItem tmp) {
+        double dbl = getCreditBean().getPaidAmount(tmp.getPatientEncounter(), BillType.CashRecieveBill);
+
+        tmp.getPatientEncounter().setCreditPaidAmount(0 - dbl);
+        getPatientEncounterFacade().edit(tmp.getPatientEncounter());
     }
 
 //    private void updateReferenceBill(BillItem tmp) {
@@ -397,7 +585,7 @@ public class CashRecieveBillController implements Serializable {
         currentBillItem = null;
         paymentMethodData = null;
         billItems = null;
-
+        selectedBillItems = null;
     }
 
     public String prepareNewBill() {
@@ -546,5 +734,32 @@ public class CashRecieveBillController implements Serializable {
 
     public void setBillController(BillController billController) {
         this.billController = billController;
+    }
+
+    public List<BillItem> getSelectedBillItems() {
+        if (selectedBillItems == null) {
+            selectedBillItems = new ArrayList<>();
+        }
+        return selectedBillItems;
+    }
+
+    public void setSelectedBillItems(List<BillItem> selectedBillItems) {
+        this.selectedBillItems = selectedBillItems;
+    }
+
+    public PatientEncounterFacade getPatientEncounterFacade() {
+        return patientEncounterFacade;
+    }
+
+    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
+        this.patientEncounterFacade = patientEncounterFacade;
+    }
+
+    public AdmissionController getAdmissionController() {
+        return admissionController;
+    }
+
+    public void setAdmissionController(AdmissionController admissionController) {
+        this.admissionController = admissionController;
     }
 }

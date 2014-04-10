@@ -285,7 +285,8 @@ public class AgentPaymentReceiveSearchController implements Serializable {
                 getBilledBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
 
-                getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

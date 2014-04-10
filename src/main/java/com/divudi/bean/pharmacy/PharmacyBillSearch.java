@@ -1185,8 +1185,8 @@ public class PharmacyBillSearch implements Serializable {
                 getBillFacade().edit(getBill().getReferenceBill());
             }
 
-            getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
-
+            WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -1213,8 +1213,6 @@ public class PharmacyBillSearch implements Serializable {
 
         return false;
     }
-    
-    
 
     public void pharmacyRetailCancelBillWithStock() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
@@ -1253,9 +1251,8 @@ public class PharmacyBillSearch implements Serializable {
 //                getBill().getReferenceBill().setReferenceBill(null);
 //                getBillFacade().edit(getBill().getReferenceBill());
 //            }
-            
             getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
-            
+
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;

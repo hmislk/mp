@@ -25,10 +25,8 @@ import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
-import com.divudi.entity.BillSession;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
-import com.divudi.entity.CashTransaction;
 import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
@@ -37,6 +35,7 @@ import com.divudi.entity.Patient;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -176,7 +175,8 @@ public class BillPackageMedicalController implements Serializable {
         tmp.copy(billedBill);
         tmp.setBilledBill(billedBill);
 
-        getCashTransactionBean().saveBillCashOutTransaction(tmp, getSessionController().getLoggedUser());
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
 
     }
 
@@ -323,7 +323,8 @@ public class BillPackageMedicalController implements Serializable {
         tmp.setNetTotal(dbl);
         getBillFacade().edit(tmp);
 
-        getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
 
     }
 

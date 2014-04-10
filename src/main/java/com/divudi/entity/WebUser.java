@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ public class WebUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     Drawer drawer;
 
     public Drawer getDrawer() {

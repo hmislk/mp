@@ -27,7 +27,6 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
-import com.divudi.entity.CashTransaction;
 import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
@@ -37,6 +36,7 @@ import com.divudi.entity.Patient;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -51,6 +51,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.enterprise.context.SessionScoped;
@@ -198,10 +199,10 @@ public class BillPackageController implements Serializable {
 
             saveBill(d, myBill);
 
-            List<BillEntry> tmp = new ArrayList<BillEntry>();
+            List<BillEntry> tmp = new ArrayList<>();
             for (BillEntry e : lstBillEntries) {
 
-                if (e.getBillItem().getItem().getDepartment().getId() == d.getId()) {
+                if (Objects.equals(e.getBillItem().getItem().getDepartment().getId(), d.getId())) {
                     getBillBean().saveBillItem(myBill, e, getSessionController().getLoggedUser());
                     // getBillBean().calculateBillItem(myBill, e);                
                     tmp.add(e);
@@ -264,8 +265,8 @@ public class BillPackageController implements Serializable {
         tmp.setNetTotal(dbl);
         getBillFacade().edit(tmp);
 
-        getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
-
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
     }
 
     public void cancellAll() {
@@ -287,7 +288,8 @@ public class BillPackageController implements Serializable {
         tmp.copy(billedBill);
         tmp.setBilledBill(billedBill);
 
-        getCashTransactionBean().saveBillCashOutTransaction(tmp, getSessionController().getLoggedUser());
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
     }
 
     private void saveBillItemSessions() {

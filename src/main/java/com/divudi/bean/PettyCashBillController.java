@@ -15,9 +15,8 @@ import com.divudi.ejb.CashTransactionBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.PatientEncounter;
-import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.PersonFacade;
@@ -186,8 +185,8 @@ public class PettyCashBillController implements Serializable {
         saveBill();
         saveBillItem();
 
-        getCashTransactionBean().saveBillCashOutTransaction(getCurrent(), getSessionController().getLoggedUser());
-
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(getCurrent(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
 

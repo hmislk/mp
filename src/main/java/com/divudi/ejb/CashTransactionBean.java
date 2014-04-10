@@ -251,13 +251,13 @@ public class CashTransactionBean {
         this.billFacade = billFacade;
     }
 
-    public void saveBillCashInTransaction(Bill bill, WebUser webUser) {
+    public WebUser saveBillCashInTransaction(Bill bill, WebUser webUser) {
         if (bill == null) {
-            return;
+            return null;
         }
 
         if (webUser == null) {
-            return;
+            return null;
         }
 
         CashTransaction cashTransaction = setCashTransactionValue(new CashTransaction(), bill);
@@ -267,9 +267,13 @@ public class CashTransactionBean {
         getBillFacade().edit(bill);
 
         addToBallance(webUser.getDrawer(), cashTransaction);
+
+        WebUser w = getWebUserFacade().find(webUser.getId());
+
+        return w;
     }
 
-    public void saveBillCashOutTransaction(Bill bill, WebUser webUser) {
+    public WebUser saveBillCashOutTransaction(Bill bill, WebUser webUser) {
         CashTransaction cashTransaction = setCashTransactionValue(new CashTransaction(), bill);
         saveCashOutTransaction(cashTransaction, bill, webUser);
 
@@ -277,6 +281,10 @@ public class CashTransactionBean {
         getBillFacade().edit(bill);
 
         deductFromBallance(webUser.getDrawer(), cashTransaction);
+
+        WebUser w = getWebUserFacade().find(webUser.getId());
+
+        return w;
     }
 
     public boolean addToBallance(Drawer drawer, CashTransaction cashTransaction) {

@@ -14,6 +14,7 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Speciality;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -33,11 +34,6 @@ import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
-import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
@@ -417,8 +413,8 @@ public class InwardStaffPaymentBillController implements Serializable {
         getBillFacade().edit(b);
         printPreview = true;
 
-        getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
-
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         UtilityController.addSuccessMessage("Successfully Paid");
         System.out.println("Paid");
     }

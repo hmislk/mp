@@ -57,7 +57,6 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.enterprise.context.SessionScoped;
 ;
 import javax.inject.Inject;
-import static org.dom4j.xpath.DefaultNamespaceContext.create;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
@@ -905,7 +904,7 @@ public class PharmacySaleController implements Serializable {
             getPreBill().setTotal(getPreBill().getTotal() + b.getNetValue());
         }
 
-        netTot = netTot + getPreBill().getServiceCharge();
+     //   netTot = netTot + getPreBill().getServiceCharge();
 
         getPreBill().setNetTotal(netTot);
         getPreBill().setTotal(grossTot);

@@ -30,8 +30,6 @@ public class BatchBill implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    @OneToMany(mappedBy = "batchBill")
-    List<Bill> listBill = new ArrayList<>();
     @ManyToOne
     private PatientEncounter patientEncounter;
     @ManyToOne
@@ -86,13 +84,6 @@ public class BatchBill implements Serializable {
         return "com.divudi.entity.BatchBill[ id=" + id + " ]";
     }
 
-    public List<Bill> getListBill() {
-        return listBill;
-    }
-
-    public void setListBill(List<Bill> listBill) {
-        this.listBill = listBill;
-    }
 
     public WebUser getCreater() {
         return creater;

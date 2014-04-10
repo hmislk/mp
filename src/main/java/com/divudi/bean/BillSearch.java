@@ -12,6 +12,7 @@ import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.entity.LazyBill;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.ejb.PharmacyBean;
@@ -807,6 +808,17 @@ public class BillSearch implements Serializable {
         return false;
     }
 
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
+
     public void cancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (errorCheck()) {
@@ -831,6 +843,8 @@ public class BillSearch implements Serializable {
                 getBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
 
+                WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);
@@ -951,6 +965,9 @@ public class BillSearch implements Serializable {
                 getBill().setCancelledBill(cb);
                 getBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
+
+                WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

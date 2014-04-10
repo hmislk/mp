@@ -466,7 +466,7 @@ public class PatientInvestigationController implements Serializable {
 
     public String toCollectSample() {
         prepareToSample();
-        return "lab_sample";
+        return "/lab_sample";
     }
 
     public void prepareToSample() {
@@ -498,7 +498,7 @@ public class PatientInvestigationController implements Serializable {
         temMap.put("d", getSessionController().getDepartment());
 //        //System.out.println("Sql is " + temSql);
         toReceive = getFacade().findBySQL(temSql, temMap, TemporalType.TIMESTAMP);
-        return "lab_receive";
+        return "/lab_receive";
     }
 
     public void markYetToReceiveOnes() {

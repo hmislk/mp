@@ -84,8 +84,7 @@
                                        (pb.bill.billClass eq 'class com.divudi.entity.RefundBill' and pb.bill.billType eq 'PharmacyPre' and pb.bill.createdAt ne null )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyTransferIssue' and pb.bill.createdAt ne null )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.BilledBill' and pb.bill.billType eq 'PharmacyTransferReceive' and pb.bill.createdAt ne null )
-                                       )? 'greenText' : ''}"
-                                     >
+                                       )? 'greenText' : ''}" >
 
                             <p:column >
                                 <h:outputLabel value="#{i+1}"/>
@@ -132,8 +131,7 @@
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
                                     <h:outputLabel value="After "/>
-                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stockHistory.stockQty+(pb.pharmaceuticalBillItem.qtyInUnit+pb.pharmaceuticalBillItem.freeQtyInUnit)}"
-                                                   />
+                                    <h:outputLabel value="#{pb.pharmaceuticalBillItem.stockHistory.stockQty+(pb.pharmaceuticalBillItem.qtyInUnit+pb.pharmaceuticalBillItem.freeQtyInUnit)}" />
 
                                 </h:panelGrid>
                             </p:column>

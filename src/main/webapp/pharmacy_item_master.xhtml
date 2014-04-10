@@ -21,7 +21,7 @@
                                 <h:panelGrid columns="2" id="gpSelectText" >
                                     
                                     <h:outputLabel value="Search By Name"/>
-                                    <p:autoComplete converter="ampCon"  id="lstSelect1"   size="10" value="#{ampController.current}" 
+                                    <p:autoComplete id="lstSelect1"   size="10" value="#{ampController.current}" 
                                                     forceSelection="true"
                                                     style="min-width: 223px" completeMethod="#{ampController.completeAmpByName}" 
                                                     var="myItem" itemValue="#{myItem}" itemLabel="#{myItem.name}" >
@@ -34,12 +34,12 @@
                                         <p:column headerText="Barcode">
                                             <h:outputLabel value="#{myItem.barcode}" ></h:outputLabel>
                                         </p:column>
-                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect1" >
+                                        <f:ajax event="itemSelect" render="gpDetail lstSelect2 lstSelect3" execute="lstSelect1" >
                                         </f:ajax>
                                     </p:autoComplete>
                                     
                                     <h:outputLabel value="Search By Code"/>
-                                    <p:autoComplete converter="ampCon"  id="lstSelect2"   size="10" 
+                                    <p:autoComplete id="lstSelect2"   size="10" 
                                                     forceSelection="true"
                                                     value="#{ampController.current}" style="min-width: 223px" 
                                                     completeMethod="#{ampController.completeAmpByCode}"  var="myItem" 
@@ -53,12 +53,12 @@
                                         <p:column headerText="Barcode">
                                             <h:outputLabel value="#{myItem.barcode}" ></h:outputLabel>
                                         </p:column>
-                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect2" >
+                                        <f:ajax event="itemSelect" render="gpDetail lstSelect1 lstSelect3" execute="lstSelect2" >
                                         </f:ajax>
                                     </p:autoComplete>
                                     
                                     <h:outputLabel value="Search By Barcode"/>
-                                    <p:autoComplete converter="ampCon"  id="lstSelect3"   size="10" 
+                                    <p:autoComplete  id="lstSelect3"   size="10" 
                                                     forceSelection="true"
                                                     value="#{ampController.current}" style="min-width: 223px" 
                                                     completeMethod="#{ampController.completeAmpByBarCode}" 
@@ -72,7 +72,7 @@
                                         <p:column headerText="Barcode">
                                             <h:outputLabel value="#{myItem.barcode}" ></h:outputLabel>
                                         </p:column>
-                                        <f:ajax event="itemSelect" render="gpDetail" execute="lstSelect3" >
+                                        <f:ajax event="itemSelect" render="gpDetail lstSelect1 lstSelect2" execute="lstSelect3" >
                                         </f:ajax>
                                     </p:autoComplete>
                                     
@@ -106,8 +106,10 @@
                                             <h:outputText  value="Bar Code" ></h:outputText>
                                             <h:inputText  value="#{ampController.current.barcode}"  ></h:inputText>
                                             <h:outputText  value="Manufacturer" ></h:outputText>
-                                            <p:autoComplete  converter="ManuFacCon" completeMethod="#{manufacturerController.completeManu}"
-                                                             var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" forceSelection="true" value="#{ampController.current.institution}" ></p:autoComplete>
+                                            <p:autoComplete  completeMethod="#{manufacturerController.completeManu}"
+                                                             var="pta" itemLabel="#{pta.name}" itemValue="#{pta}"
+                                                             forceSelection="true" 
+                                                             value="#{ampController.current.institution}" ></p:autoComplete>
                                             <h:outputLabel value="Item Category"/>
                                             <p:autoComplete  value="#{ampController.current.category}" 
                                                              forceSelection="true"
@@ -126,7 +128,9 @@
                                             <p:tab id="tabVmp" title="VMP" >
                                                 <p:panelGrid columns="2">
                                                     <h:outputText  value="Select VMP" ></h:outputText>
-                                                    <p:autoComplete  converter="vmp" completeMethod="#{vmpController.completeVmp}" var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" forceSelection="true" value="#{ampController.current.vmp}" ></p:autoComplete>
+                                                    <p:autoComplete  converter="vmp" 
+                                                                     completeMethod="#{vmpController.completeVmp}"
+                                                                     var="pta" itemLabel="#{pta.name}" itemValue="#{pta}" forceSelection="true" value="#{ampController.current.vmp}" ></p:autoComplete>
                                                 </p:panelGrid>
                                             </p:tab>
                                             <p:tab id="tabGen" title="Generic">

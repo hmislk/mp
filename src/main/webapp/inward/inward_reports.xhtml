@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="/resources/template/template.xhtml" >
+
+            <ui:define name="content">
+                <h:form>
+                    <h:panelGrid columns="3" >    
+                        <p:panel header="By Service Added Date" >
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Report By Bill" action="report_md_inward_bill_added_date" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Report By Item" action="report_md_inward_item_added_date" actionListener="#{mdInwardReportController.makeNull}"/> 
+                            </h:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="By Discharged Date">
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Report By Bill" action="report_md_inward_bill_discharged" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Report By Item" action="report_md_inward_item_discharged" actionListener="#{mdInwardReportController.makeNull}"/> 
+                            </h:panelGrid>
+                        </p:panel>
+                        <p:panel header="Reports By Bht">
+                            <h:panelGrid columns="1">
+                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Break Down" action="inward_bill_final_break_down" /> 
+                            </h:panelGrid>
+                        </p:panel>
+                        
+                        <p:panel header="BHT Issuing">
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill Item" action="report_bht_issue_by_bill" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill" action="report_bht_issue_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
+                            </h:panelGrid>
+                        </p:panel>
+                        
+                        <p:panel header="Doctor Payment Report">
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Doctor Payment" action="report_doctor_payment" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                 
+                            </h:panelGrid>
+                        </p:panel>
+                        
+                        <p:panel header="Inward Payment Report">
+                            <h:panelGrid columns="1">
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Inward Payment By Bill Item" action="report_inward_payment_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                <p:commandButton styleClass="linkButton" ajax="false" value="Inward Payment By Bill" action="report_bht_issue_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
+                            </h:panelGrid>
+                        </p:panel>                    
+                        
+                        
+                    </h:panelGrid>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

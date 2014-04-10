@@ -17,12 +17,13 @@ import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import org.eclipse.persistence.jpa.JpaHelper;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -52,13 +53,17 @@ public class ServiceFeeEdit implements Serializable {
     }
 
     private void calBillFees() {
+        System.err.println("Calculating BillFee 1 " + billItem);
         String sql = "SELECT b FROM BillFee b WHERE b.retired=false and b.billItem=:billItem ";
         HashMap hm = new HashMap();
         hm.put("billItem", billItem);
         billFees = getBillFeeFacade().findBySQL(sql, hm);
+        System.err.println("Calculating BillFee 2 " + billFees);
     }
 
-    public void updateFee(BillFee billFee) {
+    public void updateFee(RowEditEvent event) {
+        BillFee billFee = (BillFee) event.getObject();
+
         if (billFee.getFee() != null && billFee.getFee().getFeeType() == FeeType.Staff) {
             if (billFee.getPaidValue() != 0) {
                 UtilityController.addErrorMessage("Staff Fee Allready Paid");
@@ -120,6 +125,9 @@ public class ServiceFeeEdit implements Serializable {
     }
 
     public List<BillFee> getBillFees() {
+        if (billFees == null) {
+            billFees = new ArrayList<>();
+        }
         return billFees;
     }
 
@@ -158,6 +166,7 @@ public class ServiceFeeEdit implements Serializable {
 
     public void setBillItem(BillItem billItem) {
         this.billItem = billItem;
+
         calBillFees();
     }
 

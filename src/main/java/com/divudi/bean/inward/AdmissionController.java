@@ -11,6 +11,7 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import static com.divudi.data.BillType.Appointment;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
@@ -19,7 +20,9 @@ import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.Appointment;
 import com.divudi.entity.Bill;
+import com.divudi.entity.Institution;
 import com.divudi.entity.Patient;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.Person;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.PatientRoom;
@@ -47,6 +50,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
 import org.primefaces.event.TabChangeEvent;
+
+
 
 /**
  *
@@ -98,6 +103,52 @@ public class AdmissionController implements Serializable {
 
     }
 
+    public List<Admission> completeBhtCredit(String qry) {
+        List<Admission> a = null;
+        String sql;
+        HashMap hash = new HashMap();
+        if (qry != null) {
+            sql = "select c from Admission c "
+                    + " where abs(c.creditUsedAmount)-abs(c.creditPaidAmount) >:val  "
+                    + " and c.paymentMethod= :pm "
+                    + " and c.paymentFinalized=true "
+                    + " and c.retired=false "
+                    + " and (upper(c.bhtNo) like :q"
+                    + " or upper(c.patient.person.name) like :q "
+                    + " or upper(c.creditCompany.name) like :q ) "
+                    + " order by c.creditCompany.name";
+
+            hash.put("pm", PaymentMethod.Credit);
+            hash.put("val", 0.1);
+            hash.put("q", "%" + qry.toUpperCase() + "%");
+            a = getFacade().findBySQL(sql, hash);
+        }
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        return a;
+    }
+
+    public List<Admission> getCreditBillsBht(Institution institution) {
+        String sql;
+        HashMap hash = new HashMap();
+
+        sql = "select c from PatientEncounter c "
+                + " where c.retired=false "
+                + " and abs(c.creditUsedAmount)-abs(c.creditPaidAmount) >:val "
+                + " and c.paymentFinalized=true "
+                + " and c.paymentMethod=:pm  "
+                + " and c.creditCompany=:ins ";
+
+        hash.put("pm", PaymentMethod.Credit);
+        hash.put("val", 0.1);
+        hash.put("ins", institution);
+        //     hash.put("pm", PaymentMethod.Credit);
+        List<Admission> lst = getFacade().findBySQL(sql, hash);
+
+        return lst;
+    }
+
     public List<Admission> completePatientPaymentDue(String qry) {
         String sql = "Select b.patientEncounter From "
                 + " BilledBill b where"
@@ -122,8 +173,8 @@ public class AdmissionController implements Serializable {
         return b;
 
     }
-    
-     public List<Admission> completePatientPaymentMax(String qry) {
+
+    public List<Admission> completePatientPaymentMax(String qry) {
         String sql = "Select b.patientEncounter From "
                 + " BilledBill b where"
                 + " b.retired=false "
@@ -227,9 +278,12 @@ public class AdmissionController implements Serializable {
         if (query == null) {
             suggestions = new ArrayList<>();
         } else {
-            sql = "select c from Admission c where c.retired=false "
-                    + " and ( (upper(c.bhtNo) like :q )or (upper(c.patient.person.name)"
-                    + " like :q) ) order by c.bhtNo";
+            sql = "select c from Admission c "
+                    + " where c.retired=false "
+                    + " and c.paymentFinalized=true "
+                    + " and (upper(c.bhtNo) like :q "
+                    + " or upper(c.patient.person.name) like :q)"
+                    + "  order by c.bhtNo";
             //System.out.println(sql);
             //      h.put("btp", BillType.InwardPaymentBill);
             h.put("q", "%" + query.toUpperCase() + "%");

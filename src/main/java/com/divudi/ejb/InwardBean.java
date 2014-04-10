@@ -7,20 +7,32 @@ package com.divudi.ejb;
 
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
+import com.divudi.data.dataStructure.DepartmentBillItems;
+import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.entity.Bill;
+import com.divudi.entity.BilledBill;
+import com.divudi.entity.CancelledBill;
+import com.divudi.entity.Department;
 import com.divudi.entity.Fee;
+import com.divudi.entity.Item;
 import com.divudi.entity.PatientEncounter;
+import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.InwardFee;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.RoomFacilityCharge;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.DepartmentFacade;
 import com.divudi.facade.FeeFacade;
+import com.divudi.facade.ItemFacade;
 import com.divudi.facade.PatientRoomFacade;
 import com.divudi.facade.RoomFacade;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TemporalType;
@@ -42,6 +54,113 @@ public class InwardBean {
     private BillFacade billFacade;
     @EJB
     private FeeFacade feeFacade;
+    @EJB
+    private DepartmentFacade departmentFacade;
+    @EJB
+    private ItemFacade itemFacade;
+    @EJB
+    private BillItemFacade billItemFacade;
+
+    private List<Department> getToDepartmentList(PatientEncounter patientEncounter, Bill forwardRefBill) {
+        String sql;
+        HashMap hm = new HashMap();
+
+        sql = "SELECT  distinct(b.bill.toDepartment) FROM BillItem b "
+                + " WHERE   b.retired=false "
+                + " and b.bill.billType=:btp ";
+
+        if (forwardRefBill != null) {
+            sql += " and b.bill.forwardReferenceBill=:fB";
+            hm.put("fB", forwardRefBill);
+        }
+
+        sql += " and Type(b.item)!=TimedItem "
+                + " and b.bill.patientEncounter=:pe ";
+
+        hm.put("btp", BillType.InwardBill);
+        hm.put("pe", patientEncounter);
+
+        return getDepartmentFacade().findBySQL(sql, hm, TemporalType.TIME);
+    }
+
+    private List<Item> getToDepartmentItems(PatientEncounter patientEncounter, Department department, Bill forwardBill) {
+        HashMap hm = new HashMap();
+        String sql = "SELECT  distinct(b.item) FROM BillItem b "
+                + " WHERE b.retired=false"
+                + " and b.bill.billType=:btp";
+
+        if (forwardBill != null) {
+            sql += " and b.bill.forwardReferenceBill=:fB";
+            hm.put("fB", forwardBill);
+        }
+
+        sql += " and Type(b.item)!=TimedItem"
+                + "  and b.bill.patientEncounter=:pe"
+                + " and b.bill.toDepartment=:dep "
+                + "  order by b.item.name ";
+
+        hm.put("btp", BillType.InwardBill);
+        hm.put("pe", patientEncounter);
+        hm.put("dep", department);
+
+        return getItemFacade().findBySQL(sql, hm, TemporalType.TIME);
+    }
+
+    private double calBillItemCount(Bill bill, Item item, PatientEncounter patientEncounter, Bill forwardBill) {
+        HashMap hm = new HashMap();
+        String sql = "SELECT  count(b) FROM BillItem b "
+                + " WHERE b.retired=false "
+                + "  and b.bill.billType=:btp ";
+
+        if (forwardBill != null) {
+            sql += " and b.bill.forwardReferenceBill=:fB";
+            hm.put("fB", forwardBill);
+        }
+
+        sql += " and b.bill.patientEncounter=:pe "
+                + " and b.item=:itm "
+                + " and type(b.bill)=:cls";
+
+        hm.put("btp", BillType.InwardBill);
+        hm.put("pe", patientEncounter);
+        hm.put("itm", item);
+        hm.put("cls", bill.getClass());
+        double dbl = getBillItemFacade().countBySql(sql, hm, TemporalType.TIME);
+
+        return dbl;
+    }
+
+    public List<DepartmentBillItems> createDepartmentBillItems(PatientEncounter patientEncounter, Bill forwardRefBill) {
+        List<DepartmentBillItems> list = new ArrayList<>();
+
+        List<Department> deptList = getToDepartmentList(patientEncounter, forwardRefBill);
+
+        for (Department dep : deptList) {
+            DepartmentBillItems table = new DepartmentBillItems();
+
+            List<Item> items = getToDepartmentItems(patientEncounter, dep, forwardRefBill);
+
+            for (Item itm : items) {
+                double billed = calBillItemCount(new BilledBill(), itm, patientEncounter, forwardRefBill);
+                double cancelld = calBillItemCount(new CancelledBill(), itm, patientEncounter, forwardRefBill);
+                double refund = calBillItemCount(new RefundBill(), itm, patientEncounter, forwardRefBill);
+//                System.err.println("Billed " + billed);
+//                System.err.println("Cancelled " + cancelld);
+//                System.err.println("Refun " + refund);
+                itm.setTransBillItemCount(billed - (cancelld + refund));
+            }
+
+            table.setDepartment(dep);
+            table.setItems(items);
+
+            list.add(table);
+
+        }
+
+//        calServiceTot(departmentBillItems);
+        return list;
+
+    }
 
     public Fee getStaffFeeForInward(WebUser webUser) {
         String sql = "Select f From InwardFee f "
@@ -74,10 +193,10 @@ public class InwardBean {
         Bill b = getBillFacade().findFirstBySQL(sql, hm);
 
         double paid = getPaidValue(patientEncounter);
-        System.err.println("NET " + b.getNetTotal());
-        System.err.println("PAID " + paid);
+//        System.err.println("NET " + b.getNetTotal());
+//        System.err.println("PAID " + paid);
 
-        b.setPaidAmount(0-paid);
+        b.setPaidAmount(0 - paid);
         getBillFacade().edit(b);
 
     }
@@ -210,5 +329,29 @@ public class InwardBean {
 
     public void setFeeFacade(FeeFacade feeFacade) {
         this.feeFacade = feeFacade;
+    }
+
+    public DepartmentFacade getDepartmentFacade() {
+        return departmentFacade;
+    }
+
+    public void setDepartmentFacade(DepartmentFacade departmentFacade) {
+        this.departmentFacade = departmentFacade;
+    }
+
+    public ItemFacade getItemFacade() {
+        return itemFacade;
+    }
+
+    public void setItemFacade(ItemFacade itemFacade) {
+        this.itemFacade = itemFacade;
+    }
+
+    public BillItemFacade getBillItemFacade() {
+        return billItemFacade;
+    }
+
+    public void setBillItemFacade(BillItemFacade billItemFacade) {
+        this.billItemFacade = billItemFacade;
     }
 }

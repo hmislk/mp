@@ -147,12 +147,12 @@ public class AmpController implements Serializable {
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
         m.put("dep", DepartmentType.Store);
-        String sql="select c from Amp c where "
-                    + " c.retired=false and c.departmentType!=:dep and "
-                    + "(upper(c.barcode) like :n ) order by c.barcode";
+        String sql = "select c from Amp c where "
+                + " c.retired=false and c.departmentType!=:dep and "
+                + "(upper(c.barcode) like :n ) order by c.barcode";
         System.out.println("sql = " + sql);
         System.out.println("m = " + m);
-        
+
         if (qry != null) {
             a = getFacade().findBySQL(sql, m, 30);
             System.out.println("a = " + a);
@@ -163,7 +163,6 @@ public class AmpController implements Serializable {
         }
         return a;
     }
-
     @EJB
     BillNumberBean billNumberBean;
 
@@ -442,8 +441,56 @@ public class AmpController implements Serializable {
         }
 
         java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+            java.lang.Long key = 0l;
+            try {
+                key = Long.valueOf(value);
+            } catch (Exception e) {
+                key = 0l;
+            }
+            return key;
+        }
+
+        String getStringKey(java.lang.Long value) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(value);
+            return sb.toString();
+        }
+
+        @Override
+        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+            if (object == null) {
+                return null;
+            }
+            if (object instanceof Amp) {
+                Amp o = (Amp) object;
+                return getStringKey(o.getId());
+            } else {
+                throw new IllegalArgumentException("object " + object + " is of type "
+                        + object.getClass().getName() + "; expected type: " + AmpController.class.getName());
+            }
+        }
+    }
+
+    @FacesConverter(forClass = Amp.class)
+    public static class AmpConverter implements Converter {
+
+        @Override
+        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+            if (value == null || value.length() == 0) {
+                return null;
+            }
+            AmpController controller = (AmpController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "ampController");
+            return controller.getEjbFacade().find(getKey(value));
+        }
+
+        java.lang.Long getKey(String value) {
+            java.lang.Long key = 0l;
+            try {
+                key = Long.valueOf(value);
+            } catch (Exception e) {
+                key = 0l;
+            }
             return key;
         }
 

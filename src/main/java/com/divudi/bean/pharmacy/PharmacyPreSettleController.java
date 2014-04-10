@@ -5,14 +5,17 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.PaymentSchemeController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.data.inward.InwardChargeType;
+import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -105,15 +108,7 @@ public class PharmacyPreSettleController implements Serializable {
     List<Item> itemsWithoutStocks;
     /////////////////////////
     //   PaymentScheme paymentScheme;
-    String creditCardRefNo;
-    Institution creditBank;
-    String chequeRefNo;
-    Institution chequeBank;
-    Date chequeDate;
-    String comment;
-    Institution slipBank;
-    Date slipDate;
-    Institution creditCompany;
+    private PaymentMethodData paymentMethodData;
     double cashPaid;
     double netTotal;
     double balance;
@@ -139,15 +134,7 @@ public class PharmacyPreSettleController implements Serializable {
         replaceableStocks = null;
         billItems = null;
         itemsWithoutStocks = null;
-        creditCardRefNo = "";
-        creditBank = null;
-        chequeRefNo = "";
-        chequeBank = null;
-        chequeDate = null;
-        comment = "";
-        slipBank = null;
-        slipDate = null;
-        creditCompany = null;
+        paymentMethodData = null;
         cashPaid = 0;
         netTotal = 0;
         balance = 0;
@@ -249,51 +236,19 @@ public class PharmacyPreSettleController implements Serializable {
         this.billItems = billItems;
     }
 
+    @Inject
+    private PaymentSchemeController paymentSchemeController;
+
     private boolean errorCheckForSaleBill() {
 //        if (checkPaymentScheme(getSaleBill().getPaymentScheme())) {
 //            return true;
 //        }
 
-        if (getPreBill().getPaymentScheme() != null && getPreBill().getPaymentScheme().getPaymentMethod() != null && getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cheque) {
-            if (getChequeBank() == null || getChequeRefNo() == null || getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number,Bank and Cheque Date");
-                return true;
-            }
-
-        }
-
-        if (getPreBill().getPaymentScheme() != null && getPreBill().getPaymentScheme().getPaymentMethod() != null && getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getComment() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
-                return true;
-            }
-
-        }
-
-        if (getPreBill().getPaymentScheme() != null && getPreBill().getPaymentScheme().getPaymentMethod() != null && getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Card) {
-            if (getCreditBank() == null || getCreditCardRefNo() == null) {
-                UtilityController.addErrorMessage("Please Fill Credit Card Number and Bank");
-                return true;
-            }
-
-//            if (getCreditCardRefNo().trim().length() < 16) {
-//                UtilityController.addErrorMessage("Enter 16 Digit");
-//                return true;
-//            }
-        }
-
-        if (getPreBill().getPaymentScheme() != null && getPreBill().getPaymentScheme().getPaymentMethod() != null && getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit) {
-            if (getCreditCompany() == null) {
-                UtilityController.addErrorMessage("Please Select Credit Company");
-                return true;
-            }
-
-        }
-
-        if (getCreditCompany() != null && getPreBill().getPaymentScheme().getPaymentMethod() != PaymentMethod.Credit) {
-            UtilityController.addErrorMessage("Please Select Payment Scheme with Credit");
+        if (getPreBill().getPaymentScheme() == null) {
             return true;
         }
+
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getPreBill().getPaymentScheme().getPaymentMethod(), paymentMethodData));
 
         if (getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cash) {
             if (cashPaid == 0.0) {
@@ -308,6 +263,9 @@ public class PharmacyPreSettleController implements Serializable {
         return false;
     }
 
+    @EJB
+    private BillBean billBean;
+
     private void saveSaleBill(Patient tmpPatient) {
 
         getSaleBill().setBillType(BillType.PharmacySale);
@@ -320,8 +278,6 @@ public class PharmacyPreSettleController implements Serializable {
 
         getSaleBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
         getSaleBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
-
-        getSaleBill().setCreditCompany(creditCompany);
 
         //System.err.println(getPreBill());
         //System.err.println(getPreBill().getGrantTotal());
@@ -336,22 +292,7 @@ public class PharmacyPreSettleController implements Serializable {
         //   getSaleBill().setRefBill(getPreBill());
         getSaleBill().setPaymentScheme(getPreBill().getPaymentScheme());
 
-        if (getSaleBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Cheque)) {
-            getSaleBill().setBank(chequeBank);
-            getSaleBill().setChequeRefNo(chequeRefNo);
-            getSaleBill().setChequeDate(chequeDate);
-        }
-
-        if (getSaleBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Slip)) {
-            getSaleBill().setBank(slipBank);
-            getSaleBill().setChequeDate(slipDate);
-            getSaleBill().setComments(comment);
-        }
-
-        if (getSaleBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Card)) {
-            getSaleBill().setCreditCardRefNo(creditCardRefNo);
-            getSaleBill().setBank(creditBank);
-        }
+        getBillBean().setPaymentMethodData(getSaleBill(), getSaleBill().getPaymentScheme().getPaymentMethod(), paymentMethodData);
 
         getSaleBill().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getSaleBill().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -374,6 +315,7 @@ public class PharmacyPreSettleController implements Serializable {
 
     private void saveSaleReturnBill(Patient tmpPatient) {
 
+        getSaleReturnBill().setPaymentScheme(getPreBill().getPaymentScheme());
         getSaleReturnBill().setBillType(BillType.PharmacySale);
         getSaleReturnBill().setReferenceBill(getPreBill());
 
@@ -386,32 +328,13 @@ public class PharmacyPreSettleController implements Serializable {
         getSaleReturnBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
         getSaleReturnBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        getSaleReturnBill().setCreditCompany(creditCompany);
-
         getSaleReturnBill().setGrantTotal(getPreBill().getGrantTotal());
         getSaleReturnBill().setDiscount(getPreBill().getDiscount());
         getSaleReturnBill().setNetTotal(getPreBill().getNetTotal());
         getSaleReturnBill().setTotal(getPreBill().getTotal());
 
-//        getSaleReturnBill().setRefBill(getPreBill());
-        getSaleReturnBill().setPaymentScheme(getPreBill().getPaymentScheme());
 
-        if (getSaleReturnBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Cheque)) {
-            getSaleReturnBill().setBank(chequeBank);
-            getSaleReturnBill().setChequeRefNo(chequeRefNo);
-            getSaleReturnBill().setChequeDate(chequeDate);
-        }
-
-        if (getSaleReturnBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Slip)) {
-            getSaleReturnBill().setBank(slipBank);
-            getSaleReturnBill().setChequeDate(slipDate);
-            getSaleReturnBill().setComments(comment);
-        }
-
-        if (getSaleReturnBill().getPaymentScheme().getPaymentMethod().equals(PaymentMethod.Card)) {
-            getSaleReturnBill().setCreditCardRefNo(creditCardRefNo);
-            getSaleReturnBill().setBank(creditBank);
-        }
+        getBillBean().setPaymentMethodData(getSaleReturnBill(), getSaleReturnBill().getPaymentScheme().getPaymentMethod(), paymentMethodData);
 
         getSaleReturnBill().setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getSaleReturnBill().setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -429,8 +352,7 @@ public class PharmacyPreSettleController implements Serializable {
 
         getBillFacade().create(getSaleReturnBill());
 
-     //   updateSaleReturnPreBill();
-   
+        //   updateSaleReturnPreBill();
     }
 
 //     private void updateSaleReturnPreBill() {
@@ -736,78 +658,6 @@ public class PharmacyPreSettleController implements Serializable {
         this.pharmaceuticalBillItemFacade = pharmaceuticalBillItemFacade;
     }
 
-    public String getCreditCardRefNo() {
-        return creditCardRefNo;
-    }
-
-    public void setCreditCardRefNo(String creditCardRefNo) {
-        this.creditCardRefNo = creditCardRefNo;
-    }
-
-    public Institution getCreditBank() {
-        return creditBank;
-    }
-
-    public void setCreditBank(Institution creditBank) {
-        this.creditBank = creditBank;
-    }
-
-    public String getChequeRefNo() {
-        return chequeRefNo;
-    }
-
-    public void setChequeRefNo(String chequeRefNo) {
-        this.chequeRefNo = chequeRefNo;
-    }
-
-    public Institution getChequeBank() {
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
-    }
-
-    public Institution getCreditCompany() {
-        return creditCompany;
-    }
-
-    public void setCreditCompany(Institution creditCompany) {
-        this.creditCompany = creditCompany;
-    }
-
     public double getCashPaid() {
         return cashPaid;
     }
@@ -857,6 +707,33 @@ public class PharmacyPreSettleController implements Serializable {
     public void setBill(Bill bill) {
 
         this.bill = bill;
+    }
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    public BillBean getBillBean() {
+        return billBean;
+    }
+
+    public void setBillBean(BillBean billBean) {
+        this.billBean = billBean;
+    }
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
     }
 
 }

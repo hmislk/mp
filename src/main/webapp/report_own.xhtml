@@ -15,7 +15,7 @@
                 <h:form>
 
                     <h:panelGrid columns="3"  >
-                       
+
                         <h:panelGrid columns="1" >
                             <f:facet name="header">
                                 <p:outputLabel value="Accountant Cash Summery"/>
@@ -34,8 +34,9 @@
                                 <p:outputLabel value="Accountant Cash Summery(Witout Professional)"/>
                             </f:facet>
 
-<!--                            <p:commandButton styleClass="linkButton" ajax="false" value="By Category" action="report_cash_category_without_pro"/> -->
+                            <!--                            <p:commandButton styleClass="linkButton" ajax="false" value="By Category" action="report_cash_category_without_pro"/> -->
                             <p:commandButton styleClass="linkButton" ajax="false" value="By Category Export Excel" action="report_cash_category_without_pro_excel"/> 
+
                             <p:commandButton styleClass="linkButton" ajax="false" value="By Category(Summarized)" action="report_cash_category_summery_without_pro"/> 
 
 
@@ -51,15 +52,15 @@
                             <p:commandButton styleClass="linkButton" ajax="false" value="Day-end Detailed By Bill Type" action="report_cashier_detailed_institution_by_billType.xhtml" actionListener="#{commonReport.recreteModal}"/>                                
 
                         </h:panelGrid>
-                        
-                         <h:panelGrid columns="1" >
+
+                        <h:panelGrid columns="1" >
                             <f:facet name="header">
                                 <p:outputLabel value="Summery By Service"/>
                             </f:facet>
                             <h:panelGrid >                               
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Summery By Service" action="report_opd_service_summery" /> 
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Summery By Service Category" action="report_opd_service_summery_by_category" /> 
-                                
+
                             </h:panelGrid>
 
                         </h:panelGrid>
@@ -81,13 +82,25 @@
                             <h:panelGrid >                               
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Report By Item " action="report_opd_daily_summery_credit_department" /> 
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Report By Bill" action="report_opd_daily_summery_credit_department_by_bill" /> 
-<!--                               <p:commandButton styleClass="linkButton" ajax="false" value="Lab Report By Item " action="report_lab_by_collection_centre_investigation_count" /> 
-                               <p:commandButton styleClass="linkButton" ajax="false" value="Lab Report By Bill " action="report_lab_by_collection_centre_credit_own" /> 
+                                <!--                               <p:commandButton styleClass="linkButton" ajax="false" value="Lab Report By Item " action="report_lab_by_collection_centre_investigation_count" /> 
+                                                               <p:commandButton styleClass="linkButton" ajax="false" value="Lab Report By Bill " action="report_lab_by_collection_centre_credit_own" /> 
                                 -->
                                 <!--<p:commandButton styleClass="linkButton" ajax="false" value="Report By All" action="report_credit_company" />--> 
-                                
+
                             </h:panelGrid>
 
+                            <h:panelGrid columns="1" >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Testing "/>
+                                </f:facet>
+                                <h:panelGrid >                               
+                                    <p:commandButton styleClass="linkButton" ajax="false" 
+                                                     value="By Category Export Excel" 
+                                                     action="report_cash_category_without_pro_excel_1"/> 
+
+                                </h:panelGrid>
+
+                            </h:panelGrid>
                         </h:panelGrid>
 
                     </h:panelGrid>

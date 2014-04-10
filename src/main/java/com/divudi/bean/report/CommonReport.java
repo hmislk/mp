@@ -16,9 +16,11 @@ import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.InwardPriceAdjustmentFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,11 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 
 /**
@@ -52,6 +53,8 @@ public class CommonReport implements Serializable {
     CommonFunctions commonFunctions;
     @EJB
     private InwardPriceAdjustmentFacade inwdPriceAdjFacade;
+    @EJB
+    BillItemFacade billItemFac;
     ////////////////////
     private Institution collectingIns;
     Institution institution;
@@ -94,6 +97,9 @@ public class CommonReport implements Serializable {
     private BillsTotals GrnPaymentReturn;
     private BillsTotals GrnPaymentCancell;
     private BillsTotals GrnPaymentCancellReturn;
+    private BillsTotals PharmacyBhtPreBilled;
+    private BillsTotals PharmacyBhtPreCancelled;
+    private BillsTotals PharmacyBhtPreRefunded;
 
     //////////////////    
     private List<String1Value1> dataTableData;
@@ -466,7 +472,8 @@ public class CommonReport implements Serializable {
     }
 
     private List<Bill> getBills(Bill billClass, BillType billType, Department dep) {
-        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill and b.retired=false and "
+        String sql = "SELECT b FROM Bill b WHERE type(b)=:bill"
+                + " and b.retired=false and "
                 + " b.billType = :btp "
                 + " and b.department=:d "
                 + " and b.createdAt between :fromDate and "
@@ -936,6 +943,22 @@ public class CommonReport implements Serializable {
 
     }
 
+    private double calValue(Bill billClass, BillType billType, Department dep) {
+        String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
+                + " type(b)=:bill and b.retired=false and "
+                + " b.billType=:btp and b.department=:d "
+                + "  and b.createdAt between :fromDate and :toDate";
+        Map temMap = new HashMap();
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+        temMap.put("btp", billType);
+        temMap.put("d", dep);
+        temMap.put("bill", billClass.getClass());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
     private double calValue(Bill billClass, BillType billType, PaymentMethod paymentMethod, Department dep, Institution ins) {
         String sql = "SELECT sum(b.netTotal) FROM Bill b WHERE"
                 + " type(b)=:bill and b.retired=false and "
@@ -1256,6 +1279,61 @@ public class CommonReport implements Serializable {
 
     }
 
+    public void createBhtIssueTable() {
+        recreteModal();
+
+        PharmacyBhtPreBilled = new BillsTotals();
+        PharmacyBhtPreCancelled = new BillsTotals();
+        PharmacyBhtPreRefunded = new BillsTotals();
+
+        if (getDepartment() == null) {
+            return;
+        }
+
+        //Pharmacy Bht Billed Bills
+        getPharmacyBhtPreBilled().setBills(getBills(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
+        getPharmacyBhtPreBilled().setCash(calValue(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
+     
+
+        //Pharmacy Bht Cancelled Bill
+        getPharmacyBhtPreCancelled().setBills(getBills(new CancelledBill(), BillType.PharmacyBhtPre, getDepartment()));
+        getPharmacyBhtPreCancelled().setCash(calValue(new CancelledBill(), BillType.PharmacyBhtPre, getDepartment()));
+
+        //Pharmacy Bht Refunded Bill
+        getPharmacyBhtPreRefunded().setBills(getBills(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
+        getPharmacyBhtPreRefunded().setCash(calValue(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
+
+    }
+
+//    public void createBhtIssueBillItemTable() {
+//        recreteModal();
+//
+//        PharmacyBhtPreBilled = new BillsTotals();
+//        PharmacyBhtPreCancelled = new BillsTotals();
+//        PharmacyBhtPreRefunded = new BillsTotals();
+//        
+//        if (getDepartment() == null) {
+//            return;
+//        }
+//
+//        //GRN Billed Bills
+//        getPharmacyBhtPreBilled().setBills(getBills(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
+//        getPharmacyBhtPreBilled().setCash(calValue(new PreBill(), BillType.PharmacyBhtPre, PaymentMethod.Cash, getDepartment()));
+//        getPharmacyBhtPreBilled().setCredit(calValue(new PreBill(), BillType.PharmacyBhtPre, PaymentMethod.Credit, getDepartment()));
+//
+//        //GRN Cancelled Bill
+//        getPharmacyBhtPreCancelled().setBills(getBills(new CancelledBill(), BillType.PharmacyBhtPre, getDepartment()));
+//        getPharmacyBhtPreCancelled().setCash(calValue(new CancelledBill(), BillType.PharmacyBhtPre, PaymentMethod.Cash, getDepartment()));
+//        getPharmacyBhtPreCancelled().setCredit(calValue(new CancelledBill(), BillType.PharmacyBhtPre, PaymentMethod.Credit, getDepartment()));
+//
+//        //GRN Refunded Bill
+//        getPharmacyBhtPreRefunded().setBills(getBills(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
+//        getPharmacyBhtPreRefunded().setCash(calValue(new RefundBill(), BillType.PharmacyBhtPre, PaymentMethod.Cash, getDepartment()));
+//        getPharmacyBhtPreRefunded().setCredit(calValue(new RefundBill(), BillType.PharmacyBhtPre, PaymentMethod.Credit, getDepartment()));
+//
+//     
+//
+//    }
     public void createGrnPaymentTable() {
         recreteModal();
 
@@ -2185,4 +2263,37 @@ public class CommonReport implements Serializable {
     public void setInwardRefunds(BillsTotals inwardRefunds) {
         this.inwardRefunds = inwardRefunds;
     }
+
+    public BillsTotals getPharmacyBhtPreBilled() {
+        return PharmacyBhtPreBilled;
+    }
+
+    public void setPharmacyBhtPreBilled(BillsTotals PharmacyBhtPreBilled) {
+        this.PharmacyBhtPreBilled = PharmacyBhtPreBilled;
+    }
+
+    public BillsTotals getPharmacyBhtPreCancelled() {
+        return PharmacyBhtPreCancelled;
+    }
+
+    public void setPharmacyBhtPreCancelled(BillsTotals PharmacyBhtPreCancelled) {
+        this.PharmacyBhtPreCancelled = PharmacyBhtPreCancelled;
+    }
+
+    public BillsTotals getPharmacyBhtPreRefunded() {
+        return PharmacyBhtPreRefunded;
+    }
+
+    public void setPharmacyBhtPreRefunded(BillsTotals PharmacyBhtPreRefunded) {
+        this.PharmacyBhtPreRefunded = PharmacyBhtPreRefunded;
+    }
+
+    public BillItemFacade getBillItemFac() {
+        return billItemFac;
+    }
+
+    public void setBillItemFac(BillItemFacade billItemFac) {
+        this.billItemFac = billItemFac;
+    }
+
 }

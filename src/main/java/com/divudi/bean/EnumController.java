@@ -37,7 +37,7 @@ public class EnumController implements Serializable {
     }
 
     public PaymentMethod[] getPaymentMethodForAdmission() {
-        PaymentMethod[] tmp = {PaymentMethod.Cash, PaymentMethod.Credit};
+        PaymentMethod[] tmp = {PaymentMethod.Credit,PaymentMethod.Cash};
         return tmp;
     }
 

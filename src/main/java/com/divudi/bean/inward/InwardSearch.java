@@ -22,11 +22,13 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
+import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientInvestigationFacade;
 import java.io.Serializable;
@@ -307,6 +309,20 @@ public class InwardSearch implements Serializable {
 
     }
 
+    @EJB
+    private EncounterComponentFacade encounterComponentFacade;
+
+    private void retireEncounterComponents() {
+        for (BillItem b : getBillItems()) {
+            for (EncounterComponent nB : getBillBean().getEncounterBillComponents(b)) {
+                nB.setRetired(true);
+                nB.setRetiredAt(new Date());
+                nB.setRetirer(getSessionController().getLoggedUser());
+                getEncounterComponentFacade().edit(nB);
+            }
+        }
+    }
+
     private boolean checkPaid() {
         HashMap hm = new HashMap();
         String sql = "SELECT bf FROM BillFee bf where bf.retired=false and bf.bill=:b ";
@@ -442,6 +458,8 @@ public class InwardSearch implements Serializable {
             getBillFacade().edit((BilledBill) getBill());
             UtilityController.addSuccessMessage("Cancelled");
 
+            getBillBean().updateBatchBill(getBill().getForwardReferenceBill());
+
             printPreview = true;
 
         } else {
@@ -563,10 +581,6 @@ public class InwardSearch implements Serializable {
                 return;
             }
 
-            if (cancelBillPayment(getBill().getReferenceBill())) {
-                return;
-            }
-
             CancelledBill cb = createCancelBill();
             //Copy & paste
             getBillFacade().create(cb);
@@ -576,6 +590,7 @@ public class InwardSearch implements Serializable {
             getBillFacade().edit((BilledBill) getBill());
 
             getBill().getPatientEncounter().setPaymentFinalized(false);
+            getBill().getPatientEncounter().setCreditUsedAmount(0);
             getPatientEncounterFacade().edit(getBill().getPatientEncounter());
 
             UtilityController.addSuccessMessage("Cancelled");
@@ -731,6 +746,9 @@ public class InwardSearch implements Serializable {
             getBillItemFacede().create(b);
 
             cancelBillComponents(can, b);
+            if (getBill().getSurgeryBillType() != null) {
+                retireEncounterComponents();
+            }
             cancelBillFee(can, b);
 
         }
@@ -991,6 +1009,14 @@ public class InwardSearch implements Serializable {
 
     public void setInwardBean(InwardBean inwardBean) {
         this.inwardBean = inwardBean;
+    }
+
+    public EncounterComponentFacade getEncounterComponentFacade() {
+        return encounterComponentFacade;
+    }
+
+    public void setEncounterComponentFacade(EncounterComponentFacade encounterComponentFacade) {
+        this.encounterComponentFacade = encounterComponentFacade;
     }
 
 }

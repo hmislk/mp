@@ -88,7 +88,7 @@ public class InwardStaffPaymentBillController implements Serializable {
         String sql;
         Map m = new HashMap();
 
-        sql = "select bf from BillFee bf where bf.bill.billDate :fd "
+        sql = "select bf from BillFee bf where bf.bill.billDate between :fd "
                 + "and :td and bf.retired=false "
                 + "and bf.bill.billType=:btp";
         m.put("fd", fromDate);

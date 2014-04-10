@@ -843,7 +843,8 @@ public class BillSearch implements Serializable {
                 getBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
 
-                getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);
@@ -964,9 +965,9 @@ public class BillSearch implements Serializable {
                 getBill().setCancelledBill(cb);
                 getBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
-                
-                getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
-                
+
+                WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

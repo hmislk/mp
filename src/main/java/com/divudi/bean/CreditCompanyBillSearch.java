@@ -336,7 +336,6 @@ public class CreditCompanyBillSearch implements Serializable {
 //        temBi.setCreater(getSessionController().getLoggedUser());
 //        getBillItemFacade().create(temBi);
 //    }
-    
     @EJB
     CashTransactionBean cashTransactionBean;
 
@@ -347,6 +346,7 @@ public class CreditCompanyBillSearch implements Serializable {
     public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
         this.cashTransactionBean = cashTransactionBean;
     }
+
     public void cancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (errorCheck()) {
@@ -364,7 +364,8 @@ public class CreditCompanyBillSearch implements Serializable {
                 getBill().setCancelledBill(cb);
                 getBilledBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
-                getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

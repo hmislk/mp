@@ -505,8 +505,8 @@ public class InwardSearch implements Serializable {
 
             }
 
-            getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
-
+            WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -550,8 +550,8 @@ public class InwardSearch implements Serializable {
 
             }
 
-            getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
-
+            WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -690,8 +690,8 @@ public class InwardSearch implements Serializable {
             getBillFacade().edit((BilledBill) getBill());
             UtilityController.addSuccessMessage("Cancelled");
 
-            getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
-
+            WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             printPreview = true;
 
         } else {

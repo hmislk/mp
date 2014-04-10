@@ -118,14 +118,14 @@ public class PettyCashBillSearch implements Serializable {
     public List<Bill> getUserBillsOwn() {
         List<Bill> userBills;
         if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
+            userBills = new ArrayList<>();
             //System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
             //System.out.println("user ok");
         }
         if (userBills == null) {
-            userBills = new ArrayList<Bill>();
+            userBills = new ArrayList<>();
         }
         return userBills;
     }
@@ -138,10 +138,6 @@ public class PettyCashBillSearch implements Serializable {
     }
 
     private LazyDataModel<Bill> searchBills;
-
- 
-    
-    
 
     public BillFeeFacade getBillFeeFacade() {
         return billFeeFacade;
@@ -319,7 +315,7 @@ public class PettyCashBillSearch implements Serializable {
 
         return false;
     }
-    
+
     @EJB
     CashTransactionBean cashTransactionBean;
 
@@ -348,10 +344,9 @@ public class PettyCashBillSearch implements Serializable {
                 getBill().setCancelledBill(cb);
                 getBilledBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
-                
-                
-                getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
 
+                WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

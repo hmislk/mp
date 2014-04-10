@@ -16,6 +16,7 @@ import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.RefundBill;
+import com.divudi.entity.WebUser;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
@@ -296,8 +297,8 @@ public class SaleReturnController implements Serializable {
         getReturnBill().getReturnCashBills().add(b);
         getBillFacade().edit(getReturnBill());
 
-        getCashTransactionBean().saveBillCashOutTransaction(getReturnBill(), getSessionController().getLoggedUser());
-
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(getReturnBill(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         printPreview = true;
         UtilityController.addSuccessMessage("Successfully Returned");
 

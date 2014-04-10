@@ -549,7 +549,7 @@ public class InwardServiceController implements Serializable {
                 return null;
             }
             ServiceController controller = (ServiceController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "serviceController");
+                    getValue(facesContext.getELContext(), null, "inwardServiceController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -575,12 +575,12 @@ public class InwardServiceController implements Serializable {
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + ServiceController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + InwardServiceController.class.getName());
             }
         }
     }
 
-    @FacesConverter("serv")
+    @FacesConverter("inwServ")
     public static class ServiceConverter implements Converter {
 
         public ServiceConverter() {
@@ -592,7 +592,7 @@ public class InwardServiceController implements Serializable {
                 return null;
             }
             ServiceController controller = (ServiceController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "serviceController");
+                    getValue(facesContext.getELContext(), null, "inwardServiceController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -618,7 +618,7 @@ public class InwardServiceController implements Serializable {
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + ServiceController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + InwardServiceController.class.getName());
             }
         }
     }

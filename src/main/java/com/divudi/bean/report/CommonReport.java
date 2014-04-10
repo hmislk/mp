@@ -1290,20 +1290,18 @@ public class CommonReport implements Serializable {
             return;
         }
 
-        //GRN Billed Bills
+        //Pharmacy Bht Billed Bills
         getPharmacyBhtPreBilled().setBills(getBills(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
         getPharmacyBhtPreBilled().setCash(calValue(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
-     ///   getPharmacyBhtPreBilled().setCredit(calValue(new PreBill(), BillType.PharmacyBhtPre, PaymentMethod.Credit, getDepartment()));
+     
 
         //Pharmacy Bht Cancelled Bill
         getPharmacyBhtPreCancelled().setBills(getBills(new CancelledBill(), BillType.PharmacyBhtPre, getDepartment()));
         getPharmacyBhtPreCancelled().setCash(calValue(new CancelledBill(), BillType.PharmacyBhtPre, getDepartment()));
-    //    getPharmacyBhtPreCancelled().setCredit(calValue(new CancelledBill(), BillType.PharmacyBhtPre, PaymentMethod.Credit, getDepartment()));
 
         //Pharmacy Bht Refunded Bill
         getPharmacyBhtPreRefunded().setBills(getBills(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
         getPharmacyBhtPreRefunded().setCash(calValue(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
-     //   getPharmacyBhtPreRefunded().setCredit(calValue(new RefundBill(), BillType.PharmacyBhtPre, PaymentMethod.Credit, getDepartment()));
 
     }
 

@@ -5,6 +5,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod"
                 xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
 
     <ui:define name="content">
@@ -19,25 +20,20 @@
                             <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
                             <p:selectOneMenu   id="cmbPs" value="#{saleReturnController.returnBill.paymentScheme}">                                                                     
                                 <f:selectItems value="#{paymentSchemeController.items}" var="i" itemLabel="#{i.name}" itemValue="#{i}" />
-                                <p:ajax process="cmbPs" update="lblCardRef txtCardRef lblCheqRef txtCheqRef bank lblSlipRef txtSlipRef slipBank" event="change" />
+                                <p:ajax process="cmbPs" update="creditCard cheque slip" event="change" />
 
                             </p:selectOneMenu>
-                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCardRef" value="#{saleReturnController.returnBill.creditCardRefNo}" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
+                            <h:panelGroup id="creditCard" style="display: #{saleReturnController.returnBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{saleReturnController.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{saleReturnController.returnBill.chequeRefNo}" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{saleReturnController.returnBill.bank}" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
+                            <h:panelGroup id="cheque" style="display: #{saleReturnController.returnBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{saleReturnController.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtSlipRef" value="#{saleReturnController.returnBill.comments}" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="slipBank" value="#{saleReturnController.returnBill.bank}" style="display: #{saleReturnController.returnBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
+                            <h:panelGroup id="slip" style="display: #{saleReturnController.returnBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{saleReturnController.paymentMethodData}"/>
+                            </h:panelGroup>
 
                             <p:commandButton  value="Return" action="#{saleReturnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
@@ -88,7 +84,7 @@
 
                 </p:dataTable>  
                 <p:spacer height="50"/>
-               
+
             </h:panelGroup>
 
             <p:panel rendered="#{saleReturnController.printPreview}">
@@ -98,7 +94,7 @@
                 </p:commandButton>
                 <p:panel   id="gpBillPreview"   >
                     <ph:returnBill bill="#{saleReturnController.returnBill}"/>
-                
+
                 </p:panel>
             </p:panel>
 

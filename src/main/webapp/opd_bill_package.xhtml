@@ -6,7 +6,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp">
+                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
 
 
 
@@ -24,34 +25,20 @@
                                 <p:selectOneMenu   id="cmbPs" value="#{billPackageController.paymentScheme}" >
                                     <!--<f:selectItem itemLabel="Select Payment Method" />-->                                    
                                     <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                    <p:ajax process="cmbPs" update="pBillDetails tblBillItem lblCardRef creditBank txtCardRef lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />
+                                    <p:ajax process="cmbPs" update="pBillDetails tblBillItem creditCard cheque slip" event="change" />
                                 </p:selectOneMenu>
 
-                                <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display:#{billPackageController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                                <p:inputMask mask="9999-9999-9999-9999" id="txtCardRef" autocomplete="off" maxlength="16" value="#{billPackageController.creditCardRefNo}" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="creditBank" value="#{billPackageController.creditBank}" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
+                                <h:panelGroup id="creditCard" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                    <pa:creditCard paymentMethodData="#{billPackageController.paymentMethodData}"/>
+                                </h:panelGroup>
 
+                                <h:panelGroup id="cheque" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                    <pa:cheque paymentMethodData="#{billPackageController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                <p:inputText  id="txtCheqRef" value="#{billPackageController.chequeRefNo}" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="bank" value="#{billPackageController.chequeBank}" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
-                                <p:calendar id="chequeDate"  value="#{billPackageController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                                </p:calendar>
-
-                                <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                <p:inputText  id="txtSlipRef" value="#{billPackageController.comment}" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="slipBank" value="#{billPackageController.slipBank}" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
-                                <p:calendar id="slipDate"  value="#{billPackageController.slipDate}" pattern="dd MMMM yyyy" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                                </p:calendar>
+                                <h:panelGroup id="slip" style="display: #{billPackageController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                    <pa:slip paymentMethodData="#{billPackageController.paymentMethodData}"/>
+                                </h:panelGroup>
 
                                 <p:commandButton  value="Settle" action="#{billPackageController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                                 </p:commandButton>

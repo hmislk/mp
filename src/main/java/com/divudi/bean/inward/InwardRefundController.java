@@ -17,11 +17,13 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.InwardBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.RefundBill;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
@@ -100,6 +102,9 @@ public class InwardRefundController implements Serializable {
         return false;
     }
 
+    @EJB
+    private CashTransactionBean cashTransactionBean;
+
     public void pay() {
         if (errorCheck()) {
             return;
@@ -113,6 +118,8 @@ public class InwardRefundController implements Serializable {
             getInwardBean().updateFinalFill(getCurrent().getPatientEncounter());
         }
 
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(getCurrent(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         UtilityController.addSuccessMessage("Payment Bill Saved");
     }
 
@@ -298,5 +305,13 @@ public class InwardRefundController implements Serializable {
 
     public void setInwardBean(InwardBean inwardBean) {
         this.inwardBean = inwardBean;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 }

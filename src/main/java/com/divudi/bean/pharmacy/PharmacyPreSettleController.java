@@ -17,16 +17,17 @@ import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
+import com.divudi.entity.WebUser;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.facade.BillFacade;
@@ -39,7 +40,6 @@ import com.divudi.facade.StockFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.EJB;
@@ -239,6 +239,7 @@ public class PharmacyPreSettleController implements Serializable {
     @Inject
     private PaymentSchemeController paymentSchemeController;
 
+    @SuppressWarnings("empty-statement")
     private boolean errorCheckForSaleBill() {
 //        if (checkPaymentScheme(getSaleBill().getPaymentScheme())) {
 //            return true;
@@ -332,7 +333,6 @@ public class PharmacyPreSettleController implements Serializable {
         getSaleReturnBill().setDiscount(getPreBill().getDiscount());
         getSaleReturnBill().setNetTotal(getPreBill().getNetTotal());
         getSaleReturnBill().setTotal(getPreBill().getTotal());
-
 
         getBillBean().setPaymentMethodData(getSaleReturnBill(), getSaleReturnBill().getPaymentScheme().getPaymentMethod(), paymentMethodData);
 
@@ -432,12 +432,25 @@ public class PharmacyPreSettleController implements Serializable {
         getPreBill().getCashBillsPre().add(getSaleBill());
         getBillFacade().edit(getPreBill());
 
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(getSaleBill(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         setBill(getBillFacade().find(getSaleBill().getId()));
 
         clearBill();
         clearBillItem();
         billPreview = true;
 
+    }
+
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 
     public void settleReturnBillWithPay() {
@@ -449,6 +462,8 @@ public class PharmacyPreSettleController implements Serializable {
         getPreBill().getReturnCashBills().add(getSaleReturnBill());
         getBillFacade().edit(getPreBill());
 
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(getSaleReturnBill(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         setBill(getBillFacade().find(getSaleReturnBill().getId()));
 
         clearBill();

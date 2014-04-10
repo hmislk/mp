@@ -32,10 +32,15 @@ public class CashTransactionHistory implements Serializable {
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date cashAt;
+
     @OneToOne
     private CashTransaction cashTransaction;
 
-    private double drawerRunningBallance;
+    private double cashBallance;
+    private double creditCardBallance;
+    private double chequeBallance;
+    private double slipBallance;
+
     @Enumerated(EnumType.STRING)
     private HistoryType historyType;
 
@@ -108,14 +113,6 @@ public class CashTransactionHistory implements Serializable {
 
     public void setCashTransaction(CashTransaction cashTransaction) {
         this.cashTransaction = cashTransaction;
-    }
-
-    public double getDrawerRunningBallance() {
-        return drawerRunningBallance;
-    }
-
-    public void setDrawerRunningBallance(double drawerRunningBallance) {
-        this.drawerRunningBallance = drawerRunningBallance;
     }
 
     public HistoryType getHistoryType() {
@@ -221,7 +218,37 @@ public class CashTransactionHistory implements Serializable {
     public void setRetireComments(String retireComments) {
         this.retireComments = retireComments;
     }
-    
-    
+
+    public double getCashBallance() {
+        return cashBallance;
+    }
+
+    public void setCashBallance(double cashBallance) {
+        this.cashBallance = cashBallance;
+    }
+
+    public double getCreditCardBallance() {
+        return creditCardBallance;
+    }
+
+    public void setCreditCardBallance(double creditCardBallance) {
+        this.creditCardBallance = creditCardBallance;
+    }
+
+    public double getChequeBallance() {
+        return chequeBallance;
+    }
+
+    public void setChequeBallance(double chequeBallance) {
+        this.chequeBallance = chequeBallance;
+    }
+
+    public double getSlipBallance() {
+        return slipBallance;
+    }
+
+    public void setSlipBallance(double slipBallance) {
+        this.slipBallance = slipBallance;
+    }
 
 }

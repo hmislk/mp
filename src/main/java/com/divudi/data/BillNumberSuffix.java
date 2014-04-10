@@ -78,4 +78,6 @@ public enum BillNumberSuffix {
     PACK,//Package
     SURG,//Surger Bill
     TIME,//Timed Service 
+    CSIN,//Cashier Cash Out
+    CSOUT,//Cashier CAsh IN
 }

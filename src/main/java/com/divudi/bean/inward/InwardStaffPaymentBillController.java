@@ -4,6 +4,7 @@ import com.divudi.bean.*;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -13,6 +14,7 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Speciality;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -32,11 +34,6 @@ import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
-import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
@@ -401,6 +398,9 @@ public class InwardStaffPaymentBillController implements Serializable {
         return false;
     }
 
+    @EJB
+    private CashTransactionBean cashTransactionBean;
+
     public void settleBill() {
         if (errorCheck()) {
             return;
@@ -412,6 +412,9 @@ public class InwardStaffPaymentBillController implements Serializable {
         saveBillCompo(b);
         getBillFacade().edit(b);
         printPreview = true;
+
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         UtilityController.addSuccessMessage("Successfully Paid");
         System.out.println("Paid");
     }
@@ -629,6 +632,14 @@ public class InwardStaffPaymentBillController implements Serializable {
 
     public void setDocPayingBillFee(List<BillFee> docPayingBillFee) {
         this.docPayingBillFee = docPayingBillFee;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 
 }

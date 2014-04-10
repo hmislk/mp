@@ -100,6 +100,30 @@ public class CommonReport implements Serializable {
     private BillsTotals PharmacyBhtPreBilled;
     private BillsTotals PharmacyBhtPreCancelled;
     private BillsTotals PharmacyBhtPreRefunded;
+    BillsTotals cashInBills;
+    BillsTotals cashOutBills;
+
+    public BillsTotals getCashInBills() {
+        if (cashInBills == null) {
+            cashInBills = new BillsTotals();
+        }
+        return cashInBills;
+    }
+
+    public void setCashInBills(BillsTotals cashInBills) {
+        this.cashInBills = cashInBills;
+    }
+
+    public BillsTotals getCashOutBills() {
+        if (cashOutBills == null) {
+            cashOutBills = new BillsTotals();
+        }
+        return cashOutBills;
+    }
+
+    public void setCashOutBills(BillsTotals cashOutBills) {
+        this.cashOutBills = cashOutBills;
+    }
 
     //////////////////    
     private List<String1Value1> dataTableData;
@@ -1212,30 +1236,11 @@ public class CommonReport implements Serializable {
         getInwardRefunds().setCredit(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Credit, getWebUser()));
         getInwardRefunds().setSlip(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Slip, getWebUser()));
 
-        //Phrmacy Bill Other
-        getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
-        getBilledBillsPh2().setCard(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
-        getBilledBillsPh2().setCash(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
-        getBilledBillsPh2().setCheque(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
-        getBilledBillsPh2().setCredit(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
-        getBilledBillsPh2().setSlip(calValueOther(new BilledBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
+        //Cash IN
+        getCashInBills().setBills(userBillsOwn(new BilledBill(), BillType.CashIn, getWebUser()));
 
-        //Pharmacy Cancell Other
-        getCancellededBillsPh2().setBills(userPharmacyBillsOther(new CancelledBill(), BillType.PharmacySale, getWebUser()));
-        getCancellededBillsPh2().setCard(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
-        getCancellededBillsPh2().setCash(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
-        getCancellededBillsPh2().setCheque(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
-        getCancellededBillsPh2().setCredit(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
-        getCancellededBillsPh2().setSlip(calValueOther(new CancelledBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
-
-        //Pharmacy Refunded Other
-        getRefundedBillsPh2().setBills(userPharmacyBillsOther(new RefundBill(), BillType.PharmacySale, getWebUser()));
-        getRefundedBillsPh2().setCard(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Card, getWebUser()));
-        getRefundedBillsPh2().setCash(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Cash, getWebUser()));
-        getRefundedBillsPh2().setCheque(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Cheque, getWebUser()));
-        getRefundedBillsPh2().setCredit(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Credit, getWebUser()));
-        getRefundedBillsPh2().setSlip(calValueOther(new RefundBill(), BillType.PharmacySale, PaymentMethod.Slip, getWebUser()));
-
+        //Cash Out
+        getCashOutBills().setBills(userBillsOwn(new BilledBill(), BillType.CashOut, getWebUser()));
     }
 
     public List<InwardPriceAdjustment> createMatrxTabl() {
@@ -1293,7 +1298,6 @@ public class CommonReport implements Serializable {
         //Pharmacy Bht Billed Bills
         getPharmacyBhtPreBilled().setBills(getBills(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
         getPharmacyBhtPreBilled().setCash(calValue(new PreBill(), BillType.PharmacyBhtPre, getDepartment()));
-     
 
         //Pharmacy Bht Cancelled Bill
         getPharmacyBhtPreCancelled().setBills(getBills(new CancelledBill(), BillType.PharmacyBhtPre, getDepartment()));
@@ -1457,6 +1461,8 @@ public class CommonReport implements Serializable {
         inwardPayments = null;
         inwardPaymentCancel = null;
         inwardRefunds = null;
+        cashInBills = null;
+        cashOutBills = null;
         grnBilled = null;
         grnCancelled = null;
         grnReturn = null;

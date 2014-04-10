@@ -43,33 +43,24 @@
 
                         <p:dataTable id="tblBills" value="#{searchController.billItems}" var="bi"  >
                             <p:column>
-                                <h:outputLabel value="#{bi.paidForBillFee.id}"/>
+                                <p:commandButton ajax="false" value="View Bill" action="payment_bill_reprint">
+                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
+                                </p:commandButton>
                             </p:column>
                             <p:column headerText="Opd Bill No" >
-                                <h:commandLink action="payment_bill_reprint" value="#{bi.paidForBillFee.bill.insId}">
-                                    <h:outputLabel  ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bi.paidForBillFee.bill.insId}" ></h:outputLabel>
                             </p:column>  
                             <p:column headerText="Specility" >
-                                <h:commandLink action="payment_bill_reprint" >
-                                    <h:outputLabel value="#{bi.paidForBillFee.staff.speciality.name}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bi.paidForBillFee.staff.speciality.name}" ></h:outputLabel>
                             </p:column>    
                             <p:column headerText="Doctor" >
-                                <h:commandLink action="payment_bill_reprint" >
-                                    <h:outputLabel value="#{bi.paidForBillFee.staff.person.nameWithTitle}" ></h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bi.paidForBillFee.staff.person.nameWithTitle}" ></h:outputLabel>
+
                             </p:column>                         
                             <p:column headerText="Paid at"  >
-                                <h:commandLink action="bill_reprint" >
-                                    <h:outputLabel value="#{bi.bill.createdAt}" >
-                                        <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bi.bill.createdAt}" >
+                                    <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
+                                </h:outputLabel>
                                 <br/>
                                 <h:panelGroup rendered="#{bi.bill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled at " />
@@ -85,11 +76,9 @@
                                 </h:panelGroup>
                             </p:column>  
                             <p:column headerText="Paid by" >
-                                <h:commandLink action="bill_reprint" >
-                                    <h:outputLabel value="#{bi.bill.creater.webUserPerson.name}" >                                      
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+
+                                <h:outputLabel value="#{bi.bill.creater.webUserPerson.name}" >                                      
+                                </h:outputLabel>
                                 <br/>
                                 <h:panelGroup rendered="#{bi.bill.cancelled}" >
                                     <h:outputLabel style="color: red;" value="Cancelled at " />
@@ -104,20 +93,15 @@
                                 </h:panelGroup>
                             </p:column>    
                             <p:column headerText="Service Name"  >
-                                <h:commandLink action="payment_bill_reprint" >
-                                    <h:outputLabel value="#{bi.paidForBillFee.billItem.item.name}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bi.paidForBillFee.billItem.item.name}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
                             </p:column>
                             <p:column headerText="Charges"  >
-                                <h:commandLink action="payment_bill_reprint" >
-                                    <h:outputLabel value="#{bi.paidForBillFee.feeValue}" >
-                                        <f:convertNumber pattern="#,000.00"/>
-                                    </h:outputLabel>
-                                    <f:setPropertyActionListener value="#{bi.bill}" target="#{billSearch.bill}"/>
-                                </h:commandLink>
+                                <h:outputLabel value="#{bi.paidForBillFee.feeValue}" >
+                                    <f:convertNumber pattern="#,000.00"/>
+                                </h:outputLabel>
+
                             </p:column>
 
                         </p:dataTable>

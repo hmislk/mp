@@ -10,12 +10,14 @@ import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CreditBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PatientEncounter;
+import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.Admission;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
@@ -425,6 +427,16 @@ public class CashRecieveBillController implements Serializable {
 
     @EJB
     private BillBean billBean;
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
 
     public void settleBill() {
 
@@ -439,6 +451,8 @@ public class CashRecieveBillController implements Serializable {
         saveBill(BillType.CashRecieveBill);
         saveBillItem();
 
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(getCurrent(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         //   savePayments();
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
@@ -458,6 +472,8 @@ public class CashRecieveBillController implements Serializable {
         saveBill(BillType.CashRecieveBill);
         saveBillItemBht();
 
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(getCurrent(), getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         //   savePayments();
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;

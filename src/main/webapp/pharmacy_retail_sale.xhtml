@@ -186,7 +186,7 @@
                                         <p:selectOneMenu   id="cmbPs" value="#{pharmacySaleController.paymentScheme}">     
 
                                             <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                            <p:ajax process="cmbPs wsd wcd" update="pBillDetails creditCard cheque slip" 
+                                            <p:ajax process="cmbPs" update="pBillDetails creditCard cheque slip" 
                                                     event="change"  listener="#{pharmacySaleController.paymentSchemeChanged}" />
 
                                         </p:selectOneMenu>
@@ -212,8 +212,8 @@
                                             </f:facet>
                                         </p:commandButton>
                                         <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBill}"  ></p:commandButton>
-                                        <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
-                                        <p:watermark id="wsd" value="Slip Date" for="slipDate"/>
+                                        
+                                        
                                     </h:panelGrid>
 
 

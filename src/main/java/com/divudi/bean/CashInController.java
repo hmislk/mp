@@ -43,8 +43,6 @@ public class CashInController implements Serializable {
     private BillNumberBean billNumberBean;
     @Inject
     private SessionController sessionController;
-    private Drawer drawer;
-    private boolean disableInput;
 
     public CashTransactionFacade getCashTransactionFacade() {
         return cashTransactionFacade;
@@ -72,11 +70,20 @@ public class CashInController implements Serializable {
         this.bill = bill;
     }
 
-    private void saveBill() {
-        double netTotal = Math.abs(getBill().getCashTransaction().getCashValue())
-                + Math.abs(getBill().getCashTransaction().getChequeValue())
-                + Math.abs(getBill().getCashTransaction().getCreditCardValue())
-                + Math.abs(getBill().getCashTransaction().getSlipValue());
+    private void saveBill(CashTransaction ct) {
+        double netTotal = 0;
+        if (ct.getCashValue() != null) {
+            netTotal += Math.abs(ct.getCashValue());
+        }
+        if (ct.getChequeValue() != null) {
+            netTotal += Math.abs(ct.getChequeValue());
+        }
+        if (ct.getCreditCardValue() != null) {
+            netTotal += Math.abs(ct.getCreditCardValue());
+        }
+        if (ct.getSlipValue() != null) {
+            netTotal += Math.abs(ct.getSlipValue());
+        }
 
         getBill().setNetTotal(netTotal);
         getBill().setBillType(BillType.CashIn);
@@ -99,9 +106,11 @@ public class CashInController implements Serializable {
             return;
         }
 
+        calTotal();
+
         CashTransaction ct = getBill().getCashTransaction();
         getBill().setCashTransaction(null);
-        saveBill();
+        saveBill(ct);
 
         getCashTransactionBean().saveCashInTransaction(ct, getBill(), getSessionController().getLoggedUser());
 
@@ -127,12 +136,11 @@ public class CashInController implements Serializable {
     public void makeNull() {
         printPreview = false;
         bill = null;
-        drawer = null;
     }
 
     public void calTotal() {
         double dbl = getCashTransactionBean().calTotal(getBill().getCashTransaction());
-
+        System.err.println("Cal Total " + dbl);
         getBill().getCashTransaction().setCashValue(dbl);
     }
 
@@ -184,25 +192,6 @@ public class CashInController implements Serializable {
 
     public void setBillNumberBean(BillNumberBean billNumberBean) {
         this.billNumberBean = billNumberBean;
-    }
-
-    public Drawer getDrawer() {
-        if (drawer == null) {
-            drawer = getCashTransactionBean().getDrawer(getSessionController().getLoggedUser());
-        }
-        return drawer;
-    }
-
-    public void setDrawer(Drawer drawer) {
-        this.drawer = drawer;
-    }
-
-    public boolean isDisableInput() {
-        return disableInput;
-    }
-
-    public void setDisableInput(boolean disableInput) {
-        this.disableInput = disableInput;
     }
 
     public Bill getReferenceBill() {

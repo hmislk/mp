@@ -910,7 +910,7 @@ public class PharmacySaleController implements Serializable {
         setActiveIndex(1);
     }
 
-    private void calTotal() {
+    public void calTotal() {
         getPreBill().setTotal(0);
         double netTot = 0.0;
         double discount = 0.0;

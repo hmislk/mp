@@ -33,17 +33,11 @@
                             </f:facet>
                             <h:panelGrid columns="2">
                                 <h:outputLabel value="1/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty1}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty1}"/>
                                 <h:outputLabel value="2/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty2}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty2}"/>
                                 <h:outputLabel value="5/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty5}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty5}"/>
                             </h:panelGrid>    
                         </p:panel>
                         <p:panel>
@@ -52,45 +46,23 @@
                             </f:facet>
                             <h:panelGrid columns="4" >
                                 <h:outputLabel value="10/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty10}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty10}"/>
                                 <h:outputLabel value="20/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty20}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty20}"/>
                                 <h:outputLabel value="50/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty50}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty50}"/>
                                 <h:outputLabel value="100/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty100}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty100}"/>
                                 <h:outputLabel value="200/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty200}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty200}"/>
                                 <h:outputLabel value="500/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty500}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty500}"/>
                                 <h:outputLabel value="1000/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty1000}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty1000}"/>
                                 <h:outputLabel value="2000/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty2000}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty2000}"/>
                                 <h:outputLabel value="5000/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty5000}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
-                                <h:outputLabel value="10000/="/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty10000}">
-                                    <f:ajax event="blur" execute="@this" render="netTotal" listener="#{cashOutController.calTotal()}"/>
-                                </p:inputText>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.qty5000}"/>
                             </h:panelGrid>
                         </p:panel>
                         <p:panel>
@@ -98,14 +70,14 @@
                                 <h:outputLabel value="Summery"/>
                             </f:facet>
                             <h:panelGrid columns="2">                                
-                                <h:outputLabel value="Cash Value"/>
+                                <p:commandButton ajax="false" value="Cal Cash Value" action="#{cashOutController.calTotal()}"/>
                                 <h:outputLabel id="netTotal" value="#{cashOutController.bill.cashTransaction.creditCardValue}"/>
                                 <h:outputLabel value="Credit Card Tot" />
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.creditCardValue}" disabled="#{cashInController.referenceBill ne null}"/>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.creditCardValue}" />
                                 <h:outputLabel value="Slip Total"/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.slipValue}" disabled="#{cashInController.referenceBill ne null}"/>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.slipValue}"/>
                                 <h:outputLabel value="Cheque Total"/>
-                                <p:inputText value="#{cashOutController.bill.cashTransaction.chequeValue}" disabled="#{cashInController.referenceBill ne null}"/>
+                                <p:inputText value="#{cashOutController.bill.cashTransaction.chequeValue}"/>
                             </h:panelGrid>
                         </p:panel>
                         <p:panel>

@@ -1240,7 +1240,7 @@ public class CommonReport implements Serializable {
         getCashInBills().setBills(userBillsOwn(new BilledBill(), BillType.CashIn, getWebUser()));
 
         //Cash Out
-        getCashInBills().setBills(userBillsOwn(new BilledBill(), BillType.CashOut, getWebUser()));
+        getCashOutBills().setBills(userBillsOwn(new BilledBill(), BillType.CashOut, getWebUser()));
     }
 
     public List<InwardPriceAdjustment> createMatrxTabl() {

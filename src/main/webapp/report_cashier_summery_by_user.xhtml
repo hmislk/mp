@@ -23,12 +23,10 @@
                             <h:outputLabel value="#{commonReport.webUser.institution.name}"/><br/>
                             <h:outputLabel value="#{commonReport.webUser.webUserPerson.name}"/>
                             <h:outputLabel value="  Casheir Session Report"/>
-                            <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" action="#{commonReport.createCashierTableByUser()}" />  
+                            <p:commandButton id="btnRefresh" ajax="false" value="Refresh"
+                                             styleClass="noPrintButton" style="float: right;"
+                                             action="#{commonReport.createCashierTableByUser()}" />  
                             <p:defaultCommand target="btnRefresh"/>
-
-                            <p:commandButton actionListener="#{commonReport.createCashierTableByUser()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
-                                <pe:exporter type="xlsx" target="sum1,sum2,sum11,sum22" fileName="All_Cashier_Summery"   />
-                            </p:commandButton> 
 
                             <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                                 <p:printer target="reportPrint"  />
@@ -137,7 +135,6 @@
                         <ca:inwardPaymentCancel data="#{commonReport.userInwardPaymentCancelBillsOwn}"/>
 
                         <p:spacer height="30"/>
-                        #{commonReport.inwardRefunds.bills.size()}
                         <ca:inwrdRefundBill data="#{commonReport.inwardRefunds}"/>
 
                         <p:spacer height="30"/>
@@ -174,6 +171,163 @@
                         </p:dataTable>
 
                         <p:spacer height="30"/>
+                        <h:outputLabel value="#{commonReport.cashInBills.bills.size()}"/>
+                        <p:dataTable value="#{commonReport.cashInBills.bills}" var="cI">
+                            <f:facet name="CASH IN TRANSACTION"/>
+                            <p:column headerText="From">
+                                <h:outputLabel value="#{cI.fromWebUser.webUserPerson.nameWithTitle}"/>
+                            </p:column>
+                            <p:column headerText="Coins">
+                                <h:panelGrid columns="1">
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty1 ne null}" >
+                                        <h:outputLabel value="1/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty1}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty2 ne null}" >
+                                        <h:outputLabel value="2/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty2}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty5 ne null}" >
+                                        <h:outputLabel value="5/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty5}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </p:column>
+                            <p:column headerText="Notes">
+                                <h:panelGrid columns="1">
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty10 ne null}" >
+                                        <h:outputLabel value="10/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty10}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty20 ne null}" >
+                                        <h:outputLabel value="20/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty20}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty50 ne null}" >
+                                        <h:outputLabel value="50/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty50}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty100 ne null}" >
+                                        <h:outputLabel value="100/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty100}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty200 ne null}" >
+                                        <h:outputLabel value="200/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty200}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty500 ne null}" >
+                                        <h:outputLabel value="500/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty500}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty1000 ne null}" >
+                                        <h:outputLabel value="1000/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty1000}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty2000 ne null}" >
+                                        <h:outputLabel value="2000/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty2000}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cI.cashTransaction.qty5000 ne null}" >
+                                        <h:outputLabel value="5000/=" />
+                                        <h:outputLabel value="#{cI.cashTransaction.qty5000}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </p:column>
+
+                            <p:column headerText="Cash Value">
+                                <h:outputLabel value="#{cI.cashTransaction.cashValue}"/>
+                            </p:column>
+                            <p:column headerText="Credit Card Value">
+                                <h:outputLabel value="#{cI.cashTransaction.creditCardValue}"/>
+                            </p:column>
+                            <p:column headerText="Cheque Value">
+                                <h:outputLabel value="#{cI.cashTransaction.chequeValue}"/>
+                            </p:column>
+                            <p:column headerText="Slip Value">
+                                <h:outputLabel value="#{cI.cashTransaction.slipValue}"/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:spacer height="30"/>
+
+                        <p:dataTable value="#{commonReport.cashOutBills.bills}" var="cO">
+                            <f:facet name="CASH OUT TRANSACTION"/>
+                            <p:column headerText="From">
+                                <h:outputLabel value="#{cO.fromWebUser.webUserPerson.nameWithTitle}"/>
+                            </p:column>
+                            <p:column headerText="Coins">
+                                <h:panelGrid columns="1">
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty1 ne null}" >
+                                        <h:outputLabel value="1/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty1}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty2 ne null}" >
+                                        <h:outputLabel value="2/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty2}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty5 ne null}" >
+                                        <h:outputLabel value="5/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty5}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </p:column>
+                            <p:column headerText="Notes">
+                                <h:panelGrid columns="1">
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty10 ne null}" >
+                                        <h:outputLabel value="10/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty10}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty20 ne null}" >
+                                        <h:outputLabel value="20/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty20}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty50 ne null}" >
+                                        <h:outputLabel value="50/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty50}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty100 ne null}" >
+                                        <h:outputLabel value="100/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty100}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty200 ne null}" >
+                                        <h:outputLabel value="200/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty200}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty500 ne null}" >
+                                        <h:outputLabel value="500/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty500}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty1000 ne null}" >
+                                        <h:outputLabel value="1000/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty1000}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty2000 ne null}" >
+                                        <h:outputLabel value="2000/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty2000}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{cO.cashTransaction.qty5000 ne null}" >
+                                        <h:outputLabel value="5000/=" />
+                                        <h:outputLabel value="#{cO.cashTransaction.qty5000}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </p:column>
+
+                            <p:column headerText="Cash Value">
+                                <h:outputLabel value="#{cO.cashTransaction.cashValue}"/>
+                            </p:column>
+                            <p:column headerText="Credit Card Value">
+                                <h:outputLabel value="#{cO.cashTransaction.creditCardValue}"/>
+                            </p:column>
+                            <p:column headerText="Cheque Value">
+                                <h:outputLabel value="#{cO.cashTransaction.chequeValue}"/>
+                            </p:column>
+                            <p:column headerText="Slip Value">
+                                <h:outputLabel value="#{cO.cashTransaction.slipValue}"/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:spacer height="30"/>
+
 
                         <h:panelGrid columns="1">
                             <h:outputLabel value="Cashier : #{commonReport.webUser.webUserPerson.name}"/>
@@ -219,94 +373,6 @@
                         <ca:pettyCancel data="#{commonReport.userPettyPaymentCancelBills}"/>
                     </p:panel>
 
-
-                    <div style="page-break-after: always;">
-                        <br/>
-                    </div>
-
-                    <p:panel rendered="#{commonReport.userBillsPhOther.bills.size()!=0
-                                         or commonReport.userCancelledBillsPhOther.bills.size()!=0
-                                         or commonReport.userRefundedBillsPhOther.bills.size()!=0 }" >
-                        <p:panel  >
-                            <f:facet name="header"> 
-                                <h:outputLabel value="#{commonReport.institution.name}"/><br/>
-                                <h:outputLabel value="#{commonReport.webUser.webUserPerson.name}"/>
-                                <h:outputLabel value="  Casheir Session Report"/>
-                            </f:facet>
-
-                            <h:panelGrid columns="4" styleClass="printBlock"  style="min-width: 100%!important;">                             
-                                <h:outputLabel value="From Date " />
-                                <h:outputLabel  value="#{commonReport.fromDate}" >
-                                    <f:convertDateTime pattern="dd MMMM yyyy"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="To Date" />
-                                <h:outputLabel  value="#{commonReport.toDate}" >
-                                    <f:convertDateTime pattern="dd MMMM yyyy"/>
-                                </h:outputLabel>
-
-                                <h:outputLabel value="From Time " />
-                                <h:outputLabel  value="#{commonReport.fromDate}" >
-                                    <f:convertDateTime pattern="HH:mm a"/>
-                                </h:outputLabel>
-                                <h:outputLabel value="To Time " />
-                                <h:outputLabel  value="#{commonReport.toDate}" >
-                                    <f:convertDateTime pattern="HH:mm a"/>
-                                </h:outputLabel>
-                            </h:panelGrid>
-
-                            <p:spacer height="30"/>
-
-                            <ca:pharmacyBilledSummery data="#{commonReport.userBillsPhOther}"/>
-
-                            <p:spacer height="30"/>
-
-                            <ca:pharmacyCancelled data="#{commonReport.userCancelledBillsPhOther}"  />
-
-                            <p:spacer height="30"/>
-
-                            <ca:phrmacyRefunded data="#{commonReport.userRefundedBillsPhOther}"/>
-
-                            <p:dataTable id="sum11" value="#{commonReport.creditSlipSum2}"  var="i" >
-                                <f:facet name="header">
-                                    Credit Summery
-                                </f:facet>
-                                <p:column>
-                                    <h:outputLabel value="#{i.string}"/>
-                                </p:column>
-                                <p:column style="font-weight: bold;text-align:right;" >
-                                    <h:outputLabel value="#{i.value}">
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>
-                                </p:column>
-                            </p:dataTable>                
-
-
-                            <p:spacer height="30"/>
-
-                            <p:dataTable id="sum22" value="#{commonReport.cashChequeSum2}"  var="i" >
-                                <f:facet name="header">
-                                    <h:outputLabel value="Cash Summery"/>
-                                </f:facet>
-                                <p:column>
-                                    <h:outputLabel value="#{i.string}"/>
-                                </p:column>
-                                <p:column style="font-weight: bold;text-align:right;" >
-                                    <h:outputLabel value="#{i.value}">
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>
-                                </p:column>
-                            </p:dataTable>
-
-                            <p:spacer height="30"/>
-
-                            <h:panelGrid columns="1">
-                                <h:outputLabel value="Cashier : #{commonReport.webUser.webUserPerson.name}"/>
-                                <br/>
-                                <h:outputLabel value="............................"/>
-                            </h:panelGrid>
-
-                        </p:panel>
-                    </p:panel>
                 </p:panel>
             </h:form>
         </h:panelGroup>

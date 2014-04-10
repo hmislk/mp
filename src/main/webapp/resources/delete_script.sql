@@ -78,7 +78,7 @@ delete from vtminvmp WHERE `ID` > 0;
 delete from vtmsvmps  WHERE `ID` > 0;
 delete from webtheme WHERE `ID` > 7000;
 delete from webuser WHERE `ID` > 7000;
-delete from item WHERE `DTYPE` = 'Packege' or `DTYPE` = 'Service' or `DTYPE`='Vmp'  or `DTYPE`='Amp'  or `DTYPE`='Vmpp'  or `DTYPE`='Ampp'  or `DTYPE`='Vtm'  or `DTYPE`='Atm';
+
 SET FOREIGN_KEY_CHECKS=1;
 
 

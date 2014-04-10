@@ -12,9 +12,10 @@ import com.divudi.ejb.CashTransactionBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CashTransaction;
-import com.divudi.entity.Drawer;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.CashTransactionFacade;
+import com.divudi.facade.WebUserFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -101,6 +102,17 @@ public class CashInController implements Serializable {
 
     }
 
+    @EJB
+    WebUserFacade webUserFacade;
+
+    public WebUserFacade getWebUserFacade() {
+        return webUserFacade;
+    }
+
+    public void setWebUserFacade(WebUserFacade webUserFacade) {
+        this.webUserFacade = webUserFacade;
+    }
+
     public void settle() {
         if (errorCheck()) {
             return;
@@ -127,6 +139,9 @@ public class CashInController implements Serializable {
 //            getCashTransactionBean().deductFromBallance(getBill().getFromWebUser().getDrawer(), dbl, ct);
 //        }
         getCashTransactionBean().addToBallance(getSessionController().getLoggedUser().getDrawer(), ct);
+
+        WebUser wb = getWebUserFacade().find(getSessionController().getLoggedUser().getId());
+        getSessionController().setLoggedUser(wb);
 
         UtilityController.addSuccessMessage("Succesfully Cash Inned ");
         printPreview = true;

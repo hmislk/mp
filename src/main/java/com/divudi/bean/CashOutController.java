@@ -13,8 +13,10 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CashTransaction;
 import com.divudi.entity.Drawer;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.CashTransactionFacade;
+import com.divudi.facade.WebUserFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -70,11 +72,23 @@ public class CashOutController implements Serializable {
         this.bill = bill;
     }
 
-    private void saveBill() {
-        double netTotal = Math.abs(getBill().getCashTransaction().getCashValue())
-                + Math.abs(getBill().getCashTransaction().getChequeValue())
-                + Math.abs(getBill().getCashTransaction().getCreditCardValue())
-                + Math.abs(getBill().getCashTransaction().getSlipValue());
+    private void saveBill(CashTransaction cashTransaction) {
+        double netTotal = 0;
+        if (cashTransaction.getCashValue() != null) {
+            netTotal += Math.abs(cashTransaction.getCashValue());
+        }
+
+        if (cashTransaction.getCreditCardValue()!= null) {
+            netTotal += Math.abs(cashTransaction.getCreditCardValue());
+        }
+
+        if (cashTransaction.getChequeValue()!= null) {
+            netTotal += Math.abs(cashTransaction.getChequeValue());
+        }
+        
+         if (cashTransaction.getSlipValue()!= null) {
+            netTotal += Math.abs(cashTransaction.getSlipValue());
+        }
 
         getBill().setNetTotal(0 - netTotal);
 
@@ -92,14 +106,19 @@ public class CashOutController implements Serializable {
 
     }
 
+    @EJB
+    private WebUserFacade webUserFacade;
+
     public void settle() {
         if (errorCheck()) {
             return;
         }
 
+        calTotal();
+
         CashTransaction ct = getBill().getCashTransaction();
         getBill().setCashTransaction(null);
-        saveBill();
+        saveBill(ct);
 
         getCashTransactionBean().saveCashOutTransaction(ct, getBill(), getSessionController().getLoggedUser());
 
@@ -107,6 +126,9 @@ public class CashOutController implements Serializable {
         getBillFacade().edit(getBill());
 
         getCashTransactionBean().deductFromBallance(getSessionController().getLoggedUser().getDrawer(), ct);
+
+        WebUser wb = getWebUserFacade().find(getSessionController().getLoggedUser().getId());
+        getSessionController().setLoggedUser(wb);
 
 //        if (getBill().getToWebUser() != null) {
 //            getCashTransactionBean().addToBallance(getBill().getToWebUser().getDrawer(), dbl, ct);
@@ -186,6 +208,14 @@ public class CashOutController implements Serializable {
 
     public void setDrawer(Drawer drawer) {
         this.drawer = drawer;
+    }
+
+    public WebUserFacade getWebUserFacade() {
+        return webUserFacade;
+    }
+
+    public void setWebUserFacade(WebUserFacade webUserFacade) {
+        this.webUserFacade = webUserFacade;
     }
 
 }

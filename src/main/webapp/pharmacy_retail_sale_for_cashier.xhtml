@@ -6,7 +6,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:bil="http://java.sun.com/jsf/composite/bill"
-      xmlns:phi="http://java.sun.com/jsf/composite/pharmacy">
+      xmlns:phi="http://java.sun.com/jsf/composite/pharmacy"
+      xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
 
     <body>
 
@@ -194,40 +195,25 @@
                                         <p:selectOneMenu   id="cmbPs" value="#{pharmacySaleController.paymentScheme}">     
 
                                             <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                            <p:ajax process="cmbPs wsd wcd" update="pBillDetails lblCardRef txtCardRef creditBank lblCheqRef txtCheqRef bank chequeDate lblSlipRef txtSlipRef slipBank slipDate" 
+                                            <p:ajax process="cmbPs " update="pBillDetails creditCard cheque slip" 
                                                     event="change"  listener="#{pharmacySaleController.paymentSchemeChanged}" />
 
                                         </p:selectOneMenu>
 
-                                        <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                                        <p:inputText id="txtCardRef" autocomplete="off"  value="#{pharmacySaleController.creditCardRefNo}" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                                        <h:selectOneMenu id="creditBank" value="#{pharmacySaleController.creditBank}" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                            <f:selectItem itemLabel="Select Bank"/>
-                                            <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                        </h:selectOneMenu>
+                                        <h:panelGroup id="creditCard" style="display: #{pharmacySaleController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                            <pa:creditCard paymentMethodData="#{pharmacySaleController.paymentMethodData}"/>
+                                        </h:panelGroup>
 
-                                        <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                        <p:inputText  id="txtCheqRef" value="#{pharmacySaleController.chequeRefNo}" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                        <h:selectOneMenu id="bank" value="#{pharmacySaleController.chequeBank}" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                            <f:selectItem itemLabel="Select Bank"/>
-                                            <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                        </h:selectOneMenu>
-                                        <p:calendar id="chequeDate"  value="#{pharmacySaleController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                                        </p:calendar>
+                                        <h:panelGroup id="cheque" style="display: #{pharmacySaleController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                            <pa:cheque paymentMethodData="#{pharmacySaleController.paymentMethodData}"/>
+                                        </h:panelGroup>
 
-                                        <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                        <p:inputText  id="txtSlipRef" value="#{pharmacySaleController.comment}" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                        <h:selectOneMenu id="slipBank" value="#{pharmacySaleController.slipBank}" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                            <f:selectItem itemLabel="Select Bank"/>
-                                            <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                        </h:selectOneMenu>
-
-                                        <p:calendar id="slipDate"  value="#{pharmacySaleController.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacySaleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                                        </p:calendar>
+                                        <h:panelGroup id="slip" style="display: #{pharmacySaleController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                            <pa:slip paymentMethodData="#{pharmacySaleController.paymentMethodData}"/>
+                                        </h:panelGroup>
                                         <p:commandButton accesskey="c" ajax= "false" value="For Cashier" action="#{pharmacySaleController.settlePreBill()}" update="tblBillItem txtRate txtQty acStock" process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}" ></p:commandButton>
                                         <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBillForCashier}"  ></p:commandButton>
-                                        <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
-                                        <p:watermark id="wsd" value="Slip Date" for="slipDate"/>
+                                        
                                     </h:panelGrid>
 
 

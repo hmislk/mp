@@ -245,10 +245,9 @@
                                             <p:ajax process="total dis netTotal paid" update="balance netTotal" event="blur"/>
                                         </h:outputLabel>
                                         <h:outputLabel value="Service Charge" ></h:outputLabel>
-                                        <h:outputLabel id="service" value="#{pharmacySaleController.preBill.serviceCharge}" >
-                                            <f:convertNumber pattern="#,##0.00" />
+                                        <p:inputText id="service" value="#{pharmacySaleController.preBill.serviceCharge}" >
                                             <p:ajax process="total dis netTotal service paid" update="balance netTotal" event="blur"/>
-                                        </h:outputLabel>
+                                        </p:inputText>
                                         <h:outputLabel value="Net Total" ></h:outputLabel>
                                         <h:outputLabel id="netTotal" value="#{pharmacySaleController.preBill.netTotal}" >
                                             <f:convertNumber pattern="#,##0.00" />

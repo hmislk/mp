@@ -126,12 +126,23 @@ public class BillBhtController implements Serializable {
     private List<BillEntry> lstBillEntries;
     private boolean printPreview;
     private List<Bill> bills;
+    Date date;
+
+    public Date getDate() {
+        if(date==null)date=new Date();
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public void selectSurgeryBillListener() {
         patientEncounter = getBatchBill().getPatientEncounter();
     }
 
     public void makeNull() {
+        date=null;
         total = 0.0;
         discount = 0.0;
         netTotal = 0.0;
@@ -275,8 +286,8 @@ public class BillBhtController implements Serializable {
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
 
-        temp.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-        temp.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        temp.setBillDate(date);
+        temp.setBillTime(date);
         temp.setPatientEncounter(patientEncounter);
         temp.setPaymentScheme(getPaymentScheme());
 

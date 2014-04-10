@@ -10,7 +10,7 @@
 
     <body>
 
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="/resources/template/template.xhtml">
 
             <ui:define name="content">
 
@@ -246,7 +246,7 @@
                                         </h:outputLabel>
                                         <h:outputLabel value="Service Charge" ></h:outputLabel>
                                         <p:inputText id="service" value="#{pharmacySaleController.preBill.serviceCharge}" >
-                                            <p:ajax process="total dis netTotal service paid" update="balance netTotal" event="blur"/>
+                                            <p:ajax process="total dis netTotal service paid" update="balance netTotal" event="blur" listener="#{pharmacySaleController.calTotal}" />
                                         </p:inputText>
                                         <h:outputLabel value="Net Total" ></h:outputLabel>
                                         <h:outputLabel id="netTotal" value="#{pharmacySaleController.preBill.netTotal}" >

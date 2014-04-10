@@ -4,16 +4,17 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.LazyBillFee;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Speciality;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
@@ -31,14 +32,12 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.primefaces.model.LazyDataModel;
 
@@ -383,6 +382,17 @@ public class StaffPaymentBillController implements Serializable {
         return false;
     }
 
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
+
     public void settleBill() {
         if (errorCheck()) {
             return;
@@ -393,6 +403,9 @@ public class StaffPaymentBillController implements Serializable {
         getBillFacade().create(b);
         saveBillCompo(b);
         printPreview = true;
+
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
         UtilityController.addSuccessMessage("Successfully Paid");
         //System.out.println("Paid");
     }
@@ -560,8 +573,6 @@ public class StaffPaymentBillController implements Serializable {
     }
 
     private LazyDataModel<BillFee> dueBillFee;
-
-  
 
     public List<BillFee> getDueBillFeeReportAll() {
 

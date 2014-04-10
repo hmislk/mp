@@ -247,6 +247,26 @@ public class PatientController implements Serializable {
         return suggestions;
     }
 
+    
+        public List<Patient> completePatientByNameOrCode(String query) {
+        List<Patient> suggestions;
+        String sql;
+        HashMap hm = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<Patient>();
+        } else {
+            sql = "select p from Patient p where p.retired=false "
+                    + " and ( upper(p.person.name) like  :q or "
+                    + " upper(p.code) like  :q )"
+                    + "order by p.person.name";
+            hm.put("q", "%" + query.toUpperCase() + "%");
+            //System.out.println(sql);
+            suggestions = getFacade().findBySQL(sql, hm, 20);
+        }
+        return suggestions;
+    }
+
+    
     public void saveSelected() {
         if (getCurrent().getPerson() == null) {
             UtilityController.addErrorMessage("No Person. Not Saved");

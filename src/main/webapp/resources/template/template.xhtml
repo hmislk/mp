@@ -88,7 +88,7 @@
                                         <p:menuitem  ajax="false"   action="/inward/inward_search_professional_payment_due"  value="Payment Due Search"
                                                      actionListener="#{searchController.makeListNull}" ></p:menuitem>
                                         <p:menuitem  ajax="false" action="/inward/inward_search_professional_payment_done" value="Payment Done Search"  
-                                                      actionListener="#{searchController.makeListNull}" ></p:menuitem>
+                                                     actionListener="#{searchController.makeListNull}" ></p:menuitem>
                                     </p:submenu>  
                                     <p:submenu label="Payment">
                                         <p:submenu label="Not Finalized">
@@ -263,8 +263,8 @@
                                 </p:submenu>
                                 <p:submenu label="Payment"  rendered="#{webUserController.hasPrivilege('Payment')}">
                                     <p:menuitem  ajax="false"  action="/payment_staff_bill" value="Pay Doctor/Staff" rendered="#{webUserController.hasPrivilege('PaymentBilling')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false"  action="/payment_search_due_all" actionListener="#{searchController.makeListNull}"  value="Payments-due Search" rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false"  action="/payment_search_bill_all" actionListener="#{searchController.makeListNull}"
+                                    <p:menuitem  ajax="false"  action="/opd_search_professional_payment_due" actionListener="#{searchController.makeListNull}"  value="Payments-due Search" rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>
+                                    <p:menuitem  ajax="false"  action="/opd_search_professional_payment_done" actionListener="#{searchController.makeListNull}"
                                                  value="Payments-done Search"  rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>                                                               
                                     <p:menuitem  ajax="false"  action="/petty_cash_bill" value="Petty Cash Payment"  ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="/petty_cash_bill_search_own" actionListener="#{searchController.makeListNull}"  value="Petty Cash Bill Search"  ></p:menuitem>
@@ -341,6 +341,12 @@
                                     <p:menuitem  ajax="false"  action="/report_income" value="Income Report"  ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="/report_lab" value="Lab Report"  ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="/report_entered_data" value="Check Entered Data"  ></p:menuitem>
+
+                                </p:submenu>
+                                <p:submenu label="Cash Transaction">
+                                    <p:menuitem ajax="false" action="/cashTransaction/cash_in" value="Cash In" actionListener="#{cashInController.makeNull()}"/>
+                                    <p:menuitem ajax="false" action="/cashTransaction/cash_out"  value="Cash Out" actionListener="#{cashOutController.makeNull()}"/>   
+                                    <p:menuitem ajax="false" action="/cashTransaction/list_to_cash_recieve"  value="List To Cash Recieve"/>   
 
                                 </p:submenu>
                                 <p:submenu label="User"  >
@@ -429,6 +435,17 @@
                             <h:outputLabel value="Department  - #{sessionController.loggedUser.department.name} " ></h:outputLabel>
                             <h:outputLabel value="||" ></h:outputLabel>
                             <h:outputLabel value="Institution  - #{sessionController.loggedUser.institution.name}" ></h:outputLabel>
+                            <h:outputLabel value="||" ></h:outputLabel>
+                            <h:panelGrid columns="4" >
+                                <h:outputLabel value="Cash" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.runningBallance}" style="font-size: 50%;"/>
+                                <h:outputLabel value="|| Card" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.creditCardBallance}" style="font-size: 50%;"/>
+                                <h:outputLabel value="Cheque" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.chequeBallance}" style="font-size: 50%;"/>
+                                <h:outputLabel value="|| Slip" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.slipBallance}" style="font-size: 50%;"/>
+                            </h:panelGrid>
                         </h:panelGrid>
                     </h:form>
                 </p:panel>

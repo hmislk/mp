@@ -30,7 +30,7 @@
                                     <h:outputLabel value="Search by Name/Address" />
                                     <p:autoComplete widgetVar="aPt" id="acPt" forceSelection="true" 
                                                     value="#{patientController.current}" 
-                                                    completeMethod="#{patientController.completePatient}" 
+                                                    completeMethod="#{patientController.completePatientByNameOrCode}" 
                                                     var="apt" itemLabel="#{apt.person.name}" 
                                                     itemValue="#{apt}" size="30"  style="width: 400px;">
                                         <p:column headerText="Name">
@@ -281,7 +281,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td colspan="3" style="text-align: center; vertical-align: middle;" >
-                                                                <p:graphicImage value="#{patientController.barcode}" style="max-width: 7.5cm; padding: 10px; margin: 10px;" ></p:graphicImage>
+                                                                <p:graphicImage value="#{barcodeController.createPatientBarcode}" style="max-width: 7.5cm; padding: 10px; margin: 10px;" ></p:graphicImage>
                                                             </td>
                                                         </tr>
                                                     </table>

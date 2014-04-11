@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.ejb.EJB;
@@ -442,7 +443,7 @@ public class BillController implements Serializable {
             List<BillEntry> tmp = new ArrayList<>();
 
             for (BillEntry e : lstBillEntries) {
-                if (e.getBillItem().getItem().getDepartment().getId() == d.getId()) {
+                if (Objects.equals(e.getBillItem().getItem().getDepartment().getId(), d.getId())) {
                     getBillBean().saveBillItem(myBill, e, getSessionController().getLoggedUser());
                     //getBillBean().calculateBillItem(myBill, e);
                     tmp.add(e);

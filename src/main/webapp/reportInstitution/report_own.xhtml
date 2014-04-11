@@ -8,7 +8,7 @@
 
     <body>
 
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="/resources/template/template.xhtml">
 
             <ui:define name="content">
 
@@ -34,9 +34,7 @@
                                 <p:outputLabel value="Accountant Cash Summery(Witout Professional)"/>
                             </f:facet>
 
-                            <!--                            <p:commandButton styleClass="linkButton" ajax="false" value="By Category" action="report_cash_category_without_pro"/> -->
                             <p:commandButton styleClass="linkButton" ajax="false" value="By Category Export Excel" action="report_cash_category_without_pro_excel"/> 
-
                             <p:commandButton styleClass="linkButton" ajax="false" value="By Category(Summarized)" action="report_cash_category_summery_without_pro"/> 
 
 
@@ -48,8 +46,8 @@
                                 <p:outputLabel value="Day End"/>
                             </f:facet>
 
-                            <p:commandButton styleClass="linkButton" ajax="false" value="Day-end Detailed Report" action="report_cashier_detailed_institution.xhtml" actionListener="#{commonReport.recreteModal}"/>                                
-                            <p:commandButton styleClass="linkButton" ajax="false" value="Day-end Detailed By Bill Type" action="report_cashier_detailed_institution_by_billType.xhtml" actionListener="#{commonReport.recreteModal}"/>                                
+                            <p:commandButton styleClass="linkButton" ajax="false" value="Day-end Detailed Report" action="report_institution_detailed_institution.xhtml" actionListener="#{commonReport.recreteModal}"/>                                
+                            <p:commandButton styleClass="linkButton" ajax="false" value="Day-end Detailed By Bill Type" action="report_institution_detailed_by_billType.xhtml" actionListener="#{commonReport.recreteModal}"/>                                
 
                         </h:panelGrid>
 
@@ -82,10 +80,6 @@
                             <h:panelGrid >                               
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Report By Item " action="report_opd_daily_summery_credit_department" /> 
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Report By Bill" action="report_opd_daily_summery_credit_department_by_bill" /> 
-                                <!--                               <p:commandButton styleClass="linkButton" ajax="false" value="Lab Report By Item " action="report_lab_by_collection_centre_investigation_count" /> 
-                                                               <p:commandButton styleClass="linkButton" ajax="false" value="Lab Report By Bill " action="report_lab_by_collection_centre_credit_own" /> 
-                                -->
-                                <!--<p:commandButton styleClass="linkButton" ajax="false" value="Report By All" action="report_credit_company" />--> 
 
                             </h:panelGrid>
 

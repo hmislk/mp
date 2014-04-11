@@ -467,6 +467,9 @@ public class BillSearch implements Serializable {
             getBill().setRefundedBill(rb);
             getBillFacade().edit(getBill());
 
+            WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(rb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
+
             printPreview = true;
             //UtilityController.addSuccessMessage("Refunded");
 

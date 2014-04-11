@@ -102,12 +102,46 @@ public class CashierReportController implements Serializable {
         return cashierDatas;
     }
 
+    private BillsTotals createRow(BillType billType, String suffix, Bill bill, WebUser webUser) {
+        BillsTotals newB = new BillsTotals();
+        newB.setName(billType.getLabel() + suffix);
+        newB.setCard(calTotalValueOwn(webUser, bill, PaymentMethod.Card, billType));
+        finalCardTot += newB.getCard();
+        newB.setCash(calTotalValueOwn(webUser, bill, PaymentMethod.Cash, billType));
+        finalCashTot += newB.getCash();
+        newB.setCheque(calTotalValueOwn(webUser, bill, PaymentMethod.Cheque, billType));
+        finalChequeTot += newB.getCheque();
+        newB.setCredit(calTotalValueOwn(webUser, bill, PaymentMethod.Credit, billType));
+        finalCreditTot += newB.getCredit();
+        newB.setSlip(calTotalValueOwn(webUser, bill, PaymentMethod.Slip, billType));
+        finalSlipTot += newB.getSlip();
+
+        return newB;
+
+    }
+
+    private BillsTotals createRowInOut(BillType billType, String suffix, Bill bill, WebUser webUser) {
+        BillsTotals newB = new BillsTotals();
+        newB.setName(billType.getLabel() + suffix);
+        newB.setCard(calTotalValueOwnInOutCreditCard(webUser, bill, billType));
+        finalCardTot += newB.getCard();
+        newB.setCash(calTotalValueOwnInOutCash(webUser, bill, billType));
+        finalCashTot += newB.getCash();
+        newB.setCheque(calTotalValueOwnInOutCheque(webUser, bill, billType));
+        finalChequeTot += newB.getCheque();
+        newB.setSlip(calTotalValueOwnInOutSlip(webUser, bill, billType));
+        finalSlipTot += newB.getSlip();
+
+        return newB;
+
+    }
+
     public void calCashierData() {
         finalCashTot = finalChequeTot = finalCardTot = finalCreditTot = finalSlipTot = 0;
         webUserBillsTotals = new ArrayList<>();
-        for (WebUser w : getCashiers()) {
+        for (WebUser webUser : getCashiers()) {
             WebUserBillsTotal tmp = new WebUserBillsTotal();
-            tmp.setWebUser(w);
+            tmp.setWebUser(webUser);
             List<BillsTotals> billls = new ArrayList<>();
 
             double uCard = 0;
@@ -116,52 +150,19 @@ public class CashierReportController implements Serializable {
             double uCredit = 0;
             double uSlip = 0;
             for (BillType btp : getEnumController().getCashFlowBillTypes()) {
-                BillsTotals newB = new BillsTotals();
-                newB.setName(btp.getLabel() + "Billed");
-                newB.setCard(calTotalValueOwn(w, new BilledBill(), PaymentMethod.Card, btp));
-                finalCardTot += newB.getCard();
-                newB.setCash(calTotalValueOwn(w, new BilledBill(), PaymentMethod.Cash, btp));
-                finalCashTot += newB.getCash();
-                newB.setCheque(calTotalValueOwn(w, new BilledBill(), PaymentMethod.Cheque, btp));
-                finalChequeTot += newB.getCheque();
-                newB.setCredit(calTotalValueOwn(w, new BilledBill(), PaymentMethod.Credit, btp));
-                finalCreditTot += newB.getCredit();
-                newB.setSlip(calTotalValueOwn(w, new BilledBill(), PaymentMethod.Slip, btp));
-                finalSlipTot += newB.getSlip();
+                BillsTotals newB = createRow(btp, "Billed", new BilledBill(), webUser);
 
                 if (newB.getCard() != 0 || newB.getCash() != 0 || newB.getCheque() != 0 || newB.getCredit() != 0 || newB.getSlip() != 0) {
                     billls.add(newB);
                 }
 
-                BillsTotals newC = new BillsTotals();
-                newC.setName(btp.getLabel() + "Cancelled");
-                newC.setCard(calTotalValueOwn(w, new CancelledBill(), PaymentMethod.Card, btp));
-                finalCardTot += newC.getCard();
-                newC.setCash(calTotalValueOwn(w, new CancelledBill(), PaymentMethod.Cash, btp));
-                finalCashTot += newC.getCash();
-                newC.setCheque(calTotalValueOwn(w, new CancelledBill(), PaymentMethod.Cheque, btp));
-                finalChequeTot += newC.getCheque();
-                newC.setCredit(calTotalValueOwn(w, new CancelledBill(), PaymentMethod.Credit, btp));
-                finalCreditTot += newC.getCredit();
-                newC.setSlip(calTotalValueOwn(w, new CancelledBill(), PaymentMethod.Slip, btp));
-                finalSlipTot += newC.getSlip();
+                BillsTotals newC = createRow(btp, "Cancelled", new CancelledBill(), webUser);
 
                 if (newC.getCard() != 0 || newC.getCash() != 0 || newC.getCheque() != 0 || newC.getCredit() != 0 || newC.getSlip() != 0) {
                     billls.add(newC);
                 }
 
-                BillsTotals newR = new BillsTotals();
-                newR.setName(btp.getLabel() + "Refunded");
-                newR.setCard(calTotalValueOwn(w, new RefundBill(), PaymentMethod.Card, btp));
-                finalCardTot += newR.getCard();
-                newR.setCash(calTotalValueOwn(w, new RefundBill(), PaymentMethod.Cash, btp));
-                finalCashTot += newR.getCash();
-                newR.setCheque(calTotalValueOwn(w, new RefundBill(), PaymentMethod.Cheque, btp));
-                finalChequeTot += newR.getCheque();
-                newR.setCredit(calTotalValueOwn(w, new RefundBill(), PaymentMethod.Credit, btp));
-                finalCreditTot += newR.getCredit();
-                newR.setSlip(calTotalValueOwn(w, new RefundBill(), PaymentMethod.Slip, btp));
-                finalSlipTot += newR.getSlip();
+                BillsTotals newR = createRow(btp, "Refunded", new RefundBill(), webUser);
 
                 if (newR.getCard() != 0 || newR.getCash() != 0 || newR.getCheque() != 0 || newR.getCredit() != 0 || newR.getSlip() != 0) {
                     billls.add(newR);
@@ -175,12 +176,36 @@ public class CashierReportController implements Serializable {
 
             }
 
+            BillsTotals newIn = createRow(BillType.CashIn, "Billed", new BilledBill(), webUser);
+
+            if (newIn.getCard() != 0 || newIn.getCash() != 0 || newIn.getCheque() != 0 || newIn.getCredit() != 0 || newIn.getSlip() != 0) {
+                billls.add(newIn);
+            }
+
+            uCard += (newIn.getCard());
+            uCash += (newIn.getCash());
+            uCheque += (newIn.getCheque());
+            uCredit += (newIn.getCredit());
+            uSlip += (newIn.getSlip());
+            
+             BillsTotals newOut = createRow(BillType.CashOut, "Billed", new BilledBill(), webUser);
+
+            if (newOut.getCard() != 0 || newOut.getCash() != 0 || newOut.getCheque() != 0 || newOut.getCredit() != 0 || newOut.getSlip() != 0) {
+                billls.add(newOut);
+            }
+
+            uCard += (newOut.getCard());
+            uCash += (newOut.getCash());
+            uCheque += (newOut.getCheque());
+            uCredit += (newOut.getCredit());
+            uSlip += (newOut.getSlip());
+
+
 //            System.err.println("1 "+uCard);
 //            System.err.println("2 "+uCash);
 //            System.err.println("3 "+uCheque);
 //            System.err.println("4 "+uCredit);
 //            System.err.println("5 "+uSlip);
-
             BillsTotals newSum = new BillsTotals();
             newSum.setName("Total ");
             newSum.setBold(true);
@@ -202,7 +227,7 @@ public class CashierReportController implements Serializable {
     }
     private List<WebUserBillsTotal> webUserBillsTotals;
 
-    double calTotalValueOwn(WebUser w, Bill billClass, PaymentMethod pM, BillType billType) {
+    private double calTotalValueOwn(WebUser w, Bill billClass, PaymentMethod pM, BillType billType) {
 ////        int day= Calendar.HOUR_OF_DAY(getToDate())- Calendar.DATE(getFromDate()) ;
 //        Date a;
 //        a = Calendar.Date.getToDate()-Date.getFromDate();
@@ -224,6 +249,98 @@ public class CashierReportController implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("billTp", billType);
         temMap.put("payMethod", pM);
+        temMap.put("bill", billClass.getClass());
+        temMap.put("cret", w);
+        temMap.put("ins", getSessionController().getInstitution());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calTotalValueOwnInOutCash(WebUser w, Bill billClass, BillType billType) {
+
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select sum(b.cashTransaction.cashValue) from Bill b"
+                + "  where type(b)=:bill "
+                + " and b.creater=:cret "
+                + " and b.institution=:ins"
+                + " and b.billType= :billTp "
+                + "and b.createdAt between :fromDate and :toDate ";
+
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("billTp", billType);
+        temMap.put("bill", billClass.getClass());
+        temMap.put("cret", w);
+        temMap.put("ins", getSessionController().getInstitution());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calTotalValueOwnInOutCreditCard(WebUser w, Bill billClass, BillType billType) {
+
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select sum(b.cashTransaction.creditCardValue) from Bill b"
+                + "  where type(b)=:bill "
+                + " and b.creater=:cret "
+                + " and b.institution=:ins"
+                + " and b.billType= :billTp "
+                + "and b.createdAt between :fromDate and :toDate ";
+
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("billTp", billType);
+        temMap.put("bill", billClass.getClass());
+        temMap.put("cret", w);
+        temMap.put("ins", getSessionController().getInstitution());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calTotalValueOwnInOutCheque(WebUser w, Bill billClass, BillType billType) {
+
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select sum(b.cashTransaction.cheque) from Bill b"
+                + "  where type(b)=:bill "
+                + " and b.creater=:cret "
+                + " and b.institution=:ins"
+                + " and b.billType= :billTp "
+                + "and b.createdAt between :fromDate and :toDate ";
+
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("billTp", billType);
+        temMap.put("bill", billClass.getClass());
+        temMap.put("cret", w);
+        temMap.put("ins", getSessionController().getInstitution());
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calTotalValueOwnInOutSlip(WebUser w, Bill billClass, BillType billType) {
+
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select sum(b.cashTransaction.slipValue) from Bill b"
+                + "  where type(b)=:bill "
+                + " and b.creater=:cret "
+                + " and b.institution=:ins"
+                + " and b.billType= :billTp "
+                + "and b.createdAt between :fromDate and :toDate ";
+
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("billTp", billType);
         temMap.put("bill", billClass.getClass());
         temMap.put("cret", w);
         temMap.put("ins", getSessionController().getInstitution());

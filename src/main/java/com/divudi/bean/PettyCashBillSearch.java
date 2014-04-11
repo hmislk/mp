@@ -10,6 +10,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.entity.Bill;
@@ -117,14 +118,14 @@ public class PettyCashBillSearch implements Serializable {
     public List<Bill> getUserBillsOwn() {
         List<Bill> userBills;
         if (getUser() == null) {
-            userBills = new ArrayList<Bill>();
+            userBills = new ArrayList<>();
             //System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
             //System.out.println("user ok");
         }
         if (userBills == null) {
-            userBills = new ArrayList<Bill>();
+            userBills = new ArrayList<>();
         }
         return userBills;
     }
@@ -137,10 +138,6 @@ public class PettyCashBillSearch implements Serializable {
     }
 
     private LazyDataModel<Bill> searchBills;
-
- 
-    
-    
 
     public BillFeeFacade getBillFeeFacade() {
         return billFeeFacade;
@@ -319,6 +316,17 @@ public class PettyCashBillSearch implements Serializable {
         return false;
     }
 
+    @EJB
+    CashTransactionBean cashTransactionBean;
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
+
     public void cancelBill() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
             if (errorCheck()) {
@@ -337,6 +345,8 @@ public class PettyCashBillSearch implements Serializable {
                 getBilledBillFacade().edit(getBill());
                 UtilityController.addSuccessMessage("Cancelled");
 
+                WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+                getSessionController().setLoggedUser(wb);
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

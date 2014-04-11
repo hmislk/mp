@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 /**
@@ -30,26 +31,16 @@ public class CashTransaction implements Serializable {
     private Long id;
     @Enumerated(EnumType.STRING)
     private InOutType inOutType;
-    @ManyToOne
+    @OneToOne(mappedBy = "cashTransaction")
     private Bill bill;
     @ManyToOne
-    private CashierDrawer cashierDrawer;
+    private Drawer drawer;
+    @OneToOne(mappedBy = "cashTransaction")
+    private CashTransactionHistory cashTransactionHistory;
     /////////////
     private double tenderedAmount;
     private double ballanceAmount;
     /////////////////
-    private double qty1;
-    private double qty2;
-    private double qty5;
-    private double qty10;
-    private double qty20;
-    private double qty50;
-    private double qty100;
-    private double qty200;
-    private double qty500;
-    private double qty1000;
-    private double qty2000;
-    private double qty5000;
     //Created Properties
     @ManyToOne
     private WebUser creater;
@@ -62,6 +53,188 @@ public class CashTransaction implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date retiredAt;
     private String retireComments;
+///////////////////
+    private Double qty1;
+    private Double qty2;
+    private Double qty5;
+    private Double qty10;
+    private Double qty20;
+    private Double qty50;
+    private Double qty100;
+    private Double qty200;
+    private Double qty500;
+    private Double qty1000;
+    private Double qty2000;
+    private Double qty5000;
+    private Double qty10000;
+    Double creditCardValue;
+    Double chequeValue;
+    Double slipValue;
+    Double cashValue;
+
+    public Double getCashValue() {
+        return cashValue;
+    }
+
+    public void setCashValue(Double cashValue) {
+        this.cashValue = cashValue;
+    }
+
+    public Double getCreditCardValue() {
+        return creditCardValue;
+    }
+
+    public void setCreditCardValue(Double creditCardValue) {
+        this.creditCardValue = creditCardValue;
+    }
+
+    public Double getChequeValue() {
+        return chequeValue;
+    }
+
+    public void setChequeValue(Double chequeValue) {
+        this.chequeValue = chequeValue;
+    }
+
+    public Double getSlipValue() {
+        return slipValue;
+    }
+
+    public void setSlipValue(Double slipValue) {
+        this.slipValue = slipValue;
+    }
+
+    public Drawer getDrawer() {
+        return drawer;
+    }
+
+    public void setDrawer(Drawer drawer) {
+        this.drawer = drawer;
+    }
+
+    public void copyQty(CashTransaction cashTransaction) {
+        qty1 = cashTransaction.getQty1();
+        qty10 = cashTransaction.getQty10();
+        qty100 = cashTransaction.getQty100();
+        qty1000 = cashTransaction.getQty1000();
+        qty10000 = cashTransaction.getQty10000();
+        qty2 = cashTransaction.getQty2();
+        qty20 = cashTransaction.getQty20();
+        qty200 = cashTransaction.getQty200();
+        qty2000 = cashTransaction.getQty2000();
+        qty5 = cashTransaction.getQty5();
+        qty50 = cashTransaction.getQty50();
+        qty500 = cashTransaction.getQty500();
+        qty5000 = cashTransaction.getQty5000();
+        creditCardValue = cashTransaction.getCreditCardValue();
+        chequeValue = cashTransaction.getChequeValue();
+        slipValue = cashTransaction.getSlipValue();
+
+    }
+
+    public Double getQty1() {
+        return qty1;
+    }
+
+    public void setQty1(Double qty1) {
+        this.qty1 = qty1;
+    }
+
+    public Double getQty2() {
+        return qty2;
+    }
+
+    public void setQty2(Double qty2) {
+        this.qty2 = qty2;
+    }
+
+    public Double getQty5() {
+        return qty5;
+    }
+
+    public void setQty5(Double qty5) {
+        this.qty5 = qty5;
+    }
+
+    public Double getQty10() {
+        return qty10;
+    }
+
+    public void setQty10(Double qty10) {
+        this.qty10 = qty10;
+    }
+
+    public Double getQty20() {
+        return qty20;
+    }
+
+    public void setQty20(Double qty20) {
+        this.qty20 = qty20;
+    }
+
+    public Double getQty50() {
+        return qty50;
+    }
+
+    public void setQty50(Double qty50) {
+        this.qty50 = qty50;
+    }
+
+    public Double getQty100() {
+        return qty100;
+    }
+
+    public void setQty100(Double qty100) {
+        this.qty100 = qty100;
+    }
+
+    public Double getQty200() {
+        return qty200;
+    }
+
+    public void setQty200(Double qty200) {
+        this.qty200 = qty200;
+    }
+
+    public Double getQty500() {
+        return qty500;
+    }
+
+    public void setQty500(Double qty500) {
+        this.qty500 = qty500;
+    }
+
+    public Double getQty1000() {
+        return qty1000;
+    }
+
+    public void setQty1000(Double qty1000) {
+        this.qty1000 = qty1000;
+    }
+
+    public Double getQty2000() {
+        return qty2000;
+    }
+
+    public void setQty2000(Double qty2000) {
+        this.qty2000 = qty2000;
+    }
+
+    public Double getQty5000() {
+        return qty5000;
+    }
+
+    public void setQty5000(Double qty5000) {
+        this.qty5000 = qty5000;
+    }
+
+    public Double getQty10000() {
+        return qty10000;
+    }
+
+    public void setQty10000(Double qty10000) {
+        this.qty10000 = qty10000;
+    }
 
     public Long getId() {
         return id;
@@ -110,102 +283,6 @@ public class CashTransaction implements Serializable {
 
     public void setBallanceAmount(double ballanceAmount) {
         this.ballanceAmount = ballanceAmount;
-    }
-
-    public double getQty1() {
-        return qty1;
-    }
-
-    public void setQty1(double qty1) {
-        this.qty1 = qty1;
-    }
-
-    public double getQty2() {
-        return qty2;
-    }
-
-    public void setQty2(double qty2) {
-        this.qty2 = qty2;
-    }
-
-    public double getQty5() {
-        return qty5;
-    }
-
-    public void setQty5(double qty5) {
-        this.qty5 = qty5;
-    }
-
-    public double getQty10() {
-        return qty10;
-    }
-
-    public void setQty10(double qty10) {
-        this.qty10 = qty10;
-    }
-
-    public double getQty20() {
-        return qty20;
-    }
-
-    public void setQty20(double qty20) {
-        this.qty20 = qty20;
-    }
-
-    public double getQty50() {
-        return qty50;
-    }
-
-    public void setQty50(double qty50) {
-        this.qty50 = qty50;
-    }
-
-    public double getQty100() {
-        return qty100;
-    }
-
-    public void setQty100(double qty100) {
-        this.qty100 = qty100;
-    }
-
-    public double getQty200() {
-        return qty200;
-    }
-
-    public void setQty200(double qty200) {
-        this.qty200 = qty200;
-    }
-
-    public double getQty500() {
-        return qty500;
-    }
-
-    public void setQty500(double qty500) {
-        this.qty500 = qty500;
-    }
-
-    public double getQty1000() {
-        return qty1000;
-    }
-
-    public void setQty1000(double qty1000) {
-        this.qty1000 = qty1000;
-    }
-
-    public double getQty2000() {
-        return qty2000;
-    }
-
-    public void setQty2000(double qty2000) {
-        this.qty2000 = qty2000;
-    }
-
-    public double getQty5000() {
-        return qty5000;
-    }
-
-    public void setQty5000(double qty5000) {
-        this.qty5000 = qty5000;
     }
 
     public InOutType getInOutType() {
@@ -272,12 +349,12 @@ public class CashTransaction implements Serializable {
         this.retireComments = retireComments;
     }
 
-    public CashierDrawer getCashierDrawer() {
-        return cashierDrawer;
+    public CashTransactionHistory getCashTransactionHistory() {
+        return cashTransactionHistory;
     }
 
-    public void setCashierDrawer(CashierDrawer cashierDrawer) {
-        this.cashierDrawer = cashierDrawer;
+    public void setCashTransactionHistory(CashTransactionHistory cashTransactionHistory) {
+        this.cashTransactionHistory = cashTransactionHistory;
     }
 
 }

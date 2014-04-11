@@ -6,7 +6,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp">
+                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
+                xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
 
 
 
@@ -24,34 +25,21 @@
                                 <p:selectOneMenu   id="cmbPs" value="#{billPackageMedicalController.paymentScheme}" >
                                     <!--<f:selectItem itemLabel="Select Payment Method" />-->                                    
                                     <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                    <p:ajax process="cmbPs" update="pBillDetails tblBillItem lblCardRef creditBank txtCardRef lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />
+                                    <p:ajax process="cmbPs" update="pBillDetails tblBillItem creditCard cheque slip" event="change" />
                                 </p:selectOneMenu>
 
-                                <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display:#{billPackageMedicalController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                                <p:inputMask mask="9999-9999-9999-9999" id="txtCardRef" autocomplete="off" maxlength="16" value="#{billPackageMedicalController.creditCardRefNo}" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="creditBank" value="#{billPackageMedicalController.creditBank}" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
+                                <h:panelGroup id="creditCard" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                    <pa:creditCard paymentMethodData="#{billPackageMedicalController.paymentMethodData}"/>
+                                </h:panelGroup>
 
+                                <h:panelGroup id="cheque" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                    <pa:cheque paymentMethodData="#{billPackageMedicalController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                <p:inputText  id="txtCheqRef" value="#{billPackageMedicalController.chequeRefNo}" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="bank" value="#{billPackageMedicalController.chequeBank}" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
-                                <p:calendar id="chequeDate"  value="#{billPackageMedicalController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                                </p:calendar>
+                                <h:panelGroup id="slip" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                    <pa:slip paymentMethodData="#{billPackageMedicalController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                <p:inputText  id="txtSlipRef" value="#{billPackageMedicalController.comment}" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                                <h:selectOneMenu id="slipBank" value="#{billPackageMedicalController.slipBank}" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                    <f:selectItem itemLabel="Select Bank"/>
-                                    <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                                </h:selectOneMenu>
-                                <p:calendar id="slipDate"  value="#{billPackageMedicalController.slipDate}" pattern="dd MMMM yyyy" style="display: #{billPackageMedicalController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                                </p:calendar>
 
                                 <p:commandButton  value="Settle" action="#{billPackageMedicalController.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                                 </p:commandButton>
@@ -116,7 +104,7 @@
                                             <p:column>
                                                 #{ix.total}
                                             </p:column>
-                                             <p:column>
+                                            <p:column>
                                                 #{ix.forInstitution.name}
                                             </p:column>
 
@@ -174,7 +162,7 @@
                                             </p:autoComplete>
                                             <p:commandButton id="btnAddNewDoc" type="button" value="Add New Doctor" onclick="dlg.show();" actionListener="#{doctorController.prepareAdd}" process="btnAddNewDoc" update="#{p:component('panDoc')}" />  
                                         </p:tab>
-                                                                          
+
                                         <p:tab title="Staff">
                                             <p:autoComplete forceSelection="true" converter="stfcon" value="#{billPackageMedicalController.staff}" completeMethod="#{staffController.completeStaff}" var="ix2" itemLabel="#{ix2.person.name}" itemValue="#{ix2}" size="30"  style="width: 400px;">
                                             </p:autoComplete>

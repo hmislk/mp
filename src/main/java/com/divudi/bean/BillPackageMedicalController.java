@@ -13,29 +13,34 @@ import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
+import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.ServiceSessionBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
-import com.divudi.entity.Packege;
 import com.divudi.entity.Patient;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.BillSessionFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientInvestigationFacade;
 import com.divudi.facade.PersonFacade;
@@ -45,6 +50,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.enterprise.context.SessionScoped;
@@ -60,7 +66,7 @@ import org.primefaces.event.TabChangeEvent;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -88,9 +94,6 @@ public class BillPackageMedicalController implements Serializable {
     private double netTotal;
     private double cashPaid;
     private double cashBalance;
-    private String creditCardRefNo;
-    private String chequeRefNo;
-    private Institution chequeBank;
     private BillItem currentBillItem;
     //Bill Items
     private List<BillComponent> lstBillComponents;
@@ -117,22 +120,64 @@ public class BillPackageMedicalController implements Serializable {
     //Temprory Variable
     private Patient tmpPatient;
     List<Bill> bills;
-    private Institution slipBank;
-    private String comment;
-    private Institution creditBank;
-    private Date chequeDate;
-    private Date slipDate;
     @Inject
     private BillSearch billSearch;
+    PaymentMethodData paymentMethodData;
+
+    public PaymentMethodData getPaymentMethodData() {
+        if (paymentMethodData == null) {
+            paymentMethodData = new PaymentMethodData();
+        }
+        return paymentMethodData;
+    }
+
+    public void setPaymentMethodData(PaymentMethodData paymentMethodData) {
+        this.paymentMethodData = paymentMethodData;
+    }
+
+    @EJB
+    CashTransactionBean cashTransactionBean;
+    @EJB
+    BillSessionFacade billSessionFacade;
+
+    public BillSessionFacade getBillSessionFacade() {
+        return billSessionFacade;
+    }
+
+    public void setBillSessionFacade(BillSessionFacade billSessionFacade) {
+        this.billSessionFacade = billSessionFacade;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
+    }
 
     public void cancellAll() {
+        Bill tmp = new CancelledBill();
+        tmp.setCreatedAt(new Date());
+        tmp.setCreater(getSessionController().getLoggedUser());
+        getBillFacade().create(tmp);
+
+        Bill billedBill = null;
         for (Bill b : bills) {
+            billedBill = b.getBackwardReferenceBill();
             getBillSearch().setBill((BilledBill) b);
             getBillSearch().setPaymentScheme(b.getPaymentScheme());
             getBillSearch().setComment("Batch Cancell");
-            //  //System.out.println("ggg : " + getBillSearch().getComment());
+            //System.out.println("ggg : " + getBillSearch().getComment());
             getBillSearch().cancelBill();
         }
+
+        tmp.copy(billedBill);
+        tmp.setBilledBill(billedBill);
+
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
+
     }
 
     public Title[] getTitle() {
@@ -195,7 +240,7 @@ public class BillPackageMedicalController implements Serializable {
             List<BillEntry> tmp = new ArrayList<>();
             for (BillEntry e : lstBillEntries) {
 
-                if (e.getBillItem().getItem().getDepartment().getId() == d.getId()) {
+                if (Objects.equals(e.getBillItem().getItem().getDepartment().getId(), d.getId())) {
                     getBillBean().saveBillItem(myBill, e, getSessionController().getLoggedUser());
                     // getBillBean().calculateBillItem(myBill, e);                
                     tmp.add(e);
@@ -226,16 +271,67 @@ public class BillPackageMedicalController implements Serializable {
             //   //System.out.println("22");
         }
 
+        saveBatchBill();
+        saveBillItemSessions();
+
         clearBillItemValues();
         //System.out.println("33");
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
     }
 
+    @EJB
+    ServiceSessionBean serviceSessionBean;
+
+    public ServiceSessionBean getServiceSessionBean() {
+        return serviceSessionBean;
+    }
+
+    public void setServiceSessionBean(ServiceSessionBean serviceSessionBean) {
+        this.serviceSessionBean = serviceSessionBean;
+    }
+
+    private void saveBillItemSessions() {
+        for (BillEntry be : lstBillEntries) {
+            be.getBillItem().setBillSession(getServiceSessionBean().createBillSession(be.getBillItem()));
+
+            if (be.getBillItem().getBillSession() != null) {
+                getBillSessionFacade().create(be.getBillItem().getBillSession());
+
+            }
+
+        }
+    }
+
+    private void saveBatchBill() {
+        Bill tmp = new BilledBill();
+        tmp.setBillType(BillType.OpdBathcBill);
+        tmp.setPaymentScheme(paymentScheme);
+        tmp.setCreatedAt(new Date());
+        tmp.setCreater(getSessionController().getLoggedUser());
+        getBillFacade().create(tmp);
+
+        double dbl = 0;
+        for (Bill b : bills) {
+            b.setBackwardReferenceBill(tmp);
+            dbl += b.getNetTotal();
+            getBillFacade().edit(b);
+
+            tmp.getForwardReferenceBills().add(b);
+        }
+
+        tmp.setNetTotal(dbl);
+        getBillFacade().edit(tmp);
+
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
+
+    }
+
     private Bill saveBill(Department bt, BilledBill temp) {
 
         temp.setDeptId(getBillNumberBean().departmentBillNumberGenerator(getSessionController().getDepartment(), bt, BillType.OpdBill));
-       temp.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(),bt,new BilledBill(),BillType.OpdBill,BillNumberSuffix.PACK));
+        temp.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), bt, new BilledBill(), BillType.OpdBill, BillNumberSuffix.PACK));
         //getCurrent().setCashBalance(cashBalance); 
         //getCurrent().setCashPaid(cashPaid);
         //  temp.setBillType(bt);
@@ -257,22 +353,7 @@ public class BillPackageMedicalController implements Serializable {
         //System.err.println("aaaa : " + getCreditCompany());
         temp.setCreditCompany(getCreditCompany());
 
-        if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Cheque)) {
-            temp.setBank(chequeBank);
-            temp.setChequeRefNo(chequeRefNo);
-            temp.setChequeDate(chequeDate);
-        }
-
-        if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Slip)) {
-            temp.setBank(slipBank);
-            temp.setChequeDate(slipDate);
-            temp.setComments(comment);
-        }
-
-        if (paymentScheme.getPaymentMethod().equals(PaymentMethod.Card)) {
-            temp.setCreditCardRefNo(creditCardRefNo);
-            temp.setBank(creditBank);
-        }
+        getBillBean().setPaymentMethodData(temp, getPaymentScheme().getPaymentMethod(), getPaymentMethodData());
 
         temp.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         temp.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -285,6 +366,17 @@ public class BillPackageMedicalController implements Serializable {
         getFacade().create(temp);
         return temp;
 
+    }
+
+    @Inject
+    PaymentSchemeController paymentSchemeController;
+
+    public PaymentSchemeController getPaymentSchemeController() {
+        return paymentSchemeController;
+    }
+
+    public void setPaymentSchemeController(PaymentSchemeController paymentSchemeController) {
+        this.paymentSchemeController = paymentSchemeController;
     }
 
     private boolean errorCheck() {
@@ -307,37 +399,16 @@ public class BillPackageMedicalController implements Serializable {
 
         }
         if (getLstBillEntries().isEmpty()) {
-
             UtilityController.addErrorMessage("No investigations are added to the bill to settle");
             return true;
         }
 
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod().toString().equals("Cheque")) {
-            if (getChequeBank() == null || getChequeRefNo() == null || getChequeDate() == null) {
-                UtilityController.addErrorMessage("Please select Cheque Number and Bank");
-                return true;
-            }
+        if (getPaymentScheme() == null) {
+            return true;
         }
 
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Slip) {
-            if (getSlipBank() == null || getComment() == null || getSlipDate() == null) {
-                UtilityController.addErrorMessage("Please Fill Memo,Bank and Slip Date ");
-                return true;
-            }
-
-        }
-
-        if (paymentScheme != null && paymentScheme.getPaymentMethod() != null && paymentScheme.getPaymentMethod() == PaymentMethod.Card) {
-            if (getCreditBank() == null || getCreditCardRefNo() == null) {
-                UtilityController.addErrorMessage("Please Fill Credit Card Number,Bank and Cheque Date");
-                return true;
-            }
-
-            if (getCreditCardRefNo().trim().length() < 16) {
-                UtilityController.addErrorMessage("Enter 16 Digit");
-                return true;
-            }
-
+        if (getPaymentSchemeController().errorCheckPaymentScheme(getPaymentScheme().getPaymentMethod(), getPaymentMethodData())) {
+            return true;
         }
 
         if (paymentScheme.getPaymentMethod() == PaymentMethod.Cash) {
@@ -460,14 +531,7 @@ public class BillPackageMedicalController implements Serializable {
         setCreditCompany(null);
         setYearMonthDay(null);
         setBills(null);
-        setComment("");
-        setChequeBank(null);
-        setSlipBank(null);
-        setChequeRefNo("");
-        setCreditCardRefNo("");
-        setChequeDate(null);
-        setSlipDate(null);
-
+        paymentMethodData = null;
         setCurrentBillItem(null);
         setLstBillComponents(null);
         setLstBillEntries(null);
@@ -485,6 +549,7 @@ public class BillPackageMedicalController implements Serializable {
     }
 
     public String prepareNewBill() {
+        paymentMethodData = null;
         clearBillItemValues();
         clearBillValues();
         setPrintPreview(true);
@@ -714,31 +779,6 @@ public class BillPackageMedicalController implements Serializable {
         this.cashBalance = cashBalance;
     }
 
-    public String getCreditCardRefNo() {
-        return creditCardRefNo;
-    }
-
-    public void setCreditCardRefNo(String creditCardRefNo) {
-        this.creditCardRefNo = creditCardRefNo;
-    }
-
-    public String getChequeRefNo() {
-        return chequeRefNo;
-    }
-
-    public void setChequeRefNo(String chequeRefNo) {
-        this.chequeRefNo = chequeRefNo;
-    }
-
-    public Institution getChequeBank() {
-
-        return chequeBank;
-    }
-
-    public void setChequeBank(Institution chequeBank) {
-        this.chequeBank = chequeBank;
-    }
-
     public BillItem getCurrentBillItem() {
         if (currentBillItem == null) {
             currentBillItem = new BillItem();
@@ -837,46 +877,6 @@ public class BillPackageMedicalController implements Serializable {
     public void setBillItemFacade(BillItemFacade billItemFacade) {
         this.billItemFacade = billItemFacade;
 
-    }
-
-    public Institution getSlipBank() {
-        return slipBank;
-    }
-
-    public void setSlipBank(Institution slipBank) {
-        this.slipBank = slipBank;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Institution getCreditBank() {
-        return creditBank;
-    }
-
-    public void setCreditBank(Institution creditBank) {
-        this.creditBank = creditBank;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
-
-    public Date getSlipDate() {
-        return slipDate;
-    }
-
-    public void setSlipDate(Date slipDate) {
-        this.slipDate = slipDate;
     }
 
     public BillSearch getBillSearch() {

@@ -6,7 +6,7 @@
 
 package com.divudi.facade;
 
-import com.divudi.entity.CashierDrawer;
+import com.divudi.entity.Drawer;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  * @author safrin
  */
 @Stateless
-public class CashierDrawerFacade extends AbstractFacade<CashierDrawer> {
+public class DrawerFacade extends AbstractFacade<Drawer> {
     @PersistenceContext(unitName = "hmisPU")
     private EntityManager em;
 
@@ -25,8 +25,8 @@ public class CashierDrawerFacade extends AbstractFacade<CashierDrawer> {
         return em;
     }
 
-    public CashierDrawerFacade() {
-        super(CashierDrawer.class);
+    public DrawerFacade() {
+        super(Drawer.class);
     }
     
 }

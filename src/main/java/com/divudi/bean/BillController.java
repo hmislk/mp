@@ -19,9 +19,9 @@ import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.ServiceSessionBean;
-import com.divudi.entity.BatchBill;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -29,14 +29,15 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BillSession;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Doctor;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Patient;
-import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
+import com.divudi.entity.WebUser;
 import com.divudi.facade.BatchBillFacade;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
@@ -139,6 +140,8 @@ public class BillController implements Serializable {
     String strTenderedValue;
     private YearMonthDay yearMonthDay;
     private PaymentMethodData paymentMethodData;
+    @EJB
+    private CashTransactionBean cashTransactionBean;
 
     public boolean findByFilter(String property, String value) {
         String sql = "Select b From Bill b where b.retired=false and upper(b." + property + ") like '%" + value.toUpperCase() + " %'";
@@ -492,26 +495,41 @@ public class BillController implements Serializable {
     private BatchBillFacade batchBillFacade;
 
     private void saveBatchBill() {
-        BatchBill tmp = new BatchBill();
+        Bill tmp = new BilledBill();
+        tmp.setBillType(BillType.OpdBathcBill);
+        tmp.setPaymentScheme(paymentScheme);
         tmp.setCreatedAt(new Date());
         tmp.setCreater(getSessionController().getLoggedUser());
-        for (Bill b : bills) {
-            tmp.getListBill().add(b);
-        }
+        getBillFacade().create(tmp);
 
-        getBatchBillFacade().create(tmp);
-
+        double dbl = 0;
         for (Bill b : bills) {
-            b.setBatchBill(tmp);
+            b.setBackwardReferenceBill(tmp);
+            dbl += b.getNetTotal();
             getBillFacade().edit(b);
+
+            tmp.getForwardReferenceBills().add(b);
         }
+
+        tmp.setNetTotal(dbl);
+        getBillFacade().edit(tmp);
+
+        WebUser wb = getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
     }
 
     @Inject
     private BillSearch billSearch;
 
     public void cancellAll() {
+        Bill tmp = new CancelledBill();
+        tmp.setCreatedAt(new Date());
+        tmp.setCreater(getSessionController().getLoggedUser());
+        getBillFacade().create(tmp);
+
+        Bill billedBill = null;
         for (Bill b : bills) {
+            billedBill = b.getBackwardReferenceBill();
             getBillSearch().setBill((BilledBill) b);
             getBillSearch().setPaymentScheme(b.getPaymentScheme());
             getBillSearch().setComment("Batch Cancell");
@@ -519,6 +537,11 @@ public class BillController implements Serializable {
             getBillSearch().cancelBill();
         }
 
+        tmp.copy(billedBill);
+        tmp.setBilledBill(billedBill);
+
+        WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(tmp, getSessionController().getLoggedUser());
+        getSessionController().setLoggedUser(wb);
     }
 
     public void dateChangeListen() {
@@ -876,6 +899,7 @@ public class BillController implements Serializable {
         clearBillValues();
         setPrintPreview(true);
         printPreview = false;
+        paymentMethodData = null;
         //  return "opd_bill";
     }
 
@@ -1320,6 +1344,14 @@ public class BillController implements Serializable {
 
     public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
         this.patientEncounterFacade = patientEncounterFacade;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 
     /**

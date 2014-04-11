@@ -10,6 +10,7 @@ import com.divudi.bean.WebUserController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.EjbApplication;
 import com.divudi.ejb.InwardBean;
@@ -471,6 +472,8 @@ public class InwardSearch implements Serializable {
 
     @EJB
     private InwardBean inwardBean;
+    @EJB
+    CashTransactionBean cashTransactionBean;
 
     public void cancelBillPayment() {
         if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
@@ -502,6 +505,8 @@ public class InwardSearch implements Serializable {
 
             }
 
+            WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -511,6 +516,14 @@ public class InwardSearch implements Serializable {
             return;
         }
 
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 
     public void cancelBillRefund() {
@@ -537,6 +550,8 @@ public class InwardSearch implements Serializable {
 
             }
 
+            WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             UtilityController.addSuccessMessage("Cancelled");
 
             printPreview = true;
@@ -675,6 +690,8 @@ public class InwardSearch implements Serializable {
             getBillFacade().edit((BilledBill) getBill());
             UtilityController.addSuccessMessage("Cancelled");
 
+            WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
             printPreview = true;
 
         } else {

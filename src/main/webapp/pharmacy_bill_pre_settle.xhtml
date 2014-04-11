@@ -5,7 +5,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+      xmlns:ph="http://java.sun.com/jsf/composite/pharmacy"
+      xmlns:pa="http://java.sun.com/jsf/composite/paymentMethod">
 
     <body>
 
@@ -23,36 +24,20 @@
                             <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
                             <p:selectOneMenu   id="cmbPs" value="#{pharmacyPreSettleController.preBill.paymentScheme}"  disabled="true" >                                                                     
                                 <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                <p:ajax process="cmbPs wsd wcd" update="lblCardRef txtCardRef creditBank lblCheqRef txtCheqRef bank chequeDate lblSlipRef
-                                        txtSlipRef slipBank slipDate " event="change" />
-                                <!--<p:ajax process="cmbPs wsd wcd" update="pBillDetails  tblBillItem lblCardRef txtCardRef creditBank lblCheqRef txtCheqRef chequeDate bank lblSlipRef txtSlipRef slipBank slipDate" event="change" />-->
+                                <p:ajax process="cmbPs wsd wcd" update="creditCard cheque slip " event="change" />
                             </p:selectOneMenu>
 
-                            <h:outputLabel id="lblCardRef" value="Card Ref. No" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                            <p:inputText id="txtCardRef" autocomplete="off"  value="#{pharmacyPreSettleController.creditCardRefNo}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; " />                                
-                            <h:selectOneMenu id="creditBank" value="#{pharmacyPreSettleController.creditBank}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
+                            <h:panelGroup id="creditCard" style="display:#{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{pharmacyPreSettleController.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblCheqRef" value="Cheque No" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtCheqRef" value="#{pharmacyPreSettleController.chequeRefNo}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="bank" value="#{pharmacyPreSettleController.chequeBank}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-                            <p:calendar id="chequeDate"  value="#{pharmacyPreSettleController.chequeDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="cheque" style="display:#{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{pharmacyPreSettleController.paymentMethodData}"/>
+                            </h:panelGroup>
 
-                            <h:outputLabel id="lblSlipRef" value="Slip Memo" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <p:inputText  id="txtSlipRef" value="#{pharmacyPreSettleController.comment}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; " />
-                            <h:selectOneMenu id="slipBank" value="#{pharmacyPreSettleController.slipBank}" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">
-                                <f:selectItem itemLabel="Select Bank"/>
-                                <f:selectItems value="#{institutionController.banks}" var="inst" itemLabel="#{inst.name}" itemValue="#{inst}"/>
-                            </h:selectOneMenu>
-
-                            <p:calendar id="slipDate"  value="#{pharmacyPreSettleController.slipDate}" pattern="dd MMMM yyyy" style="display: #{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ; ">                            
-                            </p:calendar>
+                            <h:panelGroup id="slip" style="display:#{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{pharmacyPreSettleController.paymentMethodData}"/>
+                            </h:panelGroup>
 
                             <p:commandButton ajax= "false"  value="Settle and Accept Payment" action="#{pharmacyPreSettleController.settleBillWithPay2}" ></p:commandButton>
 

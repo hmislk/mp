@@ -220,15 +220,38 @@ public class UserPrivilageController implements Serializable {
         TreeNode node200531 = new PrivilageNode("GRN Payment", node20053, Privileges.StoreDealorPaymentPaymentGRN);
         TreeNode node200532 = new PrivilageNode("GRN Payment(Select)", node20053, Privileges.StoreDealorPaymentPaymentGRNSelect);
         TreeNode node20054 = new PrivilageNode("GRN Payment Due Search", node2005, Privileges.StoreDealorPaymentGRNDoneSearch);
-        TreeNode node2006=new PrivilageNode("Search", node20);
-        TreeNode node20060=new PrivilageNode("Search Menu", node2006, Privileges.StoreSearch);
-        TreeNode node2007=new PrivilageNode("Report", node20);
-        TreeNode node20070=new PrivilageNode("Report Menu", node2007, Privileges.StoreReports);
-        TreeNode node2008=new PrivilageNode("Summery", node20);
-        TreeNode node20080=new PrivilageNode("Summery Menu", node2008, Privileges.StoreSummery);
-        TreeNode node2009=new PrivilageNode("Administration", node20);
-        TreeNode node20090=new PrivilageNode("Administration Menu", node2009, Privileges.StoreAdministration);
+        TreeNode node2006 = new PrivilageNode("Search", node20);
+        TreeNode node20060 = new PrivilageNode("Search Menu", node2006, Privileges.StoreSearch);
+        TreeNode node2007 = new PrivilageNode("Report", node20);
+        TreeNode node20070 = new PrivilageNode("Report Menu", node2007, Privileges.StoreReports);
+        TreeNode node2008 = new PrivilageNode("Summery", node20);
+        TreeNode node20080 = new PrivilageNode("Summery Menu", node2008, Privileges.StoreSummery);
+        TreeNode node2009 = new PrivilageNode("Administration", node20);
+        TreeNode node20090 = new PrivilageNode("Administration Menu", node2009, Privileges.StoreAdministration);
 
+        TreeNode node21 = new PrivilageNode("Search", tmproot);
+        TreeNode node2100 = new PrivilageNode("Search Menu", node21, Privileges.Search);
+        TreeNode node2101 = new PrivilageNode("Grand Search", node21, Privileges.SearchGrand);
+
+        TreeNode node22 =new PrivilageNode("Cash Transaction", tmproot);
+        TreeNode node2200=new PrivilageNode("Cash Transaction Menu", node22, Privileges.CashTransaction);
+        TreeNode node2201=new PrivilageNode("Cash In", node22, Privileges.CashTransactionCashIn);
+        TreeNode node2202=new PrivilageNode("Cash Out", node22, Privileges.CashTransactionCashOut);
+        TreeNode node2203=new PrivilageNode("List To Cash Recieve", node22, Privileges.CashTransactionListToCashRecieve);
+        
+        TreeNode node23=new PrivilageNode("Channelling", tmproot);
+        TreeNode node2300=new PrivilageNode("Channelling Menu", node23, Privileges.Channelling);
+        TreeNode node2301=new PrivilageNode("Channel Booking", node23, Privileges.ChannellingChannelBooking);
+        TreeNode node2302=new PrivilageNode("Past Booking", node23, Privileges.ChannellingPastBooking);
+        TreeNode node2303=new PrivilageNode("Booked List", node23, Privileges.ChannellingBookedList);
+        TreeNode node2304=new PrivilageNode("Doctor Leave", node23, Privileges.ChannellingDoctorLeave);
+        TreeNode node2305=new PrivilageNode("Channel Sheduling", node23, Privileges.ChannellingChannelSheduling);
+        TreeNode node2306=new PrivilageNode("Channel Agent Fee", node23, Privileges.ChannellingChannelAgentFee);
+        TreeNode node2307=new PrivilageNode("Payment", node23);
+        TreeNode node23070=new PrivilageNode("Payment Menu", node2307, Privileges.ChannellingPayment);
+        TreeNode node23071=new PrivilageNode("Pay Doctor", node2307, Privileges.ChannellingPaymentPayDoctor);
+        TreeNode node23072=new PrivilageNode("Payment Due Search", node2307, Privileges.ChannellingPaymentDueSearch);
+        TreeNode node23073=new PrivilageNode("Payment Done Search", node2307, Privileges.ChannellingPaymentDoneSearch);
 
         return tmproot;
     }

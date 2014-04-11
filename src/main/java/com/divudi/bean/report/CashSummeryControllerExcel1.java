@@ -290,17 +290,22 @@ public class CashSummeryControllerExcel1 implements Serializable {
 
     private void createOtherInstituion() {
         System.err.println("createOtherInstituion");
+        otherHospitalTotal = 0;
+        otherProfessionalTotal = 0;
         otherInstitution = new ArrayList<>();
-        otherHospitalTotal = getOtherInstitutionNotStaffFee(FeeType.Staff);
-        otherProfessionalTotal = getOtherInstitutionFees(FeeType.Staff);
-        if ((otherHospitalTotal + otherProfessionalTotal) != 0) {
+        double totaltFee = getOtherInstitutionFees();
+        double proTotal = getOtherInstitutionFees(FeeType.Staff);
+        if ((totaltFee) != 0) {
             String1Value3 tmp = new String1Value3();
             tmp.setString("Outer Institution");
-            tmp.setValue1(otherHospitalTotal);
-            tmp.setValue2(otherProfessionalTotal);
-            tmp.setValue3(otherHospitalTotal + otherProfessionalTotal);
+            tmp.setValue1(totaltFee - proTotal);
+            tmp.setValue2(proTotal);
+            tmp.setValue3(totaltFee);
 
             otherInstitution.add(tmp);
+
+            otherHospitalTotal = totaltFee - proTotal;
+            otherProfessionalTotal = proTotal;
         }
     }
 
@@ -413,7 +418,31 @@ public class CashSummeryControllerExcel1 implements Serializable {
 
         return val;
     }
-    
+
+    public double getOtherInstitutionFees() {
+        String sql = "SELECT sum(bf.feeValue) "
+                + " FROM BillFee bf"
+                + " WHERE bf.billItem.bill.institution=:ins "
+                + " and bf.billItem.item.institution!=:ins "
+                + " and bf.createdAt between :fromDate and :toDate "
+                + " and (bf.billItem.bill.paymentMethod = :pm1 "
+                + " or bf.billItem.bill.paymentMethod = :pm2 "
+                + " or bf.billItem.bill.paymentMethod = :pm3 "
+                + " or bf.billItem.bill.paymentMethod = :pm4)";
+
+        HashMap temMap = new HashMap();
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getInstitution());
+        temMap.put("pm1", PaymentMethod.Cash);
+        temMap.put("pm2", PaymentMethod.Card);
+        temMap.put("pm3", PaymentMethod.Cheque);
+        temMap.put("pm4", PaymentMethod.Slip);
+        double val = getBillFeeFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+        return val;
+    }
+
     public double getOtherInstitutionNotStaffFee(FeeType feeType) {
         String sql = "SELECT sum(bf.feeValue) "
                 + " FROM BillFee bf"
@@ -908,13 +937,13 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     public void createCashCategoryWithoutPro() {
-        long lng=getCommonFunctions().getDayCount(getFromDate(), getToDate());
-        
-        if(Math.abs(lng)>2){
+        long lng = getCommonFunctions().getDayCount(getFromDate(), getToDate());
+
+        if (Math.abs(lng) > 2) {
             UtilityController.addErrorMessage("Date Range is too Long");
             return;
         }
-        
+
         createOPdCategoryTable();
         createOtherInstituion();
         createPharmacySale();

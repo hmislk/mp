@@ -110,6 +110,24 @@ public class PatientEncounter implements Serializable {
     private boolean paymentFinalized;
     String referanceNo;
     String policyNo;
+    boolean foriegner;
+    boolean claimable;
+
+    public boolean isForiegner() {
+        return foriegner;
+    }
+
+    public void setForiegner(boolean foriegner) {
+        this.foriegner = foriegner;
+    }
+
+    public boolean isClaimable() {
+        return claimable;
+    }
+
+    public void setClaimable(boolean claimable) {
+        this.claimable = claimable;
+    }
     @Lob
     String comments;
     @Transient

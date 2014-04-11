@@ -1178,6 +1178,34 @@ public class CommonReport implements Serializable {
 
     }
 
+    public void createTableByBillTypeWebUser() {
+        billedBills = null;
+        cancellededBills = null;
+        refundedBills = null;
+        List<Bill> list = null;
+        getBilledBills().setBills(userBillsOwn(new BilledBill(), billType, webUser));
+        getBilledBills().setCard(calValue(new BilledBill(), billType, PaymentMethod.Card, webUser));
+        getBilledBills().setCash(calValue(new BilledBill(), billType, PaymentMethod.Cash, webUser));
+        getBilledBills().setCheque(calValue(new BilledBill(), billType, PaymentMethod.Cheque, webUser));
+        getBilledBills().setCredit(calValue(new BilledBill(), billType, PaymentMethod.Credit, webUser));
+        getBilledBills().setSlip(calValue(new BilledBill(), billType, PaymentMethod.Slip, webUser));
+        ////////////
+        getCancellededBills().setBills(userBillsOwn(new CancelledBill(), billType, webUser));
+        getCancellededBills().setCard(calValue(new CancelledBill(), billType, PaymentMethod.Card, webUser));
+        getCancellededBills().setCash(calValue(new CancelledBill(), billType, PaymentMethod.Cash, webUser));
+        getCancellededBills().setCheque(calValue(new CancelledBill(), billType, PaymentMethod.Cheque, webUser));
+        getCancellededBills().setCredit(calValue(new CancelledBill(), billType, PaymentMethod.Credit, webUser));
+        getCancellededBills().setSlip(calValue(new CancelledBill(), billType, PaymentMethod.Slip, webUser));
+        /////////////
+        getRefundedBills().setBills(userBillsOwn(new RefundBill(), billType, webUser));
+        getRefundedBills().setCard(calValue(new RefundBill(), billType, PaymentMethod.Card, webUser));
+        getRefundedBills().setCash(calValue(new RefundBill(), billType, PaymentMethod.Cash, webUser));
+        getRefundedBills().setCheque(calValue(new RefundBill(), billType, PaymentMethod.Cheque, webUser));
+        getRefundedBills().setCredit(calValue(new RefundBill(), billType, PaymentMethod.Credit, webUser));
+        getRefundedBills().setSlip(calValue(new RefundBill(), billType, PaymentMethod.Slip, webUser));
+
+    }
+
     public void createCashierTableByUser() {
         recreteModal();
         //Opd Billed Bills

@@ -496,11 +496,14 @@ public class CashSummeryControllerExcel implements Serializable {
     }
 
     public List<BillFee> getPathologyFees() {
-        String sql = "SELECT bf FROM BillFee bf WHERE bf.billItem.bill.institution=:ins "
+        String sql = "SELECT bf FROM BillFee bf"
+                + " WHERE bf.billItem.bill.institution=:ins "
                 + " and bf.billItem.item.institution!=:ins "
-                + " and  bf.createdAt between :fromDate and :toDate  and "
-                + "( bf.billItem.bill.paymentMethod = :pm1 or  bf.billItem.bill.paymentMethod = :pm2 or "
-                + " bf.billItem.bill.paymentMethod = :pm3 or  bf.billItem.bill.paymentMethod = :pm4)";
+                + " and  bf.createdAt between :fromDate and :toDate  "
+                + " and ( bf.billItem.bill.paymentMethod = :pm1 "
+                + " or  bf.billItem.bill.paymentMethod = :pm2 "
+                + " or bf.billItem.bill.paymentMethod = :pm3 "
+                + " or  bf.billItem.bill.paymentMethod = :pm4)";
 
         HashMap temMap = new HashMap();
         temMap.put("toDate", getToDate());

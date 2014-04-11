@@ -1661,6 +1661,9 @@ public class PharmacyBillSearch implements Serializable {
             getBillFacade().edit(getBill());
             UtilityController.addSuccessMessage("Cancelled");
 
+            WebUser wb = getCashTransactionBean().saveBillCashInTransaction(cb, getSessionController().getLoggedUser());
+            getSessionController().setLoggedUser(wb);
+
             printPreview = true;
 
         } else {

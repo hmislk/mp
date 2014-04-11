@@ -104,6 +104,10 @@ public enum BillType {
                 return "Pharmacy Transfer Issue";
             case PharmacyTransferReceive:
                 return "Pharmacy Transfer Receive";
+            case CashIn:
+                return "Cash In Transaction";
+            case CashOut:
+                return "Cash Out Transaction";
 
         }
 

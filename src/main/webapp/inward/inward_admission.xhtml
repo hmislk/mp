@@ -118,6 +118,13 @@
 
                         <p:panel header="Hospital Use">
                             <h:panelGrid columns="2">
+                               
+                                <p:selectBooleanCheckbox value="#{admissionController.current.foriegner}"
+                                                             itemLabel="Mark as Foreigner"/>
+                                                               
+                                <p:selectBooleanCheckbox value="#{admissionController.current.claimable}" 
+                                                         itemLabel="Claimable"/>
+                                
                                 <p:outputLabel value="Admitted Time"/>
                                 <p:calendar value="#{admissionController.current.dateOfAdmission}" pattern="dd MMMM yyyy hh mm a" >                               
                                 </p:calendar>     

@@ -110,7 +110,7 @@
                                     <h:outputText value="Inward Charge Category" ></h:outputText>
                                     <p:selectOneMenu id="cmbInward" value="#{serviceController.current.inwardChargeType}" >
                                         <f:selectItem itemLabel="Please select Charge"/>
-                                        <f:selectItems value="#{serviceController.inwardChargeTypes}"/>
+                                        <f:selectItems value="#{serviceController.inwardChargeTypes}" var="i" itemLabel="#{i.label}" itemValue="#{i}"/>
                                     </p:selectOneMenu>
                                     <h:outputText value="Session Numbering" ></h:outputText>
                                     <p:selectOneMenu  value="#{serviceController.current.sessionNumberType}" >

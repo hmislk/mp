@@ -32,79 +32,73 @@
 
                                 <div >
                                     <div>
-
-
                                         <div class="fiveinchbill" style="font-size: 130%;">
                                             <div  >
 
                                                 <div class="billName" style=" position: absolute;left: 40%;top: 30%;font-weight: bold;">
-                                                    <h:outputLabel value="Cash Transcation Recieve"   />                           
+                                                    <h:outputLabel value="CASH IN"   />                           
                                                 </div>
 
                                                 <div class="receiptno" >                                                  
-                                                    <h:outputLabel value="#{cc.attrs.bill.cancelledBill.insId} **Cancelled"  
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId ne null}"/> 
-                                                    <h:outputLabel value="#{cc.attrs.bill.insId}" 
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId eq null}"/>  
+                                                    <h:outputLabel value="#{cc.attrs.bill.insId}" />  
                                                     <h:outputLabel value="  **Duplicate" 
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId eq null and cc.attrs.dup eq true }" />
+                                                                   rendered="#{cc.attrs.dup eq true }" />
                                                 </div>
 
                                                 <div class="billdate">                   
-                                                    <h:outputLabel value="#{cc.attrs.bill.cancelledBill.billDate}"
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId ne null}"  >
+                                                    <h:outputLabel value="#{cc.attrs.bill.billDate}"  >
                                                         <f:convertDateTime pattern="dd/MM/yy"/>
                                                     </h:outputLabel>                      
-                                                    <h:outputLabel value="#{cc.attrs.bill.billDate}"
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId eq null }">
-                                                        <f:convertDateTime pattern="dd/MM/yy"/>
-                                                    </h:outputLabel>
                                                 </div>
 
 
                                                 <div class="billtime">                                                  
-                                                    <h:outputLabel value="#{cc.attrs.bill.cancelledBill.billTime}"  
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId ne null}">
+                                                    <h:outputLabel value="#{cc.attrs.bill.billTime}"  >
                                                         <f:convertDateTime pattern="hh mm a"/>
                                                     </h:outputLabel>                        
-                                                    <h:outputLabel value="#{cc.attrs.bill.billTime}" 
-                                                                   rendered="#{cc.attrs.bill.cancelledBill.insId eq null }">
-                                                        <f:convertDateTime pattern="hh mm a"/>
-                                                    </h:outputLabel>
                                                 </div>
 
                                                 <div class="items">
 
                                                     <h:panelGrid columns="2">
                                                         <h:outputLabel value="From : "/>
-                                                        <h:outputLabel value=""/>
-                                                        <h:outputLabel value="To : "/>
-                                                        <h:outputLabel value=""/>
-                                                        <h:outputLabel value="Issued Value :"/>
-                                                        <h:outputLabel value=""/>
-                                                        <h:outputLabel value="Issuer Current Ballance "/>
-                                                        <h:outputLabel value=""/>
-                                                        <h:outputLabel value="Reciever Current Ballance "/>
-                                                        <h:outputLabel value=""/>
+                                                        <h:outputLabel value="#{cc.attrs.bill.fromWebUser.webUserPerson.name}"
+                                                                       style="float: right;"/>
+                                                        <h:outputLabel value="Recived User : "/>
+                                                        <h:outputLabel value="#{cc.attrs.bill.creater.webUserPerson.name}"
+                                                                       style="float: right;"/>
+                                                        <h:outputLabel value="Cash Value :"/>
+                                                        <h:outputLabel value="#{cc.attrs.bill.cashTransaction.cashValue}"
+                                                                       style="float: right;">
+                                                            <f:convertNumber pattern="#000.00"/>
+                                                        </h:outputLabel>
+                                                        <h:outputLabel value="Credit Card Value :"/>
+                                                        <h:outputLabel value="#{cc.attrs.bill.cashTransaction.creditCardValue}"
+                                                                       style="float: right;">
+                                                            <f:convertNumber pattern="#000.00"/>
+                                                        </h:outputLabel>
+                                                        <h:outputLabel value="Cheque Value "/>
+                                                        <h:outputLabel value="#{cc.attrs.bill.cashTransaction.chequeValue}"
+                                                                       style="float: right;">
+                                                            <f:convertNumber pattern="#000.00"/>
+                                                        </h:outputLabel>
+                                                        <h:outputLabel value="Slip Value "/>
+                                                        <h:outputLabel value="#{cc.attrs.bill.cashTransaction.slipValue}"
+                                                                       style="float: right;">
+                                                            <f:convertNumber pattern="#000.00"/>
+                                                        </h:outputLabel>
                                                     </h:panelGrid>
                                                     <p:panel>
                                                         <f:facet name="header">
-                                                            <h:outputLabel value="COINS"/>
+                                                            <h:outputLabel value="NOTE"/>
                                                         </f:facet>
-                                                        <h:panelGrid columns="2">
+                                                        <h:panelGrid columns="6" style="min-width: 100%;">
                                                             <h:outputLabel value="1/="/>
                                                             <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty1}"/>
                                                             <h:outputLabel value="2/="/>
                                                             <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty2}"/>
                                                             <h:outputLabel value="5/="/>
                                                             <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty5}"/>
-                                                        </h:panelGrid>    
-                                                    </p:panel>
-                                                    <p:panel>
-                                                        <f:facet name="header">
-                                                            <h:outputLabel value="NOTE"/>
-                                                        </f:facet>
-                                                        <h:panelGrid columns="4">
                                                             <h:outputLabel value="10/="/>
                                                             <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty10}"/>
                                                             <h:outputLabel value="20/="/>
@@ -123,8 +117,6 @@
                                                             <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty2000}"/>
                                                             <h:outputLabel value="5000/="/>
                                                             <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty5000}"/>
-                                                            <h:outputLabel value="10000/="/>
-                                                            <h:outputLabel value="#{cc.attrs.bill.cashTransaction.qty10000}"/>
                                                         </h:panelGrid>
                                                     </p:panel>
 

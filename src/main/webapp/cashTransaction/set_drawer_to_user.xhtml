@@ -19,8 +19,9 @@
                                     forceSelection="true" converter="drawerCon"
                                     completeMethod="#{drawerController.completeDrawer}" var="s"
                                     itemLabel="#{s.name}" itemValue="#{s}" ></p:autoComplete>
-                    </h:outputLabel>
-                    <p:commandButton ajax="false" value="Update" action="#{sessionController.update}"
+
+                    <p:commandButton ajax="false" value="Update" action="#{sessionController.update}"/>
+                </h:panelGrid>
             </h:form>
 
         </h:panelGroup>

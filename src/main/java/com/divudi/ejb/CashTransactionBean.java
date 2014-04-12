@@ -17,9 +17,11 @@ import com.divudi.facade.CashTransactionFacade;
 import com.divudi.facade.CashTransactionHistoryFacade;
 import com.divudi.facade.DrawerFacade;
 import com.divudi.facade.WebUserFacade;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -39,6 +41,31 @@ public class CashTransactionBean {
     private CashTransactionFacade cashTransactionFacade;
     @EJB
     private WebUserFacade webUserFacade;
+
+    public void updateDrawers() {
+        System.err.println("1");
+        List<Drawer> items = getDrawerFacade().findBySQL("Select d from Drawer d where d.retired=false ");
+        System.err.println("2");
+        for (Drawer dr : items) {
+            dr.setWebUsers(getUser(dr));
+            getDrawerFacade().edit(dr);
+        }
+        System.err.println("3");
+    }
+
+    public List<WebUser> getUser(Drawer drawer) {
+        String sql = "select wu from WebUser wu "
+                + " where wu.retired=false "
+                + " and wu.drawer=:d";
+        HashMap hm = new HashMap();
+        hm.put("d", drawer);
+        List<WebUser> wb = getWebUserFacade().findBySQL(sql, hm);
+        if (wb == null) {
+            wb = new ArrayList<>();
+        }
+
+        return wb;
+    }
 
     public CashTransaction setCashTransactionValue(CashTransaction cashTransaction, Bill bill) {
         if (bill.getPaymentMethod() == null) {

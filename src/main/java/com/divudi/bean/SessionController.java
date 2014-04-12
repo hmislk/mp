@@ -10,8 +10,10 @@ package com.divudi.bean;
 import com.divudi.bean.pharmacy.PharmacySaleController;
 import com.divudi.data.Privileges;
 import com.divudi.ejb.ApplicationEjb;
+import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.WebUserBean;
 import com.divudi.entity.Department;
+import com.divudi.entity.Drawer;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Logins;
 import com.divudi.entity.WebUser;
@@ -20,10 +22,10 @@ import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.enterprise.context.SessionScoped;
 import com.divudi.entity.Person;
 import com.divudi.entity.WebUserPrivilege;
 import com.divudi.entity.WebUserRole;
+import com.divudi.facade.DrawerFacade;
 import com.divudi.facade.LoginsFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.WebUserDepartmentFacade;
@@ -33,6 +35,7 @@ import com.divudi.facade.WebUserRoleFacade;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -64,9 +67,12 @@ public class SessionController implements Serializable, HttpSessionListener {
     SecurityController securityController;
     Department department;
     Institution institution;
+    @EJB
+    private CashTransactionBean cashTransactionBean;
 
     public void update() {
         getFacede().edit(getLoggedUser());
+        getCashTransactionBean().updateDrawers();
     }
 
     public Department getDepartment() {
@@ -713,5 +719,13 @@ public class SessionController implements Serializable, HttpSessionListener {
 
     public void setPharmacySaleController(PharmacySaleController pharmacySaleController) {
         this.pharmacySaleController = pharmacySaleController;
+    }
+
+    public CashTransactionBean getCashTransactionBean() {
+        return cashTransactionBean;
+    }
+
+    public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
+        this.cashTransactionBean = cashTransactionBean;
     }
 }

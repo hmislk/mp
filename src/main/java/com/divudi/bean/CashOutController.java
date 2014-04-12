@@ -78,15 +78,15 @@ public class CashOutController implements Serializable {
             netTotal += Math.abs(cashTransaction.getCashValue());
         }
 
-        if (cashTransaction.getCreditCardValue()!= null) {
+        if (cashTransaction.getCreditCardValue() != null) {
             netTotal += Math.abs(cashTransaction.getCreditCardValue());
         }
 
-        if (cashTransaction.getChequeValue()!= null) {
+        if (cashTransaction.getChequeValue() != null) {
             netTotal += Math.abs(cashTransaction.getChequeValue());
         }
-        
-         if (cashTransaction.getSlipValue()!= null) {
+
+        if (cashTransaction.getSlipValue() != null) {
             netTotal += Math.abs(cashTransaction.getSlipValue());
         }
 
@@ -114,7 +114,9 @@ public class CashOutController implements Serializable {
             return;
         }
 
-        calTotal();
+        if (getBill().getCashTransaction().getCashValue() != 0) {
+            calTotal();
+        }
 
         CashTransaction ct = getBill().getCashTransaction();
         getBill().setCashTransaction(null);

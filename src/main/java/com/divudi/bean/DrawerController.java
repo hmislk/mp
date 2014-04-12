@@ -41,6 +41,25 @@ public class DrawerController implements Serializable {
     private DrawerFacade ejbFacade;
     private Drawer current;
     private List<Drawer> items = null;
+    List<Drawer> drawers;
+
+    public void createDrawers() {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "select c from Drawer c "
+                + " where c.retired=false "
+                + " order by c.name";
+
+        drawers = getFacade().findBySQL(sql, hm);
+    }
+
+    public List<Drawer> getDrawers() {
+        return drawers;
+    }
+
+    public void setDrawers(List<Drawer> drawers) {
+        this.drawers = drawers;
+    }
 
     public List<Drawer> completeDrawer(String qry) {
         List<Drawer> list;

@@ -118,7 +118,9 @@ public class CashInController implements Serializable {
             return;
         }
 
-        calTotal();
+        if (getBill().getCashTransaction().getCashValue() != 0) {
+            calTotal();
+        }
 
         CashTransaction ct = getBill().getCashTransaction();
         getBill().setCashTransaction(null);

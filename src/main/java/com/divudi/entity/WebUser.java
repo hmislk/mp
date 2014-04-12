@@ -31,7 +31,7 @@ public class WebUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     Drawer drawer;
 
     public Drawer getDrawer() {

@@ -43,7 +43,7 @@ import javax.servlet.http.HttpSessionListener;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -65,6 +65,10 @@ public class SessionController implements Serializable, HttpSessionListener {
     Department department;
     Institution institution;
 
+    public void update() {
+        getFacede().edit(getLoggedUser());
+    }
+
     public Department getDepartment() {
         return department;
     }
@@ -77,15 +81,15 @@ public class SessionController implements Serializable, HttpSessionListener {
     }
 
     public Institution getInstitution() {
-        if(institution==null){
-            if(department!=null){
-                institution=department.getInstitution();
-            }else{
-                if(loggedUser!=null){
-                    if(loggedUser.getInstitution()!=null){
-                        institution=loggedUser.getInstitution();
-                    }else if(loggedUser.getDepartment()!=null){
-                        institution=loggedUser.getDepartment().getInstitution();
+        if (institution == null) {
+            if (department != null) {
+                institution = department.getInstitution();
+            } else {
+                if (loggedUser != null) {
+                    if (loggedUser.getInstitution() != null) {
+                        institution = loggedUser.getInstitution();
+                    } else if (loggedUser.getDepartment() != null) {
+                        institution = loggedUser.getDepartment().getInstitution();
                     }
                 }
             }
@@ -224,7 +228,6 @@ public class SessionController implements Serializable, HttpSessionListener {
         uFacade.create(user);
     }
 
-
     public String registeUser() {
         if (!userNameAvailable(newUserName)) {
             UtilityController.addErrorMessage("User name already exists. Plese enter another user name");
@@ -234,7 +237,6 @@ public class SessionController implements Serializable, HttpSessionListener {
             UtilityController.addErrorMessage("Password and Re-entered password are not matching");
             return "";
         }
-
 
         WebUser user = new WebUser();
         Person person = new Person();
@@ -275,15 +277,15 @@ public class SessionController implements Serializable, HttpSessionListener {
     }
 
     public void changeCurrentUserPassword() {
-        if(getCurrent()==null){
+        if (getCurrent() == null) {
             UtilityController.addErrorMessage("Select a User");
-            return ;
+            return;
         }
         WebUser user = getCurrent();
-        
+
         if (!newPassword.equals(newPasswordConfirm)) {
             UtilityController.addErrorMessage("Password and Re-entered password are not maching");
-            return ;
+            return;
         }
 
         user.setWebUserPassword(getSecurityController().hash(newPassword));
@@ -330,7 +332,7 @@ public class SessionController implements Serializable, HttpSessionListener {
 
                     u.setDepartment(department);
                     u.setInstitution(institution);
-                    
+
                     getFacede().edit(u);
 
                     setLoggedUser(u);
@@ -354,10 +356,10 @@ public class SessionController implements Serializable, HttpSessionListener {
         sql = "select wd from WebUserDepartment wd where wd.retired=false and wd.webUser.id=" + e.getId() + " and wd.department.id = " + d.getId();
         return !getWebUserDepartmentFacade().findBySQL(sql).isEmpty();
     }
-    
+
     @Inject
     ApplicationController applicationController;
-    
+
     @EJB
     ApplicationEjb applicationEjb;
 
@@ -376,7 +378,7 @@ public class SessionController implements Serializable, HttpSessionListener {
     public void setApplicationController(ApplicationController applicationController) {
         this.applicationController = applicationController;
     }
-    
+
     @Inject
     private PharmacySaleController pharmacySaleController;
 
@@ -390,8 +392,6 @@ public class SessionController implements Serializable, HttpSessionListener {
         getPharmacySaleController().makeNull();
 
     }
-    
-    
 
     public WebUser getCurrent() {
         if (current == null) {

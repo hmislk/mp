@@ -8,8 +8,8 @@
  */
 package com.divudi.bean;
 
-import com.divudi.facade.AreaFacade;
-import com.divudi.entity.Area;
+import com.divudi.facade.DrawerFacade;
+import com.divudi.entity.Drawer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,21 +32,21 @@ import javax.faces.convert.FacesConverter;
  */
 @Named
 @SessionScoped
-public class AreaController implements Serializable {
+public class DrawerController implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Inject
     SessionController sessionController;
     @EJB
-    private AreaFacade ejbFacade;
-    private Area current;
-    private List<Area> items = null;
+    private DrawerFacade ejbFacade;
+    private Drawer current;
+    private List<Drawer> items = null;
 
-    public List<Area> completeArea(String qry) {
-        List<Area> list;
+    public List<Drawer> completeDrawer(String qry) {
+        List<Drawer> list;
         String sql;
         HashMap hm = new HashMap();
-        sql = "select c from Area c "
+        sql = "select c from Drawer c "
                 + " where c.retired=false "
                 + " and upper(c.name) like :q "
                 + " order by c.name";
@@ -60,7 +60,7 @@ public class AreaController implements Serializable {
     }
 
     public void prepareAdd() {
-        current = new Area();
+        current = new Drawer();
     }
 
     private void recreateModel() {
@@ -82,11 +82,11 @@ public class AreaController implements Serializable {
         getItems();
     }
 
-    public AreaFacade getEjbFacade() {
+    public DrawerFacade getEjbFacade() {
         return ejbFacade;
     }
 
-    public void setEjbFacade(AreaFacade ejbFacade) {
+    public void setEjbFacade(DrawerFacade ejbFacade) {
         this.ejbFacade = ejbFacade;
     }
 
@@ -98,17 +98,17 @@ public class AreaController implements Serializable {
         this.sessionController = sessionController;
     }
 
-    public AreaController() {
+    public DrawerController() {
     }
 
-    public Area getCurrent() {
+    public Drawer getCurrent() {
         if (current == null) {
-            current = new Area();
+            current = new Drawer();
         }
         return current;
     }
 
-    public void setCurrent(Area current) {
+    public void setCurrent(Drawer current) {
         this.current = current;
     }
 
@@ -129,11 +129,11 @@ public class AreaController implements Serializable {
         getCurrent();
     }
 
-    private AreaFacade getFacade() {
+    private DrawerFacade getFacade() {
         return ejbFacade;
     }
 
-    public List<Area> getItems() {
+    public List<Drawer> getItems() {
         items = getFacade().findAll("name", true);
         return items;
     }
@@ -141,16 +141,16 @@ public class AreaController implements Serializable {
     /**
      *
      */
-    @FacesConverter(forClass = Area.class)
-    public static class AreaConverter implements Converter {
+    @FacesConverter(forClass = Drawer.class)
+    public static class DrawerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            AreaController controller = (AreaController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "areaController");
+            DrawerController controller = (DrawerController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "drawerController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -171,26 +171,26 @@ public class AreaController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Area) {
-                Area o = (Area) object;
+            if (object instanceof Drawer) {
+                Drawer o = (Drawer) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + AreaController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + DrawerController.class.getName());
             }
         }
     }
 
-    @FacesConverter("areaCon")
-    public static class AreaControllerConverter implements Converter {
+    @FacesConverter("drawerCon")
+    public static class DrawerControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            AreaController controller = (AreaController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "areaController");
+            DrawerController controller = (DrawerController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "drawerController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -211,12 +211,12 @@ public class AreaController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Area) {
-                Area o = (Area) object;
+            if (object instanceof Drawer) {
+                Drawer o = (Drawer) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + AreaController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + DrawerController.class.getName());
             }
         }
     }

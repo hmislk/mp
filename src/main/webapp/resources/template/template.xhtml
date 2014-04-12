@@ -131,7 +131,7 @@
                                         <p:menuitem  ajax="false" action="/pharmacy_retail_sale_for_cashier"  value="Sale for cashier" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStockForCashier()}" ></p:menuitem>                                       
                                         <p:submenu label="Search">
                                             <p:menuitem  ajax="false" action="/pharmacy_search_sale_bill"  value="Search Sale Bill"
-                                                          actionListener="#{searchController.makeListNull}"
+                                                         actionListener="#{searchController.makeListNull}"
                                                          rendered="#{webUserController.hasPrivilege('PharmacySale')}"   ></p:menuitem>                                        
                                             <p:menuitem  ajax="false" action="/pharmacy_search_sale_bill_item"  
                                                          value="Search Sale Bill Items" actionListener="#{searchController.makeListNull}" 
@@ -347,6 +347,8 @@
                                     <p:menuitem ajax="false" action="/cashTransaction/cash_in" value="Cash In" actionListener="#{cashInController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashIn')}" />
                                     <p:menuitem ajax="false" action="/cashTransaction/cash_out"  value="Cash Out" actionListener="#{cashOutController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashOut')}" />   
                                     <p:menuitem ajax="false" action="/cashTransaction/list_to_cash_recieve"  value="List To Cash Recieve" rendered="#{webUserController.hasPrivilege('CashTransactionListToCashRecieve')}" />   
+                                    <p:menuitem ajax="false" action="/cashTransaction/administration"  value="Administration"  />   
+                                    <p:menuitem ajax="false" action="/cashTransaction/report"  value="Reports"  />                                      
                                 </p:submenu>
                                 <p:submenu label="User"  >
                                     <p:menuitem  ajax="false"  action="/user_change_password" value="Change Password"  ></p:menuitem>

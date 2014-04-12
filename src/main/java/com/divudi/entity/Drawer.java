@@ -29,7 +29,7 @@ public class Drawer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany(mappedBy = "drawer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "drawer")
     private List<WebUser> webUsers = new ArrayList<>();
     String name;
     @ManyToOne

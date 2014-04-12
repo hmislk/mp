@@ -78,6 +78,16 @@ public class WebUserController implements Serializable {
     Speciality speciality;
     List<WebUserPrivilege> userPrivileges;
     WebUser removingUser;
+    private List<WebUser> webUsers;
+
+    public void createWebUserDrawers() {
+        String sql = "select c from WebUser c "
+                + " where c.retired=false "
+                + " c.drawer is not null "
+                + " order by c.drawer.name,c.webUserPerson.name";
+
+        webUsers = getFacade().findBySQL(sql);
+    }
 
     public List<Department> getInstitutionDepatrments() {
         List<Department> d;
@@ -549,6 +559,14 @@ public class WebUserController implements Serializable {
 
     public void setCurrentPrivilegeses(Privileges[] currentPrivilegeses) {
         this.currentPrivilegeses = currentPrivilegeses;
+    }
+
+    public List<WebUser> getWebUsers() {
+        return webUsers;
+    }
+
+    public void setWebUsers(List<WebUser> webUsers) {
+        this.webUsers = webUsers;
     }
 
     @FacesConverter("webUs")

@@ -11,5 +11,5 @@ package com.divudi.data;
  */
 public enum InOutType {
 
-    in, out;
+    in, out,none;
 }

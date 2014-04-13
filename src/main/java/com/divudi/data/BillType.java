@@ -50,6 +50,7 @@ public enum BillType {
     PharmacyTransferIssue,
     PharmacyTransferReceive,
     PharmacyAdjustment,
+    DrawerAdjustment,
     PharmacyMajorAdjustment,
     ChannelPaid,
     ChannelCredit,

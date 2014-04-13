@@ -345,8 +345,12 @@
                                 </p:submenu>
                                 <p:submenu label="Cash Transaction" rendered="#{webUserController.hasPrivilege('CashTransaction')}">
                                     <p:menuitem ajax="false" action="/cashTransaction/cash_in" value="Cash In" actionListener="#{cashInController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashIn')}" />
-                                    <p:menuitem ajax="false" action="/cashTransaction/cash_out"  value="Cash Out" actionListener="#{cashOutController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashOut')}" />   
+                                    <p:menuitem ajax="false" action="/cashTransaction/cash_out"  value="Cash Out" actionListener="#{cashOutController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashOut')}" />                                      
                                     <p:menuitem ajax="false" action="/cashTransaction/list_to_cash_recieve"  value="List To Cash Recieve" rendered="#{webUserController.hasPrivilege('CashTransactionListToCashRecieve')}" />   
+                                    <p:submenu label="Search">
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_bill" value="Cash In "/>
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_cash_out_bill" value="Cash Out "/>                                        
+                                    </p:submenu>
                                     <p:menuitem ajax="false" action="/cashTransaction/administration"  value="Administration"  />   
                                     <p:menuitem ajax="false" action="/cashTransaction/report"  value="Reports"  />                                      
                                 </p:submenu>

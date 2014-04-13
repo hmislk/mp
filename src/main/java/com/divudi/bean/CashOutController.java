@@ -148,7 +148,7 @@ public class CashOutController implements Serializable {
 
     public void calTotal() {
         double dbl = getCashTransactionBean().calTotal(getBill().getCashTransaction());
-        getBill().setNetTotal(dbl);
+        getBill().getCashTransaction().setCashValue(dbl);
     }
 
     /**

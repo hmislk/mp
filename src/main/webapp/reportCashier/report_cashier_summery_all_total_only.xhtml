@@ -16,19 +16,18 @@
                 <p:panel id="reportPrint" styleClass="noBorder summeryBorder">
                     <f:facet name="header">
 
-                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{cashierReportController.calCashierData()}" />  
+                        <p:commandButton id="btnRefresh" ajax="false" value="Refresh" styleClass="noPrintButton" style="float: right;" actionListener="#{cashierReportController.calCashierDataTotalOnly()}" />  
                         <p:defaultCommand target="btnRefresh"/>
 
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" style="float: right;" >
                             <p:printer target="reportPrint" />
                         </p:commandButton>  
 
-                        <p:commandButton  actionListener="#{cashierReportController.calCashierData()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;">
+                        <p:commandButton  actionListener="#{cashierReportController.calCashierDataTotalOnly()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;">
                             <pe:exporter type="xlsx" target="tbl" fileName="All_Cashier_Summery_report" subTable="true"/>
                         </p:commandButton>  
 
                         <h:outputLabel value="Cashier Wise Session Summery Report"/>
-<!--                        <h:outputLabel value="#{sessionController.loggedUser.institution.name}"/> -->
                         <br/>
 
                         <h:panelGrid columns="4" style="min-width: 100%;" styleClass="noPrintButton">
@@ -82,35 +81,35 @@
                                 </f:facet>
 
                                 <p:column >
-                                    <h:outputLabel value="#{dt.name}" rendered="#{dt.bold eq true}"></h:outputLabel>
+                                    <h:outputLabel value="#{dt.name}" />
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.cash}" rendered="#{dt.bold eq true}">
+                                    <h:outputLabel value="#{dt.cash}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.credit}" rendered="#{dt.bold eq true}">
+                                    <h:outputLabel value="#{dt.credit}" >
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.card}" rendered="#{dt.bold eq true}">
+                                    <h:outputLabel value="#{dt.card}" >
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>                                
                                 </p:column>
 
                                 <p:column style="text-align: right;">
-                                    <h:outputLabel value="#{dt.cheque}" rendered="#{dt.bold eq true}">
+                                    <h:outputLabel value="#{dt.cheque}">
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>                                
                                 </p:column>
 
                                 <p:column style="text-align: right;" >
-                                    <h:outputLabel value="#{dt.slip}"  rendered="#{dt.bold eq true}">
+                                    <h:outputLabel value="#{dt.slip}" >
                                         <f:convertNumber pattern="#,000.00" />
                                     </h:outputLabel>                                
                                 </p:column>

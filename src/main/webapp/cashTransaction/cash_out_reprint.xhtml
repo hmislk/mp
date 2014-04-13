@@ -8,7 +8,7 @@
       xmlns:bi="http://java.sun.com/jsf/composite/cashTransaction">
 
     <body>
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="/resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
                     <p:panel header="Reprint" >
@@ -16,7 +16,7 @@
                             <h:outputLabel value="Reprint" ></h:outputLabel>
                             <hr/>
 
-                            <p:commandButton ajax="false" value="Cancel" action="#{billSearch.toCancel}" disabled="#{billSearch.bill.cancelled}">                           
+                            <p:commandButton ajax="false" value="Cancel" action="cash_out_cancel" disabled="#{billSearch.bill.cancelled}">                           
                             </p:commandButton>
 
                         </f:facet>
@@ -25,17 +25,14 @@
                             <p:panelGrid columns="2" style="width: 100%;">
                                 <p:panel header="Person Detail">
                                     <p:panelGrid columns="2">
-                                        <h:outputLabel value="Person Name:" ></h:outputLabel>
-                                        <h:outputLabel value="#{billSearch.bill.staff.person.nameWithTitle }" rendered="#{billSearch.bill.staff ne null}" ></h:outputLabel>                                        
-                                        <h:outputLabel value="#{billSearch.bill.person.nameWithTitle }" rendered="#{billSearch.bill.staff eq null}" ></h:outputLabel>                                        
+                                        <h:outputLabel value="To WebUser Name:" ></h:outputLabel>
+                                        <h:outputLabel value="#{billSearch.bill.toWebUser.webUserPerson.nameWithTitle}" rendered="#{billSearch.bill.staff ne null}" ></h:outputLabel>                                        
                                     </p:panelGrid>
                                 </p:panel>
                                 <p:panel header="Bill Detail">
                                     <p:panelGrid columns="2">
                                         <h:outputLabel value="Bill No :" ></h:outputLabel>
                                         <h:outputLabel value="#{billSearch.bill.insId}" ></h:outputLabel>
-                                        <h:outputLabel value="Payment Type : " ></h:outputLabel>
-                                        <h:outputLabel value="#{billSearch.bill.paymentScheme.name}" ></h:outputLabel>                                        
                                         <h:outputLabel value="Net Total :" ></h:outputLabel>
                                         <h:outputLabel value="#{billSearch.bill.netTotal}" ></h:outputLabel>
                                     </p:panelGrid>
@@ -49,7 +46,7 @@
 
 
                     <h:panelGroup >
-                        <bi:billRecieve  bill="#{billSearch.bill}"/>
+                        <bi:cashOut  bill="#{billSearch.bill}"/>
                     </h:panelGroup>
 
 

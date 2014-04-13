@@ -23,6 +23,7 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
+import com.divudi.entity.CashTransaction;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
@@ -33,6 +34,7 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.ItemBatchFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
+import com.divudi.facade.WebUserFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -773,6 +775,59 @@ public class BillSearch implements Serializable {
         return cb;
     }
 
+    private CancelledBill createCahsInOutCancelBill(BillNumberSuffix billNumberSuffix) {
+        CancelledBill cb = new CancelledBill();
+        if (getBill() != null) {
+            cb.setBilledBill(getBill());
+            cb.setBillType(getBill().getBillType());
+            cb.setCollectingCentre(getBill().getCollectingCentre());
+            cb.setCatId(getBill().getCatId());
+            cb.setCreditCompany(getBill().getCreditCompany());
+            cb.setStaffFee(0 - getBill().getStaffFee());
+            cb.setPerformInstitutionFee(0 - getBill().getPerformInstitutionFee());
+            cb.setBillerFee(0 - getBill().getBillerFee());
+
+            cb.setStaff(getBill().getStaff());
+
+            cb.setToDepartment(getBill().getToDepartment());
+            cb.setToInstitution(getBill().getToInstitution());
+
+            cb.setFromDepartment(getBill().getFromDepartment());
+            cb.setFromInstitution(getBill().getFromInstitution());
+
+            cb.setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), cb, cb.getBillType(), billNumberSuffix));
+            cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, cb.getBillType(), billNumberSuffix));
+
+            cb.setDiscount(0 - getBill().getDiscount());
+            cb.setDiscountPercent(getBill().getDiscountPercent());
+
+            cb.setNetTotal(0 - getBill().getNetTotal());
+            cb.setPatient(getBill().getPatient());
+
+            cb.setPatientEncounter(null);
+            cb.setReferredBy(getBill().getReferredBy());
+
+            cb.setReferringDepartment(getBill().getReferringDepartment());
+            cb.setTotal(0 - getBill().getTotal());
+        }
+
+        cb.setBalance(
+                0.0);
+
+        cb.setBillDate(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setBillTime(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        cb.setCreater(getSessionController().getLoggedUser());
+        cb.setPaymentScheme(getBill().getPaymentScheme());
+        cb.setDepartment(getSessionController().getLoggedUser().getDepartment());
+        cb.setInstitution(getSessionController().getInstitution());
+        cb.setInstitution(getSessionController().getLoggedUser().getInstitution());
+
+        cb.setComments(comment);
+
+        return cb;
+    }
+
     private boolean errorCheck() {
         if (getBill().isCancelled()) {
             UtilityController.addErrorMessage("Already Cancelled. Can not cancel again");
@@ -848,6 +903,106 @@ public class BillSearch implements Serializable {
 
                 WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(cb, getSessionController().getLoggedUser());
                 getSessionController().setLoggedUser(wb);
+                printPreview = true;
+            } else {
+                getEjbApplication().getBillsToCancel().add(cb);
+                UtilityController.addSuccessMessage("Awaiting Cancellation");
+            }
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+
+    }
+
+    @EJB
+    WebUserFacade webUserFacade;
+
+    public WebUserFacade getWebUserFacade() {
+        return webUserFacade;
+    }
+
+    public void setWebUserFacade(WebUserFacade webUserFacade) {
+        this.webUserFacade = webUserFacade;
+    }
+
+    public void cancelCashInBill() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            CancelledBill cb = createCahsInOutCancelBill(BillNumberSuffix.CSINCAN);
+            Calendar now = Calendar.getInstance();
+            now.setTime(new Date());
+            Calendar created = Calendar.getInstance();
+            created.setTime(cb.getBilledBill().getCreatedAt());
+
+            //Copy & paste
+            if ((now.get(Calendar.DATE) == created.get(Calendar.DATE))
+                    || (getBill().getBillType() == BillType.LabBill && getWebUserController().hasPrivilege("LabBillCancelling"))
+                    || (getBill().getBillType() == BillType.OpdBill && getWebUserController().hasPrivilege("OpdCancel"))) {
+
+                getBillFacade().create(cb);
+                cancelBillItems(cb);
+                getBill().setCancelled(true);
+                getBill().setCancelledBill(cb);
+                getBillFacade().edit(getBill());
+                UtilityController.addSuccessMessage("Cancelled");
+
+                CashTransaction newCt = new CashTransaction();
+                newCt.invertQty(getBill().getCashTransaction());
+
+                CashTransaction tmp = getCashTransactionBean().saveCashOutTransaction(newCt, cb, getSessionController().getLoggedUser());
+                cb.setCashTransaction(tmp);
+                getBillFacade().edit(cb);
+
+                getCashTransactionBean().deductFromBallance(getSessionController().getLoggedUser().getDrawer(), tmp);
+
+                WebUser wb = getWebUserFacade().find(getSessionController().getLoggedUser().getId());
+                getSessionController().setLoggedUser(wb);
+                printPreview = true;
+            } else {
+                getEjbApplication().getBillsToCancel().add(cb);
+                UtilityController.addSuccessMessage("Awaiting Cancellation");
+            }
+
+        } else {
+            UtilityController.addErrorMessage("No Bill to cancel");
+        }
+
+    }
+
+    public void cancelCashOutBill() {
+        if (getBill() != null && getBill().getId() != null && getBill().getId() != 0) {
+
+            CancelledBill cb = createCahsInOutCancelBill(BillNumberSuffix.CSOUTCAN);
+            Calendar now = Calendar.getInstance();
+            now.setTime(new Date());
+            Calendar created = Calendar.getInstance();
+            created.setTime(cb.getBilledBill().getCreatedAt());
+
+            //Copy & paste
+            if ((now.get(Calendar.DATE) == created.get(Calendar.DATE))
+                    || (getBill().getBillType() == BillType.LabBill && getWebUserController().hasPrivilege("LabBillCancelling"))
+                    || (getBill().getBillType() == BillType.OpdBill && getWebUserController().hasPrivilege("OpdCancel"))) {
+
+                getBillFacade().create(cb);
+                cancelBillItems(cb);
+                getBill().setCancelled(true);
+                getBill().setCancelledBill(cb);
+                getBillFacade().edit(getBill());
+                UtilityController.addSuccessMessage("Cancelled");
+
+                CashTransaction newCt = new CashTransaction();
+                newCt.invertQty(getBill().getCashTransaction());
+
+                CashTransaction tmp = getCashTransactionBean().saveCashInTransaction(newCt, cb, getSessionController().getLoggedUser());
+                cb.setCashTransaction(tmp);
+                getBillFacade().edit(cb);
+
+                getCashTransactionBean().addToBallance(getSessionController().getLoggedUser().getDrawer(), tmp);
+
+                WebUser wb = getWebUserFacade().find(getSessionController().getLoggedUser().getId());
+                getSessionController().setLoggedUser(wb);
+
                 printPreview = true;
             } else {
                 getEjbApplication().getBillsToCancel().add(cb);

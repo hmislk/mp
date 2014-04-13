@@ -79,5 +79,7 @@ public enum BillNumberSuffix {
     SURG,//Surger Bill
     TIME,//Timed Service 
     CSIN,//Cashier Cash Out
+    CSINCAN,//Cash In Cancel
     CSOUT,//Cashier CAsh IN
+    CSOUTCAN,//Cash Out Cancel
 }

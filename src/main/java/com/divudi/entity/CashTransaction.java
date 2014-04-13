@@ -117,7 +117,6 @@ public class CashTransaction implements Serializable {
         qty10 = cashTransaction.getQty10();
         qty100 = cashTransaction.getQty100();
         qty1000 = cashTransaction.getQty1000();
-        qty10000 = cashTransaction.getQty10000();
         qty2 = cashTransaction.getQty2();
         qty20 = cashTransaction.getQty20();
         qty200 = cashTransaction.getQty200();
@@ -126,9 +125,65 @@ public class CashTransaction implements Serializable {
         qty50 = cashTransaction.getQty50();
         qty500 = cashTransaction.getQty500();
         qty5000 = cashTransaction.getQty5000();
+        cashValue = cashTransaction.getCashValue();
         creditCardValue = cashTransaction.getCreditCardValue();
         chequeValue = cashTransaction.getChequeValue();
         slipValue = cashTransaction.getSlipValue();
+
+    }
+
+    public void invertQty(CashTransaction cashTransaction) {
+        if (cashTransaction.getQty1() != null) {
+            qty1 = 0 - cashTransaction.getQty1();
+        }
+        if (cashTransaction.getQty10() != null) {
+            qty10 = 0 - cashTransaction.getQty10();
+        }
+        if (cashTransaction.getQty100() != null) {
+            qty100 = 0 - cashTransaction.getQty100();
+        }
+        if (cashTransaction.getQty1000() != null) {
+            qty1000 = cashTransaction.getQty1000();
+        }
+
+        if (cashTransaction.getQty2() != null) {
+            qty2 = 0 - cashTransaction.getQty2();
+        }
+        if (cashTransaction.getQty20() != null) {
+            qty20 = 0 - cashTransaction.getQty20();
+        }
+        if (cashTransaction.getQty200() != null) {
+            qty200 = 0 - cashTransaction.getQty200();
+        }
+        if (cashTransaction.getQty2000() != null) {
+            qty2000 = cashTransaction.getQty2000();
+        }
+
+        if (cashTransaction.getQty5() != null) {
+            qty5 = 0 - cashTransaction.getQty5();
+        }
+        if (cashTransaction.getQty50() != null) {
+            qty50 = 0 - cashTransaction.getQty50();
+        }
+        if (cashTransaction.getQty500() != null) {
+            qty500 = 0 - cashTransaction.getQty500();
+        }
+        if (cashTransaction.getQty5000() != null) {
+            qty5000 = cashTransaction.getQty5000();
+        }
+
+        if (cashTransaction.getCashValue() != null) {
+            cashValue = 0 - cashTransaction.getCashValue();
+        }
+        if (cashTransaction.getCreditCardValue() != null) {
+            creditCardValue = 0 - cashTransaction.getCreditCardValue();
+        }
+        if (cashTransaction.getChequeValue() != null) {
+            chequeValue = 0 - cashTransaction.getChequeValue();
+        }
+        if (cashTransaction.getSlipValue() != null) {
+            slipValue = 0 - cashTransaction.getSlipValue();
+        }
 
     }
 

@@ -1766,6 +1766,88 @@ public class SearchController implements Serializable {
 
     }
 
+    public void createTableCashIn() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where b.billType = :billType "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false"
+                + " and b.creater=:w ";
+
+       
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+        
+        
+        if (getSearchKeyword().getPersonName()!= null && !getSearchKeyword().getPersonName().trim().equals("")) {
+            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
+        }
+      
+        if (getSearchKeyword().getNetTotal()!= null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.createdAt desc  ";
+//    
+        temMap.put("billType", BillType.CashIn);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("w", getSessionController().getLoggedUser());
+
+        //System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
+    }
+    
+      public void createTableCashOut() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where b.billType = :billType "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false"
+                + " and b.creater=:w ";
+
+       
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+        
+        
+        if (getSearchKeyword().getPersonName()!= null && !getSearchKeyword().getPersonName().trim().equals("")) {
+            sql += " and  (upper(b.toWebUser.webUserPerson.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
+        }
+      
+        if (getSearchKeyword().getNetTotal()!= null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.createdAt desc  ";
+//    
+        temMap.put("billType", BillType.CashOut);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("w", getSessionController().getLoggedUser());
+
+        //System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+
+    }
+
     public void createSearchAll() {
         bills = null;
         String sql;

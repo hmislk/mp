@@ -3,7 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core">
 
     <!-- INTERFACE -->
@@ -13,7 +12,7 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:outputStylesheet library="css" name="pharmacyA4.css"/>
+        <h:outputStylesheet library="css" name="pharmacypos.css"/>
         <div class="posbill noBorder summeryBorder" >
 
 
@@ -36,15 +35,65 @@
                 <h:outputLabel value="#{cc.attrs.bill.creater.webUserPerson.name}">
                 </h:outputLabel>
 
-                <h:outputLabel value="Department "/>
-                <h:outputLabel value="#{cc.attrs.bill.department.name}">
+                <h:outputLabel value="Drawer Name "/>
+                <h:outputLabel value="#{cc.attrs.bill.cashTransaction.drawer.name}">
                 </h:outputLabel>
             </h:panelGrid>
 
 
             <div >
-              
-                
+                <h:panelGrid columns="2">
+                    <f:facet name="header">
+                        <h:outputLabel value="Before Adjustment"/>
+                    </f:facet>
+                    <h:outputLabel value="Cash Value :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.cashTransactionHistory.cashBallance}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                    <h:outputLabel value="Credit Card Value :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.cashTransactionHistory.creditCardBallance}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                    <h:outputLabel value="Cheque Value "/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.cashTransactionHistory.chequeBallance}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                    <h:outputLabel value="Slip Value "/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.cashTransactionHistory.slipBallance}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2">
+                    <f:facet name="header">
+                        <h:outputLabel value="After Adjustment"/>
+                    </f:facet>
+                    <h:outputLabel value="Cash Value :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.cashValue}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                    <h:outputLabel value="Credit Card Value :"/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.creditCardValue}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                    <h:outputLabel value="Cheque Value "/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.chequeValue}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                    <h:outputLabel value="Slip Value "/>
+                    <h:outputLabel value="#{cc.attrs.bill.cashTransaction.slipValue}"
+                                   style="float: right;">
+                        <f:convertNumber pattern="#000.00"/>
+                    </h:outputLabel>
+                </h:panelGrid>
+
             </div>
 
             <h:panelGrid columns="2" style="min-width: 100%;">

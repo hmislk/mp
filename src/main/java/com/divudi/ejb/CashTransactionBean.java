@@ -43,14 +43,14 @@ public class CashTransactionBean {
     private WebUserFacade webUserFacade;
 
     public void updateDrawers() {
-        System.err.println("1");
+        //   System.err.println("1");
         List<Drawer> items = getDrawerFacade().findBySQL("Select d from Drawer d where d.retired=false ");
-        System.err.println("2");
+        //   System.err.println("2");
         for (Drawer dr : items) {
             dr.setWebUsers(getUser(dr));
             getDrawerFacade().edit(dr);
         }
-        System.err.println("3");
+        //   System.err.println("3");
     }
 
     public List<WebUser> getUser(Drawer drawer) {
@@ -142,6 +142,18 @@ public class CashTransactionBean {
 
         ct.setInOutType(InOutType.out);
         ct.setDrawer(getDrawer(webUser));
+        ct.setCreatedAt(new Date());
+        ct.setBill(bill);
+        ct.setCreater(webUser);
+        getCashTransactionFacade().create(ct);
+
+        return ct;
+    }
+
+    public CashTransaction saveCashAdjustmentTransaction(CashTransaction ct, Bill bill, Drawer drawer, WebUser webUser) {
+
+        ct.setInOutType(InOutType.none);
+        ct.setDrawer(drawer);
         ct.setCreatedAt(new Date());
         ct.setBill(bill);
         ct.setCreater(webUser);
@@ -371,6 +383,35 @@ public class CashTransactionBean {
             fetchedDrw.setSlipBallance(fetchedDrw.getSlipBallance() - Math.abs(cashTransaction.getSlipValue()));
         }
 
+        getDrawerFacade().edit(fetchedDrw);
+
+        return true;
+    }
+
+    public boolean resetBallance(Drawer drawer, CashTransaction cashTransaction) {
+        if (drawer == null) {
+            return false;
+        }
+
+        if (drawer.getId() == null) {
+            return false;
+        }
+
+        System.err.println("11 "+drawer);
+        System.err.println("22 "+cashTransaction);
+        addToTransactionHistory(cashTransaction, drawer);
+
+        System.err.println("13 "+drawer);
+        System.err.println("24 "+cashTransaction);
+        Drawer fetchedDrw = getDrawerFacade().find(drawer.getId());
+
+        fetchedDrw.setRunningBallance(cashTransaction.getCashValue());
+        fetchedDrw.setChequeBallance(cashTransaction.getChequeValue());
+        fetchedDrw.setCreditCardBallance(cashTransaction.getCreditCardValue());
+        fetchedDrw.setSlipBallance(cashTransaction.getSlipValue());
+        
+        System.err.println("15 "+drawer);
+        System.err.println("26 "+cashTransaction);
         getDrawerFacade().edit(fetchedDrw);
 
         return true;

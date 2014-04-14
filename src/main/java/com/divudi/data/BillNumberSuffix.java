@@ -75,6 +75,7 @@ public enum BillNumberSuffix {
     PTYPAY,//Payment
     PTYCAN,//Cancell
     NONE,//NO Prefix
+    DRADJ,//Drawer Adjustment
     PACK,//Package
     SURG,//Surger Bill
     TIME,//Timed Service 

@@ -6,10 +6,12 @@
  * and
  * a Set of Related Tools
  */
-package com.divudi.bean;
+package com.divudi.bean.cashTransaction;
 
+import com.divudi.bean.SessionController;
+import com.divudi.bean.UtilityController;
 import com.divudi.facade.DrawerFacade;
-import com.divudi.entity.Drawer;
+import com.divudi.entity.cashTransaction.Drawer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;

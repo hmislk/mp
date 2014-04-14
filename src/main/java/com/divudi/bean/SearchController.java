@@ -716,7 +716,7 @@ public class SearchController implements Serializable {
 
     }
 
-    public void createAdjustmentBillItemTable() {
+    public void createDrawerAdjustmentTable() {
         //  searchBillItems = null;
         String sql;
         Map m = new HashMap();

@@ -40,7 +40,7 @@
 
             </p:panel>
             <p:dataGrid  value="#{creditSummeryController.dailyCredit}" var="d" columns="1">
-                <p:dataTable id="safrin" value="#{d.categoryWitmItems}" var="s" rendered="#{d.departmentTotal!=0}">                       
+                <p:dataTable id="safrin" value="#{d.categoryWitmItems}" var="s" rendered="#{d.departmentTotal>0}">                       
                     <p:columnGroup type="header">
                         <p:row>
                             <p:column headerText="Item Name"/>                         
@@ -50,28 +50,28 @@
                             <p:column headerText="Total"/>
                         </p:row>
                     </p:columnGroup>
-                    <p:subTable value="#{s.itemWithFees}" var="i" rendered="#{s.subTotal!=0}">
+                    <p:subTable value="#{s.itemWithFees}" var="i" rendered="#{s.subTotal>0}">
                         <f:facet name="header" >
                             <p:outputLabel value="#{s.category.name}" />                                  
                         </f:facet>
                         <p:column>
-                            <h:outputLabel value="#{i.item.name}" rendered="#{i.total!=0}" />
+                            <h:outputLabel value="#{i.item.name}" rendered="#{i.total>0}" />
                         </p:column>                      
                         <p:column>
-                            <h:outputLabel value="#{i.count}" rendered="#{i.total!=0}" />
+                            <h:outputLabel value="#{i.count}" rendered="#{i.total>0}" />
                         </p:column>
-                        <p:column style="text-align: right;" rendered="#{i.total!=0}">                               
+                        <p:column style="text-align: right;" rendered="#{i.total>0}">                               
                             <h:outputLabel value="#{i.hospitalFee}" style="text-align: right;">
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>                                        
                         </p:column>
                         <p:column style="text-align: right;">                               
-                            <h:outputLabel value="#{i.proFee}" rendered="#{i.total!=0}">
+                            <h:outputLabel value="#{i.proFee}" rendered="#{i.total>0}">
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
                         </p:column>
                         <p:column style="text-align: right;">                               
-                            <h:outputLabel value="#{i.total}" rendered="#{i.total!=0}">
+                            <h:outputLabel value="#{i.total}" rendered="#{i.total>0}">
                                 <f:convertNumber pattern="#,000.00"/>
                             </h:outputLabel>
                         </p:column>

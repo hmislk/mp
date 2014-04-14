@@ -3,16 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.divudi.bean;
+package com.divudi.bean.cashTransaction;
 
+import com.divudi.bean.SessionController;
+import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CashTransactionBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.CashTransaction;
-import com.divudi.entity.Drawer;
+import com.divudi.entity.cashTransaction.CashTransaction;
+import com.divudi.entity.cashTransaction.Drawer;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.CashTransactionFacade;

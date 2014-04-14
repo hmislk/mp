@@ -50,25 +50,25 @@
 
                     </p:row>
                 </p:columnGroup>
-                <p:subTable id="safrin" value="#{d.categoryWitmItems}" var="s" rendered="#{d.departmentTotal!=0}">                     
+                <p:subTable id="safrin" value="#{d.categoryWitmItems}" var="s" rendered="#{d.departmentTotal>0}">                     
 
                     <p:column >
-                        <p:outputLabel value="#{s.category.name}" rendered="#{s.subTotal!=0}" />   
+                        <p:outputLabel value="#{s.category.name}" rendered="#{s.subTotal>0}" />   
                     </p:column>
                     <p:column style="text-align: right;">
-                        <h:outputLabel value="#{s.subHosTotal}" rendered="#{s.subTotal!=0}">
+                        <h:outputLabel value="#{s.subHosTotal}" rendered="#{s.subTotal>0}">
                             <f:convertNumber pattern="#,000.00"/>
                         </h:outputLabel>
                     </p:column>
                     <p:column style="text-align: right;">
 
-                        <h:outputLabel value="#{s.subTotal-s.subHosTotal}" rendered="#{s.subTotal!=0}">
+                        <h:outputLabel value="#{s.subTotal-s.subHosTotal}" rendered="#{s.subTotal>0}">
                             <f:convertNumber pattern="#,000.00"/>
                         </h:outputLabel>                          
 
                     </p:column>
                     <p:column  style="text-align: right;">
-                        <h:outputLabel value="#{s.subTotal}" rendered="#{s.subTotal!=0}">
+                        <h:outputLabel value="#{s.subTotal}" rendered="#{s.subTotal>0}">
                             <f:convertNumber pattern="#,000.00"/>
                         </h:outputLabel>
                     </p:column>    
@@ -154,7 +154,7 @@
                     <h:outputLabel value="#{s.string}"/>
                 </p:column>
                 <p:column style="text-align: right;">
-                    <h:outputLabel value="#{s.value}" rendered="#{s.value!=0}">
+                    <h:outputLabel value="#{s.value}" rendered="#{s.value>0}">
                         <f:convertNumber pattern="#,000.00"/>
                     </h:outputLabel>
                     <h:outputLabel value="................" rendered="#{s.value==0}"/>

@@ -6,7 +6,7 @@
 
 package com.divudi.facade;
 
-import com.divudi.entity.Drawer;
+import com.divudi.entity.cashTransaction.Drawer;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

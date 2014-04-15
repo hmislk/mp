@@ -10,7 +10,7 @@
         <ui:composition template="/resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>            
-                    <p:commandButton id="btnSearch" ajax="false" value="Process Due Age" action="#{creditCompanyDueController.createAgeTable()}" />
+                    <p:commandButton id="btnSearch" ajax="false" value="Process Cash Access Age" action="#{creditCompanyDueController.createInwardCashAgeTableAccess()}" />
                     <p:defaultCommand target="btnSearch"/>
                     
                     <p:dataTable id="lst" value="#{creditCompanyDueController.creditCompanyAge}" var="i"

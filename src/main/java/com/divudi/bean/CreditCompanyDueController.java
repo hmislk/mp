@@ -131,7 +131,7 @@ public class CreditCompanyDueController implements Serializable {
 
             String1Value5 newRow = new String1Value5();
             newRow.setString(ins.getName());
-            setInwardValues(ins, newRow);
+            setInwardValuesAccess(ins, newRow);
 
             if (newRow.getValue1() != 0
                     || newRow.getValue2() != 0
@@ -173,6 +173,30 @@ public class CreditCompanyDueController implements Serializable {
     }
 
     private void setInwardValues(Institution inst, String1Value5 dataTable5Value) {
+
+        List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounters(inst);
+        System.err.println("Institution Ins " + inst.getName());
+        for (PatientEncounter b : lst) {
+
+            Long dayCount = getCommonFunctions().getDayCountTillNow(b.getCreatedAt());
+
+            double finalValue = (Math.abs(b.getCreditUsedAmount()) - Math.abs(b.getCreditPaidAmount()));
+
+            if (dayCount < 30) {
+                dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
+            } else if (dayCount < 60) {
+                dataTable5Value.setValue2(dataTable5Value.getValue2() + finalValue);
+            } else if (dayCount < 90) {
+                dataTable5Value.setValue3(dataTable5Value.getValue3() + finalValue);
+            } else {
+                dataTable5Value.setValue4(dataTable5Value.getValue4() + finalValue);
+            }
+
+        }
+
+    }
+    
+       private void setInwardValuesAccess(Institution inst, String1Value5 dataTable5Value) {
 
         List<PatientEncounter> lst = getCreditBean().getCreditPatientEncountersAccess(inst);
         System.err.println("Institution Ins " + inst.getName());

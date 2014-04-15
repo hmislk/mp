@@ -223,7 +223,7 @@ public class DrawerAdjustmentController implements Serializable {
         if (errorCheck()) {
             return;
         }
-        save(getSessionController().getLoggedUser().getDrawer().getSlipBallance(), PaymentMethod.Card);
+        save(getSessionController().getLoggedUser().getDrawer().getCreditCardBallance(), PaymentMethod.Card);
     }
 
     public SessionController getSessionController() {

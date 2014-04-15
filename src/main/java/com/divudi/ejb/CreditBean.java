@@ -107,6 +107,28 @@ public class CreditBean {
         return lst;
     }
     
+     public List<PatientEncounter> getCreditPatientEncounterAccess(Institution institution, Date fromDate, Date toDate) {
+        String sql;
+        HashMap hm;
+        sql = "Select b From PatientEncounter b "
+                + " where b.retired=false "
+                + " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount)) <:val "
+                + " and b.dateOfDischarge between :frm and :to "
+                + " and b.paymentFinalized = true "
+                + " and b.paymentMethod= :pm "
+                + " and b.creditCompany=:ins  ";
+
+        hm = new HashMap();
+        hm.put("frm", fromDate);
+        hm.put("to", toDate);
+        hm.put("pm", PaymentMethod.Credit);
+        hm.put("ins", institution);
+        hm.put("val", 0.1);
+        List<PatientEncounter> lst = getPatientEncounterFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+        return lst;
+    }
+    
      public List<Institution> getCreditCompanyFromBht() {
         String sql;
         HashMap hm;
@@ -122,6 +144,22 @@ public class CreditBean {
         hm.put("pm", PaymentMethod.Credit);
         return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
     }
+     
+      public List<Institution> getCreditCompanyFromBhtAccess() {
+        String sql;
+        HashMap hm;
+        sql = "Select distinct(b.creditCompany) "
+                + " From PatientEncounter b "
+                + " where b.retired=false "
+                + " and b.paymentFinalized=true "
+                + " and b.paymentMethod=:pm "
+                + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)< :val ";
+
+        hm = new HashMap();
+        hm.put("val", 0.1);
+        hm.put("pm", PaymentMethod.Credit);
+        return getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
 
     public List<Institution> getCreditInstitutionByPatientEncounter(Date fromDate, Date toDate) {
         String sql;
@@ -130,6 +168,28 @@ public class CreditBean {
                 + " From PatientEncounter b "
                 + " where b.retired=false "
                 + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount) >:val "
+                + " and b.dateOfDischarge between :frm and :to "
+                + " and b.paymentFinalized = true "
+                + " and b.paymentMethod = :pm "
+                + " order by b.creditCompany.name  ";
+
+        hm = new HashMap();
+        hm.put("frm", fromDate);
+        hm.put("to", toDate);
+        hm.put("pm", PaymentMethod.Credit);
+        hm.put("val", 0.1);
+        List<Institution> setIns = getInstitutionFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+
+        return setIns;
+    }
+    
+      public List<Institution> getCreditInstitutionByPatientEncounterAccess(Date fromDate, Date toDate) {
+        String sql;
+        HashMap hm;
+        sql = "Select distinct(b.creditCompany)"
+                + " From PatientEncounter b "
+                + " where b.retired=false "
+                + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount) <:val "
                 + " and b.dateOfDischarge between :frm and :to "
                 + " and b.paymentFinalized = true "
                 + " and b.paymentMethod = :pm "
@@ -360,6 +420,22 @@ public class CreditBean {
                 + " and b.paymentFinalized=true "
                 + " and b.paymentMethod=:pm "
                 + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)> :val "
+                + " and (b.creditCompany=:ins ) ";
+
+        hm.put("val", 0.1);
+        hm.put("ins", institution);
+        hm.put("pm", PaymentMethod.Credit);
+        return getPatientEncounterFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+    
+     public List<PatientEncounter> getCreditPatientEncountersAccess(Institution institution) {
+        String sql;
+        HashMap hm = new HashMap();
+        sql = "Select b From PatientEncounter b "
+                + " where b.retired=false "
+                + " and b.paymentFinalized=true "
+                + " and b.paymentMethod=:pm "
+                + " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)< :val "
                 + " and (b.creditCompany=:ins ) ";
 
         hm.put("val", 0.1);

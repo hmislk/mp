@@ -104,7 +104,7 @@ public class CashierReportController implements Serializable {
 
     private BillsTotals createRow(BillType billType, String suffix, Bill bill, WebUser webUser) {
         BillsTotals newB = new BillsTotals();
-        newB.setName(billType.getLabel() +" "+ suffix);
+        newB.setName(billType.getLabel() + " " + suffix);
         newB.setCard(calTotalValueOwn(webUser, bill, PaymentMethod.Card, billType));
         finalCardTot += newB.getCard();
         newB.setCash(calTotalValueOwn(webUser, bill, PaymentMethod.Cash, billType));
@@ -122,7 +122,7 @@ public class CashierReportController implements Serializable {
 
     private BillsTotals createRowInOut(BillType billType, String suffix, Bill bill, WebUser webUser) {
         BillsTotals newB = new BillsTotals();
-        newB.setName(billType.getLabel() +" "+ suffix);
+        newB.setName(billType.getLabel() + " " + suffix);
         newB.setCard(calTotalValueOwnInOutCreditCard(webUser, bill, billType));
         finalCardTot += newB.getCard();
         newB.setCash(calTotalValueOwnInOutCash(webUser, bill, billType));
@@ -176,10 +176,12 @@ public class CashierReportController implements Serializable {
 
             }
 
+            //Cash In
             BillsTotals newIn = createRowInOut(BillType.CashIn, "Billed", new BilledBill(), webUser);
 
-            if (newIn.getCard() != 0 || newIn.getCash() != 0 || newIn.getCheque() != 0 || newIn.getCredit() != 0 || newIn.getSlip() != 0) {
-                System.err.println("New IN ");
+            if (newIn.getCard() != 0 || newIn.getCash() != 0
+                    || newIn.getCheque() != 0 || newIn.getCredit() != 0
+                    || newIn.getSlip() != 0) {
                 billls.add(newIn);
             }
 
@@ -189,6 +191,20 @@ public class CashierReportController implements Serializable {
             uCredit += (newIn.getCredit());
             uSlip += (newIn.getSlip());
 
+            BillsTotals newInCan = createRowInOut(BillType.CashIn, "Cancelled", new CancelledBill(), webUser);
+            uCard += (newInCan.getCard());
+            uCash += (newInCan.getCash());
+            uCheque += (newInCan.getCheque());
+            uCredit += (newInCan.getCredit());
+            uSlip += (newInCan.getSlip());
+
+            if (newInCan.getCard() != 0 || newInCan.getCash() != 0
+                    || newInCan.getCheque() != 0 || newInCan.getCredit() != 0
+                    || newInCan.getSlip() != 0) {
+                billls.add(newInCan);
+            }
+
+            //Cash Out
             BillsTotals newOut = createRowInOut(BillType.CashOut, "Billed", new BilledBill(), webUser);
 
             if (newOut.getCard() != 0 || newOut.getCash() != 0 || newOut.getCheque() != 0 || newOut.getCredit() != 0 || newOut.getSlip() != 0) {
@@ -202,11 +218,39 @@ public class CashierReportController implements Serializable {
             uCredit += (newOut.getCredit());
             uSlip += (newOut.getSlip());
 
-//            System.err.println("1 "+uCard);
-//            System.err.println("2 "+uCash);
-//            System.err.println("3 "+uCheque);
-//            System.err.println("4 "+uCredit);
-//            System.err.println("5 "+uSlip);
+            if (newOut.getCard() != 0 || newOut.getCash() != 0
+                    || newOut.getCheque() != 0 || newOut.getCredit() != 0
+                    || newOut.getSlip() != 0) {
+                billls.add(newOut);
+            }
+
+            BillsTotals newOutCan = createRowInOut(BillType.CashOut, "Cancelled", new CancelledBill(), webUser);
+            uCard += (newOutCan.getCard());
+            uCash += (newOutCan.getCash());
+            uCheque += (newOutCan.getCheque());
+            uCredit += (newOutCan.getCredit());
+            uSlip += (newOutCan.getSlip());
+
+            if (newOutCan.getCard() != 0 || newOutCan.getCash() != 0
+                    || newOutCan.getCheque() != 0 || newOutCan.getCredit() != 0
+                    || newOutCan.getSlip() != 0) {
+                billls.add(newOutCan);
+            }
+
+            //Adjustment
+            BillsTotals adj = createRowInOut(BillType.DrawerAdjustment, "Adjusment", new BilledBill(), webUser);
+            uCard += (adj.getCard());
+            uCash += (adj.getCash());
+            uCheque += (adj.getCheque());
+            uCredit += (adj.getCredit());
+            uSlip += (adj.getSlip());
+
+            if (adj.getCard() != 0 || adj.getCash() != 0
+                    || adj.getCheque() != 0 || adj.getCredit() != 0
+                    || adj.getSlip() != 0) {
+                billls.add(adj);
+            }
+
             BillsTotals newSum = new BillsTotals();
             newSum.setName("Total ");
             newSum.setBold(true);
@@ -254,6 +298,7 @@ public class CashierReportController implements Serializable {
 
             }
 
+            //Cash IN
             BillsTotals newIn = createRowInOut(BillType.CashIn, "Billed", new BilledBill(), webUser);
             uCard += (newIn.getCard());
             uCash += (newIn.getCash());
@@ -261,12 +306,35 @@ public class CashierReportController implements Serializable {
             uCredit += (newIn.getCredit());
             uSlip += (newIn.getSlip());
 
+            BillsTotals newInCan = createRowInOut(BillType.CashIn, "Cancelled", new CancelledBill(), webUser);
+            uCard += (newInCan.getCard());
+            uCash += (newInCan.getCash());
+            uCheque += (newInCan.getCheque());
+            uCredit += (newInCan.getCredit());
+            uSlip += (newInCan.getSlip());
+
+            //Cahs Out
             BillsTotals newOut = createRowInOut(BillType.CashOut, "Billed", new BilledBill(), webUser);
             uCard += (newOut.getCard());
             uCash += (newOut.getCash());
             uCheque += (newOut.getCheque());
             uCredit += (newOut.getCredit());
             uSlip += (newOut.getSlip());
+
+            BillsTotals newOutCan = createRowInOut(BillType.CashOut, "Cancelled", new CancelledBill(), webUser);
+            uCard += (newOutCan.getCard());
+            uCash += (newOutCan.getCash());
+            uCheque += (newOutCan.getCheque());
+            uCredit += (newOutCan.getCredit());
+            uSlip += (newOutCan.getSlip());
+
+            //Drawer Adjustment
+            BillsTotals adj = createRowInOut(BillType.DrawerAdjustment, "Adjusment", new BilledBill(), webUser);
+            uCard += (adj.getCard());
+            uCash += (adj.getCash());
+            uCheque += (adj.getCheque());
+            uCredit += (adj.getCredit());
+            uSlip += (adj.getSlip());
 
             BillsTotals newSum = new BillsTotals();
             newSum.setName("Total ");

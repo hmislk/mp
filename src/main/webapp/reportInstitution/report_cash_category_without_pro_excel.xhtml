@@ -50,7 +50,7 @@
             <!--            <p:spacer height="30" />-->
 
             <p:dataTable id="opd"  value="#{cashSummeryControllerExcel1.dailyCashExcel}" var="d" 
-                         rendered="#{cashSummeryControllerExcel1.dailyCashExcel.size()!=0}">                   
+                         rendered="#{cashSummeryControllerExcel1.dailyCashExcel.size()>0}">                   
                 <f:facet name="header">
                     <h:panelGrid columns="2" styleClass="printBlock" style="min-width: 100%;">
                         <p:outputLabel value="#{sessionController.institution.name}"/><h:outputLabel/>
@@ -110,7 +110,7 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="other" value="#{cashSummeryControllerExcel1.otherInstitution}" var="th" rendered="#{cashSummeryControllerExcel1.otherInstitution.size()!=0}">
+            <p:dataTable id="other" value="#{cashSummeryControllerExcel1.otherInstitution}" var="th" rendered="#{cashSummeryControllerExcel1.otherInstitution.size()>0}">
                 <p:column>
                     <h:outputLabel value="#{th.string}"/>
                 </p:column>
@@ -142,7 +142,7 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="pharmacy" value="#{cashSummeryControllerExcel1.pharmacySales}" var="dep" rendered="#{cashSummeryControllerExcel1.pharmacySales.size()!=0}">
+            <p:dataTable id="pharmacy" value="#{cashSummeryControllerExcel1.pharmacySales}" var="dep" rendered="#{cashSummeryControllerExcel1.pharmacySales.size()>0}">
                 <f:facet name="header">
                     <h:outputLabel value="Pharmacy Collection"/>
                 </f:facet>
@@ -183,7 +183,7 @@
             <p:spacer height="30"/>
 
             <p:dataTable id="inward" value="#{cashSummeryControllerExcel1.inwardCollection}"
-                         var="inw" rendered="#{cashSummeryControllerExcel1.inwardTot!=0}">
+                         var="inw" rendered="#{cashSummeryControllerExcel1.inwardTot>0}">
                 <f:facet name="header">
                     Inward Collection
                 </f:facet>
@@ -194,7 +194,7 @@
                         <p:column headerText="Payment"/>                       
                     </p:row>
                 </p:columnGroup>
-                <p:subTable value="#{inw.bills}" var="b" rendered="#{inw.total!=0}" >
+                <p:subTable value="#{inw.bills}" var="b" rendered="#{inw.total>0}" >
                     <f:facet name="header">
                         #{inw.admissionType.name}
                     </f:facet>
@@ -248,7 +248,7 @@
 
 
             <p:spacer height="30"/>
-            <p:dataTable id="agent" value="#{cashSummeryControllerExcel1.agentCollections}" var="a" rendered="#{cashSummeryControllerExcel1.agentCollections.size()!=0}" sortBy="#{a.institution.id}" >
+            <p:dataTable id="agent" value="#{cashSummeryControllerExcel1.agentCollections}" var="a" rendered="#{cashSummeryControllerExcel1.agentCollections.size()>0}" sortBy="#{a.institution.id}" >
                 <f:facet name="header">               
                     <p:outputLabel value="Agent Collection"/>                 
                 </f:facet>
@@ -284,7 +284,7 @@
             <p:spacer height="30"/>
 
 
-            <p:dataTable id="creditCompany" value="#{cashSummeryControllerExcel1.creditCompanyCollections}" var="c" rendered="#{cashSummeryControllerExcel1.creditCompanyCollections.size()!=0}">
+            <p:dataTable id="creditCompany" value="#{cashSummeryControllerExcel1.creditCompanyCollections}" var="c" rendered="#{cashSummeryControllerExcel1.creditCompanyCollections.size()>0}">
                 <f:facet name="header">
                     <p:outputLabel value="Credit Company Collection"/>    
                 </f:facet>                               
@@ -348,15 +348,15 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="dept" value="#{cashSummeryControllerExcel1.departmentPayments}" var="a" rendered="#{cashSummeryControllerExcel1.departmentPayments.size()!=0}"  >
+            <p:dataTable id="dept" value="#{cashSummeryControllerExcel1.departmentPayments}" var="a" rendered="#{cashSummeryControllerExcel1.departmentPayments.size()>0}"  >
                 <f:facet name="header">               
                     <p:outputLabel value="Professional Payment" />    
                 </f:facet>
                 <p:column>
-                    <h:outputLabel value="#{a.department.name}" rendered="#{a.totalPayment!=0}"/>
+                    <h:outputLabel value="#{a.department.name}" rendered="#{a.totalPayment>0}"/>
                 </p:column>
                 <p:column style="text-align: right;">
-                    <h:outputLabel value="#{-a.totalPayment}" rendered="#{a.totalPayment!=0}" >
+                    <h:outputLabel value="#{-a.totalPayment}" rendered="#{a.totalPayment>0}" >
                         <f:convertNumber pattern="#,000.00"/>
                     </h:outputLabel>
                 </p:column>                
@@ -376,15 +376,15 @@
             </p:dataTable>   
 
 
-            <p:dataTable id="inwProf" value="#{cashSummeryControllerExcel1.inwardProfessions}" var="b" rendered="#{cashSummeryControllerExcel1.inwardProfessions.size()!=0}" >
+            <p:dataTable id="inwProf" value="#{cashSummeryControllerExcel1.inwardProfessions}" var="b" rendered="#{cashSummeryControllerExcel1.inwardProfessions.size()>0}" >
                 <f:facet name="header">               
                     <p:outputLabel value="Inward Professional Payment" />    
                 </f:facet>
                 <p:column>
-                    <h:outputLabel value="#{b.string}" rendered="#{b.value!=0}"/>
+                    <h:outputLabel value="#{b.string}" rendered="#{b.value>0}"/>
                 </p:column> 
                 <p:column style="text-align: right;">
-                    <h:outputLabel value="#{0-b.value}" rendered="#{b.value!=0}">
+                    <h:outputLabel value="#{0-b.value}" rendered="#{b.value>0}">
                         <f:convertNumber pattern="#,000.00"/>
                     </h:outputLabel>
                 </p:column> 
@@ -408,7 +408,7 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="card" value="#{cashSummeryControllerExcel1.cardBill}" var="ch" sortBy="#{ch.billClass}" rendered="#{cashSummeryControllerExcel1.cardBill.size()!=0}">
+            <p:dataTable id="card" value="#{cashSummeryControllerExcel1.cardBill}" var="ch" sortBy="#{ch.billClass}" rendered="#{cashSummeryControllerExcel1.cardBill.size()>0}">
                 <f:facet name="header">              
                     <p:outputLabel value="Credit Card Transactions"/>    
                 </f:facet>
@@ -457,7 +457,7 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="slip" value="#{cashSummeryControllerExcel1.slipBill}" var="ch" sortBy="#{ch.billClass}" rendered="#{cashSummeryControllerExcel1.slipBill.size()!=0}">
+            <p:dataTable id="slip" value="#{cashSummeryControllerExcel1.slipBill}" var="ch" sortBy="#{ch.billClass}" rendered="#{cashSummeryControllerExcel1.slipBill.size()>0}">
                 <f:facet name="header">
 
                     <p:outputLabel value="Slip Transactions"/>    
@@ -516,7 +516,7 @@
 
             <p:spacer height="30"/>
 
-            <p:dataTable id="cheque" value="#{cashSummeryControllerExcel1.chequeBill}" var="ch" sortBy="#{ch.billClass}" rendered="#{cashSummeryControllerExcel1.chequeBill.size()!=0}">
+            <p:dataTable id="cheque" value="#{cashSummeryControllerExcel1.chequeBill}" var="ch" sortBy="#{ch.billClass}" rendered="#{cashSummeryControllerExcel1.chequeBill.size()>0}">
                 <f:facet name="header">              
                     <p:outputLabel value="Cheque Transactions"/>    
                 </f:facet>
@@ -581,7 +581,7 @@
                     <h:outputLabel value="#{s.string}"/>
                 </p:column>
                 <p:column style="text-align: right;">
-                    <h:outputLabel value="#{s.value}" rendered="#{s.value!=0}">
+                    <h:outputLabel value="#{s.value}" rendered="#{s.value>0}">
                         <f:convertNumber pattern="#,000.00"/>
                     </h:outputLabel>
                     <h:outputLabel value="................" rendered="#{s.value==0}"/>

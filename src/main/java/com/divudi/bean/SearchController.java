@@ -716,6 +716,33 @@ public class SearchController implements Serializable {
 
     }
 
+    public void createDrawerAdjustmentTable() {
+        //  searchBillItems = null;
+        String sql;
+        Map m = new HashMap();
+        m.put("toDate", toDate);
+        m.put("fromDate", fromDate);
+        m.put("bType", BillType.DrawerAdjustment);
+        m.put("ins", getSessionController().getInstitution());
+        m.put("class", BilledBill.class);
+
+        sql = "select bi from Bill bi"
+                + " where  type(bi)=:class "
+                + " and bi.institution=:ins"
+                + " and bi.billType=:bType  "
+                + " and bi.createdAt between :fromDate and :toDate ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(bi.insId) like :billNo )";
+            m.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by bi.id desc  ";
+
+        bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
+
+    }
+
     public void createPharmacyBillItemTableBht() {
         createBillItemTableBht(BillType.PharmacyBhtPre);
     }
@@ -1777,19 +1804,17 @@ public class SearchController implements Serializable {
                 + " and b.retired=false"
                 + " and b.creater=:w ";
 
-       
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
             temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
-        
-        
-        if (getSearchKeyword().getPersonName()!= null && !getSearchKeyword().getPersonName().trim().equals("")) {
+
+        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
             sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
             temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
         }
-      
-        if (getSearchKeyword().getNetTotal()!= null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
             sql += " and  (upper(b.netTotal) like :total )";
             temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
         }
@@ -1806,8 +1831,8 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
-    
-      public void createTableCashOut() {
+
+    public void createTableCashOut() {
         bills = null;
         String sql;
         Map temMap = new HashMap();
@@ -1818,19 +1843,17 @@ public class SearchController implements Serializable {
                 + " and b.retired=false"
                 + " and b.creater=:w ";
 
-       
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
             temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
         }
-        
-        
-        if (getSearchKeyword().getPersonName()!= null && !getSearchKeyword().getPersonName().trim().equals("")) {
+
+        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
             sql += " and  (upper(b.toWebUser.webUserPerson.name) like :patientName )";
             temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
         }
-      
-        if (getSearchKeyword().getNetTotal()!= null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
             sql += " and  (upper(b.netTotal) like :total )";
             temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
         }

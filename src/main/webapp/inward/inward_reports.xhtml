@@ -27,32 +27,41 @@
                         </p:panel>
                         <p:panel header="Reports By Bht">
                             <h:panelGrid columns="1">
-                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Break Down" action="inward_bill_final_break_down" /> 
+                                <p:commandButton styleClass="linkButton" ajax="false" value="BHT Break Down" action="inward_bill_final_break_down" /> 
                             </h:panelGrid>
                         </p:panel>
-                        
+
                         <p:panel header="BHT Issuing">
                             <h:panelGrid columns="1">
                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill Item" action="report_bht_issue_by_bill" actionListener="#{mdInwardReportController.makeNull}"/> 
                                 <p:commandButton styleClass="linkButton" ajax="false" value="BHT Issue By Bill" action="report_bht_issue_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
                             </h:panelGrid>
                         </p:panel>
-                        
+
                         <p:panel header="Doctor Payment Report">
                             <h:panelGrid columns="1">
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Doctor Payment" action="report_doctor_payment" actionListener="#{mdInwardReportController.makeNull}"/> 
-                                 
+
                             </h:panelGrid>
                         </p:panel>
-                        
+
                         <p:panel header="Inward Payment Report">
                             <h:panelGrid columns="1">
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Inward Payment By Bill Item" action="report_inward_payment_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
                                 <p:commandButton styleClass="linkButton" ajax="false" value="Inward Payment By Bill" action="report_bht_issue_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
                             </h:panelGrid>
                         </p:panel>                    
+
+                        <p:panel header="Credit Due" >
+                            <p:commandButton  action="/credit/credit_company_inward_due" value="Due Search"  ajax="false" styleClass="linkButton"  />
+                            <p:commandButton   action="/credit/credit_company_inward_due_age" value="Due Age"  ajax="false" styleClass="linkButton"/>
+                        </p:panel>
                         
-                        
+                         <p:panel header="Credit Access" >
+                            <p:commandButton action="/credit/credit_company_inward_access" value="Access Search"  ajax="false"  styleClass="linkButton"/>
+                            <p:commandButton    action="/credit/credit_company_inward_access_age" value="Access Age"  ajax="false" styleClass="linkButton" />
+                        </p:panel>
+
                     </h:panelGrid>
                 </h:form>
             </ui:define>

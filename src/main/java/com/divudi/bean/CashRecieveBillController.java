@@ -102,21 +102,21 @@ public class CashRecieveBillController implements Serializable {
 
     public void changeNetValueListener(BillItem billItem) {
 
-        if (!isPaidAmountOk(billItem)) {
-            billItem.setNetValue(0);
-//            UtilityController.addSuccessMessage("U cant add more than ballance");
-//            return;
-        }
+//        if (!isPaidAmountOk(billItem)) {
+//            billItem.setNetValue(0);
+////            UtilityController.addSuccessMessage("U cant add more than ballance");
+////            return;
+//        }
         calTotal();
     }
 
     public void changeNetValueListenerBht(BillItem billItem) {
 
-        if (!isBhtPaidAmountOk(billItem)) {
-            billItem.setNetValue(0);
-//            UtilityController.addSuccessMessage("U cant add more than ballance");
-//            return;
-        }
+//        if (!isBhtPaidAmountOk(billItem)) {
+//            billItem.setNetValue(0);
+////            UtilityController.addSuccessMessage("U cant add more than ballance");
+////            return;
+//        }
         calTotal();
     }
 
@@ -211,12 +211,12 @@ public class CashRecieveBillController implements Serializable {
             return true;
         }
 
-        double dbl = getReferenceBallance(getCurrentBillItem());
-
-        if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
-            UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
-            return true;
-        }
+//        double dbl = getReferenceBallance(getCurrentBillItem());
+//
+//        if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
+//            UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
+//            return true;
+//        }
 
         for (BillItem b : getBillItems()) {
             if (b.getReferenceBill() != null && b.getReferenceBill().getCreditCompany() != null) {
@@ -236,12 +236,12 @@ public class CashRecieveBillController implements Serializable {
             return true;
         }
 
-        double dbl = getReferenceBhtBallance(getCurrentBillItem());
-
-        if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
-            UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
-            return true;
-        }
+//        double dbl = getReferenceBhtBallance(getCurrentBillItem());
+//
+//        if (dbl < Math.abs(getCurrentBillItem().getNetValue())) {
+//            UtilityController.addErrorMessage("U Cant Recieve Over Than Due");
+//            return true;
+//        }
 
         for (BillItem b : getBillItems()) {
             if (b.getPatientEncounter() != null && b.getPatientEncounter().getCreditCompany() != null) {

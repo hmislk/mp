@@ -56,6 +56,9 @@ public class CashInController implements Serializable {
     }
 
     private boolean errorCheck() {
+        if (getBill().getCashTransaction() == null) {
+            return true;
+        }
 
         return false;
     }
@@ -120,7 +123,7 @@ public class CashInController implements Serializable {
             return;
         }
 
-        if (getBill().getCashTransaction().getCashValue() != 0) {
+        if (getBill().getCashTransaction().getCashValue() == null) {
             calTotal();
         }
 
@@ -155,6 +158,7 @@ public class CashInController implements Serializable {
     public void makeNull() {
         printPreview = false;
         bill = null;
+        referenceBill = null;
     }
 
     public void calTotal() {

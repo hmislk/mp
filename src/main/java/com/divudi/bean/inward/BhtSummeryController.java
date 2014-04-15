@@ -257,7 +257,7 @@ public class BhtSummeryController implements Serializable {
                 + " and pr.patientEncounter=:pe ";
         hm.put("pe", getPatientEncounter());
         hm.put("dt", date);
-        PatientRoom tmp = getPatientRoomFacade().findFirstBySQL(sql, hm);
+        PatientRoom tmp = getPatientRoomFacade().findFirstBySQL(sql, hm,TemporalType.TIMESTAMP);
 
         if (tmp != null) {
             return true;

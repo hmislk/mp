@@ -423,6 +423,7 @@ public class PatientEncounter implements Serializable {
 
     public void setDateOfAdmission(Date dateOfAdmission) {
         this.dateOfAdmission = dateOfAdmission;
+        printingAdmissionTime = dateOfAdmission;
     }
 
     public Date getTimeOfAdmission() {
@@ -467,6 +468,7 @@ public class PatientEncounter implements Serializable {
 
     public void setDateOfDischarge(Date dateOfDischarge) {
         this.dateOfDischarge = dateOfDischarge;
+        this.printingDischargeTime = dateOfDischarge;
     }
 
     public PaymentMethod getPaymentMethod() {

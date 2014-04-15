@@ -89,13 +89,39 @@ public class CreditCompanyDueController implements Serializable {
 
     public void createInwardAgeTable() {
         makeNull();
-        System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
         List<Institution> list = getCreditBean().getCreditCompanyFromBht();
+        System.err.println("Ins Size " + list.size());
+        setIns.addAll(list);
+
+        creditCompanyAge = new ArrayList<>();
+        for (Institution ins : setIns) {
+            if (ins == null) {
+                continue;
+            }
+
+            String1Value5 newRow = new String1Value5();
+            newRow.setString(ins.getName());
+            setInwardValues(ins, newRow);
+
+            if (newRow.getValue1() != 0
+                    || newRow.getValue2() != 0
+                    || newRow.getValue3() != 0
+                    || newRow.getValue4() != 0) {
+                creditCompanyAge.add(newRow);
+            }
+        }
+
+    }
+
+    public void createInwardAgeTableAccess() {
+        makeNull();
+        Set<Institution> setIns = new HashSet<>();
+
+        List<Institution> list = getCreditBean().getCreditCompanyFromBhtAccess();
 
         setIns.addAll(list);
-        System.err.println("size " + setIns.size());
 
         creditCompanyAge = new ArrayList<>();
         for (Institution ins : setIns) {
@@ -148,7 +174,7 @@ public class CreditCompanyDueController implements Serializable {
 
     private void setInwardValues(Institution inst, String1Value5 dataTable5Value) {
 
-        List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounters(inst);
+        List<PatientEncounter> lst = getCreditBean().getCreditPatientEncountersAccess(inst);
         System.err.println("Institution Ins " + inst.getName());
         for (PatientEncounter b : lst) {
 
@@ -223,8 +249,28 @@ public class CreditCompanyDueController implements Serializable {
         institutionEncounters = new ArrayList<>();
         for (Institution ins : setIns) {
             List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounter(ins, getFromDate(), getToDate());
-            
-             System.err.println("SIze  Pe " + lst.size());
+
+            System.err.println("SIze  Pe " + lst.size());
+            InstitutionEncounters newIns = new InstitutionEncounters();
+            newIns.setInstitution(ins);
+            newIns.setPatientEncounters(lst);
+
+            for (PatientEncounter b : lst) {
+                newIns.setTotal(newIns.getTotal() + b.getCreditUsedAmount());
+                newIns.setPaidTotal(newIns.getPaidTotal() + b.getCreditPaidAmount());
+            }
+
+            institutionEncounters.add(newIns);
+        }
+
+    }
+
+    public void createInwardCreditAccess() {
+        List<Institution> setIns = getCreditBean().getCreditInstitutionByPatientEncounterAccess(getFromDate(), getToDate());
+
+        institutionEncounters = new ArrayList<>();
+        for (Institution ins : setIns) {
+            List<PatientEncounter> lst = getCreditBean().getCreditPatientEncounterAccess(ins, getFromDate(), getToDate());
             InstitutionEncounters newIns = new InstitutionEncounters();
             newIns.setInstitution(ins);
             newIns.setPatientEncounters(lst);

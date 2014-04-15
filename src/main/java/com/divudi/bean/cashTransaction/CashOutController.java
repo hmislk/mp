@@ -57,6 +57,9 @@ public class CashOutController implements Serializable {
     }
 
     private boolean errorCheck() {
+        if (getBill().getCashTransaction() == null) {
+            return true;
+        }
 
         return false;
     }
@@ -116,7 +119,7 @@ public class CashOutController implements Serializable {
             return;
         }
 
-        if (getBill().getCashTransaction().getCashValue() != 0) {
+        if (getBill().getCashTransaction().getCashValue() == null) {
             calTotal();
         }
 

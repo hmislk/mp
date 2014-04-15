@@ -4,6 +4,7 @@
  */
 package com.divudi.entity;
 
+import com.divudi.entity.cashTransaction.CashTransaction;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.inward.SurgeryBillType;

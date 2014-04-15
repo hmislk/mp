@@ -351,6 +351,13 @@
                                         <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_bill" value="Cash In "/>
                                         <p:menuitem ajax="false" action="/cashTransaction/search_cash_out_bill" value="Cash Out "/>                                        
                                     </p:submenu>
+                                    <p:submenu label="Adjustment">
+                                         <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cash" value="Cash"/>                                        
+                                         <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cheque" value="Cheque"/>                                        
+                                         <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_credit_card" value="Credit Card"/>                                        
+                                         <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_slip" value="Slip"/>                                        
+                                          <p:menuitem ajax="false" action="/cashTransaction/search_adjustment_bill" value="Search"/>                                        
+                                    </p:submenu>
                                     <p:menuitem ajax="false" action="/cashTransaction/administration"  value="Administration"  />   
                                     <p:menuitem ajax="false" action="/cashTransaction/report"  value="Reports"  />                                      
                                 </p:submenu>

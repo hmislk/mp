@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.divudi.entity;
+package com.divudi.entity.cashTransaction;
 
 import com.divudi.data.InOutType;
+import com.divudi.entity.Bill;
+import com.divudi.entity.WebUser;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;

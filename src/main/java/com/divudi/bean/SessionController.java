@@ -13,7 +13,7 @@ import com.divudi.ejb.ApplicationEjb;
 import com.divudi.ejb.CashTransactionBean;
 import com.divudi.ejb.WebUserBean;
 import com.divudi.entity.Department;
-import com.divudi.entity.Drawer;
+import com.divudi.entity.cashTransaction.Drawer;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Logins;
 import com.divudi.entity.WebUser;

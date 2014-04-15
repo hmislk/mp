@@ -8,9 +8,9 @@ package com.divudi.ejb;
 import com.divudi.data.InOutType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.Bill;
-import com.divudi.entity.CashTransaction;
-import com.divudi.entity.CashTransactionHistory;
-import com.divudi.entity.Drawer;
+import com.divudi.entity.cashTransaction.CashTransaction;
+import com.divudi.entity.cashTransaction.CashTransactionHistory;
+import com.divudi.entity.cashTransaction.Drawer;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.CashTransactionFacade;
@@ -150,9 +150,21 @@ public class CashTransactionBean {
         return ct;
     }
 
-    public CashTransaction saveCashAdjustmentTransaction(CashTransaction ct, Bill bill, Drawer drawer, WebUser webUser) {
+    public CashTransaction saveCashAdjustmentTransactionOut(CashTransaction ct, Bill bill, Drawer drawer, WebUser webUser) {
 
-        ct.setInOutType(InOutType.none);
+        ct.setInOutType(InOutType.out);
+        ct.setDrawer(drawer);
+        ct.setCreatedAt(new Date());
+        ct.setBill(bill);
+        ct.setCreater(webUser);
+        getCashTransactionFacade().create(ct);
+
+        return ct;
+    }
+
+    public CashTransaction saveCashAdjustmentTransactionIn(CashTransaction ct, Bill bill, Drawer drawer, WebUser webUser) {
+
+        ct.setInOutType(InOutType.in);
         ct.setDrawer(drawer);
         ct.setCreatedAt(new Date());
         ct.setBill(bill);
@@ -397,21 +409,21 @@ public class CashTransactionBean {
             return false;
         }
 
-        System.err.println("11 "+drawer);
-        System.err.println("22 "+cashTransaction);
+        System.err.println("11 " + drawer);
+        System.err.println("22 " + cashTransaction);
         addToTransactionHistory(cashTransaction, drawer);
 
-        System.err.println("13 "+drawer);
-        System.err.println("24 "+cashTransaction);
+        System.err.println("13 " + drawer);
+        System.err.println("24 " + cashTransaction);
         Drawer fetchedDrw = getDrawerFacade().find(drawer.getId());
 
         fetchedDrw.setRunningBallance(cashTransaction.getCashValue());
         fetchedDrw.setChequeBallance(cashTransaction.getChequeValue());
         fetchedDrw.setCreditCardBallance(cashTransaction.getCreditCardValue());
         fetchedDrw.setSlipBallance(cashTransaction.getSlipValue());
-        
-        System.err.println("15 "+drawer);
-        System.err.println("26 "+cashTransaction);
+
+        System.err.println("15 " + drawer);
+        System.err.println("26 " + cashTransaction);
         getDrawerFacade().edit(fetchedDrw);
 
         return true;

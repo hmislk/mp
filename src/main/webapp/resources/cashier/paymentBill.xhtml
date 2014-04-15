@@ -13,7 +13,7 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:dataTable id="payment" value="#{cc.attrs.data.bills}" var="b"   sortBy="#{b.billType}" rendered="#{cc.attrs.data.bills.size()!=0}" >
+        <p:dataTable id="payment" value="#{cc.attrs.data.bills}" var="b"   sortBy="#{b.billType}" rendered="#{cc.attrs.data.bills.size()>0}" >
             <f:facet name="header">  
                 <h:outputLabel value="Payments"/>
             </f:facet> 
@@ -37,7 +37,7 @@
                 </f:facet> 
                 <h:outputLabel value="#{b.staff.person.nameWithTitle}"/>
             </p:column>
-            <p:column headerText="Cash" style=" text-align: right" rendered="#{cc.attrs.data.cash!=0.0}"  >
+            <p:column headerText="Cash" style=" text-align: right" rendered="#{cc.attrs.data.cash>0.0}"  >
                 <f:facet name="header">  
                     <h:outputLabel value="Cash"/>
                 </f:facet> 

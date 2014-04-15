@@ -6,7 +6,7 @@
 
 package com.divudi.facade;
 
-import com.divudi.entity.CashTransaction;
+import com.divudi.entity.cashTransaction.CashTransaction;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

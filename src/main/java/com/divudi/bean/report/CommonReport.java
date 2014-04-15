@@ -101,7 +101,43 @@ public class CommonReport implements Serializable {
     private BillsTotals PharmacyBhtPreCancelled;
     private BillsTotals PharmacyBhtPreRefunded;
     BillsTotals cashInBills;
+    BillsTotals cashInBillsCancel;
     BillsTotals cashOutBills;
+    BillsTotals cashOutBillsCancel;
+    BillsTotals cashAdjustmentBills;
+
+    public BillsTotals getCashAdjustmentBills() {
+        if (cashAdjustmentBills == null) {
+            cashAdjustmentBills = new BillsTotals();
+        }
+        return cashAdjustmentBills;
+    }
+
+    public void setCashAdjustmentBills(BillsTotals cashAdjustmentBills) {
+        this.cashAdjustmentBills = cashAdjustmentBills;
+    }
+
+    public BillsTotals getCashInBillsCancel() {
+        if (cashInBillsCancel == null) {
+            cashInBillsCancel = new BillsTotals();
+        }
+        return cashInBillsCancel;
+    }
+
+    public void setCashInBillsCancel(BillsTotals cashInBillsCancel) {
+        this.cashInBillsCancel = cashInBillsCancel;
+    }
+
+    public BillsTotals getCashOutBillsCancel() {
+        if (cashOutBillsCancel == null) {
+            cashOutBillsCancel = new BillsTotals();
+        }
+        return cashOutBillsCancel;
+    }
+
+    public void setCashOutBillsCancel(BillsTotals cashOutBillsCancel) {
+        this.cashOutBillsCancel = cashOutBillsCancel;
+    }
 
     public BillsTotals getCashInBills() {
         if (cashInBills == null) {
@@ -1345,26 +1381,46 @@ public class CommonReport implements Serializable {
         getInwardRefunds().setSlip(calValue(new RefundBill(), BillType.InwardPaymentBill, PaymentMethod.Slip, getWebUser()));
 
         //////////
-        createCreditSlipSum();
-        createCashChequeSum();
+        createSum();
 
-        //Cash IN
+        //Cash IN Billed
         getCashInBills().setBills(userBillsOwn(new BilledBill(), BillType.CashIn, getWebUser()));
         getCashInBills().setCard(calValueCreditCard(new BilledBill(), BillType.CashIn, getWebUser()));
         getCashInBills().setCash(calValueCash(new BilledBill(), BillType.CashIn, getWebUser()));
         getCashInBills().setCheque(calValueCheque(new BilledBill(), BillType.CashIn, getWebUser()));
         getCashInBills().setSlip(calValueSlip(new BilledBill(), BillType.CashIn, getWebUser()));
 
-        //Cash Out
+        //Cash IN Canceled
+        getCashInBillsCancel().setBills(userBillsOwn(new CancelledBill(), BillType.CashIn, getWebUser()));
+        getCashInBillsCancel().setCard(calValueCreditCard(new CancelledBill(), BillType.CashIn, getWebUser()));
+        getCashInBillsCancel().setCash(calValueCash(new CancelledBill(), BillType.CashIn, getWebUser()));
+        getCashInBillsCancel().setCheque(calValueCheque(new CancelledBill(), BillType.CashIn, getWebUser()));
+        getCashInBillsCancel().setSlip(calValueSlip(new CancelledBill(), BillType.CashIn, getWebUser()));
+
+        //Cash Out Billled
         getCashOutBills().setBills(userBillsOwn(new BilledBill(), BillType.CashOut, getWebUser()));
         getCashOutBills().setCard(calValueCreditCard(new BilledBill(), BillType.CashOut, getWebUser()));
         getCashOutBills().setCash(calValueCash(new BilledBill(), BillType.CashOut, getWebUser()));
         getCashOutBills().setCheque(calValueCheque(new BilledBill(), BillType.CashOut, getWebUser()));
         getCashOutBills().setSlip(calValueSlip(new BilledBill(), BillType.CashOut, getWebUser()));
 
+        //Cash Out Cancelled
+        getCashOutBillsCancel().setBills(userBillsOwn(new CancelledBill(), BillType.CashOut, getWebUser()));
+        getCashOutBillsCancel().setCard(calValueCreditCard(new CancelledBill(), BillType.CashOut, getWebUser()));
+        getCashOutBillsCancel().setCash(calValueCash(new CancelledBill(), BillType.CashOut, getWebUser()));
+        getCashOutBillsCancel().setCheque(calValueCheque(new CancelledBill(), BillType.CashOut, getWebUser()));
+        getCashOutBillsCancel().setSlip(calValueSlip(new CancelledBill(), BillType.CashOut, getWebUser()));
+
+        //Cash Adjustement
+        getCashAdjustmentBills().setBills(userBillsOwn(new BilledBill(), BillType.DrawerAdjustment, getWebUser()));
+        getCashAdjustmentBills().setCard(calValueCreditCard(new BilledBill(), BillType.DrawerAdjustment, getWebUser()));
+        getCashAdjustmentBills().setCash(calValueCash(new BilledBill(), BillType.DrawerAdjustment, getWebUser()));
+        getCashAdjustmentBills().setCheque(calValueCheque(new BilledBill(), BillType.DrawerAdjustment, getWebUser()));
+        getCashAdjustmentBills().setSlip(calValueSlip(new BilledBill(), BillType.DrawerAdjustment, getWebUser()));
+
         //////////
-        createCreditSlipSumAfter();
-        createCashChequeSumAfter();
+        createSumAfterCash();
+
     }
 
     public List<InwardPriceAdjustment> createMatrxTabl() {
@@ -1586,7 +1642,10 @@ public class CommonReport implements Serializable {
         inwardPaymentCancel = null;
         inwardRefunds = null;
         cashInBills = null;
+        cashInBillsCancel = null;
         cashOutBills = null;
+        cashOutBillsCancel = null;
+        cashAdjustmentBills = null;
         grnBilled = null;
         grnCancelled = null;
         grnReturn = null;
@@ -1805,7 +1864,7 @@ public class CommonReport implements Serializable {
     private List<String1Value1> creditSlipSum;
     private List<String1Value1> creditSlipSumAfter;
 
-    public void createCreditSlipSum() {
+    public void createSum() {
         List<BillsTotals> list2 = new ArrayList<>();
         list2.add(billedBills);
         list2.add(cancellededBills);
@@ -1827,10 +1886,16 @@ public class CommonReport implements Serializable {
 
         double credit = 0.0;
         double slip = 0;
+        double creditCard = 0.0;
+        double cheque = 0.0;
+        double cash = 0.0;
         for (BillsTotals bt : list2) {
             if (bt != null) {
                 credit += bt.getCredit();
                 slip += bt.getSlip();
+                creditCard += bt.getCard();
+                cheque += bt.getCheque();
+                cash += bt.getCash();
             }
         }
 
@@ -1850,9 +1915,33 @@ public class CommonReport implements Serializable {
         tmp3.setValue(credit + slip);
         creditSlipSum.add(tmp3);
 
+        ///////////////////
+        cashChequeSum = new ArrayList<>();
+
+        tmp1 = new String1Value1();
+        tmp1.setString("Final Credit Card Total");
+        tmp1.setValue(creditCard);
+
+        tmp2 = new String1Value1();
+        tmp2.setString("Final Cheque Total");
+        tmp2.setValue(cheque);
+
+        tmp3 = new String1Value1();
+        tmp3.setString("Final Cash Total");
+        tmp3.setValue(cash);
+
+        String1Value1 tmp4 = new String1Value1();
+        tmp4.setString("Total");
+        tmp4.setValue(creditCard + cheque + cash);
+
+        cashChequeSum.add(tmp1);
+        cashChequeSum.add(tmp2);
+        cashChequeSum.add(tmp3);
+        cashChequeSum.add(tmp4);
+
     }
 
-    public void createCreditSlipSumAfter() {
+    public void createSumAfterCash() {
         List<BillsTotals> list2 = new ArrayList<>();
         list2.add(billedBills);
         list2.add(cancellededBills);
@@ -1872,14 +1961,23 @@ public class CommonReport implements Serializable {
         list2.add(cashRecieves);
         list2.add(cashRecieveCancel);
         list2.add(cashInBills);
+        list2.add(cashInBillsCancel);
         list2.add(cashOutBills);
+        list2.add(cashOutBillsCancel);
+        list2.add(cashAdjustmentBills);
 
         double credit = 0.0;
         double slip = 0;
+        double creditCard = 0.0;
+        double cheque = 0.0;
+        double cash = 0.0;
         for (BillsTotals bt : list2) {
             if (bt != null) {
                 credit += bt.getCredit();
                 slip += bt.getSlip();
+                creditCard += bt.getCard();
+                cheque += bt.getCheque();
+                cash += bt.getCash();
             }
         }
 
@@ -1898,6 +1996,30 @@ public class CommonReport implements Serializable {
         tmp3.setString("Total");
         tmp3.setValue(credit + slip);
         creditSlipSumAfter.add(tmp3);
+
+        ////////////////////////////////////////
+        cashChequeSumAfter = new ArrayList<>();
+
+        tmp1 = new String1Value1();
+        tmp1.setString("Final Credit Card Total");
+        tmp1.setValue(creditCard);
+
+        tmp2 = new String1Value1();
+        tmp2.setString("Final Cheque Total");
+        tmp2.setValue(cheque);
+
+        tmp3 = new String1Value1();
+        tmp3.setString("Final Cash Total");
+        tmp3.setValue(cash);
+
+        String1Value1 tmp4 = new String1Value1();
+        tmp4.setString("Total");
+        tmp4.setValue(creditCard + cheque + cash);
+
+        cashChequeSumAfter.add(tmp1);
+        cashChequeSumAfter.add(tmp2);
+        cashChequeSumAfter.add(tmp3);
+        cashChequeSumAfter.add(tmp4);
 
     }
 
@@ -2164,120 +2286,6 @@ public class CommonReport implements Serializable {
 
     private List<String1Value1> cashChequeSum;
     private List<String1Value1> cashChequeSumAfter;
-
-    public void createCashChequeSum() {
-        List<BillsTotals> list2 = new ArrayList<>();
-        list2.add(billedBills);
-        list2.add(cancellededBills);
-        list2.add(refundedBills);
-        list2.add(billedBillsPh);
-        list2.add(cancellededBillsPh);
-        list2.add(refundedBillsPh);
-        list2.add(paymentBills);
-        list2.add(paymentCancelBills);
-        list2.add(pettyPayments);
-        list2.add(pettyPaymentsCancel);
-        list2.add(agentRecieves);
-        list2.add(agentCancelBill);
-        list2.add(inwardPayments);
-        list2.add(inwardPaymentCancel);
-        list2.add(cashRecieves);
-        list2.add(cashRecieveCancel);
-
-        double creditCard = 0.0;
-        double cheque = 0.0;
-        double cash = 0.0;
-
-        for (BillsTotals bt : list2) {
-            if (bt != null) {
-                creditCard += bt.getCard();
-                cheque += bt.getCheque();
-                cash += bt.getCash();
-            }
-        }
-
-        cashChequeSum = new ArrayList<>();
-
-        String1Value1 tmp1 = new String1Value1();
-        tmp1.setString("Final Credit Card Total");
-        tmp1.setValue(creditCard);
-
-        String1Value1 tmp2 = new String1Value1();
-        tmp2.setString("Final Cheque Total");
-        tmp2.setValue(cheque);
-
-        String1Value1 tmp3 = new String1Value1();
-        tmp3.setString("Final Cash Total");
-        tmp3.setValue(cash);
-
-        String1Value1 tmp4 = new String1Value1();
-        tmp4.setString("Total");
-        tmp4.setValue(creditCard + cheque + cash);
-
-        cashChequeSum.add(tmp1);
-        cashChequeSum.add(tmp2);
-        cashChequeSum.add(tmp3);
-        cashChequeSum.add(tmp4);
-
-    }
-
-    public void createCashChequeSumAfter() {
-        List<BillsTotals> list2 = new ArrayList<>();
-        list2.add(billedBills);
-        list2.add(cancellededBills);
-        list2.add(refundedBills);
-        list2.add(billedBillsPh);
-        list2.add(cancellededBillsPh);
-        list2.add(refundedBillsPh);
-        list2.add(paymentBills);
-        list2.add(paymentCancelBills);
-        list2.add(pettyPayments);
-        list2.add(pettyPaymentsCancel);
-        list2.add(agentRecieves);
-        list2.add(agentCancelBill);
-        list2.add(inwardPayments);
-        list2.add(inwardPaymentCancel);
-        list2.add(cashRecieves);
-        list2.add(cashRecieveCancel);
-        list2.add(cashInBills);
-        list2.add(cashOutBills);
-
-        double creditCard = 0.0;
-        double cheque = 0.0;
-        double cash = 0.0;
-
-        for (BillsTotals bt : list2) {
-            if (bt != null) {
-                creditCard += bt.getCard();
-                cheque += bt.getCheque();
-                cash += bt.getCash();
-            }
-        }
-
-        cashChequeSumAfter = new ArrayList<>();
-
-        String1Value1 tmp1 = new String1Value1();
-        tmp1.setString("Final Credit Card Total");
-        tmp1.setValue(creditCard);
-
-        String1Value1 tmp2 = new String1Value1();
-        tmp2.setString("Final Cheque Total");
-        tmp2.setValue(cheque);
-
-        String1Value1 tmp3 = new String1Value1();
-        tmp3.setString("Final Cash Total");
-        tmp3.setValue(cash);
-
-        String1Value1 tmp4 = new String1Value1();
-        tmp4.setString("Total");
-        tmp4.setValue(creditCard + cheque + cash);
-
-        cashChequeSumAfter.add(tmp1);
-        cashChequeSumAfter.add(tmp2);
-        cashChequeSumAfter.add(tmp3);
-        cashChequeSumAfter.add(tmp4);
-
-    }
 
     public List<String1Value1> getCashChequeSum2() {
         List<BillsTotals> list2 = new ArrayList<>();

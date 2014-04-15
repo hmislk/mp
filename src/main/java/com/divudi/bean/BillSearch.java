@@ -23,7 +23,7 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
-import com.divudi.entity.CashTransaction;
+import com.divudi.entity.cashTransaction.CashTransaction;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;

@@ -22,7 +22,7 @@
                         <p:calendar id="toDate" value="#{creditCompanyDueController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
                             <f:ajax event="dateSelect" execute="@this fromDate"  render="lst"/>
                         </p:calendar>
-                        <p:commandButton ajax="false" value="Process Due" action="#{creditCompanyDueController.createOpdCreditDue}"/>
+                        <p:commandButton ajax="false" value="Process Access" action="#{creditCompanyDueController.createOpdCreditAccess}"/>
                     </h:panelGrid>
 
                     <p:dataTable id="lst" value="#{creditCompanyDueController.items}" var="i">

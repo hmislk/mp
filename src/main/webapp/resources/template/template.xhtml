@@ -198,10 +198,6 @@
                                     <p:menuitem  ajax="false" action="/pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                                 </p:submenu>
 
-                                <p:submenu label="Channelling" >
-                                    <p:menuitem ajax="false" action="/channel/channel_shedule" value="Channel Scheduling" ></p:menuitem>
-                                </p:submenu>
-
                                 <p:submenu label="Store"  rendered="#{webUserController.hasPrivilege('Store')}">                                                           
                                     <p:submenu label="Issue" rendered="#{webUserController.hasPrivilege('StoreIssue')}">
                                         <p:menuitem ajax="false" action="/store/store_retail_sale_bht"  value="Inward Billing"

@@ -5,6 +5,7 @@
  */
 package com.divudi.bean.report;
 
+import com.divudi.bean.ServiceSubCategoryController;
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
@@ -17,16 +18,19 @@ import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Category;
 import com.divudi.entity.Item;
 import com.divudi.entity.RefundBill;
+import com.divudi.entity.ServiceCategory;
+import com.divudi.entity.ServiceSubCategory;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -170,28 +174,86 @@ public class ServiceSummery implements Serializable {
 
     }
 
-    public List<BillItemWithFee> getServiceCategorySummery() {
+    List<BillItemWithFee> billItemWithFees;
 
-        List<BillItemWithFee> tmp = new ArrayList<>();
+    public List<BillItemWithFee> getBillItemWithFees() {
+        return billItemWithFees;
+    }
 
-        for (BillItem i : getBillItemByCategory()) {
+    public void setBillItemWithFees(List<BillItemWithFee> billItemWithFees) {
+        this.billItemWithFees = billItemWithFees;
+    }
+
+    public void createServiceCategorySummery() {
+        if (getCategory() == null) {
+            return;
+        }
+        if (getToDate() == null || getFromDate() == null) {
+            return;
+        }
+
+        billItemWithFees = new ArrayList<>();
+
+        List<BillItem> list = calBillItems();
+
+        for (BillItem i : list) {
             BillItemWithFee bi = new BillItemWithFee();
             bi.setBillItem(i);
             bi.setHospitalFee(calHospitalFee(i));
-            tmp.add(bi);
+            billItemWithFees.add(bi);
         }
 
-        return tmp;
     }
 
-    private List<BillItem> getBillItemByCategory() {
+    @Inject
+    ServiceSubCategoryController serviceSubCategoryController;
+
+    public ServiceSubCategoryController getServiceSubCategoryController() {
+        return serviceSubCategoryController;
+    }
+
+    public void setServiceSubCategoryController(ServiceSubCategoryController serviceSubCategoryController) {
+        this.serviceSubCategoryController = serviceSubCategoryController;
+    }
+
+    private List<BillItem> calBillItems() {
+        if (getCategory() instanceof ServiceSubCategory) {
+            return getBillItemByCategory(category);
+        }
+
+        if (getCategory() instanceof ServiceCategory) {
+            getServiceSubCategoryController().setParentCategory(getCategory());
+            List<ServiceSubCategory> subCategorys = getServiceSubCategoryController().getItems();
+            if (subCategorys.isEmpty()) {
+                return getBillItemByCategory(getCategory());
+            } else {
+                Set<BillItem> setBillItem = new HashSet<>();
+                for (ServiceSubCategory ssc : subCategorys) {
+                    setBillItem.addAll(getBillItemByCategory(ssc));
+                }
+
+                List<BillItem> billItems = new ArrayList<>();
+                billItems.addAll(setBillItem);
+                return billItems;
+            }
+        }
+
+        return null;
+    }
+
+    private List<BillItem> getBillItemByCategory(Category cat) {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select bi FROM BillItem bi where  bi.bill.institution=:ins and  bi.bill.billType= :bTp  "
-                + " and  bi.bill.createdAt between :fromDate and :toDate and bi.item.category=:cat"
-                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) "
+        sql = "select bi FROM BillItem bi "
+                + " where  bi.bill.institution=:ins"
+                + " and  bi.bill.billType= :bTp  "
+                + " and  bi.bill.createdAt between :fromDate and :toDate "
+                + " and bi.item.category=:cat"
+                + " and ( bi.bill.paymentMethod = :pm1 "
+                + " or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3"
+                + " or  bi.bill.paymentMethod = :pm4) "
                 + " order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
@@ -201,7 +263,7 @@ public class ServiceSummery implements Serializable {
         temMap.put("pm2", PaymentMethod.Card);
         temMap.put("pm3", PaymentMethod.Cheque);
         temMap.put("pm4", PaymentMethod.Slip);
-        temMap.put("cat", getCategory());
+        temMap.put("cat", cat);
         List<BillItem> tmp = getBillItemFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         return tmp;

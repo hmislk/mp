@@ -14,7 +14,9 @@
             <p:panel>
                 <f:facet name="header" >                
 
-                    <p:commandButton value="Refresh" ajax="false" id="btnRefresh"  styleClass="noPrintButton" style="float: right;" />
+                    <p:commandButton value="Refresh" ajax="false" id="btnRefresh"  
+                                     actionListener="#{serviceSummery.createServiceCategorySummery()}"
+                                     styleClass="noPrintButton" style="float: right;" />
                     <p:defaultCommand target="btnRefresh"/>
 
                     <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
@@ -44,7 +46,7 @@
             </p:panel>
             <p:spacer height="30"/>
 
-            <p:dataTable id="opd" rowIndexVar="i"  value="#{serviceSummery.serviceCategorySummery}" var="d">                   
+            <p:dataTable id="opd" rowIndexVar="i"  value="#{serviceSummery.billItemWithFees}" var="d">                   
 
                 <f:facet name="header">
                     <h:outputLabel value="#{serviceSummery.category.name}"/>

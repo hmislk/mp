@@ -222,8 +222,8 @@ public class CashInController implements Serializable {
     }
 
     public void setReferenceBill(Bill referenceBill) {
-        this.referenceBill = referenceBill;
         makeNull();
+        this.referenceBill = referenceBill;
         getBill().getCashTransaction().copyQty(referenceBill.getCashTransaction());
         getBill().setFromWebUser(referenceBill.getFromWebUser());
         getBill().setNetTotal(referenceBill.getNetTotal());

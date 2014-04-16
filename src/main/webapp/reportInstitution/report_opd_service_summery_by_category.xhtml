@@ -95,16 +95,16 @@
                         </p:column>
 
 
-                        <p:column colspan="3" footerText="COUNT  (#{serviceSummery.countTotal2})">
+                        <p:column colspan="3" footerText="COUNT  (#{serviceSummery.count})">
                             <f:facet name="footer">
-                                <h:outputLabel value="COUNT  (#{serviceSummery.countTotal2})">                                   
+                                <h:outputLabel value="COUNT  (#{serviceSummery.count})">                                   
                                 </h:outputLabel>
                             </f:facet>
                         </p:column>
 
-                        <p:column style="text-align: right;" footerText="#{serviceSummery.serviceTot2}" >
+                        <p:column style="text-align: right;" footerText="#{serviceSummery.value}" >
                             <f:facet name="footer">
-                                <h:outputLabel value="#{serviceSummery.serviceTot2}">
+                                <h:outputLabel value="#{serviceSummery.value}">
                                     <f:convertNumber pattern="#,000.00"/>
                                 </h:outputLabel>
                             </f:facet>

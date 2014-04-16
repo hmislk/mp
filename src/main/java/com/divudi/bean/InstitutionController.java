@@ -32,7 +32,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -60,12 +60,11 @@ public class InstitutionController implements Serializable {
 
         return selectedItems;
     }
-    
+
 //    public List<Institution> getBranch(){
 //        String sql="Select i From Institution i where i.retired=false and"
 //                + " i.institution=:ins";
 //    }
-
     public List<Institution> completeIns(String qry) {
         String sql;
         sql = "select c from Institution c where c.retired=false and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name";
@@ -74,44 +73,55 @@ public class InstitutionController implements Serializable {
 
     public List<Institution> completeCompany(String qry) {
         String sql;
-        HashMap hm=new HashMap();
+        HashMap hm = new HashMap();
         hm.put("type", InstitutionType.Company);
         sql = "select c from Institution c where c.retired=false and c.institutionType=:type and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name";
-        
-        return getFacade().findBySQL(sql,hm);
+
+        return getFacade().findBySQL(sql, hm);
     }
-    
-     public List<Institution> completeCreditCompany(String qry) {
+
+    public List<Institution> completeCreditCompany(String qry) {
         String sql;
-        HashMap hm=new HashMap();
+        HashMap hm = new HashMap();
         hm.put("type", InstitutionType.CreditCompany);
         sql = "select c from Institution c where c.retired=false and "
                 + "c.institutionType=:type and upper(c.name) "
                 + "like '%" + qry.toUpperCase() + "%' order by c.name";
-        
-        return getFacade().findBySQL(sql,hm);
+
+        return getFacade().findBySQL(sql, hm);
     }
-    
-     public List<Institution> getCompany() {
+
+    public List<Institution> getCreditCompany() {
         String sql;
-        HashMap hm=new HashMap();
+        HashMap hm = new HashMap();
+        hm.put("type", InstitutionType.CreditCompany);
+        sql = "select c from Institution c "
+                + " where c.retired=false "
+                + " and c.institutionType=:type"
+                + "  order by c.name";
+        return getFacade().findBySQL(sql, hm);
+    }
+
+    public List<Institution> getCompany() {
+        String sql;
+        HashMap hm = new HashMap();
         hm.put("type", InstitutionType.Company);
         sql = "select c from Institution c where c.retired=false and"
                 + " c.institutionType=:type order by c.name";
-        
-        return getFacade().findBySQL(sql,hm);
+
+        return getFacade().findBySQL(sql, hm);
     }
-    
-     public List<Institution> completeSupplier(String qry) {
+
+    public List<Institution> completeSupplier(String qry) {
         String sql;
-        HashMap hm=new HashMap();
+        HashMap hm = new HashMap();
         hm.put("type", InstitutionType.Dealer);
         sql = "select c from Institution c where c.retired=false and"
                 + " c.institutionType=:type and upper(c.name)"
                 + " like '%" + qry.toUpperCase() + "%' order by c.name";
-        return getFacade().findBySQL(sql,hm);
+        return getFacade().findBySQL(sql, hm);
     }
-    
+
 //     public List<Institution> completeSupplier(String qry) {
 //        String sql;
 //        HashMap hm=new HashMap();
@@ -120,7 +130,6 @@ public class InstitutionController implements Serializable {
 //        
 //        return getFacade().findBySQL(sql,hm);
 //    }
-
     public List<Institution> completeCredit(String query) {
         List<Institution> suggestions;
         String sql;
@@ -271,8 +280,7 @@ public class InstitutionController implements Serializable {
 //
 //        return items;
 //    }
-    
-     public List<Institution> getInsuranceCompany() {
+    public List<Institution> getInsuranceCompany() {
         String sql = "select c from Institution c where c.retired=false and c.institutionType=:tp  order by c.name";
         HashMap hm = new HashMap();
         hm.put("tp", InstitutionType.CreditCompany);
@@ -288,7 +296,7 @@ public class InstitutionController implements Serializable {
         String sql = "select c from Institution c where c.retired=false and c.institutionType=:tp  order by c.name";
         HashMap hm = new HashMap();
         hm.put("tp", InstitutionType.Bank);
-        items = getFacade().findBySQL(sql,hm);
+        items = getFacade().findBySQL(sql, hm);
         if (items == null) {
             items = new ArrayList<>();
         }
@@ -312,29 +320,27 @@ public class InstitutionController implements Serializable {
         this.institutionTypes = institutionTypes;
     }
 
-    public Institution getInstitutionByName(String name, InstitutionType type){
-       String sql;
+    public Institution getInstitutionByName(String name, InstitutionType type) {
+        String sql;
         Map m = new HashMap();
         m.put("n", name.toUpperCase());
         m.put("t", type);
         sql = "select i from Institution i where upper(i.name) =:n and i.institutionType=:t";
-        Institution i=getFacade().findFirstBySQL(sql, m);
-        if(i==null){
+        Institution i = getFacade().findFirstBySQL(sql, m);
+        if (i == null) {
             i = new Institution();
             i.setName(name);
             i.setInstitutionType(type);
             i.setCreatedAt(Calendar.getInstance().getTime());
             i.setCreater(getSessionController().getLoggedUser());
             getFacade().create(i);
-        }else{
+        } else {
             i.setRetired(false);
             getFacade().edit(i);
         }
         return i;
     }
-    
-    
-    
+
     @FacesConverter("institutionConverter")
     public static class InstitutionConverter implements Converter {
 
@@ -374,7 +380,7 @@ public class InstitutionController implements Serializable {
             }
         }
     }
-    
+
     /**
      *
      */

@@ -54,10 +54,28 @@ public class ServiceSummery implements Serializable {
     private Date toDate;
     private Item service;
     private Category category;
+    double count;
+    double value;
     @EJB
     private BillItemFacade billItemFacade;
     @EJB
     private BillFeeFacade billFeeFacade;
+
+    public double getCount() {
+        return count;
+    }
+
+    public void setCount(double count) {
+        this.count = count;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
 
     /**
      * Creates a new instance of ServiceSummery
@@ -203,6 +221,9 @@ public class ServiceSummery implements Serializable {
             billItemWithFees.add(bi);
         }
 
+        calCountTotal();
+        calServiceTot();
+
     }
 
     @Inject
@@ -270,33 +291,59 @@ public class ServiceSummery implements Serializable {
 
     }
 
-    public long getCountTotal2() {
+    public void calCountTotal() {
         long countTotal = 0;
+        long billed = 0l;
+        long cancelled = 0l;
+        long refunded = 0l;
 
-        long billed = getCount2(new BilledBill());
-        long cancelled = getCount2(new CancelledBill());
-        long refunded = getCount2(new RefundBill());
+        if (getCategory() instanceof ServiceSubCategory) {
+            billed = getCount(new BilledBill(), getCategory());
+            cancelled = getCount(new CancelledBill(), getCategory());
+            refunded = getCount(new RefundBill(), getCategory());
+        }
+
+        if (getCategory() instanceof ServiceCategory) {
+            getServiceSubCategoryController().setParentCategory(getCategory());
+            List<ServiceSubCategory> subCategorys = getServiceSubCategoryController().getItems();
+            if (subCategorys.isEmpty()) {
+                billed = getCount(new BilledBill(), getCategory());
+                cancelled = getCount(new CancelledBill(), getCategory());
+                refunded = getCount(new RefundBill(), getCategory());
+            } else {
+                billed = 0l;
+                cancelled = 0l;
+                refunded = 0l;
+                for (ServiceSubCategory ssc : subCategorys) {
+                    billed += getCount(new BilledBill(), ssc);
+                    cancelled += getCount(new CancelledBill(), ssc);
+                    refunded += getCount(new RefundBill(), ssc);
+                }
+            }
+        }
 
         countTotal = billed - (refunded + cancelled);
 
-        //     //System.err.println("Billed : " + billed);
-        //   //System.err.println("Cancelled : " + cancelled);
-        //    //System.err.println("Refunded : " + refunded);
-        //     //System.err.println("Gross Tot : " + countTotal);
-        return countTotal;
+        count = countTotal;
     }
 
-    private long getCount2(Bill bill) {
+    private long getCount(Bill bill, Category cat) {
         String sql;
         Map temMap = new HashMap();
-        sql = "select count(bi) FROM BillItem bi where bi.bill.billType=:bType and bi.item.category=:cat "
-                + " and type(bi.bill)=:billClass and bi.bill.toInstitution=:ins and "
-                + " ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4) "
-                + " and bi.bill.createdAt between :fromDate and :toDate order by bi.item.name";
+        sql = "select count(bi) FROM BillItem bi "
+                + " where bi.bill.billType=:bType "
+                + " and bi.item.category=:cat "
+                + " and type(bi.bill)=:billClass "
+                + " and bi.bill.toInstitution=:ins "
+                + " and ( bi.bill.paymentMethod = :pm1 "
+                + " or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3"
+                + " or  bi.bill.paymentMethod = :pm4) "
+                + " and bi.bill.createdAt between :fromDate and :toDate"
+                + " order by bi.item.name";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
-        temMap.put("cat", getCategory());
+        temMap.put("cat", cat);
         temMap.put("billClass", bill.getClass());
         temMap.put("bType", BillType.OpdBill);
         temMap.put("pm1", PaymentMethod.Cash);
@@ -308,15 +355,20 @@ public class ServiceSummery implements Serializable {
 
     }
 
-    public double getServiceTot2() {
+    private double getServiceValue(Category cat) {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select sum(bi.feeValue) FROM BillFee bi where  bi.bill.institution=:ins"
-                + " and  bi.bill.billType= :bTp and bi.fee.feeType=:ftp "
-                + " and  bi.bill.createdAt between :fromDate and :toDate and bi.billItem.item.category=:cat"
-                + " and ( bi.bill.paymentMethod = :pm1 or  bi.bill.paymentMethod = :pm2 "
-                + " or  bi.bill.paymentMethod = :pm3 or  bi.bill.paymentMethod = :pm4)";
+        sql = "select sum(bi.feeValue) FROM BillFee bi "
+                + " where  bi.bill.institution=:ins"
+                + " and  bi.bill.billType= :bTp "
+                + " and bi.fee.feeType=:ftp "
+                + " and  bi.bill.createdAt between :fromDate and :toDate"
+                + " and bi.billItem.item.category=:cat"
+                + " and ( bi.bill.paymentMethod = :pm1 "
+                + " or  bi.bill.paymentMethod = :pm2 "
+                + " or  bi.bill.paymentMethod = :pm3 "
+                + " or  bi.bill.paymentMethod = :pm4)";
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
@@ -326,10 +378,31 @@ public class ServiceSummery implements Serializable {
         temMap.put("pm3", PaymentMethod.Cheque);
         temMap.put("pm4", PaymentMethod.Slip);
         temMap.put("ftp", FeeType.OwnInstitution);
-        temMap.put("cat", getCategory());
+        temMap.put("cat", cat);
         //     List<BillItem> tmp = getBillItemFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         return getBillFeeFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private void calServiceTot() {
+
+        if (getCategory() instanceof ServiceSubCategory) {
+            value = getServiceValue(getCategory());
+        }
+
+        if (getCategory() instanceof ServiceCategory) {
+            getServiceSubCategoryController().setParentCategory(getCategory());
+            List<ServiceSubCategory> subCategorys = getServiceSubCategoryController().getItems();
+            if (subCategorys.isEmpty()) {
+                value = getServiceValue(getCategory());
+            } else {
+                value = 0;
+                for (ServiceSubCategory ssc : subCategorys) {
+                    value += getServiceValue(ssc);
+                }
+            }
+        }
 
     }
 

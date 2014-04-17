@@ -142,6 +142,21 @@ public class InwardMemberShipDiscount implements Serializable {
         return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
     }
 
+    public List<InwardPriceAdjustment> getInwardPriceAdjustments(Institution ins, MembershipScheme mem, PaymentMethod pay) {
+        String sql = "select ipa from InwardPriceAdjustment ipa "
+                + " where ipa.retired=false"
+                + " and ipa.paymentMethod=:pm"
+                + " and ipa.membershipScheme=:mem"
+                + " and ipa.institution=:ins";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", pay);
+        hm.put("mem", mem);
+        hm.put("ins", ins);
+
+        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
+    }
+
     private InwardPriceAdjustment getInwardPriceAdjustment(InwardChargeType inwardChargeType) {
         InwardPriceAdjustment object = getMemberDisCount(getCurrentPaymentMethod(), getCurrentMembershipScheme(), institution, inwardChargeType);
 

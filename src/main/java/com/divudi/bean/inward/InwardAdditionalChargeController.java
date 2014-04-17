@@ -14,7 +14,7 @@ import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -43,8 +43,6 @@ public class InwardAdditionalChargeController implements Serializable {
     private static final long serialVersionUID = 1L;
     @EJB
     private BillNumberBean billNumberBean;
-    @EJB
-    private InwardCalculation inwardCalculation;
     private InwardChargeType inwardChargeType;
     //////////////
     @EJB
@@ -55,11 +53,21 @@ public class InwardAdditionalChargeController implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private BillFeeFacade billFeeFacade;
+    @EJB
+    InwardBean inwardBean;
     //////////////
     @Inject
     private SessionController sessionController;
     //////////////
     private BilledBill current;
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
 
     private boolean errorCheck() {
         if (getCurrent().getPatientEncounter() == null) {
@@ -129,7 +137,7 @@ public class InwardAdditionalChargeController implements Serializable {
 
     private void saveBillFee(BillItem bt) {
         BillFee bf = new BillFee();
-        Fee additional = getInwardCalculation().createAdditionalFee();
+        Fee additional = getInwardBean().createAdditionalFee();
 
         bf.setPatienEncounter(getCurrent().getPatientEncounter());
         bf.setBill(getCurrent());
@@ -201,14 +209,6 @@ public class InwardAdditionalChargeController implements Serializable {
 
     public void setFeeFacade(FeeFacade feeFacade) {
         this.feeFacade = feeFacade;
-    }
-
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
     }
 
     public InwardChargeType getInwardChargeType() {

@@ -17,7 +17,7 @@ import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.BatchBill;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
@@ -39,7 +39,7 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.FeeFacade;
-import com.divudi.facade.InwardPriceAdjustmentFacade;
+import com.divudi.facade.PriceMatrixFacade;
 import com.divudi.facade.ItemFeeFacade;
 import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PatientInvestigationFacade;
@@ -79,7 +79,7 @@ public class BillBhtController implements Serializable {
     @EJB
     private ItemFeeFacade itemFeeFacade;
     @EJB
-    private InwardPriceAdjustmentFacade priceAdjustmentFacade;
+    private PriceMatrixFacade priceAdjustmentFacade;
     @EJB
     private FeeFacade feeFacade;
     @EJB
@@ -98,7 +98,7 @@ public class BillBhtController implements Serializable {
     private BillFeeFacade billFeeFacade;
     ///////////////////
     @EJB
-    private InwardCalculation inwardCalculation;
+    InwardBean inwardBean;
     @EJB
     private BillBean billBean;
     @EJB
@@ -128,8 +128,20 @@ public class BillBhtController implements Serializable {
     private List<Bill> bills;
     Date date;
 
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
+    
+    
+
     public Date getDate() {
-        if(date==null)date=new Date();
+        if (date == null) {
+            date = new Date();
+        }
         return date;
     }
 
@@ -142,7 +154,7 @@ public class BillBhtController implements Serializable {
     }
 
     public void makeNull() {
-        date=null;
+        date = null;
         total = 0.0;
         discount = 0.0;
         netTotal = 0.0;
@@ -283,8 +295,8 @@ public class BillBhtController implements Serializable {
         temp.setDepartment(getSessionController().getLoggedUser().getDepartment());
         temp.setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
 
-        temp.setFromDepartment(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoomFacilityCharge().getDepartment());
-        temp.setFromInstitution(getInwardCalculation().getCurrentPatientRoom(patientEncounter).getRoomFacilityCharge().getDepartment().getInstitution());
+        temp.setFromDepartment(getInwardBean().getCurrentPatientRoom(patientEncounter).getRoomFacilityCharge().getDepartment());
+        temp.setFromInstitution(getInwardBean().getCurrentPatientRoom(patientEncounter).getRoomFacilityCharge().getDepartment().getInstitution());
 
         temp.setToDepartment(bt);
         temp.setToInstitution(bt.getInstitution());
@@ -332,7 +344,7 @@ public class BillBhtController implements Serializable {
             return;
         }
 
-        PatientRoom patientRoom = getInwardCalculation().getCurrentPatientRoom(patientEncounter);
+        PatientRoom patientRoom = getInwardBean().getCurrentPatientRoom(patientEncounter);
 
         if (patientRoom == null) {
             UtilityController.addErrorMessage("Please Set Room or Bed For This Patient");
@@ -378,7 +390,7 @@ public class BillBhtController implements Serializable {
             addingEntry.setBillItem(billItem);
             addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(billItem));
             System.err.println("Add To Bill");
-            addingEntry.setLstBillFees(getInwardCalculation().billFeeFromBillItemWithMatrix(billItem, getPatientEncounter(), billItem.getItem().getInstitution()));
+            addingEntry.setLstBillFees(getInwardBean().billFeeFromBillItemWithMatrix(billItem, getPatientEncounter(), billItem.getItem().getInstitution()));
             addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(billItem));
             lstBillEntries.add(addingEntry);
 
@@ -726,11 +738,11 @@ public class BillBhtController implements Serializable {
 
     }
 
-    public InwardPriceAdjustmentFacade getPriceAdjustmentFacade() {
+    public PriceMatrixFacade getPriceAdjustmentFacade() {
         return priceAdjustmentFacade;
     }
 
-    public void setPriceAdjustmentFacade(InwardPriceAdjustmentFacade priceAdjustmentFacade) {
+    public void setPriceAdjustmentFacade(PriceMatrixFacade priceAdjustmentFacade) {
         this.priceAdjustmentFacade = priceAdjustmentFacade;
     }
 
@@ -750,14 +762,7 @@ public class BillBhtController implements Serializable {
         this.itemFeeFacade = itemFeeFacade;
     }
 
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
-
-    }
+   
 
     public boolean isPrintPreview() {
         return printPreview;

@@ -11,9 +11,9 @@ package com.divudi.bean.memberShip;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.PaymentMethod;
-import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.facade.MembershipSchemeFacade;
-import com.divudi.entity.MembershipScheme;
+import com.divudi.entity.memberShip.MembershipScheme;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +32,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- * Informatics)
+ Informatics)
  */
 @Named
 @SessionScoped

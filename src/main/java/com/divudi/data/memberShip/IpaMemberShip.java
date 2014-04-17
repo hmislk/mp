@@ -5,7 +5,7 @@
  */
 package com.divudi.data.memberShip;
 
-import com.divudi.entity.MembershipScheme;
+import com.divudi.entity.memberShip.MembershipScheme;
 import java.util.ArrayList;
 import java.util.List;
 

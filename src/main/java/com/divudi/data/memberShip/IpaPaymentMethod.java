@@ -6,7 +6,7 @@
 package com.divudi.data.memberShip;
 
 import com.divudi.data.PaymentMethod;
-import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PriceMatrix;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class IpaPaymentMethod {
 
     PaymentMethod paymentMethod;
-    List<InwardPriceAdjustment> inwardPriceAdjustments;
+    List<PriceMatrix> priceMatrixs;
 
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
@@ -27,15 +27,15 @@ public class IpaPaymentMethod {
         this.paymentMethod = paymentMethod;
     }
 
-    public List<InwardPriceAdjustment> getInwardPriceAdjustments() {
-        if (inwardPriceAdjustments == null) {
-            inwardPriceAdjustments = new ArrayList<>();
+    public List<PriceMatrix> getPriceMatrixs() {
+        if (priceMatrixs == null) {
+            priceMatrixs = new ArrayList<>();
         }
-        return inwardPriceAdjustments;
+        return priceMatrixs;
     }
 
-    public void setInwardPriceAdjustments(List<InwardPriceAdjustment> inwardPriceAdjustments) {
-        this.inwardPriceAdjustments = inwardPriceAdjustments;
+    public void setPriceMatrixs(List<PriceMatrix> priceMatrixs) {
+        this.priceMatrixs = priceMatrixs;
     }
 
 }

@@ -14,7 +14,6 @@ import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.InwardBean;
-import com.divudi.ejb.InwardCalculation;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
@@ -79,7 +78,7 @@ public class SurgeryBillController implements Serializable {
     @EJB
     private BillNumberBean billNumberBean;
     @EJB
-    private InwardCalculation inwardCalculation;
+    InwardBean InwardBean;
     @EJB
     private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
     @EJB
@@ -89,6 +88,8 @@ public class SurgeryBillController implements Serializable {
     private SessionController sessionController;
     @Inject
     InwardTimedItemController inwardTimedItemController;
+    
+    
 
     public InwardTimedItemController getInwardTimedItemController() {
         return inwardTimedItemController;
@@ -371,8 +372,8 @@ public class SurgeryBillController implements Serializable {
     }
 
     private double savePatientItem(PatientItem patientItem) {
-        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) patientItem.getItem());
-        double count = getInwardCalculation().calCount(timedItemFee, patientItem.getFromTime(), patientItem.getToTime());
+        TimedItemFee timedItemFee = getInwardBean().getTimedItemFee((TimedItem) patientItem.getItem());
+        double count = getInwardBean().calCount(timedItemFee, patientItem.getFromTime(), patientItem.getToTime());
 
         patientItem.setServiceValue(count * timedItemFee.getFee());
         patientItem.setPatientEncounter(getBatchBill().getPatientEncounter());
@@ -825,14 +826,7 @@ public class SurgeryBillController implements Serializable {
         this.patientItemFacade = patientItemFacade;
     }
 
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
-    }
-
+ 
     public PharmaceuticalBillItemFacade getPharmaceuticalBillItemFacade() {
         return pharmaceuticalBillItemFacade;
     }

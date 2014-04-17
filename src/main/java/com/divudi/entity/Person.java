@@ -7,6 +7,7 @@
  */
 package com.divudi.entity;
 
+import com.divudi.entity.memberShip.MembershipScheme;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.entity.clinical.ClinicalFindingValue;

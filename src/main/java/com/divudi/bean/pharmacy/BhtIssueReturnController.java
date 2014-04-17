@@ -9,7 +9,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
@@ -132,7 +132,7 @@ public class BhtIssueReturnController implements Serializable {
         getReturnBill().copy(getBill());
 
         getReturnBill().setBilledBill(getBill());
-        
+
         getReturnBill().setForwardReferenceBill(getBill().getForwardReferenceBill());
 
         getReturnBill().setTotal(0 - getReturnBill().getTotal());
@@ -213,9 +213,19 @@ public class BhtIssueReturnController implements Serializable {
     }
 
     @EJB
-    private InwardCalculation inwardCalculation;
-    @EJB
     private BillFeeFacade billFeeFacade;
+    @EJB
+    InwardBean inwardBean;
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
+    
+    
 
     public void updateFee(List<BillItem> billItems) {
         double total = 0;
@@ -225,7 +235,7 @@ public class BhtIssueReturnController implements Serializable {
             BillFee marginFee, issueFee = null;
 
             /////////////
-            issueFee = getInwardCalculation().getIssueBillFee(bi, bi.getBill().getInstitution());
+            issueFee = getInwardBean().getIssueBillFee(bi, bi.getBill().getInstitution());
             issueFee.setBill(bi.getBill());
             issueFee.setBillItem(bi);
             issueFee.setFeeValue(0 - Math.abs(value));
@@ -239,9 +249,9 @@ public class BhtIssueReturnController implements Serializable {
             }
 
             /////////////
-            marginFee = getInwardCalculation().getBillFeeMatrix(bi, bi.getBill().getInstitution());
+            marginFee = getInwardBean().getBillFeeMatrix(bi, bi.getBill().getInstitution());
             double rate = bi.getRate();
-            double matrixValue = getInwardCalculation().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
+            double matrixValue = getInwardBean().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
             marginFee.setBill(bi.getBill());
             marginFee.setBillItem(bi);
             marginFee.setFeeValue(0 - Math.abs(matrixValue * bi.getQty()));
@@ -411,13 +421,6 @@ public class BhtIssueReturnController implements Serializable {
         this.billItems = billItems;
     }
 
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
-    }
 
     public BillFeeFacade getBillFeeFacade() {
         return billFeeFacade;

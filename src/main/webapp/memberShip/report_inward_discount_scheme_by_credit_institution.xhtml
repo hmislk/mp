@@ -14,14 +14,14 @@
 
                 </f:facet>
                 <p:commandButton ajax="false" value="Process" 
-                                 action="#{reportMemberShip.createCreditInstitutionInwardPriceAdjustments}"/>
+                                 action="#{reportMemberShip.createCreditInstitutionpriceMatrixs}"/>
 
                 <p:dataGrid columns="1" value="#{reportMemberShip.ipaCreditInstitutions}" var="tbl">
                     <p:dataTable value="#{tbl.ipaPaymentMethods}" var="inw">
                         <f:facet name="header">
                             <h:outputLabel value="#{tbl.institution.name}"/>
                         </f:facet>
-                        <p:subTable value="#{inw.inwardPriceAdjustments}" var="pI">
+                        <p:subTable value="#{inw.priceMatrixs}" var="pI">
                             <f:facet name="header">
                                 <h:outputLabel value="#{pI.paymentMethod}"/>
                                 <h:outputLabel value="|| #{tbl.institution.name}"/>

@@ -4,7 +4,7 @@
  */
 package com.divudi.facade;
 
-import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PriceMatrix;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
  * @author Buddhika
  */
 @Stateless
-public class InwardPriceAdjustmentFacade extends AbstractFacade<InwardPriceAdjustment> {
+public class PriceMatrixFacade extends AbstractFacade<PriceMatrix> {
     @PersistenceContext(unitName = "hmisPU")
     private EntityManager em;
 
@@ -23,8 +23,8 @@ public class InwardPriceAdjustmentFacade extends AbstractFacade<InwardPriceAdjus
         return em;
     }
 
-    public InwardPriceAdjustmentFacade() {
-        super(InwardPriceAdjustment.class);
+    public PriceMatrixFacade() {
+        super(PriceMatrix.class);
     }
     
 }

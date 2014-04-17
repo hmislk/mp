@@ -17,7 +17,7 @@ import com.divudi.data.inward.InwardChargeType;
 import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
@@ -415,7 +415,7 @@ public class PharmacySaleBhtController implements Serializable {
                     + " order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
         items = getStockFacade().findBySQL(sql, m, 20);
-      //  itemsWithoutStocks = completeRetailSaleItems(qry);
+        //  itemsWithoutStocks = completeRetailSaleItems(qry);
         //System.out.println("selectedSaleitems = " + itemsWithoutStocks);
         return items;
     }
@@ -570,7 +570,7 @@ public class PharmacySaleBhtController implements Serializable {
             return;
         }
 
-        PatientRoom currentPatientRoom = getInwardCalculation().getCurrentPatientRoom(getPatientEncounter());
+        PatientRoom currentPatientRoom = getInwardBean().getCurrentPatientRoom(getPatientEncounter());
 
         if (currentPatientRoom == null) {
             UtilityController.addErrorMessage("This Bht can't issue as this has no room currently occupy");
@@ -600,7 +600,15 @@ public class PharmacySaleBhtController implements Serializable {
     @EJB
     private BillFeeFacade billFeeFacade;
     @EJB
-    private InwardCalculation inwardCalculation;
+    private InwardBean inwardBean;
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
 
     public void updateFee(List<BillItem> billItems) {
         double total = 0;
@@ -610,7 +618,7 @@ public class PharmacySaleBhtController implements Serializable {
             BillFee marginFee, issueFee = null;
 
             /////////////
-            issueFee = getInwardCalculation().getIssueBillFee(bi, bi.getBill().getInstitution());
+            issueFee = getInwardBean().getIssueBillFee(bi, bi.getBill().getInstitution());
             issueFee.setBill(bi.getBill());
             issueFee.setBillItem(bi);
             issueFee.setFeeValue(Math.abs(value));
@@ -624,9 +632,9 @@ public class PharmacySaleBhtController implements Serializable {
             }
 
             /////////////
-            marginFee = getInwardCalculation().getBillFeeMatrix(bi, bi.getBill().getInstitution());
+            marginFee = getInwardBean().getBillFeeMatrix(bi, bi.getBill().getInstitution());
             double rate = bi.getRate();
-            double matrixValue = getInwardCalculation().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
+            double matrixValue = getInwardBean().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
             marginFee.setBill(bi.getBill());
             marginFee.setBillItem(bi);
             marginFee.setFeeValue(Math.abs(matrixValue * bi.getQty()));
@@ -1072,14 +1080,6 @@ public class PharmacySaleBhtController implements Serializable {
 
     public void setBillFeeFacade(BillFeeFacade billFeeFacade) {
         this.billFeeFacade = billFeeFacade;
-    }
-
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
     }
 
     public Bill getBatchBill() {

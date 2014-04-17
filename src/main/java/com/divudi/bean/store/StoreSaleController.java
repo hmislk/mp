@@ -5,7 +5,6 @@
  */
 package com.divudi.bean.store;
 
-import com.divudi.bean.pharmacy.*;
 import com.divudi.bean.PaymentSchemeController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
@@ -18,7 +17,7 @@ import com.divudi.data.inward.InwardChargeType;
 import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.InwardBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
@@ -58,14 +57,6 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.enterprise.context.SessionScoped;
 ;
 import javax.inject.Inject;
-import org.primefaces.event.RowEditEvent;
-import org.primefaces.event.SelectEvent;
-import javax.inject.Inject;
-import org.primefaces.event.RowEditEvent;
-import org.primefaces.event.SelectEvent;
-import javax.inject.Inject;
-import org.primefaces.event.RowEditEvent;
-import org.primefaces.event.SelectEvent;import javax.inject.Inject;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 
@@ -424,7 +415,7 @@ public class StoreSaleController implements Serializable {
                     + " order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
         items = getStockFacade().findBySQL(sql, m, 20);
-      //  itemsWithoutStocks = completeRetailSaleItems(qry);
+        //  itemsWithoutStocks = completeRetailSaleItems(qry);
         //System.out.println("selectedSaleitems = " + itemsWithoutStocks);
         return items;
     }
@@ -566,6 +557,17 @@ public class StoreSaleController implements Serializable {
         settleBhtIssue(BillType.StoreBhtPre, BillNumberSuffix.STISSUE);
     }
 
+    @EJB
+    InwardBean inwardBean;
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
+
     private void settleBhtIssue(BillType btp, BillNumberSuffix billNumberSuffix) {
 
         if (getPatientEncounter() == null || getPatientEncounter().getPatient() == null) {
@@ -579,7 +581,7 @@ public class StoreSaleController implements Serializable {
             return;
         }
 
-        PatientRoom currentPatientRoom = getInwardCalculation().getCurrentPatientRoom(getPatientEncounter());
+        PatientRoom currentPatientRoom = getInwardBean().getCurrentPatientRoom(getPatientEncounter());
 
         if (currentPatientRoom == null) {
             UtilityController.addErrorMessage("This Bht can't issue as this has no room currently occupy");
@@ -608,8 +610,6 @@ public class StoreSaleController implements Serializable {
 
     @EJB
     private BillFeeFacade billFeeFacade;
-    @EJB
-    private InwardCalculation inwardCalculation;
 
     public void updateFee(List<BillItem> billItems) {
         double total = 0;
@@ -619,7 +619,7 @@ public class StoreSaleController implements Serializable {
             BillFee marginFee, issueFee = null;
 
             /////////////
-            issueFee = getInwardCalculation().getIssueBillFee(bi, bi.getBill().getInstitution());
+            issueFee = getInwardBean().getIssueBillFee(bi, bi.getBill().getInstitution());
             issueFee.setBill(bi.getBill());
             issueFee.setBillItem(bi);
             issueFee.setFeeValue(Math.abs(value));
@@ -633,9 +633,9 @@ public class StoreSaleController implements Serializable {
             }
 
             /////////////
-            marginFee = getInwardCalculation().getBillFeeMatrix(bi, bi.getBill().getInstitution());
+            marginFee = getInwardBean().getBillFeeMatrix(bi, bi.getBill().getInstitution());
             double rate = bi.getRate();
-            double matrixValue = getInwardCalculation().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
+            double matrixValue = getInwardBean().calInwardMargin(bi, rate, bi.getBill().getFromDepartment());
             marginFee.setBill(bi.getBill());
             marginFee.setBillItem(bi);
             marginFee.setFeeValue(Math.abs(matrixValue * bi.getQty()));
@@ -1081,14 +1081,6 @@ public class StoreSaleController implements Serializable {
 
     public void setBillFeeFacade(BillFeeFacade billFeeFacade) {
         this.billFeeFacade = billFeeFacade;
-    }
-
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
     }
 
     public Bill getBatchBill() {

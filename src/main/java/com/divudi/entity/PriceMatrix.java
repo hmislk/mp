@@ -23,7 +23,7 @@ import javax.persistence.Temporal;
  * @author Buddhika
  */
 @Entity
-public class InwardPriceAdjustment implements Serializable {
+public class PriceMatrix implements Serializable {
 
     static final long serialVersionUID = 1L;
     @Id
@@ -159,10 +159,10 @@ public class InwardPriceAdjustment implements Serializable {
     @Override
     public boolean equals(Object object) {
 
-        if (!(object instanceof InwardPriceAdjustment)) {
+        if (!(object instanceof PriceMatrix)) {
             return false;
         }
-        InwardPriceAdjustment other = (InwardPriceAdjustment) object;
+        PriceMatrix other = (PriceMatrix) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

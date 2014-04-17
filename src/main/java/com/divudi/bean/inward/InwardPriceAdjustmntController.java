@@ -14,14 +14,14 @@ import com.divudi.data.BillType;
 import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
-import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.ServiceCategory;
 import com.divudi.entity.ServiceSubCategory;
 import com.divudi.entity.lab.InvestigationCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.StoreItemCategory;
-import com.divudi.facade.InwardPriceAdjustmentFacade;
+import com.divudi.facade.PriceMatrixFacade;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- * Informatics)
+ Informatics)
  */
 @Named
 @SessionScoped
@@ -49,9 +49,9 @@ public class InwardPriceAdjustmntController implements Serializable {
     @Inject
     SessionController sessionController;
     @EJB
-    private InwardPriceAdjustmentFacade ejbFacade;
-    private InwardPriceAdjustment current;
-    private List<InwardPriceAdjustment> items = null;
+    private PriceMatrixFacade ejbFacade;
+    private PriceMatrix current;
+    private List<PriceMatrix> items = null;
     BillType billType;
     PaymentScheme paymentScheme;
     Category category;
@@ -90,7 +90,7 @@ public class InwardPriceAdjustmntController implements Serializable {
             return;
         }
 
-        InwardPriceAdjustment a = new InwardPriceAdjustment();
+        PriceMatrix a = new PriceMatrix();
 
         a.setCategory(category);
         a.setDepartment(department);
@@ -106,11 +106,11 @@ public class InwardPriceAdjustmntController implements Serializable {
 //        createItems();
     }
 
-    public InwardPriceAdjustmentFacade getEjbFacade() {
+    public PriceMatrixFacade getEjbFacade() {
         return ejbFacade;
     }
 
-    public void setEjbFacade(InwardPriceAdjustmentFacade ejbFacade) {
+    public void setEjbFacade(PriceMatrixFacade ejbFacade) {
         this.ejbFacade = ejbFacade;
     }
 
@@ -125,11 +125,11 @@ public class InwardPriceAdjustmntController implements Serializable {
     public InwardPriceAdjustmntController() {
     }
 
-    public InwardPriceAdjustment getCurrent() {
+    public PriceMatrix getCurrent() {
         return current;
     }
 
-    public void setCurrent(InwardPriceAdjustment current) {
+    public void setCurrent(PriceMatrix current) {
 
         this.current = current;
     }
@@ -214,20 +214,22 @@ public class InwardPriceAdjustmntController implements Serializable {
         getCurrent();
     }
 
-    private InwardPriceAdjustmentFacade getFacade() {
+    private PriceMatrixFacade getFacade() {
         return ejbFacade;
     }
 
-    private List<InwardPriceAdjustment> filterItems;
+    private List<PriceMatrix> filterItems;
 
-    public List<InwardPriceAdjustment> getItems() {
+    public List<PriceMatrix> getItems() {
 
         return items;
     }
 
     public void createItems() {
         String sql;
-        sql = "select a from InwardPriceAdjustment a where a.retired=false order by a.department.name,a.category.name,a.fromPrice";
+        sql = "select a from InwardPriceAdjustment a "
+                + " where a.retired=false "
+                + " order by a.department.name,a.category.name,a.fromPrice";
         items = getFacade().findBySQL(sql);
     }
 
@@ -235,8 +237,10 @@ public class InwardPriceAdjustmntController implements Serializable {
         filterItems = null;
         String sql;
         HashMap hm = new HashMap();
-        sql = "select a from InwardPriceAdjustment a where a.retired=false "
-                + " and type(a.category)=:service or type(a.category)=:sub "
+        sql = "select a from InwardPriceAdjustment a"
+                + " where a.retired=false "
+                + " and type(a.category)=:service "
+                + " or type(a.category)=:sub "
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("service", ServiceCategory.class);
         hm.put("sub", ServiceSubCategory.class);
@@ -247,8 +251,10 @@ public class InwardPriceAdjustmntController implements Serializable {
         filterItems = null;
         String sql;
         HashMap hm = new HashMap();
-        sql = "select a from InwardPriceAdjustment a where a.retired=false "
-                + " and type(a.category)=:service or type(a.category)=:sub"
+        sql = "select a from InwardPriceAdjustment a "
+                + " where a.retired=false "
+                + " and type(a.category)=:service "
+                + " or type(a.category)=:sub"
                 + " or type(a.category)=:cat "
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("service", ServiceCategory.class);
@@ -261,7 +267,8 @@ public class InwardPriceAdjustmntController implements Serializable {
         filterItems = null;
         String sql;
         HashMap hm = new HashMap();
-        sql = "select a from InwardPriceAdjustment a where a.retired=false "
+        sql = "select a from InwardPriceAdjustment a "
+                + " where a.retired=false "
                 + " and type(a.category)=:cat  "
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("cat", InvestigationCategory.class);
@@ -286,8 +293,8 @@ public class InwardPriceAdjustmntController implements Serializable {
         filterItems = null;
         String sql;
         HashMap hm = new HashMap();
-        sql = "select a from InwardPriceAdjustment a where "
-                + " a.retired=false "
+        sql = "select a from InwardPriceAdjustment a "
+                + " where a.retired=false "
                 + " and type(a.category)=:cat  "
                 + " order by a.department.name,a.category.name,a.fromPrice";
         hm.put("cat", StoreItemCategory.class);
@@ -295,7 +302,7 @@ public class InwardPriceAdjustmntController implements Serializable {
         items = getFacade().findBySQL(sql, hm);
     }
 
-    public void onEdit(InwardPriceAdjustment tmp) {
+    public void onEdit(PriceMatrix tmp) {
         //Cheking Minus Value && Null
         getFacade().edit(tmp);
         //  createItems();
@@ -310,18 +317,18 @@ public class InwardPriceAdjustmntController implements Serializable {
         this.roomLocation = roomLocation;
     }
 
-    public List<InwardPriceAdjustment> getFilterItems() {
+    public List<PriceMatrix> getFilterItems() {
         return filterItems;
     }
 
-    public void setFilterItems(List<InwardPriceAdjustment> filterItems) {
+    public void setFilterItems(List<PriceMatrix> filterItems) {
         this.filterItems = filterItems;
     }
 
     /**
      *
      */
-    @FacesConverter(forClass = InwardPriceAdjustment.class)
+    @FacesConverter(forClass = PriceMatrix.class)
     public static class InwardPriceAdjustmentControllerConverter implements Converter {
 
         @Override
@@ -351,8 +358,8 @@ public class InwardPriceAdjustmntController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof InwardPriceAdjustment) {
-                InwardPriceAdjustment o = (InwardPriceAdjustment) object;
+            if (object instanceof PriceMatrix) {
+                PriceMatrix o = (PriceMatrix) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "

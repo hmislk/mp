@@ -17,7 +17,6 @@ import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardBean;
-import com.divudi.ejb.InwardCalculation;
 import com.divudi.entity.Appointment;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
@@ -51,8 +50,6 @@ import javax.inject.Named;
 import javax.persistence.TemporalType;
 import org.primefaces.event.TabChangeEvent;
 
-
-
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
@@ -79,8 +76,6 @@ public class AdmissionController implements Serializable {
     ////////////////////////////
     @EJB
     private CommonFunctions commonFunctions;
-    @EJB
-    private InwardCalculation inwardCalculation;
     ///////////////////////
     List<Admission> selectedItems;
     private Admission current;
@@ -199,21 +194,6 @@ public class AdmissionController implements Serializable {
 
     }
 
-//    public List<Admission> completePatientBht(String query) {
-//        List<Admission> suggestions;
-//        String sql;
-//        if (query == null) {
-//            suggestions = new ArrayList<>();
-//        } else {
-//            sql = "select c from Admission c where c.retired=false and "
-//                    + " c.discharged=false and (upper(c.bhtNo) like '%" + query.toUpperCase() + "%' "
-//                    + "or upper(c.patient.person.name) like '%" + query.toUpperCase() + "%') "
-//                    + "order by c.bhtNo";
-//            //System.out.println(sql);
-//            suggestions = getFacade().findBySQL(sql);
-//        }
-//        return suggestions;
-//    }
     public List<Admission> getSelectedItems() {
         selectedItems = getFacade().findBySQL("select c from Admission c where c.retired=false and upper(c.name) like '%" + getSelectText().toUpperCase() + "%' order by c.name");
         return selectedItems;
@@ -671,7 +651,7 @@ public class AdmissionController implements Serializable {
             return;
         }
 
-        bhtText = getInwardCalculation().getBhtText(getCurrent().getAdmissionType());
+        bhtText = getInwardBean().getBhtText(getCurrent().getAdmissionType());
     }
 
     public String getBhtText() {
@@ -709,14 +689,6 @@ public class AdmissionController implements Serializable {
 
     public void setNewPatient(Patient newPatient) {
         this.newPatient = newPatient;
-    }
-
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
     }
 
     public YearMonthDay getYearMonthDay() {

@@ -8,7 +8,7 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.FeeType;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.facade.BillFacade;
@@ -38,7 +38,7 @@ public class ServiceFeeEdit implements Serializable {
     @EJB
     private BillFeeFacade billFeeFacade;
     @EJB
-    private InwardCalculation inwardCalculation;
+    private InwardBean inwardBean;
     @EJB
     private BillItemFacade billItemFacade;
     @EJB
@@ -46,6 +46,16 @@ public class ServiceFeeEdit implements Serializable {
     @Inject
     private SessionController sessionController;
 
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
+
+    
+    
     /**
      * Creates a new instance of ServiceFeeEdit
      */
@@ -77,10 +87,10 @@ public class ServiceFeeEdit implements Serializable {
         getBillFeeFacade().edit(billFee);
         double serviceValue = 0;
         BillFee marginFee = null;
-        marginFee = getInwardCalculation().getBillFeeMatrix(billFee.getBillItem(), billFee.getBill().getInstitution());
-        serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billFee.getBillItem());
+        marginFee = getInwardBean().getBillFeeMatrix(billFee.getBillItem(), billFee.getBill().getInstitution());
+        serviceValue = getInwardBean().getHospitalFeeByBillItem(billFee.getBillItem());
 
-        double matrixValue = getInwardCalculation().calInwardMargin(billFee.getBillItem(), serviceValue, billFee.getBill().getFromDepartment());
+        double matrixValue = getInwardBean().calInwardMargin(billFee.getBillItem(), serviceValue, billFee.getBill().getFromDepartment());
         marginFee.setBill(billFee.getBill());
         marginFee.setFeeValue(matrixValue);
 
@@ -144,13 +154,7 @@ public class ServiceFeeEdit implements Serializable {
         this.billFeeFacade = billFeeFacade;
     }
 
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
-    }
+   
 
     public BillItemFacade getBillItemFacade() {
         return billItemFacade;

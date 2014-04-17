@@ -87,6 +87,55 @@ public class BillBean {
     @EJB
     ServiceSessionBean serviceSessionBean;
 
+    public List<ItemFee> getItemFee(BillItem billItem) {
+
+        String sql;
+        sql = "Select f from ItemFee f"
+                + " where f.retired=false "
+                + " and f.item=:itm";
+        HashMap hm = new HashMap();
+        hm.put("itm", billItem.getItem());
+        return getItemFeeFacade().findBySQL(sql, hm);
+    }
+
+    public Fee getFee(FeeType feeType) {
+        HashMap hm = new HashMap();
+        String sql = "Select f from Fee f where f.retired=false and f.FeeType=:nm";
+        hm.put("nm", FeeType.Matrix);
+        return getFeeFacade().findFirstBySQL(sql, hm, TemporalType.TIMESTAMP);
+    }
+
+    public BillFee createBillFee(BillItem billItem, Fee i) {
+        BillFee f;
+        f = new BillFee();
+        f.setFee(i);
+        f.setFeeValue(i.getFee());
+        f.setDepartment(billItem.getItem().getDepartment());
+        f.setBillItem(billItem);
+
+        f.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+
+        if (billItem.getItem().getDepartment() != null) {
+            f.setDepartment(billItem.getItem().getDepartment());
+        } else {
+            f.setDepartment(billItem.getBill().getDepartment());
+        }
+        if (billItem.getItem().getInstitution() != null) {
+            f.setInstitution(billItem.getItem().getInstitution());
+        } else {
+            f.setInstitution(billItem.getBill().getDepartment().getInstitution());
+        }
+        if (i.getStaff() != null) {
+            f.setStaff(i.getStaff());
+        } else {
+            f.setStaff(null);
+        }
+        f.setSpeciality(i.getSpeciality());
+
+        return f;
+
+    }
+
     public void saveEncounterComponents(List<Bill> bills, Bill batchBill, WebUser user) {
         for (BillFee bf : getBillFeeFromBills(bills)) {
             saveEncounterComponent(bf, batchBill, user);
@@ -683,7 +732,7 @@ public class BillBean {
             getBillItemFacade().edit(e.getBillItem());
 
             System.err.println("1 " + e.getBillItem());
-          
+
             if (b.getBillType() == BillType.InwardBill) {
                 updateMatrix(e.getBillItem());
             }
@@ -739,15 +788,23 @@ public class BillBean {
     }
 
     @EJB
-    private InwardCalculation inwardCalculation;
+    InwardBean inwardBean;
+
+    public InwardBean getInwardBean() {
+        return inwardBean;
+    }
+
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
+    }
 
     private void updateMatrix(BillItem billItem) {
         double serviceValue = 0;
         BillFee marginFee = null;
-        marginFee = getInwardCalculation().getBillFeeMatrix(billItem, billItem.getBill().getInstitution());
-        serviceValue = getInwardCalculation().getHospitalFeeByBillItem(billItem);
+        marginFee = getInwardBean().getBillFeeMatrix(billItem, billItem.getBill().getInstitution());
+        serviceValue = getInwardBean().getHospitalFeeByBillItem(billItem);
 
-        double matrixValue = getInwardCalculation().calInwardMargin(billItem, serviceValue, billItem.getBill().getFromDepartment());
+        double matrixValue = getInwardBean().calInwardMargin(billItem, serviceValue, billItem.getBill().getFromDepartment());
         marginFee.setBill(billItem.getBill());
         marginFee.setFeeValue(matrixValue);
 
@@ -1178,14 +1235,6 @@ public class BillBean {
 
         return "";
 
-    }
-
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
     }
 
     public List<BillFee> getBillFee(Bill b) {

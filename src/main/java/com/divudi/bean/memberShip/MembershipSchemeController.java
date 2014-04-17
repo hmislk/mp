@@ -6,8 +6,10 @@
  * and
  * a Set of Related Tools
  */
-package com.divudi.bean;
+package com.divudi.bean.memberShip;
 
+import com.divudi.bean.SessionController;
+import com.divudi.bean.UtilityController;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.facade.MembershipSchemeFacade;

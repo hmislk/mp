@@ -4,10 +4,10 @@
  */
 package com.divudi.entity;
 
-import com.divudi.entity.cashTransaction.CashTransaction;
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.inward.SurgeryBillType;
+import com.divudi.entity.cashTransaction.CashTransaction;
 import com.divudi.entity.pharmacy.StockVarientBillItem;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -29,6 +29,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+
+
 
 
 

@@ -11,36 +11,36 @@
     <ui:define name="content">
         <h:panelGroup >
             <h:form  >
-                <p:panel rendered="#{!pharmacyDealorBill.printPreview}" >
+                <p:panel rendered="#{!storeDealorBill.printPreview}" >
                     <f:facet name="header" >
                         <h:panelGrid columns="15"  >
                             <h:outputLabel value="Cash Bill" />
                             <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
-                            <p:selectOneMenu   id="cmbPs" value="#{pharmacyDealorBill.current.paymentMethod}">                                                                     
+                            <p:selectOneMenu   id="cmbPs" value="#{storeDealorBill.current.paymentMethod}">                                                                     
                                 <f:selectItems value="#{enumController.paymentMethods}"  />
                                 <p:ajax process="cmbPs" 
                                         update="creditCard cheque slip " 
                                         event="change" />
 
                             </p:selectOneMenu>
-                            <h:panelGroup id="creditCard" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                <pa:creditCard paymentMethodData="#{pharmacyDealorBill.paymentMethodData}"/>
+                            <h:panelGroup id="creditCard" style="display: #{storeDealorBill.current.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                <pa:creditCard paymentMethodData="#{storeDealorBill.paymentMethodData}"/>
                             </h:panelGroup>
 
-                            <h:panelGroup id="cheque" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
-                                <pa:cheque paymentMethodData="#{pharmacyDealorBill.paymentMethodData}"/>
+                            <h:panelGroup id="cheque" style="display: #{storeDealorBill.current.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                <pa:cheque paymentMethodData="#{storeDealorBill.paymentMethodData}"/>
                             </h:panelGroup>
 
-                            <h:panelGroup id="slip" style="display: #{pharmacyDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
-                                <pa:slip paymentMethodData="#{pharmacyDealorBill.paymentMethodData}"/>
+                            <h:panelGroup id="slip" style="display: #{storeDealorBill.current.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                <pa:slip paymentMethodData="#{storeDealorBill.paymentMethodData}"/>
                             </h:panelGroup>
 
 
-                            <p:commandButton id="btnSettle" value="Settle" action="#{pharmacyDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                            <p:commandButton id="btnSettle" value="Settle" action="#{storeDealorBill.settleBill}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                             </p:commandButton>
                             <p:defaultCommand target="btnSettle"/>
 
-                            <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.makeNull()}" >
+                            <p:commandButton value="New Bill" ajax="false" action="#{storeDealorBill.makeNull()}" >
                             </p:commandButton>
 
                         </h:panelGrid>
@@ -51,7 +51,7 @@
                             <h:outputLabel value="Paying Amount"/>
                             <h:outputLabel/>
                             <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true"
-                                            value="#{pharmacyDealorBill.currentBillItem.referenceBill}"
+                                            value="#{storeDealorBill.currentBillItem.referenceBill}"
                                             completeMethod="#{billController.completeBillFromDealorStore}" 
                                             var="ix" itemLabel="#{ix.deptId}"
                                             itemValue="#{ix}" size="30"  style="width: 400px;">                                  
@@ -81,18 +81,18 @@
                                 </p:column>
                                 <f:ajax event="itemSelect" execute="@this" 
                                         render="netValue" 
-                                        listener="#{pharmacyDealorBill.selectListener()}"/>
+                                        listener="#{storeDealorBill.selectListener()}"/>
                             </p:autoComplete>
-                            <p:inputText id="netValue" value="#{pharmacyDealorBill.currentBillItem.netValue}">
+                            <p:inputText id="netValue" value="#{storeDealorBill.currentBillItem.netValue}">
                                 <f:convertNumber pattern="#,000.00" />
                             </p:inputText>
-                            <p:commandButton id="btnAddIx" value="Add" action="#{pharmacyDealorBill.addToBill()}" ajax="false"/>
+                            <p:commandButton id="btnAddIx" value="Add" action="#{storeDealorBill.addToBill()}" ajax="false"/>
                         </h:panelGrid>
 
-                        <p:dataTable value="#{pharmacyDealorBill.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
+                        <p:dataTable value="#{storeDealorBill.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
                             <f:facet name="header">
                                 <h:outputLabel value="Paying GRN : "/>
-                                <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
+                                <h:outputLabel value="#{storeDealorBill.current.toInstitution.name}"/>
                             </f:facet>
                             <p:column>
                                 <f:facet name="header">No</f:facet>
@@ -130,7 +130,7 @@
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Remove">
-                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.remove}" value="X"/>
+                                <p:commandButton ajax="false" action="#{storeDealorBill.remove}" value="X"/>
                             </p:column>
                         </p:dataTable>
 
@@ -139,22 +139,22 @@
 
                         <p:panelGrid  columns="2">
                             <p:outputLabel value="Net Total" />
-                            <p:outputLabel id="tot" value="#{pharmacyDealorBill.current.netTotal}">
+                            <p:outputLabel id="tot" value="#{storeDealorBill.current.netTotal}">
                                 <f:convertNumber pattern="#,000.00" />
                             </p:outputLabel>
 
                             <p:outputLabel value="Description"/>
-                            <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         
+                            <p:inputTextarea value="#{storeDealorBill.current.comments}"/>                                                         
                         </p:panelGrid>
                     </p:panelGrid>
                 </p:panel>
 
 
 
-                <p:panel rendered="#{pharmacyDealorBill.printPreview}" >
-                    <p:commandButton value="New Bill" ajax="false" action="#{pharmacyDealorBill.makeNull()}" >
+                <p:panel rendered="#{storeDealorBill.printPreview}" >
+                    <p:commandButton value="New Bill" ajax="false" action="#{storeDealorBill.makeNull()}" >
                     </p:commandButton>
-                    <bi:insRecieve billController ="#{pharmacyDealorBill}"  bill="#{pharmacyDealorBill.current}" dup="false"/>                       
+                    <bi:insRecieve billController ="#{storeDealorBill}"  bill="#{storeDealorBill.current}" dup="false"/>                       
                 </p:panel>
 
             </h:form>

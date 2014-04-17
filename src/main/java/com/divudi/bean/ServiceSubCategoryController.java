@@ -8,12 +8,13 @@
  */
 package com.divudi.bean;
 
-import com.divudi.entity.ServiceCategory;
+import com.divudi.entity.Category;
 import com.divudi.entity.ServiceSubCategory;
 import com.divudi.facade.ServiceSubCategoryFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.inject.Named;
@@ -28,7 +29,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -41,7 +42,7 @@ public class ServiceSubCategoryController implements Serializable {
     private ServiceSubCategoryFacade ejbFacade;
     List<ServiceSubCategory> selectedItems;
     private ServiceSubCategory current;
-    private ServiceCategory parentCategory;
+    private Category parentCategory;
     private List<ServiceSubCategory> items = null;
     String selectText = "";
 
@@ -145,25 +146,29 @@ public class ServiceSubCategoryController implements Serializable {
 
     public List<ServiceSubCategory> getItems() {
         if (getParentCategory() == null) {
-            return new ArrayList<ServiceSubCategory>();
+            return new ArrayList<>();
         }
 
-        String sql = "SELECT sb from ServiceSubCategory sb WHERE sb.retired=false AND sb.parentCategory.id = " + getParentCategory().getId();
-        items = getFacade().findBySQL(sql);
+        String sql = "SELECT sb from ServiceSubCategory sb "
+                + " WHERE sb.retired=false "
+                + " AND sb.parentCategory=:parent";
+
+        HashMap hm = new HashMap();
+        hm.put("parent", getParentCategory());
+        items = getFacade().findBySQL(sql, hm);
 
         if (items == null) {
-            return new ArrayList<ServiceSubCategory>();
+            return new ArrayList<>();
         }
-
 
         return items;
     }
 
-    public ServiceCategory getParentCategory() {
+    public Category getParentCategory() {
         return parentCategory;
     }
 
-    public void setParentCategory(ServiceCategory parentCategory) {
+    public void setParentCategory(Category parentCategory) {
         this.parentCategory = parentCategory;
         current = new ServiceSubCategory();
     }

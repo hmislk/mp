@@ -5,8 +5,6 @@
  */
 package com.divudi.data.memberShip;
 
-import com.divudi.entity.Institution;
-import com.divudi.entity.InwardPriceAdjustment;
 import com.divudi.entity.MembershipScheme;
 import java.util.ArrayList;
 import java.util.List;

@@ -56,6 +56,9 @@ public class mdInwardReportController implements Serializable {
     private List<ItemWithFee> fillterItemWithFees;
     private PaymentMethod paymentMethod;
     List<BillItem> billItem;
+    List<Bill> bil;
+    List<Bill> cancel;
+    List<Bill> refund;
     ////////////////////////////////////
     @EJB
     private CommonFunctions commonFunctions;
@@ -162,11 +165,11 @@ public class mdInwardReportController implements Serializable {
 
     public void makeBillNull() {
         bills = null;
-        itemWithFees=null;
-        fillterBill=null;
-        fillterItemWithFees=null;
+        itemWithFees = null;
+        fillterBill = null;
+        fillterItemWithFees = null;
     }
-    
+
     public List<Bill> getBills() {
 
         if (bills == null) {
@@ -203,11 +206,6 @@ public class mdInwardReportController implements Serializable {
 
         return bills;
     }
-    
-    
-    
-    
-    
 
     public List<Bill> getBillsDischarged() {
 
@@ -249,7 +247,9 @@ public class mdInwardReportController implements Serializable {
     }
 
     public Date getFromDate() {
-
+        if (fromDate == null) {
+            fromDate = getCommonFunctions().getStartOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        }
         return fromDate;
     }
 
@@ -259,6 +259,9 @@ public class mdInwardReportController implements Serializable {
     }
 
     public Date getToDate() {
+        if (toDate == null) {
+            toDate = getCommonFunctions().getEndOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        }
         return toDate;
     }
 
@@ -322,12 +325,12 @@ public class mdInwardReportController implements Serializable {
     public void setSessionController(SessionController sessionController) {
         this.sessionController = sessionController;
     }
-    
-    public void listInBhtBillItems(){
-    
-        Map m=new HashMap();
+
+    public void listInBhtBillItems() {
+
+        Map m = new HashMap();
         String jpql;
-        jpql="select b from BillItem b where"
+        jpql = "select b from BillItem b where"
                 + " b.bill.department =:dept"
                 + " and  b.bill.billType=:biTy "
                 + " and b.createdAt between :fd and :td";
@@ -335,11 +338,126 @@ public class mdInwardReportController implements Serializable {
         m.put("td", toDate);
         m.put("dept", dept);
         m.put("biTy", BillType.PharmacyBhtPre);
-        billItem=getBillItemFacade().findBySQL(jpql, m,TemporalType.TIMESTAMP);
-        
-        
+        billItem = getBillItemFacade().findBySQL(jpql, m, TemporalType.TIMESTAMP);
+
     }
 
+    public List<Bill> getBil() {
+        return bil;
+    }
+
+    public void setBil(List<Bill> bil) {
+        this.bil = bil;
+    }
+
+//    public void listInwardBillItems(){
+//    
+//        Map m=new HashMap();
+//        String jpql;
+//        jpql="select b from BillItem b where"
+//                + " b.bill.department =:dept"
+//                + " and  b.bill.billType=:biTy "
+//                + " and b.createdAt between :fd and :td";
+//        m.put("fd", fromDate);
+//        m.put("td", toDate);
+//        m.put("dept", dept);
+//        m.put("biTy", BillType.InwardFinalBill);
+//        billItem=getBillItemFacade().findBySQL(jpql, m,TemporalType.TIMESTAMP);
+//        
+//        
+//    }
+    double totalValue;
+
+    public double getTotalValue() {
+        return totalValue;
+    }
+
+    public void setTotalValue(double totalValue) {
+        this.totalValue = totalValue;
+    }
+
+    private double calTotal(Bill bill) {
+        String sql;
+        Map temMap = new HashMap();
+        sql = "select sum(b.netTotal) from Bill b where"
+                + " b.billType = :billType "
+                + " and type(b)=:class"
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
+
+        temMap.put("billType", BillType.InwardPaymentBill);
+        temMap.put("class", bill.getClass());
+        temMap.put("toDate", toDate);
+        temMap.put("fromDate", fromDate);
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+    }
+
+    private List<Bill> calBills(Bill bill) {
+        String sql;
+        Map temMap = new HashMap();
+        sql = "select b from Bill b where"
+                + " b.billType = :billType "
+                + " and type(b)=:class"
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
+
+        sql += " order by b.insId desc  ";
+
+        temMap.put("billType", BillType.InwardPaymentBill);
+        temMap.put("class", bill.getClass());
+        temMap.put("toDate", toDate);
+        temMap.put("fromDate", fromDate);
+
+        return getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+    }
+
+    public List<Bill> getRefund() {
+        return refund;
+    }
+
+    public void setRefund(List<Bill> refund) {
+        this.refund = refund;
+    }
+    
+    
+
+    public List<Bill> getCancel() {
+        return cancel;
+    }
+
+    public void setCancel(List<Bill> cancel) {
+        this.cancel = cancel;
+    }
+
+    double cancelledTotal;
+
+    public double getCancelledTotal() {
+        return cancelledTotal;
+    }
+
+    public void setCancelledTotal(double cancelledTotal) {
+        this.cancelledTotal = cancelledTotal;
+    }
+
+    public void listInwardPaymentBill() {
+
+        bil = calBills(new BilledBill());
+        cancel = calBills(new CancelledBill());
+
+        totalValue = calTotal(new BilledBill());
+        cancelledTotal = calTotal(new CancelledBill());
+
+//        Map m = new HashMap();
+//        String jpql;
+//        jpql = "select b from BilledBill b where"
+//                + " b.billType=:biTy "
+//                + " and b.createdAt between :fd and :td";
+//        m.put("fd", fromDate);
+//        m.put("td", toDate);
+//        m.put("biTy", BillType.InwardPaymentBill);
+//        bil = getBillFacade().findBySQL(jpql, m, TemporalType.TIMESTAMP);
+    }
 
     public List<ItemWithFee> getItemWithFees() {
 
@@ -694,6 +812,5 @@ public class mdInwardReportController implements Serializable {
     public void setBillItem(List<BillItem> billItem) {
         this.billItem = billItem;
     }
-    
-    
+
 }

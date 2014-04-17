@@ -102,13 +102,26 @@
                                     </p:selectOneMenu>
                                     <h:outputLabel value="Discreption"/>
                                     <p:inputText id="txtDes" value="#{surgeryBillController.proEncounterComponent.description}" ></p:inputText>
-                                    <h:outputLabel  value="Doctor/Staff" ></h:outputLabel>
-                                    <p:autoComplete  style="width: 400px;" forceSelection="true"
-                                                     value="#{surgeryBillController.proEncounterComponent.billFee.staff}" id="scStaff"
-                                                     completeMethod="#{staffController.completeItems}" var="mys" 
-                                                     itemLabel="#{mys.person.nameWithTitle}" itemValue="#{mys}"     >
 
+                                    <h:outputText value="Speciality"/>
+                                    <p:autoComplete converter="specilityCon"  forceSelection="true" id="cmbSpe" 
+                                                    value="#{surgeryBillController.proEncounterComponent.billFee.speciality}" 
+                                                    completeMethod="#{specialityController.completeSpeciality}" var="sp" 
+                                                    itemLabel="#{sp.name}" 
+                                                    itemValue="#{sp}" size="30"  style="width: 400px;">
+                                        <f:ajax execute="cmbSpe" render="cmbDoc" event="select"/>
                                     </p:autoComplete>
+
+
+                                    <h:outputText value="Doctor/Staff"/>
+                                    <p:autoComplete converter="stfcon"  forceSelection="true" id="cmbDoc" 
+                                                    value="#{surgeryBillController.proEncounterComponent.billFee.staff}" 
+                                                    completeMethod="#{staffController.completeItems}" var="st" 
+                                                    itemLabel="#{st.person.nameWithTitle}" itemValue="#{st}" size="30" 
+                                                    style="width: 400px;">
+                                    <f:ajax execute="cmbSpe" event="keypress"/>
+                                    </p:autoComplete>
+
                                     <h:outputLabel value="Fee"/>
                                     <p:inputText id="prof" value="#{surgeryBillController.proEncounterComponent.billFee.feeValue}"/>
                                     <p:commandButton ajax="false" update="surgery"  
@@ -260,13 +273,13 @@
                                                          disabled="#{ti.billFee.id eq null or surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>                                                                    
                                     </p:column>
                                     <p:column headerText="Remove">
-                                        <p:commandButton ajax="false" value="Remove"  
+                                        <p:commandButton ajax="false" value="Remove A"  
                                                          rendered="#{c.billFee.id eq null}"
-                                                         action="#{surgeryBillController.removeTimedEncFromList(c)}"
+                                                         action="#{surgeryBillController.removeTimedEncFromList(ti)}"
                                                          disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
-                                        <p:commandButton ajax="false" value="Remove"  
+                                        <p:commandButton ajax="false" value="Remove B"  
                                                          rendered="#{c.billFee.id ne null}"
-                                                         action="#{surgeryBillController.removeTimedEncFromDbase(c)}"
+                                                         action="#{surgeryBillController.removeTimedEncFromDbase(ti)}"
                                                          disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
                                     </p:column>
                                 </p:dataTable>

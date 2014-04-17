@@ -105,6 +105,15 @@ public class CommonReport implements Serializable {
     BillsTotals cashOutBills;
     BillsTotals cashOutBillsCancel;
     BillsTotals cashAdjustmentBills;
+    BillsTotals InwardPaymentBill;
+
+    public BillsTotals getInwardPaymentBill() {
+        return InwardPaymentBill;
+    }
+
+    public void setInwardPaymentBill(BillsTotals InwardPaymentBill) {
+        this.InwardPaymentBill = InwardPaymentBill;
+    }
 
     public BillsTotals getCashAdjustmentBills() {
         if (cashAdjustmentBills == null) {
@@ -1488,6 +1497,8 @@ public class CommonReport implements Serializable {
         getPharmacyBhtPreRefunded().setCash(calValue(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
 
     }
+    
+    
 
 //    public void createBhtIssueBillItemTable() {
 //        recreteModal();

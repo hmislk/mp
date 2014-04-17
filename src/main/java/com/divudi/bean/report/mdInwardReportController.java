@@ -8,6 +8,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.data.dataStructure.BillsTotals;
 import com.divudi.data.dataStructure.ItemWithFee;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
@@ -59,6 +60,7 @@ public class mdInwardReportController implements Serializable {
     List<Bill> bil;
     List<Bill> cancel;
     List<Bill> refund;
+    BillsTotals biltot;
     ////////////////////////////////////
     @EJB
     private CommonFunctions commonFunctions;
@@ -91,6 +93,17 @@ public class mdInwardReportController implements Serializable {
         itemWithFees = null;
         fillterItemWithFees = null;
         paymentMethod = null;
+    }
+
+    public BillsTotals getBiltot() {
+        if (biltot == null) {
+            biltot = new BillsTotals();
+        }
+        return biltot;
+    }
+
+    public void setBiltot(BillsTotals biltot) {
+        this.biltot = biltot;
     }
 
     public double getHospitalTotal() {
@@ -393,6 +406,25 @@ public class mdInwardReportController implements Serializable {
         return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
     }
 
+    private double calTotal(Bill bill, PaymentMethod paymentMethod) {
+        String sql;
+        Map temMap = new HashMap();
+        sql = "select sum(b.netTotal) from Bill b where"
+                + " b.billType = :billType "
+                + " and type(b)=:class"
+                + " and b.paymentMethod=:pm"
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false  ";
+
+        temMap.put("billType", BillType.InwardPaymentBill);
+        temMap.put("class", bill.getClass());
+        temMap.put("toDate", toDate);
+        temMap.put("fromDate", fromDate);
+        temMap.put("pm", paymentMethod);
+
+        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+    }
+
     private List<Bill> calBills(Bill bill) {
         String sql;
         Map temMap = new HashMap();
@@ -412,6 +444,16 @@ public class mdInwardReportController implements Serializable {
         return getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
     }
 
+    public double getBilledCashValue() {
+        return billedCashValue;
+    }
+
+    public void setBilledCashValue(double billedCashValue) {
+        this.billedCashValue = billedCashValue;
+    }
+
+    
+    
     public List<Bill> getRefund() {
         return refund;
     }
@@ -419,8 +461,6 @@ public class mdInwardReportController implements Serializable {
     public void setRefund(List<Bill> refund) {
         this.refund = refund;
     }
-    
-    
 
     public List<Bill> getCancel() {
         return cancel;
@@ -440,6 +480,21 @@ public class mdInwardReportController implements Serializable {
         this.cancelledTotal = cancelledTotal;
     }
 
+    double billedCashValue = 0;
+    double billedCreditValue =0;
+    double billedCreditCardValue =0;
+    double billedSlipValue =0;
+    double billedChequeValue =0;
+    double billedAgentValue =0;
+    
+    double cancelledCashValue = 0;
+    double cancelledCreditValue =0;
+    double cancelledCreditCardValue =0;
+    double cancelledSlipValue =0;
+    double cancelledChequeValue =0;
+    double cancelledAgentValue =0;
+    
+
     public void listInwardPaymentBill() {
 
         bil = calBills(new BilledBill());
@@ -447,16 +502,28 @@ public class mdInwardReportController implements Serializable {
 
         totalValue = calTotal(new BilledBill());
         cancelledTotal = calTotal(new CancelledBill());
+        billedCashValue = calTotal(new BilledBill(), PaymentMethod.Cash);
+        billedChequeValue =calTotal(new BilledBill(),PaymentMethod.Cheque);
+        billedAgentValue =calTotal(new BilledBill(), PaymentMethod.Agent);
+        billedCreditCardValue =calTotal(new BilledBill(), PaymentMethod.Card);
+        billedCreditValue =calTotal(new BilledBill(), PaymentMethod.Credit);
+        billedSlipValue =calTotal(new BilledBill(), PaymentMethod.Slip);
+        cancelledCashValue = calTotal(new CancelledBill(), PaymentMethod.Cash);
+        cancelledChequeValue =calTotal(new CancelledBill(),PaymentMethod.Cheque);
+        cancelledAgentValue =calTotal(new CancelledBill(), PaymentMethod.Agent);
+        cancelledCreditCardValue =calTotal(new CancelledBill(), PaymentMethod.Card);
+        cancelledCreditValue =calTotal(new CancelledBill(), PaymentMethod.Credit);
+        cancelledSlipValue =calTotal(new CancelledBill(), PaymentMethod.Slip);
 
 //        Map m = new HashMap();
-//        String jpql;
-//        jpql = "select b from BilledBill b where"
-//                + " b.billType=:biTy "
-//                + " and b.createdAt between :fd and :td";
-//        m.put("fd", fromDate);
-//        m.put("td", toDate);
-//        m.put("biTy", BillType.InwardPaymentBill);
-//        bil = getBillFacade().findBySQL(jpql, m, TemporalType.TIMESTAMP);
+        //        String jpql;
+        //        jpql = "select b from BilledBill b where"
+        //                + " b.billType=:biTy "
+        //                + " and b.createdAt between :fd and :td";
+        //        m.put("fd", fromDate);
+        //        m.put("td", toDate);
+        //        m.put("biTy", BillType.InwardPaymentBill);
+        //        bil = getBillFacade().findBySQL(jpql, m, TemporalType.TIMESTAMP);
     }
 
     public List<ItemWithFee> getItemWithFees() {
@@ -755,6 +822,39 @@ public class mdInwardReportController implements Serializable {
         this.itemWithFees = itemWithFees;
     }
 
+    public double getBilledCreditValue() {
+        return billedCreditValue;
+    }
+
+    public void setBilledCreditValue(double billedCreditValue) {
+        this.billedCreditValue = billedCreditValue;
+    }
+
+    public double getBilledCreditCardValue() {
+        return billedCreditCardValue;
+    }
+
+    public void setBilledCreditCardValue(double billedCreditCardValue) {
+        this.billedCreditCardValue = billedCreditCardValue;
+    }
+
+    public double getBilledSlipValue() {
+        return billedSlipValue;
+    }
+
+    public void setBilledSlipValue(double billedSlipValue) {
+        this.billedSlipValue = billedSlipValue;
+    }
+
+    public double getBilledChequeValue() {
+        return billedChequeValue;
+    }
+
+    public void setBilledChequeValue(double billedChequeValue) {
+        this.billedChequeValue = billedChequeValue;
+    }
+
+    
     public ItemFacade getItemFacade() {
         return itemFacade;
     }
@@ -812,5 +912,63 @@ public class mdInwardReportController implements Serializable {
     public void setBillItem(List<BillItem> billItem) {
         this.billItem = billItem;
     }
+
+    public double getBilledAgentValue() {
+        return billedAgentValue;
+    }
+
+    public void setBilledAgentValue(double billedAgentValue) {
+        this.billedAgentValue = billedAgentValue;
+    }
+
+    public double getCancelledCashValue() {
+        return cancelledCashValue;
+    }
+
+    public void setCancelledCashValue(double cancelledCashValue) {
+        this.cancelledCashValue = cancelledCashValue;
+    }
+
+    public double getCancelledCreditValue() {
+        return cancelledCreditValue;
+    }
+
+    public void setCancelledCreditValue(double cancelledCreditValue) {
+        this.cancelledCreditValue = cancelledCreditValue;
+    }
+
+    public double getCancelledCreditCardValue() {
+        return cancelledCreditCardValue;
+    }
+
+    public void setCancelledCreditCardValue(double cancelledCreditCardValue) {
+        this.cancelledCreditCardValue = cancelledCreditCardValue;
+    }
+
+    public double getCancelledSlipValue() {
+        return cancelledSlipValue;
+    }
+
+    public void setCancelledSlipValue(double cancelledSlipValue) {
+        this.cancelledSlipValue = cancelledSlipValue;
+    }
+
+    public double getCancelledChequeValue() {
+        return cancelledChequeValue;
+    }
+
+    public void setCancelledChequeValue(double cancelledChequeValue) {
+        this.cancelledChequeValue = cancelledChequeValue;
+    }
+
+    public double getCancelledAgentValue() {
+        return cancelledAgentValue;
+    }
+
+    public void setCancelledAgentValue(double cancelledAgentValue) {
+        this.cancelledAgentValue = cancelledAgentValue;
+    }
+    
+    
 
 }

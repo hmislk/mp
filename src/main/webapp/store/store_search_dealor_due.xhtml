@@ -12,19 +12,19 @@
                 <h:form>
                     <h:panelGrid columns="6">
                         <h:outputLabel value="From Date"/>
-                        <p:calendar id="fromDate" value="#{dealorDueController.fromDate}" navigator="false"
+                        <p:calendar id="fromDate" value="#{storeDealorDueController.fromDate}" navigator="false"
                                     pattern="dd MMMM yyyy hh mm a" >
 
                         </p:calendar>
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{dealorDueController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                        <p:calendar id="toDate" value="#{storeDealorDueController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
 
                         </p:calendar>
-                        <p:commandButton value="Process" action="#{dealorDueController.fillItemsStore()}" ajax="false"  />
+                        <p:commandButton value="Process" action="#{storeDealorDueController.fillItemsStore()}" ajax="false"  />
 
                     </h:panelGrid>
 
-                    <p:dataTable id="lst" value="#{dealorDueController.items}" var="i"  style="width: 100%;">
+                    <p:dataTable id="lst" value="#{storeDealorDueController.items}" var="i"  style="width: 100%;">
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column headerText="GRN No">                                    

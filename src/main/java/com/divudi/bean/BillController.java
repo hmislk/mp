@@ -816,38 +816,24 @@ public class BillController implements Serializable {
             double entryDis = 0.0;
             double entryNet = 0.0;
             BillItem bi = be.getBillItem();
+
             for (BillFee bf : be.getLstBillFees()) {
-                //  boolean flag = false;
-//                System.out.println("bill item fee");
-                if (bf.getBillItem().getItem().isDiscountAllowed() == false && bf.getBillItem().getItem().isUserChangable() == false) {
-                    System.out.println("billing for not discount allowed ");
+                boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
+                
+                if (discountAllowed == false) {
+                    System.err.println("NOT discount allowed 1 ");
                     bf.setFeeValue(isForeigner());
-                } else if (bf.getBillItem().getItem().isDiscountAllowed() == true
-                        && getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit && getCreditCompany() != null) {
-                    System.err.println("billing for company " + getCreditCompany().getName());
+                } else if (discountAllowed == true
+                        && getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit
+                        && getCreditCompany() != null) {
+                    System.err.println("Credit company 2 " + getCreditCompany().getName());
                     bf.setFeeValueForCreditCompany(isForeigner(), getCreditCompany().getLabBillDiscount());
-
-                } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == true) {
-                    System.err.println("Discount Allowed & User Changable");
+                } else {
+                    System.err.println("ELSE 3");
                     if (paymentScheme == null) {
                         bf.setFeeValue(isForeigner());
                     } else {
-                        bf.setFeeValueForDiscountAllowedAndUserChangable(isForeigner(), paymentScheme.getDiscountPercent());
-                    }
-
-                } else if (bf.getBillItem().getItem().isDiscountAllowed() == true && bf.getBillItem().getItem().isUserChangable() == false) {
-                    System.out.println("Discount Allowed & Not User Changable");
-                    if (paymentScheme == null) {
-                        bf.setFeeValue(isForeigner());
-                    } else {
-                        bf.setFeeValueForDiscountAllowedNotUserChangable(isForeigner(), paymentScheme.getDiscountPercent());
-                    }
-                } else if (bf.getBillItem().getItem().isUserChangable() == true && bf.getBillItem().getItem().isDiscountAllowed() == false) {
-                    System.err.println("User Changable & not Discount Allowed");
-                    if (paymentScheme == null) {
-                        bf.setFeeValue(isForeigner());
-                    } else {
-                        bf.setFeeValueForUserChangableAndNotDiscountAllowed(isForeigner());
+                        bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
                     }
                 }
 

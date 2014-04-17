@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.divudi.bean.inward;
+package com.divudi.bean.memberShip;
 
 import com.divudi.bean.EnumController;
 import com.divudi.bean.SessionController;
@@ -58,33 +58,37 @@ public class InwardMemberShipDiscount implements Serializable {
 
         if (membershipScheme != null) {
             if (ins != null) {
-                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                        + "  i.membershipScheme=:m and"
-                        + " i.paymentMethod=:p and"
-                        + " i.inwardChargeType=:inw"
-                        + " i.institution=:ins ";
+                sql = "Select i from InwardPriceAdjustment i"
+                        + "  where i.retired=false "
+                        + " and i.membershipScheme=:m "
+                        + " and i.paymentMethod=:p "
+                        + " and i.inwardChargeType=:inw"
+                        + " and i.institution=:ins ";
                 hm.put("m", membershipScheme);
                 hm.put("ins", ins);
             } else {
-                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                        + "  i.membershipScheme=:m and"
-                        + " i.paymentMethod=:p and"
-                        + " i.inwardChargeType=:inw"
+                sql = "Select i from InwardPriceAdjustment i "
+                        + " where i.retired=false "
+                        + " and  i.membershipScheme=:m "
+                        + " and i.paymentMethod=:p "
+                        + " and i.inwardChargeType=:inw "
                         + " and i.institution is null ";
                 hm.put("m", membershipScheme);
             }
         } else {
             if (ins != null) {
-                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                        + " i.paymentMethod=:p and"
-                        + " i.inwardChargeType=:inw "
+                sql = "Select i from InwardPriceAdjustment i "
+                        + " where i.retired=false "
+                        + " and i.paymentMethod=:p "
+                        + " and i.inwardChargeType=:inw "
                         + " and i.membershipScheme is null"
                         + " and i.institution=:ins ";
                 hm.put("ins", ins);
             } else {
-                sql = "Select i from InwardPriceAdjustment i where i.retired=false and"
-                        + " i.paymentMethod=:p and"
-                        + " i.inwardChargeType=:inw "
+                sql = "Select i from InwardPriceAdjustment i "
+                        + " where i.retired=false "
+                        + " and i.paymentMethod=:p "
+                        + " and i.inwardChargeType=:inw "
                         + " and i.membershipScheme is null"
                         + " and i.institution is null ";
             }
@@ -94,6 +98,63 @@ public class InwardMemberShipDiscount implements Serializable {
         hm.put("inw", inwardChargeType);
 
         return getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
+    }
+
+    public List<InwardPriceAdjustment> getInwardPriceAdjustments(PaymentMethod paymentMethod) {
+        String sql = "select ipa from InwardPriceAdjustment ipa "
+                + " where ipa.retired=false"
+                + " and ipa.paymentMethod=:pm"
+                + " and ipa.membershipScheme is null"
+                + " and ipa.institution is null"
+                + " order by ipa.paymentMethod ";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", paymentMethod);
+
+        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
+    }
+
+    public List<InwardPriceAdjustment> getInwardPriceAdjustments(Institution ins, PaymentMethod pay) {
+        String sql = "select ipa from InwardPriceAdjustment ipa "
+                + " where ipa.retired=false"
+                + " and ipa.paymentMethod=:pm"
+                + " and ipa.institution=:ins"
+                + " and ipa.membershipScheme is null";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", pay);
+        hm.put("ins", ins);
+
+        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
+    }
+
+    public List<InwardPriceAdjustment> getInwardPriceAdjustments(MembershipScheme mem, PaymentMethod pay) {
+        String sql = "select ipa from InwardPriceAdjustment ipa "
+                + " where ipa.retired=false"
+                + " and ipa.paymentMethod=:pm"
+                + " and ipa.membershipScheme=:mem"
+                + " and ipa.institution is null";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", pay);
+        hm.put("mem", mem);
+
+        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
+    }
+
+    public List<InwardPriceAdjustment> getInwardPriceAdjustments(Institution ins, MembershipScheme mem, PaymentMethod pay) {
+        String sql = "select ipa from InwardPriceAdjustment ipa "
+                + " where ipa.retired=false"
+                + " and ipa.paymentMethod=:pm"
+                + " and ipa.membershipScheme=:mem"
+                + " and ipa.institution=:ins";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", pay);
+        hm.put("mem", mem);
+        hm.put("ins", ins);
+
+        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
     }
 
     private InwardPriceAdjustment getInwardPriceAdjustment(InwardChargeType inwardChargeType) {

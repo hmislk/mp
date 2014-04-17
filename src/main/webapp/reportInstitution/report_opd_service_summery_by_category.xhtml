@@ -14,7 +14,9 @@
             <p:panel>
                 <f:facet name="header" >                
 
-                    <p:commandButton value="Refresh" ajax="false" id="btnRefresh"  styleClass="noPrintButton" style="float: right;" />
+                    <p:commandButton value="Refresh" ajax="false" id="btnRefresh"  
+                                     actionListener="#{serviceSummery.createServiceCategorySummery()}"
+                                     styleClass="noPrintButton" style="float: right;" />
                     <p:defaultCommand target="btnRefresh"/>
 
                     <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
@@ -44,7 +46,7 @@
             </p:panel>
             <p:spacer height="30"/>
 
-            <p:dataTable id="opd" rowIndexVar="i"  value="#{serviceSummery.serviceCategorySummery}" var="d">                   
+            <p:dataTable id="opd" rowIndexVar="i"  value="#{serviceSummery.billItemWithFees}" var="d">                   
 
                 <f:facet name="header">
                     <h:outputLabel value="#{serviceSummery.category.name}"/>
@@ -93,16 +95,16 @@
                         </p:column>
 
 
-                        <p:column colspan="3" footerText="COUNT  (#{serviceSummery.countTotal2})">
+                        <p:column colspan="3" footerText="COUNT  (#{serviceSummery.count})">
                             <f:facet name="footer">
-                                <h:outputLabel value="COUNT  (#{serviceSummery.countTotal2})">                                   
+                                <h:outputLabel value="COUNT  (#{serviceSummery.count})">                                   
                                 </h:outputLabel>
                             </f:facet>
                         </p:column>
 
-                        <p:column style="text-align: right;" footerText="#{serviceSummery.serviceTot2}" >
+                        <p:column style="text-align: right;" footerText="#{serviceSummery.value}" >
                             <f:facet name="footer">
-                                <h:outputLabel value="#{serviceSummery.serviceTot2}">
+                                <h:outputLabel value="#{serviceSummery.value}">
                                     <f:convertNumber pattern="#,000.00"/>
                                 </h:outputLabel>
                             </f:facet>

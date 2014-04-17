@@ -18,8 +18,6 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -71,7 +69,7 @@ public class InwardMemberShipDiscount implements Serializable {
 
         items = new ArrayList<>();
         for (InwardChargeType ict : getEnumController().getInwardChargeTypes()) {
-            items.add(getPriceMatrixBean().getInwardMemberShipDiscount(currentMembershipScheme, institution, currentPaymentMethod, ict, getSessionController().getLoggedUser()));
+            items.add(getPriceMatrixBean().getInwardMemberShipDiscount(getCurrentMembershipScheme(), getInstitution(), getCurrentPaymentMethod(), ict, getSessionController().getLoggedUser()));
         }
 
     }

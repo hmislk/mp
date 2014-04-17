@@ -24,8 +24,10 @@
                                      forceSelection="true" 
                                      value="#{inwardMemberShipDiscount.institution}" ></p:autoComplete>
                     <h:outputLabel value="Select Paymentmethod"/>
-                    <p:selectOneMenu    value="#{inwardMemberShipDiscount.currentPaymentMethod}">                                                                   
-                        <f:selectItems value="#{enumController.paymentMethods}"/>                      
+                    <p:selectOneMenu    value="#{inwardMemberShipDiscount.currentPaymentMethod}">        
+                        <f:selectItem itemLabel="Select Payment method"/>
+                        <f:selectItems value="#{enumController.paymentMethodForAdmission}"/>  
+                        <f:ajax execute="@this" event="change" />
                     </p:selectOneMenu>
                     <p:commandButton ajax="false" value="Process" action="#{inwardMemberShipDiscount.createItems()}"/>
                     <p:commandButton ajax="false" value="Clear" action="#{inwardMemberShipDiscount.makeNull()}"/>
@@ -35,7 +37,7 @@
                     <p:column headerText="InwardchargeType">
                         #{prc.inwardChargeType}
                     </p:column>
-                    <p:column headerText="Dicount Percent">
+                    <p:column headerText="Discount Percent">
                         <p:inputText value="#{prc.discountPercent}">
                             <f:ajax event="blur" listener="#{inwardMemberShipDiscount.edit(prc)}"/>
                         </p:inputText>

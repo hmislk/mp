@@ -17,7 +17,7 @@
             <p:panel header="Error Detection" >
                 <f:facet name="header" >
                     <h:outputLabel value="Error Detection" ></h:outputLabel>
-                    <p:autoComplete value="#{pharmacyErrorChecking.department}"  
+                    <p:autoComplete value="#{storeErrorChecking.department}"  
                                     style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;"  completeMethod="#{departmentController.completeDept}" var="dept" itemValue="#{dept}" itemLabel="#{dept.name}" 
                                     forceSelection="true" rendered="true" 
                                     requiredMessage="You must select a department" >
@@ -29,7 +29,7 @@
                         </p:column>
 
                     </p:autoComplete>
-                    <p:autoComplete value="#{pharmacyErrorChecking.item}"  
+                    <p:autoComplete value="#{storeErrorChecking.item}"  
                                     style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;"  
                                     completeMethod="#{itemController.completeStoreItem}" 
                                     var="item" itemValue="#{item}" itemLabel="#{item.name}" 
@@ -49,22 +49,22 @@
 
 
                     <p:panel header="All Bills" >
-                        <p:commandButton ajax="false" value="List All Bill Items" action="#{pharmacyErrorChecking.listPharmacyMovement() }" >
+                        <p:commandButton ajax="false" value="List All Bill Items" action="#{storeErrorChecking.listPharmacyMovement() }" >
                         </p:commandButton>
                         <br/>
                         <h:outputLabel value="Calculated Stock" ></h:outputLabel>
-                        <h:outputLabel value="#{pharmacyErrorChecking.calculatedStock}" ></h:outputLabel>
+                        <h:outputLabel value="#{storeErrorChecking.calculatedStock}" ></h:outputLabel>
                         <br/>
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
-                        <h:outputLabel value="#{pharmacyErrorChecking.itemStock}" ></h:outputLabel>
+                        <h:outputLabel value="#{storeErrorChecking.itemStock}" ></h:outputLabel>
                         <br/>
                         <h:outputLabel value="Category" ></h:outputLabel>
-                        <h:outputLabel value="#{pharmacyErrorChecking.item.category.name}" ></h:outputLabel>
+                        <h:outputLabel value="#{storeErrorChecking.item.category.name}" ></h:outputLabel>
                         <br/>
                         <h:outputLabel value="Current Stock" ></h:outputLabel>
                         <h:outputLabel value="" ></h:outputLabel>
 
-                        <p:dataTable value="#{pharmacyErrorChecking.billItems}" var="pb"  rowIndexVar="i"
+                        <p:dataTable value="#{storeErrorChecking.billItems}" var="pb"  rowIndexVar="i"
                                      rowStyleClass="#{(pb.retired eq true or pb.bill.retired eq true) ?'greenText' : ''} 
                                      #{((pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyPurchaseBill' )or
                                        (pb.bill.billClass eq 'class com.divudi.entity.CancelledBill' and pb.bill.billType eq 'PharmacyGrnBill' )or

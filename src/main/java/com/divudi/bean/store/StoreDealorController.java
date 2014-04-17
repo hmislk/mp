@@ -6,18 +6,20 @@
  * and
  * a Set of Related Tools
  */
-package com.divudi.bean.pharmacy;
+package com.divudi.bean.store;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.DepartmentType;
-import com.divudi.ejb.BillNumberBean;
-import com.divudi.facade.AmpFacade;
-import com.divudi.entity.pharmacy.Amp;
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
+import com.divudi.data.InstitutionType;
+import com.divudi.facade.InstitutionFacade;
+import com.divudi.entity.Institution;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -34,38 +36,39 @@ import javax.faces.convert.FacesConverter;
  */
 @Named
 @SessionScoped
-public class StoreAmpController implements Serializable {
+public class StoreDealorController implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Inject
     SessionController sessionController;
     @EJB
-    private AmpFacade ejbFacade;
-    private Amp current;
-    private List<Amp> items = null;
-    List<Amp> itemsByCode = null;
+    private InstitutionFacade ejbFacade;
+    private Institution current;
+    private List<Institution> items = null;
 
-    public List<Amp> getItemsByCode() {
-        if (itemsByCode == null) {
-            itemsByCode = getFacade().findBySQL("select a from Amp a where a.retired=false order by a.code");
-        }
-        return itemsByCode;
+    public List<Institution> completeDealor(String query) {
+        List<Institution> suggestions;
+        String sql;
+        Map m = new HashMap();
+
+        sql = "select c from Institution c where c.retired=false and "
+                + " c.institutionType =:t and upper(c.name) like :q order by c.name";
+        //System.out.println(sql);
+        m.put("t", InstitutionType.StoreDealor);
+        m.put("q", "%" + query.toUpperCase() + "%");
+        suggestions = getEjbFacade().findBySQL(sql, m, 10);
+        //System.out.println("suggestions = " + suggestions);
+
+        return suggestions;
     }
-
-    public void setItemsByCode(List<Amp> itemsByCode) {
-        this.itemsByCode = itemsByCode;
-    }
-
-    @EJB
-    BillNumberBean billNumberBean;
 
     public void prepareAdd() {
-        current = null;
+        current = new Institution();
+        current.setInstitutionType(InstitutionType.StoreDealor);
     }
 
     private void recreateModel() {
         items = null;
-        current = null;
     }
 
     public void saveSelected() {
@@ -74,20 +77,20 @@ public class StoreAmpController implements Serializable {
             getFacade().edit(current);
             UtilityController.addSuccessMessage("savedOldSuccessfully");
         } else {
-            getCurrent().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
-            getCurrent().setCreater(getSessionController().getLoggedUser());
-            getFacade().create(getCurrent());
+            current.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+            current.setCreater(getSessionController().getLoggedUser());
+            getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
         recreateModel();
-        // getItems();
+        //     getItems();
     }
 
-    public AmpFacade getEjbFacade() {
+    public InstitutionFacade getEjbFacade() {
         return ejbFacade;
     }
 
-    public void setEjbFacade(AmpFacade ejbFacade) {
+    public void setEjbFacade(InstitutionFacade ejbFacade) {
         this.ejbFacade = ejbFacade;
     }
 
@@ -99,21 +102,19 @@ public class StoreAmpController implements Serializable {
         this.sessionController = sessionController;
     }
 
-    public StoreAmpController() {
+    public StoreDealorController() {
     }
 
-    public Amp getCurrent() {
+    public Institution getCurrent() {
         if (current == null) {
-            current = new Amp();
-            current.setDepartmentType(DepartmentType.Store);
-            current.setCode(billNumberBean.storeItemNumberGenerator());
+            current = new Institution();
+            current.setInstitutionType(InstitutionType.StoreDealor);
         }
         return current;
     }
 
-    public void setCurrent(Amp current) {
+    public void setCurrent(Institution current) {
         this.current = current;
-
     }
 
     public void delete() {
@@ -128,44 +129,41 @@ public class StoreAmpController implements Serializable {
             UtilityController.addSuccessMessage("NothingToDelete");
         }
         recreateModel();
-        getItems();
+        //      getItems();
         current = null;
         getCurrent();
     }
 
-    private AmpFacade getFacade() {
+    private InstitutionFacade getFacade() {
         return ejbFacade;
     }
-    private List<Amp> filteredItems;
 
-    public List<Amp> getItems() {
+    public List<Institution> getItems() {
+        // items = getFacade().findAll("name", true);
+        String sql = "SELECT i FROM Institution i where i.retired=false and i.institutionType =:tp"
+                + " order by i.name";
+        HashMap hm = new HashMap();
+        hm.put("tp", InstitutionType.StoreDealor);
+        items = getEjbFacade().findBySQL(sql, hm);
         if (items == null) {
-            items = getFacade().findAll("name", true);
+            items = new ArrayList<>();
         }
         return items;
-    }
-
-    public List<Amp> getFilteredItems() {
-        return filteredItems;
-    }
-
-    public void setFilteredItems(List<Amp> filteredItems) {
-        this.filteredItems = filteredItems;
     }
 
     /**
      *
      */
-    @FacesConverter("stoAmpCon")
-    public static class AmpControllerConverter implements Converter {
+    @FacesConverter("storeDeal")
+    public static class StoreDealerControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            StoreAmpController controller = (StoreAmpController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "storeAmpController");
+            StoreDealorController controller = (StoreDealorController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "storeDealorController");
             return controller.getEjbFacade().find(getKey(value));
         }
 
@@ -186,12 +184,12 @@ public class StoreAmpController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Amp) {
-                Amp o = (Amp) object;
+            if (object instanceof Institution) {
+                Institution o = (Institution) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type "
-                        + object.getClass().getName() + "; expected type: " + StoreAmpController.class.getName());
+                        + object.getClass().getName() + "; expected type: " + StoreDealorController.class.getName());
             }
         }
     }

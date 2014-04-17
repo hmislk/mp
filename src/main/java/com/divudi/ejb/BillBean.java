@@ -683,7 +683,10 @@ public class BillBean {
             getBillItemFacade().edit(e.getBillItem());
 
             System.err.println("1 " + e.getBillItem());
-            updateMatrix(e.getBillItem());
+          
+            if (b.getBillType() == BillType.InwardBill) {
+                updateMatrix(e.getBillItem());
+            }
 
         }
 

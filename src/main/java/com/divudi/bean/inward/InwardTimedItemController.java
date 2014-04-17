@@ -11,8 +11,7 @@ package com.divudi.bean.inward;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.ejb.CommonFunctions;
-import com.divudi.ejb.InwardCalculation;
-import com.divudi.entity.Bill;
+import com.divudi.ejb.InwardBean;
 import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
 import com.divudi.entity.inward.TimedItem;
@@ -53,7 +52,7 @@ public class InwardTimedItemController implements Serializable {
     @EJB
     private CommonFunctions commonFunctions;
     @EJB
-    private InwardCalculation inwardCalculation;
+    private InwardBean inwardBean;
 
     public void makeNull() {
         items = null;
@@ -73,8 +72,8 @@ public class InwardTimedItemController implements Serializable {
         if (errorCheck()) {
             return;
         }
-        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) getCurrent().getItem());
-        double count = getInwardCalculation().calCount(timedItemFee, getCurrent().getFromTime(), getCurrent().getToTime());
+        TimedItemFee timedItemFee = getInwardBean().getTimedItemFee((TimedItem) getCurrent().getItem());
+        double count = getInwardBean().calCount(timedItemFee, getCurrent().getFromTime(), getCurrent().getToTime());
 
         getCurrent().setServiceValue(count * timedItemFee.getFee());
         getCurrent().setCreater(getSessionController().getLoggedUser());
@@ -100,8 +99,8 @@ public class InwardTimedItemController implements Serializable {
             tmpPI.setToTime(Calendar.getInstance().getTime());
         }
 
-        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) tmpPI.getItem());
-        double count = getInwardCalculation().calCount(timedItemFee, tmpPI.getFromTime(), tmpPI.getToTime());
+        TimedItemFee timedItemFee = getInwardBean().getTimedItemFee((TimedItem) tmpPI.getItem());
+        double count = getInwardBean().calCount(timedItemFee, tmpPI.getFromTime(), tmpPI.getToTime());
 
         tmpPI.setServiceValue(count * timedItemFee.getFee());
 
@@ -123,8 +122,8 @@ public class InwardTimedItemController implements Serializable {
         }
 
         for (PatientItem pi : items) {
-            TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
-            double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
+            TimedItemFee timedItemFee = getInwardBean().getTimedItemFee((TimedItem) pi.getItem());
+            double count = getInwardBean().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
             pi.setServiceValue(count * timedItemFee.getFee());
         }
     }
@@ -178,12 +177,12 @@ public class InwardTimedItemController implements Serializable {
         this.commonFunctions = commonFunctions;
     }
 
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
+    public InwardBean getInwardBean() {
+        return inwardBean;
     }
 
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
+    public void setInwardBean(InwardBean inwardBean) {
+        this.inwardBean = inwardBean;
     }
 
 }

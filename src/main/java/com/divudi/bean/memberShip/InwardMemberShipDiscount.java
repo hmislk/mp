@@ -9,10 +9,11 @@ import com.divudi.bean.EnumController;
 import com.divudi.bean.SessionController;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.inward.InwardChargeType;
+import com.divudi.ejb.PriceMatrixBean;
 import com.divudi.entity.Institution;
-import com.divudi.entity.InwardPriceAdjustment;
-import com.divudi.entity.MembershipScheme;
-import com.divudi.facade.InwardPriceAdjustmentFacade;
+import com.divudi.entity.PriceMatrix;
+import com.divudi.entity.memberShip.MembershipScheme;
+import com.divudi.facade.PriceMatrixFacade;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -34,145 +35,32 @@ public class InwardMemberShipDiscount implements Serializable {
     private MembershipScheme currentMembershipScheme;
     private PaymentMethod currentPaymentMethod;
     private Institution institution;
-    private List<InwardPriceAdjustment> items;
+    private List<PriceMatrix> items;
     @Inject
     private EnumController enumController;
     @Inject
     private SessionController sessionController;
     @EJB
-    private InwardPriceAdjustmentFacade inwardPriceAdjustmentFacade;
+    private PriceMatrixFacade priceMatrixFacade;
+    @EJB
+    PriceMatrixBean priceMatrixBean;
 
-    public void edit(InwardPriceAdjustment inwardPriceAdjustment) {
-        getInwardPriceAdjustmentFacade().edit(inwardPriceAdjustment);
+    public PriceMatrixBean getPriceMatrixBean() {
+        return priceMatrixBean;
+    }
+
+    public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
+        this.priceMatrixBean = priceMatrixBean;
+    }
+
+    public void edit(PriceMatrix inwardPriceAdjustment) {
+        getPriceMatrixFacade().edit(inwardPriceAdjustment);
     }
 
     public void makeNull() {
         currentMembershipScheme = null;
         currentPaymentMethod = null;
         items = null;
-    }
-
-    public InwardPriceAdjustment getMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, Institution ins, InwardChargeType inwardChargeType) {
-        String sql;
-        HashMap hm = new HashMap();
-
-        if (membershipScheme != null) {
-            if (ins != null) {
-                sql = "Select i from InwardPriceAdjustment i"
-                        + "  where i.retired=false "
-                        + " and i.membershipScheme=:m "
-                        + " and i.paymentMethod=:p "
-                        + " and i.inwardChargeType=:inw"
-                        + " and i.institution=:ins ";
-                hm.put("m", membershipScheme);
-                hm.put("ins", ins);
-            } else {
-                sql = "Select i from InwardPriceAdjustment i "
-                        + " where i.retired=false "
-                        + " and  i.membershipScheme=:m "
-                        + " and i.paymentMethod=:p "
-                        + " and i.inwardChargeType=:inw "
-                        + " and i.institution is null ";
-                hm.put("m", membershipScheme);
-            }
-        } else {
-            if (ins != null) {
-                sql = "Select i from InwardPriceAdjustment i "
-                        + " where i.retired=false "
-                        + " and i.paymentMethod=:p "
-                        + " and i.inwardChargeType=:inw "
-                        + " and i.membershipScheme is null"
-                        + " and i.institution=:ins ";
-                hm.put("ins", ins);
-            } else {
-                sql = "Select i from InwardPriceAdjustment i "
-                        + " where i.retired=false "
-                        + " and i.paymentMethod=:p "
-                        + " and i.inwardChargeType=:inw "
-                        + " and i.membershipScheme is null"
-                        + " and i.institution is null ";
-            }
-        }
-
-        hm.put("p", paymentMethod);
-        hm.put("inw", inwardChargeType);
-
-        return getInwardPriceAdjustmentFacade().findFirstBySQL(sql, hm);
-    }
-
-    public List<InwardPriceAdjustment> getInwardPriceAdjustments(PaymentMethod paymentMethod) {
-        String sql = "select ipa from InwardPriceAdjustment ipa "
-                + " where ipa.retired=false"
-                + " and ipa.paymentMethod=:pm"
-                + " and ipa.membershipScheme is null"
-                + " and ipa.institution is null"
-                + " order by ipa.paymentMethod ";
-
-        HashMap hm = new HashMap();
-        hm.put("pm", paymentMethod);
-
-        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
-    }
-
-    public List<InwardPriceAdjustment> getInwardPriceAdjustments(Institution ins, PaymentMethod pay) {
-        String sql = "select ipa from InwardPriceAdjustment ipa "
-                + " where ipa.retired=false"
-                + " and ipa.paymentMethod=:pm"
-                + " and ipa.institution=:ins"
-                + " and ipa.membershipScheme is null";
-
-        HashMap hm = new HashMap();
-        hm.put("pm", pay);
-        hm.put("ins", ins);
-
-        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
-    }
-
-    public List<InwardPriceAdjustment> getInwardPriceAdjustments(MembershipScheme mem, PaymentMethod pay) {
-        String sql = "select ipa from InwardPriceAdjustment ipa "
-                + " where ipa.retired=false"
-                + " and ipa.paymentMethod=:pm"
-                + " and ipa.membershipScheme=:mem"
-                + " and ipa.institution is null";
-
-        HashMap hm = new HashMap();
-        hm.put("pm", pay);
-        hm.put("mem", mem);
-
-        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
-    }
-
-    public List<InwardPriceAdjustment> getInwardPriceAdjustments(Institution ins, MembershipScheme mem, PaymentMethod pay) {
-        String sql = "select ipa from InwardPriceAdjustment ipa "
-                + " where ipa.retired=false"
-                + " and ipa.paymentMethod=:pm"
-                + " and ipa.membershipScheme=:mem"
-                + " and ipa.institution=:ins";
-
-        HashMap hm = new HashMap();
-        hm.put("pm", pay);
-        hm.put("mem", mem);
-        hm.put("ins", ins);
-
-        return getInwardPriceAdjustmentFacade().findBySQL(sql, hm);
-    }
-
-    private InwardPriceAdjustment getInwardPriceAdjustment(InwardChargeType inwardChargeType) {
-        InwardPriceAdjustment object = getMemberDisCount(getCurrentPaymentMethod(), getCurrentMembershipScheme(), institution, inwardChargeType);
-
-        if (object == null) {
-            object = new InwardPriceAdjustment();
-            object.setCreatedAt(new Date());
-            object.setCreater(getSessionController().getLoggedUser());
-            object.setInwardChargeType(inwardChargeType);
-            object.setMembershipScheme(getCurrentMembershipScheme());
-            object.setPaymentMethod(getCurrentPaymentMethod());
-            object.setInstitution(institution);
-            getInwardPriceAdjustmentFacade().create(object);
-        }
-
-        return object;
-
     }
 
     public void createItems() {
@@ -183,7 +71,7 @@ public class InwardMemberShipDiscount implements Serializable {
 
         items = new ArrayList<>();
         for (InwardChargeType ict : getEnumController().getInwardChargeTypes()) {
-            items.add(getInwardPriceAdjustment(ict));
+            items.add(getPriceMatrixBean().getInwardMemberShipDiscount(currentMembershipScheme, institution, currentPaymentMethod, ict, getSessionController().getLoggedUser()));
         }
 
     }
@@ -210,11 +98,11 @@ public class InwardMemberShipDiscount implements Serializable {
         this.currentPaymentMethod = currentPaymentMethod;
     }
 
-    public List<InwardPriceAdjustment> getItems() {
+    public List<PriceMatrix> getItems() {
         return items;
     }
 
-    public void setItems(List<InwardPriceAdjustment> items) {
+    public void setItems(List<PriceMatrix> items) {
         this.items = items;
     }
 
@@ -226,12 +114,12 @@ public class InwardMemberShipDiscount implements Serializable {
         this.enumController = enumController;
     }
 
-    public InwardPriceAdjustmentFacade getInwardPriceAdjustmentFacade() {
-        return inwardPriceAdjustmentFacade;
+    public PriceMatrixFacade getPriceMatrixFacade() {
+        return priceMatrixFacade;
     }
 
-    public void setInwardPriceAdjustmentFacade(InwardPriceAdjustmentFacade inwardPriceAdjustmentFacade) {
-        this.inwardPriceAdjustmentFacade = inwardPriceAdjustmentFacade;
+    public void setPriceMatrixFacade(PriceMatrixFacade priceMatrixFacade) {
+        this.priceMatrixFacade = priceMatrixFacade;
     }
 
     public SessionController getSessionController() {

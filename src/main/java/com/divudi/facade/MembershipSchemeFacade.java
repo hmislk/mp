@@ -6,7 +6,7 @@
 
 package com.divudi.facade;
 
-import com.divudi.entity.MembershipScheme;
+import com.divudi.entity.memberShip.MembershipScheme;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

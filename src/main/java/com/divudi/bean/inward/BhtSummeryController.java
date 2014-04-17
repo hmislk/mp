@@ -30,14 +30,12 @@ import static com.divudi.data.inward.InwardChargeType.RoomCharges;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.InwardBean;
-import com.divudi.ejb.InwardCalculation;
+import com.divudi.ejb.PriceMatrixBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.CancelledBill;
-import com.divudi.entity.Department;
-import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.Item;
 import com.divudi.entity.PatientItem;
 import com.divudi.entity.PreBill;
@@ -99,10 +97,11 @@ public class BhtSummeryController implements Serializable {
     @EJB
     private PatientEncounterFacade patientEncounterFacade;
     ////////////////////////////
-    @EJB
-    private InwardCalculation inwardCalculation;
+
     @EJB
     private BillNumberBean billNumberBean;
+    @EJB
+    PriceMatrixBean priceMatrixBean;
     //////////////////////////
     @Inject
     private SessionController sessionController;
@@ -135,6 +134,14 @@ public class BhtSummeryController implements Serializable {
     private InwardMemberShipDiscount inwardMemberShipDiscount;
     private Item item;
 
+    public PriceMatrixBean getPriceMatrixBean() {
+        return priceMatrixBean;
+    }
+
+    public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
+        this.priceMatrixBean = priceMatrixBean;
+    }
+
     public void createBillItems(Item item) {
         String sql = "SELECT  b FROM BillItem b "
                 + " WHERE b.retired=false "
@@ -155,7 +162,7 @@ public class BhtSummeryController implements Serializable {
 
     public void calculateDiscount() {
         for (ChargeItemTotal cit : chargeItemTotals) {
-            InwardPriceAdjustment ipa = getInwardMemberShipDiscount().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
+            PriceMatrix ipa = getPriceMatrixBean().getMemberDisCount(getPatientEncounter().getPaymentMethod(), getPatientEncounter().getPatient().getPerson().getMembershipScheme(), getPatientEncounter().getCreditCompany(), cit.getInwardChargeType());
 
             if (ipa == null || ipa.getDiscountPercent() == 0 || cit.getTotal() == 0) {
                 cit.setDiscount(0);
@@ -245,7 +252,7 @@ public class BhtSummeryController implements Serializable {
         TimedItemFee timedFee = p.getRoomFacilityCharge().getTimedItemFee();
         double roomCharge = p.getCurrentRoomCharge();
 
-        charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+        charge = roomCharge * getInwardBean().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
 
         p.setCalculatedRoomCharge(charge);
     }
@@ -258,7 +265,7 @@ public class BhtSummeryController implements Serializable {
                 + " and pr.patientEncounter=:pe ";
         hm.put("pe", getPatientEncounter());
         hm.put("dt", date);
-        PatientRoom tmp = getPatientRoomFacade().findFirstBySQL(sql, hm,TemporalType.TIMESTAMP);
+        PatientRoom tmp = getPatientRoomFacade().findFirstBySQL(sql, hm, TemporalType.TIMESTAMP);
 
         if (tmp != null) {
             return true;
@@ -564,8 +571,8 @@ public class BhtSummeryController implements Serializable {
         }
 
         for (PatientItem pi : patientItems) {
-            TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) pi.getItem());
-            double count = getInwardCalculation().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
+            TimedItemFee timedItemFee = getInwardBean().getTimedItemFee((TimedItem) pi.getItem());
+            double count = getInwardBean().calCount(timedItemFee, pi.getFromTime(), pi.getToTime());
             pi.setServiceValue(count * timedItemFee.getFee());
             pi.setTmpConsumedTime(getDuration(pi.getFromTime(), pi.getToTime()));
 
@@ -594,8 +601,8 @@ public class BhtSummeryController implements Serializable {
             patientItem.setToTime(Calendar.getInstance().getTime());
         }
 
-        TimedItemFee timedItemFee = getInwardCalculation().getTimedItemFee((TimedItem) patientItem.getItem());
-        double count = getInwardCalculation().calCount(timedItemFee, patientItem.getFromTime(), patientItem.getToTime());
+        TimedItemFee timedItemFee = getInwardBean().getTimedItemFee((TimedItem) patientItem.getItem());
+        double count = getInwardBean().calCount(timedItemFee, patientItem.getFromTime(), patientItem.getToTime());
         patientItem.setServiceValue(count * timedItemFee.getFee());
 
         getPatientItemFacade().edit(patientItem);
@@ -664,7 +671,7 @@ public class BhtSummeryController implements Serializable {
         List<PatientRoom> tmp = getPatientRoomFacade().findBySQL(sql, hm);
 
         setRoomChargeData(tmp);
-        // totalLinen = getInwardCalculation().calTotalLinen(tmp);
+        // totalLinen = getInwardBean().calTotalLinen(tmp);
 
         return roomChargeDatas;
     }
@@ -732,9 +739,9 @@ public class BhtSummeryController implements Serializable {
         double mo = p.getCurrentMoCharge();
         //long servicedPeriod;
         if (p.getDischargedAt() != null) {
-            charge = mo * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+            charge = mo * getInwardBean().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = mo * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+            charge = mo * getInwardBean().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
         rcd.setMoChargeTot(charge);
     }
@@ -750,9 +757,9 @@ public class BhtSummeryController implements Serializable {
         double nursing = p.getCurrentNursingCharge();
         //long servicedPeriod;
         if (p.getDischargedAt() != null) {
-            charge = nursing * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+            charge = nursing * getInwardBean().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = nursing * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+            charge = nursing * getInwardBean().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
         rcd.setNursingTot(charge);
     }
@@ -771,11 +778,11 @@ public class BhtSummeryController implements Serializable {
         rcd.setPatientRoom(p);
 
 //        if (p.getDischargedAt() != null) {
-//            charge = roomCharge * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+//            charge = roomCharge * getInwardBean().calCountWithoutOverShoot(timedFee, p);
 //        } else {
-//            charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
+//            charge = roomCharge * getInwardBean().calCount(timedFee, p.getAdmittedAt(), getPatientEncounter().getDateOfDischarge());
 //        }
-        charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+        charge = roomCharge * getInwardBean().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
 
         //      System.err.println("Room Charge " + roomCharge);
         //     System.out.println("calculated " + charge);
@@ -794,9 +801,9 @@ public class BhtSummeryController implements Serializable {
         //  rcd.setPatientRoom(p);
 
         if (p.getDischargedAt() != null) {
-            charge = roomCharge * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+            charge = roomCharge * getInwardBean().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = roomCharge * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+            charge = roomCharge * getInwardBean().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
 
         return charge;
@@ -813,9 +820,9 @@ public class BhtSummeryController implements Serializable {
         double maintanance = p.getCurrentMaintananceCharge();
         //long servicedPeriod;
         if (p.getDischargedAt() != null) {
-            charge = maintanance * getInwardCalculation().calCountWithoutOverShoot(timedFee, p);
+            charge = maintanance * getInwardBean().calCountWithoutOverShoot(timedFee, p);
         } else {
-            charge = maintanance * getInwardCalculation().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
+            charge = maintanance * getInwardBean().calCount(timedFee, p.getAdmittedAt(), p.getDischargedAt());
         }
         rcd.setMaintananceTot(charge);
     }
@@ -1138,14 +1145,6 @@ public class BhtSummeryController implements Serializable {
         this.timedItemFeeFacade = timedItemFeeFacade;
     }
 
-    public InwardCalculation getInwardCalculation() {
-        return inwardCalculation;
-    }
-
-    public void setInwardCalculation(InwardCalculation inwardCalculation) {
-        this.inwardCalculation = inwardCalculation;
-    }
-
     private void createChargeItemTotals() {
         chargeItemTotals = new ArrayList<>();
 
@@ -1312,7 +1311,7 @@ public class BhtSummeryController implements Serializable {
                     i.setTotal(getTotalNursing());
                     break;
                 case LinenCharges:
-                    i.setTotal(getInwardCalculation().calTotalLinen(getPatientEncounter()));
+                    i.setTotal(getInwardBean().calTotalLinen(getPatientEncounter()));
                     break;
                 case MaintainCharges:
                     i.setTotal(getTotalMaintanance());

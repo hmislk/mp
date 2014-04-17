@@ -12,9 +12,10 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.memberShip.IpaMemberShip;
 import com.divudi.data.memberShip.IpaMemberShipCreditInstitution;
 import com.divudi.data.memberShip.IpaPaymentMethod;
+import com.divudi.ejb.PriceMatrixBean;
 import com.divudi.entity.Institution;
-import com.divudi.entity.MembershipScheme;
-import com.divudi.facade.InwardPriceAdjustmentFacade;
+import com.divudi.entity.memberShip.MembershipScheme;
+import com.divudi.facade.PriceMatrixFacade;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -43,15 +44,26 @@ public class ReportMemberShip {
     @Inject
     MembershipSchemeController membershipSchemeController;
     @EJB
-    InwardPriceAdjustmentFacade inwardPriceAdjustmentFacade;
+    PriceMatrixFacade inwardPriceAdjustmentFacade;
+    @EJB
+    PriceMatrixBean priceMatrixBean;
+
+    public PriceMatrixBean getPriceMatrixBean() {
+        return priceMatrixBean;
+    }
+
+    public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
+        this.priceMatrixBean = priceMatrixBean;
+    }
+    
 
     public void createPaymentMethodInwardPriceAdjustments() {
         ipaPaymentMethods = new ArrayList<>();
         for (PaymentMethod pm : getEnumController().getPaymentMethods()) {
             IpaPaymentMethod subTable = new IpaPaymentMethod();
             subTable.setPaymentMethod(pm);
-            subTable.setInwardPriceAdjustments(getInwardMemberShipDiscount().getInwardPriceAdjustments(pm));
-            if (!subTable.getInwardPriceAdjustments().isEmpty()) {
+            subTable.setPriceMatrixs(getPriceMatrixBean().getInwardMemberShipDiscounts(pm));
+            if (!subTable.getPriceMatrixs().isEmpty()) {
                 ipaPaymentMethods.add(subTable);
             }
         }
@@ -65,9 +77,9 @@ public class ReportMemberShip {
             for (PaymentMethod pm : getEnumController().getPaymentMethods()) {
                 IpaPaymentMethod subTable2 = new IpaPaymentMethod();
                 subTable2.setPaymentMethod(pm);
-                subTable2.setInwardPriceAdjustments(getInwardMemberShipDiscount().getInwardPriceAdjustments(ins, pm));
+                subTable2.setPriceMatrixs(getPriceMatrixBean().getInwardMemberShipDiscounts(ins, pm));
 
-                if (!subTable2.getInwardPriceAdjustments().isEmpty()) {
+                if (!subTable2.getPriceMatrixs().isEmpty()) {
                     subTable1.getIpaPaymentMethods().add(subTable2);
                 }
             }
@@ -89,9 +101,9 @@ public class ReportMemberShip {
                 for (PaymentMethod pm : getEnumController().getPaymentMethods()) {
                     IpaPaymentMethod subTable3 = new IpaPaymentMethod();
                     subTable3.setPaymentMethod(pm);
-                    subTable3.setInwardPriceAdjustments(getInwardMemberShipDiscount().getInwardPriceAdjustments(ins, mem, pm));
+                    subTable3.setPriceMatrixs(getPriceMatrixBean().getInwardMemberShipDiscounts(ins, mem, pm));
 
-                    if (!subTable3.getInwardPriceAdjustments().isEmpty()) {
+                    if (!subTable3.getPriceMatrixs().isEmpty()) {
                         subTable2.getIpaPaymentMethods().add(subTable3);
                     }
                 }
@@ -116,9 +128,9 @@ public class ReportMemberShip {
             for (PaymentMethod pm : getEnumController().getPaymentMethods()) {
                 IpaPaymentMethod subTable2 = new IpaPaymentMethod();
                 subTable2.setPaymentMethod(pm);
-                subTable2.setInwardPriceAdjustments(getInwardMemberShipDiscount().getInwardPriceAdjustments(mem, pm));
+                subTable2.setPriceMatrixs(getPriceMatrixBean().getInwardMemberShipDiscounts(mem, pm));
 
-                if (!subTable2.getInwardPriceAdjustments().isEmpty()) {
+                if (!subTable2.getPriceMatrixs().isEmpty()) {
                     subTable1.getIpaPaymentMethods().add(subTable2);
                 }
             }
@@ -185,11 +197,11 @@ public class ReportMemberShip {
         this.enumController = enumController;
     }
 
-    public InwardPriceAdjustmentFacade getInwardPriceAdjustmentFacade() {
+    public PriceMatrixFacade getInwardPriceAdjustmentFacade() {
         return inwardPriceAdjustmentFacade;
     }
 
-    public void setInwardPriceAdjustmentFacade(InwardPriceAdjustmentFacade inwardPriceAdjustmentFacade) {
+    public void setInwardPriceAdjustmentFacade(PriceMatrixFacade inwardPriceAdjustmentFacade) {
         this.inwardPriceAdjustmentFacade = inwardPriceAdjustmentFacade;
     }
 

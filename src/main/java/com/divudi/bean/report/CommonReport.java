@@ -15,13 +15,13 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
-import com.divudi.entity.InwardPriceAdjustment;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
-import com.divudi.facade.InwardPriceAdjustmentFacade;
+import com.divudi.facade.PriceMatrixFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +52,7 @@ public class CommonReport implements Serializable {
     @EJB
     CommonFunctions commonFunctions;
     @EJB
-    private InwardPriceAdjustmentFacade inwdPriceAdjFacade;
+    private PriceMatrixFacade inwdPriceAdjFacade;
     @EJB
     BillItemFacade billItemFac;
     ////////////////////
@@ -172,7 +172,7 @@ public class CommonReport implements Serializable {
 
     //////////////////    
     private List<String1Value1> dataTableData;
-    private List<InwardPriceAdjustment> items = null;
+    private List<PriceMatrix> items = null;
 
     /**
      * Creates a new instance of CommonReport
@@ -1432,7 +1432,7 @@ public class CommonReport implements Serializable {
 
     }
 
-    public List<InwardPriceAdjustment> createMatrxTabl() {
+    public List<PriceMatrix> createMatrxTabl() {
         String sql;
         sql = "select a from InwardPriceAdjustment a where a.retired=false order by a.department.name,a.category.name,a.fromPrice";
         items = getInwdPriceAdjFacade().findBySQL(sql);
@@ -2455,19 +2455,19 @@ public class CommonReport implements Serializable {
         this.grnReturnCancel = grnReturnCancel;
     }
 
-    public List<InwardPriceAdjustment> getItems() {
+    public List<PriceMatrix> getItems() {
         return items;
     }
 
-    public void setItems(List<InwardPriceAdjustment> items) {
+    public void setItems(List<PriceMatrix> items) {
         this.items = items;
     }
 
-    public InwardPriceAdjustmentFacade getInwdPriceAdjFacade() {
+    public PriceMatrixFacade getInwdPriceAdjFacade() {
         return inwdPriceAdjFacade;
     }
 
-    public void setInwdPriceAdjFacade(InwardPriceAdjustmentFacade inwdPriceAdjFacade) {
+    public void setInwdPriceAdjFacade(PriceMatrixFacade inwdPriceAdjFacade) {
         this.inwdPriceAdjFacade = inwdPriceAdjFacade;
     }
 

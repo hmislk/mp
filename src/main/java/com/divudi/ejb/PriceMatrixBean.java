@@ -14,6 +14,7 @@ import com.divudi.entity.Institution;
 import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.InwardPriceAdjustment;
+import com.divudi.entity.memberShip.InwardMemberShipDiscount;
 import com.divudi.entity.memberShip.MembershipScheme;
 import com.divudi.facade.PriceMatrixFacade;
 import java.util.Date;
@@ -66,11 +67,13 @@ public class PriceMatrixBean {
         return (InwardPriceAdjustment) getPriceMatrixFacade().findFirstBySQL(sql, hm);
     }
 
-    public PriceMatrix getMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, Institution ins, InwardChargeType inwardChargeType) {
+    public InwardMemberShipDiscount getInwardMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, Institution ins, InwardChargeType inwardChargeType) {
         String sql;
         HashMap hm = new HashMap();
-
+        hm.put("p", paymentMethod);
+        hm.put("inw", inwardChargeType);
         if (membershipScheme != null) {
+            hm.put("m", membershipScheme);
             if (ins != null) {
                 sql = "Select i from InwardMemberShipDiscount i"
                         + "  where i.retired=false "
@@ -78,7 +81,6 @@ public class PriceMatrixBean {
                         + " and i.paymentMethod=:p "
                         + " and i.inwardChargeType=:inw"
                         + " and i.institution=:ins ";
-                hm.put("m", membershipScheme);
                 hm.put("ins", ins);
             } else {
                 sql = "Select i from InwardMemberShipDiscount i "
@@ -87,7 +89,6 @@ public class PriceMatrixBean {
                         + " and i.paymentMethod=:p "
                         + " and i.inwardChargeType=:inw "
                         + " and i.institution is null ";
-                hm.put("m", membershipScheme);
             }
         } else {
             if (ins != null) {
@@ -95,8 +96,8 @@ public class PriceMatrixBean {
                         + " where i.retired=false "
                         + " and i.paymentMethod=:p "
                         + " and i.inwardChargeType=:inw "
-                        + " and i.membershipScheme is null"
-                        + " and i.institution=:ins ";
+                        + " and i.institution=:ins"
+                        + " and i.membershipScheme is null ";
                 hm.put("ins", ins);
             } else {
                 sql = "Select i from InwardMemberShipDiscount i "
@@ -108,10 +109,7 @@ public class PriceMatrixBean {
             }
         }
 
-        hm.put("p", paymentMethod);
-        hm.put("inw", inwardChargeType);
-
-        return getPriceMatrixFacade().findFirstBySQL(sql, hm);
+        return (InwardMemberShipDiscount) getPriceMatrixFacade().findFirstBySQL(sql, hm);
     }
 
     public List<PriceMatrix> getInwardMemberShipDiscounts(PaymentMethod paymentMethod) {
@@ -171,11 +169,11 @@ public class PriceMatrixBean {
         return getPriceMatrixFacade().findBySQL(sql, hm);
     }
 
-    public PriceMatrix getInwardMemberShipDiscount(MembershipScheme membershipScheme, Institution institution, PaymentMethod paymentMethod, InwardChargeType inwardChargeType, WebUser webUser) {
-        PriceMatrix object = getMemberDisCount(paymentMethod, membershipScheme, institution, inwardChargeType);
+    public InwardMemberShipDiscount getInwardMemberShipDiscount(MembershipScheme membershipScheme, Institution institution, PaymentMethod paymentMethod, InwardChargeType inwardChargeType, WebUser webUser) {
+        PriceMatrix object = getInwardMemberDisCount(paymentMethod, membershipScheme, institution, inwardChargeType);
 
         if (object == null) {
-            object = new PriceMatrix();
+            object = new InwardMemberShipDiscount();
             object.setCreatedAt(new Date());
             object.setCreater(webUser);
             object.setInwardChargeType(inwardChargeType);
@@ -185,7 +183,7 @@ public class PriceMatrixBean {
             getPriceMatrixFacade().create(object);
         }
 
-        return object;
+        return (InwardMemberShipDiscount) object;
 
     }
 

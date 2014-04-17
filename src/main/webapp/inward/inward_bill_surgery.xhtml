@@ -274,11 +274,11 @@
                                     </p:column>
                                     <p:column headerText="Remove">
                                         <p:commandButton ajax="false" value="Remove A"  
-                                                         rendered="#{c.billFee.id eq null}"
+                                                         rendered="#{ti.billFee.id eq null}"
                                                          action="#{surgeryBillController.removeTimedEncFromList(ti)}"
                                                          disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
                                         <p:commandButton ajax="false" value="Remove B"  
-                                                         rendered="#{c.billFee.id ne null}"
+                                                         rendered="#{ti.billFee.id ne null}"
                                                          action="#{surgeryBillController.removeTimedEncFromDbase(ti)}"
                                                          disabled="#{surgeryBillController.batchBill.patientEncounter.paymentFinalized}"/>
                                     </p:column>

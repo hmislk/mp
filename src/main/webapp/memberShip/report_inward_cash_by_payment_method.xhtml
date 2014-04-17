@@ -12,9 +12,9 @@
             <p:panel>
               
                 <p:commandButton ajax="false" value="Process" 
-                                 action="#{reportMemberShip.createPaymentMethodpriceMatrixs}"/>
+                                 action="#{reportMemberShip.createPaymentMethodInwardPriceAdjustments()}"/>
 
-                <p:dataTable value="#{reportMemberShip.getIpaPaymentMethods()}" var="pI">
+                <p:dataTable value="#{reportMemberShip.ipaPaymentMethods}" var="pI">
                     <p:subTable value="#{pI.priceMatrixs}" var="inw">
                         <f:facet name="header">
                             <h:outputLabel value="#{pI.paymentMethod}"/>

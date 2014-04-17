@@ -10,6 +10,7 @@ import com.divudi.bean.InstitutionController;
 import com.divudi.data.memberShip.IpaCreditInstitution;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.memberShip.IpaMemberShip;
+import com.divudi.data.memberShip.IpaMemberShipCreditInstitution;
 import com.divudi.data.memberShip.IpaPaymentMethod;
 import com.divudi.entity.Institution;
 import com.divudi.entity.MembershipScheme;
@@ -32,6 +33,7 @@ public class ReportMemberShip {
     List<IpaPaymentMethod> ipaPaymentMethods;
     List<IpaCreditInstitution> ipaCreditInstitutions;
     private List<IpaMemberShip> ipaMemberShip;
+    List<IpaMemberShipCreditInstitution> ipaMemberShipCreditInstitution;
     @Inject
     EnumController enumController;
     @Inject
@@ -76,6 +78,36 @@ public class ReportMemberShip {
         }
     }
 
+    public void createMemberShipCreditInstitution() {
+        ipaMemberShipCreditInstitution = new ArrayList<>();
+        for (Institution ins : getInstitutionController().getCreditCompany()) {
+            IpaMemberShipCreditInstitution subTable1 = new IpaMemberShipCreditInstitution();
+            subTable1.setInstitution(ins);
+            for (MembershipScheme mem : getMembershipSchemeController().getItems()) {
+                IpaMemberShip subTable2 = new IpaMemberShip();
+                subTable2.setMembershipScheme(mem);
+                for (PaymentMethod pm : getEnumController().getPaymentMethods()) {
+                    IpaPaymentMethod subTable3 = new IpaPaymentMethod();
+                    subTable3.setPaymentMethod(pm);
+                    subTable3.setInwardPriceAdjustments(getInwardMemberShipDiscount().getInwardPriceAdjustments(ins, mem, pm));
+
+                    if (!subTable3.getInwardPriceAdjustments().isEmpty()) {
+                        subTable2.getIpaPaymentMethods().add(subTable3);
+                    }
+                }
+
+                if (!subTable2.getIpaPaymentMethods().isEmpty()) {
+                    subTable1.getIpaMemberShips().add(subTable2);
+                }
+            }
+
+            if (!subTable1.getIpaMemberShips().isEmpty()) {
+                ipaMemberShipCreditInstitution.add(subTable1);
+            }
+
+        }
+    }
+
     public void createMemberShipInwardPriceAdjustments() {
         ipaMemberShip = new ArrayList<>();
         for (MembershipScheme mem : getMembershipSchemeController().getItems()) {
@@ -95,6 +127,14 @@ public class ReportMemberShip {
                 ipaMemberShip.add(subTable1);
             }
         }
+    }
+
+    public List<IpaMemberShipCreditInstitution> getIpaMemberShipCreditInstitution() {
+        return ipaMemberShipCreditInstitution;
+    }
+
+    public void setIpaMemberShipCreditInstitution(List<IpaMemberShipCreditInstitution> ipaMemberShipCreditInstitution) {
+        this.ipaMemberShipCreditInstitution = ipaMemberShipCreditInstitution;
     }
 
     public MembershipSchemeController getMembershipSchemeController() {

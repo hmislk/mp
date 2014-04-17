@@ -45,7 +45,7 @@
 
                         <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill"  >
                             <p:commandButton ajax="false" value="View Bill" action="/pharmacy_reprint_bill_dealor">
-                                <f:setPropertyActionListener  value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
+                                <f:setPropertyActionListener  value="#{bill}" target="#{storeDealorPaymentBillSearch.bill}"/>
                             </p:commandButton>
                             <p:column headerText="Bill No" >
                                 <h:outputLabel value="#{bill.insId}" ></h:outputLabel>

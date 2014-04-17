@@ -22,7 +22,7 @@
 
 
 
-                    <p:panel rendered="#{!pharmacySaleBhtController.billPreview}" style="width: fit-content;" >
+                    <p:panel rendered="#{!storeSaleController.billPreview}" style="width: fit-content;" >
 
 
 
@@ -38,14 +38,14 @@
                                     <f:facet name="header" >
                                         <h:panelGrid columns="20"  >
                                             <p:commandButton ajax= "false" accesskey="s" value="Settle" 
-                                                             action="#{pharmacySaleBhtController.settleStoreBhtIssue()}" 
-                                                             update=":#{p:component('tblBillItem')} :#{p:component('txtQty')} "   actionListener="#{pharmacySaleBhtController.calculateAllRates}">
+                                                             action="#{storeSaleController.settleStoreBhtIssue()}" 
+                                                             update=":#{p:component('tblBillItem')} :#{p:component('txtQty')} "   actionListener="#{storeSaleController.calculateAllRates}">
                                                 <f:facet name="title" >
                                                     <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
                                                     <h:outputLabel value="ettle"  ></h:outputLabel>
                                                 </f:facet>
                                             </p:commandButton>
-                                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleBhtController.newSaleBill}"  ></p:commandButton>
+                                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{storeSaleController.newSaleBill}"  ></p:commandButton>
 
 
                                         </h:panelGrid>
@@ -60,7 +60,7 @@
                                     <p:panel header="Patient Detail">                                        
                                         <h:outputLabel value="Type Patinet Name or BHT : "/>
                                         <p:autoComplete widgetVar="aPt2"  id="acPt2" forceSelection="true" converter="admis"
-                                                        value="#{pharmacySaleBhtController.patientEncounter}" 
+                                                        value="#{storeSaleController.patientEncounter}" 
                                                         completeMethod="#{admissionController.completePatient}"
                                                         var="apt2" itemLabel="#{amp2.bhtNo}"
                                                         itemValue="#{apt2}" size="30"  style="width: 400px;">
@@ -81,15 +81,15 @@
                                         <p:panel header="Patient Detail" >
                                             <h:panelGrid columns="2">
                                                 <p:outputLabel  value="Name" />
-                                                <p:outputLabel value="#{pharmacySaleBhtController.patientEncounter.patient.person.name}"/>
+                                                <p:outputLabel value="#{storeSaleController.patientEncounter.patient.person.name}"/>
                                                 <p:outputLabel value="NIC" />
-                                                <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.nic}"  />
+                                                <p:outputLabel  value="#{storeSaleController.patientEncounter.patient.person.nic}"  />
                                                 <p:outputLabel value="Age"/>
-                                                <p:outputLabel value="#{pharmacySaleBhtController.patientEncounter.patient.age}"/>
+                                                <p:outputLabel value="#{storeSaleController.patientEncounter.patient.age}"/>
                                                 <p:outputLabel value="Address" />
-                                                <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.address}" />
+                                                <p:outputLabel  value="#{storeSaleController.patientEncounter.patient.person.address}" />
                                                 <p:outputLabel value="Phone No" />
-                                                <p:outputLabel  value="#{pharmacySaleBhtController.patientEncounter.patient.person.phone}"  />
+                                                <p:outputLabel  value="#{storeSaleController.patientEncounter.patient.person.phone}"  />
                                             </h:panelGrid>
                                         </p:panel>
                                     </p:panel>
@@ -103,9 +103,9 @@
                                             <p:outputLabel value="Medicines/Devices" ></p:outputLabel>
                                             <style>.ui-autocomplete-input {width:300px!important;}</style>
                                             <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
-                                                            value="#{pharmacySaleBhtController.stock}" 
+                                                            value="#{storeSaleController.stock}" 
                                                             converter="stockCon" 
-                                                            completeMethod="#{pharmacySaleBhtController.completeAvailableStocksStore}" 
+                                                            completeMethod="#{storeSaleController.completeAvailableStocksStore}" 
                                                             var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
                                                             style="width: 50px!important;">
                                                 <p:column headerText="Item">
@@ -125,20 +125,20 @@
                                                     </h:outputLabel>
                                                 </p:column>
                                                 <p:ajax event="focus" process="acStock" ></p:ajax>
-                                                <p:ajax event="itemSelect"   listener="#{pharmacySaleBhtController.handleSelect}"  update="focusQty" ></p:ajax>
+                                                <p:ajax event="itemSelect"   listener="#{storeSaleController.handleSelect}"  update="focusQty" ></p:ajax>
                                             </p:autoComplete>
 
                                         </h:panelGrid>
                                         <h:panelGrid columns="1" >
                                             <p:outputLabel value="Quentity" ></p:outputLabel>
-                                            <p:inputText  accesskey="q"  autocomplete="off" id="txtQty" value="#{pharmacySaleBhtController.qty}" style="width: 50px!important;"   >
-                                                <p:ajax event="keyup"  listener="#{pharmacySaleBhtController.calculateBillItemListner}" process="acStock txtQty"></p:ajax>
-                                                <p:ajax event="blur"  listener="#{pharmacySaleBhtController.calculateBillItemListner}" process="acStock txtQty"></p:ajax>
+                                            <p:inputText  accesskey="q"  autocomplete="off" id="txtQty" value="#{storeSaleController.qty}" style="width: 50px!important;"   >
+                                                <p:ajax event="keyup"  listener="#{storeSaleController.calculateBillItemListner}" process="acStock txtQty"></p:ajax>
+                                                <p:ajax event="blur"  listener="#{storeSaleController.calculateBillItemListner}" process="acStock txtQty"></p:ajax>
                                             </p:inputText>
                                         </h:panelGrid>
 
                                         <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
-                                                          action="#{pharmacySaleBhtController.addBillItem}" process="@this acStock txtQty" update=":#{p:component('tblBillItem')} acStock focusItem" ></p:commandButton>
+                                                          action="#{storeSaleController.addBillItem}" process="@this acStock txtQty" update=":#{p:component('tblBillItem')} acStock focusItem" ></p:commandButton>
 
                                         <p:focus id="focusQty" for="txtQty" ></p:focus>
                                         <p:focus id="focusItem" for="acStock" ></p:focus>
@@ -148,11 +148,11 @@
 
 
                                     <p:panel header="Bill Items" id="pBis">
-                                        <p:dataTable id="tblBillItem" value="#{pharmacySaleBhtController.preBill.billItems}"
+                                        <p:dataTable id="tblBillItem" value="#{storeSaleController.preBill.billItems}"
                                                      var="bi" rowIndexVar="s" editable="true" sortBy="#{bi.searialNo}" >
 
-                                            <p:ajax event="rowEdit" listener="#{pharmacySaleBhtController.onEdit}"/>  
-                                            <p:ajax event="rowEditCancel" listener="#{pharmacySaleBhtController.onEdit}"/> 
+                                            <p:ajax event="rowEdit" listener="#{storeSaleController.onEdit}"/>  
+                                            <p:ajax event="rowEditCancel" listener="#{storeSaleController.onEdit}"/> 
 
 
                                             <p:column headerText="Item">
@@ -184,7 +184,7 @@
 
                                             </p:column>
                                             <p:column headerText="Remove">
-                                                <p:commandButton value="Remove" action="#{pharmacySaleBhtController.removeBillItem(bi)}" ajax="false" >
+                                                <p:commandButton value="Remove" action="#{storeSaleController.removeBillItem(bi)}" ajax="false" >
 
                                                 </p:commandButton>
                                             </p:column>
@@ -211,7 +211,7 @@
                 <h:form>
 
 
-                    <p:panel  rendered="#{pharmacySaleBhtController.billPreview}" >
+                    <p:panel  rendered="#{storeSaleController.billPreview}" >
 
 
 
@@ -223,12 +223,12 @@
                             <p:commandButton accesskey="p" id="btnPrint" value="Print" ajax="false" action="#" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleBhtController.newSaleBill()}" ></p:commandButton>
+                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{storeSaleController.newSaleBill()}" ></p:commandButton>
 
                         </div>
                         <div >
                             <h:panelGroup   id="gpBillPreview"   > 
-                                <phi:issueBill bill="#{pharmacySaleBhtController.printBill}"/>
+                                <phi:issueBill bill="#{storeSaleController.printBill}"/>
                             </h:panelGroup>
                         </div>
 

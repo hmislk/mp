@@ -90,20 +90,20 @@
                     </h:commandLink>
                 </p:column>
                 <p:column>
-                    <p:commandButton ajax="false" value="Recieve" action="pharmacy_grn" disabled="#{p.cancelled}">
+                    <p:commandButton ajax="false" value="Recieve" action="store_grn" disabled="#{p.cancelled}">
                         <f:setPropertyActionListener target="#{storeGrnController.approveBill}" value="#{p}"/>
                     </p:commandButton>
                 </p:column>
                 <p:column headerText="GRNS">                   
                     <p:dataTable var="b" value="#{p.listOfBill}">                        
                         <p:column  >
-                            <h:commandLink action="pharmacy_reprint_grn"  >                                
+                            <h:commandLink action="store_reprint_grn"  >                                
                                 <h:outputLabel  value="#{b.deptId}"/>
                                 <f:setPropertyActionListener target="#{storeBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>
                         <p:column >
-                            <h:commandLink action="pharmacy_reprint_grn" >
+                            <h:commandLink action="store_reprint_grn" >
                                 <h:outputLabel value="#{b.createdAt}" >
                                     <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                 </h:outputLabel>
@@ -127,7 +127,7 @@
                         </p:column> 
 
                         <p:column >
-                            <h:commandLink action="pharmacy_reprint_grn" >
+                            <h:commandLink action="store_reprint_grn" >
                                 <h:outputLabel value="#{b.creater.webUserPerson.name}" >                                      
                                 </h:outputLabel>
                                 <f:setPropertyActionListener value="#{b}" target="#{storeBillSearch.bill}"/>
@@ -147,13 +147,13 @@
                             </h:panelGroup>
                         </p:column> 
                         <p:column >
-                            <h:commandLink action="pharmacy_reprint_grn"  >   
+                            <h:commandLink action="store_reprint_grn"  >   
                                 <h:outputLabel  value="#{b.invoiceNumber}"/>
                                 <f:setPropertyActionListener target="#{storeBillSearch.bill}" value="#{b}"/>
                             </h:commandLink>
                         </p:column>
                         <p:column >
-                            <h:commandLink action="pharmacy_reprint_grn"  >   
+                            <h:commandLink action="store_reprint_grn"  >   
                                 <h:outputLabel value="#{b.netTotal}">
                                     <f:convertNumber pattern="#,##0.00" />
                                 </h:outputLabel>

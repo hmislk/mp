@@ -247,8 +247,7 @@ public class PatientController implements Serializable {
         return suggestions;
     }
 
-    
-        public List<Patient> completePatientByNameOrCode(String query) {
+    public List<Patient> completePatientByNameOrCode(String query) {
         List<Patient> suggestions;
         String sql;
         HashMap hm = new HashMap();
@@ -266,7 +265,6 @@ public class PatientController implements Serializable {
         return suggestions;
     }
 
-    
     public void saveSelected() {
         if (getCurrent().getPerson() == null) {
             UtilityController.addErrorMessage("No Person. Not Saved");
@@ -296,8 +294,11 @@ public class PatientController implements Serializable {
             getFacade().create(current);
             UtilityController.addSuccessMessage("savedNewSuccessfully");
         }
+
+        getPersonFacade().edit(getCurrent().getPerson());
+
         recreateModel();
-        getItems();
+        //   getItems();
     }
 
     public void setSelectText(String selectText) {

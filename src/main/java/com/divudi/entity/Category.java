@@ -57,7 +57,11 @@ public class Category implements Serializable {
     @Transient
     private String entityClass;
    // @ManyToOne
- //   private Department department;
+    //   private Department department;
+
+    public String getCategoryClass() {
+        return this.getClass().toString();
+    }
 
     public SymanticHyrachi getSymanticType() {
         return symanticType;

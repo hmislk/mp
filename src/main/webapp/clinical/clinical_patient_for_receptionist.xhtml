@@ -21,7 +21,8 @@
                             <p:panel header="Search" >
                                 <f:facet name="header" >
                                     <h:outputLabel value="Search" />
-                                    <p:commandButton id="btnAddPt" style="float: right;" value="New" process="btnAddPt" update="acPt :#{p:component('panelDetails')} " action="#{patientController.prepareAdd()}" >
+                                    <p:commandButton id="btnAddPt" style="float: right;" value="New" process="btnAddPt" 
+                                                     update="acPt :#{p:component('panelDetails')} :#{p:component('patientDetail')} " action="#{patientController.prepareAdd()}" >
 
                                     </p:commandButton>
                                 </f:facet>
@@ -54,7 +55,8 @@
                                                 <f:convertDateTime pattern="dd MMMM yyyy"/>
                                             </h:outputLabel>
                                         </p:column>
-                                        <f:ajax event="itemSelect" execute="acPt" render=":#{p:component('panelDetails')} :#{p:component('panPhoto')} :#{p:component('panelQueue')} " listener="#{patientController.createPatientBarcode}"/>
+                                        <f:ajax event="itemSelect" execute="acPt" render=":#{p:component('panelDetails')} 
+                                                :#{p:component('panPhoto')} :#{p:component('panelQueue')} " listener="#{patientController.createPatientBarcode}"/>
                                     </p:autoComplete>
 
                                     <p:panel  id="panelQueue" header="Add to Queue" >
@@ -108,7 +110,7 @@
                                     <p:commandButton  ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
                                 </f:facet>
 
-                                <h:panelGrid columns="3" >
+                                <h:panelGrid id="patientDetail" columns="3" >
                                     <h:panelGrid columns="2" >
                                         <h:outputLabel value="Title"/>
                                         <p:selectOneMenu  rendered="#{patientController.current.person ne null}" id="cmbTitle" value="#{patientController.current.person.title}"  >

@@ -12,8 +12,10 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.memberShip.IpaMemberShip;
 import com.divudi.data.memberShip.IpaMemberShipCreditInstitution;
 import com.divudi.data.memberShip.IpaPaymentMethod;
+import com.divudi.data.memberShip.OpdMemberShip;
 import com.divudi.ejb.PriceMatrixBean;
 import com.divudi.entity.Institution;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.memberShip.MembershipScheme;
 import com.divudi.facade.PriceMatrixFacade;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class ReportMemberShip {
     List<IpaCreditInstitution> ipaCreditInstitutions;
     private List<IpaMemberShip> ipaMemberShip;
     List<IpaMemberShipCreditInstitution> ipaMemberShipCreditInstitution;
+    List<OpdMemberShip> opdMemberShip;
     @Inject
     EnumController enumController;
     @Inject
@@ -48,6 +51,14 @@ public class ReportMemberShip {
     @EJB
     PriceMatrixBean priceMatrixBean;
 
+    public List<OpdMemberShip> getOpdMemberShip() {
+        return opdMemberShip;
+    }
+
+    public void setOpdMemberShip(List<OpdMemberShip> opdMemberShip) {
+        this.opdMemberShip = opdMemberShip;
+    }
+
     public PriceMatrixBean getPriceMatrixBean() {
         return priceMatrixBean;
     }
@@ -55,7 +66,6 @@ public class ReportMemberShip {
     public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
         this.priceMatrixBean = priceMatrixBean;
     }
-    
 
     public void createPaymentMethodInwardPriceAdjustments() {
         ipaPaymentMethods = new ArrayList<>();
@@ -65,6 +75,21 @@ public class ReportMemberShip {
             subTable.setPriceMatrixs(getPriceMatrixBean().getInwardMemberShipDiscounts(pm));
             if (!subTable.getPriceMatrixs().isEmpty()) {
                 ipaPaymentMethods.add(subTable);
+            }
+        }
+    }
+
+    public void createOpdPriceAdjustments() {
+        opdMemberShip = new ArrayList<>();
+        for (MembershipScheme pm : getMembershipSchemeController().getItems()) {
+            System.err.println("Mem " + pm.getName());
+            OpdMemberShip subTable = new OpdMemberShip();
+            subTable.setMembershipScheme(pm);
+            List<PriceMatrix> list = getPriceMatrixBean().getOpdMemberShipDiscountsDepartment(pm);
+            list.addAll(getPriceMatrixBean().getOpdMemberShipDiscountsCategory(pm));
+            subTable.setPriceMatrixs(list);
+            if (!subTable.getPriceMatrixs().isEmpty()) {
+                opdMemberShip.add(subTable);
             }
         }
     }

@@ -18,6 +18,7 @@ import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.ServiceCategory;
 import com.divudi.entity.ServiceSubCategory;
+import com.divudi.entity.inward.InwardPriceAdjustment;
 import com.divudi.entity.lab.InvestigationCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.StoreItemCategory;
@@ -90,7 +91,7 @@ public class InwardPriceAdjustmntController implements Serializable {
             return;
         }
 
-        PriceMatrix a = new PriceMatrix();
+        PriceMatrix a = new InwardPriceAdjustment();
 
         a.setCategory(category);
         a.setDepartment(department);

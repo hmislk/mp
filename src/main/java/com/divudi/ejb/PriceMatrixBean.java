@@ -12,10 +12,14 @@ import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PriceMatrix;
+import com.divudi.entity.ServiceCategory;
+import com.divudi.entity.ServiceSubCategory;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.InwardPriceAdjustment;
+import com.divudi.entity.lab.InvestigationCategory;
 import com.divudi.entity.memberShip.InwardMemberShipDiscount;
 import com.divudi.entity.memberShip.MembershipScheme;
+import com.divudi.entity.memberShip.OpdMemberShipDiscount;
 import com.divudi.facade.PriceMatrixFacade;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,6 +116,68 @@ public class PriceMatrixBean {
         return (InwardMemberShipDiscount) getPriceMatrixFacade().findFirstBySQL(sql, hm);
     }
 
+    public OpdMemberShipDiscount getOpdMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, Department department, Category category) {
+        OpdMemberShipDiscount opdMemberShipDiscount = null;
+
+        System.err.println(paymentMethod);
+        System.err.println(membershipScheme);
+        System.err.println(department);
+        System.err.println(category);
+
+        //Get Discount From Category        
+        opdMemberShipDiscount = fetchOpdMemberShipDiscount(membershipScheme, paymentMethod, category);
+
+        //Get Discount From Parent Category
+        if (opdMemberShipDiscount == null && category != null) {
+            opdMemberShipDiscount = fetchOpdMemberShipDiscount(membershipScheme, paymentMethod, category.getParentCategory());
+
+        }
+
+        //Get Discount From Department
+        if (opdMemberShipDiscount == null) {
+            opdMemberShipDiscount = fetchOpdMemberShipDiscount(membershipScheme, paymentMethod, department);
+        }
+
+        System.err.println("Discount 1 " + opdMemberShipDiscount);
+        if (opdMemberShipDiscount != null) {
+            System.err.println("Discount 2 " + opdMemberShipDiscount.getDiscountPercent());
+        }
+
+        return opdMemberShipDiscount;
+    }
+
+    public OpdMemberShipDiscount fetchOpdMemberShipDiscount(MembershipScheme membershipScheme, PaymentMethod paymentMethod, Category category) {
+        String sql;
+        HashMap hm = new HashMap();
+        hm.put("p", paymentMethod);
+        hm.put("m", membershipScheme);
+        hm.put("cat", category);
+        sql = "Select i from OpdMemberShipDiscount i"
+                + "  where i.retired=false "
+                + " and i.membershipScheme=:m "
+                + " and i.paymentMethod=:p"
+                + " and i.category=:cat ";
+
+        return (OpdMemberShipDiscount) getPriceMatrixFacade().findFirstBySQL(sql, hm);
+
+    }
+
+    public OpdMemberShipDiscount fetchOpdMemberShipDiscount(MembershipScheme membershipScheme, PaymentMethod paymentMethod, Department department) {
+        String sql;
+        HashMap hm = new HashMap();
+        hm.put("p", paymentMethod);
+        hm.put("m", membershipScheme);
+        hm.put("dep", department);
+        sql = "Select i from OpdMemberShipDiscount i"
+                + "  where i.retired=false "
+                + " and i.membershipScheme=:m "
+                + " and i.paymentMethod=:p"
+                + " and i.department=:dep ";
+
+        return (OpdMemberShipDiscount) getPriceMatrixFacade().findFirstBySQL(sql, hm);
+
+    }
+
     public List<PriceMatrix> getInwardMemberShipDiscounts(PaymentMethod paymentMethod) {
         String sql = "select ipa from InwardMemberShipDiscount ipa "
                 + " where ipa.retired=false"
@@ -122,6 +188,32 @@ public class PriceMatrixBean {
 
         HashMap hm = new HashMap();
         hm.put("pm", paymentMethod);
+
+        return getPriceMatrixFacade().findBySQL(sql, hm);
+    }
+
+    public List<PriceMatrix> getOpdMemberShipDiscountsDepartment(MembershipScheme membershipScheme) {
+        String sql = "select ipa from OpdMemberShipDiscount ipa "
+                + " where ipa.retired=false"
+                + " and ipa.membershipScheme=:pm"
+                + " and ipa.category is null"
+                + " order by ipa.department.name ";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", membershipScheme);
+
+        return getPriceMatrixFacade().findBySQL(sql, hm);
+    }
+
+    public List<PriceMatrix> getOpdMemberShipDiscountsCategory(MembershipScheme membershipScheme) {
+        String sql = "select ipa from OpdMemberShipDiscount ipa "
+                + " where ipa.retired=false"
+                + " and ipa.membershipScheme=:pm"
+                + " and ipa.department is null"
+                + " order by ipa.category.name ";
+
+        HashMap hm = new HashMap();
+        hm.put("pm", membershipScheme);
 
         return getPriceMatrixFacade().findBySQL(sql, hm);
     }

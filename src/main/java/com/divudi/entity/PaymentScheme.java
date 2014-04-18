@@ -6,6 +6,7 @@ package com.divudi.entity;
 
 import com.divudi.data.CliantType;
 import com.divudi.data.PaymentMethod;
+import com.divudi.entity.memberShip.MembershipScheme;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -24,39 +25,50 @@ import javax.persistence.Temporal;
 @Entity
 public class PaymentScheme implements Serializable {
 
-     static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     //Main Properties
-     Long id;
+    Long id;
     String name;
     @Enumerated(EnumType.STRING)
-     PaymentMethod paymentMethod;
+    PaymentMethod paymentMethod;
     @Enumerated(EnumType.STRING)
-     CliantType cliantType;
-     double discountPercent = 0.0;
-     double discountPercentForPharmacy = 0.0;
+    CliantType cliantType;
+    double discountPercent = 0.0;
+    double discountPercentForPharmacy = 0.0;
     @ManyToOne
-     Institution institution;
+    Institution institution;
     @ManyToOne
-     Person person;
+    Person person;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
-     int orderNo;
-     boolean validForPayments;
-     boolean validForBilledBills;
-     boolean validForCrBills;
+    Date retiredAt;
+    String retireComments;
+    int orderNo;
+    boolean validForPayments;
+    boolean validForBilledBills;
+    boolean validForCrBills;
+    
+    @ManyToOne
+    MembershipScheme membershipScheme;
 
+    public MembershipScheme getMembershipScheme() {
+        return membershipScheme;
+    }
+
+    public void setMembershipScheme(MembershipScheme membershipScheme) {
+        this.membershipScheme = membershipScheme;
+    }
+    
     public double getDiscountPercentForPharmacy() {
         return discountPercentForPharmacy;
     }

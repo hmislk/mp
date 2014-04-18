@@ -38,6 +38,7 @@ import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
 import com.divudi.entity.WebUser;
+import com.divudi.entity.memberShip.MembershipScheme;
 import com.divudi.facade.BatchBillFacade;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
@@ -69,6 +70,7 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
+import org.primefaces.component.behavior.ajax.AjaxBehavior;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -83,6 +85,8 @@ public class BillController implements Serializable {
     private static final long serialVersionUID = 1L;
     @Inject
     SessionController sessionController;
+    @Inject
+    PaymentSchemeController paymentSchemeController;
     @EJB
     private BillFacade billFacade;
     @EJB
@@ -143,6 +147,23 @@ public class BillController implements Serializable {
     private PaymentMethodData paymentMethodData;
     @EJB
     private CashTransactionBean cashTransactionBean;
+
+    public void searchPatientListener() {
+        System.err.println("1");
+        createPaymentSchemeItems();
+    }
+
+    private void createPaymentSchemeItems() {
+
+        if (getSearchedPatient() != null && getSearchedPatient().getPerson() != null) {
+        //    System.err.println("2");
+            getPaymentSchemeController().setMembershipScheme(getSearchedPatient().getPerson().getMembershipScheme());
+        } else {
+            getPaymentSchemeController().setMembershipScheme(null);
+        }
+
+        getPaymentSchemeController().createList();
+    }
 
     public boolean findByFilter(String property, String value) {
         String sql = "Select b From Bill b where b.retired=false and upper(b." + property + ") like '%" + value.toUpperCase() + " %'";
@@ -607,9 +628,6 @@ public class BillController implements Serializable {
 
     }
 
-    @Inject
-    private PaymentSchemeController paymentSchemeController;
-
     private boolean errorCheck() {
 
         if (getLstBillEntries().isEmpty()) {
@@ -648,6 +666,7 @@ public class BillController implements Serializable {
         }
 
         if (getPaymentScheme() == null) {
+            UtilityController.addErrorMessage("Select Payment Scheme");
             return true;
         }
 
@@ -807,9 +826,20 @@ public class BillController implements Serializable {
 
     public void calTotals() {
         //System.out.println("calculating totals");
+        if (paymentScheme == null) {
+            return;
+        }
+
         double disPercent = 0.0;
         double billGross = 0.0;
         double billNet = 0.0;
+        MembershipScheme membershipScheme = null;
+
+        if (getSearchedPatient() != null
+                && getSearchedPatient().getPerson() != null) {
+            membershipScheme = getSearchedPatient().getPerson().getMembershipScheme();
+        }
+
         for (BillEntry be : getLstBillEntries()) {
             //System.out.println("bill item entry");
             double entryGross = 0.0;
@@ -818,23 +848,11 @@ public class BillController implements Serializable {
             BillItem bi = be.getBillItem();
 
             for (BillFee bf : be.getLstBillFees()) {
-                boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
-                
-                if (discountAllowed == false) {
-                    System.err.println("NOT discount allowed 1 ");
-                    bf.setFeeValue(isForeigner());
-                } else if (discountAllowed == true
-                        && getPaymentScheme().getPaymentMethod() == PaymentMethod.Credit
-                        && getCreditCompany() != null) {
-                    System.err.println("Credit company 2 " + getCreditCompany().getName());
-                    bf.setFeeValueForCreditCompany(isForeigner(), getCreditCompany().getLabBillDiscount());
+
+                if (membershipScheme != null) {
+                    getBillBean().setBillFees(bf, isForeigner(), getPaymentScheme(), bi.getItem());
                 } else {
-                    System.err.println("ELSE 3");
-                    if (paymentScheme == null) {
-                        bf.setFeeValue(isForeigner());
-                    } else {
-                        bf.setFeeValue(isForeigner(), paymentScheme.getDiscountPercent());
-                    }
+                    getBillBean().setBillFees(bf, isForeigner(), getPaymentScheme(), getCreditCompany());
                 }
 
                 entryGross += bf.getFeeGrossValue();
@@ -887,6 +905,8 @@ public class BillController implements Serializable {
         setPrintPreview(true);
         printPreview = false;
         paymentMethodData = null;
+
+        createPaymentSchemeItems();
         //  return "opd_bill";
     }
 
@@ -940,6 +960,11 @@ public class BillController implements Serializable {
     public void onTabChange(TabChangeEvent event) {
         setPatientTabId(event.getTab().getId());
 
+        if (!getPatientTabId().toString().equals("tabSearchPt")) {
+            setSearchedPatient(null);
+        }
+
+        createPaymentSchemeItems();
     }
 
     public BillFacade getEjbFacade() {

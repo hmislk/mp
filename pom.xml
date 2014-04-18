@@ -27,8 +27,7 @@
             <artifactId>barbecue</artifactId>
             <version>1.5-beta1</version>
             <type>jar</type>
-        </dependency>
-        
+        </dependency>       
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>

@@ -123,10 +123,10 @@ public class StorePurchaseOrderController implements Serializable {
         return fromDate;
     }
 
-    public String approve() {
+    public void approve() {
         if (getAprovedBill().getPaymentMethod() == null) {
             UtilityController.addErrorMessage("Select Paymentmethod");
-            return "";
+            return ;
         }
 
         calTotal();
@@ -140,15 +140,15 @@ public class StorePurchaseOrderController implements Serializable {
 
         clearList();
 
-        return viewRequestedList();
+       // return viewRequestedList();
         //   printPreview = true;
 
     }
 
-    public String viewRequestedList() {
-        clearList();
-        return "pharmacy_purhcase_order_list_to_approve";
-    }
+//    public String viewRequestedList() {
+//        clearList();
+//        return "store_purhcase_order_list_to_approve";
+//    }
 
     @Inject
     private PharmacyController pharmacyController;

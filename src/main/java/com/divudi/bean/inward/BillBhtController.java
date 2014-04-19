@@ -312,6 +312,11 @@ public class BillBhtController implements Serializable {
         return temp;
 
     }
+    
+    public void logicalDischage(){
+        getPatientEncounter().getCurrentPatientRoom().getRoomFacilityCharge().getRoom().setFilled(true);
+        UtilityController.addSuccessMessage("Logically Dischaged Success");
+    }
 
     private boolean errorCheck() {
         if (getLstBillEntries().isEmpty()) {

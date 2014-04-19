@@ -99,7 +99,6 @@ public class BillController implements Serializable {
     private EnumController enumController;
     private boolean printPreview;
     private String patientTabId = "tabNewPt";
-
     //Interface Data
     private PaymentScheme paymentScheme;
     private Patient newPatient;
@@ -139,9 +138,7 @@ public class BillController implements Serializable {
     private Patient tmpPatient;
     List<Bill> bills;
     boolean foreigner = false;
-
     Date sessionDate;
-
     String strTenderedValue;
     private YearMonthDay yearMonthDay;
     private PaymentMethodData paymentMethodData;
@@ -156,7 +153,7 @@ public class BillController implements Serializable {
     private void createPaymentSchemeItems() {
 
         if (getSearchedPatient() != null && getSearchedPatient().getPerson() != null) {
-        //    System.err.println("2");
+            //    System.err.println("2");
             getPaymentSchemeController().setMembershipScheme(getSearchedPatient().getPerson().getMembershipScheme());
         } else {
             getPaymentSchemeController().setMembershipScheme(null);
@@ -465,11 +462,14 @@ public class BillController implements Serializable {
 
             for (BillEntry e : lstBillEntries) {
                 if (Objects.equals(e.getBillItem().getItem().getDepartment().getId(), d.getId())) {
-                    getBillBean().saveBillItem(myBill, e, getSessionController().getLoggedUser());
+                    BillItem bi = getBillBean().saveBillItem(myBill, e, getSessionController().getLoggedUser());
                     //getBillBean().calculateBillItem(myBill, e);
+                    myBill.getBillItems().add(bi);
                     tmp.add(e);
                 }
             }
+
+            getBillFacade().edit(myBill);
 
             getBillBean().calculateBillItems(myBill, tmp);
             bills.add(myBill);
@@ -486,7 +486,9 @@ public class BillController implements Serializable {
         if (getBillBean().checkDepartment(getLstBillEntries()) == 1) {
             BilledBill temp = new BilledBill();
             Bill b = saveBill(lstBillEntries.get(0).getBillItem().getItem().getDepartment(), temp);
-            getBillBean().saveBillItems(b, getLstBillEntries(), getSessionController().getLoggedUser());
+            b.setBillItems(getBillBean().saveBillItems(b, getLstBillEntries(), getSessionController().getLoggedUser()));
+
+            getBillFacade().edit(b);
             getBillBean().calculateBillItems(b, getLstBillEntries());
             getBills().add(b);
 
@@ -512,7 +514,6 @@ public class BillController implements Serializable {
 
         }
     }
-
     @EJB
     private BatchBillFacade batchBillFacade;
 
@@ -539,7 +540,6 @@ public class BillController implements Serializable {
         WebUser wb = getCashTransactionBean().saveBillCashInTransaction(tmp, getSessionController().getLoggedUser());
         getSessionController().setLoggedUser(wb);
     }
-
     @Inject
     private BillSearch billSearch;
 
@@ -693,7 +693,6 @@ public class BillController implements Serializable {
 
         return false;
     }
-
     List<BillSession> billSessions;
     @EJB
     BillSessionFacade billSessionFacade;

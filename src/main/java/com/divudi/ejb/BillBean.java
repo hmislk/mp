@@ -1313,7 +1313,7 @@ public class BillBean {
                 + " WHERE b.retired=false "
                 + " and b.billItem=:b ";
         HashMap hs = new HashMap();
-        hs.put("itm", billItem);
+        hs.put("b", billItem);
         List<EncounterComponent> list = getEncounterComponentFacade().findBySQL(sql, hs);
 
         return list;

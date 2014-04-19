@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 public class ApplicationController {
 
     Date startTime;
+    Date storesExpiery;
 //    List<SessionController> sessionControllers;
 
 //    public List<SessionController> getSessionControllers() {
@@ -100,4 +101,21 @@ public class ApplicationController {
      */
     public ApplicationController() {
     }
+
+    public Date getStoresExpiery() {
+        if (storesExpiery==null) {
+            Calendar c=Calendar.getInstance();
+            c.set(Calendar.YEAR, 2020);
+            c.set(Calendar.MONTH, 0);
+            c.set(Calendar.DATE, 1);
+            storesExpiery=c.getTime();
+        }
+        return storesExpiery;
+    }
+
+    public void setStoresExpiery(Date storesExpiery) {
+        this.storesExpiery = storesExpiery;
+    }
+    
+    
 }

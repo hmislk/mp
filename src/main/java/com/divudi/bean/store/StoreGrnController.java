@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.store;
 
+import com.divudi.bean.ApplicationController;
 import com.divudi.bean.pharmacy.*;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
@@ -83,6 +84,10 @@ public class StoreGrnController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private PharmacyCalculation pharmacyCalculation;
+    @EJB
+    StoreCalculation storeCalculation;
+    @Inject
+    ApplicationController applicationController;
     /////////////////
     private Institution dealor;
     private Bill approveBill;
@@ -134,17 +139,19 @@ public class StoreGrnController implements Serializable {
     }
 
     public void setBatch(BillItem pid) {
-        if (pid.getPharmaceuticalBillItem().getDoe() == null) {
-            return;
-        }
-
-        if (pid.getPharmaceuticalBillItem().getDoe() != null) {
-            if (pid.getPharmaceuticalBillItem().getDoe().getTime() < Calendar.getInstance().getTimeInMillis()) {
-                pid.getPharmaceuticalBillItem().setStringValue(null);
-                return;
-                //    return;
-            }
-        }
+//        if (pid.getPharmaceuticalBillItem().getDoe() == null) {
+//            return;
+//        }
+//
+//        if (pid.getPharmaceuticalBillItem().getDoe() != null) {
+//            if (pid.getPharmaceuticalBillItem().getDoe().getTime() < Calendar.getInstance().getTimeInMillis()) {
+//                pid.getPharmaceuticalBillItem().setStringValue(null);
+//                return;
+//                //    return;
+//            }
+//        }
+        
+        pid.getPharmaceuticalBillItem().setDoe(getApplicationController().getStoresExpiery());
 
         Date date = pid.getPharmaceuticalBillItem().getDoe();
         DateFormat df = new SimpleDateFormat("ddMMyyyy");
@@ -171,7 +178,9 @@ public class StoreGrnController implements Serializable {
     }
 
     public void settle() {
-        String msg = getPharmacyBillBean().errorCheck(getGrnBill(), billItems);
+        
+        
+        String msg = getStoreCalculation().errorCheck(getGrnBill(), billItems);
         if (!msg.isEmpty()) {
             UtilityController.addErrorMessage(msg);
             return;
@@ -189,6 +198,7 @@ public class StoreGrnController implements Serializable {
             }
 
             PharmaceuticalBillItem ph = i.getPharmaceuticalBillItem();
+            ph.setDoe(applicationController.getStoresExpiery());
             i.setPharmaceuticalBillItem(null);
 
             i.setCreatedAt(new Date());
@@ -369,13 +379,13 @@ public class StoreGrnController implements Serializable {
             UtilityController.addErrorMessage("You cant set retail price below purchase rate");
         }
 
-        if (tmp.getPharmaceuticalBillItem().getDoe() != null) {
-            if (tmp.getPharmaceuticalBillItem().getDoe().getTime() < Calendar.getInstance().getTimeInMillis()) {
-                tmp.getPharmaceuticalBillItem().setDoe(null);
-                UtilityController.addErrorMessage("Check Date of Expiry");
-                //    return;
-            }
-        }
+//        if (tmp.getPharmaceuticalBillItem().getDoe() != null) {
+//            if (tmp.getPharmaceuticalBillItem().getDoe().getTime() < Calendar.getInstance().getTimeInMillis()) {
+//                tmp.getPharmaceuticalBillItem().setDoe(null);
+//                UtilityController.addErrorMessage("Check Date of Expiry");
+//                //    return;
+//            }
+//        }
 
         calGrossTotal();
     }
@@ -638,6 +648,22 @@ public class StoreGrnController implements Serializable {
 
     public void setGrns(List<Bill> grns) {
         this.grns = grns;
+    }
+
+    public ApplicationController getApplicationController() {
+        return applicationController;
+    }
+
+    public void setApplicationController(ApplicationController applicationController) {
+        this.applicationController = applicationController;
+    }
+
+    public StoreCalculation getStoreCalculation() {
+        return storeCalculation;
+    }
+
+    public void setStoreCalculation(StoreCalculation storeCalculation) {
+        this.storeCalculation = storeCalculation;
     }
 
 }

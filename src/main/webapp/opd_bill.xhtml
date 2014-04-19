@@ -30,8 +30,9 @@
                         <h:panelGrid columns="20"  >
                             <h:panelGrid columns="1">
                                 <h:outputLabel value="Select Paymentscheme"/>
-                                <p:selectOneMenu   id="cmbPs" value="#{billController.paymentScheme}">                                                                     
-                                    <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
+                                <p:selectOneMenu   id="cmbPs" value="#{billController.paymentScheme}">     
+                                    <f:selectItem itemLabel="Select Payment Scheme"/>
+                                    <f:selectItems value="#{paymentSchemeController.list}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
                                     <p:ajax process="cmbPs" update="pBillDetails  tblBillItem creditCard cheque slip" event="change" />
                                 </p:selectOneMenu>
                             </h:panelGrid>
@@ -64,8 +65,10 @@
 
                                 <h:panelGroup id="panelPatient" >
 
-                                    <p:tabView id="tvPt" style="min-height: 250px;"  >
-                                        <p:ajax event="tabChange"  process="@this" listener="#{billController.onTabChange}" />
+                                    <p:tabView id="tvPt"  style="min-height: 250px;"  >
+                                        <p:ajax event="tabChange"   process="@this" 
+                                                update=":#{p:component('cmbPs')}"
+                                                listener="#{billController.onTabChange}" />
 
                                         <p:tab id="tabNewPt" title="New Patient"  >
                                             <h:panelGrid columns="2" >
@@ -120,16 +123,18 @@
                                                                 completeMethod="#{patientController.completePatient}" 
                                                                 var="apt" itemLabel="#{apt.person.name}" 
                                                                 itemValue="#{apt}" size="30"  style="width: 400px;">
-                                                    <p:ajax event="itemSelect" process="acPt" update="panSearch"/>
+                                                    <f:ajax event="itemSelect" execute="@this" render=":#{p:component('cmbPs')} panSearch" 
+                                                            listener="#{billController.searchPatientListener}" />
                                                 </p:autoComplete>   
 
                                                 <h:panelGrid id="panSearch" columns="2" >
                                                     <h:outputLabel  rendered="#{billController.searchedPatient!=null}" value="Name" />
-                                                    <h:outputLabel rendered="#{billController.searchedPatient!=null}" value="#{billController.searchedPatient.person.name}" ></h:outputLabel>
+                                                    <h:outputLabel rendered="#{billController.searchedPatient!=null}" value="#{billController.searchedPatient.person.name}" />
+                                                    <h:outputLabel  rendered="#{billController.searchedPatient!=null}" value="Membership Scheme" />
+                                                    <h:outputLabel rendered="#{billController.searchedPatient!=null}" value="#{billController.searchedPatient.person.membershipScheme.name}" />
                                                     <h:outputLabel  rendered="#{billController.searchedPatient!=null}" value="Sex" />
-                                                    <h:outputLabel rendered="#{billController.searchedPatient!=null}" value="#{billController.searchedPatient.person.sex}" ></h:outputLabel>
+                                                    <h:outputLabel rendered="#{billController.searchedPatient!=null}" value="#{billController.searchedPatient.person.sex}" />
                                                     <h:outputLabel  rendered="#{billController.searchedPatient!=null}" value="DOB"  />
-
                                                     <h:outputLabel rendered="#{billController.searchedPatient!=null}" value="#{billController.searchedPatient.person.dob}"   >
                                                         <f:convertDateTime pattern="dd/MM/yy" />
                                                     </h:outputLabel>
@@ -333,7 +338,7 @@
                                                     <f:facet name="header">Fee</f:facet>
                                                     <h:inputText id="txtFeeVal" value="#{bif.feeValue}" disabled="#{!bif.billItem.item.userChangable}" >
                                                         <f:convertNumber pattern="#,##0.00" />
-                                                        <f:ajax event="change" execute="txtFeeVal" render=" :#{p:component('tblRequests')}  :#{p:component('pBillDetails')}" listener="#{billController.feeChangeListener(bif)}" />
+                                                        <f:ajax event="change" execute="@this" render="@this :#{p:component('tblRequests')}  :#{p:component('pBillDetails')}" listener="#{billController.feeChangeListener(bif)}" />
                                                     </h:inputText>
                                                 </p:column>
 

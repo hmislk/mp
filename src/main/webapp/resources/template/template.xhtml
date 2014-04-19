@@ -114,7 +114,7 @@
                                     </p:submenu>
                                     <p:menuitem  ajax="false"  action="/inward/inward_reports" value="Inward Reports" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>
                                     <p:menuitem  ajax="false"  action="/inward/inward_administration" value="Inward Administration" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>
-                                    
+
                                 </p:submenu>
                                 <p:submenu label="Lab"  rendered="#{webUserController.hasPrivilege('Lab')}">
                                     <p:menuitem  ajax="false" actionListener="#{labBillCollectingController.prepareNewBill}"  action="/lab_bill_collecting_centre" value="Collecting Centre Billing" rendered="#{webUserController.hasPrivilege('LabBilling')}" ></p:menuitem>
@@ -366,8 +366,16 @@
                                 </p:submenu>
                                 <p:submenu label="MemberShip"  >
                                     <p:menuitem action="/memberShip/membership_scheme"   value="Membership Schemes" ajax="false" />
-                                    <p:menuitem  action="/memberShip/membership_scheme_discount" value="Membership Schemes Dicounts"  ajax="false"/>
-                                    <p:menuitem  action="/memberShip/report" value="MemberShip Report"  ajax="false" />
+                                    <p:submenu label="Inward Member Ship">
+                                        <p:menuitem  action="/memberShip/membership_scheme_discount" value="Schemes Dicounts"  ajax="false"/>
+                                        <p:menuitem  action="/memberShip/report_inward" value="Inward MemberShip Report"  ajax="false" />
+                                    </p:submenu>
+                                    <p:submenu label="Opd MemberShip Dis">
+                                        <p:menuitem  action="/memberShip/membership_scheme_discount_opd_by_department" value="By Department" actionListener="#{opdMemberShipDiscountController.recreateModel()}" ajax="false"/>
+                                        <p:menuitem  action="/memberShip/membership_scheme_discount_opd_by_category" value="By Category" actionListener="#{opdMemberShipDiscountController.recreateModel()}"  ajax="false"/>
+                                        <p:menuitem  action="/memberShip/report_opd" value="Opd MemberShip Report"  ajax="false" />
+                                    </p:submenu>
+
                                 </p:submenu>
                                 <p:submenu label="Administration"  rendered="#{webUserController.hasPrivilege('Admin')}">
                                     <p:menuitem  ajax="false"  action="/admin_manage_users" value="Manage Users" rendered="#{webUserController.hasPrivilege('AdminManagingUsers')}" ></p:menuitem>

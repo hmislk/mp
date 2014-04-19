@@ -28,6 +28,8 @@ import com.divudi.entity.Item;
 import com.divudi.entity.ItemFee;
 import com.divudi.entity.PackageFee;
 import com.divudi.entity.Packege;
+import com.divudi.entity.PaymentScheme;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.EncounterComponent;
 import com.divudi.entity.lab.Investigation;
@@ -86,6 +88,48 @@ public class BillBean {
     PackageFeeFacade packageFeeFacade;
     @EJB
     ServiceSessionBean serviceSessionBean;
+    @EJB
+    PriceMatrixBean priceMatrixBean;
+
+    public PriceMatrixBean getPriceMatrixBean() {
+        return priceMatrixBean;
+    }
+
+    public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
+        this.priceMatrixBean = priceMatrixBean;
+    }
+
+    public void setBillFees(BillFee bf, boolean foreign, PaymentScheme paymentScheme, Institution creditCompany) {
+        boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
+
+        if (discountAllowed == false) {
+            bf.setFeeValue(foreign);
+        } else if (discountAllowed == true
+                && paymentScheme.getPaymentMethod() == PaymentMethod.Credit
+                && creditCompany != null) {
+            bf.setFeeValueForCreditCompany(foreign, creditCompany.getLabBillDiscount());
+        } else {
+            bf.setFeeValue(foreign, paymentScheme.getDiscountPercent());
+        }
+    }
+
+    public void setBillFees(BillFee bf, boolean foreign, PaymentScheme paymentScheme, Item item) {
+        System.err.println(paymentScheme);
+        System.err.println(paymentScheme.getPaymentMethod());
+        System.err.println(paymentScheme.getMembershipScheme());
+        boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
+        PriceMatrix priceMatrix = getPriceMatrixBean().getOpdMemberDisCount(paymentScheme.getPaymentMethod(), paymentScheme.getMembershipScheme(), item.getDepartment(), item.getCategory());
+
+        if (discountAllowed == false) {
+            bf.setFeeValue(foreign);
+        } else {
+            if (priceMatrix != null) {
+                bf.setFeeValue(foreign, priceMatrix.getDiscountPercent());
+            } else {
+                bf.setFeeValue(foreign, 0);
+            }
+        }
+    }
 
     public List<ItemFee> getItemFee(BillItem billItem) {
 

@@ -4,8 +4,6 @@
  */
 package com.divudi.entity;
 
-import com.divudi.entity.lab.*;
-import com.divudi.entity.Category;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;

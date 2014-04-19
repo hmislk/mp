@@ -245,7 +245,7 @@ public class StoreGrnController implements Serializable {
 
     public String viewPoList() {
         clearList();
-        return "pharmacy_purchase_order_list_for_recieve";
+        return "store_purchase_order_list_for_recieve";
     }
 
     public StoreGrnController() {

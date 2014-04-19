@@ -13,6 +13,7 @@ import com.divudi.data.dataStructure.PaymentMethodData;
 import java.util.TimeZone;
 import com.divudi.facade.PaymentSchemeFacade;
 import com.divudi.entity.PaymentScheme;
+import com.divudi.entity.memberShip.MembershipScheme;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,7 +51,50 @@ public class PaymentSchemeController implements Serializable {
     List<PaymentScheme> payingItems;
     List<PaymentScheme> rcItems;
     List<PaymentScheme> billingItems;
+    List<PaymentScheme> list;
     private PaymentMethod[] paymentMethods;
+    MembershipScheme membershipScheme;
+
+    public List<PaymentScheme> getList() {
+        if (list == null) {
+            createList();
+        }
+        return list;
+    }
+
+    public void setList(List<PaymentScheme> list) {
+        this.list = list;
+    }
+
+    public void createList() {
+
+        String sql;
+        HashMap hm = new HashMap();
+        if (membershipScheme == null) {
+         //   System.err.println("3");
+            sql = "SELECT i FROM PaymentScheme i "
+                    + " where i.retired=false "
+                    + " order by i.orderNo, i.name";
+        } else {
+           // System.err.println("4");
+            sql = "SELECT i FROM PaymentScheme i "
+                    + " where i.retired=false "
+                    + " and i.membershipScheme=:mem "
+                    + " order by i.orderNo, i.name";
+            hm.put("mem", membershipScheme);
+        }
+
+        list = getFacade().findBySQL(sql, hm);
+      //  System.err.println("List Size " + list.size());
+    }
+
+    public MembershipScheme getMembershipScheme() {
+        return membershipScheme;
+    }
+
+    public void setMembershipScheme(MembershipScheme membershipScheme) {
+        this.membershipScheme = membershipScheme;
+    }
 
     public boolean errorCheckPaymentScheme(PaymentMethod paymentMethod, PaymentMethodData paymentMethodData) {
         if (paymentMethod == PaymentMethod.Cheque) {
@@ -168,6 +212,10 @@ public class PaymentSchemeController implements Serializable {
 
     public void saveSelected() {
 
+        if (getCurrent().getPaymentMethod() == null) {
+            UtilityController.addErrorMessage("Payment Method?");
+            return;
+        }
         if (getCurrent().getId() != null && getCurrent().getId() > 0) {
             getFacade().edit(current);
             UtilityController.addSuccessMessage("savedOldSuccessfully");

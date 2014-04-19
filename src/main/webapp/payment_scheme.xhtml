@@ -31,16 +31,16 @@
                                     </h:selectOneListbox>
                                 </h:panelGrid>
                                 <h:panelGrid id="gpSelectButtons" columns="3"  >
-                                    
+
                                     <h:commandButton id="btnAdd" value="Add"  action="#{paymentSchemeController.prepareAdd()}" styleClass="buttons" >
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
                                         </f:ajax>
                                     </h:commandButton>
-                                    
+
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{paymentSchemeController.delete()}"  value="Delete"  >
                                     </h:commandButton>
-                                    
+
                                 </h:panelGrid>
                             </p:panel>
                         </h:panelGrid  >
@@ -52,11 +52,17 @@
                                     <h:inputText id="txtName" value="#{paymentSchemeController.current.name}"  ></h:inputText>
                                     <h:outputText id="lblPay" value="Payment Method" ></h:outputText>
                                     <h:selectOneListbox  id="cmbPay" value="#{paymentSchemeController.current.paymentMethod}" size="1" >
+                                        <f:selectItem itemLabel="Select Payment Method"/>
                                         <f:selectItems value="#{paymentSchemeController.paymentMethods}"/>
                                     </h:selectOneListbox>
-                                     <h:outputText id="lblOrder" value="Order No" ></h:outputText>
-                                     <h:inputText id="txtOrder" value="#{paymentSchemeController.current.orderNo}"  ></h:inputText>                                    
-                                    
+                                    <h:outputText  value="MemberShip Scheme" />
+                                    <h:selectOneListbox  value="#{paymentSchemeController.current.membershipScheme}" size="1" >
+                                        <f:selectItem itemLabel="Select membership Scheme"/>
+                                        <f:selectItems value="#{membershipSchemeController.items}"/>
+                                    </h:selectOneListbox>
+                                    <h:outputText id="lblOrder" value="Order No" />
+                                    <h:inputText id="txtOrder" value="#{paymentSchemeController.current.orderNo}"  />
+
                                     <h:outputText id="lblClient" value="Client Type" ></h:outputText>
                                     <h:selectOneListbox  id="cmbClient" value="#{paymentSchemeController.current.cliantType}" size="1" >
                                         <f:selectItem itemLabel="Please select client type"/>
@@ -64,13 +70,14 @@
                                         <f:selectItem itemLabel="Inward" itemValue="Inward"/>
                                         <f:selectItem itemLabel="Institution" itemValue="Institution"/>
                                         <f:selectItem itemLabel="CollectingCentre" itemValue="CollectingCentre"/>
-                                          <f:selectItem itemLabel="Staff" itemValue="Staff"/>
+                                        <f:selectItem itemLabel="Staff" itemValue="Staff"/>
                                     </h:selectOneListbox>
                                     <h:outputText id="lblLab" value="Discount Percent for OPD" ></h:outputText>
                                     <h:inputText id="txtLab" value="#{paymentSchemeController.current.discountPercent}"  ></h:inputText>    
                                     <h:outputText id="lblPharmacy" value="Discount Percent for Pharmacy" ></h:outputText>
                                     <h:inputText id="txtPharmacy" value="#{paymentSchemeController.current.discountPercentForPharmacy}"  ></h:inputText>    
-                                    
+
+
                                     <h:outputLabel rendered="#{paymentSchemeController.current!=null}"  value="Valid for Payments" />
                                     <p:selectBooleanCheckbox rendered="#{paymentSchemeController.current!=null}" value="#{paymentSchemeController.current.validForPayments}" ></p:selectBooleanCheckbox>
                                     <h:outputLabel rendered="#{paymentSchemeController.current!=null}"  value="Valid for Billing" />
@@ -80,10 +87,10 @@
 
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
-                                    
+
                                     <h:commandButton id="btnSave" value="Save"  action="#{paymentSchemeController.saveSelected()}" styleClass="buttons">
-<!--                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
-                                        </f:ajax>-->
+                                        <!--                                        <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
+                                                                                </f:ajax>-->
                                     </h:commandButton>
                                     <p:defaultCommand target="btnSave"/>
                                 </h:panelGrid>

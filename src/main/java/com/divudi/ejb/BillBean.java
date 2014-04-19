@@ -614,7 +614,7 @@ public class BillBean {
         return c;
     }
 
-    public void saveBillItem(Bill b, BillEntry e, WebUser wu) {
+    public BillItem saveBillItem(Bill b, BillEntry e, WebUser wu) {
         e.getBillItem().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         e.getBillItem().setCreater(wu);
         e.getBillItem().setBill(b);
@@ -622,6 +622,8 @@ public class BillBean {
 
         saveBillComponent(e, b, wu);
         saveBillFee(e, b, wu);
+
+        return e.getBillItem();
     }
 
 //    public void calculateBillItem(Bill bill, BillEntry e) {
@@ -757,7 +759,8 @@ public class BillBean {
         getBillFacade().edit(bill);
     }
 
-    public void saveBillItems(Bill b, List<BillEntry> billEntries, WebUser wu) {
+    public List<BillItem> saveBillItems(Bill b, List<BillEntry> billEntries, WebUser wu) {
+        List<BillItem> list = new ArrayList<>();
         for (BillEntry e : billEntries) {
             // BillItem temBi = e.getBillItem();
             e.getBillItem().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -781,9 +784,12 @@ public class BillBean {
                 updateMatrix(e.getBillItem());
             }
 
+            list.add(e.getBillItem());
         }
 
         calBillTotal(b);
+
+        return list;
     }
 
     private void calBillTotal(Bill b) {
@@ -830,7 +836,6 @@ public class BillBean {
         }
 
     }
-
     @EJB
     InwardBean inwardBean;
 
@@ -1299,7 +1304,6 @@ public class BillBean {
 
         return billFees;
     }
-
     @EJB
     private EncounterComponentFacade encounterComponentFacade;
 
@@ -1322,5 +1326,4 @@ public class BillBean {
     public void setEncounterComponentFacade(EncounterComponentFacade encounterComponentFacade) {
         this.encounterComponentFacade = encounterComponentFacade;
     }
-
 }

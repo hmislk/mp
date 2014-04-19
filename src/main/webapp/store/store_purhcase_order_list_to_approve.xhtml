@@ -115,14 +115,14 @@
 
                     <p:column headerText="Approve">
                         <p:commandButton ajax="false" value="Approve" 
-                                         action="pharmacy_purhcase_order_approving"
+                                         action="store_purhcase_order_approving"
                                          disabled="#{b.referenceBill.creater ne null and b.referenceBill.cancelled eq false}">
-                            <f:setPropertyActionListener target="#{purchaseOrderController.requestedBill}" value="#{b}"/>
+                            <f:setPropertyActionListener target="#{storePurchaseOrderController.requestedBill}" value="#{b}"/>
                         </p:commandButton>
                     </p:column>
                     <p:column headerText="View PO">
-                        <p:commandButton ajax="false" value="View PO" action="pharmacy_reprint_po" disabled="#{b.referenceBill.creater eq null or b.referenceBill.referenceBill eq null}">
-                            <f:setPropertyActionListener target="#{storeBillSearch.bill}" value="#{b.referenceBill}"/>
+                        <p:commandButton ajax="false" value="View PO" action="/pharmacy_reprint_po" disabled="#{b.referenceBill.creater eq null or b.referenceBill.referenceBill eq null}">
+                            <f:setPropertyActionListener target="#{pharmacyBillSearch.bill}" value="#{b.referenceBill}"/>
                         </p:commandButton>
                     </p:column>
                 </p:dataTable>

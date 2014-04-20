@@ -148,6 +148,7 @@ public class BillController implements Serializable {
     public void searchPatientListener() {
         System.err.println("1");
         createPaymentSchemeItems();
+        calTotals();
     }
 
     private void createPaymentSchemeItems() {
@@ -160,6 +161,10 @@ public class BillController implements Serializable {
         }
 
         getPaymentSchemeController().createList();
+
+        if (!getPaymentSchemeController().getList().isEmpty()) {
+            setPaymentScheme(getPaymentSchemeController().getList().get(0));
+        }
     }
 
     public boolean findByFilter(String property, String value) {
@@ -824,10 +829,12 @@ public class BillController implements Serializable {
     }
 
     public void calTotals() {
-        //System.out.println("calculating totals");
+        System.out.println("calculating totals");
         if (paymentScheme == null) {
             return;
         }
+
+        System.out.println("calculating totals 222 " + paymentScheme.getName());
 
         double disPercent = 0.0;
         double billGross = 0.0;
@@ -964,6 +971,7 @@ public class BillController implements Serializable {
         }
 
         createPaymentSchemeItems();
+        calTotals();
     }
 
     public BillFacade getEjbFacade() {

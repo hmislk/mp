@@ -38,6 +38,11 @@
                                 <p:calendar  value="#{bhtEditController.current.dateOfAdmission}" navigator="true" pattern="dd/MM/yyyy hh mm a" >
                                     <f:ajax event="dateSelect" execute="@this" />
                                 </p:calendar>
+                                <p:selectBooleanCheckbox value="#{bhtEditController.current.foriegner}"
+                                                         itemLabel="Mark as Foreigner"/>
+
+                                <p:selectBooleanCheckbox value="#{bhtEditController.current.claimable}" 
+                                                         itemLabel="Claimable"/>
                             </p:panel>
                             <p:panel header="Hospital">
                                 <h:panelGrid columns="2">

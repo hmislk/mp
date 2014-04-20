@@ -61,7 +61,8 @@
                                     </p:submenu>
                                     <p:submenu label="Room">
                                         <p:menuitem  ajax="false"  action="/inward/inward_room_occupancy" value="Room Occupancy" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
-                                        <p:menuitem  ajax="false"  action="/inward/inward_room_change" value="Room Change" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
+                                        <p:menuitem  ajax="false"  action="/inward/inward_room_change" value="Room Change" actionListener="#{roomChangeController.recreate()}" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
+                                        <p:menuitem  ajax="false"  action="/inward/inward_room_change_guardian" value="Gurdian Room Change" actionListener="#{roomChangeController.recreate()}" rendered="#{webUserController.hasPrivilege('InwardBillSearch')}" ></p:menuitem>   
                                     </p:submenu>  
                                     <p:submenu label="Services &amp; Items">
                                         <p:menuitem  ajax="false"  action="/inward/inward_bill_service" value="Add Services" actionListener="#{billBhtController.makeNull}" rendered="#{webUserController.hasPrivilege('InwardBilling')}" ></p:menuitem>                                            

@@ -23,6 +23,7 @@ import javax.persistence.Transient;
  */
 @Entity
 public class PatientRoom implements Serializable {
+
     @OneToOne(mappedBy = "referencePatientRoom")
     private PatientRoom duplicatePatientRoom;
 
@@ -48,9 +49,7 @@ public class PatientRoom implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date retiredAt;
     private String retireComments;
-    private double addedLinenCharge = 0.0;
-    @ManyToOne
-    private Room room;
+    private double addedLinenCharge = 0.0;   
     @ManyToOne
     private RoomFacilityCharge roomFacilityCharge;
     @ManyToOne
@@ -67,13 +66,12 @@ public class PatientRoom implements Serializable {
     private PatientRoom previousRoom;
 
     private double currentMaintananceCharge = 0.0;
- //   private double currentLinenCharge = 0.0;
+    //   private double currentLinenCharge = 0.0;
     private double currentNursingCharge = 0.0;
     private double currentMoCharge = 0.0;
     private double currentRoomCharge;
     private double calculatedRoomCharge;
-    
-    
+
     @OneToOne
     private PatientRoom referencePatientRoom;
 
@@ -81,6 +79,10 @@ public class PatientRoom implements Serializable {
     private long tmpStayedTime;
     @Transient
     private double tmpTotalRoomCharge;
+
+    public String getPatientRoomClass() {
+        return this.getClass().toString();
+    }
 
     public long getTmpStayedTime() {
         return tmpStayedTime;
@@ -203,14 +205,7 @@ public class PatientRoom implements Serializable {
         this.retireComments = retireComments;
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
+   
     public RoomFacilityCharge getRoomFacilityCharge() {
         return roomFacilityCharge;
     }
@@ -307,7 +302,6 @@ public class PatientRoom implements Serializable {
 //    public void setCurrentLinenCharge(double currentLinenCharge) {
 //        this.currentLinenCharge = currentLinenCharge;
 //    }
-
     public double getCurrentNursingCharge() {
         return currentNursingCharge;
     }

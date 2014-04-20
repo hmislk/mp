@@ -33,7 +33,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -48,7 +48,6 @@ public class RoomFacilityChargeController implements Serializable {
     private RoomFacilityCharge current;
     private List<RoomFacilityCharge> items = null;
     String selectText = "";
-   
 
     public List<RoomFacilityCharge> completeRoom(String query) {
         List<RoomFacilityCharge> suggestions;
@@ -58,7 +57,7 @@ public class RoomFacilityChargeController implements Serializable {
         } else {
             sql = "select p from RoomFacilityCharge p where p.retired=false and upper(p.name) like '%" + query.toUpperCase() + "%' order by p.name";
             //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql);           
+            suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
     }
@@ -66,17 +65,27 @@ public class RoomFacilityChargeController implements Serializable {
     public List<RoomFacilityCharge> completeRoomChange(String query) {
         List<RoomFacilityCharge> suggestions;
         String sql;
-        HashMap hm=new HashMap();
-        if (getCurrent() == null || getCurrent().getRoom() == null || query == null) {
-            suggestions = new ArrayList<RoomFacilityCharge>();
-        } else {
-            sql = "select p from RoomFacilityCharge p where p.retired=false and "
-                    + " (p.room.filled=false or p.room=:rm) and upper(p.name) like '%" + query.toUpperCase() + "%' order by p.name";
-            hm.put("rm", getCurrent().getRoom());
-            //System.out.println(sql);
-            suggestions = getFacade().findBySQL(sql,hm);
+        HashMap hm = new HashMap();
 
+        if (getCurrent() != null) {
+            sql = "select p from RoomFacilityCharge p "
+                    + " where p.retired=false"
+                    + " and (p.room.filled=false or p.room=:rm) "
+                    + " and upper(p.name) like :q"
+                    + " order by p.name";
+            hm.put("rm", getCurrent().getRoom());
+        } else {
+            sql = "select p from RoomFacilityCharge p "
+                    + " where p.retired=false"
+                    + " and (p.room.filled=false) "
+                    + " and upper(p.name) like :q"
+                    + " order by p.name";
         }
+
+        hm.put("q", "%" + query.toUpperCase() + "%");
+
+        suggestions = getFacade().findBySQL(sql, hm);
+
         return suggestions;
     }
 
@@ -206,7 +215,6 @@ public class RoomFacilityChargeController implements Serializable {
         return RoomFacility.values();
     }
 
-   
     public TimedItemFeeFacade getTimedItemFeeFacade() {
         return timedItemFeeFacade;
     }

@@ -10,7 +10,9 @@
 
     <ui:define name="content">
         <h:form>
-            <p:commandButton ajax="false" action="#{roomOccupancyController.createPatientRoom}" value="Fill"/>
+            <p:commandButton ajax="false" 
+                             action="#{roomOccupancyController.createPatientRoom}"
+                             value="Fill"/>
             <p:dataTable value="#{roomOccupancyController.patientRooms}" var="pr">
                 <f:facet name="header">
                     Room Occupancy Detail
@@ -33,9 +35,19 @@
                 <p:column headerText="Guardian Addres">
                     #{pr.patientEncounter.guardian.address}
                 </p:column>
+                <p:column headerText="Room No">
+                    <h:outputLabel value="#{pr.roomFacilityCharge.room.name}"/>
+                </p:column>
+                <p:column>
+                    <p:selectBooleanCheckbox value="#{pr.roomFacilityCharge.room.filled}" 
+                                             itemLabel="Room Filled"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton ajax="false" value="Update" action="#{roomOccupancyController.update(pr)}"/>
+                </p:column>
             </p:dataTable>
 
-               
+
 
         </h:form>
     </ui:define>

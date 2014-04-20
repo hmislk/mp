@@ -31,7 +31,6 @@
                             <h:panelGrid columns="1">
                                 <h:outputLabel value="Select Paymentscheme"/>
                                 <p:selectOneMenu   id="cmbPs" value="#{billController.paymentScheme}">     
-                                    <f:selectItem itemLabel="Select Payment Scheme"/>
                                     <f:selectItems value="#{paymentSchemeController.list}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
                                     <p:ajax process="cmbPs" update="pBillDetails  tblBillItem creditCard cheque slip" event="change" />
                                 </p:selectOneMenu>
@@ -67,7 +66,7 @@
 
                                     <p:tabView id="tvPt"  style="min-height: 250px;"  >
                                         <p:ajax event="tabChange"   process="@this" 
-                                                update=":#{p:component('cmbPs')}"
+                                                update=":#{p:component('cmbPs')} :#{p:component('tblBillItem')} :#{p:component('pBillDetails')} "
                                                 listener="#{billController.onTabChange}" />
 
                                         <p:tab id="tabNewPt" title="New Patient"  >
@@ -123,7 +122,8 @@
                                                                 completeMethod="#{patientController.completePatient}" 
                                                                 var="apt" itemLabel="#{apt.person.name}" 
                                                                 itemValue="#{apt}" size="30"  style="width: 400px;">
-                                                    <f:ajax event="itemSelect" execute="@this" render=":#{p:component('cmbPs')} panSearch" 
+                                                    <f:ajax event="itemSelect" execute="@this" 
+                                                            render=":#{p:component('cmbPs')} panSearch :#{p:component('tblBillItem')} :#{p:component('pBillDetails')}" 
                                                             listener="#{billController.searchPatientListener}" />
                                                 </p:autoComplete>   
 
@@ -173,7 +173,7 @@
 
                                         </p:autoComplete>
                                         <h:commandButton id="btnAddIx" value="Add" action="#{billController.addToBill()}">
-                                            <f:ajax execute="acIx btnAddIx" render="focusIx tblBillItem  pBillDetails pIxAdd" />
+                                            <f:ajax execute="acIx btnAddIx :#{p:component('cmbPs')}" render="focusIx tblBillItem  pBillDetails pIxAdd" />
                                         </h:commandButton>
                                         <p:defaultCommand target="btnAddIx" />
                                         <p:panel header="Session"  >

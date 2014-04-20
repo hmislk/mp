@@ -10,11 +10,11 @@ package com.divudi.bean.inward;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.BillType;
 import com.divudi.ejb.InwardBean;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.Patient;
 import com.divudi.entity.Person;
+import com.divudi.entity.inward.GuardianRoom;
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.entity.inward.RoomFacilityCharge;
 import com.divudi.facade.AdmissionFacade;
@@ -81,7 +81,7 @@ public class RoomChangeController implements Serializable {
         getPatientRoomFacade().edit(pR);
     }
 
-    private void recreate() {
+    public void recreate() {
         patientRoom = null;
         selectedItems = null;
         current = null;
@@ -93,7 +93,9 @@ public class RoomChangeController implements Serializable {
     }
 
     private boolean updatePatientRoom() {
-        if (currentPatientRoom.getAdmittedAt().getTime() > getChangeAt().getTime()) {
+        if (getCurrentPatientRoom() != null 
+                && getCurrentPatientRoom().getAdmittedAt() != null
+                && getCurrentPatientRoom().getAdmittedAt().getTime() > getChangeAt().getTime()) {
             UtilityController.addErrorMessage("U cant discharge early date than admitted");
             return false;
         }
@@ -107,12 +109,6 @@ public class RoomChangeController implements Serializable {
     private InwardBean inwardBean;
 
     public void change() {
-        Date cur = Calendar.getInstance().getTime();
-
-        if ((getChangeAt().getTime()) > cur.getTime()) {
-            UtilityController.addErrorMessage("Check Time");
-            return;
-        }
 
         if (!updatePatientRoom()) {
             return;
@@ -123,8 +119,25 @@ public class RoomChangeController implements Serializable {
         PatientRoom cuPatientRoom = getInwardBean().savePatientRoom(getNewRoomFacilityCharge(), addLinenCharge, changeAt, current, getSessionController().getLoggedUser());
         getCurrent().setCurrentPatientRoom(cuPatientRoom);
         getEjbFacade().edit(getCurrent());
-        recreate();
+
         UtilityController.addSuccessMessage("Successfully Room Changed");
+        createPatientRoom();
+    }
+
+    public void changeGurdianRoom() {
+
+        if (!updatePatientRoom()) {
+            return;
+        }
+
+        getInwardBean().makeRoomVacantGurdian(getCurrent());
+
+        getInwardBean().saveGurdianRoom(getNewRoomFacilityCharge(), addLinenCharge, changeAt, current, getSessionController().getLoggedUser());
+        //  getCurrent().setCurrentPatientRoom(cuPatientRoom);
+        //     getEjbFacade().edit(getCurrent());
+
+        UtilityController.addSuccessMessage("Successfully Room Changed");
+        createGuardianRoom();
     }
 
     public List<Admission> getSelectedItems() {
@@ -211,14 +224,30 @@ public class RoomChangeController implements Serializable {
 
     public void setCurrent(Admission current) {
         this.current = current;
-        createPatientRoom();
+
     }
 
-    private void createPatientRoom() {
+    public void createPatientRoom() {
 
         HashMap hm = new HashMap();
-        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
-                + " and pr.patientEncounter=:pe order by pr.createdAt";
+        String sql = "SELECT pr FROM PatientRoom pr "
+                + " where pr.retired=false"
+                + " and pr.patientEncounter=:pe "
+                + " and type(pr)!=:class "
+                + " order by pr.admittedAt";
+        hm.put("pe", getCurrent());
+        hm.put("class", GuardianRoom.class);
+        patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
+
+    }
+
+    public void createGuardianRoom() {
+
+        HashMap hm = new HashMap();
+        String sql = "SELECT pr FROM GuardianRoom pr "
+                + " where pr.retired=false"
+                + " and pr.patientEncounter=:pe "
+                + " order by pr.admittedAt";
         hm.put("pe", getCurrent());
         patientRoom = getPatientRoomFacade().findBySQL(sql, hm);
 

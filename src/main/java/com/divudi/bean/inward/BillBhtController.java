@@ -357,7 +357,7 @@ public class BillBhtController implements Serializable {
         }
 
         if (patientRoom.getRoomFacilityCharge().getDepartment() == null) {
-            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoom().getName());
+            UtilityController.addErrorMessage("Under administration, add a Department for this Room " + patientRoom.getRoomFacilityCharge().getRoom().getName());
             return;
         }
 

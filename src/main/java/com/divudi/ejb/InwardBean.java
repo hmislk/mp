@@ -24,6 +24,7 @@ import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.inward.AdmissionType;
+import com.divudi.entity.inward.GuardianRoom;
 import com.divudi.entity.inward.InwardFee;
 import com.divudi.entity.inward.InwardPriceAdjustment;
 import com.divudi.entity.inward.PatientRoom;
@@ -288,7 +289,36 @@ public class InwardBean {
         pr.setAddmittedBy(webUser);
         pr.setPatientEncounter(patientEncounter);
         pr.setRoomFacilityCharge(newRoomFacilityCharge);
-        pr.setRoom(newRoomFacilityCharge.getRoom());
+
+        getPatientRoomFacade().create(pr);
+
+        if (patientEncounter.getAdmissionType().isRoomChargesAllowed()) {
+            makeRoomFilled(pr);
+        }
+
+        return pr;
+    }
+
+    public PatientRoom saveGurdianRoom(RoomFacilityCharge newRoomFacilityCharge, double addLinenCharge, Date addmittedAt, PatientEncounter patientEncounter, WebUser webUser) {
+        PatientRoom pr = new GuardianRoom();
+
+        //  pr.setCurrentLinenCharge(newRoomFacilityCharge.getLinenCharge());
+        pr.setCurrentMaintananceCharge(newRoomFacilityCharge.getMaintananceCharge());
+        pr.setCurrentMoCharge(newRoomFacilityCharge.getMoCharge());
+        pr.setCurrentNursingCharge(newRoomFacilityCharge.getNursingCharge());
+        pr.setCurrentRoomCharge(newRoomFacilityCharge.getRoomCharge());
+
+        pr.setAddedLinenCharge(addLinenCharge);
+        pr.setAdmittedAt(addmittedAt);
+
+        PatientRoom currentPatientRoom = getCurrentGuardianRoom(patientEncounter);
+
+        pr.setPreviousRoom(currentPatientRoom);
+        pr.setCreatedAt(Calendar.getInstance().getTime());
+        pr.setCreater(webUser);
+        pr.setAddmittedBy(webUser);
+        pr.setPatientEncounter(patientEncounter);
+        pr.setRoomFacilityCharge(newRoomFacilityCharge);
 
         getPatientRoomFacade().create(pr);
 
@@ -311,7 +341,6 @@ public class InwardBean {
         patientRoom.setCreatedAt(Calendar.getInstance().getTime());
         patientRoom.setCreater(webUser);
         patientRoom.setPatientEncounter(patientEncounter);
-        patientRoom.setRoom(patientRoom.getRoomFacilityCharge().getRoom());
 
         if (patientRoom.getId() == null || patientRoom.getId() == 0) {
             getPatientRoomFacade().create(patientRoom);
@@ -328,8 +357,8 @@ public class InwardBean {
 
     public void makeRoomFilled(PatientRoom pr) {
 
-        pr.getRoom().setFilled(true);
-        getRoomFacade().edit(pr.getRoom());
+        pr.getRoomFacilityCharge().getRoom().setFilled(true);
+        getRoomFacade().edit(pr.getRoomFacilityCharge().getRoom());
 
     }
 
@@ -339,8 +368,20 @@ public class InwardBean {
         }
 
         PatientRoom pr = getCurrentPatientRoom(patientEncounter);
-        pr.getRoom().setFilled(false);
-        getRoomFacade().edit(pr.getRoom());
+        pr.getRoomFacilityCharge().getRoom().setFilled(false);
+        getRoomFacade().edit(pr.getRoomFacilityCharge().getRoom());
+    }
+
+    public void makeRoomVacantGurdian(PatientEncounter patientEncounter) {
+        if (!patientEncounter.getAdmissionType().isRoomChargesAllowed()) {
+            return;
+        }
+
+        PatientRoom pr = getCurrentGuardianRoom(patientEncounter);
+        if (pr != null) {
+            pr.getRoomFacilityCharge().getRoom().setFilled(false);
+            getRoomFacade().edit(pr.getRoomFacilityCharge().getRoom());
+        }
     }
 
     // Add business logic below. (Right-click in editor and choose
@@ -472,8 +513,25 @@ public class InwardBean {
     }
 
     public PatientRoom getCurrentPatientRoom(PatientEncounter patientEncounter) {
-        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false and "
-                + " pr.patientEncounter=:pe order by pr.admittedAt desc ";
+        String sql = "SELECT pr FROM PatientRoom pr "
+                + " where pr.retired=false "
+                + " and pr.patientEncounter=:pe "
+                + " and type(pr)!=:class "
+                + " order by pr.admittedAt desc ";
+        HashMap hm = new HashMap();
+        hm.put("pe", patientEncounter);
+        hm.put("class", GuardianRoom.class);
+        PatientRoom patientRoom = getPatientRoomFacade().findFirstBySQL(sql, hm);
+
+        return patientRoom;
+
+    }
+
+    public PatientRoom getCurrentGuardianRoom(PatientEncounter patientEncounter) {
+        String sql = "SELECT pr FROM GuardianRoom pr "
+                + "where pr.retired=false "
+                + "and pr.patientEncounter=:pe "
+                + "order by pr.admittedAt desc ";
         HashMap hm = new HashMap();
         hm.put("pe", patientEncounter);
         PatientRoom patientRoom = getPatientRoomFacade().findFirstBySQL(sql, hm);

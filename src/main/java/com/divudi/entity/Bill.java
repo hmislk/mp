@@ -230,6 +230,15 @@ public class Bill implements Serializable {
     private WebUser toWebUser;
     @ManyToOne
     private WebUser fromWebUser;
+    double claimableTotal;
+
+    public double getClaimableTotal() {
+        return claimableTotal;
+    }
+
+    public void setClaimableTotal(double claimableTotal) {
+        this.claimableTotal = claimableTotal;
+    }
 
     public void invertValue(Bill bill) {
         staffFee = 0 - bill.getStaffFee();

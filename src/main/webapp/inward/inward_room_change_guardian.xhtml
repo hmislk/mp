@@ -14,14 +14,14 @@
                 <p:panel header="Admitted Patients">
                     <h:panelGrid id="gpSelectText" columns="3" >
                         <h:outputLabel value="Type Patinet Name or BHT"/>
-                        <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
+                        <p:autoComplete converter="admis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                         value="#{roomChangeController.current}"
                                         completeMethod="#{admissionController.completePatient}" 
                                         var="myItem" itemValue="#{myItem}" 
                                         itemLabel="#{myItem.bhtNo}" 
                                         size="30"  style="width: 400px;" required="true"> 
-                            <f:ajax execute="acPt" render="gpDetail" event="itemSelect"
-                                    listener="#{roomChangeController.createPatientRoom()}"/>
+                            <f:ajax execute="acPt" render="gpDetail" event="itemSelect" 
+                                    listener="#{roomChangeController.createGuardianRoom()}"/>
                             <p:column>
                                 <h:outputLabel value="#{myItem.bhtNo}"/>
                             </p:column>
@@ -29,9 +29,7 @@
                                 <h:outputLabel value="#{myItem.patient.person.nameWithTitle}"/>
                             </p:column>
                         </p:autoComplete>   
-                        <p:commandButton id="btnChange" value="Change"  
-                                         action="#{roomChangeController.change()}"
-                                         ajax="false" styleClass="buttons"/>
+                        <p:commandButton id="btnChange" value="Change"  action="#{roomChangeController.changeGurdianRoom()}" ajax="false" styleClass="buttons"/>
                         <p:commandButton value="Clear"  
                                          action="#{roomChangeController.recreate()}"
                                          ajax="false" styleClass="buttons"/>
@@ -44,31 +42,31 @@
                         <h:panelGrid columns="3" style="min-width: 100%;">
                             <p:panel header="Patient Detail" >
                                 <h:panelGrid columns="2">
-                                    <h:outputText  value="Name" ></h:outputText>
+                                    <h:outputText  value="Name" />
                                     <h:outputText value="#{roomChangeController.current.patient.person.nameWithTitle}"/>
-                                    <h:outputText value="NIC" ></h:outputText>
+                                    <h:outputText value="NIC" />
                                     <h:outputText  value="#{roomChangeController.current.patient.person.nic}"  />
                                     <h:outputLabel value="Age"/>
                                     <h:outputLabel value="#{roomChangeController.current.patient.age}"/>
-                                    <h:outputText value="Address" ></h:outputText>
+                                    <h:outputText value="Address" />
                                     <h:outputText  value="#{roomChangeController.current.patient.person.address}" />
-                                    <h:outputText value="Phone No" ></h:outputText>
+                                    <h:outputText value="Phone No" />
                                     <h:outputText  value="#{roomChangeController.current.patient.person.phone}"  />
                                 </h:panelGrid>
                             </p:panel>
 
                             <p:panel header="Gardian Detail">
                                 <h:panelGrid columns="2">
-                                    <h:outputText  value="Name" ></h:outputText>
+                                    <h:outputText  value="Name" />
                                     <h:outputText value="#{roomChangeController.current.guardian.name}"  />
-                                    <h:outputText value="Address" ></h:outputText>
+                                    <h:outputText value="Address" />
                                     <h:outputText  value="#{roomChangeController.current.guardian.address}"  />
-                                    <h:outputText value="Phone No" ></h:outputText>
+                                    <h:outputText value="Phone No" />
                                     <h:outputText  value="#{roomChangeController.current.guardian.phone}"  />
                                 </h:panelGrid>
                             </p:panel>
 
-                            <p:panel header="Current Room Detail">
+                            <p:panel header="Current Gaurdian Room Detail">
                                 <p:panelGrid columns="2">
 
                                     <h:outputLabel value="Room Name"/>
@@ -81,6 +79,7 @@
 
                                 </p:panelGrid>
                             </p:panel>
+
                         </h:panelGrid>
 
                         <h:panelGrid columns="2" style="min-width: 100%;">
@@ -89,11 +88,17 @@
                             <p:panel header="New Room Detail">
                                 <p:panelGrid columns="2">
                                     <h:outputLabel value="Type Room Number or Facility"/>
-                                    <p:autoComplete converter="fac" forceSelection="true" id="cmbDoc" value="#{roomChangeController.newRoomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoomChange}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;" required="true">
-                                    </p:autoComplete>
+                                    <p:autoComplete converter="fac" forceSelection="true" id="cmbDoc" 
+                                                    value="#{roomChangeController.newRoomFacilityCharge}"
+                                                    completeMethod="#{roomFacilityChargeController.completeRoomChange}"
+                                                    var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   
+                                                    style="width: 400px;" required="true"/>
+
 
                                     <h:outputLabel value="Change at"/>
-                                    <p:calendar styleClass="dateTimePicker" id="changeAt" value="#{roomChangeController.changeAt}" navigator="false" pattern="dd MMMM yyyy hh mm a" >
+                                    <p:calendar styleClass="dateTimePicker" id="changeAt"
+                                                value="#{roomChangeController.changeAt}" 
+                                                navigator="false" pattern="dd MMMM yyyy hh mm a" >
                                         <f:ajax event="dateSelect"  render="changeAt"/>
                                     </p:calendar>
 

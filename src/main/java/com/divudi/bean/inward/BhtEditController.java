@@ -112,8 +112,8 @@ public class BhtEditController implements Serializable {
 
         //Net to check if Any Payment Paid for this BHT
         for (PatientRoom pr : getPatientRoom()) {
-            pr.getRoom().setFilled(false);
-            getRoomFacade().edit(pr.getRoom());
+            pr.getRoomFacilityCharge().getRoom().setFilled(false);
+            getRoomFacade().edit(pr.getRoomFacilityCharge().getRoom());
             getPatientRoomFacade().remove(pr);
         }
         current.setRetired(true);

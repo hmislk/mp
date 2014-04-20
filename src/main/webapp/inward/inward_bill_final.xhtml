@@ -60,14 +60,18 @@
                                                            and bhtSummeryController.due > 0 }">
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>
+                                <h:outputLabel value="Claimable Total " style="font-weight: bold" rendered="#{bhtSummeryController.patientEncounter.claimable}"/>
+                                <h:outputLabel id="claim" value="#{bhtSummeryController.claimableTotal}" rendered="#{bhtSummeryController.patientEncounter.claimable}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </h:outputLabel>
                             </p:panelGrid>      
                         </h:panelGroup>
                         <h:panelGrid columns="2">
                             <h:outputLabel value="Printing Admission Time"/>
-                            <p:calendar value="#{admissionController.current.printingAdmissionTime}" pattern="dd MMMM yyyy hh mm a" >                               
+                            <p:calendar value="#{bhtSummeryController.patientEncounter.printingAdmissionTime}" pattern="dd MMMM yyyy hh mm a" >                               
                             </p:calendar>     
                             <h:outputLabel value="Printing Discharge Time"/>
-                            <p:calendar value="#{admissionController.current.printingDischargeTime}" pattern="dd MMMM yyyy hh mm a" >                               
+                            <p:calendar value="#{bhtSummeryController.patientEncounter.printingDischargeTime}" pattern="dd MMMM yyyy hh mm a" >                               
                             </p:calendar>    
                         </h:panelGrid>
                     </h:panelGrid>
@@ -96,6 +100,8 @@
                         <p:column >
                             <p:inputText value="#{c.adjustedTotal}" rendered="#{c.inwardChargeType ne 'RoomCharges'}">
                                 <f:convertNumber pattern="#,000.00" />
+                                <f:ajax execute="@this" render=":#{p:component('claim')}" 
+                                        listener="#{bhtSummeryController.calFinalValue()}"/>
                             </p:inputText>
                             <h:panelGroup rendered="#{c.inwardChargeType eq 'RoomCharges'}">
                                 <p:dataTable var="b" value="#{c.patientRooms}">   
@@ -124,7 +130,7 @@
 
                                     <p:column>
                                         <p:commandButton ajax="false" value="Save" 
-                                                         action="#{bhtSummeryController.updateTempPatientRoom(b)}"/>
+                                                         action="#{bhtSummeryController.updatePrintingPatientRoom(b)}"/>
                                     </p:column>
 
                                 </p:dataTable>
@@ -139,7 +145,7 @@
                 <p:panel rendered="#{bhtSummeryController.printPreview}">
 
                     <h:panelGrid columns="2">
-                        <p:panel>
+                        <p:panel rendered="#{bhtSummeryController.patientEncounter.claimable}">
                             <f:facet name="header" >   
                                 <h:outputLabel value="Claimable"/>
                             </f:facet>
@@ -155,7 +161,7 @@
                                 </p:commandButton> 
                             </h:panelGrid>
                         </p:panel>
-                        <p:panel header="Not Claimable">
+                        <p:panel header="Not Claimable"  rendered="#{!bhtSummeryController.patientEncounter.claimable}">
                             <h:panelGrid columns="1">
                                 <p:commandButton value="Patient Copy without Professional" ajax="false" >
                                     <p:printer target="notClaimablePatientCopy" ></p:printer>
@@ -179,35 +185,42 @@
                     <p:commandButton value="Check Intrim " ajax="false" action="#{bhtSummeryController.prepareNewBill()}"  styleClass="noPrintButton">
                     </p:commandButton>
 
-                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder"  
+                                  rendered="#{bhtSummeryController.patientEncounter.claimable}">                  
                         <bi:finalBill   bill="#{bhtSummeryController.current}"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
+                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder"  
+                                  rendered="#{bhtSummeryController.patientEncounter.claimable}">                    
                         <bi:finalBill  hosCopy="true"                                       
-                                       bill="#{bhtSummeryController.current}"/>
+                                       bill="#{bhtSummeryController.current}" />
                     </h:panelGroup>
 
-                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
+                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" 
+                                  rendered="#{bhtSummeryController.patientEncounter.claimable}">                    
                         <bi:finalBill duplicate="true"                                   
                                       bill="#{bhtSummeryController.current}" />
                     </h:panelGroup>
 
-                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
+                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">
                         <bi:finalBill  bill="#{bhtSummeryController.current}"
                                        withoutPro="true" showProfessionalOnly="true"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
+                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">                    
                         <bi:finalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
                                        bill="#{bhtSummeryController.current}"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="professional" styleClass="noBorder">       
+                    <h:panelGroup id="professional" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">       
                         <bi:finalProfessionalBill bill="#{bhtSummeryController.current}"  />
                     </h:panelGroup>
 
-                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
+                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" 
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">                  
                         <bi:finalBill duplicate="true"                                   
                                       bill="#{bhtSummeryController.current}" withoutPro="true" showProfessionalOnly="true" />
                     </h:panelGroup>

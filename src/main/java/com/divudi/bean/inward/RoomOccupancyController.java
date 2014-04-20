@@ -6,13 +6,11 @@ package com.divudi.bean.inward;
 
 import com.divudi.entity.inward.PatientRoom;
 import com.divudi.facade.PatientRoomFacade;
-import javax.inject.Named;
-import javax.ejb.EJB;
+import com.divudi.facade.RoomFacade;
+import static com.lowagie.text.SpecialSymbol.get;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 
@@ -26,7 +24,17 @@ public class RoomOccupancyController implements Serializable {
 
     @EJB
     private PatientRoomFacade patientRoomFacade;
+    @EJB
+    RoomFacade roomFacade;
     private List<PatientRoom> patientRooms;
+
+    public RoomFacade getRoomFacade() {
+        return roomFacade;
+    }
+
+    public void setRoomFacade(RoomFacade roomFacade) {
+        this.roomFacade = roomFacade;
+    }
 
     /**
      * Creates a new instance of RoomOccupancyController
@@ -42,9 +50,16 @@ public class RoomOccupancyController implements Serializable {
         this.patientRoomFacade = patientRoomFacade;
     }
 
+    public void update(PatientRoom patientRoom) {        
+        getRoomFacade().edit(patientRoom.getRoomFacilityCharge().getRoom());
+    }
+
     public void createPatientRoom() {
-        String sql = "SELECT pr FROM PatientRoom pr where pr.retired=false"
-                + " and pr.room.filled=true and pr.room.retired=false and pr.dischargedAt is null";
+        String sql = "SELECT pr FROM PatientRoom pr "
+                + " where pr.retired=false"
+                + " and pr.room.filled=true "
+                + " and pr.room.retired=false "
+                + " and pr.dischargedAt is null";
         patientRooms = getPatientRoomFacade().findBySQL(sql);
 
     }

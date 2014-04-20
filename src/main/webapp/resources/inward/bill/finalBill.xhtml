@@ -194,27 +194,42 @@
                                 <td>&nbsp;</td>
                                 <td style="text-align: right;"><h:outputLabel value="-------------------" /></td>
                             </tr>
-                            <tr style="width: 100%;">
-                                <td style="text-align: left; font-size: 13px!important;font-weight: bold!important;">
-                                    <h:outputLabel value="Total"/>
-                                </td>
-                                <td>&nbsp;</td>
-                                <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
+                            <h:panelGroup rendered="#{!cc.attrs.bill.patientEncounter.claimable}">
+                                <tr style="width: 100%;">
+                                    <td style="text-align: left; font-size: 13px!important;font-weight: bold!important;">
+                                        <h:outputLabel value="Total"/>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
 
-                                    <h:outputLabel rendered="#{!cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.grantTotal}" >
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>  
+                                        <h:outputLabel rendered="#{!cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.grantTotal}" >
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </h:outputLabel>  
 
-                                    <h:outputLabel rendered="#{cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.hospitalFee}" >
-                                        <f:convertNumber pattern="#,000.00" />
-                                    </h:outputLabel>  
+                                        <h:outputLabel rendered="#{cc.attrs.showProfessionalOnly}" value="#{cc.attrs.bill.hospitalFee}" >
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </h:outputLabel>  
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{cc.attrs.bill.patientEncounter.claimable}">
+                                <tr style="width: 100%;">
+                                    <td style="text-align: left; font-size: 13px!important;font-weight: bold!important;">
+                                        <h:outputLabel value="Total"/>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td style="text-align: right;font-size: 13px!important;font-weight: bold!important;">
+                                        <h:outputLabel  value="#{cc.attrs.bill.claimableTotal}" >
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </h:outputLabel>  
+                                    </td>
+                                </tr>
+                            </h:panelGroup>
 
                         </h:panelGroup>
 
-                        <h:panelGroup >
+                        <h:panelGroup rendered="#{!cc.attrs.bill.patientEncounter.claimable}" >
                             <tr>
                                 <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
                                     <h:outputLabel  rendered="#{cc.attrs.bill.discount ne 0.0}" value="Discount"/>
@@ -228,7 +243,7 @@
                             </tr>
                         </h:panelGroup>
 
-                        <h:panelGroup >
+                        <h:panelGroup rendered="#{!cc.attrs.bill.patientEncounter.claimable}" >
                             <tr>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -259,7 +274,7 @@
                         </h:panelGroup>
 
 
-                        <h:panelGroup>
+                        <h:panelGroup rendered="#{!cc.attrs.bill.patientEncounter.claimable}">
                             <tr>
                                 <td style="text-align: left;font-size: 13px!important;font-weight: bold!important;">
                                     <h:outputLabel   value="Paid By Patient " rendered="#{cc.attrs.bill.paidAmount !=0}"/>

@@ -5,6 +5,7 @@
  */
 package com.divudi.bean;
 
+import com.divudi.entity.Patient;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.Barcode39;
@@ -30,7 +31,7 @@ import org.primefaces.model.StreamedContent;
  *
  * @author Buddhika
  */
-@Named(value = "barcodeController")
+@Named
 @RequestScoped
 public class BarcodeController {
 
@@ -55,12 +56,13 @@ public class BarcodeController {
         StreamedContent barcode = null;
         //Barcode  
         System.out.println("creating pt bar code");
-        File barcodeFile = new File("ptbarcode");
+
+        File barcodeFile = new File(getPatientController().getCurrent().toString());
         System.out.println("current = " + getPatientController().getCurrent());
         if (getPatientController().getCurrent() != null && getPatientController().getCurrent().getCode() != null && !getPatientController().getCurrent().getCode().trim().equals("")) {
             System.out.println("getCurrent().getCode() = " + getPatientController().getCurrent().getCode());
             try {
-                BarcodeImageHandler.saveJPEG(BarcodeFactory.createCode128(getPatientController().getCurrent().getCode()), barcodeFile);
+                BarcodeImageHandler.saveJPEG(BarcodeFactory.createCode128C(getPatientController().getCurrent().getCode()), barcodeFile);
                 barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
             } catch (Exception ex) {
                 System.out.println("ex = " + ex.getMessage());
@@ -68,7 +70,7 @@ public class BarcodeController {
         } else {
             System.out.println("else = ");
             try {
-                Barcode bc = BarcodeFactory.createCode128A("0000");
+                Barcode bc = BarcodeFactory.createCode128C("0000");
                 bc.setBarHeight(5);
                 bc.setBarWidth(3);
                 bc.setDrawingText(true);
@@ -79,6 +81,23 @@ public class BarcodeController {
                 System.out.println("ex = " + ex.getMessage());
             }
         }
+        return barcode;
+    }
+
+    public StreamedContent getCreateBarcode(String code) {
+        StreamedContent barcode = null;
+        System.out.println("code = " + code);
+        if (code == null || code.trim().equals("")) {
+            return null;
+        }
+        File barcodeFile = new File(code);
+        try {
+            BarcodeImageHandler.saveJPEG(BarcodeFactory.createCode128C(code), barcodeFile);
+            barcode = new DefaultStreamedContent(new FileInputStream(barcodeFile), "image/jpeg");
+        } catch (Exception ex) {
+            System.out.println("ex = " + ex.getMessage());
+        }
+
         return barcode;
     }
 

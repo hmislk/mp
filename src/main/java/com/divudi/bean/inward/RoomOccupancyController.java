@@ -50,15 +50,17 @@ public class RoomOccupancyController implements Serializable {
         this.patientRoomFacade = patientRoomFacade;
     }
 
-    public void update(PatientRoom patientRoom) {        
+    public void update(PatientRoom patientRoom) {
+
         getRoomFacade().edit(patientRoom.getRoomFacilityCharge().getRoom());
+        createPatientRoom();
     }
 
     public void createPatientRoom() {
         String sql = "SELECT pr FROM PatientRoom pr "
                 + " where pr.retired=false"
-                + " and pr.room.filled=true "
-                + " and pr.room.retired=false "
+                + " and pr.roomFacilityCharge.room.filled=true "
+                + " and pr.roomFacilityCharge.room.retired=false "
                 + " and pr.dischargedAt is null";
         patientRooms = getPatientRoomFacade().findBySQL(sql);
 

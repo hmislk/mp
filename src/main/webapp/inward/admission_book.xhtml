@@ -61,13 +61,7 @@
                                     <h:outputLabel value="#{i.bhtNo}" ></h:outputLabel>
                                 </p:column>
                                 
-                                <p:column headerText="Room No">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Room No"/>
-                                    </f:facet>
-                                    <h:outputLabel  value="#{i.parentEncounter.currentPatientRoom.roomFacilityCharge.room.name}" ></h:outputLabel>
-                                </p:column>
-
+                             
                                 <p:column headerText="Patient Name">
                                     <f:facet name="header">
                                         <h:outputLabel value="Patient Name"/>
@@ -89,7 +83,8 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Admited Date"/>
                                     </f:facet>                                    
-                                    <h:outputLabel value="#{i.parentEncounter.dateOfAdmission}"  >
+                                    <h:outputLabel value="#{i.dateOfAdmission}"  >
+                                        <f:convertDateTime pattern="dd MM yyyy hh mm a" ></f:convertDateTime>
                                     </h:outputLabel>
                                 </p:column>
                                 
@@ -141,19 +136,19 @@
                                     </h:outputLabel>
                                 </p:column>
                                 
-                                <p:column headerText="Health Scheme">
+                                <p:column headerText="MemberShip Scheme">
                                     <f:facet name="header">
-                                        <h:outputLabel value="Health Scheme"/>
+                                        <h:outputLabel value="MemberShip Scheme"/>
                                     </f:facet>                                    
-                                    <h:outputLabel   >
+                                    <h:outputLabel  value="#{i.patient.person.membershipScheme.name}" >
                                     </h:outputLabel>
                                 </p:column>
                                 
-                                <p:column headerText="Supplier Name">
+                                <p:column headerText="Credit Company Name">
                                     <f:facet name="header">
-                                        <h:outputLabel value="Supplier Name"/>
+                                        <h:outputLabel value="Credit Company Name"/>
                                     </f:facet>                                    
-                                    <h:outputLabel   >
+                                    <h:outputLabel  value="#{i.creditCompany.name}" >
                                     </h:outputLabel>
                                 </p:column>
                                 
@@ -165,19 +160,6 @@
                                         <f:convertDateTime pattern="dd MM yyyy hh mm a" ></f:convertDateTime>
                                     </h:outputLabel>
                                 </p:column>
-
-                                <p:columnGroup type="footer">
-                                    <p:row>
-                                        <p:column colspan="5"/>
-                                        <p:column style="text-align: right;" >
-                                            <f:facet name="footer">
-                                                <h:outputLabel value="#{reportsTransfer.purchaseValue}" >
-                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                                </h:outputLabel>
-                                            </f:facet>
-                                        </p:column>                                        
-                                    </p:row>
-                                </p:columnGroup>
 
                             </p:dataTable>
                         </h:panelGroup>

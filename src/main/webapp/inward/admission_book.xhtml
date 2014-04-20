@@ -19,9 +19,9 @@
                         <h:panelGrid columns="6" >
                             
                             <h:outputLabel value="From" ></h:outputLabel>
-                            <p:calendar value="#{bhtSummeryController.fromDate}" pattern="dd MM yyyy" ></p:calendar>
+                            <p:calendar value="#{bhtSummeryController.fromDate}" pattern="dd MM yyyy hh mm a" ></p:calendar>
                             <h:outputLabel value="To" ></h:outputLabel>
-                            <p:calendar value="#{bhtSummeryController.toDate}" pattern="dd MM yyyy" ></p:calendar>
+                            <p:calendar value="#{bhtSummeryController.toDate}" pattern="dd MM yyyy hh mm a" ></p:calendar>
                         </h:panelGrid>
 
                         <h:panelGrid columns="3">
@@ -60,6 +60,13 @@
                                     </f:facet>
                                     <h:outputLabel value="#{i.bhtNo}" ></h:outputLabel>
                                 </p:column>
+                                
+                                <p:column headerText="Room No">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Room No"/>
+                                    </f:facet>
+                                    <h:outputLabel  value="#{i.parentEncounter.currentPatientRoom.roomFacilityCharge.room.name}" ></h:outputLabel>
+                                </p:column>
 
                                 <p:column headerText="Patient Name">
                                     <f:facet name="header">
@@ -67,6 +74,95 @@
                                     </f:facet>                                    
                                     <h:outputLabel value="#{i.patient.person.name}"  >
                                         <f:convertDateTime pattern="dd/MM/yy" ></f:convertDateTime>
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor Name">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Doctor Name"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.opdDoctor.person.nameWithTitle}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Admited Date">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Admited Date"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.parentEncounter.dateOfAdmission}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Address">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Address"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.patient.person.address}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Phone">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Phone"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.patient.person.phone}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Gurdian Name">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Gurdian Name"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.guardian.nameWithTitle}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Gurdian Address">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Gurdian Address"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.guardian.address}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Gurdian Phone">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Gurdian Phone"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.guardian.phone}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Payment Method">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Payment Method"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.paymentMethod}"  >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Health Scheme">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Health Scheme"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel   >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Supplier Name">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Supplier Name"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel   >
+                                    </h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Discharge Date">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Discharge Date"/>
+                                    </f:facet>                                    
+                                    <h:outputLabel value="#{i.dateOfDischarge}"  >
+                                        <f:convertDateTime pattern="dd MM yyyy hh mm a" ></f:convertDateTime>
                                     </h:outputLabel>
                                 </p:column>
 

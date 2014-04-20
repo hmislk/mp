@@ -8,9 +8,9 @@
  */
 package com.divudi.bean.inward;
 
-import com.divudi.bean.memberShip.InwardMemberShipDiscount;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.bean.memberShip.InwardMemberShipDiscount;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
@@ -35,10 +35,11 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.Item;
+import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.PatientItem;
 import com.divudi.entity.PreBill;
+import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.inward.Admission;
 import com.divudi.entity.inward.GuardianRoom;
@@ -61,6 +62,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -121,6 +123,7 @@ public class BhtSummeryController implements Serializable {
     List<Bill> storeIssues;
     List<PatientItem> patientItems;
     private List<ChargeItemTotal> chargeItemTotals;
+    List<PatientEncounter> admissionBook;
     //////////////////////////
     private double grantTotal = 0.0;
     private double discount;
@@ -131,6 +134,8 @@ public class BhtSummeryController implements Serializable {
     private Bill current;
     private Date currentTime;
     private Date toTime;
+    Date fromDate;
+    Date toDate;
     private boolean printPreview;
     @Inject
     private InwardMemberShipDiscount inwardMemberShipDiscount;
@@ -153,6 +158,52 @@ public class BhtSummeryController implements Serializable {
 
     public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
         this.priceMatrixBean = priceMatrixBean;
+    }
+
+    public Date getFromDate() {
+        if(fromDate == null){
+            fromDate = getCommonFunctions().getStartOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        }
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        if(toDate == null){
+            toDate = getCommonFunctions().getEndOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        }
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public List<PatientEncounter> getAdmissionBook() {
+        return admissionBook;
+    }
+
+    public void setAdmissionBook(List<PatientEncounter> admissionBook) {
+        this.admissionBook = admissionBook;
+    }
+    
+        
+    
+    
+    
+    
+    public void fillAdmissionBook(){
+        Map m = new HashMap();
+        String sql = "select b from PatientEncounter b "
+                      + " where b.retired=false "
+                      + " and b.dateOfAdmission between :fd and :td ";
+        m.put("fd",fromDate);
+        m.put("td", toDate);
+        admissionBook = getPatientEncounterFacade().findBySQL(sql, m,TemporalType.TIMESTAMP);
+        
     }
 
     public void createBillItems(Item item) {

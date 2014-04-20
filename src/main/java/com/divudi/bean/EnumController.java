@@ -6,6 +6,7 @@
 package com.divudi.bean;
 
 import com.divudi.data.BillType;
+import com.divudi.data.InvestigationItemValueType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
@@ -28,6 +29,14 @@ public class EnumController implements Serializable {
 
     private PaymentScheme paymentScheme;
 
+     InvestigationItemValueType[] investigationItemValueTypes;
+
+    public InvestigationItemValueType[] getInvestigationItemValueTypes() {
+        return InvestigationItemValueType.values() ;
+    }
+    
+    
+    
     public Title[] getTitle() {
         return Title.values();
     }

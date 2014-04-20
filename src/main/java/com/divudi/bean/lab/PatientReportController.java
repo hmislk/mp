@@ -36,6 +36,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
@@ -148,8 +149,7 @@ public class PatientReportController implements Serializable {
         }
         return "lab_patient_report";
     }
-    
-   
+
 //    public List<PatientReportItemValue> getPatientReportItemValuesValues() {
 //        if (currentPatientReport != null) {
 //            patientReportItemValuesValues = currentPatientReport.getPatientReportItemOfValueType();
@@ -158,7 +158,6 @@ public class PatientReportController implements Serializable {
 //        }
 //        return patientReportItemValuesValues;
 //    }
-
 //    public void setPatientReportItemValuesValues(List<PatientReportItemValue> patientReportItemValuesValues) {
 //        this.patientReportItemValuesValues = patientReportItemValuesValues;
 //    }
@@ -172,11 +171,9 @@ public class PatientReportController implements Serializable {
 //
 //        return patientReportItemValuesFlags;
 //    }
-
 //    public void setPatientReportItemValuesFlags(List<PatientReportItemValue> patientReportItemValuesFlags) {
 //        this.patientReportItemValuesFlags = patientReportItemValuesFlags;
 //    }
-
 //    public List<PatientReportItemValue> getPatientReportItemValuesDynamicLabels() {
 //        if (currentPatientReport != null) {
 //            patientReportItemValuesDynamicLabels = currentPatientReport.getPatientReportItemOfDynamicLabelType();
@@ -189,7 +186,6 @@ public class PatientReportController implements Serializable {
 //    public void setPatientReportItemValuesDynamicLabels(List<PatientReportItemValue> patientReportItemValuesDynamicLabels) {
 //        this.patientReportItemValuesDynamicLabels = patientReportItemValuesDynamicLabels;
 //    }
-
 //    public List<PatientReportItemValue> getPatientReportItemValuesCalculations() {
 //        if (currentPatientReport != null) {
 //            patientReportItemValuesCalculations = currentPatientReport.getPatientReportItemOfCalculationType();
@@ -202,7 +198,6 @@ public class PatientReportController implements Serializable {
 //    public void setPatientReportItemValuesCalculations(List<PatientReportItemValue> patientReportItemValuesCalculations) {
 //        this.patientReportItemValuesCalculations = patientReportItemValuesCalculations;
 //    }
-
     public String getStrEnterVal() {
         //System.out.println("strEnterVal = " + strEnterVal);
         strEnterVal = null;
@@ -261,7 +256,7 @@ public class PatientReportController implements Serializable {
 
     public void saveMemoVal(long id) {
         PatientReportItemValue v = getPirivFacade().find(id);
-        if (v != null && memoEnterVal != null && !memoEnterVal.trim().equals("") ) {
+        if (v != null && memoEnterVal != null && !memoEnterVal.trim().equals("")) {
             v.setLobValue(memoEnterVal);
             getPirivFacade().edit(v);
         } else {
@@ -289,7 +284,7 @@ public class PatientReportController implements Serializable {
     }
 
     private double findPtReportItemVal(InvestigationItem ii) {
-        //System.out.println("finding report item val");
+        System.err.println("finding report item val");
         if (currentPatientReport == null) {
             UtilityController.addErrorMessage("No Report to calculate");
             return 0;
@@ -302,12 +297,21 @@ public class PatientReportController implements Serializable {
             UtilityController.addErrorMessage("Report Items values is empty");
             return 0;
         }
+        System.out.println("currentPatientReport = " + currentPatientReport);
+        System.out.println("currentPatientReport.getPatientReportItemValues() = " + currentPatientReport.getPatientReportItemValues());
+
         for (PatientReportItemValue priv : currentPatientReport.getPatientReportItemValues()) {
-            //System.out.println("priv in finding val is " + priv.getInvestigationItem().getName());
-            //System.out.println("XXXXXXXXXXX compairing are " + priv.getInvestigationItem().getId() + "  vs " + ii.getId());
-            if (priv.getInvestigationItem().getId() == ii.getId()) {
-                //System.out.println("double val is " + priv.getDoubleValue());
-                return priv.getDoubleValue();
+            if (priv != null) {
+                System.out.println("priv = " + priv);
+                System.out.println("priv in finding val is " + priv.getInvestigationItem().getName());
+                System.out.println("compairing are " + priv.getInvestigationItem().getId() + "  vs " + ii.getId());
+                if (Objects.equals(priv.getInvestigationItem().getId(), ii.getId())) {
+                    System.out.println("double val is " + priv.getDoubleValue());
+                    if (priv.getDoubleValue() == null) {
+                        return 0.0;
+                    }
+                    return priv.getDoubleValue();
+                }
             }
         }
         return 0.0;
@@ -451,7 +455,6 @@ public class PatientReportController implements Serializable {
             //System.err.println("To Age is " + f.getToAge());
 
             //System.out.println("flah low message " + f.getLowMessage());
-
             if (f.getFromAge() <= a && f.getToAge() >= a) {
                 //System.out.println("searching val");
                 PatientReportItemValue val = findItemValue(currentPatientReport, f.getInvestigationItemOfValueType());
@@ -681,7 +684,7 @@ public class PatientReportController implements Serializable {
             if (currentPatientReport != null) {
                 currentPtIx = currentPatientReport.getPatientInvestigation();
             }
-            
+
         }
         return currentPtIx;
     }
@@ -816,10 +819,6 @@ public class PatientReportController implements Serializable {
         this.transferController = transferController;
     }
 
-    
-    
-    
-    
     @FacesConverter(forClass = PatientReport.class)
     public static class PatientReportControllerConverter implements Converter {
 

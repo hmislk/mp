@@ -148,6 +148,9 @@ public class BhtSummeryController implements Serializable {
     }
 
     public Date getFromDate() {
+        if(fromDate == null){
+            fromDate = getCommonFunctions().getStartOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        }
         return fromDate;
     }
 
@@ -156,6 +159,9 @@ public class BhtSummeryController implements Serializable {
     }
 
     public Date getToDate() {
+        if(toDate == null){
+            toDate = getCommonFunctions().getEndOfDay(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        }
         return toDate;
     }
 
@@ -178,12 +184,12 @@ public class BhtSummeryController implements Serializable {
     
     public void fillAdmissionBook(){
         Map m = new HashMap();
-        String sql = "select b from PatientEncounter b"
-                      +"and where b.retired=false"
-                      +"and b.dateOfAdmission between :fd and td";
-        m.put(sql,fromDate);
-        m.put(sql, toDate);
-        admissionBook = getPatientEncounterFacade().findBySQL(sql, m);
+        String sql = "select b from PatientEncounter b "
+                      + " where b.retired=false "
+                      + " and b.dateOfAdmission between :fd and :td ";
+        m.put("fd",fromDate);
+        m.put("td", toDate);
+        admissionBook = getPatientEncounterFacade().findBySQL(sql, m,TemporalType.TIMESTAMP);
         
     }
 

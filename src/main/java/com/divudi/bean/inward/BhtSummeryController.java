@@ -404,6 +404,12 @@ public class BhtSummeryController implements Serializable {
                 return true;
             }
         }
+        
+        for (RoomChargeData rcd : getGuadianRoomChargeDatas()) {
+            if (rcd != null && rcd.getPatientRoom() != null && rcd.getPatientRoom().getDischargedAt() == null) {
+                return true;
+            }
+        }
 
         return false;
     }

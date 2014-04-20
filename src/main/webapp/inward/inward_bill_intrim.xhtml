@@ -21,7 +21,7 @@
                         <p:outputLabel value="Inward Payment Bill"/>
                         <p:commandButton ajax="false"  value="Refresh" style="float:right;" action="#{bhtSummeryController.createTables()}" />                        
                         <p:commandButton ajax="false"  value="Clear" style="float:right;" action="#{bhtSummeryController.makeNull}" />                                                
-                        <p:commandButton ajax="false" value="To Settle Bill" style="float:right;" action="#{bhtSummeryController.toSettleBill()}" />
+                        <p:commandButton ajax="false" value="To Settle Bill" style="float:right;" action="inward_bill_final" actionListener="#{bhtSummeryController.toSettleBill()}" />
                         <p:commandButton value="Print Intrim" ajax="false" >
                             <p:printer target="intrim" ></p:printer>
                         </p:commandButton>
@@ -99,6 +99,7 @@
 
                     <p:tabView  id="tvPt" style="min-height: 75%;"  >
                         <p:tab id="tabNewPt" title="Room Detail" >
+                          
                             <p:dataTable  scrollable="true" scrollHeight="300" 
                                           value="#{bhtSummeryController.roomChargeDatas}" var="rm">
                                 <p:column headerText="Room Name">
@@ -144,33 +145,33 @@
 
                         <p:tab id="tabNewPt2" title="Guardian Room Detail" >
                             <p:dataTable  scrollable="true" scrollHeight="300" 
-                                          value="#{bhtSummeryController.guadianRoomChargeDatas}" var="rm">
+                                          value="#{bhtSummeryController.guadianRoomChargeDatas}" var="rm2">
                                 <p:column headerText="Room Name">
-                                    <h:outputLabel value="#{rm.patientRoom.roomFacilityCharge.name}"/>
+                                    <h:outputLabel value="#{rm2.patientRoom.roomFacilityCharge.name}"/>
                                 </p:column>                                                                          
                                 <p:column headerText="Admitted At">
                                     <p:calendar navigator="true"  
-                                                value="#{rm.patientRoom.admittedAt}" 
+                                                value="#{rm2.patientRoom.admittedAt}" 
                                                 pattern="dd MMMM yyyy hh mm a" />     
                                 </p:column>
                                 <p:column headerText="Discharged At">                                      
                                     <p:calendar navigator="true"  
-                                                value="#{rm.patientRoom.dischargedAt}" 
+                                                value="#{rm2.patientRoom.dischargedAt}" 
                                                 pattern="dd MMMM yyyy hh mm a" /> 
                                 </p:column>
                                 <p:column headerText="Room Charge">
-                                    <h:outputLabel value="#{rm.chargeTot}">
+                                    <h:outputLabel value="#{rm2.chargeTot}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>                                        
                                 </p:column> 
                                 <p:column headerText="Maintain Charge">
-                                    <h:outputLabel value="#{rm.maintananceTot}">
+                                    <h:outputLabel value="#{rm2.maintananceTot}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                 </p:column>    
                                 <p:column>
                                     <p:commandButton ajax="false" value="Update"
-                                                     action="#{bhtSummeryController.updatePatientRoom(rm.patientRoom)}"/>
+                                                     action="#{bhtSummeryController.updatePatientRoom(rm2.patientRoom)}"/>
                                 </p:column>
 
                             </p:dataTable>

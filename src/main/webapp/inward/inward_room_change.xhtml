@@ -12,7 +12,7 @@
         <h:form>
             <p:panel>
                 <p:panel header="Admitted Patients">
-                    <h:panelGrid id="gpSelectText" columns="3" >
+                    <h:panelGrid id="gpSelectText" columns="4" >
                         <h:outputLabel value="Type Patinet Name or BHT"/>
                         <p:autoComplete converter="dis" widgetVar="aPt" id="acPt" forceSelection="true" 
                                         value="#{roomChangeController.current}"
@@ -89,7 +89,11 @@
                             <p:panel header="New Room Detail">
                                 <p:panelGrid columns="2">
                                     <h:outputLabel value="Type Room Number or Facility"/>
-                                    <p:autoComplete converter="fac" forceSelection="true" id="cmbDoc" value="#{roomChangeController.newRoomFacilityCharge}" completeMethod="#{roomFacilityChargeController.completeRoomChange}" var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   style="width: 400px;" required="true">
+                                    <p:autoComplete converter="fac" forceSelection="true"
+                                                    id="cmbDoc" value="#{roomChangeController.newRoomFacilityCharge}" 
+                                                    completeMethod="#{roomFacilityChargeController.completeRoomChange}"
+                                                    var="rf" itemLabel="#{rf.name}" itemValue="#{rf}" size="30"   
+                                                    style="width: 400px;" >
                                     </p:autoComplete>
 
                                     <h:outputLabel value="Change at"/>

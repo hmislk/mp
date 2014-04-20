@@ -442,17 +442,17 @@ public class BhtSummeryController implements Serializable {
         return false;
     }
 
-    public String toSettleBill() {
+    public void toSettleBill() {
         if (!getPatientEncounter().isDischarged()) {
             UtilityController.addErrorMessage("Please Discharge This Patient");
-            return "";
+            return;
         }
 
+ 
         createTables();
         calFinalValue();
         calculateDiscount();
 
-        return "inward_bill_final";
     }
 
     private void saveBill() {
@@ -553,6 +553,7 @@ public class BhtSummeryController implements Serializable {
     }
 
     public void createTables() {
+        makeNull();
         createRoomChargeDatas();
         createGuardianRoomChargeDatas();
         createPatientItems();
@@ -566,6 +567,9 @@ public class BhtSummeryController implements Serializable {
         createChargeItemTotals();
 
         updateTotal();
+
+        roomChargeDatas = null;
+        guadianRoomChargeDatas = null;
     }
 
     private List<PatientItem> createPatientItems() {
@@ -636,6 +640,8 @@ public class BhtSummeryController implements Serializable {
         tmpPI = null;
         currentTime = null;
         toTime = null;
+        guadianRoomChargeDatas = null;
+        roomChargeDatas = null;
     }
 
     public Admission getPatientEncounter() {
@@ -683,7 +689,7 @@ public class BhtSummeryController implements Serializable {
         hm.put("pe", getPatientEncounter());
         hm.put("class", GuardianRoom.class);
         List<PatientRoom> tmp = getPatientRoomFacade().findBySQL(sql, hm);
-
+        System.err.println("PATIENTROOM " + tmp.size());
         setRoomChargeData(tmp);
         // totalLinen = getInwardBean().calTotalLinen(tmp);
 
@@ -700,7 +706,7 @@ public class BhtSummeryController implements Serializable {
                 + " order by pr.createdAt";
         hm.put("pe", getPatientEncounter());
         List<PatientRoom> tmp = getPatientRoomFacade().findBySQL(sql, hm);
-
+        System.err.println("GUARDIANROOM " + tmp.size());
         setGuardianRoomChargeData(tmp);
         // totalLinen = getInwardBean().calTotalLinen(tmp);
 
@@ -747,7 +753,7 @@ public class BhtSummeryController implements Serializable {
     private void setRoomChargeData(List<PatientRoom> tmp) {
 
         for (PatientRoom p : tmp) {
-
+            System.err.println("PATIENT ROOM " + p);
             RoomChargeData rcd = new RoomChargeData();
             rcd.setPatientRoom(p);
             addRoomCharge(rcd, p);
@@ -762,7 +768,7 @@ public class BhtSummeryController implements Serializable {
     private void setGuardianRoomChargeData(List<PatientRoom> tmp) {
 
         for (PatientRoom p : tmp) {
-
+            System.err.println("Gaurdian ROOM " + p);
             RoomChargeData rcd = new RoomChargeData();
             rcd.setPatientRoom(p);
             addRoomCharge(rcd, p);
@@ -770,7 +776,7 @@ public class BhtSummeryController implements Serializable {
             //  addNursingCharge(rcd, p);
             //   addMoCharge(rcd, p);
 
-            roomChargeDatas.add(rcd);
+            guadianRoomChargeDatas.add(rcd);
         }
     }
 
@@ -1214,22 +1220,29 @@ public class BhtSummeryController implements Serializable {
         }
     }
 
+    private void setPrintingPatientRoom(RoomChargeData rcd, ChargeItemTotal cit) {
+        PatientRoom pr = new PatientRoom();
+        pr.setReferencePatientRoom(rcd.getPatientRoom());
+        pr.setAdmittedAt(rcd.getPatientRoom().getAdmittedAt());
+        pr.setDischargedAt(rcd.getPatientRoom().getDischargedAt());
+        pr.setCalculatedRoomCharge(rcd.getChargeTot());
+        pr.setRoomFacilityCharge(rcd.getPatientRoom().getRoomFacilityCharge());
+        pr.setCurrentRoomCharge(rcd.getPatientRoom().getCurrentRoomCharge());
+        cit.getPatientRooms().add(pr);
+    }
+
     private void setRoomChargeList() {
-        List<RoomChargeData> list = new ArrayList<>();
-        list = getRoomChargeDatas();
-        list.addAll(getGuadianRoomChargeDatas());
         for (ChargeItemTotal cit : chargeItemTotals) {
             if (cit.getInwardChargeType() == InwardChargeType.RoomCharges) {
                 //  System.err.println("Inside Room Charges");
-                for (RoomChargeData rcd : list) {
-                    PatientRoom pr = new PatientRoom();
-                    pr.setReferencePatientRoom(rcd.getPatientRoom());
-                    pr.setAdmittedAt(rcd.getPatientRoom().getAdmittedAt());
-                    pr.setDischargedAt(rcd.getPatientRoom().getDischargedAt());
-                    pr.setCalculatedRoomCharge(rcd.getChargeTot());
-                    pr.setRoomFacilityCharge(rcd.getPatientRoom().getRoomFacilityCharge());
-                    pr.setCurrentRoomCharge(rcd.getPatientRoom().getCurrentRoomCharge());
-                    cit.getPatientRooms().add(pr);
+                roomChargeDatas = null;
+                for (RoomChargeData rcd : getRoomChargeDatas()) {
+                    setPrintingPatientRoom(rcd, cit);
+                }
+
+                guadianRoomChargeDatas = null;
+                for (RoomChargeData rcd : getGuadianRoomChargeDatas()) {
+                    setPrintingPatientRoom(rcd, cit);
                 }
 
                 //  System.err.println("Room Charges Size " + cit.getPatientRooms().size());
@@ -1341,6 +1354,8 @@ public class BhtSummeryController implements Serializable {
             nursingCharge += rcd.getNursingTot();
             maintanance += rcd.getMaintananceTot();
         }
+
+        list = null;
 
         for (ChargeItemTotal i : chargeItemTotals) {
             switch (i.getInwardChargeType()) {

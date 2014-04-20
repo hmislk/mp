@@ -18,7 +18,7 @@
                             <p:panel>
                                 <p:commandButton ajax="false" value="Cancel" action="inward_cancel_bill_final" disabled="#{inwardSearch.bill.cancelled}"/>
                             </p:panel>
-                            <p:panel>
+                            <p:panel  rendered="#{bhtSummeryController.patientEncounter.claimable}">
                                 <f:facet name="header" >   
                                     <h:outputLabel value="Claimable"/>
                                 </f:facet>
@@ -36,7 +36,7 @@
                                 </h:panelGrid>
 
                             </p:panel>
-                            <p:panel header="Not Claimable">
+                            <p:panel header="Not Claimable"  rendered="#{!bhtSummeryController.patientEncounter.claimable}">
 
                                 <h:panelGrid columns="1">
 
@@ -99,40 +99,47 @@
 
 
 
-                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder">                  
+                    <h:panelGroup id="claimablePatientCopy" styleClass="noBorder"
+                                  rendered="#{bhtSummeryController.patientEncounter.claimable}">                  
                         <bi:finalBill   bill="#{inwardSearch.bill}"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder">                    
+                    <h:panelGroup id="claimableHospitalCopy" styleClass="noBorder"
+                                  rendered="#{bhtSummeryController.patientEncounter.claimable}">                    
                         <bi:finalBill  hosCopy="true"                                       
-                                             bill="#{inwardSearch.bill}"/>
+                                       bill="#{inwardSearch.bill}"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" >                    
+                    <h:panelGroup id="claimableDuplicate" styleClass="noBorder" 
+                                  rendered="#{bhtSummeryController.patientEncounter.claimable}">                    
                         <bi:finalBill duplicate="true"                                   
-                                            bill="#{inwardSearch.bill}" />
+                                      bill="#{inwardSearch.bill}" />
                     </h:panelGroup>
 
-                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder">
+                    <h:panelGroup id="notClaimablePatientCopy" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">
                         <bi:finalBill  bill="#{inwardSearch.bill}"
-                                             withoutPro="true" showProfessionalOnly="true"/>
+                                       withoutPro="true" showProfessionalOnly="true"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder">                    
+                    <h:panelGroup id="notClaimableHospitalCopy" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">                    
                         <bi:finalBill  hosCopy="true"   withoutPro="true"  showProfessionalOnly="true"                                  
-                                             bill="#{inwardSearch.bill}"/>
+                                       bill="#{inwardSearch.bill}"/>
                     </h:panelGroup>
 
-                    <h:panelGroup id="professional" styleClass="noBorder">       
+                    <h:panelGroup id="professional" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">       
                         <bi:finalProfessionalBill bill="#{inwardSearch.bill}"  />
                     </h:panelGroup>
 
-                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder" >                  
+                    <h:panelGroup id="notClaimableDuplicate" styleClass="noBorder"
+                                  rendered="#{!bhtSummeryController.patientEncounter.claimable}">                
                         <bi:finalBill duplicate="true"                                   
-                                            bill="#{inwardSearch.bill}" withoutPro="true" showProfessionalOnly="true" />
+                                      bill="#{inwardSearch.bill}" withoutPro="true" showProfessionalOnly="true" />
                     </h:panelGroup>
 
-                   
+
 
                 </h:form>
             </ui:define>

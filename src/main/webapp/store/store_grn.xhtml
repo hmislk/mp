@@ -25,7 +25,7 @@
                         <f:selectItem itemLabel="SelectPayment method"/>
                         <f:selectItems value="#{enumController.paymentMethodsForPo}"/>                     
                     </p:selectOneMenu>
-                    <p:commandButton  value="Settle" action="#{storeGrnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                    <p:commandButton   value="Settle" action="#{storeGrnController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
                     </p:commandButton>      
                 </h:panelGrid>
 
@@ -121,34 +121,7 @@
                         </h:panelGroup>
                     </p:column>  
 
-                    <p:column headerText="Date of Expiry" >  
-                        <p:cellEditor >
-                            <f:facet name="output">
-                                <h:outputLabel value="#{bi.pharmaceuticalBillItem.doe}">
-                                    <f:convertDateTime pattern="dd/MM/yy"/>
-                                </h:outputLabel>
-                            </f:facet>
-                            <f:facet name="input">
-                                <p:calendar  value="#{bi.pharmaceuticalBillItem.doe}"  
-                                             navigator="true" pattern="dd/MM/yy"    > 
-                                </p:calendar>  
-                            </f:facet>
-                        </p:cellEditor>                     
-                    </p:column> 
-
-
-                    <p:column headerText="Bathch No" >  
-                        <p:cellEditor >
-                            <f:facet name="output">
-                                <h:outputLabel value="#{bi.pharmaceuticalBillItem.stringValue}" id="txtBatch"/>
-                            </f:facet>
-                            <f:facet name="input">
-                                <p:inputText value="#{bi.pharmaceuticalBillItem.stringValue}">  
-                                </p:inputText>
-                            </f:facet>
-                        </p:cellEditor>
-
-                    </p:column>  
+                      
 
 
                     <p:column >

@@ -744,7 +744,7 @@ public class SearchController implements Serializable {
     }
 
     public void createPharmacyBillItemTableBht() {
-        createBillItemTableBht(BillType.PharmacyBhtPre);
+        createBillItemTableBht(BillType.StoreBhtPre);
     }
 
     public void createStoreBillItemTableBht() {

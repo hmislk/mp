@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.store;
 
+import com.divudi.bean.ApplicationController;
 import com.divudi.bean.pharmacy.*;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
@@ -63,6 +64,8 @@ public class StorePurchaseController implements Serializable {
     private AmpFacade ampFacade;
     @EJB
     PharmacyCalculation pharmacyBillBean;
+    @Inject
+    ApplicationController applicationController;
     ////////////
     private BillItem currentBillItem;
     //private PharmacyItemData currentPharmacyItemData;
@@ -258,10 +261,7 @@ public class StorePurchaseController implements Serializable {
             return;
         }
 
-        if (getCurrentBillItem().getPharmaceuticalBillItem().getDoe() == null) {
-            UtilityController.addErrorMessage("Please Set DAte of Expiry");
-            return;
-        }
+        
 
         if (getCurrentBillItem().getPharmaceuticalBillItem().getQty() <= 0) {
             UtilityController.addErrorMessage("Please enter Purchase QTY");
@@ -277,6 +277,9 @@ public class StorePurchaseController implements Serializable {
             UtilityController.addErrorMessage("Please enter Sale Price");
             return;
         }
+        
+        getCurrentBillItem().getPharmaceuticalBillItem().setDoe(getApplicationController().getStoresExpiery());
+        setBatch();
 
         getCurrentBillItem().setSearialNo(getBillItems().size());
         getBillItems().add(currentBillItem);
@@ -452,5 +455,15 @@ public class StorePurchaseController implements Serializable {
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
     }
+
+    public ApplicationController getApplicationController() {
+        return applicationController;
+    }
+
+    public void setApplicationController(ApplicationController applicationController) {
+        this.applicationController = applicationController;
+    }
+    
+    
 
 }

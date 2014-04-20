@@ -109,7 +109,7 @@
                     <p:column headerText="Qty" style="width:20%"> 
                         <p:inputText  id="qty" value="#{bi.tmpQty}" style="width:100%" label="Qty">  
                             <f:convertNumber pattern="#00.00"/>
-                            <f:ajax event="blur" render="total :#{p:component('tot')} "  execute="@this price" listener="#{storePurchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
+                            <f:ajax event="keyup" render="total :#{p:component('tot')} "  execute="@this price" listener="#{storePurchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
                             <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{storePurchaseOrderRequestController.onFocus(bi)}" />
                         </p:inputText>
                     </p:column>  
@@ -117,7 +117,7 @@
                         <h:panelGroup id="price">
                             <p:inputText value="#{bi.pharmaceuticalBillItem.purchaseRate}">
                                 <f:convertNumber pattern="#00.00"/>
-                                <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this qty" listener="#{storePurchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
+                                <f:ajax event="keyup" render="total :#{p:component('tot')}"  execute="@this qty" listener="#{storePurchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
                                 <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{storePurchaseOrderRequestController.onFocus(bi)}" />
                             </p:inputText>
                         </h:panelGroup>

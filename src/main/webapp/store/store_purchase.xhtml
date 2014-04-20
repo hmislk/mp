@@ -42,15 +42,12 @@
 
                 <h:panelGrid id="itemselectgrid" columns="2" style="min-width: 100%;">
                     <p:focus id="focusItem" for="acItem" ></p:focus>
-                    <p:panelGrid id="itemSelectgrid1" columns="8">                       
+                    <p:panelGrid id="itemSelectgrid1" columns="6">                       
                         <h:outputLabel value="Select Item"/>
                         <h:outputLabel value="Qty"/>
                         <h:outputLabel value="Free"/>
                         <h:outputLabel value="Purchase Rate"></h:outputLabel>
                         <h:outputLabel value="Sale Price"></h:outputLabel>
-                        <h:outputLabel value="DOE(dd mm yy)"/>
-                        <h:outputLabel value="Bathch No"/>
-
                         <h:outputLabel/>
 
                         <p:autoComplete id="acItem"   value="#{storePurchaseController.currentBillItem.item}" 
@@ -86,12 +83,7 @@
                         <p:inputText id="tmpRetail"  styleClass="numericTxt" 
                                      value="#{storePurchaseController.currentBillItem.pharmaceuticalBillItem.retailRate}"  />  
 
-                        <p:calendar navigator="true"
-                                    id="calDoe" pattern="dd MM yy" value="#{storePurchaseController.currentBillItem.pharmaceuticalBillItem.doe}"   >
-                            <f:ajax event="dateSelect" execute="@this" render="tmp" listener="#{storePurchaseController.setBatch()}"/>
-                        </p:calendar> 
-                        <p:inputText  styleClass="numericTxt" 
-                                      id="tmp" value="#{storePurchaseController.currentBillItem.pharmaceuticalBillItem.stringValue}"  />  
+
                         <p:commandButton id="btnAdd" value="Add Item" 
                                          action="#{storePurchaseController.addItem}" 
                                          process="itemselectgrid" update="itemList itemselectgrid tot focusItem :#{p:component('total')}"/>
@@ -145,17 +137,7 @@
                     </p:column>  
 
 
-                    <p:column headerText="Batch" style="width:24%">                   
-                        <h:inputText id="txtBatch" value="#{ph.pharmaceuticalBillItem.stringValue}" >
-                            <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this" listener="#{storePurchaseController.onEdit(ph)}" ></f:ajax> 
-                        </h:inputText>
-                    </p:column>  
-
-                    <p:column headerText="DoE" style="width:24%">                    
-                        <p:calendar  value="#{ph.pharmaceuticalBillItem.doe}"   navigator="true" pattern="dd/MM/yy" >
-                            <f:ajax event="dateSelect" execute="@this" render="txtBatch" listener="#{storePurchaseController.setBatch(ph)}"/>
-                        </p:calendar>
-                    </p:column>
+                    
 
 
                     <p:column headerText="Profit Margin" style="width:24%">                    

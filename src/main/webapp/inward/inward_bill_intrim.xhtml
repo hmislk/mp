@@ -56,7 +56,7 @@
                             <p:outputLabel rendered="#{bhtSummeryController.patientEncounter.foriegner}" value="Foriegner "></p:outputLabel><br/>
                             <p:outputLabel rendered="#{bhtSummeryController.patientEncounter.claimable}" value="Claimable Bill"></p:outputLabel>
                         </p:panel>
-                        
+
 
 
                         <p:panel header="Summery" id="tot">
@@ -102,7 +102,7 @@
                             <p:dataTable  scrollable="true" scrollHeight="300" 
                                           value="#{bhtSummeryController.roomChargeDatas}" var="rm">
                                 <p:column headerText="Room Name">
-                                    #{rm.patientRoom.roomFacilityCharge.name}
+                                    <h:outputLabel value="#{rm.patientRoom.roomFacilityCharge.name}"/>
                                 </p:column>                                                                          
                                 <p:column headerText="Admitted At">
                                     <p:calendar navigator="true"  
@@ -134,6 +134,40 @@
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                 </p:column> 
+                                <p:column>
+                                    <p:commandButton ajax="false" value="Update"
+                                                     action="#{bhtSummeryController.updatePatientRoom(rm.patientRoom)}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tabNewPt2" title="Guardian Room Detail" >
+                            <p:dataTable  scrollable="true" scrollHeight="300" 
+                                          value="#{bhtSummeryController.guadianRoomChargeDatas}" var="rm">
+                                <p:column headerText="Room Name">
+                                    <h:outputLabel value="#{rm.patientRoom.roomFacilityCharge.name}"/>
+                                </p:column>                                                                          
+                                <p:column headerText="Admitted At">
+                                    <p:calendar navigator="true"  
+                                                value="#{rm.patientRoom.admittedAt}" 
+                                                pattern="dd MMMM yyyy hh mm a" />     
+                                </p:column>
+                                <p:column headerText="Discharged At">                                      
+                                    <p:calendar navigator="true"  
+                                                value="#{rm.patientRoom.dischargedAt}" 
+                                                pattern="dd MMMM yyyy hh mm a" /> 
+                                </p:column>
+                                <p:column headerText="Room Charge">
+                                    <h:outputLabel value="#{rm.chargeTot}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputLabel>                                        
+                                </p:column> 
+                                <p:column headerText="Maintain Charge">
+                                    <h:outputLabel value="#{rm.maintananceTot}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputLabel>
+                                </p:column>    
                                 <p:column>
                                     <p:commandButton ajax="false" value="Update"
                                                      action="#{bhtSummeryController.updatePatientRoom(rm.patientRoom)}"/>

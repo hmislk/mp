@@ -60,6 +60,10 @@
                                                            and bhtSummeryController.due > 0 }">
                                     <f:convertNumber pattern="#,000.00" />
                                 </h:outputLabel>
+                                <h:outputLabel value="Claimable Total " style="font-weight: bold" rendered="#{bhtSummeryController.patientEncounter.claimable}"/>
+                                <h:outputLabel id="claim" value="#{bhtSummeryController.claimableTotal}" rendered="#{bhtSummeryController.patientEncounter.claimable}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </h:outputLabel>
                             </p:panelGrid>      
                         </h:panelGroup>
                         <h:panelGrid columns="2">
@@ -96,6 +100,8 @@
                         <p:column >
                             <p:inputText value="#{c.adjustedTotal}" rendered="#{c.inwardChargeType ne 'RoomCharges'}">
                                 <f:convertNumber pattern="#,000.00" />
+                                <f:ajax execute="@this" render="claim" 
+                                        listener="#{bhtSummeryController.calFinalValue()}"/>
                             </p:inputText>
                             <h:panelGroup rendered="#{c.inwardChargeType eq 'RoomCharges'}">
                                 <p:dataTable var="b" value="#{c.patientRooms}">   
@@ -124,7 +130,7 @@
 
                                     <p:column>
                                         <p:commandButton ajax="false" value="Save" 
-                                                         action="#{bhtSummeryController.updateTempPatientRoom(b)}"/>
+                                                         action="#{bhtSummeryController.updatePrintingPatientRoom(b)}"/>
                                     </p:column>
 
                                 </p:dataTable>

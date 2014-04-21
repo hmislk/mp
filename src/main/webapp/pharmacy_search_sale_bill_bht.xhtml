@@ -21,7 +21,10 @@
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
                                 <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPharmacyTableBht}"/>
-                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                                <p:spacer height="30"/>
+                                
+                                <h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                                <h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
                                 <h:outputLabel value="Bht No"/>
@@ -89,7 +92,7 @@
                             </p:column>                      
 
                             <p:column headerText="Net Value"  >
-                                <h:outputLabel value="#{bill.netTotal}" >
+                                <h:outputLabel value="#{bill.total}" >
                                     <f:convertNumber pattern="#,000.00"/>
                                 </h:outputLabel>
                             </p:column>
@@ -132,7 +135,7 @@
                                         </h:panelGroup> 
                                     </p:column>                                                     
                                     <p:column >
-                                        <h:outputLabel value="#{rb.netTotal}">
+                                        <h:outputLabel value="#{rb.total}">
                                             <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>                                  
                                     </p:column>

@@ -925,7 +925,7 @@ public class PharmacyItemExcelManager implements Serializable {
 
             }
             UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
-            return "pharmacy_purchase";
+            return "/pharmacy_purchase";
         } catch (IOException ex) {
             UtilityController.addErrorMessage(ex.getMessage());
             return "";

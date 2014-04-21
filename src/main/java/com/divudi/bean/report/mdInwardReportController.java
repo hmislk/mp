@@ -362,6 +362,8 @@ public class mdInwardReportController implements Serializable {
     public void setBil(List<Bill> bil) {
         this.bil = bil;
     }
+    
+    
 
 //    public void listInwardBillItems(){
 //    

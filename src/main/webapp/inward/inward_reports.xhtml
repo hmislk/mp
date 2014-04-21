@@ -54,11 +54,12 @@
                         
                         <p:panel header="Inward Admission Book">
                             <h:panelGrid columns="1">
-                                <p:commandButton styleClass="linkButton" ajax="false" value="Admission Detail" action="report_inward_payment_by_bill_item" actionListener="#{mdInwardReportController.makeNull}"/> 
+                                <p:commandButton value="Admission Detail" action="report_inward_payment_by_bill_item" actionListener="#{mdInwardReportController.makeNull}" styleClass="linkButton" ajax="false" /> 
                             </h:panelGrid>
                         </p:panel>
-
-                     
+                        <p:panel header="Surgery Reports">
+                            
+                        </p:panel>                     
 
                     </h:panelGrid>
                 </h:form>

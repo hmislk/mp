@@ -23,8 +23,10 @@
                                     <h:outputLabel value="Search" />
                                     <p:commandButton id="btnAddPt" style="float: right;" value="New" process="btnAddPt" 
                                                      update="acPt :#{p:component('panelDetails')} :#{p:component('patientDetail')} " action="#{patientController.prepareAdd()}" >
-
                                     </p:commandButton>
+                                    <p:commandButton id="btnPrintCard" action="/clinical/clinical_print_barcode" style="float: right;" value="Print Card" ajax="false">
+                                    </p:commandButton>
+
                                 </f:facet>
 
                                 <h:panelGrid columns="1" >
@@ -110,7 +112,7 @@
                                     <p:commandButton  ajax="false" value="Save" action="#{patientController.saveSelected()}" ></p:commandButton>
                                 </f:facet>
 
-                                <h:panelGrid id="patientDetail" columns="3" >
+                                <h:panelGrid id="patientDetail" columns="2" >
                                     <h:panelGrid columns="2" >
                                         <h:outputLabel value="Title"/>
                                         <p:selectOneMenu  rendered="#{patientController.current.person ne null}" id="cmbTitle" value="#{patientController.current.person.title}"  >
@@ -205,98 +207,6 @@
 
                                     </p:panel>
 
-                                    <p:panel >
-
-
-                                        <p:panel header="Patient Card" >
-                                            <f:facet name="header" >
-                                                <p:commandButton style="nonPrintBlock" value="Print Patient Card" >
-                                                    <p:printer target="ptCard" ></p:printer>
-                                                </p:commandButton>
-                                            </f:facet>
-
-                                            <p:panel id="ptCard" >
-
-                                                <div class="patientCard" >
-                                                    <table>
-                                                        <tr>
-                                                            <td colspan="3" style="text-align: center; vertical-align: middle; padding: 10px; font-family: Arial" >
-
-                                                                <h:outputLabel value="#{sessionController.institution.name}" ></h:outputLabel>
-
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="3" >
-                                                                <h1><h:outputLabel value="#{sessionController.institution.address}" ></h:outputLabel></h1>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td>
-                                                                Name
-                                                            </td>
-                                                            <td>
-                                                                :
-                                                            </td>
-                                                            <td>
-                                                                #{patientController.current.person.nameWithTitle}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Address
-                                                            </td>
-                                                            <td>
-                                                                :
-                                                            </td>
-                                                            <td>
-                                                                #{patientController.current.person.address}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Date of Issue
-                                                            </td>
-                                                            <td>
-                                                                :
-                                                            </td>
-                                                            <td>
-                                                                <h:outputLabel value="#{patientController.current.createdAt}" >
-                                                                    <f:convertDateTime parent="dd MMM yyyy" ></f:convertDateTime>
-                                                                </h:outputLabel>
-
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Code
-                                                            </td>
-                                                            <td>
-                                                                :
-                                                            </td>
-                                                            <td>
-                                                                <h:outputLabel value="#{patientController.current.code}" >
-                                                                </h:outputLabel>
-
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="3" style="text-align: center; vertical-align: middle;" >
-                                                                <p:graphicImage value="#{barcodeController.createPatientBarcode}" style="max-width: 7.5cm; padding: 10px; margin: 10px;" ></p:graphicImage>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-
-
-                                                </div>
-
-                                            </p:panel>
-
-                                        </p:panel>
-
-
-                                    </p:panel>
 
                                 </h:panelGrid>
 

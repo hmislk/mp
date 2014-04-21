@@ -115,6 +115,10 @@ public class Item implements Serializable {
     boolean patientNotRequired;
     boolean chargesVisibleForInward;
     boolean requestForQuentity;
+    @ManyToOne
+    Institution manufacturer;
+    @ManyToOne
+    Institution importer;
 
     @Lob
     String descreption;
@@ -512,7 +516,6 @@ public class Item implements Serializable {
         this.patientNotRequired = patientNotRequired;
     }
 
-   
     public SessionNumberType getSessionNumberType() {
         return sessionNumberType;
     }
@@ -601,9 +604,22 @@ public class Item implements Serializable {
         this.requestForQuentity = requestForQuentity;
     }
 
+    public Institution getManufacturer() {
+        return manufacturer;
+    }
 
-    
-    
+    public void setManufacturer(Institution manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public Institution getImporter() {
+        return importer;
+    }
+
+    public void setImporter(Institution importer) {
+        this.importer = importer;
+    }
+
     static class ReportItemComparator implements Comparator<ReportItem> {
 
         @Override

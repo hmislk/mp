@@ -32,29 +32,29 @@ import javax.persistence.Transient;
  */
 @Entity
 public class Person implements Serializable {
-    @OneToMany(mappedBy = "person")
-     private List<ClinicalFindingValue> clinicalFindingValues;
 
-     static final long serialVersionUID = 1L;
+    @OneToMany(mappedBy = "person")
+    private List<ClinicalFindingValue> clinicalFindingValues;
+
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     Long id;
+    Long id;
     String name;
     String description;
-     String nic;
-     String address;
-     String fax;
-     String email;
-     String website;
-     String mobile;
-     String tName;
-     String sName;
-     String phone;
-     
-     
+    String nic;
+    String address;
+    String fax;
+    String email;
+    String website;
+    String mobile;
+    String tName;
+    String sName;
+    String phone;
+
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date dob;
-    
+    Date dob;
+
     //Created Properties
     @ManyToOne
     WebUser creater;
@@ -68,19 +68,19 @@ public class Person implements Serializable {
     Date retiredAt;
     String retireComments;
     @ManyToOne
-     Area area;
+    Area area;
     @ManyToOne
-     Institution institution;
+    Institution institution;
     @ManyToOne
-     Department department;
+    Department department;
     @Enumerated(EnumType.STRING)
-     Title title;
+    Title title;
     @Enumerated(EnumType.STRING)
     Sex sex;
     @Transient
     String nameWithTitle;
     boolean foreigner = false;
-    
+
     @ManyToOne
     private MembershipScheme membershipScheme;
 
@@ -130,11 +130,10 @@ public class Person implements Serializable {
             } else {
                 temT = "";
             }
-            
+
             nameWithTitle = temT + getName();
         }
 
-       
         return nameWithTitle;
     }
 

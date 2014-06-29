@@ -7,6 +7,7 @@ package com.divudi.entity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.primefaces.model.LazyDataModel;
@@ -37,7 +38,7 @@ public class LazyBillFee extends LazyDataModel<BillFee> {
     }
 
     @Override
-    public List<BillFee> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
+    public List<BillFee> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
         List<BillFee> data = new ArrayList<>();
 
         //filter  
@@ -47,7 +48,14 @@ public class LazyBillFee extends LazyDataModel<BillFee> {
             for (Iterator<String> it = filters.keySet().iterator(); it.hasNext();) {
                 try {
                     String property = it.next();
-                    String stringValue = filters.get(property).toLowerCase();
+                    Object filterValue = filters.get(property);
+                    String stringValue;
+                    if(filterValue instanceof String){
+                        stringValue = (String)filterValue;
+                    }else{
+                        stringValue="";
+                    }
+//                    String stringValue = filters.get(property).toLowerCase();
                     String fieldValue = "";
 
                     String[] arr = property.split("\\.");

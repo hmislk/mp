@@ -70,7 +70,6 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
-import org.primefaces.component.behavior.ajax.AjaxBehavior;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -235,6 +234,8 @@ public class BillController implements Serializable {
         return a;
     }
 
+    
+    
     public List<Bill> completeBillFromDealor(String qry) {
         List<Bill> a = null;
         String sql;

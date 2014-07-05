@@ -53,8 +53,6 @@ public class RoomChangeController implements Serializable {
     private static final long serialVersionUID = 1L;
     @Inject
     SessionController sessionController;
-    @Inject
-    private RoomFacilityChargeController roomFacilityChargeController;
     @EJB
     private AdmissionFacade ejbFacade;
     @EJB
@@ -330,7 +328,6 @@ public class RoomChangeController implements Serializable {
     public PatientRoom getCurrentPatientRoom() {
         if (getPatientRoom().size() > 0) {
             currentPatientRoom = patientRoom.get(getPatientRoom().size() - 1);
-            getRoomFacilityChargeController().setCurrent(currentPatientRoom.getRoomFacilityCharge());
         } else {
             currentPatientRoom = new PatientRoom();
             currentPatientRoom.setRoomFacilityCharge(new RoomFacilityCharge());
@@ -360,13 +357,6 @@ public class RoomChangeController implements Serializable {
         this.roomFacilityChargeFacade = roomFacilityChargeFacade;
     }
 
-    public RoomFacilityChargeController getRoomFacilityChargeController() {
-        return roomFacilityChargeController;
-    }
-
-    public void setRoomFacilityChargeController(RoomFacilityChargeController roomFacilityChargeController) {
-        this.roomFacilityChargeController = roomFacilityChargeController;
-    }
 
     public Date getChangeAt() {
         if (changeAt == null) {

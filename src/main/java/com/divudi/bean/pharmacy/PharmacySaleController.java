@@ -102,7 +102,7 @@ public class PharmacySaleController implements Serializable {
     @EJB
     BillNumberBean billNumberBean;
 /////////////////////////
-    Item selectedAlternative;
+    Item selectedAvailableAmp;
     private PreBill preBill;
     private Bill saleBill;
     Bill printBill;
@@ -149,7 +149,7 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void makeNull() {
-        selectedAlternative = null;
+        selectedAvailableAmp = null;
         preBill = null;
         saleBill = null;
         printBill = null;
@@ -351,27 +351,31 @@ public class PharmacySaleController implements Serializable {
         this.replaceableStocks = replaceableStocks;
     }
 
-    public Item getSelectedAlternative() {
-        return selectedAlternative;
+    public Item getSelectedAvailableAmp() {
+        return selectedAvailableAmp;
     }
 
-    public void setSelectedAlternative(Item selectedAlternative) {
-        this.selectedAlternative = selectedAlternative;
+    public void setSelectedAvailableAmp(Item selectedAvailableAmp) {
+        this.selectedAvailableAmp = selectedAvailableAmp;
     }
 
     public void selectReplaceableStocks() {
-        if (selectedAlternative == null || !(selectedAlternative instanceof Amp)) {
+        if (selectedAvailableAmp == null || !(selectedAvailableAmp instanceof Amp)) {
             replaceableStocks = new ArrayList<>();
             return;
         }
         String sql;
         Map m = new HashMap();
         double d = 0.0;
-        Amp amp = (Amp) selectedAlternative;
+        Amp amp = (Amp) selectedAvailableAmp;
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         m.put("s", d);
         m.put("vmp", amp.getVmp());
-        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp where i.stock >:s and i.department=:d and amp.vmp=:vmp order by i.itemBatch.item.name";
+        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
+                + "where i.stock >:s and "
+                + "i.department=:d and "
+                + "amp.vmp=:vmp "
+                + "order by i.itemBatch.item.name";
         replaceableStocks = getStockFacade().findBySQL(sql, m);
     }
 
@@ -417,22 +421,22 @@ public class PharmacySaleController implements Serializable {
         return "pharmacy_retail_sale_for_cashier";
     }
 
-    public List<Item> completeRetailSaleItems(String qry) {
+    public List<Item> completeRetailSaleItemsWithoutStocks(String qry) {
         Map m = new HashMap<>();
         List<Item> items;
         String sql;
-        sql = "select i from Item i where i.retired=false and upper(i.name) like :n and type(i)=:t and i.id not in(select ibs.id from Stock ibs where ibs.stock >:s and ibs.department=:d and upper(ibs.itemBatch.item.name) like :n ) order by i.name ";
-        m
-                .put("t", Amp.class
-                );
-        m.put(
-                "d", getSessionController().getLoggedUser().getDepartment());
-        m.put(
-                "n", "%" + qry + "%");
+//        new Stock().getItemBatch().getItem();
+        sql = "select i from Amp i "
+                + "where i.retired=false and "
+                + "(upper(i.name) or upper(i.vmp.name)) like :n and "
+                + "type(i)=:t and "
+                + "i.id not in(select ibs.itemBatch.item.id from Stock ibs where ibs.stock >:s and ibs.department=:d and ibs.itemBatch.item.name like :n) "
+                + "order by i.name ";
+        m.put("t", Amp.class);
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        m.put("n", "%" + qry + "%");
         double s = 0.0;
-
-        m.put(
-                "s", s);
+        m.put("s", s);
         items = getItemFacade().findBySQL(sql, m, 10);
         return items;
     }
@@ -451,8 +455,9 @@ public class PharmacySaleController implements Serializable {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
         items = getStockFacade().findBySQL(sql, m, 20);
-        itemsWithoutStocks = completeRetailSaleItems(qry);
-        //System.out.println("selectedSaleitems = " + itemsWithoutStocks);
+        if (!qry.trim().equals("") && qry.length() >4) {
+            itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
+        }
         return items;
     }
 
@@ -903,7 +908,7 @@ public class PharmacySaleController implements Serializable {
             getPreBill().setTotal(getPreBill().getTotal() + b.getNetValue());
         }
 
-     //   netTot = netTot + getPreBill().getServiceCharge();
+        //   netTot = netTot + getPreBill().getServiceCharge();
         getPreBill().setNetTotal(netTot);
         getPreBill().setTotal(grossTot);
         getPreBill().setGrantTotal(grossTot);

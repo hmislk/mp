@@ -103,7 +103,7 @@
                                         <p:tab title="Availability" >
                                             <h:panelGrid columns="1" >
                                                 <p:panel header="Not Available" >
-                                                    <p:selectOneListbox id="lstSelectItems" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" value="#{pharmacySaleController.selectedAlternative}"  >
+                                                    <p:selectOneListbox id="lstSelectItems" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" value="#{pharmacySaleController.selectedAvailableAmp}"  >
                                                         <f:selectItems  value="#{pharmacySaleController.itemsWithoutStocks}" var="si" itemLabel="#{si.name}" itemValue="#{si}" ></f:selectItems>
                                                         <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{pharmacySaleController.selectReplaceableStocks}" ></p:ajax>
                                                     </p:selectOneListbox>

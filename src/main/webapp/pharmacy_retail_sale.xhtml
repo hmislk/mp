@@ -61,6 +61,7 @@
                                                                 </p:column>
                                                                 <p:ajax event="focus" process="acStock :#{p:component('cmbPs')}"  ></p:ajax>
                                                                 <p:ajax event="itemSelect"   listener="#{pharmacySaleController.handleSelect}"  update="txtQty txtRate focusQty" ></p:ajax>
+                                                                <p:ajax event="query" update="tabI" process="acStock"></p:ajax>
                                                             </p:autoComplete>
                                                         </td>
                                                     </tr>
@@ -92,19 +93,12 @@
                                                                 <f:convertNumber pattern="#,##0.00" />
                                                             </p:outputLabel>
                                                         </td>
-
-
                                                     </tr>
                                                 </table>
-
-
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-
-
-
                                                 <p:panel header="Patient Detail">                                        
                                                     <p:tabView id="tvPt" style="min-height: 250px;"  >
                                                         <p:ajax event="tabChange"  process="@this" listener="#{pharmacySaleController.onTabChange}" />
@@ -118,8 +112,6 @@
 
                                                     </p:tabView>
                                                 </p:panel>
-
-
                                             </td>
                                         </tr>
                                     </table>
@@ -235,18 +227,20 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td>
-                                                                                <p:selectOneListbox id="lstSelectItems" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" value="#{pharmacySaleController.selectedAlternative}"  >
-                                                                                <f:selectItems  value="#{pharmacySaleController.itemsWithoutStocks}" var="si" itemLabel="#{si.name}" itemValue="#{si}" ></f:selectItems>
-                                                                                <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{pharmacySaleController.selectReplaceableStocks}" ></p:ajax>
-                                                                            </p:selectOneListbox>
+                                                                                <p:selectOneListbox id="lstSelectItems" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" 
+                                                                                                    value="#{pharmacySaleController.selectedAvailableAmp}"  >
+                                                                                    <f:selectItems  value="#{pharmacySaleController.itemsWithoutStocks}" var="si" itemLabel="#{si.name}" itemValue="#{si}" ></f:selectItems>
+                                                                                    <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{pharmacySaleController.selectReplaceableStocks}" ></p:ajax>
+                                                                                </p:selectOneListbox>
                                                                             </td>    
                                                                             <td>
-                                                                                <p:selectOneListbox id="lstReplaceableBatch" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;"  >
-                                                                                <f:selectItems  value="#{pharmacySaleController.replaceableStocks}" var="rs" itemLabel="#{rs.itemBatch.item.name}" itemValue="#{rs}" ></f:selectItems>
-                                                                            </p:selectOneListbox>
+                                                                                <p:selectOneListbox id="lstReplaceableBatch" value="#{pharmacySaleController.selectedAvailableAmp}"
+                                                                                                    style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;"  >
+                                                                                    <f:selectItems  value="#{pharmacySaleController.replaceableStocks}" var="rs" itemLabel="#{rs.itemBatch.item.name}" itemValue="#{rs}" ></f:selectItems>
+                                                                                </p:selectOneListbox>
                                                                             </td>    
                                                                         </tr>
-                                                                        
+
                                                                     </table>
                                                                 </p:tab>
                                                                 <p:tab title="Bill Items" id="pBis">

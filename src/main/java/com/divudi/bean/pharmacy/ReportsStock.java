@@ -7,6 +7,7 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.PharmacyStockRow;
 import com.divudi.data.dataStructure.StockReportRecord;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
@@ -23,8 +24,6 @@ import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.TemporalType;
 
 /**
@@ -54,6 +55,7 @@ public class ReportsStock implements Serializable {
     Institution institution;
     private Category category;
     List<Stock> stocks;
+    List<PharmacyStockRow> pharmacyStockRows;
     double stockSaleValue;
     double stockPurchaseValue;
     List<StockReportRecord> records;
@@ -93,6 +95,56 @@ public class ReportsStock implements Serializable {
             stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
+    }
+
+    public void fillDepartmentNonEmptyStocks() {
+        if (department == null) {
+            UtilityController.addErrorMessage("Please select a department");
+            return;
+        }
+        Map m = new HashMap();
+        String sql;
+        sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+        m.put("d", department);
+        m.put("z", 0.0);
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+        for (Stock ts : stocks) {
+            stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
+            stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
+        }
+    }
+
+    public void fillDepartmentNonEmptyItemStocks() {
+        if (department == null) {
+            UtilityController.addErrorMessage("Please select a department");
+            return;
+        }
+        Map m = new HashMap();
+        String sql;
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(s.itemBatch.item.code, s.itemBatch.item.name, sum(s.stock), "
+                + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+                + "from Stock s where s.stock>:z and s.department=:d "
+                + "group by s.itemBatch.item.name, s.itemBatch.item.code "
+                + "order by s.itemBatch.item.name";
+        m.put("d", department);
+        m.put("z", 0.0);
+        List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
+
+        sql = "select sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock) "
+                + "from Stock s where s.stock>:z and s.department=:d ";
+
+        List<Object[]> objs = getStockFacade().findAggregates(sql, m);
+        try {
+            stockPurchaseValue = Double.valueOf(objs.get(0)[0] + "");
+            stockSaleValue = Double.valueOf(objs.get(0)[0] + "");
+        } catch (Exception e) {
+            System.err.println("e = " + e);
+        }
+
+        pharmacyStockRows = lsts;
+
     }
 
     public void fillDepartmentStocksMinus() {
@@ -669,6 +721,14 @@ public class ReportsStock implements Serializable {
 
     public void setStockHistoryFacade(StockHistoryFacade stockHistoryFacade) {
         this.stockHistoryFacade = stockHistoryFacade;
+    }
+
+    public List<PharmacyStockRow> getPharmacyStockRows() {
+        return pharmacyStockRows;
+    }
+
+    public void setPharmacyStockRows(List<PharmacyStockRow> pharmacyStockRows) {
+        this.pharmacyStockRows = pharmacyStockRows;
     }
 
 }

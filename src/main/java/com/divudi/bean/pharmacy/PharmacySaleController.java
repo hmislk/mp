@@ -125,8 +125,8 @@ public class PharmacySaleController implements Serializable {
     boolean billPreview = false;
     /////////////////
     List<Stock> replaceableStocks;
-    //List<BillItem> billItems;
     List<Item> itemsWithoutStocks;
+    List<Stock> stocksWithGeneric;
     /////////////////////////   
     double cashPaid;
     double netTotal;
@@ -425,20 +425,34 @@ public class PharmacySaleController implements Serializable {
         Map m = new HashMap<>();
         List<Item> items;
         String sql;
-//        new Stock().getItemBatch().getItem();
         sql = "select i from Amp i "
                 + "where i.retired=false and "
-                + "(upper(i.name) or upper(i.vmp.name)) like :n and "
-                + "type(i)=:t and "
+                + "upper(i.name) like :n and "
                 + "i.id not in(select ibs.itemBatch.item.id from Stock ibs where ibs.stock >:s and ibs.department=:d and ibs.itemBatch.item.name like :n) "
                 + "order by i.name ";
-        m.put("t", Amp.class);
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         m.put("n", "%" + qry + "%");
         double s = 0.0;
         m.put("s", s);
         items = getItemFacade().findBySQL(sql, m, 10);
         return items;
+    }
+
+    public List<Stock> completeRetailSaleItemsFromGeneric(String qry) {
+        Map m = new HashMap<>();
+        List<Stock> stocks;
+        String sql;
+        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
+                + "where i.stock >:s and "
+                + "i.department=:d and "
+                + "upper(amp.vmp.name) like :n "
+                + "order by i.itemBatch.item.name";
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        m.put("n", "%" + qry + "%");
+        double s = 0.0;
+        m.put("s", s);
+        stocks = getStockFacade().findBySQL(sql, m, 10);
+        return stocks;
     }
 
     public List<Stock> completeAvailableStocks(String qry) {
@@ -455,8 +469,9 @@ public class PharmacySaleController implements Serializable {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
         items = getStockFacade().findBySQL(sql, m, 20);
-        if (!qry.trim().equals("") && qry.length() >4) {
+        if (!qry.trim().equals("") && qry.length() > 4) {
             itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
+            stocksWithGeneric = completeRetailSaleItemsFromGeneric(qry);
         }
         return items;
     }

@@ -462,14 +462,24 @@ public class PharmacySaleController implements Serializable {
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         double d = 0.0;
         m.put("s", d);
-        m.put("n", "%" + qry.toUpperCase() + "%");
+        qry = qry.replaceAll("\n", "");
+        qry = qry.replaceAll("\r", "");
+        m.put("n", "%" + qry.toUpperCase().trim() + "%");
+        
+        System.out.println("qry = " + qry);
+        
         if (qry.length() > 4) {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n )  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         } else {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
+        
         items = getStockFacade().findBySQL(sql, m, 20);
-        if (!qry.trim().equals("") && qry.length() > 4) {
+        
+        if(qry.length()>5 && items.size()==1){
+            stock = items.get(0);
+            handleSelectAction();
+        }else if (!qry.trim().equals("") && qry.length() > 4) {
             itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
             stocksWithGeneric = completeRetailSaleItemsFromGeneric(qry);
         }
@@ -1012,6 +1022,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void handleSelect(SelectEvent event) {
+        handleSelectAction();
+    }
+    
+    public void handleSelectAction() {
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
         calculateRates(billItem);
     }

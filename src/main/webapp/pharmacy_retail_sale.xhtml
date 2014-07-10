@@ -13,7 +13,7 @@
             <ui:define name="content">
                 <h:form id="bill" >
                     <p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>
-                    <p:defaultCommand  target="btnAdd" />  
+                    <!--<p:defaultCommand  target="btnAdd" />-->  
                     <p:panel rendered="#{!pharmacySaleController.billPreview}"  >
                         <f:facet name="header" >
                             <h:outputLabel value="Pharmacy Retail Bill" />
@@ -32,7 +32,7 @@
                                                                 .ui-autocomplete-input {width:350px!important;display: block;}
                                                                 .ui-autocomplete{display: block!important;}
                                                             </style>
-                                                            <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
+                                                            <p:autoComplete accesskey="i"    id="acStock" 
                                                                             value="#{pharmacySaleController.stock}" 
                                                                             converter="stockCon" 
                                                                             completeMethod="#{pharmacySaleController.completeAvailableStocks}" 

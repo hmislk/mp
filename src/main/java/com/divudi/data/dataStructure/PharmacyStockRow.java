@@ -20,6 +20,15 @@ public class PharmacyStockRow {
     public PharmacyStockRow() {
     }
 
+    public PharmacyStockRow(String name, Double qty, Double purchaseValue, Double saleValue) {
+        this.name = name;
+        this.qty = qty;
+        this.purchaseValue = purchaseValue;
+        this.saleValue = saleValue;
+    }
+
+    
+    
     public PharmacyStockRow(String code, String name, Double qty, Double purchaseValue, Double saleValue) {
         this.code = code;
         this.name = name;

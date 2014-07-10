@@ -131,22 +131,45 @@ public class ReportsStock implements Serializable {
         m.put("d", department);
         m.put("z", 0.0);
         List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue += 0.0;
 
-        sql = "select sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock) "
-                + "from Stock s where s.stock>:z and s.department=:d ";
-
-        List<Object[]> objs = getStockFacade().findAggregates(sql, m);
-        try {
-            stockPurchaseValue = Double.valueOf(objs.get(0)[0] + "");
-            stockSaleValue = Double.valueOf(objs.get(0)[0] + "");
-        } catch (Exception e) {
-            System.err.println("e = " + e);
+        for (PharmacyStockRow r : lsts) {
+            stockPurchaseValue += r.getPurchaseValue();
+            stockSaleValue += r.getSaleValue();
         }
-
         pharmacyStockRows = lsts;
-
     }
 
+    
+    public void fillDepartmentNonEmptyProductStocks() {
+        if (department == null) {
+            UtilityController.addErrorMessage("Please select a department");
+            return;
+        }
+        Map m = new HashMap();
+        String sql;
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(amp.vmp.name, sum(s.stock), "
+                + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+                + "from Stock s join treat(s.itemBatch.item as Amp)amp "
+                + "where s.stock>:z and s.department=:d "
+                + "group by amp "
+                + "";
+        m.put("d", department);
+        m.put("z", 0.0);
+        List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue += 0.0;
+
+        for (PharmacyStockRow r : lsts) {
+            stockPurchaseValue += r.getPurchaseValue();
+            stockSaleValue += r.getSaleValue();
+        }
+        pharmacyStockRows = lsts;
+    }
+
+    
+    
     public void fillDepartmentStocksMinus() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");

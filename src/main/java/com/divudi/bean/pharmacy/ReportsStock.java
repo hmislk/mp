@@ -17,13 +17,17 @@ import com.divudi.entity.Institution;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.Staff;
+import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.ItemBatch;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.StockHistory;
+import com.divudi.entity.pharmacy.Vmp;
+import com.divudi.facade.AmpFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
+import com.divudi.facade.VmpFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,6 +79,10 @@ public class ReportsStock implements Serializable {
      */
     @EJB
     StockFacade stockFacade;
+    @EJB
+    AmpFacade ampFacade;
+    @EJB
+    VmpFacade vmpFacade;
 
     /**
      * Methods
@@ -141,7 +149,6 @@ public class ReportsStock implements Serializable {
         pharmacyStockRows = lsts;
     }
 
-    
     public void fillDepartmentNonEmptyProductStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
@@ -149,27 +156,34 @@ public class ReportsStock implements Serializable {
         }
         Map m = new HashMap();
         String sql;
-        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(amp.vmp.name, sum(s.stock), "
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(s.itemBatch.item.code, s.itemBatch.item.name, sum(s.stock), "
                 + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
-                + "from Stock s join treat(s.itemBatch.item as Amp)amp "
-                + "where s.stock>:z and s.department=:d "
-                + "group by amp "
-                + "";
+                + "from Stock s where s.stock>:z and s.department=:d "
+                + "group by s.itemBatch.item.name, s.itemBatch.item.code "
+                + "order by s.itemBatch.item.name";
         m.put("d", department);
         m.put("z", 0.0);
         List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue += 0.0;
-
+        Map<String, PharmacyStockRow> vmps = new HashMap<>();
         for (PharmacyStockRow r : lsts) {
             stockPurchaseValue += r.getPurchaseValue();
             stockSaleValue += r.getSaleValue();
+            if (r.getItem() instanceof Amp) {
+                Amp a = (Amp) r.getItem();
+                Double d;
+                String s = a.getVmp().getName();
+                PharmacyStockRow vr = vmps.get(s);
+                
+            } else {
+
+            }
+
         }
         pharmacyStockRows = lsts;
     }
 
-    
-    
     public void fillDepartmentStocksMinus() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
@@ -752,6 +766,22 @@ public class ReportsStock implements Serializable {
 
     public void setPharmacyStockRows(List<PharmacyStockRow> pharmacyStockRows) {
         this.pharmacyStockRows = pharmacyStockRows;
+    }
+
+    public AmpFacade getAmpFacade() {
+        return ampFacade;
+    }
+
+    public void setAmpFacade(AmpFacade ampFacade) {
+        this.ampFacade = ampFacade;
+    }
+
+    public VmpFacade getVmpFacade() {
+        return vmpFacade;
+    }
+
+    public void setVmpFacade(VmpFacade vmpFacade) {
+        this.vmpFacade = vmpFacade;
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package com.divudi.data.dataStructure;
 
+import com.divudi.entity.Item;
+
 /**
  *
  * @author pdhs
@@ -16,6 +18,7 @@ public class PharmacyStockRow {
     Double qty;
     Double purchaseValue;
     Double saleValue;
+    Item item;
 
     public PharmacyStockRow() {
     }
@@ -78,4 +81,22 @@ public class PharmacyStockRow {
     public void setSaleValue(Double saleValue) {
         this.saleValue = saleValue;
     }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public PharmacyStockRow(Item item, Double qty, Double purchaseValue, Double saleValue) {
+        this.qty = qty;
+        this.purchaseValue = purchaseValue;
+        this.saleValue = saleValue;
+        this.item = item;
+    }
+
+    
+
 }

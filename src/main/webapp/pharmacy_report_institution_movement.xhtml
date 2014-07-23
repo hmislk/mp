@@ -38,122 +38,129 @@
                                              actionListener="#{pharmacyController.averageByMonth()}" ></p:commandButton>
                         </h:panelGrid>
 
-                        <p:dataGrid value="#{pharmacyController.stockAverages}" var="sA" columns="1">
+                        <p:dataTable value="#{pharmacyController.stockAverages}" var="sA" paginator="true" paginatorAlwaysVisible="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" >
 
-                            #{sA.item.name}   #{sA.item.code}
-                            <p:dataTable styleClass="noBorder" value="#{sA.institutionStocks}" var="ins">
-                                <p:columnGroup type="header">
-                                    <p:row>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="header">
-                                                Department Name
-                                            </f:facet>
-                                        </p:column>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="header">
-                                                Required Stock
-                                            </f:facet>
-                                        </p:column>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="header">
-                                                Current Stock
-                                            </f:facet>
-                                        </p:column>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="header">
-                                                Average Qty
-                                            </f:facet>
-                                        </p:column>
-                                    </p:row>
-                                </p:columnGroup>
-                                <p:subTable  value="#{ins.depatmentStocks}" var="dep">
+                            <p:column >
 
-                                    <f:facet name="header">
-                                        #{ins.institution.name}
-                                    </f:facet> 
+                                #{sA.item.name}   #{sA.item.code}
+                                <p:dataTable styleClass="noBorder" value="#{sA.institutionStocks}" var="ins">
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column style="text-align: left;">
+                                                <f:facet name="header">
+                                                    Department Name
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;">
+                                                <f:facet name="header">
+                                                    Required Stock
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;">
+                                                <f:facet name="header">
+                                                    Current Stock
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;">
+                                                <f:facet name="header">
+                                                    Average Qty
+                                                </f:facet>
+                                            </p:column>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:subTable  value="#{ins.depatmentStocks}" var="dep">
 
-                                    <p:column style="text-align: left;">
-                                        #{dep.department.name}
-                                    </p:column>
-                                    <p:column style="text-align: left;">
-                                        <h:outputLabel value="#{dep.stock-dep.average}">       
-                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                        </h:outputLabel> 
-                                    </p:column>
-                                    <p:column style="text-align: left;">
-                                        <h:outputLabel value="#{dep.stock}">       
-                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                        </h:outputLabel> 
-                                    </p:column>
-                                    <p:column style="text-align: left;">
-                                        <h:outputLabel value="#{dep.average}"> 
-                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                        </h:outputLabel> 
-                                    </p:column>
+                                        <f:facet name="header">
+                                            #{ins.institution.name}
+                                        </f:facet> 
+
+                                        <p:column style="text-align: left;">
+                                            #{dep.department.name}
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <h:outputLabel value="#{dep.stock-dep.average}">       
+                                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                            </h:outputLabel> 
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <h:outputLabel value="#{dep.stock}">       
+                                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                            </h:outputLabel> 
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <h:outputLabel value="#{dep.average}"> 
+                                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                            </h:outputLabel> 
+                                        </p:column>
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column footerText="Total "></p:column>   
+                                                <p:column style="text-align: left;"
+                                                          footerText="#{ins.institutionTotal-ins.institutionAverage}">
+                                                    <f:facet name="footer">
+                                                        <h:outputLabel value="#{ins.institutionTotal-ins.institutionAverage}">
+                                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                        </h:outputLabel>
+                                                    </f:facet>
+                                                </p:column>
+                                                <p:column style="text-align: left;"
+                                                          footerText="#{ins.institutionTotal}">
+                                                    <f:facet name="footer">
+                                                        <h:outputLabel value="#{ins.institutionTotal}">
+                                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                        </h:outputLabel>
+                                                    </f:facet>
+                                                </p:column>
+                                                <p:column style="text-align: left;" 
+                                                          footerText="#{ins.institutionAverage}">
+                                                    <f:facet name="footer">
+                                                        <h:outputLabel value="#{ins.institutionAverage}">
+                                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                        </h:outputLabel>
+                                                    </f:facet>
+                                                </p:column>
+                                            </p:row>
+                                        </p:columnGroup>
+                                    </p:subTable>  
                                     <p:columnGroup type="footer">
                                         <p:row>
-                                            <p:column footerText="Total "></p:column>   
-                                            <p:column style="text-align: left;"
-                                                      footerText="#{ins.institutionTotal-ins.institutionAverage}">
+                                            <p:column style="text-align: left;">
+                                                <f:facet name="footer" >
+                                                    Total Institution Stock
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;">
                                                 <f:facet name="footer">
-                                                    <h:outputLabel value="#{ins.institutionTotal-ins.institutionAverage}">
+                                                    <h:outputLabel  value="#{sA.itemStockTotal-sA.itemAverageTotal}">
                                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                     </h:outputLabel>
                                                 </f:facet>
                                             </p:column>
-                                            <p:column style="text-align: left;"
-                                                      footerText="#{ins.institutionTotal}">
+                                            <p:column style="text-align: left;">
                                                 <f:facet name="footer">
-                                                    <h:outputLabel value="#{ins.institutionTotal}">
+                                                    <h:outputLabel  value="#{sA.itemStockTotal}">
                                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                     </h:outputLabel>
                                                 </f:facet>
                                             </p:column>
-                                            <p:column style="text-align: left;" 
-                                                      footerText="#{ins.institutionAverage}">
+                                            <p:column style="text-align: left;">
                                                 <f:facet name="footer">
-                                                    <h:outputLabel value="#{ins.institutionAverage}">
+                                                    <h:outputLabel  value="#{sA.itemAverageTotal}">
                                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                     </h:outputLabel>
                                                 </f:facet>
                                             </p:column>
                                         </p:row>
                                     </p:columnGroup>
-                                </p:subTable>  
-                                <p:columnGroup type="footer">
-                                    <p:row>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="footer" >
-                                                Total Institution Stock
-                                            </f:facet>
-                                        </p:column>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="footer">
-                                                <h:outputLabel  value="#{sA.itemStockTotal-sA.itemAverageTotal}">
-                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                                </h:outputLabel>
-                                            </f:facet>
-                                        </p:column>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="footer">
-                                                <h:outputLabel  value="#{sA.itemStockTotal}">
-                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                                </h:outputLabel>
-                                            </f:facet>
-                                        </p:column>
-                                        <p:column style="text-align: left;">
-                                            <f:facet name="footer">
-                                                <h:outputLabel  value="#{sA.itemAverageTotal}">
-                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                                </h:outputLabel>
-                                            </f:facet>
-                                        </p:column>
-                                    </p:row>
-                                </p:columnGroup>
 
-                            </p:dataTable>     
-                            <hr/><hr/>
-                        </p:dataGrid>
+                                </p:dataTable>     
+                                <hr/><hr/>
+
+                            </p:column>
+                        </p:dataTable>
                     </p:panel>
                 </h:form>
 

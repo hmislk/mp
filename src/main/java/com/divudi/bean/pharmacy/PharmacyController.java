@@ -429,6 +429,9 @@ public class PharmacyController implements Serializable {
         List<Item> items = getItemController().getDealorItem();
         List<Institution> insList = getCompany();
         for (Item i : items) {
+            
+            System.err.println("i.getName() = " + i.getName());
+            
             double itemStockTotal = 0;
             double itemAverageTotal = 0;
             StockAverage stockAverage = new StockAverage();

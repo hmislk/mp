@@ -12,8 +12,8 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form id="bill" >
-                    <p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>
-                    <!--<p:defaultCommand  target="btnAdd" />-->  
+                    <!--<p:commandButton id="nullButton2" value="No Action" action="#" style="display: none;" ></p:commandButton>-->
+                    <p:defaultCommand  target="btnAdd" />  
                     <p:panel rendered="#{!pharmacySaleController.billPreview}"  >
                         <f:facet name="header" >
                             <h:outputLabel value="Pharmacy Retail Bill" />
@@ -76,8 +76,10 @@
                                                         </td>
                                                         <td>
                                                             <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
-                                                                              action="#{pharmacySaleController.addBillItem}" process="@this acStock txtQty :#{p:component('cmbPs')}" update=":#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem tabI" ></p:commandButton>
-
+                                                                              action="#{pharmacySaleController.addBillItem}" 
+                                                                              process="@this acStock txtQty :#{p:component('cmbPs')}" 
+                                                                              update=":#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem tabI" ></p:commandButton>
+                                                                              
                                                             <p:focus id="focusQty" for="txtQty" ></p:focus>
                                                             <p:focus id="focusItem" for="acStock" ></p:focus>
                                                         </td>

@@ -1608,7 +1608,7 @@ public class SearchController implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select b from BilledBill b"
+        sql = "select b from Bill b"
                 + " where b.billType = :billType "
                 + " and b.institution=:ins "
                 + " and b.paymentMethod=:pm "
@@ -1640,7 +1640,7 @@ public class SearchController implements Serializable {
         String sql;
         Map temMap = new HashMap();
 
-        sql = "select b from BilledBill b"
+        sql = "select b from Bill b"
                 + " where b.billType = :billType "
 //                + " and b.institution=:ins "
                 + " and b.paymentMethod=:pm "

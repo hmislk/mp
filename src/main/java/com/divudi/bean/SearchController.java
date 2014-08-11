@@ -8,6 +8,7 @@ package com.divudi.bean;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.InstitutionType;
+import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.CommonFunctions;
@@ -1599,6 +1600,72 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
+    
+    double netTotal;
+
+    public void createGrnChequePayment() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b"
+                + " where b.billType = :billType "
+                + " and b.institution=:ins "
+                + " and b.paymentMethod=:pm "
+                + " and b.toInstitution.institutionType=:insTp "
+                + " and b.createdAt between :fromDate and :toDate"
+                + " and b.retired=false "
+                + " order by b.createdAt ";
+//    
+        temMap.put("billType", BillType.GrnPayment);
+        temMap.put("insTp", InstitutionType.Dealer);
+        temMap.put("pm", PaymentMethod.Cheque);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+
+        //System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        
+        netTotal=0.0;
+        
+        for(Bill b:bills){
+            netTotal+=b.getNetTotal();
+        }
+
+    }
+    
+    public void createGrnChequePaymentAll() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b"
+                + " where b.billType = :billType "
+//                + " and b.institution=:ins "
+                + " and b.paymentMethod=:pm "
+                + " and b.toInstitution.institutionType=:insTp "
+                + " and b.createdAt between :fromDate and :toDate"
+                + " and b.retired=false "
+                + " order by b.createdAt ";
+//    
+        temMap.put("billType", BillType.GrnPayment);
+        temMap.put("insTp", InstitutionType.Dealer);
+        temMap.put("pm", PaymentMethod.Cheque);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+//        temMap.put("ins", getSessionController().getInstitution());
+
+        //System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        
+        netTotal=0.0;
+        
+        for(Bill b:bills){
+            netTotal+=b.getNetTotal();
+        }
+
+    }
 
     public void createGrnPaymentTableStore() {
         bills = null;
@@ -2799,6 +2866,14 @@ public class SearchController implements Serializable {
 
     public void setPatientInvestigationsSigle(List<PatientInvestigation> patientInvestigationsSigle) {
         this.patientInvestigationsSigle = patientInvestigationsSigle;
+    }
+
+    public double getNetTotal() {
+        return netTotal;
+    }
+
+    public void setNetTotal(double netTotal) {
+        this.netTotal = netTotal;
     }
 
 }

@@ -18,6 +18,8 @@ public class StockAverage {
     private List<InstitutionStock> institutionStocks;
     private double itemStockTotal;
     private double itemAverageTotal;
+    private double itemPurchaseTotal;
+    private double itemRetailSalekTotal;
 
     public Item getItem() {
         return item;
@@ -50,4 +52,21 @@ public class StockAverage {
     public void setItemAverageTotal(double itemAverageTotal) {
         this.itemAverageTotal = itemAverageTotal;
     }
+
+    public double getItemPurchaseTotal() {
+        return itemPurchaseTotal;
+    }
+
+    public void setItemPurchaseTotal(double itemPurchaseTotal) {
+        this.itemPurchaseTotal = itemPurchaseTotal;
+    }
+
+    public double getItemRetailSalekTotal() {
+        return itemRetailSalekTotal;
+    }
+
+    public void setItemRetailSalekTotal(double itemRetailSalekTotal) {
+        this.itemRetailSalekTotal = itemRetailSalekTotal;
+    }
+    
 }

@@ -37,7 +37,7 @@ public class LazyBillItem extends LazyDataModel<BillItem> {
     }
 
     @Override
-    public List<BillItem> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+    public List<BillItem> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         List<BillItem> data = new ArrayList<>();
 
         //filter  
@@ -47,14 +47,7 @@ public class LazyBillItem extends LazyDataModel<BillItem> {
             for (Iterator<String> it = filters.keySet().iterator(); it.hasNext();) {
                 try {
                     String property = it.next();
-//                    String stringValue = filters.get(property).toLowerCase();
-                    Object filterValue = filters.get(property);
-                    String stringValue;
-                    if(filterValue instanceof String){
-                        stringValue = (String)filterValue;
-                    }else{
-                        stringValue="";
-                    }
+                    String stringValue = filters.get(property).toLowerCase();
                     String fieldValue = "";
 
                     String[] arr = property.split("\\.");

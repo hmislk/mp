@@ -39,6 +39,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
+import static ch.lambdaj.Lambda.*;
+import com.divudi.entity.Department;
 
 /**
  *
@@ -81,6 +83,16 @@ public class SearchController implements Serializable {
     @Inject
     TransferController transferController;
     Institution institution;
+    Department department;
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+    
 
     public Institution getInstitution() {
         return institution;
@@ -1617,79 +1629,68 @@ public class SearchController implements Serializable {
         bills = null;
         String sql;
         Map temMap = new HashMap();
+        
+         sql = "select b from Bill b"
+                    + " where b.billType = :billType "
+                    + " and b.paymentMethod=:pm "
+                    + " and b.chequeDate between :fromDate and :toDate"
+                    + " and b.retired=false ";
+            temMap.put("billType", BillType.GrnPayment);
+            temMap.put("pm", PaymentMethod.Cheque);
+            temMap.put("toDate", getToDate());
+            temMap.put("fromDate", getFromDate());
         if (institution != null) {
-            sql = "select b from Bill b"
-                    + " where b.billType = :billType "
-                    + " and b.institution=:ins "
-                    + " and b.paymentMethod=:pm "
-                    + " and b.toInstitution=:ins "
-                    + " and b.chequeDate between :fromDate and :toDate"
-                    + " and b.retired=false "
-                    + " order by b.createdAt ";
-            temMap.put("billType", BillType.GrnPayment);
+            sql = sql + " and b.toInstitution=:ins ";
             temMap.put("ins", institution);
-            temMap.put("pm", PaymentMethod.Cheque);
-            temMap.put("toDate", getToDate());
-            temMap.put("fromDate", getFromDate());
-            temMap.put("ins", getSessionController().getInstitution());
-        } else {
+        } 
 
-            sql = "select b from Bill b"
-                    + " where b.billType = :billType "
-                    + " and b.institution=:ins "
-                    + " and b.paymentMethod=:pm "
-                    + " and b.chequeDate between :fromDate and :toDate"
-                    + " and b.retired=false "
-                    + " order by b.createdAt ";
-            temMap.put("billType", BillType.GrnPayment);
-            temMap.put("pm", PaymentMethod.Cheque);
-            temMap.put("toDate", getToDate());
-            temMap.put("fromDate", getFromDate());
-            temMap.put("ins", getSessionController().getInstitution());
+        if(department!=null){
+            sql = sql + " and b.department=:dep ";
+            temMap.put("dep", department);
         }
-
-        //System.err.println("Sql " + sql);
+         sql=sql + " order by b.chequeDate ";
+        System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-        netTotal = 0.0;
-
-        for (Bill b : bills) {
-            netTotal += b.getNetTotal();
-        }
+//        netTotal = 0.0;
+        netTotal = sumFrom(bills).getNetTotal();
+        
+//        for (Bill b : bills) {
+//            netTotal += b.getNetTotal();
+//        }
 
     }
 
-    public void createGrnChequePaymentAll() {
-        bills = null;
-        String sql;
-        Map temMap = new HashMap();
-
-        sql = "select b from Bill b"
-                + " where b.billType = :billType "
-                //                + " and b.institution=:ins "
-                + " and b.paymentMethod=:pm "
-                + " and b.toInstitution.institutionType=:insTp "
-                + " and b.createdAt between :fromDate and :toDate"
-                + " and b.retired=false "
-                + " order by b.createdAt ";
-//    
-        temMap.put("billType", BillType.GrnPayment);
-        temMap.put("insTp", InstitutionType.Dealer);
-        temMap.put("pm", PaymentMethod.Cheque);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-//        temMap.put("ins", getSessionController().getInstitution());
-
-        //System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-        netTotal = 0.0;
-
-        for (Bill b : bills) {
-            netTotal += b.getNetTotal();
-        }
-
-    }
+//    public void createGrnChequePaymentAll() {
+//        bills = null;
+//        String sql;
+//        Map temMap = new HashMap();
+//
+//        sql = "select b from Bill b"
+//                + " where b.billType = :billType "
+//                //                + " and b.institution=:ins "
+//                + " and b.paymentMethod=:pm "
+//                + " and b.toInstitution.institutionType=:insTp "
+//                + " and b.createdAt between :fromDate and :toDate"
+//                + " and b.retired=false "
+//                + " order by b.createdAt ";
+////    
+//        temMap.put("billType", BillType.GrnPayment);
+//        temMap.put("insTp", InstitutionType.Dealer);
+//        temMap.put("pm", PaymentMethod.Cheque);
+//        temMap.put("toDate", getToDate());
+//        temMap.put("fromDate", getFromDate());
+////        temMap.put("ins", getSessionController().getInstitution());
+//
+//        //System.err.println("Sql " + sql);
+//        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+//
+//        netTotal = 0.0;
+//
+//        for (Bill b : bills) {
+//            netTotal += b.getNetTotal();
+//        }
+//
+//    }
 
     public void createGrnPaymentTableStore() {
         bills = null;

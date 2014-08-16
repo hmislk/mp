@@ -18,6 +18,7 @@ import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
+import com.divudi.entity.Institution;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BatchBillFacade;
@@ -79,6 +80,15 @@ public class SearchController implements Serializable {
     private SessionController sessionController;
     @Inject
     TransferController transferController;
+    Institution institution;
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
 
     public void makeListNull() {
         maxResult = 50;
@@ -1600,41 +1610,55 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
     }
-    
+
     double netTotal;
 
     public void createGrnChequePayment() {
         bills = null;
         String sql;
         Map temMap = new HashMap();
+        if (institution != null) {
+            sql = "select b from Bill b"
+                    + " where b.billType = :billType "
+                    + " and b.institution=:ins "
+                    + " and b.paymentMethod=:pm "
+                    + " and b.toInstitution=:ins "
+                    + " and b.chequeDate between :fromDate and :toDate"
+                    + " and b.retired=false "
+                    + " order by b.createdAt ";
+            temMap.put("billType", BillType.GrnPayment);
+            temMap.put("ins", institution);
+            temMap.put("pm", PaymentMethod.Cheque);
+            temMap.put("toDate", getToDate());
+            temMap.put("fromDate", getFromDate());
+            temMap.put("ins", getSessionController().getInstitution());
+        } else {
 
-        sql = "select b from Bill b"
-                + " where b.billType = :billType "
-                + " and b.institution=:ins "
-                + " and b.paymentMethod=:pm "
-                + " and b.toInstitution.institutionType=:insTp "
-                + " and b.createdAt between :fromDate and :toDate"
-                + " and b.retired=false "
-                + " order by b.createdAt ";
-//    
-        temMap.put("billType", BillType.GrnPayment);
-        temMap.put("insTp", InstitutionType.Dealer);
-        temMap.put("pm", PaymentMethod.Cheque);
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-        temMap.put("ins", getSessionController().getInstitution());
+            sql = "select b from Bill b"
+                    + " where b.billType = :billType "
+                    + " and b.institution=:ins "
+                    + " and b.paymentMethod=:pm "
+                    + " and b.chequeDate between :fromDate and :toDate"
+                    + " and b.retired=false "
+                    + " order by b.createdAt ";
+            temMap.put("billType", BillType.GrnPayment);
+            temMap.put("pm", PaymentMethod.Cheque);
+            temMap.put("toDate", getToDate());
+            temMap.put("fromDate", getFromDate());
+            temMap.put("ins", getSessionController().getInstitution());
+        }
 
         //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        
-        netTotal=0.0;
-        
-        for(Bill b:bills){
-            netTotal+=b.getNetTotal();
+
+        netTotal = 0.0;
+
+        for (Bill b : bills) {
+            netTotal += b.getNetTotal();
         }
 
     }
-    
+
     public void createGrnChequePaymentAll() {
         bills = null;
         String sql;
@@ -1642,7 +1666,7 @@ public class SearchController implements Serializable {
 
         sql = "select b from Bill b"
                 + " where b.billType = :billType "
-//                + " and b.institution=:ins "
+                //                + " and b.institution=:ins "
                 + " and b.paymentMethod=:pm "
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.createdAt between :fromDate and :toDate"
@@ -1658,11 +1682,11 @@ public class SearchController implements Serializable {
 
         //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        
-        netTotal=0.0;
-        
-        for(Bill b:bills){
-            netTotal+=b.getNetTotal();
+
+        netTotal = 0.0;
+
+        for (Bill b : bills) {
+            netTotal += b.getNetTotal();
         }
 
     }

@@ -14,14 +14,19 @@
                     <p:panel >
 
                         <f:facet name="header" >
-                            <h:outputLabel value="GRN DEALOR PAYMENT Cheque Report "/>                                                      
+                            <h:outputLabel value="GRN DEALOR PAYMENT FOR CHEQUES"/>                                                      
                             <h:panelGrid columns="5" >
-                                <h:outputLabel value="From Date"/>
+                                <h:outputLabel value="Cheque Date From"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
-                                <h:outputLabel value="To Date"/>
+                                <h:outputLabel value="Cheque Date To"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
+                                <h:outputLabel value="Cheque To"/>
+                                <p:autoComplete converter="deal" value="#{searchController.institution}" 
+                                            forceSelection="true"
+                                            completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+                           
                                 <h:panelGroup>
                                     <p:commandButton id="btnSearch" ajax="false" value="login Department Search" action="#{searchController.createGrnChequePayment}"/>
                                     <p:commandButton id="btnSearch2" ajax="false" value="Search All Departments" action="#{searchController.createGrnChequePaymentAll}"/>

@@ -113,6 +113,24 @@ public class PharmacyController implements Serializable {
 
         return items;
     }
+    
+    public List<Stock> completeExistingStocks(String qry) {
+        List<Stock> items;
+        String sql;
+        Map m = new HashMap();
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        double d = 0.0;
+        m.put("n", "%" + qry.toUpperCase() + "%");
+        m.put("s", d);
+        sql = "select i from Stock i where i.department=:d and "
+                + " i.stock > :s and "
+                + " (upper(i.itemBatch.item.name) like :n  or "
+                + " upper(i.itemBatch.item.code) like :n  or  "
+                + " upper(i.itemBatch.item.barcode) like :n ) ";
+        items = getStockFacade().findBySQL(sql, m, 40);
+
+        return items;
+    }
 
     public List<Stock> completeStaffStocks(String qry) {
         List<Stock> items;

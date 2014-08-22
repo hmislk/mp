@@ -14,6 +14,7 @@ import com.divudi.entity.lab.InvestigationItem;
 import com.divudi.entity.lab.ReportItem;
 import com.divudi.entity.lab.WorksheetItem;
 import com.divudi.entity.pharmacy.MeasurementUnit;
+import com.divudi.entity.pharmacy.Vmp;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,6 +131,18 @@ public class Item implements Serializable {
     @Transient
     private double transBillItemCount;
 
+    
+    @ManyToOne
+    private Vmp vmp;
+
+    public Vmp getVmp() {
+        return vmp;
+    }
+
+    public void setVmp(Vmp vmp) {
+        this.vmp = vmp;
+    }
+    
     public List<WorksheetItem> getWorksheetItems() {
         if (worksheetItems != null) {
             Collections.sort(worksheetItems, new ReportItemComparator());

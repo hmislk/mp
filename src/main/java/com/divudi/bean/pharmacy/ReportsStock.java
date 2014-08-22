@@ -67,6 +67,15 @@ public class ReportsStock implements Serializable {
     Date toDate;
     Date fromDateE;
     Date toDateE;
+    Vmp vmp;
+
+    public Vmp getVmp() {
+        return vmp;
+    }
+
+    public void setVmp(Vmp vmp) {
+        this.vmp = vmp;
+    }
 
     /**
      * Managed Beans
@@ -106,15 +115,16 @@ public class ReportsStock implements Serializable {
     }
 
     public void fillDepartmentNonEmptyStocks() {
-        if (department == null) {
-            UtilityController.addErrorMessage("Please select a department");
-            return;
-        }
         Map m = new HashMap();
         String sql;
-        sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
-        m.put("d", department);
-        m.put("z", 0.0);
+        if (department == null) {
+            sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+            m.put("d", department);
+            m.put("z", 0.0);
+        } else {
+            sql = "select s from Stock s where s.stock>:z order by s.itemBatch.item.name";
+            m.put("z", 0.0);
+        }
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
@@ -122,6 +132,35 @@ public class ReportsStock implements Serializable {
             stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
+    }
+
+    public String fillDepartmentNonEmptyStocksByVmp() {
+
+        Map m = new HashMap();
+        String sql;
+
+        if (department == null) {
+            sql = "select s from Stock s join TREAT(s.itemBatch.item as Amp) amp "
+                    + "where s.stock>:z and amp.vmp=:vmp "
+                    + "order by s.itemBatch.item.name";
+            m.put("z", 0.0);
+            m.put("vmp", vmp);
+        } else {
+            sql = "select s from Stock s join TREAT(s.itemBatch.item as Amp) amp "
+                    + "where s.stock>:z and s.department=:d and amp.vmp=:vmp "
+                    + "order by s.itemBatch.item.name";
+            m.put("d", department);
+            m.put("z", 0.0);
+            m.put("vmp", vmp);
+        }
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+        for (Stock ts : stocks) {
+            stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
+            stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
+        }
+        return "pharmacy_report_department_stock_by_single_product";
     }
 
     public void fillDepartmentNonEmptyItemStocks() {
@@ -150,36 +189,36 @@ public class ReportsStock implements Serializable {
     }
 
     public void fillDepartmentNonEmptyProductStocks() {
-        if (department == null) {
-            UtilityController.addErrorMessage("Please select a department");
-            return;
-        }
+
         Map m = new HashMap();
         String sql;
-        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(s.itemBatch.item.code, s.itemBatch.item.name, sum(s.stock), "
-                + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
-                + "from Stock s where s.stock>:z and s.department=:d "
-                + "group by s.itemBatch.item.name, s.itemBatch.item.code "
-                + "order by s.itemBatch.item.name";
-        m.put("d", department);
-        m.put("z", 0.0);
+        if (department == null) {
+            sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(vmp, sum(s.stock), "
+                    + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+                    + "from Stock s join s.itemBatch.item as amp join amp.vmp as vmp "
+                    + "where s.stock>:z  "
+                    + "group by vmp, vmp.name "
+                    + "order by vmp.name";
+            m.put("z", 0.0);
+        } else {
+            sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(vmp, sum(s.stock), "
+                    + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+                    + "from Stock s join s.itemBatch.item as amp join amp.vmp as vmp "
+                    + "where s.stock>:z and s.department=:d "
+                    + "group by vmp, vmp.name "
+                    + "order by vmp.name";
+            m.put("d", department);
+            m.put("z", 0.0);
+        }
+//        System.out.println("sql = " + sql);
+//        System.out.println("m = " + m);
+//        System.out.println("getStockFacade().findObjects(sql, m) = " + getStockFacade().findObjects(sql, m));
         List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
-        Map<String, PharmacyStockRow> vmps = new HashMap<>();
         for (PharmacyStockRow r : lsts) {
             stockPurchaseValue += r.getPurchaseValue();
             stockSaleValue += r.getSaleValue();
-            if (r.getItem() instanceof Amp) {
-                Amp a = (Amp) r.getItem();
-                Double d;
-                String s = a.getVmp().getName();
-                PharmacyStockRow vr = vmps.get(s);
-                
-            } else {
-
-            }
-
         }
         pharmacyStockRows = lsts;
     }

@@ -19,14 +19,5 @@ import javax.persistence.ManyToOne;
 public class Amp extends PharmaceuticalItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ManyToOne
-    private Vmp vmp;
-
-    public Vmp getVmp() {
-        return vmp;
-    }
-
-    public void setVmp(Vmp vmp) {
-        this.vmp = vmp;
-    }
+    
 }

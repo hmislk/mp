@@ -361,6 +361,28 @@ public class AmpController implements Serializable {
         return items;
     }
 
+    
+    public String fillAmpsByName(){
+        String jpql ;
+        jpql = "select amp from Amp as amp where amp.retired=false order by amp.name";
+        items= getFacade().findBySQL(jpql);
+        return "pharmacy_report_amp_by_name";
+    }
+    
+    public String fillAmpsByCode(){
+        String jpql ;
+        jpql = "select amp from Amp as amp where amp.retired=false order by amp.code";
+        items= getFacade().findBySQL(jpql);
+        return "pharmacy_report_amp_by_code";
+    }
+    
+    public String fillAmpsByVmp(){
+        String jpql ;
+        jpql = "select amp from Amp as amp where amp.retired=false order by amp.vmp.name";
+        items= getFacade().findBySQL(jpql);
+        return "pharmacy_report_amp_by_vmp";
+    }
+    
     public Vtm getVtm() {
         return vtm;
     }

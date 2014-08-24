@@ -194,7 +194,7 @@ public class BillController implements Serializable {
         try {
             cashPaid = Double.parseDouble(strTenderedValue);
         } catch (NumberFormatException e) {
-            //System.out.println("Error in converting tendered value. \n " + e.getMessage());
+            ////System.out.println("Error in converting tendered value. \n " + e.getMessage());
         }
     }
 
@@ -561,7 +561,7 @@ public class BillController implements Serializable {
             getBillSearch().setBill((BilledBill) b);
             getBillSearch().setPaymentScheme(b.getPaymentScheme());
             getBillSearch().setComment("Batch Cancell");
-            //System.out.println("ggg : " + getBillSearch().getComment());
+            ////System.out.println("ggg : " + getBillSearch().getComment());
             getBillSearch().cancelBill();
         }
 
@@ -706,12 +706,12 @@ public class BillController implements Serializable {
     ServiceSessionBean serviceSessionBean;
 
     public List<BillSession> getBillSessions() {
-        //   //System.out.println("getting bill sessions 1");
+        //   ////System.out.println("getting bill sessions 1");
         if (lastBillItem != null && lastBillItem.getItem() != null) {
             billSessions = getServiceSessionBean().getBillSessions(lastBillItem.getItem(), getSessionDate());
-            //     //System.out.println("bill sessions - 2" + billSessions);
+            //     ////System.out.println("bill sessions - 2" + billSessions);
         } else {
-            //System.out.println("items null");
+            ////System.out.println("items null");
         }
         return billSessions;
     }
@@ -830,12 +830,12 @@ public class BillController implements Serializable {
     }
 
     public void calTotals() {
-        System.out.println("calculating totals");
+        //System.out.println("calculating totals");
         if (paymentScheme == null) {
             return;
         }
 
-        System.out.println("calculating totals 222 " + paymentScheme.getName());
+        //System.out.println("calculating totals 222 " + paymentScheme.getName());
 
         double disPercent = 0.0;
         double billGross = 0.0;
@@ -848,7 +848,7 @@ public class BillController implements Serializable {
         }
 
         for (BillEntry be : getLstBillEntries()) {
-            //System.out.println("bill item entry");
+            ////System.out.println("bill item entry");
             double entryGross = 0.0;
             double entryDis = 0.0;
             double entryNet = 0.0;
@@ -865,7 +865,7 @@ public class BillController implements Serializable {
                 entryGross += bf.getFeeGrossValue();
                 entryNet += bf.getFeeValue();
                 entryDis += (entryGross - entryNet);
-                //System.out.println("fee net is " + bf.getFeeValue());
+                ////System.out.println("fee net is " + bf.getFeeValue());
 
             }
 
@@ -873,10 +873,10 @@ public class BillController implements Serializable {
             bi.setGrossValue(entryGross);
             bi.setNetValue(entryNet);
 
-            //   //System.out.println("item is " + bi.getItem().getName());
-            //    //System.out.println("item gross is " + bi.getGrossValue());
-            //   //System.out.println("item net is " + bi.getNetValue());
-            //    //System.out.println("item dis is " + bi.getDiscount());
+            //   ////System.out.println("item is " + bi.getItem().getName());
+            //    ////System.out.println("item gross is " + bi.getGrossValue());
+            //   ////System.out.println("item net is " + bi.getNetValue());
+            //    ////System.out.println("item dis is " + bi.getDiscount());
             billGross += +entryGross;
             billNet += entryNet;
             //     billDis = billDis + entryDis;
@@ -885,7 +885,7 @@ public class BillController implements Serializable {
         setTotal(billGross);
         setNetTotal(billNet);
 
-        //      //System.out.println("bill tot is " + billGross);
+        //      ////System.out.println("bill tot is " + billGross);
     }
 
     public void feeChanged() {
@@ -935,16 +935,16 @@ public class BillController implements Serializable {
     public void removeBillItem() {
 
         //TODO: Need to add Logic
-        //System.out.println(getIndex());
+        ////System.out.println(getIndex());
         if (getIndex() != null) {
             //  boolean remove;
             BillEntry temp = getLstBillEntries().get(getIndex());
-            //System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
+            ////System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
             recreateList(temp);
             // remove = getLstBillEntries().remove(getIndex());
 
             //  getLstBillEntries().remove(index);
-            ////System.out.println("Is Removed:" + remove);
+            //////System.out.println("Is Removed:" + remove);
             calTotals();
 
         }
@@ -956,7 +956,7 @@ public class BillController implements Serializable {
         for (BillEntry b : getLstBillEntries()) {
             if (b.getBillItem().getItem() != r.getBillItem().getItem()) {
                 temp.add(b);
-                //System.out.println(b.getBillItem().getNetValue());
+                ////System.out.println(b.getBillItem().getNetValue());
             }
         }
         lstBillEntries = temp;
@@ -1349,7 +1349,7 @@ public class BillController implements Serializable {
                 + " and (upper(p.patient.person.name)  "
                 + "like :q or upper(p.insId)  "
                 + "like :q) order by p.insId";
-        //System.out.println(sql);
+        ////System.out.println(sql);
         hm.put("q", "%" + query.toUpperCase() + "%");
         hm.put("btp", BillType.InwardAppointmentBill);
         suggestions = getFacade().findBySQL(sql, hm);

@@ -834,9 +834,9 @@ public class PharmacyController implements Serializable {
             totalPurchase += sa.getItemPurchaseTotal();
             totalRetailSale += sa.getItemRetailSalekTotal();
         }
-        System.out.println("totalStock = " + totalStock);
-        System.out.println("totalPurchase = " + totalPurchase);
-        System.out.println("totalRetailSale = " + totalRetailSale);
+        //System.out.println("totalStock = " + totalStock);
+        //System.out.println("totalPurchase = " + totalPurchase);
+        //System.out.println("totalRetailSale = " + totalRetailSale);
     }
 
     public void averageByDatePercentage() {
@@ -892,12 +892,12 @@ public class PharmacyController implements Serializable {
                         r.setAverage(avg);
                     }
 
-//                    System.out.println("calPerStock = " + calPerStock);
-//                    System.out.println("insStockTotal = " + insStockTotal);
-//                    System.out.println("insAverageTotal = " + insAverageTotal);
+//                    //System.out.println("calPerStock = " + calPerStock);
+//                    //System.out.println("insStockTotal = " + insStockTotal);
+//                    //System.out.println("insAverageTotal = " + insAverageTotal);
                     if ((insStock < calPerStock) && r.getStock() != 0) {
-                        System.out.println("*insStock = " + insStock);
-                        System.out.println("*calPerStock = " + calPerStock);
+                        //System.out.println("*insStock = " + insStock);
+                        //System.out.println("*calPerStock = " + calPerStock);
                         insStockTotal += r.getStock();
                         insAverageTotal += r.getAverage();
                         newTable.getDepatmentStocks().add(r);
@@ -905,9 +905,9 @@ public class PharmacyController implements Serializable {
 
                 }
 
-//                System.out.println("calPerStock = " + calPerStock);
-//                System.out.println("insStockTotal = " + insStockTotal);
-//                System.out.println("insAverageTotal = " + insAverageTotal);
+//                //System.out.println("calPerStock = " + calPerStock);
+//                //System.out.println("insStockTotal = " + insStockTotal);
+//                //System.out.println("insAverageTotal = " + insAverageTotal);
                 newTable.setInstitutionTotal(insStockTotal);
                 newTable.setInstitutionAverage(insAverageTotal);
 

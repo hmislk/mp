@@ -72,7 +72,7 @@ public class CategoryController implements Serializable {
         } else {
 
             sql = "select c from Category c where c.retired=false and (type(c)= :sup or type(c)= :sub) and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-            //System.out.println(sql);
+            ////System.out.println(sql);
             tmpMap.put("sup", ServiceCategory.class);
             tmpMap.put("sub", ServiceSubCategory.class);
             suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP);

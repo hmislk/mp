@@ -484,10 +484,10 @@ public class InwardBean {
 
         matrix.setFee(inwardPriceAdjustment.getMargin());
 
-        ////System.out.println("Margin : " + is.get(0).getMargin());
+        //////System.out.println("Margin : " + is.get(0).getMargin());
         f.setInstitution(i.getItem().getDepartment().getInstitution());
         f.setFeeValue(matrix.getFee());
-        ////System.out.println("Margin : " + is.get(0).getMargin());
+        //////System.out.println("Margin : " + is.get(0).getMargin());
 
         if (matrix.getId() == null) {
             getFeeFacade().create(matrix);

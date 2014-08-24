@@ -168,7 +168,7 @@ public class BillPackageMedicalController implements Serializable {
             getBillSearch().setBill((BilledBill) b);
             getBillSearch().setPaymentScheme(b.getPaymentScheme());
             getBillSearch().setComment("Batch Cancell");
-            //System.out.println("ggg : " + getBillSearch().getComment());
+            ////System.out.println("ggg : " + getBillSearch().getComment());
             getBillSearch().cancelBill();
         }
 
@@ -246,7 +246,7 @@ public class BillPackageMedicalController implements Serializable {
                     tmp.add(e);
                 }
             }
-            //System.out.println("555");
+            ////System.out.println("555");
             getBillBean().calculateBillItems(myBill, tmp);
             bills.add(myBill);
         }
@@ -266,16 +266,16 @@ public class BillPackageMedicalController implements Serializable {
             getBills().add(b);
 
         } else {
-            //    //System.out.println("11");
+            //    ////System.out.println("11");
             putToBills();
-            //   //System.out.println("22");
+            //   ////System.out.println("22");
         }
 
         saveBatchBill();
         saveBillItemSessions();
 
         clearBillItemValues();
-        //System.out.println("33");
+        ////System.out.println("33");
         UtilityController.addSuccessMessage("Bill Saved");
         printPreview = true;
     }
@@ -503,10 +503,10 @@ public class BillPackageMedicalController implements Serializable {
 
             for (BillFee bf : be.getLstBillFees()) {
 //                if (bf.getBillItem().getItem().isUserChangable() && bf.getBillItem().getItem().getDiscountAllowed() != true) {
-                //System.out.println("Total is " + tot);
-                //    //System.out.println("Bill Fee value is " + bf.getFeeValue());
+                ////System.out.println("Total is " + tot);
+                //    ////System.out.println("Bill Fee value is " + bf.getFeeValue());
                 tot += bf.getFeeValue();
-                //System.out.println("After addition is " + tot);
+                ////System.out.println("After addition is " + tot);
                 bf.getBillItem().setNetValue(bf.getBillItem().getNetValue() + bf.getFeeValue());
                 bf.getBillItem().setGrossValue(bf.getBillItem().getGrossValue() + bf.getFeeValue());
 
@@ -560,11 +560,11 @@ public class BillPackageMedicalController implements Serializable {
     public void removeBillItem() {
 
         //TODO: Need to add Logic
-        //System.out.println(getIndex());
+        ////System.out.println(getIndex());
         if (getIndex() != null) {
 
             BillEntry temp = getLstBillEntries().get(getIndex());
-            //System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
+            ////System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
             recreateList(temp);
             calTotals();
 
@@ -576,7 +576,7 @@ public class BillPackageMedicalController implements Serializable {
         for (BillEntry b : getLstBillEntries()) {
             if (b.getBillItem().getItem() != r.getBillItem().getItem()) {
                 temp.add(b);
-                //System.out.println(b.getBillItem().getNetValue());
+                ////System.out.println(b.getBillItem().getNetValue());
             }
         }
         lstBillEntries = temp;

@@ -205,8 +205,8 @@ public class ReportsTransfer implements Serializable {
                     + "bi.bill.billDate between :fd and :td group by bi.item "
                     + "order by  SUM(bi.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate * bi.pharmaceuticalBillItem.qty) ";
         }
-        //System.out.println("sql = " + sql);
-        //System.out.println("m = " + m);
+        ////System.out.println("sql = " + sql);
+        ////System.out.println("m = " + m);
         List<Object[]> objs = getBillItemFacade().findAggregates(sql, m);
         movementRecords = new ArrayList<>();
         for (Object[] obj : objs) {

@@ -196,7 +196,7 @@ public class InwardStaffPaymentBillController implements Serializable {
             } else {
                 sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
             }
-            System.out.println(sql);
+            //System.out.println(sql);
             suggestions = getStaffFacade().findBySQL(sql);
         }
         return suggestions;
@@ -289,13 +289,13 @@ public class InwardStaffPaymentBillController implements Serializable {
         totalPaying = 0;
 
         for (BillFee f : payingBillFees) {
-            System.out.println("totalPaying before " + totalPaying);
-            System.out.println("fee val is " + f.getFeeValue());
-            System.out.println("paid val is " + f.getPaidValue());
+            //System.out.println("totalPaying before " + totalPaying);
+            //System.out.println("fee val is " + f.getFeeValue());
+            //System.out.println("paid val is " + f.getPaidValue());
             totalPaying = totalPaying + (f.getFeeValue() - f.getPaidValue());
-            System.out.println("totalPaying after " + totalPaying);
+            //System.out.println("totalPaying after " + totalPaying);
         }
-        System.out.println("total pay is " + totalPaying);
+        //System.out.println("total pay is " + totalPaying);
     }
 
     public BillFeeFacade getBillFeeFacade() {
@@ -319,7 +319,7 @@ public class InwardStaffPaymentBillController implements Serializable {
     }
 
     public void setPayingBillFees(List<BillFee> payingBillFees) {
-        System.out.println("setting paying bill fees " + payingBillFees.size());
+        //System.out.println("setting paying bill fees " + payingBillFees.size());
         this.payingBillFees = payingBillFees;
     }
 
@@ -416,7 +416,7 @@ public class InwardStaffPaymentBillController implements Serializable {
         WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(b, getSessionController().getLoggedUser());
         getSessionController().setLoggedUser(wb);
         UtilityController.addSuccessMessage("Successfully Paid");
-        System.out.println("Paid");
+        //System.out.println("Paid");
     }
 
     private void saveBillCompo(Bill b) {
@@ -426,7 +426,7 @@ public class InwardStaffPaymentBillController implements Serializable {
 
             bf.setPaidValue(bf.getFeeValue());
             getBillFeeFacade().edit(bf);
-            System.out.println("marking as paid");
+            //System.out.println("marking as paid");
             b.getBillFees().add(bf);
         }
     }

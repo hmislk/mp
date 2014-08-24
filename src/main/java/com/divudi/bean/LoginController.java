@@ -8,6 +8,7 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Logins;
 import com.divudi.facade.LoginsFacade;
+import com.divudi.util.CommonDateFunctions;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +47,9 @@ public class LoginController implements Serializable {
     }
 
     public Date getFromDate() {
-
+        if (fromDate == null) {
+            fromDate = CommonDateFunctions.startOfDate();
+        }
         return fromDate;
     }
 
@@ -64,6 +67,9 @@ public class LoginController implements Serializable {
     }
 
     public Date getToDate() {
+        if (toDate == null) {
+            toDate = CommonDateFunctions.endOfDate();
+        }
         return toDate;
     }
 

@@ -214,7 +214,7 @@ public class BookingPastController implements Serializable {
             } else {
                 sql = "select p from Staff p where p.retired=false and (upper(p.person.name) like '%" + query.toUpperCase() + "%'or  upper(p.code) like '%" + query.toUpperCase() + "%' ) order by p.person.name";
             }
-            //System.out.println(sql);
+            ////System.out.println(sql);
             suggestions = getStaffFacade().findBySQL(sql);
         }
         return suggestions;
@@ -229,7 +229,7 @@ public class BookingPastController implements Serializable {
         } else {
             sql = "select p from Staff p where p.retired=false order by p.person.name";
         }
-        //System.out.println(sql);
+        ////System.out.println(sql);
         suggestions = getStaffFacade().findBySQL(sql);
 
         return suggestions;

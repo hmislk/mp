@@ -136,7 +136,7 @@ public class PharmacyPurchaseController implements Serializable {
         DateFormat df = new SimpleDateFormat("ddMMyyyy");
         String reportDate = df.format(date);
 // Print what date is today!
-        //       //System.err.println("Report Date: " + reportDate);
+        //       ////System.err.println("Report Date: " + reportDate);
         pid.getPharmaceuticalBillItem().setStringValue(reportDate);
 
         onEdit(pid);
@@ -147,7 +147,7 @@ public class PharmacyPurchaseController implements Serializable {
         DateFormat df = new SimpleDateFormat("ddMMyyyy");
         String reportDate = df.format(date);
 // Print what date is today!
-        //       //System.err.println("Report Date: " + reportDate);
+        //       ////System.err.println("Report Date: " + reportDate);
         getCurrentBillItem().getPharmaceuticalBillItem().setStringValue(reportDate);
 
         //     onEdit(pid);
@@ -181,7 +181,7 @@ public class PharmacyPurchaseController implements Serializable {
     }
 
     public void settle() {
-
+        System.out.println("settling");
         if (getBill().getFromInstitution() == null) {
             UtilityController.addErrorMessage("Select Dealor");
             return;
@@ -193,11 +193,12 @@ public class PharmacyPurchaseController implements Serializable {
             UtilityController.addErrorMessage(msg);
             return;
         }
-
+        System.out.println("to save");
         saveBill();
         //   saveBillComponent();
-        getPharmacyBillBean().calSaleFreeValue(getBill());
-
+        System.out.println("bill saved");
+        getPharmacyBillBean().calSaleFreeValue(getBill(),getBillItems());
+        System.out.println("cal sale completed");
         for (BillItem i : getBillItems()) {
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
@@ -227,6 +228,8 @@ public class PharmacyPurchaseController implements Serializable {
             getBill().getBillItems().add(i);
         }
 
+        System.err.println("getBill().getFreeValue() = " + getBill().getFreeValue());
+        
         getBillFacade().edit(getBill());
 
         WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(getBill(), getSessionController().getLoggedUser());
@@ -333,21 +336,24 @@ public class PharmacyPurchaseController implements Serializable {
 
     public void calTotal() {
         double tot = 0.0;
+        
         int serialNo = 0;
         for (BillItem p : getBillItems()) {
             p.setQty((double) p.getPharmaceuticalBillItem().getQtyInUnit());
             p.setRate(p.getPharmaceuticalBillItem().getPurchaseRateInUnit());
             p.setSearialNo(serialNo++);
             double netValue = p.getQty() * p.getRate();
-
+            double freeTotal = p.getPharmaceuticalBillItem().getFreeQty() * p.getRate();
             p.setNetValue(0 - netValue);
 
             tot += p.getNetValue();
+          
 
         }
 
         getBill().setTotal(tot);
         getBill().setNetTotal(tot);
+     
 
     }
 

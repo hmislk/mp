@@ -212,7 +212,7 @@ public class BillBhtController implements Serializable {
             getBillSearch().setBill((BilledBill) b);
             getBillSearch().setPaymentScheme(b.getPaymentScheme());
             getBillSearch().setComment("Batch Cancell");
-            //System.out.println("ggg : " + getBillSearch().getComment());
+            ////System.out.println("ggg : " + getBillSearch().getComment());
             getBillSearch().cancelBill();
         }
 
@@ -394,7 +394,7 @@ public class BillBhtController implements Serializable {
             billItem.setQty(1.0);
             addingEntry.setBillItem(billItem);
             addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(billItem));
-            System.err.println("Add To Bill");
+            //System.err.println("Add To Bill");
             addingEntry.setLstBillFees(getInwardBean().billFeeFromBillItemWithMatrix(billItem, getPatientEncounter(), billItem.getItem().getInstitution()));
             addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(billItem));
             lstBillEntries.add(addingEntry);
@@ -465,16 +465,16 @@ public class BillBhtController implements Serializable {
     public void removeBillItem() {
 
         //TODO: Need to add Logic
-        //System.out.println(getIndex());
+        ////System.out.println(getIndex());
         if (getIndex() != null) {
             boolean remove;
             BillEntry temp = getLstBillEntries().get(getIndex());
-            //System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
+            ////System.out.println("Removed Item:" + temp.getBillItem().getNetValue());
             recreateList(temp);
             // remove = getLstBillEntries().remove(getIndex());
 
             //  getLstBillEntries().remove(index);
-            ////System.out.println("Is Removed:" + remove);
+            //////System.out.println("Is Removed:" + remove);
             calTotals();
 
         }
@@ -486,7 +486,7 @@ public class BillBhtController implements Serializable {
         for (BillEntry b : getLstBillEntries()) {
             if (b.getBillItem().getItem() != r.getBillItem().getItem()) {
                 temp.add(b);
-                //System.out.println(b.getBillItem().getNetValue());
+                ////System.out.println(b.getBillItem().getNetValue());
             }
         }
         lstBillEntries = temp;

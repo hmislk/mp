@@ -565,14 +565,14 @@ public class SurgeryBillController implements Serializable {
         this.batchBill = batchBill;
         for (Bill b : getBillsByForwardRef(batchBill)) {
             if (b.getSurgeryBillType() == SurgeryBillType.ProfessionalFee) {
-                // System.err.println(SurgeryBillType.ProfessionalFee);
+                // //System.err.println(SurgeryBillType.ProfessionalFee);
                 setProfessionalBill(b);
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setProEncounterComponents(enc);
             }
 
             if (b.getSurgeryBillType() == SurgeryBillType.TimedService) {
-                // System.err.println(SurgeryBillType.TimedService);
+                // //System.err.println(SurgeryBillType.TimedService);
                 setTimedServiceBill(b);
                 List<EncounterComponent> enc = getEncounterComponents(b);
                 setTimedEncounterComponents(enc);

@@ -71,12 +71,12 @@ public class PaymentSchemeController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         if (membershipScheme == null) {
-         //   System.err.println("3");
+         //   //System.err.println("3");
             sql = "SELECT i FROM PaymentScheme i "
                     + " where i.retired=false "
                     + " order by i.orderNo, i.name";
         } else {
-           // System.err.println("4");
+           // //System.err.println("4");
             sql = "SELECT i FROM PaymentScheme i "
                     + " where i.retired=false "
                     + " and i.membershipScheme=:mem "
@@ -85,7 +85,7 @@ public class PaymentSchemeController implements Serializable {
         }
 
         list = getFacade().findBySQL(sql, hm);
-      //  System.err.println("List Size " + list.size());
+      //  //System.err.println("List Size " + list.size());
     }
 
     public MembershipScheme getMembershipScheme() {

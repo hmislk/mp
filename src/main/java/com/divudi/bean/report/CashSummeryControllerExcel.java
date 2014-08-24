@@ -113,10 +113,10 @@ public class CashSummeryControllerExcel implements Serializable {
 
         countTotal = billed - (refunded + cancelled);
 
-        //  //System.err.println("Billed : " + billed);
-        //   //System.err.println("Cancelled : " + cancelled);
-        //   //System.err.println("Refunded : " + refunded);
-        //   //System.err.println("Gross Tot : " + countTotal);
+        //  ////System.err.println("Billed : " + billed);
+        //   ////System.err.println("Cancelled : " + cancelled);
+        //   ////System.err.println("Refunded : " + refunded);
+        //   ////System.err.println("Gross Tot : " + countTotal);
         return countTotal;
     }
 
@@ -356,11 +356,11 @@ public class CashSummeryControllerExcel implements Serializable {
     private double pharmacyTotal;
 
     public List<DailyCash> getPharmacySale() {
-        //System.err.println("GETTING PHARMACY SALE");
+        ////System.err.println("GETTING PHARMACY SALE");
         List<DailyCash> list = new ArrayList<>();
         pharmacyTotal = 0;
         for (Department d : getDepartmentOfInstitution()) {
-            //System.err.println("DEP " + d.getName());
+            ////System.err.println("DEP " + d.getName());
             String sql = "Select sum(b.netTotal) from Bill b where b.retired=false and  b.billType=:bType and b.referenceBill.department=:dep "
                     + " and b.createdAt between :fromDate and :toDate and (b.paymentMethod = :pm1 or  b.paymentMethod = :pm2 or "
                     + " b.paymentMethod = :pm3 or  b.paymentMethod = :pm4)";
@@ -376,7 +376,7 @@ public class CashSummeryControllerExcel implements Serializable {
             double netTotal = getBillFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
 
             if (netTotal != 0) {
-                //System.err.println("NET " + netTotal);
+                ////System.err.println("NET " + netTotal);
                 pharmacyTotal += netTotal;
                 DailyCash dl = new DailyCash();
                 dl.setDepartment(d);
@@ -1416,12 +1416,12 @@ public class CashSummeryControllerExcel implements Serializable {
         grantTotal = 0.0;
 
         ///  grantTotal += getOpdHospitalTotal();
-        //System.err.println("Pathtotal "+getPathTotal());
-        //System.err.println("OPD Hospital "+getOpdHospitalTotal());
-        //System.err.println("Credit Com "+getCreditCompanyTotal());
-        //System.err.println("Agent "+getAgentCollectionTot());
-        //System.err.println("Inward Tot "+getInwardTot());
-        //System.err.println("Pharmacy Tot "+getPharmacyTotal());
+        ////System.err.println("Pathtotal "+getPathTotal());
+        ////System.err.println("OPD Hospital "+getOpdHospitalTotal());
+        ////System.err.println("Credit Com "+getCreditCompanyTotal());
+        ////System.err.println("Agent "+getAgentCollectionTot());
+        ////System.err.println("Inward Tot "+getInwardTot());
+        ////System.err.println("Pharmacy Tot "+getPharmacyTotal());
         grantTotal = getPathTotal() + getOpdHospitalTotal()
                 + getCreditCompanyTotal() + getAgentCollectionTot()
                 + getInwardTot() + getPharmacyTotal();

@@ -119,10 +119,10 @@ public class PriceMatrixBean {
     public OpdMemberShipDiscount getOpdMemberDisCount(PaymentMethod paymentMethod, MembershipScheme membershipScheme, Department department, Category category) {
         OpdMemberShipDiscount opdMemberShipDiscount = null;
 
-        System.err.println(paymentMethod);
-        System.err.println(membershipScheme);
-        System.err.println(department);
-        System.err.println(category);
+        //System.err.println(paymentMethod);
+        //System.err.println(membershipScheme);
+        //System.err.println(department);
+        //System.err.println(category);
 
         //Get Discount From Category        
         opdMemberShipDiscount = fetchOpdMemberShipDiscount(membershipScheme, paymentMethod, category);
@@ -138,9 +138,9 @@ public class PriceMatrixBean {
             opdMemberShipDiscount = fetchOpdMemberShipDiscount(membershipScheme, paymentMethod, department);
         }
 
-        System.err.println("Discount 1 " + opdMemberShipDiscount);
+        //System.err.println("Discount 1 " + opdMemberShipDiscount);
         if (opdMemberShipDiscount != null) {
-            System.err.println("Discount 2 " + opdMemberShipDiscount.getDiscountPercent());
+            //System.err.println("Discount 2 " + opdMemberShipDiscount.getDiscountPercent());
         }
 
         return opdMemberShipDiscount;

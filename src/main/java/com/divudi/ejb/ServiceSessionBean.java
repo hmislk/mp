@@ -98,13 +98,13 @@ public class ServiceSessionBean {
             sessDate = CommonFunctions.removeTime(bi.getSessionDate());
           //  sessDate = bi.getSessionDate();
         }
-        System.err.println("Date " + sessDate);
+        //System.err.println("Date " + sessDate);
         bi.setSessionDate(sessDate);
         bs.setSessionDate(sessDate);
 //        bs.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
         // ////System.out.println("bill item session switch - pre");
         int count = getBillSessions(i, bi.getSessionDate()).size() + 1;
-        System.err.println("COUNT " + count);
+        //System.err.println("COUNT " + count);
         bs.setSerialNo(count);
         switch (i.getSessionNumberType()) {
             case ByCategory:
@@ -120,12 +120,12 @@ public class ServiceSessionBean {
                 }
                 break;
             case BySubCategory:
-                System.err.println("By Sub Category");
+                //System.err.println("By Sub Category");
                 bs.setCategory(i.getCategory());
 //                bs.setSerialNo(getIdByCat(i.getCategory(), bi.getSessionDate()) + 1);
                 break;
             case ByItem:
-                System.err.println("By Item");
+                //System.err.println("By Item");
 //                bs.setSerialNo(getIdByItem(i, bi.getSessionDate()) + 1);
                 break;
             default:

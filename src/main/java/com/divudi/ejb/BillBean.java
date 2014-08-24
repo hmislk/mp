@@ -114,9 +114,9 @@ public class BillBean {
     }
 
     public void setBillFees(BillFee bf, boolean foreign, PaymentScheme paymentScheme, Item item) {
-        System.err.println(paymentScheme);
-        System.err.println(paymentScheme.getPaymentMethod());
-        System.err.println(paymentScheme.getMembershipScheme());
+        //System.err.println(paymentScheme);
+        //System.err.println(paymentScheme.getPaymentMethod());
+        //System.err.println(paymentScheme.getMembershipScheme());
         boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
         PriceMatrix priceMatrix = getPriceMatrixBean().getOpdMemberDisCount(paymentScheme.getPaymentMethod(), paymentScheme.getMembershipScheme(), item.getDepartment(), item.getCategory());
 
@@ -458,7 +458,7 @@ public class BillBean {
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
         lstBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //System.err.println("Search : " + sql);
+        ////System.err.println("Search : " + sql);
         if (lstBills == null) {
             lstBills = new ArrayList<>();
         }
@@ -778,7 +778,7 @@ public class BillBean {
 
             getBillItemFacade().edit(e.getBillItem());
 
-            System.err.println("1 " + e.getBillItem());
+            //System.err.println("1 " + e.getBillItem());
 
             if (b.getBillType() == BillType.InwardBill) {
                 updateMatrix(e.getBillItem());
@@ -865,7 +865,7 @@ public class BillBean {
             getBillFeeFacade().create(marginFee);
         }
 
-        System.err.println("2 " + billItem);
+        //System.err.println("2 " + billItem);
         calBillItemTotal(billItem);
 
     }
@@ -881,7 +881,7 @@ public class BillBean {
 
         billItem.setNetValue(val);
 
-        System.err.println("3 " + billItem);
+        //System.err.println("3 " + billItem);
         getBillItemFacade().edit(billItem);
 
     }

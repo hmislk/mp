@@ -308,13 +308,13 @@ public class Bill implements Serializable {
 
     public Field getField(String name) {
         try {
-            //System.err.println("ss : " + name);
+            ////System.err.println("ss : " + name);
             for (Field f : this.getClass().getFields()) {
-                //System.err.println(f.getName());
+                ////System.err.println(f.getName());
             }
             return this.getClass().getField(name);
         } catch (NoSuchFieldException | SecurityException e) {
-            //System.err.println("Ex no " + e.getMessage());
+            ////System.err.println("Ex no " + e.getMessage());
             return null;
         }
     }
@@ -1091,11 +1091,11 @@ public class Bill implements Serializable {
 
     public List<Bill> getReturnBhtIssueBills() {
         List<Bill> bills = new ArrayList<>();
-//        System.err.println("Size " + returnBhtIssueBills.size());
+//        //System.err.println("Size " + returnBhtIssueBills.size());
         for (Bill b : returnBhtIssueBills) {
-//            System.err.println("1 " + b);
-//            System.err.println("2 " + b.getBillClass());
-//            System.err.println("3 " + b.getBillType());
+//            //System.err.println("1 " + b);
+//            //System.err.println("2 " + b.getBillClass());
+//            //System.err.println("3 " + b.getBillType());
             if (b instanceof RefundBill && b.getBillType() == BillType.PharmacyBhtPre) {
                 bills.add(b);
             }

@@ -104,8 +104,8 @@ public class StoreSaleReport implements Serializable {
 //        sql = "select sum(i.netTotal) from Bill i where i.department=:d and i.referenceBill.billType=:refType "
 //                + " and i.billType=:btp and i.createdAt between :fd and :td ";
 //        double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
-//        //System.err.println("from " + fromDate);
-//        //System.err.println("Sale Value " + saleValue);
+//        ////System.err.println("from " + fromDate);
+//        ////System.err.println("Sale Value " + saleValue);
 //        return saleValue;
 //
 //    }
@@ -150,8 +150,8 @@ public class StoreSaleReport implements Serializable {
         Date fd = getCommonFunctions().getStartOfDay(date);
         Date td = getCommonFunctions().getEndOfDay(date);
 
-        System.err.println("From " + fd);
-        System.err.println("To " + td);
+        //System.err.println("From " + fd);
+        //System.err.println("To " + td);
 
         Map m = new HashMap();
         m.put("fd", fd);
@@ -258,8 +258,8 @@ public class StoreSaleReport implements Serializable {
                 + " i.referenceBill.department=:d and type(i)=:class "
                 + " and i.billType=:btp and i.createdAt between :fd and :td order by i.deptId ";
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
-        //   //System.err.println("from " + fromDate);
-        //  //System.err.println("Sale Value " + saleValue);
+        //   ////System.err.println("from " + fromDate);
+        //  ////System.err.println("Sale Value " + saleValue);
         return saleValue;
 
     }
@@ -298,8 +298,8 @@ public class StoreSaleReport implements Serializable {
 //        sql = "select sum(i.discount) from Bill i where i.department=:d and i.referenceBill.billType=:refType "
 //                + " and i.billType=:btp and i.createdAt between :fd and :td ";
 //        double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
-//        //System.err.println("from " + fromDate);
-//        //System.err.println("Sale Value " + saleValue);
+//        ////System.err.println("from " + fromDate);
+//        ////System.err.println("Sale Value " + saleValue);
 //        return saleValue;
 //
 //    }

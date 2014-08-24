@@ -73,9 +73,9 @@ public class CashRecieveBillController implements Serializable {
         Institution ins = institution;
         makeNull();
 
-        System.err.println("Select Listener");
+        //System.err.println("Select Listener");
         List<Bill> list = getBillController().getCreditBills(ins);
-        System.err.println("Size " + list.size());
+        //System.err.println("Size " + list.size());
         for (Bill b : list) {
             getCurrentBillItem().setReferenceBill(b);
             selectBillListener();
@@ -90,9 +90,9 @@ public class CashRecieveBillController implements Serializable {
         Institution ins = institution;
         makeNull();
 
-        System.err.println("Select Listener");
+        //System.err.println("Select Listener");
         List<Admission> list = getAdmissionController().getCreditBillsBht(ins);
-        System.err.println("Size " + list.size());
+        //System.err.println("Size " + list.size());
         for (PatientEncounter b : list) {
             getCurrentBillItem().setPatientEncounter(b);
             selectBhtListener();
@@ -125,16 +125,16 @@ public class CashRecieveBillController implements Serializable {
         double refBallance = getReferenceBallance(tmp);
         double netValue = Math.abs(tmp.getNetValue());
 
-        System.err.println("RefBallance " + refBallance);
-        System.err.println("Net Value " + tmp.getNetValue());
+        //System.err.println("RefBallance " + refBallance);
+        //System.err.println("Net Value " + tmp.getNetValue());
 
         if (refBallance >= netValue) {
-            System.err.println("1");
+            //System.err.println("1");
             return true;
         }
 
         if (netValue - refBallance < 0.1) {
-            System.err.println("2");
+            //System.err.println("2");
             return true;
         }
         return false;
@@ -145,16 +145,16 @@ public class CashRecieveBillController implements Serializable {
         double refBallance = getReferenceBhtBallance(tmp);
         double netValue = Math.abs(tmp.getNetValue());
 
-        System.err.println("RefBallance " + refBallance);
-        System.err.println("Net Value " + tmp.getNetValue());
+        //System.err.println("RefBallance " + refBallance);
+        //System.err.println("Net Value " + tmp.getNetValue());
 
         if (refBallance >= netValue) {
-            System.err.println("1");
+            //System.err.println("1");
             return true;
         }
 
         if (netValue - refBallance < 0.1) {
-            System.err.println("2");
+            //System.err.println("2");
             return true;
         }
         return false;
@@ -183,7 +183,7 @@ public class CashRecieveBillController implements Serializable {
     public void selectBillListener() {
         double dbl = getReferenceBallance(getCurrentBillItem());
 
-        System.err.println("Ballance Amount " + dbl);
+        //System.err.println("Ballance Amount " + dbl);
         if (dbl > 0.1) {
             getCurrentBillItem().setNetValue(dbl);
         }
@@ -193,7 +193,7 @@ public class CashRecieveBillController implements Serializable {
     public void selectBhtListener() {
         double dbl = getReferenceBhtBallance(getCurrentBillItem());
 
-        System.err.println("Ballance Amount " + dbl);
+        //System.err.println("Ballance Amount " + dbl);
         if (dbl > 0.1) {
             getCurrentBillItem().setNetValue(dbl);
         }
@@ -573,19 +573,19 @@ public class CashRecieveBillController implements Serializable {
 //    private void updateReferenceBill(BillItem tmp) {
 //        double ballance, refBallance = 0;
 //
-//        //System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
-//        //System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
-//        //System.err.println("Net Value " + tmp.getNetValue());
+//        ////System.err.println("Paid Amount " + tmp.getReferenceBill().getPaidAmount());
+//        ////System.err.println("Net Total " + tmp.getReferenceBill().getNetTotal());
+//        ////System.err.println("Net Value " + tmp.getNetValue());
 //        refBallance = tmp.getReferenceBill().getNetTotal() - tmp.getReferenceBill().getPaidAmount();
 //
-//        //System.err.println("refBallance " + refBallance);
+//        ////System.err.println("refBallance " + refBallance);
 //        //   ballance=refBallance-tmp.getNetValue();
 //        if (refBallance > tmp.getNetValue()) {
 //            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());
 //        } else {
 //            tmp.getReferenceBill().setPaidAmount(refBallance - tmp.getNetValue());
 //        }
-//        //System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
+//        ////System.err.println("Updated " + tmp.getReferenceBill().getPaidAmount());
 //
 ////        if (tmp.getReferenceBill().getPaidAmount() != 0.0) {
 ////            tmp.getReferenceBill().setPaidAmount(tmp.getReferenceBill().getPaidAmount() + tmp.getNetValue());

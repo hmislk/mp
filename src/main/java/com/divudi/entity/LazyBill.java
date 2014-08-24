@@ -24,7 +24,7 @@ public class LazyBill extends LazyDataModel<Bill> {
     public Bill getRowData(String rowKey) {
         for (Bill bill : datasource) {
             if (bill.getId().equals(rowKey)) {
-                //System.err.println("Gett Bills"+bill);
+                ////System.err.println("Gett Bills"+bill);
                 return bill;
             }
         }
@@ -34,7 +34,7 @@ public class LazyBill extends LazyDataModel<Bill> {
 
     @Override
     public Object getRowKey(Bill bill) {
-        //System.err.println("GEt Row Key"+bill);
+        ////System.err.println("GEt Row Key"+bill);
         return bill.getId();
     }
 
@@ -58,7 +58,7 @@ public class LazyBill extends LazyDataModel<Bill> {
 //                    ////System.out.println("String Value " + stringValue);
 //                    ////System.out.println("Arr Size: " + arr.length);
                     if (arr.length == 1) {
-                        //       //System.err.println("1 :" + bill.getClass().getSuperclass().getDeclaredField(property).get(bill));
+                        //       ////System.err.println("1 :" + bill.getClass().getSuperclass().getDeclaredField(property).get(bill));
                         if (bill.getClass().getSuperclass() != null && bill.getClass().getSuperclass() != Object.class) {
                             fieldValue = String.valueOf(bill.getClass().getSuperclass().getDeclaredField(property).get(bill));
                         } else {
@@ -71,7 +71,7 @@ public class LazyBill extends LazyDataModel<Bill> {
                         } else {
                             f = bill.getClass().getDeclaredField(arr[0]).get(bill);
                         }
-                        //  //System.err.println("2 :" + f.getClass().getDeclaredField(arr[1]).get(f));
+                        //  ////System.err.println("2 :" + f.getClass().getDeclaredField(arr[1]).get(f));
                         if (f.getClass().getSuperclass() != null && f.getClass().getSuperclass() != Object.class) {
                             fieldValue = String.valueOf(f.getClass().getSuperclass().getDeclaredField(arr[1]).get(f));
                         } else {
@@ -93,7 +93,7 @@ public class LazyBill extends LazyDataModel<Bill> {
                             f2 = f.getClass().getDeclaredField(arr[1]).get(f);
                         }
                      
-                        //   //System.err.println("f2 :" + f2);
+                        //   ////System.err.println("f2 :" + f2);
                         fieldValue = String.valueOf(f2.getClass().getDeclaredField(arr[2]).get(f2));
 
                     } else if (arr.length == 4) {
@@ -112,7 +112,7 @@ public class LazyBill extends LazyDataModel<Bill> {
                         }
                         
                         Object f3 = f2.getClass().getDeclaredField(arr[2]).get(f2);
-                        //  //System.err.println("4 :" + f3.getClass().getDeclaredField(arr[3]).get(f3));
+                        //  ////System.err.println("4 :" + f3.getClass().getDeclaredField(arr[3]).get(f3));
                         fieldValue = String.valueOf(f3.getClass().getDeclaredField(arr[3]).get(f3));
                     } else if (arr.length == 5) {
                        Object f;
@@ -130,7 +130,7 @@ public class LazyBill extends LazyDataModel<Bill> {
                         }
                         Object f3 = f2.getClass().getDeclaredField(arr[2]).get(f2);
                         Object f4 = f3.getClass().getDeclaredField(arr[3]).get(f3);
-                        //   //System.err.println("5 :" + f4.getClass().getDeclaredField(arr[4]).get(f4));
+                        //   ////System.err.println("5 :" + f4.getClass().getDeclaredField(arr[4]).get(f4));
                         fieldValue = String.valueOf(f4.getClass().getDeclaredField(arr[4]).get(f4));
                     }
 

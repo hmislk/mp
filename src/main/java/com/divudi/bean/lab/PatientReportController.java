@@ -284,7 +284,7 @@ public class PatientReportController implements Serializable {
     }
 
     private double findPtReportItemVal(InvestigationItem ii) {
-        System.err.println("finding report item val");
+        //System.err.println("finding report item val");
         if (currentPatientReport == null) {
             UtilityController.addErrorMessage("No Report to calculate");
             return 0;
@@ -450,9 +450,9 @@ public class PatientReportController implements Serializable {
         for (TestFlag f : fs) {
 
             Long a = v.getPatient().getAgeInDays();
-            //System.err.println("Age is a" + a);
-            //System.err.println("From Age is " + f.getFromAge());
-            //System.err.println("To Age is " + f.getToAge());
+            ////System.err.println("Age is a" + a);
+            ////System.err.println("From Age is " + f.getFromAge());
+            ////System.err.println("To Age is " + f.getToAge());
 
             ////System.out.println("flah low message " + f.getLowMessage());
             if (f.getFromAge() <= a && f.getToAge() >= a) {
@@ -690,7 +690,7 @@ public class PatientReportController implements Serializable {
     }
 
     public PatientReport createNewPatientReport(PatientInvestigation pi, Investigation ix) {
-        //System.err.println("creating a new patient report");
+        ////System.err.println("creating a new patient report");
         PatientReport r = null;
         if (pi != null && pi.getId() != null && ix != null) {
             r = new PatientReport();
@@ -713,7 +713,7 @@ public class PatientReportController implements Serializable {
     }
 
     public PatientReport createNewMicrobiologyReport(PatientInvestigation pi, Investigation ix) {
-        //System.err.println("creating a new microbiology report");
+        ////System.err.println("creating a new microbiology report");
         PatientReport r = null;
         if (pi != null && pi.getId() != null && ix != null) {
             r = new PatientReport();

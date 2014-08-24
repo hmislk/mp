@@ -1055,11 +1055,11 @@ public class PharmacySaleController implements Serializable {
         }
         getBillItem();
         bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getRetailsaleRate());
-        //   //System.err.println("Rate "+bi.getRate());
+        //   ////System.err.println("Rate "+bi.getRate());
         bi.setDiscount(calculateBillItemDiscountRate(bi));
-        //  //System.err.println("Discount "+bi.getDiscount());
+        //  ////System.err.println("Discount "+bi.getDiscount());
         bi.setNetRate(bi.getRate() - bi.getDiscount());
-        //  //System.err.println("Net "+bi.getNetRate());
+        //  ////System.err.println("Net "+bi.getNetRate());
     }
 
     public double calculateBillItemDiscountRate(BillItem bi) {
@@ -1083,12 +1083,12 @@ public class PharmacySaleController implements Serializable {
         }
         bi.setItem(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getItem());
         double tr = bi.getPharmaceuticalBillItem().getStock().getItemBatch().getRetailsaleRate();
-        //  //System.err.println("tr = " + tr);
+        //  ////System.err.println("tr = " + tr);
         double tdp = getPaymentScheme().getDiscountPercentForPharmacy();
-        //    //System.err.println("tdp = " + tdp);
+        //    ////System.err.println("tdp = " + tdp);
         double dr;
         dr = (tr * tdp) / 100;
-        //     //System.err.println("dr = " + dr);
+        //     ////System.err.println("dr = " + dr);
 
         if (bi.getItem().isDiscountAllowed()) {
             return dr;
@@ -1350,12 +1350,12 @@ public class PharmacySaleController implements Serializable {
     }
 
     public PaymentScheme getPaymentScheme() {
-        //  //System.err.println("GEtting Paymen");
+        //  ////System.err.println("GEtting Paymen");
         return paymentScheme;
     }
 
     public void setPaymentScheme(PaymentScheme paymentScheme) {
-        //     //System.err.println("Setting Pay");
+        //     ////System.err.println("Setting Pay");
         this.paymentScheme = paymentScheme;
     }
 

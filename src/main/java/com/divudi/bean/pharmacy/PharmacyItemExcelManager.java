@@ -391,7 +391,7 @@ public class PharmacyItemExcelManager implements Serializable {
         Long completedId;
 
         String sql;
-        sql = "select max(b.id) from Bill b";
+        sql = "select count(b.id) from Bill b where b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3";
         completedId = getBillFacade().findAggregateLong(sql);
         System.out.println("completedId = " + completedId);
 
@@ -401,16 +401,18 @@ public class PharmacyItemExcelManager implements Serializable {
         
         System.out.println("loopCount = " + loopCount);
         
+        long nextId = 0l;
+        
         for (int i = 0; i >= loopCount; i++) {
 
-            System.out.println("i = " + i);
+            System.out.println("i = " + ((i*1000)-1));
             
-            sql = "Select b from Bill b where b.id>:bid b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3";
+            sql = "Select b from Bill b where b.id>:bid and ( b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3)";
             Map m = new HashMap();
             m.put("bt1", BillType.PharmacyPurchaseBill);
             m.put("bt2", BillType.PharmacyGrnBill);
             m.put("bt3", BillType.PharmacyGrnReturn);
-            m.put("bid", (i*1000)-1);
+            m.put("bid", nextId);
 
             List<Bill> bills = getBillFacade().findBySQL(sql, m, 1000);
 
@@ -421,9 +423,9 @@ public class PharmacyItemExcelManager implements Serializable {
                     if (bi.getPharmaceuticalBillItem() == null) {
                         continue;
                     }
-                    System.out.println("i.getPharmaceuticalBillItem().getQty() = " + bi.getPharmaceuticalBillItem().getQty());
-                    System.out.println("i.getPharmaceuticalBillItem().getFreeQty() = " + bi.getPharmaceuticalBillItem().getFreeQty());
-                    System.out.println("i.getPharmaceuticalBillItem().getPurchaseRate() = " + bi.getPharmaceuticalBillItem().getPurchaseRate());
+//                    System.out.println("i.getPharmaceuticalBillItem().getQty() = " + bi.getPharmaceuticalBillItem().getQty());
+//                    System.out.println("i.getPharmaceuticalBillItem().getFreeQty() = " + bi.getPharmaceuticalBillItem().getFreeQty());
+//                    System.out.println("i.getPharmaceuticalBillItem().getPurchaseRate() = " + bi.getPharmaceuticalBillItem().getPurchaseRate());
                     if (b instanceof BilledBill) {
                         sale += bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
                         free += bi.getPharmaceuticalBillItem().getFreeQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
@@ -431,12 +433,13 @@ public class PharmacyItemExcelManager implements Serializable {
                         sale -= bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
                         free -= bi.getPharmaceuticalBillItem().getFreeQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
                     }
-                    System.out.println("sale = " + sale);
-                    System.out.println("free = " + free);
+//                    System.out.println("sale = " + sale);
+//                    System.out.println("free = " + free);
                 }
                 b.setSaleValue(sale);
                 b.setFreeValue(free);
                 getBillFacade().edit(b);
+                nextId = b.getId();
             }
 
             

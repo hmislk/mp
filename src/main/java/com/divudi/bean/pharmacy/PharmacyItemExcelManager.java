@@ -14,6 +14,7 @@ import com.divudi.data.dataStructure.PharmacyImportCol;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
+import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
@@ -385,6 +386,63 @@ public class PharmacyItemExcelManager implements Serializable {
 //        }
 //
 //    }
+    public void calculatePreviousFreeValues() {
+
+        Long completedId;
+
+        String sql;
+        sql = "select max(b.id) from Bill b";
+        completedId = getBillFacade().findAggregateLong(sql);
+        System.out.println("completedId = " + completedId);
+
+        int loopCount;
+        completedId= completedId/1000;
+        loopCount = completedId.intValue();
+        
+        System.out.println("loopCount = " + loopCount);
+        
+        for (int i = 0; i >= loopCount; i++) {
+
+            System.out.println("i = " + i);
+            
+            sql = "Select b from Bill b where b.id>:bid b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3";
+            Map m = new HashMap();
+            m.put("bt1", BillType.PharmacyPurchaseBill);
+            m.put("bt2", BillType.PharmacyGrnBill);
+            m.put("bt3", BillType.PharmacyGrnReturn);
+            m.put("bid", (i*1000)-1);
+
+            List<Bill> bills = getBillFacade().findBySQL(sql, m, 1000);
+
+            for (Bill b : bills) {
+                double sale = 0.0;
+                double free = 0.0;
+                for (BillItem bi : b.getBillItems()) {
+                    if (bi.getPharmaceuticalBillItem() == null) {
+                        continue;
+                    }
+                    System.out.println("i.getPharmaceuticalBillItem().getQty() = " + bi.getPharmaceuticalBillItem().getQty());
+                    System.out.println("i.getPharmaceuticalBillItem().getFreeQty() = " + bi.getPharmaceuticalBillItem().getFreeQty());
+                    System.out.println("i.getPharmaceuticalBillItem().getPurchaseRate() = " + bi.getPharmaceuticalBillItem().getPurchaseRate());
+                    if (b instanceof BilledBill) {
+                        sale += bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+                        free += bi.getPharmaceuticalBillItem().getFreeQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+                    } else {
+                        sale -= bi.getPharmaceuticalBillItem().getQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+                        free -= bi.getPharmaceuticalBillItem().getFreeQty() * bi.getPharmaceuticalBillItem().getPurchaseRate();
+                    }
+                    System.out.println("sale = " + sale);
+                    System.out.println("free = " + free);
+                }
+                b.setSaleValue(sale);
+                b.setFreeValue(free);
+                getBillFacade().edit(b);
+            }
+
+            
+        }
+    }
+
     public void resetGrnReference() {
         String sql;
         Map temMap = new HashMap();
@@ -918,7 +976,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setDoe(doe);
                 if (batch == null || batch.trim().equals("")) {
                     getPharmacyPurchaseController().setBatch();
-                }else{
+                } else {
                     getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setStringValue(batch);
                 }
                 getPharmacyPurchaseController().addItem();

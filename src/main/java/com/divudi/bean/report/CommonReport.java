@@ -111,6 +111,7 @@ public class CommonReport implements Serializable {
     Double profitTotal =0.0;
 
     public String listProfitBills() {
+        System.out.println("list profit bills");
         String sql = "SELECT b FROM Bill b "
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "
@@ -141,8 +142,12 @@ public class CommonReport implements Serializable {
         profitBills =getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
         profitTotal =0.0;
         
+//        System.out.println("temMap = " + temMap);
+//        System.out.println("sql = " + sql);
+        
         for(Bill b:profitBills){
             profitTotal+=b.getNetTotal();
+//            System.out.println("profitTotal = " + profitTotal);
         }
         return "pharmacy_report_gross_profit_by_bills";
     }

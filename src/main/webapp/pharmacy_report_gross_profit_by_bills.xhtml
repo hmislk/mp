@@ -52,100 +52,145 @@
                         </p:commandButton>  
                     </h:panelGrid>
 
-                    <p:dataTable id="tblBills"  value="#{commonReport.profitBills}" var="b" 
-                                 >
 
-                        <f:facet name="header">  
-                            <h:outputLabel value="Approximate Bill-vice Gross Profit Report - #{commonReport.department.name}"/>
+
+
+
+                    <p:dataTable id="tblBills"  
+                                 value="#{commonReport.profitBills}" var="b"
+                                 paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="1000,3000,5000"
+                                 rows="5000"
+                                 rowIndexVar="ri">
+
+                        <f:facet name="header">
+                            <h:outputLabel value="Approximate Item-vice Gross Profit - #{reportsTransfer.department.name}"/>
                         </f:facet>
 
-                        <p:column headerText="Purchase No" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Purchase No"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.deptId}"/>
-                        </p:column>
-
-                        <p:column headerText="Invoice No" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Invoice No"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.invoiceNumber}"/>
-                        </p:column>
-
-                        <p:column headerText="Created At"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Created At"/>
-                            </f:facet> 
+                        <p:column headerText="Date/Time" style="width: 70px;" 
+                                  sortBy="#{b.createdAt}" filterBy="#{b.createdAt}"
+                                  filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputLabel value="Date/Time"/>
+                            </f:facet>
                             <h:outputLabel value="#{b.createdAt}" >
-                                <f:convertDateTime pattern="dd MM yy hh:mm a"/>
+                                <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
                             </h:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Suplier Name"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Suplier Name"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.fromInstitution.name}"/>
-
+                        <p:column headerText="Bill Type" >
+                            <f:facet name="header">
+                                <h:outputLabel value="Bill Type"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.billType}" ></h:outputLabel>
                         </p:column>
 
-                        <p:column headerText="GRN No" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="GRN No"/>
-                            </f:facet> 
-                            <h:outputLabel value="#{b.referenceBill.deptId}"/>
+
+                        <p:column headerText="Bill Class" >
+                            <f:facet name="header">
+                                <h:outputLabel value="Bill Class"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.billClass}" ></h:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Cash" style=" text-align: right"  >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Cash"/>
-                            </f:facet> 
-                            <h:outputLabel rendered="#{b.paymentMethod=='Cash'}" value="#{b.netTotal}" >
-                                <f:convertNumber pattern="#,000.00"/>
+                        <p:column headerText="Bill No"  
+                                  sortBy="#{b.insId}" filterBy="#{b.insId}"
+                                  filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputLabel value="Bill No."/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.insId}" ></h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Total" 
+                                  sortBy="#{b.total}" 
+                                  style="text-align: right; padding: 5px;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Total"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.total}"  >
+                                <f:convertNumber pattern="#,###" ></f:convertNumber>
                             </h:outputLabel>
-                            <h:outputLabel rendered="#{b.paymentMethod!='Cash'}" value="0.00" />
                         </p:column>
 
-                        <p:column headerText="Credit" style=" text-align: right" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Credit"/>
-                            </f:facet> 
-                            <h:outputLabel rendered="#{b.paymentMethod=='Credit'}" value="#{b.netTotal}"  >
-                                <f:convertNumber pattern="#,000.00"/>
+                        <p:column headerText="Discount"  sortBy="#{b.discount}"
+                                  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Discount"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.discount}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
-                            <h:outputLabel rendered="#{b.paymentMethod!='Credit'}" value="0.00"/>
-                        </p:column>
-                        <p:column headerText="Remark" >
-                            <f:facet name="header">  
-                                <h:outputLabel value="Remark"/>
-                            </f:facet> 
-                            <h:outputLabel value="Cancelled. (#{b.cancelledBill.deptId})" rendered="#{b.cancelled==true}" ></h:outputLabel>
                         </p:column>
 
-                        <p:columnGroup type="footer">  
-                            <p:row >  
-                                <p:column colspan="5" style="text-align:left" footerText="Totals:"/>
+                        <p:column headerText="Free Offer" 
+                                  sortBy="#{b.freeValue}"  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Free Offers"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.freeValue}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
 
-                                <p:column style="text-align: right;" footerText="#{commonReport.purchaseBilled.cash}">
+                        <p:column headerText="Net Total"  sortBy="#{b.netTotal}"  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Profite Value"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.netTotal}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+
+
+
+
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column colspan="3" >
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.purchaseBilled.cash}">
-                                            <f:convertNumber pattern="#,000.00"/>
+                                        <h:outputLabel value="Total" />
+                                    </f:facet>
+                                </p:column>
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{reportsTransfer.purchaseValue}" >
+                                            <f:convertNumber parent="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
 
-                                <p:column style="text-align: right;" footerText="#{commonReport.purchaseBilled.credit}">
-                                    <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.purchaseBilled.credit}">
-                                            <f:convertNumber pattern="#,000.00"/>
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{reportsTransfer.saleValue}" >
+                                            <f:convertNumber parent="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
-                                </p:column>  
-                            </p:row>  
-                        </p:columnGroup>  
+                                </p:column>
+
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{reportsTransfer.profitValue}" >
+                                            <f:convertNumber parent="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{reportsTransfer.stockValue}" >
+                                            <f:convertNumber parent="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+                            </p:row>
+                        </p:columnGroup>
 
                     </p:dataTable>
+
 
                 </p:panel>
             </h:form>

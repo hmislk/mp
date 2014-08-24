@@ -200,7 +200,7 @@ public class StorePurchaseController implements Serializable {
 
         saveBill();
         //   saveBillComponent();
-        getPharmacyBillBean().calSaleFreeValue(getBill());
+        getPharmacyBillBean().calSaleFreeValue(getBill(),getBillItems());
 
         for (BillItem i : getBillItems()) {
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {

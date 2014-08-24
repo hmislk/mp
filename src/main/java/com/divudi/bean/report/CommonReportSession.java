@@ -37,7 +37,7 @@ import javax.persistence.TemporalType;
  */
 @Named
 @SessionScoped
-public class CommonReport1 implements Serializable {
+public class CommonReportSession implements Serializable {
 
     @Inject
     SessionController sessionController;
@@ -78,10 +78,165 @@ public class CommonReport1 implements Serializable {
     //////////////////    
     private List<String1Value1> dataTableData;
 
+    
+    
+     List<Bill> profitBills;
+
+    Double profitTotal = 0.0;
+    double grossTotal = 0.0;
+    double netTotal = 0.0;
+    double discountTotal = 0.0;
+    double freeTotal = 0.0;
+
+    public String listProfitBills() {
+        System.out.println("list profit bills");
+        String sql = "SELECT b FROM Bill b "
+                + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
+                + " and b.retired=false "
+                + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
+                + " and b.createdAt between :fromDate and :toDate ";
+
+        Map temMap = new HashMap();
+
+        if (department != null) {
+            sql += " and b.department=:d ";
+            temMap.put("d", department);
+        }
+
+        sql += " order by b.deptId  ";
+
+        temMap.put("bc1", BilledBill.class);
+        temMap.put("bc2", RefundBill.class);
+        temMap.put("bc3", CancelledBill.class);
+
+        temMap.put("bt1", BillType.PharmacyPurchaseBill);
+        temMap.put("bt2", BillType.PharmacyGrnBill);
+        temMap.put("bt3", BillType.PharmacySale);
+
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+
+        profitBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        profitTotal = 0.0;
+
+//        System.out.println("temMap = " + temMap);
+//        System.out.println("sql = " + sql);
+        for (Bill b : profitBills) {
+            grossTotal+=b.getTotal();
+            netTotal+=b.getNetTotal();
+            profitTotal += b.getNetTotal();
+            discountTotal += b.getDiscount();
+            freeTotal += b.getFreeValue();
+        }
+        return "pharmacy_report_gross_profit_by_bills";
+    }
+
+    
+    public String listProfitBillsDailySummery() {
+        System.out.println("list profit bills");
+        String sql = "SELECT b FROM Bill b "
+                + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
+                + " and b.retired=false "
+                + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
+                + " and b.createdAt between :fromDate and :toDate ";
+
+        Map temMap = new HashMap();
+
+        if (department != null) {
+            sql += " and b.department=:d ";
+            temMap.put("d", department);
+        }
+
+        sql += " order by b.deptId  ";
+
+        temMap.put("bc1", BilledBill.class);
+        temMap.put("bc2", RefundBill.class);
+        temMap.put("bc3", CancelledBill.class);
+
+        temMap.put("bt1", BillType.PharmacyPurchaseBill);
+        temMap.put("bt2", BillType.PharmacyGrnBill);
+        temMap.put("bt3", BillType.PharmacySale);
+
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+
+        profitBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        profitTotal = 0.0;
+
+//        System.out.println("temMap = " + temMap);
+//        System.out.println("sql = " + sql);
+        for (Bill b : profitBills) {
+            grossTotal+=b.getTotal();
+            netTotal+=b.getNetTotal();
+            profitTotal += b.getNetTotal();
+            discountTotal += b.getDiscount();
+            freeTotal += b.getFreeValue();
+        }
+        return "pharmacy_report_gross_profit_by_bills";
+    }
+
+    
+    public List<Bill> getProfitBills() {
+        return profitBills;
+    }
+
+    public void setProfitBills(List<Bill> profitBills) {
+        this.profitBills = profitBills;
+    }
+
+    public Double getProfitTotal() {
+        return profitTotal;
+    }
+
+    public void setProfitTotal(Double profitTotal) {
+        this.profitTotal = profitTotal;
+    }
+
+    public double getGrossTotal() {
+        return grossTotal;
+    }
+
+    public void setGrossTotal(double grossTotal) {
+        this.grossTotal = grossTotal;
+    }
+
+    public double getNetTotal() {
+        return netTotal;
+    }
+
+    public void setNetTotal(double netTotal) {
+        this.netTotal = netTotal;
+    }
+
+    public double getDiscountTotal() {
+        return discountTotal;
+    }
+
+    public void setDiscountTotal(double discountTotal) {
+        this.discountTotal = discountTotal;
+    }
+
+    public double getFreeTotal() {
+        return freeTotal;
+    }
+
+    public void setFreeTotal(double freeTotal) {
+        this.freeTotal = freeTotal;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Creates a new instance of CommonReport
      */
-    public CommonReport1() {
+    public CommonReportSession() {
     }
 
     public CommonFunctions getCommonFunctions() {
@@ -1498,4 +1653,7 @@ public class CommonReport1 implements Serializable {
     public void setRefundedBillsPh2(BillsTotals refundedBillsPh2) {
         this.refundedBillsPh2 = refundedBillsPh2;
     }
+    
+    
+    
 }

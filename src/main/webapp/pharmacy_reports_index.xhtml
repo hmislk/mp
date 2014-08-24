@@ -32,11 +32,6 @@
                                     <p:commandButton value="Department Stock By Batch minus" action="pharmacy_report_department_stock_by_batch_minus" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
-                            <p:panel header="Purchase Reports" >
-                                <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandButton value="Department Stock By Batch" action="pharmacy_department_stock_report_by_batch" ajax="false" ></p:commandButton>                            
-                                </p:panelGrid>
-                            </p:panel>
                             <p:panel header="Sale Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
                                     <p:commandButton value="Institution Item Movement" action="pharmacy_report_institution_movement" ajax="false" ></p:commandButton> 
@@ -56,14 +51,19 @@
                             </p:panel>
                             <p:panel header="Profit Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandButton value="Approximate Item-vice Gross Profit Report" 
+                                    <p:commandLink value="Approximate Item-vice Gross Profit Report - List All Bills" 
                                                      action="pharmacy_report_gross_profit_by_item" ajax="false" >
-                                    </p:commandButton> 
-                                     <p:commandButton value="Approximate Bill-vice Gross Profit Report" 
+                                    </p:commandLink> 
+                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - List All Bills" 
                                                      action="pharmacy_report_gross_profit_by_bills" ajax="false" >
-                                    </p:commandButton> 
+                                    </p:commandLink> 
                                     
-                                    
+                                     <p:commandLink value="Approximate Item-vice Gross Profit Report - Daily Summery" 
+                                                    disabled="true"      action="pharmacy_report_gross_profit_by_item_ds" ajax="false" >
+                                    </p:commandLink> 
+                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - Daily Summery" 
+                                                    disabled="true"   action="pharmacy_report_gross_profit_by_bills_ds" ajax="false" >
+                                    </p:commandLink> 
                                     
 
                                 </p:panelGrid>

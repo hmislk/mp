@@ -26,7 +26,10 @@
                     </h:panelGrid>
                     <h:panelGrid columns="2" id="ins">
                         <p:panel header="PaymentSchme allowed for this user are">
-                            <p:dataTable  value="#{userPaymentSchemeController.items}" var="i">
+                            <p:dataTable  value="#{userPaymentSchemeController.items}" var="i"paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,30,50"
+                                 rows="50">
                                 <p:column headerText="Payment Scheme">
                                     <h:outputLabel value="#{i.paymentScheme.name}"/>                              
                                 </p:column>

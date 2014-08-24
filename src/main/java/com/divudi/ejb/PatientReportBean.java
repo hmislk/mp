@@ -108,9 +108,9 @@ public class PatientReportBean {
         } else {
             String sql;
             sql = "select ii from InvestigationItem ii where ii.retired = false and ii.ixItemType = com.divudi.data.InvestigationItemType.Value and ii.item.id = " + ix.getId() + " order by ii.cssTop, ii.cssLeft ";
-            //System.out.println(sql);
+            ////System.out.println(sql);
             ii = getIxItemFacade().findBySQL(sql);
-            //System.out.println("ii is " + ii + " and the cou");
+            ////System.out.println("ii is " + ii + " and the cou");
         }
         if (ii == null) {
             ii = new ArrayList<InvestigationItem>();
@@ -140,11 +140,11 @@ public class PatientReportBean {
 
     public void addPatientReportItemValuesForReport(PatientReport ptReport) {
         String sql = "";
-        //System.out.println("going to add patient report item values for report");
+        ////System.out.println("going to add patient report item values for report");
         Investigation temIx = (Investigation) ptReport.getItem();
-        //System.out.println("Items getting for ix is - " + temIx.getName());
+        ////System.out.println("Items getting for ix is - " + temIx.getName());
         for (ReportItem ii : temIx.getReportItems()) {
-            //System.out.println("report items is " + ii.getName());
+            ////System.out.println("report items is " + ii.getName());
             PatientReportItemValue val = null;
             if ((ii.getIxItemType() == InvestigationItemType.Value || ii.getIxItemType() == InvestigationItemType.Calculation || ii.getIxItemType() == InvestigationItemType.Flag) && ii.isRetired() == false) {
                 if (ptReport.getId() == null || ptReport.getId() == 0) {
@@ -165,7 +165,7 @@ public class PatientReportBean {
                     val.setPatientEncounter(ptReport.getPatientInvestigation().getEncounter());
                     val.setPatientReport(ptReport);
                     // ptReport.getPatientReportItemValues().add(val);
-                    //System.out.println("New value added to pr teport" + ptReport);
+                    ////System.out.println("New value added to pr teport" + ptReport);
 
                 } else {
                     sql = "select i from PatientReportItemValue i where i.patientReport=:ptRp"
@@ -174,9 +174,9 @@ public class PatientReportBean {
                     hm.put("ptRp", ptReport);
                     hm.put("inv", ii);
                     val = getPtRivFacade().findFirstBySQL(sql, hm);
-                    //System.out.println("val is " + val);
+                    ////System.out.println("val is " + val);
                     if (val == null) {
-                        //System.out.println("val is null");
+                        ////System.out.println("val is null");
                         val = new PatientReportItemValue();
                         if (ii.getIxItemValueType() == InvestigationItemValueType.Varchar) {
                             val.setStrValue(getDefaultVarcharValue((InvestigationItem) ii, ptReport.getPatientInvestigation().getPatient()));
@@ -193,7 +193,7 @@ public class PatientReportBean {
                         val.setPatientEncounter(ptReport.getPatientInvestigation().getEncounter());
                         val.setPatientReport(ptReport);
                         //ptReport.getPatientReportItemValues().add(val);
-                        //System.out.println("value added to pr teport" + ptReport);
+                        ////System.out.println("value added to pr teport" + ptReport);
 
                     }
 
@@ -208,14 +208,14 @@ public class PatientReportBean {
                     val.setPatientEncounter(ptReport.getPatientInvestigation().getEncounter());
                     val.setPatientReport(ptReport);
                     // ptReport.getPatientReportItemValues().add(val);
-                    //System.out.println("New value added to pr teport" + ptReport);
+                    ////System.out.println("New value added to pr teport" + ptReport);
 
                 } else {
                     sql = "select i from PatientReportItemValue i where i.patientReport.id = " + ptReport.getId() + " and i.investigationItem.id = " + ii.getId() + " and i.investigationItem.ixItemType = com.divudi.data.InvestigationItemType.Value";
                     val = getPtRivFacade().findFirstBySQL(sql);
-                    //System.out.println("val is " + val);
+                    ////System.out.println("val is " + val);
                     if (val == null) {
-                        //System.out.println("val is null");
+                        ////System.out.println("val is null");
                         val = new PatientReportItemValue();
                         val.setStrValue(getPatientDynamicLabel((InvestigationItem) ii, ptReport.getPatientInvestigation().getPatient()));
                         val.setInvestigationItem((InvestigationItem) ii);
@@ -223,7 +223,7 @@ public class PatientReportBean {
                         val.setPatientEncounter(ptReport.getPatientInvestigation().getEncounter());
                         val.setPatientReport(ptReport);
                         // ptReport.getPatientReportItemValues().add(val);
-                        //System.out.println("value added to pr teport" + ptReport);
+                        ////System.out.println("value added to pr teport" + ptReport);
 
                     }
 
@@ -240,11 +240,11 @@ public class PatientReportBean {
 
     public void addMicrobiologyReportItemValuesForReport(PatientReport ptReport) {
         String sql = "";
-        //System.out.println("going to add microbiology report item values for report");
+        ////System.out.println("going to add microbiology report item values for report");
         Investigation temIx = (Investigation) ptReport.getItem();
-        //System.out.println("Items getting for ix is - " + temIx.getName());
+        ////System.out.println("Items getting for ix is - " + temIx.getName());
         for (ReportItem ii : temIx.getReportItems()) {
-            //System.out.println("report items is " + ii.getName());
+            ////System.out.println("report items is " + ii.getName());
             if (ii.isRetired()) {
                 continue;
             }
@@ -258,7 +258,7 @@ public class PatientReportBean {
                     hm.put("ptRp", ptReport);
                     hm.put("inv", ii);
                     val = getPtRivFacade().findFirstBySQL(sql, hm);
-                    //System.out.println("val is " + val);
+                    ////System.out.println("val is " + val);
                     if (val == null) {
                         val = new PatientReportItemValue();
                         val.setLobValue(getDefaultMemoValue((InvestigationItem) ii, ptReport.getPatientInvestigation().getPatient()));
@@ -266,7 +266,7 @@ public class PatientReportBean {
                         val.setPatient(ptReport.getPatientInvestigation().getPatient());
                         val.setPatientEncounter(ptReport.getPatientInvestigation().getEncounter());
                         val.setPatientReport(ptReport);
-                        //System.out.println("value added to pr teport" + ptReport);
+                        ////System.out.println("value added to pr teport" + ptReport);
                     }
                 }
             }
@@ -317,7 +317,7 @@ public class PatientReportBean {
         m.put("a", a.getName());
         InvestigationItem ii = getIiFacade().findFirstBySQL(sql, m);
         if (ii == null) {
-            //System.out.println("ii is null");
+            ////System.out.println("ii is null");
             ii = new InvestigationItem();
             ii.setName(a.getName());
             ii.setItem(i);
@@ -328,7 +328,7 @@ public class PatientReportBean {
 //            i.getReportItems().add(ii);
 //            getIxFacade().edit(i);
         } else {
-            //System.out.println("ii was found and it is " + ii.getItem().getName() + " and " + ii.getName());
+            ////System.out.println("ii was found and it is " + ii.getItem().getName() + " and " + ii.getName());
         }
         return ii;
     }

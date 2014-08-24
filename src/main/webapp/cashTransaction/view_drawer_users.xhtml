@@ -17,7 +17,12 @@
             <h:form  >
                 <p:commandButton ajax="false" value="Process" action="#{drawerController.createDrawers()}"/>
 
-                <p:dataTable id="lstSelect" value="#{drawerController.drawers}" var="u">
+                <p:dataTable id="lstSelect" 
+                             value="#{drawerController.drawers}" var="u"
+                             paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,30,50"
+                                 rows="50">
                     <p:column headerText="Drawer Name">
                         <h:outputLabel value="#{u.name}"/>
                     </p:column>

@@ -63,12 +63,12 @@ public class ServiceFeeEdit implements Serializable {
     }
 
     private void calBillFees() {
-        System.err.println("Calculating BillFee 1 " + billItem);
+        //System.err.println("Calculating BillFee 1 " + billItem);
         String sql = "SELECT b FROM BillFee b WHERE b.retired=false and b.billItem=:billItem ";
         HashMap hm = new HashMap();
         hm.put("billItem", billItem);
         billFees = getBillFeeFacade().findBySQL(sql, hm);
-        System.err.println("Calculating BillFee 2 " + billFees);
+        //System.err.println("Calculating BillFee 2 " + billFees);
     }
 
     public void updateFee(RowEditEvent event) {

@@ -85,8 +85,8 @@ public class StaffImageController implements Serializable {
             UtilityController.addErrorMessage("Please select staff member");
             return "";
         }
-        //System.out.println("file name is not null");
-        //System.out.println(file.getFileName());
+        ////System.out.println("file name is not null");
+        ////System.out.println(file.getFileName());
         try {
             in = getFile().getInputstream();
             File f = new File(getStaffController().getCurrent().toString() + getStaffController().getCurrent().getFileType());
@@ -110,23 +110,23 @@ public class StaffImageController implements Serializable {
             getStaffFacade().edit(getStaffController().getCurrent());
             return "";
         } catch (IOException e) {
-            //System.out.println("Error " + e.getMessage());
+            ////System.out.println("Error " + e.getMessage());
             return "";
         }
 
     }
 
     public StreamedContent getSignatureById() {
-        //System.err.println("Get Sigature By Id");
+        ////System.err.println("Get Sigature By Id");
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getRenderResponse()) {
-            //System.err.println("Contex Response");
+            ////System.err.println("Contex Response");
             // So, we're rendering the view. Return a stub StreamedContent so that it will generate right URL.
             return new DefaultStreamedContent();
         } else {
             // So, browser is requesting the image. Get ID value from actual request param.
             String id = context.getExternalContext().getRequestParameterMap().get("id");
-            //System.err.println("Staff Id " + id);
+            ////System.err.println("Staff Id " + id);
             Long l;
             try {
                 l = Long.valueOf(id);
@@ -135,17 +135,17 @@ public class StaffImageController implements Serializable {
             }
             Staff temImg = getStaffFacade().find(l);
             if (temImg != null) {
-                //System.err.println("Img 1 " + temImg);
+                ////System.err.println("Img 1 " + temImg);
                 byte[] imgArr = null;
                 try {
                     imgArr = temImg.getBaImage();
                 } catch (Exception e) {
-                    //System.err.println("Try  " + e.getMessage());
+                    ////System.err.println("Try  " + e.getMessage());
                     return new DefaultStreamedContent();
                 }
 
                 StreamedContent str = new DefaultStreamedContent(new ByteArrayInputStream(imgArr), temImg.getFileType());
-                //System.err.println("Stream " + str);
+                ////System.err.println("Stream " + str);
                 return str;
             } else {
                 return new DefaultStreamedContent();
@@ -164,14 +164,14 @@ public class StaffImageController implements Serializable {
 
         Staff temStaff = getStaffFacade().findFirstBySQL("select s from Staff s where s.baImage != null and s.id = " + stfId);
 
-        //System.out.println("Printing");
+        ////System.out.println("Printing");
 
         if (temStaff == null) {
             return new DefaultStreamedContent();
         } else {
             if (temStaff.getId() != null && temStaff.getBaImage() != null) {
-                //System.out.println(temStaff.getFileType());
-                //System.out.println(temStaff.getFileName());
+                ////System.out.println(temStaff.getFileType());
+                ////System.out.println(temStaff.getFileName());
                 return new DefaultStreamedContent(new ByteArrayInputStream(temStaff.getBaImage()), temStaff.getFileType(), temStaff.getFileName());
             } else {
                 return new DefaultStreamedContent();

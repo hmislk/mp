@@ -21,9 +21,6 @@ public class Vmpp extends PharmaceuticalItem implements Serializable {
     private static final long serialVersionUID = 1L;
    
     @ManyToOne
-    Vmp vmp;
-
-    @ManyToOne
     MeasurementUnit packUnit;
 
     public MeasurementUnit getPackUnit() {
@@ -36,14 +33,7 @@ public class Vmpp extends PharmaceuticalItem implements Serializable {
     
     
     
-    
-    public Vmp getVmp() {
-        return vmp;
-    }
-
-    public void setVmp(Vmp vmp) {
-        this.vmp = vmp;
-    }
+   
     
     
 }

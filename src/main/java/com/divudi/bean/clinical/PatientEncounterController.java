@@ -87,8 +87,8 @@ public class PatientEncounterController implements Serializable {
             jpql = jpql + " and pe.opdDoctor=:doc ";
             m.put("doc", doctor);
         }
-        System.out.println("m = " + m);
-        System.out.println("sql = " + jpql);
+        //System.out.println("m = " + m);
+        //System.out.println("sql = " + jpql);
         items = getFacade().findBySQL(jpql, m);
         return "/clinical/clinical_reports_all_opd_visits";
     }

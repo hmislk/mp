@@ -67,17 +67,17 @@ public class StorePurchaseOrderRequestController implements Serializable {
     PharmacyCalculation pharmacyBillBean;
 
     public void removeSelected() {
-        //  //System.err.println("1");
+        //  ////System.err.println("1");
         if (selectedBillItems == null) {
-            //   //System.err.println("2");
+            //   ////System.err.println("2");
             return;
         }
 
         for (BillItem b : selectedBillItems) {
-            //System.err.println("SerialNO " + b.getSearialNo());
-            //System.err.println("Item " + b.getItem().getName());
+            ////System.err.println("SerialNO " + b.getSearialNo());
+            ////System.err.println("Item " + b.getItem().getName());
             BillItem tmp = getBillItems().remove(b.getSearialNo());
-            //System.err.println("Removed Item " + tmp.getItem().getName());
+            ////System.err.println("Removed Item " + tmp.getItem().getName());
             calTotal();
         }
 
@@ -117,8 +117,8 @@ public class StorePurchaseOrderRequestController implements Serializable {
     }
 
     public void removeItem(BillItem bi) {
-        //System.err.println("5 " + bi.getItem().getName());
-        //System.err.println("6 " + bi.getSearialNo());
+        ////System.err.println("5 " + bi.getItem().getName());
+        ////System.err.println("6 " + bi.getSearialNo());
         getBillItems().remove(bi.getSearialNo());
 
         calTotal();

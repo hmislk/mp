@@ -182,7 +182,7 @@ public class BhtIssueReturnController implements Serializable {
             getBillItemFacade().edit(i);
 
             //   getPharmaceuticalBillItemFacade().edit(i.getPharmaceuticalBillItem());
-            //System.err.println("STOCK " + i.getPharmaceuticalBillItem().getStock());
+            ////System.err.println("STOCK " + i.getPharmaceuticalBillItem().getStock());
             getPharmacyBean().addToStock(i.getPharmaceuticalBillItem().getStock(), Math.abs(i.getPharmaceuticalBillItem().getQtyInUnit()), i.getPharmaceuticalBillItem(), getSessionController().getDepartment());
 
             //   i.getBillItem().getTmpReferenceBillItem().getPharmaceuticalBillItem().setRemainingQty(i.getRemainingQty() - i.getQty());
@@ -307,10 +307,10 @@ public class BhtIssueReturnController implements Serializable {
 
             double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyBhtPre);
 
-            System.err.println("Refund " + rFund);
+            //System.err.println("Refund " + rFund);
             double tmpQty = (Math.abs(i.getQtyInUnit())) - Math.abs(rFund);
 
-            System.err.println("TMP " + tmpQty);
+            //System.err.println("TMP " + tmpQty);
             if (tmpQty <= 0) {
                 continue;
             }

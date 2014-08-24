@@ -733,7 +733,7 @@ public class InwardSearch implements Serializable {
     }
 
     public List<Bill> getBillsToApproveCancellation() {
-        //System.out.println("1");
+        ////System.out.println("1");
         billsToApproveCancellation = ejbApplication.getBillsToCancel();
         return billsToApproveCancellation;
     }
@@ -800,12 +800,12 @@ public class InwardSearch implements Serializable {
 
     public void setBill(Bill bill) {
         recreateModel();
-        System.err.println("Billed " + bill);
+        //System.err.println("Billed " + bill);
         this.bill = bill;
     }
 
     public void setBillActionListener(String id) {
-        System.err.println("Billed Id " + id);
+        //System.err.println("Billed Id " + id);
         setBill(bill);
     }
 
@@ -898,7 +898,7 @@ public class InwardSearch implements Serializable {
         }
         double tot = 0.0;
         for (BillFee f : getBillFees()) {
-            //System.out.println("Tot" + f.getFeeValue());
+            ////System.out.println("Tot" + f.getFeeValue());
             tot += f.getFeeValue();
         }
 

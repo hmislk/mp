@@ -20,6 +20,7 @@ public class StockReportRecord {
     Double retailsaleValue;
     Double wholeSaleValue;
     Double stockQty;
+    Double profitValue;
     Institution institution;
 
     public StockReportRecord(Item item, Double qty, Double purchaseValue, Double retailsaleValue, Double wholeSaleValue) {
@@ -30,6 +31,16 @@ public class StockReportRecord {
         this.wholeSaleValue = wholeSaleValue;
     }
 
+    public Double getProfitValue() {
+        return profitValue;
+    }
+
+    public void setProfitValue(Double profitValue) {
+        this.profitValue = profitValue;
+    }
+
+    
+    
     public Item getItem() {
         return item;
     }

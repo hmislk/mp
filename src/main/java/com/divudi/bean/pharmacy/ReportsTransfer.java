@@ -18,6 +18,7 @@ import com.divudi.entity.pharmacy.Stock;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.StockFacade;
+import com.divudi.util.CommonDateFunctions;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -54,6 +55,8 @@ public class ReportsTransfer implements Serializable {
     double totalsValue;
     double discountsValue;
     double netTotalValues;
+    double profitValue;
+    double stockValue;
 
     List<BillItem> transferItems;
     List<Bill> transferBills;
@@ -118,6 +121,59 @@ public class ReportsTransfer implements Serializable {
         }
     }
 
+    public String fillGrossProfitByItem() {
+        String sql;
+        Map m = new HashMap();
+
+//        m.put("t1", BillType.PharmacyTransferIssue);
+        m.put("t2", BillType.PharmacyPre);
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+
+        sql = "select bi.item, abs(SUM(bi.pharmaceuticalBillItem.qty)), "
+                + "abs(SUM(bi.pharmaceuticalBillItem.stock.itemBatch.purcahseRate * bi.pharmaceuticalBillItem.qty)), "
+                + "abs(SUM(bi.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate * bi.qty))  ";
+        sql += "FROM BillItem bi where bi.retired=false and "
+                + "(bi.bill.billType=:t2) "
+                + "and bi.bill.billDate between :fd and :td ";
+        if (department != null) {
+            sql += " and bi.bill.department=:d ";
+            m.put("d", department);
+        }
+        sql += "group by bi.item, bi.item.name "
+                + "order by bi.item.name";
+        List<Object[]> objs = getBillItemFacade().findAggregates(sql, m);
+        movementRecords = new ArrayList<>();
+
+        saleValue = 0.0;
+        purchaseValue = 0.0;
+        totalsValue = 0.0;
+        discountsValue = 0.0;
+        netTotalValues = 0.0;
+        profitValue = 0.0;
+        stockValue=0.0;
+
+        for (Object[] obj : objs) {
+            StockReportRecord r = new StockReportRecord();
+            r.setItem((Item) obj[0]);
+            r.setQty((Double) obj[1]);
+            r.setPurchaseValue((Double) obj[2]);
+            r.setRetailsaleValue((Double) obj[3]);
+            r.setProfitValue(r.getRetailsaleValue() - r.getPurchaseValue());
+            if (department != null) {
+                r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem(), department));
+            } else {
+                r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem()));
+            }
+            saleValue += r.getRetailsaleValue();
+            purchaseValue += r.getPurchaseValue();
+            profitValue += r.getProfitValue();
+            stockValue+=r.getStockQty();
+            movementRecords.add(r);
+        }
+        return "pharmacy_report_gross_profit_by_item";
+    }
+
     public void fillMoving(boolean fast) {
         String sql;
         Map m = new HashMap();
@@ -149,8 +205,8 @@ public class ReportsTransfer implements Serializable {
                     + "bi.bill.billDate between :fd and :td group by bi.item "
                     + "order by  SUM(bi.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate * bi.pharmaceuticalBillItem.qty) ";
         }
-        //System.out.println("sql = " + sql);
-        //System.out.println("m = " + m);
+        ////System.out.println("sql = " + sql);
+        ////System.out.println("m = " + m);
         List<Object[]> objs = getBillItemFacade().findAggregates(sql, m);
         movementRecords = new ArrayList<>();
         for (Object[] obj : objs) {
@@ -268,7 +324,6 @@ public class ReportsTransfer implements Serializable {
             saleValue = saleValue + (ts.getPharmaceuticalBillItem().getItemBatch().getRetailsaleRate() * ts.getPharmaceuticalBillItem().getQtyInUnit());
         }
     }
-    
 
     public void fillDepartmentTransfersIssueByBill() {
         Map m = new HashMap();
@@ -422,6 +477,9 @@ public class ReportsTransfer implements Serializable {
     }
 
     public Date getFromDate() {
+        if(fromDate==null){
+            fromDate = CommonDateFunctions.startOfMonth();
+        }
         return fromDate;
     }
 
@@ -430,6 +488,9 @@ public class ReportsTransfer implements Serializable {
     }
 
     public Date getToDate() {
+        if(toDate==null){
+            toDate = CommonDateFunctions.endOfMonth();
+        }
         return toDate;
     }
 
@@ -525,4 +586,21 @@ public class ReportsTransfer implements Serializable {
         this.netTotalValues = netTotalValues;
     }
 
+    public double getProfitValue() {
+        return profitValue;
+    }
+
+    public void setProfitValue(double profitValue) {
+        this.profitValue = profitValue;
+    }
+
+    public double getStockValue() {
+        return stockValue;
+    }
+
+    public void setStockValue(double stockValue) {
+        this.stockValue = stockValue;
+    }
+
+    
 }

@@ -255,7 +255,7 @@ public class PharmacyController implements Serializable {
     private List<InstitutionStock> institutionStocks;
 
     public List<Object[]> calDepartmentStock(Institution institution) {
-        //   //System.err.println("Cal Department Stock");
+        //   ////System.err.println("Cal Department Stock");
         Item item;
 
         if (pharmacyItem instanceof Ampp) {
@@ -278,7 +278,7 @@ public class PharmacyController implements Serializable {
     }
 
     public List<Object[]> calDepartmentStock(Institution institution, Item itm) {
-        //   //System.err.println("Cal Department Stock");
+        //   ////System.err.println("Cal Department Stock");
 
         if (itm instanceof Ampp) {
             itm = ((Ampp) itm).getAmp();
@@ -420,7 +420,7 @@ public class PharmacyController implements Serializable {
             dayCount = lValue / (1000 * 60 * 60 * 24);
         }
 
-        System.err.println("Day Count " + dayCount);
+        //System.err.println("Day Count " + dayCount);
         createStockAverage(dayCount);
 
     }
@@ -437,7 +437,7 @@ public class PharmacyController implements Serializable {
             monthCount = lValue / (1000 * 60 * 60 * 24 * 30);
         }
 
-        System.err.println("Month Count " + monthCount);
+        //System.err.println("Month Count " + monthCount);
         createStockAverage(Math.abs(monthCount));
 
     }
@@ -449,7 +449,7 @@ public class PharmacyController implements Serializable {
         List<Institution> insList = getCompany();
         for (Item i : items) {
 
-            System.err.println("i.getName() = " + i.getName());
+            //System.err.println("i.getName() = " + i.getName());
 
             double itemStockTotal = 0;
             double itemAverageTotal = 0;
@@ -466,7 +466,7 @@ public class PharmacyController implements Serializable {
                 List<Object[]> objs = calDepartmentStock(ins, i);
 
                 for (Object[] obj : objs) {
-//                    System.err.println("Inside ");
+//                    //System.err.println("Inside ");
                     DepartmentStock r = new DepartmentStock();
                     r.setDepartment((Department) obj[0]);
                     r.setStock((Double) obj[1]);
@@ -502,7 +502,7 @@ public class PharmacyController implements Serializable {
     }
 
     public void createInstitutionStock() {
-        //   //System.err.println("Institution Stock");
+        //   ////System.err.println("Institution Stock");
         List<Institution> insList = getCompany();
 
         institutionStocks = new ArrayList<>();
@@ -685,7 +685,7 @@ public class PharmacyController implements Serializable {
 
     public void createGrnTable() {
 
-        // //System.err.println("Getting GRNS : ");
+        // ////System.err.println("Getting GRNS : ");
         String sql = "Select b From BillItem b where type(b.bill)=:class and b.bill.creater is not null "
                 + " and b.bill.cancelled=false and b.retired=false and b.item=:i "
                 + " and b.bill.billType=:btp and b.createdAt between :frm and :to order by b.id desc ";
@@ -702,7 +702,7 @@ public class PharmacyController implements Serializable {
 
     public void createDirectPurchaseTable() {
 
-        // //System.err.println("Getting GRNS : ");
+        // ////System.err.println("Getting GRNS : ");
         String sql = "Select b From BillItem b where type(b.bill)=:class and b.bill.creater is not null "
                 + " and b.bill.cancelled=false and b.retired=false and b.item=:i "
                 + " and b.bill.billType=:btp and b.createdAt between :frm and :to order by b.id desc ";
@@ -722,7 +722,7 @@ public class PharmacyController implements Serializable {
 
     public void createPoTable() {
 
-        // //System.err.println("Getting POS : ");
+        // ////System.err.println("Getting POS : ");
         String sql = "Select b From BillItem b where type(b.bill)=:class and b.bill.creater is not null "
                 + " and b.bill.cancelled=false and b.retired=false and b.item=:i "
                 + " and b.bill.billType=:btp and b.createdAt between :frm and :to order by b.id desc";
@@ -792,7 +792,7 @@ public class PharmacyController implements Serializable {
                 List<Object[]> objs = calDepartmentStock(ins, i);
 
                 for (Object[] obj : objs) {
-//                    System.err.println("Inside ");
+//                    //System.err.println("Inside ");
                     DepartmentStock r = new DepartmentStock();
                     r.setDepartment((Department) obj[0]);
                     r.setStock((Double) obj[1]);
@@ -851,7 +851,7 @@ public class PharmacyController implements Serializable {
             dayCount = lValue / (1000 * 60 * 60 * 24);
         }
 
-        System.err.println("Day Count " + dayCount);
+        //System.err.println("Day Count " + dayCount);
         createStockAverageByPer(dayCount);
 
     }
@@ -878,7 +878,7 @@ public class PharmacyController implements Serializable {
                 List<Object[]> objs = calDepartmentStock(ins, i);
                 double calPerStock = 0.0;
                 for (Object[] obj : objs) {
-//                    System.err.println("Inside ");
+//                    //System.err.println("Inside ");
                     DepartmentStock r = new DepartmentStock();
                     r.setDepartment((Department) obj[0]);
                     r.setStock((Double) obj[1]);
@@ -964,7 +964,7 @@ public class PharmacyController implements Serializable {
             monthCount = lValue / (1000 * 60 * 60 * 24 * 30);
         }
 
-        System.err.println("Month Count " + monthCount);
+        //System.err.println("Month Count " + monthCount);
         createStockAverageByPer(Math.abs(monthCount));
 
     }

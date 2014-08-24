@@ -299,7 +299,7 @@ public class HumanResourceBean {
     }
 
     public StaffPaysheetComponent getBasic(Staff staff) {
-        //System.err.println("Getting Basic " + staff.getStaffEmployment());
+        ////System.err.println("Getting Basic " + staff.getStaffEmployment());
 
         String sql;
         HashMap hm;
@@ -361,8 +361,8 @@ public class HumanResourceBean {
 
 //    public double calOt(Date date) {
 //        DateRange dateRange = getCommonFunctions().getDateRangeForOT(date);
-//        //System.err.println("From : " + dateRange.getFromDate());
-//        //System.err.println("To : " + dateRange.getToDate());
+//        ////System.err.println("From : " + dateRange.getFromDate());
+//        ////System.err.println("To : " + dateRange.getToDate());
 //
 //        return 0.0;
 //    }
@@ -387,7 +387,7 @@ public class HumanResourceBean {
         Calendar time = Calendar.getInstance();
         time.setTime(tmp);
         time.add(Calendar.MILLISECOND, 1);
-        //System.err.println("Start Time : " + time.getTime());
+        ////System.err.println("Start Time : " + time.getTime());
 
         if (checkExistingStaffShift(time.getTime())) {
             return;
@@ -534,8 +534,8 @@ public class HumanResourceBean {
         
         otNormalSpecial.setDateRange(dateRange);
         
-        //System.err.println("From : " + dateRange.getFromDate());
-        //System.err.println("To : " + dateRange.getToDate());
+        ////System.err.println("From : " + dateRange.getFromDate());
+        ////System.err.println("To : " + dateRange.getToDate());
 
         List<StartEndRecord> startEndRecords = getRecords(staff, dateRange);
 
@@ -571,8 +571,8 @@ public class HumanResourceBean {
         dateRange.setFromDate(getCommonFunctions().getStartOfMonth(date));
         dateRange.setToDate(getCommonFunctions().getEndOfMonth(date));
 
-        //System.err.println("From : " + dateRange.getFromDate());
-        //System.err.println("To : " + dateRange.getToDate());
+        ////System.err.println("From : " + dateRange.getFromDate());
+        ////System.err.println("To : " + dateRange.getToDate());
 
         List<StaffShift> staffShifts = getStaffShift(staff, dateRange.getFromDate(), dateRange.getToDate());
 

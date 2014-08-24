@@ -192,7 +192,7 @@ public class AttendanceUploadController implements Serializable {
 
 //21/12/2013 15:17:22 dd/MM/yyyy                         
                         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                        //  //System.err.println("str :" + str);
+                        //  ////System.err.println("str :" + str);
 
                         try {
                             ////System.out.println("str = " + str);
@@ -284,8 +284,8 @@ public class AttendanceUploadController implements Serializable {
                 String str = cell.getContents();
 
                 if (s != null && !str.equals("")) {
-//                    //System.err.println("AcNo : " + strCat);
-//                    //System.err.println("Staff : " + s);
+//                    ////System.err.println("AcNo : " + strCat);
+//                    ////System.err.println("Staff : " + s);
                     FingerPrintRecord ffr = new FingerPrintRecord();
                     ffr.setCreatedAt(Calendar.getInstance().getTime());
                     ffr.setCreater(getSessionController().getLoggedUser());
@@ -294,7 +294,7 @@ public class AttendanceUploadController implements Serializable {
 
                     Date date;
                     DateFormat formatter = new SimpleDateFormat("MM/d/yy HH:mm");
-                    //  //System.err.println("str :" + str);
+                    //  ////System.err.println("str :" + str);
                     date = formatter.parse(str);
                     ffr.setRecordTimeStamp(date);
                     String jpql = "select r from FingerPrintRecord r where r.retired=false and "
@@ -360,10 +360,10 @@ public class AttendanceUploadController implements Serializable {
         Calendar c = Calendar.getInstance();
         c.setTime(recordedDate);
         c.add(Calendar.MINUTE, -60);
-        //System.err.println("min : " + c.getTime());
+        ////System.err.println("min : " + c.getTime());
         Date minTime = c.getTime();
         c.add(Calendar.MINUTE, 120);
-        //System.err.println("max : " + c.getTime());
+        ////System.err.println("max : " + c.getTime());
         Date maxTime = c.getTime();
         Map m = new HashMap();
         m.put("f", minTime);
@@ -373,7 +373,7 @@ public class AttendanceUploadController implements Serializable {
                 + " ss.continuedFrom is null and ss.shiftStartTime between :f and :t";
         List<StaffShift> ss = getStaffShiftFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
         if (!ss.isEmpty()) {
-            //System.err.println("exist : " + ss.get(0).getStaff().getPerson().getName());
+            ////System.err.println("exist : " + ss.get(0).getStaff().getPerson().getName());
             r.setTimes(Times.inTime);
             ss.get(0).setStartRecord(r);
             getStaffShiftFacade().edit(ss.get(0));
@@ -384,7 +384,7 @@ public class AttendanceUploadController implements Serializable {
                 + " ss.continuedTo is null and  ss.shiftEndTime between :f and :t";
         ss = getStaffShiftFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
         if (!ss.isEmpty()) {
-            //System.err.println("exist : " + ss.get(0).getStaff().getPerson().getName());
+            ////System.err.println("exist : " + ss.get(0).getStaff().getPerson().getName());
             r.setTimes(Times.outTime);
             ss.get(0).setEndRecord(r);
             getStaffShiftFacade().edit(ss.get(0));
@@ -399,11 +399,11 @@ public class AttendanceUploadController implements Serializable {
 //    public void onEdit(RowEditEvent event) {
 //        FingerPrintRecord tmp = (FingerPrintRecord) event.getObject();
 //
-//        //System.err.println("1: " + tmp.getTimes());
-//        //System.err.println("2: " + tmp.getFingerPrintRecordType());
-//        //System.err.println("3: " + tmp.getStaff().getAcNo());
-//        //System.err.println("4: " + tmp.getRecordTimeStamp());
-//        //System.err.println("5: " + tmp.getStaffShift());
+//        ////System.err.println("1: " + tmp.getTimes());
+//        ////System.err.println("2: " + tmp.getFingerPrintRecordType());
+//        ////System.err.println("3: " + tmp.getStaff().getAcNo());
+//        ////System.err.println("4: " + tmp.getRecordTimeStamp());
+//        ////System.err.println("5: " + tmp.getStaffShift());
 //
 //        if (tmp.getTimes() == Times.inTime) {
 //            tmp.getStaffShift().setStartRecord(tmp);
@@ -413,7 +413,7 @@ public class AttendanceUploadController implements Serializable {
 //
 //        if (tmp.getStaffShift() != null && tmp.getStaffShift().getId() != null) {
 //            getStaffShiftFacade().edit(tmp.getStaffShift());
-//            //System.err.println("1: ");
+//            ////System.err.println("1: ");
 //        }
 //
 //        getFingerPrintRecordFacade().edit(tmp);
@@ -421,11 +421,11 @@ public class AttendanceUploadController implements Serializable {
 //    }
     public void onEdit(FingerPrintRecord tmp) {
 
-        //System.err.println("1: " + tmp.getTimes());
-        //System.err.println("2: " + tmp.getFingerPrintRecordType());
-        //System.err.println("3: " + tmp.getStaff().getAcNo());
-        //System.err.println("4: " + tmp.getRecordTimeStamp());
-        //System.err.println("5: " + tmp.getStaffShift());
+        ////System.err.println("1: " + tmp.getTimes());
+        ////System.err.println("2: " + tmp.getFingerPrintRecordType());
+        ////System.err.println("3: " + tmp.getStaff().getAcNo());
+        ////System.err.println("4: " + tmp.getRecordTimeStamp());
+        ////System.err.println("5: " + tmp.getStaffShift());
 
         if (tmp.getTimes() == Times.inTime) {
             tmp.getStaffShift().setStartRecord(tmp);
@@ -435,7 +435,7 @@ public class AttendanceUploadController implements Serializable {
 
         if (tmp.getStaffShift() != null && tmp.getStaffShift().getId() != null) {
             getStaffShiftFacade().edit(tmp.getStaffShift());
-            //System.err.println("1: ");
+            ////System.err.println("1: ");
         }
 
         getFingerPrintRecordFacade().edit(tmp);
@@ -452,7 +452,7 @@ public class AttendanceUploadController implements Serializable {
                 + "  ss.shiftDate=:d";
         List<StaffShift> ss = getStaffShiftFacade().findBySQL(sql, m, TemporalType.DATE);
         if (!ss.isEmpty()) {
-            //System.err.println("exist : " + ss.get(0).getStaff().getPerson().getName());
+            ////System.err.println("exist : " + ss.get(0).getStaff().getPerson().getName());
             return ss;
         } else {
             return new ArrayList<>();

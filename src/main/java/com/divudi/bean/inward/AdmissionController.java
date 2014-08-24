@@ -510,7 +510,7 @@ public class AdmissionController implements Serializable {
         }
 
         if (appointmentFee != 0) {
-            System.err.println("Appoint ");
+            //System.err.println("Appoint ");
             getInwardPaymentController().getCurrent().setPaymentMethod(getCurrent().getPaymentMethod());
             getInwardPaymentController().getCurrent().setPatientEncounter(current);
             getInwardPaymentController().getCurrent().setTotal(appointmentFee);

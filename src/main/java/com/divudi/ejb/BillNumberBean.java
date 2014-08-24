@@ -300,7 +300,7 @@ public class BillNumberBean {
         hm.put("btp", billType);
         hm.put("class", bill.getClass());
         Long b = getBillFacade().findAggregateLong(sql, hm, TemporalType.DATE);
-        //System.err.println("fff " + b);
+        ////System.err.println("fff " + b);
 
         if (billNumberSuffix == BillNumberSuffix.NONE) {
             if (b != null && b != 0) {

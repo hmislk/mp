@@ -148,7 +148,7 @@ public class BillSearch implements Serializable {
     }
 
     public String preSettle(String b) {
-        //System.err.println("Bill " + b);
+        ////System.err.println("Bill " + b);
         getPharmacyPreSettleController().setPreBill(getBillFacade().find(b));
         return "pharmacy_preBill_settle";
     }
@@ -326,7 +326,7 @@ public class BillSearch implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
         List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //System.err.println("SIZE : " + lst.size());
+        ////System.err.println("SIZE : " + lst.size());
 
         lazyBills = new LazyBill(lst);
     }
@@ -371,7 +371,7 @@ public class BillSearch implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("dept", getSessionController().getInstitution());
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-        //     //System.err.println("SIZE : " + lst.size());
+        //     ////System.err.println("SIZE : " + lst.size());
 
     }
 
@@ -1429,7 +1429,7 @@ public class BillSearch implements Serializable {
 
     public void setBill(BilledBill bill) {
         recreateModel();
-        System.err.println("Bill " + bill);
+        //System.err.println("Bill " + bill);
         this.bill = bill;
     }
 

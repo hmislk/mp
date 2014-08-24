@@ -870,11 +870,11 @@ public class PharmacySaleBhtController implements Serializable {
         }
         getBillItem();
         bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getRetailsaleRate());
-        //   //System.err.println("Rate "+bi.getRate());
+        //   ////System.err.println("Rate "+bi.getRate());
 //        bi.setDiscount(calculateBillItemDiscountRate(bi));
-        //  //System.err.println("Discount "+bi.getDiscount());
+        //  ////System.err.println("Discount "+bi.getDiscount());
         bi.setNetRate(bi.getRate() - bi.getDiscount());
-        //  //System.err.println("Net "+bi.getNetRate());
+        //  ////System.err.println("Net "+bi.getNetRate());
     }
 
     private void clearBill() {

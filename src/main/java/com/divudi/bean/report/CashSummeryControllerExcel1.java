@@ -148,7 +148,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createFinalSummery() {
-        System.err.println("createFinalSummery");
+        //System.err.println("createFinalSummery");
         finalSumery = new ArrayList<>();
         String1Value1 dd;
         dd = new String1Value1();
@@ -199,7 +199,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createCollections2Hos() {
-        System.err.println("createCollections2Hos");
+        //System.err.println("createCollections2Hos");
         collections2Hos = new ArrayList<>();
         String1Value1 dd;
         dd = new String1Value1();
@@ -215,7 +215,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createInwardProfessions() {
-        System.err.println("createInwardProfessions");
+        //System.err.println("createInwardProfessions");
         inwardProfTot = 0.0;
         inwardProfessions = new ArrayList<>();
 
@@ -269,14 +269,14 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createPharmacySale() {
-        System.err.println("createPharmacySale");
+        //System.err.println("createPharmacySale");
         pharmacySales = new ArrayList<>();
         pharmacyTotal = 0;
         for (Department d : getDepartmentOfInstitution()) {
-            //System.err.println("DEP " + d.getName());
+            ////System.err.println("DEP " + d.getName());
             double netTotal = getDepartmentSale(d);
             if (netTotal != 0) {
-                //System.err.println("NET " + netTotal);
+                ////System.err.println("NET " + netTotal);
                 pharmacyTotal += netTotal;
                 DailyCash dl = new DailyCash();
                 dl.setDepartment(d);
@@ -289,7 +289,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createOtherInstituion() {
-        System.err.println("createOtherInstituion");
+        //System.err.println("createOtherInstituion");
         otherHospitalTotal = 0;
         otherProfessionalTotal = 0;
         otherInstitution = new ArrayList<>();
@@ -332,7 +332,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createCardBill() {
-        System.err.println("createCardBill");
+        //System.err.println("createCardBill");
         cardTot = getBillTotal(PaymentMethod.Card);
         cardBill = getBills(PaymentMethod.Card);
 
@@ -380,14 +380,14 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createSlipBill() {
-        System.err.println("createSlipBill");
+        //System.err.println("createSlipBill");
         slipTot = getBillTotal(PaymentMethod.Slip);
         slipBill = getBills(PaymentMethod.Slip);
 
     }
 
     private void createChequeBill() {
-        System.err.println("createChequeBill");
+        //System.err.println("createChequeBill");
         chequeTot = getBillTotal(PaymentMethod.Cheque);
         chequeBill = getBills(PaymentMethod.Cheque);
 
@@ -516,7 +516,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createCreditCompanyCollection() {
-        System.err.println("createCreditCompanyCollection");
+        //System.err.println("createCreditCompanyCollection");
         creditCompanyTotal = 0.0;
         creditCompanyCollections = new ArrayList<>();
         List<Bill> tmp = getBills(BillType.CashRecieveBill);
@@ -533,7 +533,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     private void createAgentCollection() {
-        System.err.println("createAgentCollection");
+        //System.err.println("createAgentCollection");
         agentCollectionTot = 0.0;
 
         agentCollections = getBills(BillType.AgentPaymentReceiveBill);
@@ -543,7 +543,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     public void createInwardCollection() {
-        System.err.println("createInwardCollection");
+        //System.err.println("createInwardCollection");
         inwardTot = 0.0;
         admissionTypeBillses = new ArrayList<>();
         for (AdmissionType at : getAdmissionTypeController().getItems()) {
@@ -676,7 +676,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     public void createDepartmentPayment() {
-        System.err.println("createDepartmentPayment");
+        //System.err.println("createDepartmentPayment");
         doctorPaymentTot = 0.0;
 
         List<Department> depList = getDepartmentList();
@@ -960,13 +960,13 @@ public class CashSummeryControllerExcel1 implements Serializable {
     }
 
     public void createOPdCategoryTable() {
-        System.err.println("createOPdCategoryTable");
+        //System.err.println("createOPdCategoryTable");
         string1Value2s = new ArrayList<>();
         for (Category cat : findCategory()) {
-            System.err.println("Cat " + cat.getName() + " TIME " + new Date());
-            System.err.println("##################");
+            //System.err.println("Cat " + cat.getName() + " TIME " + new Date());
+            //System.err.println("##################");
             for (Item i : findItem(cat)) {
-                //   System.err.println("Item " + i.getName() + " TIME " + new Date());
+                //   //System.err.println("Item " + i.getName() + " TIME " + new Date());
                 double count = getCount(i);
                 double hos = getFee(i, FeeType.OwnInstitution);
                 //     double pro = getFee(i, FeeType.Staff);

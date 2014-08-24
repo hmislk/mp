@@ -800,12 +800,12 @@ public class InwardSearch implements Serializable {
 
     public void setBill(Bill bill) {
         recreateModel();
-        System.err.println("Billed " + bill);
+        //System.err.println("Billed " + bill);
         this.bill = bill;
     }
 
     public void setBillActionListener(String id) {
-        System.err.println("Billed Id " + id);
+        //System.err.println("Billed Id " + id);
         setBill(bill);
     }
 

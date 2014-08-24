@@ -394,7 +394,7 @@ public class BillBhtController implements Serializable {
             billItem.setQty(1.0);
             addingEntry.setBillItem(billItem);
             addingEntry.setLstBillComponents(getBillBean().billComponentsFromBillItem(billItem));
-            System.err.println("Add To Bill");
+            //System.err.println("Add To Bill");
             addingEntry.setLstBillFees(getInwardBean().billFeeFromBillItemWithMatrix(billItem, getPatientEncounter(), billItem.getItem().getInstitution()));
             addingEntry.setLstBillSessions(getBillBean().billSessionsfromBillItem(billItem));
             lstBillEntries.add(addingEntry);

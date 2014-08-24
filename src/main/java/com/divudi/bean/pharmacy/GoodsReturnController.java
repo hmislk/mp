@@ -67,7 +67,7 @@ public class GoodsReturnController implements Serializable {
 
     public void setBill(Bill bill) {
         makeNull();
-        System.err.println("Bill " + bill);
+        //System.err.println("Bill " + bill);
         this.bill = bill;
         generateBillComponent();
     }
@@ -201,17 +201,17 @@ public class GoodsReturnController implements Serializable {
     }
 
     public void settle() {
-        System.err.println("1");
+        //System.err.println("1");
         if (checkGrnItems()) {
             UtilityController.addErrorMessage("ITems for this GRN Already issued so you can't Return ");
             return;
         }
 
-        System.err.println("2");
+        //System.err.println("2");
         saveReturnBill();
-        System.err.println("3");
+        //System.err.println("3");
         saveComponent();
-        System.err.println("4");
+        //System.err.println("4");
 
         calTotal();
         getBillFacade().edit(getReturnBill());
@@ -237,7 +237,7 @@ public class GoodsReturnController implements Serializable {
     }
 
     private void generateBillComponent() {
-        System.err.println("Generate ");
+        //System.err.println("Generate ");
         billItems = null;
         for (PharmaceuticalBillItem grnPh : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getBill())) {
             BillItem bi = new BillItem();
@@ -254,9 +254,9 @@ public class GoodsReturnController implements Serializable {
 
             double netQty = Math.abs(rBilled) - Math.abs(rCacnelled);
 
-            //System.err.println("Billed " + rBilled);
-            //System.err.println("Cancelled " + rCacnelled);
-            //System.err.println("Net " + netQty);
+            ////System.err.println("Billed " + rBilled);
+            ////System.err.println("Cancelled " + rCacnelled);
+            ////System.err.println("Net " + netQty);
             retPh.setQtyInUnit((double) (grnPh.getQtyInUnit() - netQty));
 
             List<Item> suggessions = new ArrayList<>();
@@ -274,7 +274,7 @@ public class GoodsReturnController implements Serializable {
 //            bi.setTmpSuggession(suggessions);
             bi.setPharmaceuticalBillItem(retPh);
 
-            System.err.println("Add " + bi);
+            //System.err.println("Add " + bi);
 
             getBillItems().add(bi);
 

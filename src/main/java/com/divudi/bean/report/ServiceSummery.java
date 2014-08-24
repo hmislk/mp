@@ -139,10 +139,10 @@ public class ServiceSummery implements Serializable {
 
         countTotal = billed - (refunded + cancelled);
 
-        //     //System.err.println("Billed : " + billed);
-        //   //System.err.println("Cancelled : " + cancelled);
-        //    //System.err.println("Refunded : " + refunded);
-        //     //System.err.println("Gross Tot : " + countTotal);
+        //     ////System.err.println("Billed : " + billed);
+        //   ////System.err.println("Cancelled : " + cancelled);
+        //    ////System.err.println("Refunded : " + refunded);
+        //     ////System.err.println("Gross Tot : " + countTotal);
         return countTotal;
     }
 

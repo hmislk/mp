@@ -435,11 +435,11 @@ public class InwardStaffPaymentBillController implements Serializable {
         BillItem i = new BillItem();
         i.setReferanceBillItem(bf.getBillItem());
         i.setReferenceBill(bf.getBill());
-//        System.err.println("SS : " + bf.getPatienEncounter().getName());
-//        System.err.println("SS : " + bf.getPatienEncounter().getDateTime());
-//        System.err.println("SS : " + bf.getPatienEncounter().getFromTime());
-//        System.err.println("SS : " + bf.getPatienEncounter().getToTime());
-//        System.err.println("SS : " + bf.getPatienEncounter().getId());
+//        //System.err.println("SS : " + bf.getPatienEncounter().getName());
+//        //System.err.println("SS : " + bf.getPatienEncounter().getDateTime());
+//        //System.err.println("SS : " + bf.getPatienEncounter().getFromTime());
+//        //System.err.println("SS : " + bf.getPatienEncounter().getToTime());
+//        //System.err.println("SS : " + bf.getPatienEncounter().getId());
         i.setPaidForBillFee(bf);
         i.setBill(b);
         i.setCreatedAt(Calendar.getInstance().getTime());

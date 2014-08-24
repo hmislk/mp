@@ -185,7 +185,7 @@ public class StoreGrnController implements Serializable {
             UtilityController.addErrorMessage(msg);
             return;
         }
-        getPharmacyBillBean().calSaleFreeValue(getGrnBill());
+        getPharmacyBillBean().calSaleFreeValue(getGrnBill(),getBillItems());
         if (getGrnBill().getInvoiceDate() == null) {
             getGrnBill().setInvoiceDate(getApproveBill().getCreatedAt());
         }

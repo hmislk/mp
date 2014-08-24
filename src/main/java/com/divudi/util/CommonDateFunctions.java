@@ -36,10 +36,10 @@ public class CommonDateFunctions {
     public static Date endOfDate(Date date) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        c.set(Calendar.HOUR, c.getActualMaximum(Calendar.HOUR));
-        c.set(Calendar.MINUTE, c.getActualMaximum(Calendar.MINUTE));
-        c.set(Calendar.SECOND, c.getActualMaximum(Calendar.SECOND));
-        c.set(Calendar.MILLISECOND, c.getActualMaximum(Calendar.MILLISECOND));
+        c.set(Calendar.HOUR, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND,59);
+        c.set(Calendar.MILLISECOND, 999);
         return c.getTime();
     }
 
@@ -51,10 +51,10 @@ public class CommonDateFunctions {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
-        c.set(Calendar.HOUR, c.getActualMaximum(Calendar.HOUR));
-        c.set(Calendar.MINUTE, c.getActualMaximum(Calendar.MINUTE));
-        c.set(Calendar.SECOND, c.getActualMaximum(Calendar.SECOND));
-        c.set(Calendar.MILLISECOND, c.getActualMaximum(Calendar.MILLISECOND));
+        c.set(Calendar.HOUR, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        c.set(Calendar.MILLISECOND, 59);
         return c.getTime();
     }
 
@@ -67,10 +67,10 @@ public class CommonDateFunctions {
         c.setTime(date);
         c.set(Calendar.MONTH, c.getActualMaximum(Calendar.MONTH));
         c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
-        c.set(Calendar.HOUR, c.getActualMaximum(Calendar.HOUR));
-        c.set(Calendar.MINUTE, c.getActualMaximum(Calendar.MINUTE));
-        c.set(Calendar.SECOND, c.getActualMaximum(Calendar.SECOND));
-        c.set(Calendar.MILLISECOND, c.getActualMaximum(Calendar.MILLISECOND));
+        c.set(Calendar.HOUR, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        c.set(Calendar.MILLISECOND, 59);
         return c.getTime();
     }
 

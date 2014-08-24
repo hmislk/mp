@@ -114,6 +114,7 @@ public class Bill implements Serializable {
     double staffFee;
     double billerFee;
     double grantTotal;
+    double freeTotal;
 
     //Institution
     @ManyToOne
@@ -231,6 +232,16 @@ public class Bill implements Serializable {
     @ManyToOne
     private WebUser fromWebUser;
     double claimableTotal;
+
+    public double getFreeTotal() {
+        return freeTotal;
+    }
+
+    public void setFreeTotal(double freeTotal) {
+        this.freeTotal = freeTotal;
+    }
+    
+    
 
     public double getClaimableTotal() {
         return claimableTotal;

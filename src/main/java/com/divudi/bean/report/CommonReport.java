@@ -107,6 +107,46 @@ public class CommonReport implements Serializable {
     BillsTotals cashAdjustmentBills;
     BillsTotals InwardPaymentBill;
 
+    List<Bill> profitBills;
+    Double profitTotal =0.0;
+
+    public String listProfitBills() {
+        String sql = "SELECT b FROM Bill b "
+                + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
+                + " and b.retired=false "
+                + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
+                + " and b.createdAt between :fromDate and :toDate ";
+
+        
+        Map temMap = new HashMap();
+
+        if(department!=null){
+            sql += " and b.department=:d ";
+            temMap.put("d", department);
+        }
+        
+        sql += " order by b.deptId  ";
+
+        temMap.put("bc1", BilledBill.class);
+        temMap.put("bc2", RefundBill.class);
+        temMap.put("bc3", CancelledBill.class);
+
+        temMap.put("bt1", BillType.PharmacyPurchaseBill);
+        temMap.put("bt2", BillType.PharmacyGrnBill);
+        temMap.put("bt3", BillType.PharmacySale);
+
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+
+        profitBills =getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        profitTotal =0.0;
+        
+        for(Bill b:profitBills){
+            profitTotal+=b.getNetTotal();
+        }
+        return "pharmacy_report_gross_profit_by_bills";
+    }
+
     public BillsTotals getInwardPaymentBill() {
         return InwardPaymentBill;
     }
@@ -1497,8 +1537,6 @@ public class CommonReport implements Serializable {
         getPharmacyBhtPreRefunded().setCash(calValue(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
 
     }
-    
-    
 
 //    public void createBhtIssueBillItemTable() {
 //        recreteModal();
@@ -2610,4 +2648,22 @@ public class CommonReport implements Serializable {
         this.cashChequeSumAfter = cashChequeSumAfter;
     }
 
+    public List<Bill> getProfitBills() {
+        return profitBills;
+    }
+
+    public void setProfitBills(List<Bill> profitBills) {
+        this.profitBills = profitBills;
+    }
+
+    public Double getProfitTotal() {
+        return profitTotal;
+    }
+
+    public void setProfitTotal(Double profitTotal) {
+        this.profitTotal = profitTotal;
+    }
+
+    
+    
 }

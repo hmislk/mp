@@ -230,15 +230,25 @@
                             <h:outputLabel value="||" ></h:outputLabel>
                             <h:outputLabel value="Institution  - #{sessionController.loggedUser.institution.name}" ></h:outputLabel>
                             <h:outputLabel value="||" ></h:outputLabel>
-                            <h:panelGrid columns="4" >
+                            <h:panelGrid columns="5" >
                                 <h:outputLabel value="Cash" style="font-size: 50%;"/>
-                                <h:outputLabel value="#{sessionController.loggedUser.drawer.runningBallance}" style="font-size: 50%;"/>
-                                <h:outputLabel value="|| Card" style="font-size: 50%;"/>
-                                <h:outputLabel value="#{sessionController.loggedUser.drawer.creditCardBallance}" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.runningBallance}" style="font-size: 50%;"> 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+                                <p:spacer ></p:spacer>
+                                <h:outputLabel value="Card" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.creditCardBallance}" style="font-size: 50%;"> 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
                                 <h:outputLabel value="Cheque" style="font-size: 50%;"/>
-                                <h:outputLabel value="#{sessionController.loggedUser.drawer.chequeBallance}" style="font-size: 50%;"/>
-                                <h:outputLabel value="|| Slip" style="font-size: 50%;"/>
-                                <h:outputLabel value="#{sessionController.loggedUser.drawer.slipBallance}" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.chequeBallance}" style="font-size: 50%;"> 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+                                <p:spacer ></p:spacer>
+                                <h:outputLabel value="Slip" style="font-size: 50%;"/>
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.slipBallance}" style="font-size: 50%;"> 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
                             </h:panelGrid>
                         </h:panelGrid>
                     </h:form>

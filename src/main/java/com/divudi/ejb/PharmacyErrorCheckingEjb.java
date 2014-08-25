@@ -57,7 +57,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        //System.err.println(billType + " : " + value);
+        ////System.err.println(billType + " : " + value);
         return value;
     }
 
@@ -89,7 +89,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        //System.err.println(billType + " : " + value);
+        ////System.err.println(billType + " : " + value);
         return value;
     }
 
@@ -150,7 +150,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        //System.err.println(billType + " : Sale Duduction " + value);
+        ////System.err.println(billType + " : Sale Duduction " + value);
         return value;
     }
 
@@ -168,7 +168,7 @@ public class PharmacyErrorCheckingEjb {
 
         double value = getBillFacade().findDoubleByJpql(sql, hm);
 
-        //System.err.println(billType + " : Re Add To Stock " + value);
+        ////System.err.println(billType + " : Re Add To Stock " + value);
         return value;
     }
 
@@ -256,14 +256,14 @@ public class PharmacyErrorCheckingEjb {
     }
 
     public List<Bill> errPreBills(Department dept) {
-        //System.out.println("errrPreBills");
+        ////System.out.println("errrPreBills");
         String sql;
 
         Map m = new HashMap();
         m.put("d", dept);
         sql = "select pb from PreBill pb where pb.retired=false and pb.department=:d order by pb.id";
-        //System.out.println("m = " + m);
-        //System.out.println("sql = " + sql);
+        ////System.out.println("m = " + m);
+        ////System.out.println("sql = " + sql);
         List<Bill> pbs = getBillFacade().findBySQL(sql, m);
         List<Bill> epbs = new ArrayList<Bill>();
         epbs = new ArrayList<Bill>();
@@ -273,14 +273,14 @@ public class PharmacyErrorCheckingEjb {
             Bill bb = pb.getReferenceBill();
 
             if (bb == null) {
-                //System.out.println("bb is null");
+                ////System.out.println("bb is null");
                 if (pb.getBillItems() != null) {
-                    //System.out.println("pb has bill Items = " + pb.getBillItems());
+                    ////System.out.println("pb has bill Items = " + pb.getBillItems());
                     for (BillItem bi : pb.getBillItems()) {
-                        //System.out.println("bi = " + bi);
+                        ////System.out.println("bi = " + bi);
                         if (bi.isRetired() != false) {
-                            //System.out.println("bi is NOT retired ");
-                            //System.err.println("err1");
+                            ////System.out.println("bi is NOT retired ");
+                            ////System.err.println("err1");
                             err1 = true;
                         }
                     }
@@ -288,10 +288,10 @@ public class PharmacyErrorCheckingEjb {
             } else {
                 if (bb.getBillItems() != null && pb.getBillItems() != null) {
                     if (bb.getNetTotal() != pb.getNetTotal()) {
-                        //System.out.println("bb.getBillItems().size() = " + bb.getNetTotal());
-                        //System.out.println("pb.getBillItems().size() = " + pb.getNetTotal());
+                        ////System.out.println("bb.getBillItems().size() = " + bb.getNetTotal());
+                        ////System.out.println("pb.getBillItems().size() = " + pb.getNetTotal());
                         err1 = true;
-                        //System.err.println("err 2");
+                        ////System.err.println("err 2");
                     }
                 }
             }

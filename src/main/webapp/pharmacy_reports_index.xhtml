@@ -22,22 +22,20 @@
                                     <p:commandButton value="Department Stock By Item" action="pharmacy_report_department_stock_by_item" ajax="false" ></p:commandButton>                            
                                     
                                     <p:commandButton value="Department Stock By Product" action="pharmacy_report_department_stock_by_product" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Department Stock By A SingleProduct" action="pharmacy_report_department_stock_by_single_product" ajax="false" ></p:commandButton>                            
                                     
                                     <p:commandButton value="Staff Stock By Batch" action="pharmacy_report_staff_stock_by_batch" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Suppliers' Stock" action="pharmacy_report_supplier_stock_by_batch" ajax="false" ></p:commandButton>       
+                                    <p:commandButton value="Suppliers' Stock All Institution (New)" action="pharmacy_report_institution_stock_all" ajax="false" ></p:commandButton>
                                     <p:commandButton value="Category Stock" action="pharmacy_report_category_stock_by_batch" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="All Suppliers' Stock" action="pharmacy_report_all_supplier_stock" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Department Stock By Batch minus" action="pharmacy_report_department_stock_by_batch_minus" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
-                            <p:panel header="Purchase Reports" >
-                                <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandButton value="Department Stock By Batch" action="pharmacy_department_stock_report_by_batch" ajax="false" ></p:commandButton>                            
-                                </p:panelGrid>
-                            </p:panel>
                             <p:panel header="Sale Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandButton value="Institution Item Movement" action="pharmacy_report_institution_movement" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Institution Item Movement" action="pharmacy_report_institution_movement" ajax="false" ></p:commandButton> 
+                                    <p:commandButton value="Institution Item Movement By Percentage(New)" action="pharmacy_report_institution_movement_by_persentage" ajax="false" ></p:commandButton>
                                     <p:commandButton value="Fast Moving" action="pharmacy_report_department_fast_moving" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Slow Moving" action="pharmacy_report_department_slow_moving" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Non Moving" action="pharmacy_report_department_non_moving" ajax="false" ></p:commandButton>                            
@@ -49,19 +47,33 @@
                                     <p:commandButton value="Transfer Receive By Bill Item" action="pharmacy_report_transfer_receive_bill_item" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Transfer Issue by Bill" action="pharmacy_report_transfer_issue_bill" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Transfer Receive by Bill" action="pharmacy_report_transfer_receive_bill" ajax="false" ></p:commandButton>                            
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel header="Profit Reports" >
+                                <p:panelGrid columns="1" styleClass="alignTop">
+                                    <p:commandLink value="Approximate Item-vice Gross Profit Report - List All Bills" 
+                                                     action="pharmacy_report_gross_profit_by_item" ajax="false" >
+                                    </p:commandLink> 
+                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - List All Bills" 
+                                                     action="pharmacy_report_gross_profit_by_bills" ajax="false" >
+                                    </p:commandLink> 
+                                    
+                                     <p:commandLink value="Approximate Item-vice Gross Profit Report - Daily Summery" 
+                                                    disabled="true"      action="pharmacy_report_gross_profit_by_item_ds" ajax="false" >
+                                    </p:commandLink> 
+                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - Daily Summery" 
+                                                    disabled="true"   action="pharmacy_report_gross_profit_by_bills_ds" ajax="false" >
+                                    </p:commandLink> 
+                                    
 
                                 </p:panelGrid>
                             </p:panel>
+                            
                             <p:panel header="Item Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandButton value="Items by name" action="pharmacy_report_amp_by_name" ajax="false" ></p:commandButton>                            
-                                    <p:commandButton value="Items by code" action="pharmacy_report_amp_by_code" ajax="false" ></p:commandButton>                            
-                                </p:panelGrid>
-                            </p:panel>
-                            <p:panel header="Item Reports" >
-                                <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandButton value="Items by name" action="pharmacy_report_amp_by_name" ajax="false" ></p:commandButton>                            
-                                    <p:commandButton value="Items by code" action="pharmacy_report_amp_by_code" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Items by name" action="#{ampController.fillAmpsByName()}" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Items by code" action="#{ampController.fillAmpsByCode()}" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Items by product" action="#{ampController.fillAmpsByVmp()}" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
                             <p:panel header="Stock Taking Reports" >
@@ -70,7 +82,11 @@
                                     <p:commandButton value="After Stock Taking Report" action="pharmacy_report_after_stock_taking" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
-
+                            <p:panel header="Payment Reports" >
+                                <p:panelGrid columns="1" styleClass="alignTop">
+                                    <p:commandButton value="Cheque Payment Report(New)" action="pharmacy_report_dealor_cheque_payment" ajax="false" ></p:commandButton>                            
+                                </p:panelGrid>
+                            </p:panel>
                         </p:panelGrid>
 
                     </p:panel>

@@ -68,7 +68,7 @@ public class PharmaceuticalBillItem implements Serializable {
     
     public void invertValue(PharmaceuticalBillItem ph){
         qty=0-ph.qty;
-       // //System.err.println("QTY "+qty);
+       // ////System.err.println("QTY "+qty);
         freeQty=0-ph.freeQty;
       //  purchaseRate=0-ph.purchaseRate;
       //  lastPurchaseRate=0-ph.lastPurchaseRate;

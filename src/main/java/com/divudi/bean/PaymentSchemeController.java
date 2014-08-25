@@ -71,12 +71,12 @@ public class PaymentSchemeController implements Serializable {
         String sql;
         HashMap hm = new HashMap();
         if (membershipScheme == null) {
-         //   System.err.println("3");
+         //   //System.err.println("3");
             sql = "SELECT i FROM PaymentScheme i "
                     + " where i.retired=false "
                     + " order by i.orderNo, i.name";
         } else {
-           // System.err.println("4");
+           // //System.err.println("4");
             sql = "SELECT i FROM PaymentScheme i "
                     + " where i.retired=false "
                     + " and i.membershipScheme=:mem "
@@ -85,7 +85,7 @@ public class PaymentSchemeController implements Serializable {
         }
 
         list = getFacade().findBySQL(sql, hm);
-      //  System.err.println("List Size " + list.size());
+      //  //System.err.println("List Size " + list.size());
     }
 
     public MembershipScheme getMembershipScheme() {
@@ -162,14 +162,14 @@ public class PaymentSchemeController implements Serializable {
     }
 
     public List<PaymentScheme> getRcItems() {
-        //System.out.println("getting rc items " + rcItems);
+        ////System.out.println("getting rc items " + rcItems);
         if (rcItems == null) {
-            //System.out.println("rsItems null");
+            ////System.out.println("rsItems null");
             rcItems = getFacade().findBySQL("select c from PaymentScheme c where c.retired=false and c.validForCrBills = true order by c.name");
             String temSql;
             temSql = "SELECT i FROM PaymentScheme i where i.retired=false order by i.name";
             items = getFacade().findBySQL(temSql);
-            //System.out.println("noew after getting rs items , it is " + rcItems);
+            ////System.out.println("noew after getting rs items , it is " + rcItems);
         }
         return rcItems;
     }

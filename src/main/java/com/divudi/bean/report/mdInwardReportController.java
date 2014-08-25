@@ -560,8 +560,8 @@ public class mdInwardReportController implements Serializable {
                 iwf.setItem(i);
                 setCount(iwf);
                 setFee(iwf);
-                //   //System.out.println("ss " + itemWithFees.size());
-                //      //System.out.println("ss " + iwf.getItem());
+                //   ////System.out.println("ss " + itemWithFees.size());
+                //      ////System.out.println("ss " + iwf.getItem());
                 itemWithFees.add(iwf);
             }
 
@@ -603,8 +603,8 @@ public class mdInwardReportController implements Serializable {
                 iwf.setItem(i);
                 setCountDischarge(iwf);
                 setFeeDischarge(iwf);
-                //System.out.println("ss " + itemWithFees.size());
-                //System.out.println("ss " + iwf.getItem());
+                ////System.out.println("ss " + itemWithFees.size());
+                ////System.out.println("ss " + iwf.getItem());
                 itemWithFees.add(iwf);
             }
 

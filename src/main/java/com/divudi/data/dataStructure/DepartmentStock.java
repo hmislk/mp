@@ -7,6 +7,7 @@
 package com.divudi.data.dataStructure;
 
 import com.divudi.entity.Department;
+import java.util.Date;
 
 /**
  *
@@ -16,6 +17,9 @@ public class DepartmentStock {
     private Department department;
     private double stock;
     private double average;
+    private Date expiryDate;
+    private double purchaseRate;
+    private double retailSale;
 
     public Department getDepartment() {
         return department;
@@ -39,6 +43,30 @@ public class DepartmentStock {
 
     public void setAverage(double average) {
         this.average = average;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public double getPurchaseRate() {
+        return purchaseRate;
+    }
+
+    public void setPurchaseRate(double purchaseRate) {
+        this.purchaseRate = purchaseRate;
+    }
+
+    public double getRetailSale() {
+        return retailSale;
+    }
+
+    public void setRetailSale(double retailSale) {
+        this.retailSale = retailSale;
     }
     
     

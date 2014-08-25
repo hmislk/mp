@@ -137,14 +137,14 @@ public class DrawerAdjustmentController implements Serializable {
 
         double difference = ballance - getValue();
 
-//        System.err.println("Cash Ballance " + cashBallance);
-//        System.err.println("Difference  " + difference);
+//        //System.err.println("Cash Ballance " + cashBallance);
+//        //System.err.println("Difference  " + difference);
         CashTransaction cashTransaction = new CashTransaction();
         cashTransaction.setCreatedAt(new Date());
         cashTransaction.setCreater(getSessionController().getLoggedUser());
 
         if (difference < 0) {
-            //  System.err.println("Adding");
+            //  //System.err.println("Adding");
             switch (paymentMethod) {
                 case Cash:
                     cashTransaction.setCashValue(0 - difference);
@@ -168,7 +168,7 @@ public class DrawerAdjustmentController implements Serializable {
             getCashTransactionBean().addToBallance(getSessionController().getLoggedUser().getDrawer(), cashTransaction);
 
         } else {
-            //System.err.println("Diduct");
+            ////System.err.println("Diduct");
             switch (paymentMethod) {
                 case Cash:
                     cashTransaction.setCashValue(0 - difference);

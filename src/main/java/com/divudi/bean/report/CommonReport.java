@@ -107,6 +107,7 @@ public class CommonReport implements Serializable {
     BillsTotals cashAdjustmentBills;
     BillsTotals InwardPaymentBill;
 
+   
     public BillsTotals getInwardPaymentBill() {
         return InwardPaymentBill;
     }
@@ -611,7 +612,7 @@ public class CommonReport implements Serializable {
         Bill b = getBillFacade().findFirstBySQL(sql, temMap, TemporalType.DATE);
 
         if (b != null && institution == null) {
-            //System.err.println("SYS " + b.getInstitution().getName());
+            ////System.err.println("SYS " + b.getInstitution().getName());
             institution = b.getInstitution();
         }
 
@@ -1173,9 +1174,9 @@ public class CommonReport implements Serializable {
         double tmp = 0.0;
         for (BillsTotals bt : list) {
             if (bt != null) {
-                System.err.println("CRDIT " + bt.getCredit());
-                System.err.println("CASH " + bt.getCash());
-                //   System.err.println("Size " + bt.getBills().size());
+                //System.err.println("CRDIT " + bt.getCredit());
+                //System.err.println("CASH " + bt.getCash());
+                //   //System.err.println("Size " + bt.getBills().size());
                 tmp += bt.getCredit();
             }
         }
@@ -1497,8 +1498,6 @@ public class CommonReport implements Serializable {
         getPharmacyBhtPreRefunded().setCash(calValue(new RefundBill(), BillType.PharmacyBhtPre, getDepartment()));
 
     }
-    
-    
 
 //    public void createBhtIssueBillItemTable() {
 //        recreteModal();
@@ -2610,4 +2609,5 @@ public class CommonReport implements Serializable {
         this.cashChequeSumAfter = cashChequeSumAfter;
     }
 
+    
 }

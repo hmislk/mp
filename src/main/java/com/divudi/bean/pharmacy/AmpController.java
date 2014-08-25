@@ -99,7 +99,7 @@ public class AmpController implements Serializable {
                     + " c.retired=false and c.departmentType!=dep and "
                     + "(upper(c.name) like :n or upper(c.code)  "
                     + "like :n or upper(c.barcode) like :n) order by c.name", m, 30);
-            //System.out.println("a size is " + a.size());
+            ////System.out.println("a size is " + a.size());
         }
 
         if (a == null) {
@@ -117,7 +117,7 @@ public class AmpController implements Serializable {
             a = getFacade().findBySQL("select c from Amp c where "
                     + " c.retired=false and (c.departmentType is null or c.departmentType!=:dep )and "
                     + "(upper(c.name) like :n ) order by c.name", m, 30);
-            //System.out.println("a size is " + a.size());
+            ////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -134,7 +134,7 @@ public class AmpController implements Serializable {
             a = getFacade().findBySQL("select c from Amp c where "
                     + " c.retired=false and (c.departmentType is null or c.departmentType!=:dep) and "
                     + "(upper(c.code) like :n ) order by c.code", m, 30);
-            //System.out.println("a size is " + a.size());
+            ////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -150,13 +150,13 @@ public class AmpController implements Serializable {
         String sql = "select c from Amp c where "
                 + " c.retired=false and c.departmentType!=:dep and "
                 + "(upper(c.barcode) like :n ) order by c.barcode";
-        System.out.println("sql = " + sql);
-        System.out.println("m = " + m);
+        //System.out.println("sql = " + sql);
+        //System.out.println("m = " + m);
 
         if (qry != null) {
             a = getFacade().findBySQL(sql, m, 30);
-            System.out.println("a = " + a);
-            //System.out.println("a size is " + a.size());
+            //System.out.println("a = " + a);
+            ////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -361,6 +361,28 @@ public class AmpController implements Serializable {
         return items;
     }
 
+    
+    public String fillAmpsByName(){
+        String jpql ;
+        jpql = "select amp from Amp as amp where amp.retired=false order by amp.name";
+        items= getFacade().findBySQL(jpql);
+        return "pharmacy_report_amp_by_name";
+    }
+    
+    public String fillAmpsByCode(){
+        String jpql ;
+        jpql = "select amp from Amp as amp where amp.retired=false order by amp.code";
+        items= getFacade().findBySQL(jpql);
+        return "pharmacy_report_amp_by_code";
+    }
+    
+    public String fillAmpsByVmp(){
+        String jpql ;
+        jpql = "select amp from Amp as amp where amp.retired=false order by amp.vmp.name";
+        items= getFacade().findBySQL(jpql);
+        return "pharmacy_report_amp_by_vmp";
+    }
+    
     public Vtm getVtm() {
         return vtm;
     }

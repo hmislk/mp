@@ -134,11 +134,14 @@ public class CommonReportSession implements Serializable {
     
     public String listProfitBillsDailySummery() {
         System.out.println("list profit bills");
-        String sql = "SELECT b FROM Bill b "
+        String sql = "SELECT new com.divudi.data.DailySummeryRow(b.createdAt, b.freeValue, double profit, double discounts) "
+                + " FROM Bill b "
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "
                 + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
-                + " and b.createdAt between :fromDate and :toDate ";
+                + " and b.createdAt between :fromDate and :toDate "
+                + " group by b.createdAt "
+                + " order by b.createdAt";
 
         Map temMap = new HashMap();
 

@@ -540,17 +540,10 @@ public abstract class AbstractFacade<T> {
     }
 
     public List<Object[]> findAggregates(String temSQL, Map<String, Object> parameters, TemporalType tt) {
-//        ////System.out.println("find aggregates 3");
         TypedQuery<Object[]> qry = getEntityManager().createQuery(temSQL, Object[].class);
-//        ////System.out.println("2");
         Set s = parameters.entrySet();
-//        ////System.out.println("m " + parameters);
-//        ////System.out.println("s = " + s);
-//        ////System.out.println("3");
         Iterator it = s.iterator();
-//        ////System.out.println("4");
         while (it.hasNext()) {
-//            ////System.out.println("5");
             Map.Entry m = (Map.Entry) it.next();
             Object pVal =  m.getValue();
             String pPara = (String) m.getKey();
@@ -560,13 +553,11 @@ public abstract class AbstractFacade<T> {
             }else{
                 qry.setParameter(pPara, pVal);
             }
-//            ////System.out.println("Parameter " + pPara + "\tVal" + pVal);
         }
-//        ////System.out.println("6");
         try {
             return qry.getResultList();
         } catch (Exception e) {
-//            ////System.out.println(e.getMessage());
+            System.out.println("e = " + e);
             return null;
         }
     }

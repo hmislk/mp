@@ -47,8 +47,8 @@
                         </p:commandButton>
 
                         <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" 
-                                         style="float: right;" >
-                            <p:printer target="reportPrint"/>
+                                         >
+                            <p:printer target="tblBills"/>
                         </p:commandButton>  
                     </h:panelGrid>
 
@@ -74,8 +74,11 @@
                                 <h:outputLabel value="Date/Time"/>
                             </f:facet>
                             <h:outputLabel  id="BilledAt" value="#{b.summeryDate}" >
-                                <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
+                                <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
                             </h:outputLabel>
+                            <p:commandLink ajax="false" value="View Details" action="#{commonReportSession.listProfitBills()}">
+                                <f:setPropertyActionListener value="#{b.summeryDate}" target="#{commonReportSession.billDate}" ></f:setPropertyActionListener>
+                            </p:commandLink>
                         </p:column>
 
                         <p:column headerText="Discount"  sortBy="#{b.discounts}"
@@ -125,13 +128,6 @@
                                         <h:outputLabel value="Total" />
                                     </f:facet>
                                 </p:column>
-                                <p:column style="text-align: right;" >
-                                    <f:facet name="footer" >
-                                        <h:outputLabel value="#{commonReportSession.grossTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
-                                        </h:outputLabel>
-                                    </f:facet>
-                                </p:column>
 
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
@@ -157,8 +153,8 @@
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
-                                
-                                
+
+
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.profitTotal}" >

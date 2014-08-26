@@ -18,6 +18,7 @@ import com.divudi.entity.Institution;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
+import com.divudi.util.CommonDateFunctions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,6 +53,7 @@ public class CommonReportSession implements Serializable {
     Institution institution;
     private Date fromDate;
     private Date toDate;
+    Date billDate;
     private WebUser webUser;
     private Department department;
     private BillType billType;
@@ -136,22 +138,23 @@ public class CommonReportSession implements Serializable {
     
     public String listProfitBillsDailySummery() {
         System.out.println("list profit bills");
-        String sql = "SELECT new com.divudi.data.DailySummeryRow(b.createdAt, b.freeValue, b.netTotal, b.discount) "
+        String jpql;
+         jpql = "SELECT new com.divudi.data.DailySummeryRow(FUNC('DATE',b.createdAt), sum(b.freeValue), sum(b.netTotal), sum(b.discount)) "
                 + " FROM Bill b "
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "
                 + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
-                + " and b.createdAt between :fromDate and :toDate ";
-
+                + " and FUNC('DATE',b.createdAt) between :fromDate and :toDate ";
+        
         Map temMap = new HashMap();
 
         if (department != null) {
-            sql += " and b.department=:d ";
+            jpql += " and b.department=:d ";
             temMap.put("d", department);
         }
 
-        sql += " group by b.createdAt "
-                + "order by b.deptId  ";
+        jpql += " group by FUNC('DATE',b.createdAt) "
+                + "order by FUNC('DATE',b.createdAt)  ";
 
         temMap.put("bc1", BilledBill.class);
         temMap.put("bc2", RefundBill.class);
@@ -164,11 +167,15 @@ public class CommonReportSession implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
 
-        List<Object[]> dsso = getBillFacade().findAggregates(sql, temMap, TemporalType.DATE);
+        List<Object[]> dsso = getBillFacade().findAggregates(jpql, temMap, TemporalType.DATE);
         profitTotal = 0.0;
         discountTotal = 0.0;
         freeTotal =0.0;
         dailySummeryRows = new ArrayList<>();
+        if(dsso==null){
+            dsso = new ArrayList<>();
+            System.out.println("new list as null");
+        }
         for (Object b : dsso) {
             DailySummeryRow dsr = (DailySummeryRow) b;
             profitTotal += dsr.getProfit();
@@ -1664,6 +1671,16 @@ public class CommonReportSession implements Serializable {
 
     public void setDailySummeryRows(List<DailySummeryRow> dailySummeryRows) {
         this.dailySummeryRows = dailySummeryRows;
+    }
+
+    public Date getBillDate() {
+        return billDate;
+    }
+
+    public void setBillDate(Date billDate) {
+        this.billDate = billDate;
+        fromDate = CommonDateFunctions.startOfDate(billDate);
+        toDate = CommonDateFunctions.endOfDate(billDate);
     }
     
     

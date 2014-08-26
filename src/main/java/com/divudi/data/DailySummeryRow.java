@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.divudi.data;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -13,22 +13,32 @@ import java.util.Date;
  * @author buddhika
  */
 public class DailySummeryRow {
-    Date summeryDate;
-    double freeAmounts;
-    double profit;
-    double discounts;
 
-    //com.divudi.data.DailySummeryRow(Date summeryDate, double freeAmounts, double profit, double discounts)
+    Date summeryDate;
+    Double freeAmounts;
+    Double profit;
+    Double discounts;
     
-    public DailySummeryRow(Date summeryDate, double freeAmounts, double profit, double discounts) {
+
+    //com.divudi.data.DailySummeryRow(Date summeryDate, Double freeAmounts, Double profit, Double discounts)
+    public DailySummeryRow(Date summeryDate, Double freeAmounts, Double profit, Double discounts) {
         this.summeryDate = summeryDate;
         this.freeAmounts = freeAmounts;
         this.profit = profit;
         this.discounts = discounts;
     }
-    
-    
-    
+
+    public DailySummeryRow(Object summeryDateOfMonth, Double freeAmounts, Double profit, Double discounts) {
+        try {
+            this.summeryDate = (Date) summeryDateOfMonth;
+        } catch (Exception e) {
+            System.out.println("e = " + e);
+        }
+        this.freeAmounts = freeAmounts;
+        this.profit = profit;
+        this.discounts = discounts;
+    }
+
     public DailySummeryRow() {
     }
 
@@ -40,30 +50,28 @@ public class DailySummeryRow {
         this.summeryDate = summeryDate;
     }
 
-    public double getFreeAmounts() {
+    public Double getFreeAmounts() {
         return freeAmounts;
     }
 
-    public void setFreeAmounts(double freeAmounts) {
+    public void setFreeAmounts(Double freeAmounts) {
         this.freeAmounts = freeAmounts;
     }
 
-    public double getProfit() {
+    public Double getProfit() {
         return profit;
     }
 
-    public void setProfit(double profit) {
+    public void setProfit(Double profit) {
         this.profit = profit;
     }
 
-    public double getDiscounts() {
+    public Double getDiscounts() {
         return discounts;
     }
 
-    public void setDiscounts(double discounts) {
+    public void setDiscounts(Double discounts) {
         this.discounts = discounts;
     }
 
-    
-    
 }

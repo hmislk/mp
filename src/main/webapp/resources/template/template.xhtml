@@ -147,6 +147,7 @@
                                 <p:menuitem  ajax="false"  action="/user_preferances" value="Change Preferances"  ></p:menuitem>
                             </p:submenu>
                             <p:submenu label="Administration"  rendered="#{webUserController.hasPrivilege('Admin')}">
+                                <p:menuitem  ajax="false"  action="/pharmacy_reports_index_administrator" value="Administrator Reports" rendered="#{webUserController.hasPrivilege('AdminPrices')}" ></p:menuitem>
                                 <p:menuitem  ajax="false"  action="/admin_manage_users" value="Manage Users" rendered="#{webUserController.hasPrivilege('AdminManagingUsers')}" ></p:menuitem>
                                 <p:menuitem  ajax="false"  action="/admin_mange_institutions_index" value="Manage Institutions" rendered="#{webUserController.hasPrivilege('AdminInstitutions')}" ></p:menuitem>
                                 <p:menuitem  ajax="false"  action="/admin_manage_staff_index" value="Manage Staff" rendered="#{webUserController.hasPrivilege('AdminStaff')}" ></p:menuitem>

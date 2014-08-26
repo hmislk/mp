@@ -49,26 +49,6 @@
                                     <p:commandButton value="Transfer Receive by Bill" action="pharmacy_report_transfer_receive_bill" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
-                            <p:panel header="Profit Reports" >
-                                <p:panelGrid columns="1" styleClass="alignTop">
-                                    <p:commandLink value="Approximate Item-vice Gross Profit Report - List All Bills" 
-                                                     action="pharmacy_report_gross_profit_by_item" ajax="false" >
-                                    </p:commandLink> 
-                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - List All Bills" 
-                                                     action="pharmacy_report_gross_profit_by_bills" ajax="false" >
-                                    </p:commandLink> 
-                                    
-                                     <p:commandLink value="Approximate Item-vice Gross Profit Report - Daily Summery" 
-                                                         action="pharmacy_report_gross_profit_by_item_ds" ajax="false" >
-                                    </p:commandLink> 
-                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - Daily Summery" 
-                                                     action="pharmacy_report_gross_profit_by_bills_ds" ajax="false" >
-                                    </p:commandLink> 
-                                    
-
-                                </p:panelGrid>
-                            </p:panel>
-                            
                             <p:panel header="Item Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
                                     <p:commandButton value="Items by name" action="#{ampController.fillAmpsByName()}" ajax="false" ></p:commandButton>                            

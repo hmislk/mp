@@ -18,7 +18,7 @@
 
                     <p:defaultCommand target="btnRefresh"/>
 
-                    <h:panelGrid columns="6" style="noPrintButton">
+                    
                         <h:outputLabel value="From Date"/>
                         <p:calendar id="frmDate" value="#{commonReportSession.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
                         </p:calendar>
@@ -39,18 +39,16 @@
 
                         <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                          styleClass="noPrintButton" 
-                                         action="#{commonReportSession.listProfitBillsDailySummery()}"
-                                         style="float: right;" />  
+                                         action="#{commonReportSession.listProfitBillsDailySummery()}"/>  
 
                         <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                             <pe:exporter type="xlsx" target="tblBills" fileName="Approximate Bill-vice Gross Profit Report #{commonReportSession.department.name}"  />
                         </p:commandButton>
 
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" 
-                                         >
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >
                             <p:printer target="tblBills"/>
                         </p:commandButton>  
-                    </h:panelGrid>
+                    
 
 
 
@@ -68,17 +66,13 @@
                             <h:outputLabel value="Approximate Item-vice Gross Profit"/>
                         </f:facet>
 
-                        <p:column headerText="Date/Time" style="width: 70px;" 
-                                  sortBy="#{b.summeryDate}" >
+                        <p:column headerText="Date/Time"  sortBy="#{b.summeryDate}" >
                             <f:facet name="header">
                                 <h:outputLabel value="Date/Time"/>
                             </f:facet>
                             <h:outputLabel  id="BilledAt" value="#{b.summeryDate}" >
                                 <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
                             </h:outputLabel>
-                            <p:commandLink ajax="false" value="View Details" action="#{commonReportSession.listProfitBills()}">
-                                <f:setPropertyActionListener value="#{b.summeryDate}" target="#{commonReportSession.billDate}" ></f:setPropertyActionListener>
-                            </p:commandLink>
                         </p:column>
 
                         <p:column headerText="Discount"  sortBy="#{b.discounts}"
@@ -118,7 +112,11 @@
                             </h:outputLabel>
                         </p:column>
 
-
+                        <p:column headerText="Actions"  >
+                            <p:commandButton ajax="false" value="View All Bills" action="#{commonReportSession.listProfitBills()}">
+                                <f:setPropertyActionListener value="#{b.summeryDate}" target="#{commonReportSession.billDate}" ></f:setPropertyActionListener>
+                            </p:commandButton>
+                        </p:column>
 
 
                         <p:columnGroup type="footer">

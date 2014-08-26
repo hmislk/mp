@@ -141,9 +141,7 @@ public class CommonReportSession implements Serializable {
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "
                 + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
-                + " and b.createdAt between :fromDate and :toDate "
-                + " group by b.createdAt "
-                + " order by b.createdAt";
+                + " and b.createdAt between :fromDate and :toDate ";
 
         Map temMap = new HashMap();
 
@@ -152,7 +150,8 @@ public class CommonReportSession implements Serializable {
             temMap.put("d", department);
         }
 
-        sql += " order by b.deptId  ";
+        sql += " group by b.createdAt "
+                + "order by b.deptId  ";
 
         temMap.put("bc1", BilledBill.class);
         temMap.put("bc2", RefundBill.class);

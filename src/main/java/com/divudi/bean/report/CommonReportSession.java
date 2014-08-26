@@ -6,6 +6,7 @@ package com.divudi.bean.report;
 
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
+import com.divudi.data.DailySummeryRow;
 import com.divudi.data.dataStructure.BillsTotals;
 import com.divudi.data.table.String1Value1;
 import com.divudi.ejb.CommonFunctions;
@@ -81,6 +82,7 @@ public class CommonReportSession implements Serializable {
     
     
      List<Bill> profitBills;
+     List<DailySummeryRow> dailySummeryRows;
 
     Double profitTotal = 0.0;
     double grossTotal = 0.0;
@@ -134,7 +136,7 @@ public class CommonReportSession implements Serializable {
     
     public String listProfitBillsDailySummery() {
         System.out.println("list profit bills");
-        String sql = "SELECT new com.divudi.data.DailySummeryRow(b.createdAt, b.freeValue, double profit, double discounts) "
+        String sql = "SELECT new com.divudi.data.DailySummeryRow(b.createdAt, b.freeValue, b.netTotal, b.discount) "
                 + " FROM Bill b "
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "
@@ -163,19 +165,19 @@ public class CommonReportSession implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("toDate", getToDate());
 
-        profitBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+        List<Object[]> dsso = getBillFacade().findAggregates(sql, temMap, TemporalType.DATE);
         profitTotal = 0.0;
-
-//        System.out.println("temMap = " + temMap);
-//        System.out.println("sql = " + sql);
-        for (Bill b : profitBills) {
-            grossTotal+=b.getTotal();
-            netTotal+=b.getNetTotal();
-            profitTotal += b.getNetTotal();
-            discountTotal += b.getDiscount();
-            freeTotal += b.getFreeValue();
+        discountTotal = 0.0;
+        freeTotal =0.0;
+        dailySummeryRows = new ArrayList<>();
+        for (Object b : dsso) {
+            DailySummeryRow dsr = (DailySummeryRow) b;
+            profitTotal += dsr.getProfit();
+            discountTotal += dsr.getDiscounts();
+            freeTotal += dsr.getFreeAmounts();
+            dailySummeryRows.add(dsr);
         }
-        return "pharmacy_report_gross_profit_by_bills";
+        return "pharmacy_report_gross_profit_by_bills_ds";
     }
 
     
@@ -1655,6 +1657,14 @@ public class CommonReportSession implements Serializable {
 
     public void setRefundedBillsPh2(BillsTotals refundedBillsPh2) {
         this.refundedBillsPh2 = refundedBillsPh2;
+    }
+
+    public List<DailySummeryRow> getDailySummeryRows() {
+        return dailySummeryRows;
+    }
+
+    public void setDailySummeryRows(List<DailySummeryRow> dailySummeryRows) {
+        this.dailySummeryRows = dailySummeryRows;
     }
     
     

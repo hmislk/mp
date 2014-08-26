@@ -57,7 +57,7 @@
 
 
                     <p:dataTable id="tblBills"  
-                                 value="#{commonReportSession.profitBills}" var="b"
+                                 value="#{commonReportSession.dailySummeryRows}" var="b"
                                  paginator="true" paginatorAlwaysVisible="true"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="10,20,50"
@@ -69,69 +69,48 @@
                         </f:facet>
 
                         <p:column headerText="Date/Time" style="width: 70px;" 
-                                  sortBy="#{b.createdAt}" >
+                                  sortBy="#{b.summeryDate}" >
                             <f:facet name="header">
                                 <h:outputLabel value="Date/Time"/>
                             </f:facet>
-                            <h:outputLabel  id="BilledAt" value="#{b.createdAt}" >
+                            <h:outputLabel  id="BilledAt" value="#{b.summeryDate}" >
                                 <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
                             </h:outputLabel>
-                            <p:tooltip for="BilledAt" >
-                                <h:outputLabel value="Bill Type : #{b.billType}" ></h:outputLabel>
-                                <br/>
-                                <h:outputLabel value="Bill Class : #{b.billClass}" ></h:outputLabel>
-                                <br/>
-                                <h:outputLabel value="Bill Id : #{b.insId}" ></h:outputLabel>
-                                <br/>
-                                <h:outputLabel value="#{b.deptId}" ></h:outputLabel>
-                                <br/>
-                            </p:tooltip>
                         </p:column>
 
-                        <p:column headerText="Total" 
-                                  sortBy="#{b.total}" 
-                                  style="text-align: right; padding: 5px;">
-                            <f:facet name="header">
-                                <h:outputLabel value="Total"/>
-                            </f:facet>
-                            <h:outputLabel value="#{b.total}"  >
-                                <f:convertNumber pattern="#,###" ></f:convertNumber>
-                            </h:outputLabel>
-                        </p:column>
-
-                        <p:column headerText="Discount"  sortBy="#{b.discount}"
+                        <p:column headerText="Discount"  sortBy="#{b.discounts}"
                                   style="text-align: right;">
                             <f:facet name="header">
                                 <h:outputLabel value="Discount"/>
                             </f:facet>
-                            <h:outputLabel value="#{b.discount}"  >
+                            <h:outputLabel value="#{b.discounts}"  >
                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
                         <p:column headerText="Free Offer" 
-                                  sortBy="#{b.freeValue}"  style="text-align: right;">
+                                  sortBy="#{b.freeAmounts}"  style="text-align: right;">
                             <f:facet name="header">
                                 <h:outputLabel value="Free Offers"/>
                             </f:facet>
-                            <h:outputLabel value="#{b.freeValue}"  >
+                            <h:outputLabel value="#{b.freeAmounts}"  >
                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
 
-                        <p:column headerText="Discount + Free Offer"  sortBy="#{b.discount}"
+                        <p:column headerText="Discount + Free Offer"  sortBy="#{b.discounts + b.freeAmounts}"
                                   style="text-align: right;">
-                            <h:outputLabel value="#{b.discount + b.freeValue}"  >
+                            <h:outputLabel value="#{b.discounts + b.freeAmounts}"  >
                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Net Total"  sortBy="#{b.netTotal}"  style="text-align: right;">
+                        <p:column headerText="Net Total"  sortBy="#{b.profit}"  style="text-align: right;">
                             <f:facet name="header">
                                 <h:outputLabel value="Profite Value"/>
                             </f:facet>
-                            <h:outputLabel value="#{b.netTotal}"  >
+                            <h:outputLabel value="#{b.profit}"  >
                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
@@ -182,7 +161,7 @@
                                 
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
-                                        <h:outputLabel value="#{commonReportSession.netTotal}" >
+                                        <h:outputLabel value="#{commonReportSession.profitTotal}" >
                                             <f:convertNumber parent="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>

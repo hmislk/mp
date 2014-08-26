@@ -10,5 +10,5 @@
         <property name="URL" value="jdbc:mysql://198.98.124.57:3306/deniyaya?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="dsM12" object-type="user" pool-name="mysql_deniyaya_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="dsMp" object-type="user" pool-name="mysql_deniyaya_rootPool"/>
 </resources>

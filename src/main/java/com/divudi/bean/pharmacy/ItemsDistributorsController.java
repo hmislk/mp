@@ -38,6 +38,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.persistence.TemporalType;
+import org.jfree.base.log.LogConfiguration;
 
 /**
  *
@@ -98,9 +99,9 @@ public class ItemsDistributorsController implements Serializable {
         }
     }
 
-    public void addToPackage() {
+    public void addAnItemForDistributor() {
         if (getCurrentInstituion() == null) {
-            UtilityController.addErrorMessage("Please select a package");
+            UtilityController.addErrorMessage("Please select a distributor");
             return;
         }
         if (getCurrentItem() == null) {
@@ -121,25 +122,62 @@ public class ItemsDistributorsController implements Serializable {
         pi.setCreater(getSessionController().getLoggedUser());
         getFacade().create(pi);
         UtilityController.addSuccessMessage("Added");
-        recreateModel();
+        setCurrentItem(null);
+        fillItemsForDistributor();
     }
 
-    public void removeFromPackage() {
+    public void addDistributorForAnItem() {
         if (getCurrentInstituion() == null) {
-            UtilityController.addErrorMessage("Please select a package");
+            UtilityController.addErrorMessage("Please select a distributor");
             return;
         }
-        if (getCurrent() == null) {
+        if (getCurrentItem() == null) {
             UtilityController.addErrorMessage("Please select an item");
             return;
         }
 
+        if (checkItem()) {
+            UtilityController.addErrorMessage("Item already added for this dealor");
+            return;
+        }
+
+        ItemsDistributors pi = new ItemsDistributors();
+
+        pi.setInstitution(getCurrentInstituion());
+        pi.setItem(getCurrentItem());
+        pi.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        pi.setCreater(getSessionController().getLoggedUser());
+        getFacade().create(pi);
+        UtilityController.addSuccessMessage("Added");
+        setCurrentInstituion(null);
+        fillDistributorsForItem();
+    }
+
+    public void removeFromDistributor() {
+        if (getCurrent() == null) {
+            UtilityController.addErrorMessage("Please select an item");
+            return;
+        }
         getCurrent().setRetired(true);
         getCurrent().setRetirer(getSessionController().getLoggedUser());
         getCurrent().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getFacade().edit(getCurrent());
         UtilityController.addSuccessMessage("Item Removed");
-        recreateModel();
+        fillItemsForDistributor();
+    }
+    
+    
+    public void removeFromItem() {
+        if (getCurrent() == null) {
+            UtilityController.addErrorMessage("Please select an item");
+            return;
+        }
+        getCurrent().setRetired(true);
+        getCurrent().setRetirer(getSessionController().getLoggedUser());
+        getCurrent().setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
+        getFacade().edit(getCurrent());
+        UtilityController.addSuccessMessage("Item Removed");
+        fillDistributorsForItem();
     }
 
     /**
@@ -215,21 +253,31 @@ public class ItemsDistributorsController implements Serializable {
      * @return
      */
     public List<ItemsDistributors> getItems() {
-        String temSql;
-        HashMap hm = new HashMap();
-
-        temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and"
-                + " i.institution=:ins "
-                + " order by i.item.name";
-
-        hm.put("ins", getCurrentInstituion());
-
-        items = getFacade().findBySQL(temSql,hm);
 
         if (items == null) {
             items = new ArrayList<>();
         }
         return items;
+    }
+
+    public void fillItemsForDistributor() {
+        String temSql;
+        HashMap hm = new HashMap();
+        temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and"
+                + " i.institution=:ins "
+                + " order by i.item.name";
+        hm.put("ins", getCurrentInstituion());
+        items = getFacade().findBySQL(temSql, hm);
+    }
+    
+     public void fillDistributorsForItem() {
+        String temSql;
+        HashMap hm = new HashMap();
+        temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and"
+                + " i.item=:item "
+                + " order by i.item.name";
+        hm.put("item", getCurrentItem());
+        items = getFacade().findBySQL(temSql, hm);
     }
 
     public void createItemDistributorTable() {

@@ -165,8 +165,7 @@ public class ItemsDistributorsController implements Serializable {
         UtilityController.addSuccessMessage("Item Removed");
         fillItemsForDistributor();
     }
-    
-    
+
     public void removeFromItem() {
         if (getCurrent() == null) {
             UtilityController.addErrorMessage("Please select an item");
@@ -269,8 +268,8 @@ public class ItemsDistributorsController implements Serializable {
         hm.put("ins", getCurrentInstituion());
         items = getFacade().findBySQL(temSql, hm);
     }
-    
-     public void fillDistributorsForItem() {
+
+    public void fillDistributorsForItem() {
         String temSql;
         HashMap hm = new HashMap();
         temSql = "SELECT i FROM ItemsDistributors i where i.retired=false and"
@@ -278,6 +277,18 @@ public class ItemsDistributorsController implements Serializable {
                 + " order by i.item.name";
         hm.put("item", getCurrentItem());
         items = getFacade().findBySQL(temSql, hm);
+    }
+
+    public String toFillItemsForDistributor() {
+        setCurrentItem(null);
+        fillItemsForDistributor();
+        return "pharmacy_distributor_items";
+    }
+
+    public String toFillDistributorsForItem() {
+        setCurrentInstituion(null);
+        fillDistributorsForItem();
+        return "pharmacy_items_distributors";
     }
 
     public void createItemDistributorTable() {

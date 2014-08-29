@@ -64,6 +64,18 @@ public class AmpController implements Serializable {
     @EJB
     private VtmsVmpsFacade vivFacade;
     List<Amp> itemsByCode = null;
+    private List<Amp> lstAmps = null;
+    
+    
+    public String listAllAmps(){
+        lstAmps = getFacade().findBySQL("select a from Amp a where a.retired=false order by a.name");
+        return "pharmacy_list_amps";
+    }
+
+    public List<Amp> getLstAmps() {
+        return lstAmps;
+    }
+
 
     public List<Amp> getItemsByCode() {
         if (itemsByCode == null) {

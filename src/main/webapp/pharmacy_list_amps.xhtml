@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+
+        <h:form>
+
+            <p:commandButton action="#{ampController.listAllAmps}" value="List All"  process="@this" update="tbl"
+                             ></p:commandButton>
+
+            <p:dataTable id="tbl" rowIndexVar="r" 
+                         value="#{ampController.lstAmps}" 
+                         var="i"
+                         paginator="true" paginatorAlwaysVisible="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,30,50"
+                         rows="50"
+                         >
+                <p:column headerText="No" >
+                    <h:outputLabel value="#{r+1}"/>
+                </p:column>
+                <p:column headerText="Name" sortBy="#{i.name}" filterBy="#{i.name}" filterMatchMode="contains">
+                    <h:outputLabel value="#{i.name}"/>
+                </p:column>
+                <p:column headerText="Code"  sortBy="#{i.code}" filterBy="#{i.code}" filterMatchMode="startsWith">
+                    <h:outputLabel value="#{i.code}"/>
+                </p:column>   
+                <p:column headerText="Barcode"  sortBy="#{i.barcode}" filterBy="#{i.barcode}" filterMatchMode="startsWith">
+                    <h:outputLabel value="#{i.barcode}"/>
+                </p:column>   
+                <p:column headerText="Catogory"  sortBy="#{i.category.name}" filterBy="#{i.category.name}"
+                          filterMatchMode="contains">
+                    <h:outputLabel value="#{i.category.name}"/>
+                </p:column>         
+                <p:column headerText="Product"  sortBy="#{i.vmp.name}" filterBy="#{i.vmp.name}" filterMatchMode="contains">
+                    <h:outputLabel value="#{i.vmp.name}"/>
+                </p:column>               
+
+            </p:dataTable>
+
+        </h:form>    
+
+
+    </ui:define>
+
+</ui:composition>

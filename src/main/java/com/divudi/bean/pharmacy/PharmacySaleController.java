@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -136,6 +137,24 @@ public class PharmacySaleController implements Serializable {
     ///////////////////
     private UserStockContainer userStockContainer;
     PaymentMethodData paymentMethodData;
+
+    String errorMessage;
+
+    public List<Stock> getStocksWithGeneric() {
+        return stocksWithGeneric;
+    }
+
+    public void setStocksWithGeneric(List<Stock> stocksWithGeneric) {
+        this.stocksWithGeneric = stocksWithGeneric;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     public PaymentMethodData getPaymentMethodData() {
         if (paymentMethodData == null) {
@@ -231,20 +250,21 @@ public class PharmacySaleController implements Serializable {
     //Check when edititng Qty
     //
     public boolean onEdit(BillItem tmp) {
+        errorMessage = null;
         //Cheking Minus Value && Null
         if (tmp.getQty() <= 0 || tmp.getQty() == null) {
             setZeroToQty(tmp);
             onEditCalculation(tmp);
-
-            UtilityController.addErrorMessage("Can not enter a minus value");
+            errorMessage = "Can not enter a minus value.";
+//            UtilityController.addErrorMessage("Can not enter a minus value");
             return true;
         }
 
         if (tmp.getQty() > tmp.getPharmaceuticalBillItem().getStock().getStock()) {
             setZeroToQty(tmp);
             onEditCalculation(tmp);
-
-            UtilityController.addErrorMessage("No Sufficient Stocks?");
+            errorMessage = "No sufficient stocks.";
+//            UtilityController.addErrorMessage("No Sufficient Stocks?");
             return true;
         }
 
@@ -254,8 +274,10 @@ public class PharmacySaleController implements Serializable {
             setZeroToQty(tmp);
             onEditCalculation(tmp);
 
-            UtilityController.addErrorMessage("Another User On Change Bill Item "
-                    + " Qty value is resetted");
+            errorMessage = "Another user also billing the same stock. Quentity is resetted.";
+
+//            UtilityController.addErrorMessage("Another User On Change Bill Item "
+//                    + " Qty value is resetted");
             return true;
         }
 
@@ -332,8 +354,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void setQty(Double qty) {
+        errorMessage = null;
         if (qty != null && qty <= 0) {
-            UtilityController.addErrorMessage("Can not enter a minus value");
+//            UtilityController.addErrorMessage("Can not enter a minus value");
+            errorMessage = "Can not enter a minus value";
             return;
         }
         this.qty = qty;
@@ -465,21 +489,20 @@ public class PharmacySaleController implements Serializable {
         qry = qry.replaceAll("\n", "");
         qry = qry.replaceAll("\r", "");
         m.put("n", "%" + qry.toUpperCase().trim() + "%");
-        
+
         //System.out.println("qry = " + qry);
-        
         if (qry.length() > 4) {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n )  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         } else {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
-        
+
         items = getStockFacade().findBySQL(sql, m, 20);
-        
-        if(qry.length()>5 && items.size()==1){
+
+        if (qry.length() > 5 && items.size() == 1) {
             stock = items.get(0);
             handleSelectAction();
-        }else if (!qry.trim().equals("") && qry.length() > 4) {
+        } else if (!qry.trim().equals("") && qry.length() > 4) {
             itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
             stocksWithGeneric = completeRetailSaleItemsFromGeneric(qry);
         }
@@ -503,8 +526,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     private boolean errorCheckForPreBill() {
+        errorMessage = null;
         if (getPreBill().getBillItems().isEmpty()) {
-            UtilityController.addErrorMessage("No Items added to bill to sale");
+//            UtilityController.addErrorMessage("No Items added to bill to sale");
+            errorMessage = "No items in the bill for sale. NOT settled.";
             return true;
         }
         return false;
@@ -568,16 +593,18 @@ public class PharmacySaleController implements Serializable {
 //        if (checkPaymentScheme(getSaleBill().getPaymentScheme())) {
 //            return true;
 //        }
-
+        errorMessage = null;
         getPaymentSchemeController().errorCheckPaymentScheme(getPaymentScheme().getPaymentMethod(), paymentMethodData);
 
         if (getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cash) {
             if (cashPaid == 0.0) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
+//                UtilityController.addErrorMessage("Please select tendered amount correctly");
+                errorMessage = "Please enter tendered value correctly.";
                 return true;
             }
             if (cashPaid < getNetTotal()) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
+                errorMessage = "Tendered value is less than the bill value.";
+//                UtilityController.addErrorMessage("Please select tendered amount correctly");
                 return true;
             }
         }
@@ -846,7 +873,7 @@ public class PharmacySaleController implements Serializable {
 
     private boolean checkItemBatch() {
         for (BillItem bItem : getPreBill().getBillItems()) {
-            if (bItem.getPharmaceuticalBillItem().getStock().getId() == getBillItem().getPharmaceuticalBillItem().getStock().getId()) {
+            if (Objects.equals(bItem.getPharmaceuticalBillItem().getStock().getId(), getBillItem().getPharmaceuticalBillItem().getStock().getId())) {
                 return true;
             }
         }
@@ -856,6 +883,7 @@ public class PharmacySaleController implements Serializable {
 
     public void addBillItem() {
         editingQty = null;
+        errorMessage = null;
 
         if (billItem == null) {
             return;
@@ -864,21 +892,25 @@ public class PharmacySaleController implements Serializable {
             return;
         }
         if (getStock() == null) {
-            UtilityController.addErrorMessage("Item?");
+            errorMessage = "Item?";
+//            UtilityController.addErrorMessage("Item?");
             return;
         }
         if (getQty() == null) {
-            UtilityController.addErrorMessage("Quentity?");
+            errorMessage = "Quentity?";
+//            UtilityController.addErrorMessage("Quentity?");
             return;
         }
 
         if (getQty() > getStock().getStock()) {
-            UtilityController.addErrorMessage("No Sufficient Stocks?");
+            errorMessage = "No sufficient stocks.";
+//            UtilityController.addErrorMessage("No Sufficient Stocks?");
             return;
         }
 
         if (checkItemBatch()) {
-            UtilityController.addErrorMessage("Already added this item batch");
+            errorMessage = "This batch is already there in the bill.";
+//            UtilityController.addErrorMessage("Already added this item batch");
             return;
         }
         //Checking User Stock Entity
@@ -1024,7 +1056,7 @@ public class PharmacySaleController implements Serializable {
     public void handleSelect(SelectEvent event) {
         handleSelectAction();
     }
-    
+
     public void handleSelectAction() {
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
         calculateRates(billItem);

@@ -33,6 +33,8 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.UserStock;
 import com.divudi.entity.pharmacy.UserStockContainer;
+import com.divudi.entity.pharmacy.Vmp;
+import com.divudi.facade.AmpFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.ItemFacade;
@@ -43,6 +45,7 @@ import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
 import com.divudi.facade.UserStockContainerFacade;
 import com.divudi.facade.UserStockFacade;
+import com.divudi.facade.VmpFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -101,6 +105,8 @@ public class PharmacySaleController implements Serializable {
     private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
     @EJB
     BillNumberBean billNumberBean;
+    @EJB
+    VmpFacade vmpFacade;
 /////////////////////////
     Item selectedAvailableAmp;
     private PreBill preBill;
@@ -112,6 +118,7 @@ public class PharmacySaleController implements Serializable {
     BillItem editingBillItem;
     Double qty;
     Stock stock;
+    Stock replacableStock;
 
     PaymentScheme paymentScheme;
 
@@ -123,10 +130,12 @@ public class PharmacySaleController implements Serializable {
     private String patientTabId = "tabNewPt";
     private String strTenderedValue = "";
     boolean billPreview = false;
+    Vmp selectedGeneric;
     /////////////////
     List<Stock> replaceableStocks;
     List<Item> itemsWithoutStocks;
     List<Stock> stocksWithGeneric;
+    List<Vmp> selectedGenerics;
     /////////////////////////   
     double cashPaid;
     double netTotal;
@@ -136,6 +145,25 @@ public class PharmacySaleController implements Serializable {
     ///////////////////
     private UserStockContainer userStockContainer;
     PaymentMethodData paymentMethodData;
+
+    String errorMessage;
+
+    
+    public List<Stock> getStocksWithGeneric() {
+        return stocksWithGeneric;
+    }
+
+    public void setStocksWithGeneric(List<Stock> stocksWithGeneric) {
+        this.stocksWithGeneric = stocksWithGeneric;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     public PaymentMethodData getPaymentMethodData() {
         if (paymentMethodData == null) {
@@ -231,20 +259,21 @@ public class PharmacySaleController implements Serializable {
     //Check when edititng Qty
     //
     public boolean onEdit(BillItem tmp) {
+        errorMessage = null;
         //Cheking Minus Value && Null
         if (tmp.getQty() <= 0 || tmp.getQty() == null) {
             setZeroToQty(tmp);
             onEditCalculation(tmp);
-
-            UtilityController.addErrorMessage("Can not enter a minus value");
+            errorMessage = "Can not enter a minus value.";
+//            UtilityController.addErrorMessage("Can not enter a minus value");
             return true;
         }
 
         if (tmp.getQty() > tmp.getPharmaceuticalBillItem().getStock().getStock()) {
             setZeroToQty(tmp);
             onEditCalculation(tmp);
-
-            UtilityController.addErrorMessage("No Sufficient Stocks?");
+            errorMessage = "No sufficient stocks.";
+//            UtilityController.addErrorMessage("No Sufficient Stocks?");
             return true;
         }
 
@@ -254,8 +283,10 @@ public class PharmacySaleController implements Serializable {
             setZeroToQty(tmp);
             onEditCalculation(tmp);
 
-            UtilityController.addErrorMessage("Another User On Change Bill Item "
-                    + " Qty value is resetted");
+            errorMessage = "Another user also billing the same stock. Quentity is resetted.";
+
+//            UtilityController.addErrorMessage("Another User On Change Bill Item "
+//                    + " Qty value is resetted");
             return true;
         }
 
@@ -332,8 +363,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void setQty(Double qty) {
+        errorMessage = null;
         if (qty != null && qty <= 0) {
-            UtilityController.addErrorMessage("Can not enter a minus value");
+//            UtilityController.addErrorMessage("Can not enter a minus value");
+            errorMessage = "Can not enter a minus value";
             return;
         }
         this.qty = qty;
@@ -359,11 +392,21 @@ public class PharmacySaleController implements Serializable {
         this.selectedAvailableAmp = selectedAvailableAmp;
     }
 
+    public void makeStockAsBillItemStock(){
+        //System.out.println("replacableStock = " + replacableStock);
+        setStock(replacableStock);
+        //System.out.println("getStock() = " + getStock());
+    }
+    
     public void selectReplaceableStocks() {
+        //System.out.println("selectedAvailableAmp = " + selectedAvailableAmp);
+        //System.out.println("!selectedAvailableAmp instanceof Amp = " + !(selectedAvailableAmp instanceof Amp));
+        
         if (selectedAvailableAmp == null || !(selectedAvailableAmp instanceof Amp)) {
             replaceableStocks = new ArrayList<>();
             return;
         }
+        
         String sql;
         Map m = new HashMap();
         double d = 0.0;
@@ -376,8 +419,30 @@ public class PharmacySaleController implements Serializable {
                 + "i.department=:d and "
                 + "amp.vmp=:vmp "
                 + "order by i.itemBatch.item.name";
+        //System.out.println("m = " + m);
+        //System.out.println("sql = " + sql);
         replaceableStocks = getStockFacade().findBySQL(sql, m);
+        //System.out.println("replaceableStocks.size() = " + replaceableStocks.size());
     }
+
+//    public void selectStocksFromGeneric() {
+//        if (selectedGeneric == null) {
+//            stocksWithGeneric = new ArrayList<>();
+//            return;
+//        }
+//        String sql;
+//        Map m = new HashMap();
+//        double d = 0.0;
+//        m.put("d", getSessionController().getLoggedUser().getDepartment());
+//        m.put("s", d);
+//        m.put("vmp", selectedGeneric);
+//        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
+//                + "where i.stock >:s and "
+//                + "i.department=:d and "
+//                + "amp.vmp=:vmp "
+//                + "order by i.itemBatch.item.name";
+//        selectedGenerics = getStockFacade().findBySQL(sql, m, 10);
+//    }
 
     public List<Item> getItemsWithoutStocks() {
         return itemsWithoutStocks;
@@ -425,11 +490,35 @@ public class PharmacySaleController implements Serializable {
         Map m = new HashMap<>();
         List<Item> items;
         String sql;
-        sql = "select i from Amp i "
-                + "where i.retired=false and "
-                + "upper(i.name) like :n and "
-                + "i.id not in(select ibs.itemBatch.item.id from Stock ibs where ibs.stock >:s and ibs.department=:d and ibs.itemBatch.item.name like :n) "
-                + "order by i.name ";
+
+        if (qry.length() > 4) {
+            sql = "select i from Amp i "
+                    + "where i.retired=false and "
+                    + "(upper(i.name) like :n or upper(i.code) like :n  or upper(i.barcode) like :n  or upper(i.vmp.name) like :n) and "
+                    + "i.id not in(select ibs.itemBatch.item.id from Stock ibs where ibs.stock >:s and ibs.department=:d and (upper(ibs.itemBatch.item.name) like :n or upper(ibs.itemBatch.item.code) like :n  or upper(ibs.itemBatch.item.barcode) like :n  or upper(ibs.itemBatch.item.vmp.name) like :n )  ) "
+                    + "order by i.name ";
+
+        } else {
+
+            sql = "select i from Amp i "
+                    + "where i.retired=false and "
+                    + "(upper(i.name) like :n or upper(i.code) like :n or upper(i.vmp.name) like :n) and "
+                    + "i.id not in(select ibs.itemBatch.item.id from Stock ibs where ibs.stock >:s and ibs.department=:d and (upper(ibs.itemBatch.item.name) like :n or upper(ibs.itemBatch.item.code) like :n or upper(ibs.itemBatch.item.vmp.name) like :n )  ) "
+                    + "order by i.name ";
+
+        }
+
+//        if (qry.length() > 4) {
+//            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n or upper(i.itemBatch.item.vmp.name) like :n) order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+//        } else {
+//            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.vmp.name) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+//        }
+//        
+//        sql = "select i from Amp i "
+//                + "where i.retired=false and "
+//                + "upper(i.name) like :n and "
+//                + "i.id not in(select ibs.itemBatch.item.id from Stock ibs where ibs.stock >:s and ibs.department=:d and ibs.itemBatch.item.name like :n) "
+//                + "order by i.name ";
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         m.put("n", "%" + qry + "%");
         double s = 0.0;
@@ -455,6 +544,15 @@ public class PharmacySaleController implements Serializable {
         return stocks;
     }
 
+//    public void completeGenerics(String qry) {
+//        Map m = new HashMap<>();
+//        String sql;
+//        sql = "select i from Vmp "
+//                + "where upper(i.name) like :n "
+//                + "order by i.name";
+//        m.put("n", "%" + qry + "%");
+//        selectedGenerics = getVmpFacade().findBySQL(sql, m);
+//    }
     public List<Stock> completeAvailableStocks(String qry) {
         List<Stock> items;
         String sql;
@@ -465,23 +563,52 @@ public class PharmacySaleController implements Serializable {
         qry = qry.replaceAll("\n", "");
         qry = qry.replaceAll("\r", "");
         m.put("n", "%" + qry.toUpperCase().trim() + "%");
-        
+
         //System.out.println("qry = " + qry);
-        
         if (qry.length() > 4) {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n )  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         } else {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         }
-        
+
         items = getStockFacade().findBySQL(sql, m, 20);
-        
-        if(qry.length()>5 && items.size()==1){
+
+        if (qry.length() > 5 && items.size() == 1) {
             stock = items.get(0);
             handleSelectAction();
-        }else if (!qry.trim().equals("") && qry.length() > 4) {
+        } else if (!qry.trim().equals("") && qry.length() > 4) {
             itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
-            stocksWithGeneric = completeRetailSaleItemsFromGeneric(qry);
+//            completeGenerics(qry);
+//            stocksWithGeneric = completeRetailSaleItemsFromGeneric(qry);
+        }
+        return items;
+    }
+
+    public List<Stock> completeAvailableStocksFromNameOrGeneric(String qry) {
+        List<Stock> items;
+        String sql;
+        Map m = new HashMap();
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        double d = 0.0;
+        m.put("s", d);
+        qry = qry.replaceAll("\n", "");
+        qry = qry.replaceAll("\r", "");
+        m.put("n", "%" + qry.toUpperCase().trim() + "%");
+
+        //System.out.println("qry = " + qry);
+        if (qry.length() > 4) {
+            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n or upper(i.itemBatch.item.vmp.name) like :n) order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        } else {
+            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.vmp.name) like :n)  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        }
+
+        items = getStockFacade().findBySQL(sql, m, 20);
+
+        if (qry.length() > 5 && items.size() == 1) {
+            stock = items.get(0);
+            handleSelectAction();
+        } else if (!qry.trim().equals("") && qry.length() > 4) {
+            itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
         }
         return items;
     }
@@ -503,8 +630,10 @@ public class PharmacySaleController implements Serializable {
     }
 
     private boolean errorCheckForPreBill() {
+        errorMessage = null;
         if (getPreBill().getBillItems().isEmpty()) {
-            UtilityController.addErrorMessage("No Items added to bill to sale");
+//            UtilityController.addErrorMessage("No Items added to bill to sale");
+            errorMessage = "No items in the bill for sale. NOT settled.";
             return true;
         }
         return false;
@@ -568,16 +697,18 @@ public class PharmacySaleController implements Serializable {
 //        if (checkPaymentScheme(getSaleBill().getPaymentScheme())) {
 //            return true;
 //        }
-
+        errorMessage = null;
         getPaymentSchemeController().errorCheckPaymentScheme(getPaymentScheme().getPaymentMethod(), paymentMethodData);
 
         if (getPreBill().getPaymentScheme().getPaymentMethod() == PaymentMethod.Cash) {
             if (cashPaid == 0.0) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
+//                UtilityController.addErrorMessage("Please select tendered amount correctly");
+                errorMessage = "Please enter tendered value correctly.";
                 return true;
             }
             if (cashPaid < getNetTotal()) {
-                UtilityController.addErrorMessage("Please select tendered amount correctly");
+                errorMessage = "Tendered value is less than the bill value.";
+//                UtilityController.addErrorMessage("Please select tendered amount correctly");
                 return true;
             }
         }
@@ -846,7 +977,7 @@ public class PharmacySaleController implements Serializable {
 
     private boolean checkItemBatch() {
         for (BillItem bItem : getPreBill().getBillItems()) {
-            if (bItem.getPharmaceuticalBillItem().getStock().getId() == getBillItem().getPharmaceuticalBillItem().getStock().getId()) {
+            if (Objects.equals(bItem.getPharmaceuticalBillItem().getStock().getId(), getBillItem().getPharmaceuticalBillItem().getStock().getId())) {
                 return true;
             }
         }
@@ -856,6 +987,7 @@ public class PharmacySaleController implements Serializable {
 
     public void addBillItem() {
         editingQty = null;
+        errorMessage = null;
 
         if (billItem == null) {
             return;
@@ -864,21 +996,25 @@ public class PharmacySaleController implements Serializable {
             return;
         }
         if (getStock() == null) {
-            UtilityController.addErrorMessage("Item?");
+            errorMessage = "Item?";
+//            UtilityController.addErrorMessage("Item?");
             return;
         }
         if (getQty() == null) {
-            UtilityController.addErrorMessage("Quentity?");
+            errorMessage = "Quentity?";
+//            UtilityController.addErrorMessage("Quentity?");
             return;
         }
 
         if (getQty() > getStock().getStock()) {
-            UtilityController.addErrorMessage("No Sufficient Stocks?");
+            errorMessage = "No sufficient stocks.";
+//            UtilityController.addErrorMessage("No Sufficient Stocks?");
             return;
         }
 
         if (checkItemBatch()) {
-            UtilityController.addErrorMessage("Already added this item batch");
+            errorMessage = "This batch is already there in the bill.";
+//            UtilityController.addErrorMessage("Already added this item batch");
             return;
         }
         //Checking User Stock Entity
@@ -1024,8 +1160,15 @@ public class PharmacySaleController implements Serializable {
     public void handleSelect(SelectEvent event) {
         handleSelectAction();
     }
-    
+
     public void handleSelectAction() {
+        if (stock == null) {
+            //System.out.println("Stock NOT selected.");
+        }
+        if (getBillItem() == null || getBillItem().getPharmaceuticalBillItem() == null) {
+            //System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
+        }
+
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
         calculateRates(billItem);
     }
@@ -1410,4 +1553,38 @@ public class PharmacySaleController implements Serializable {
         this.cashTransactionBean = cashTransactionBean;
     }
 
+    public List<Vmp> getSelectedGenerics() {
+        return selectedGenerics;
+    }
+
+    public void setSelectedGenerics(List<Vmp> selectedGenerics) {
+        this.selectedGenerics = selectedGenerics;
+    }
+
+    public VmpFacade getVmpFacade() {
+        return vmpFacade;
+    }
+
+    public void setVmpFacade(VmpFacade vmpFacade) {
+        this.vmpFacade = vmpFacade;
+    }
+
+    public Vmp getSelectedGeneric() {
+        return selectedGeneric;
+    }
+
+    public void setSelectedGeneric(Vmp selectedGeneric) {
+        this.selectedGeneric = selectedGeneric;
+    }
+
+    public Stock getReplacableStock() {
+        return replacableStock;
+    }
+
+    public void setReplacableStock(Stock replacableStock) {
+        this.replacableStock = replacableStock;
+    }
+
+    
+    
 }

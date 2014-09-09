@@ -16,11 +16,14 @@
                         <h:outputLabel value="CASH IN"/>
 
                     </f:facet>
-                    <h:panelGrid columns="3">
+                    <h:panelGrid columns="4">
+                         <p:panel header="Comments">
+                                <p:inputTextarea value="#{cashInController.bill.comments}"/>
+                            </p:panel>
                         <p:panel>
                             <f:facet name="header">
                                 <h:outputLabel value="NOTE"/>
-                            </f:facet>
+                            </f:facet>                           
                             <h:panelGrid columns="6" >
                                 <h:outputLabel value="1/="/>
                                 <p:inputText value="#{cashInController.bill.cashTransaction.qty1}" 

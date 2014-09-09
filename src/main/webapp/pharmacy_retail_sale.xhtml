@@ -32,7 +32,7 @@
                                             <p:selectOneMenu   id="cmbPs" value="#{pharmacySaleController.paymentScheme}">     
 
                                                 <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                                <p:ajax process="cmbPs" update="pBillDetails creditCard cheque slip" 
+                                                <p:ajax process="cmbPs" update="pBillDetails creditCard cheque slip :#{p:component('tblBillItem')} :#{p:component('panelBillTotals')} :#{p:component('txtQty')} :#{p:component('txtRate')}" 
                                                         event="change"  listener="#{pharmacySaleController.paymentSchemeChanged}" />
 
                                             </p:selectOneMenu>
@@ -73,7 +73,7 @@
                                         </h:panelGroup>
                                     </td>
                                     <td>
-                                        
+
                                     </td>
                                 </tr>
 
@@ -141,7 +141,7 @@
                                                                 </p:column>
                                                                 <p:ajax event="focus" process="acStock :#{p:component('cmbPs')}"  ></p:ajax>
                                                                 <p:ajax event="itemSelect"   listener="#{pharmacySaleController.handleSelect}"  update="txtQty txtRate focusQty" ></p:ajax>
-                                                                <p:ajax event="query" update="tabI" process="acStock"></p:ajax>
+                                                                <p:ajax event="query" update=":#{p:component('tabI')}" process="acStock"></p:ajax>
                                                             </p:autoComplete>
                                                         </td>
                                                         <td style="min-width: 50px;">
@@ -154,7 +154,7 @@
                                                             <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
                                                                               action="#{pharmacySaleController.addBillItem}" 
                                                                               process="@this acStock txtQty :#{p:component('cmbPs')}" 
-                                                                              update=":#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem tabI" ></p:commandButton>
+                                                                              update=":#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem :#{p:component('tabI')}" ></p:commandButton>
                                                         </td>
                                                         <td style="padding: 5px;margin: auto;">
                                                             <p:outputLabel id="txtRate" value="#{pharmacySaleController.billItem.netRate}" >
@@ -238,14 +238,6 @@
                                                     </p:dataTable>
 
                                                 </p:panel>
-
-
-                                                <p:tabView id="tabI" dynamic="true" activeIndex="#{pharmacySaleController.activeIndex}" >
-
-
-                                                </p:tabView>
-
-
                                             </td>
                                         </tr>
                                     </table>
@@ -310,15 +302,19 @@
                                         <tr>
                                             <td>
 
-                                                <p:panel header="Availability" >
+                                                <p:panel header="Availability" id="tabI" >
                                                     <table >
                                                         <tr>
                                                             <th>
                                                                 <h:outputLabel value="Not Available" ></h:outputLabel>
                                                             </th>
                                                             <th>
-                                                                <h:outputLabel value="Substitutes" ></h:outputLabel>
+                                                                <h:outputLabel value="Generic Names" ></h:outputLabel>
                                                             </th>
+                                                            <th>
+                                                                <h:outputLabel value="Stocks from Generic Names" ></h:outputLabel>
+                                                            </th>
+
                                                         </tr>
                                                         <tr>
                                                             <td>
@@ -326,6 +322,14 @@
                                                                                     value="#{pharmacySaleController.selectedAvailableAmp}"  >
                                                                     <f:selectItems  value="#{pharmacySaleController.itemsWithoutStocks}" var="si" itemLabel="#{si.name}" itemValue="#{si}" ></f:selectItems>
                                                                     <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{pharmacySaleController.selectReplaceableStocks}" ></p:ajax>
+                                                                </p:selectOneListbox>
+                                                            </td>    
+                                                            <td>
+                                                                <p:selectOneListbox id="lstGeneric" 
+                                                                                    style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" 
+                                                                                    value="#{pharmacySaleController.selectedGeneric}"  >
+                                                                    <f:selectItems  value="#{pharmacySaleController.selectedGenerics}" var="vmp" itemLabel="#{vmp.name}" itemValue="#{vmp}" ></f:selectItems>
+                                                                    <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{pharmacySaleController.selectStocksFromGeneric}" ></p:ajax>
                                                                 </p:selectOneListbox>
                                                             </td>    
                                                             <td>

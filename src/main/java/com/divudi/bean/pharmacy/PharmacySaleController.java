@@ -33,6 +33,8 @@ import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.UserStock;
 import com.divudi.entity.pharmacy.UserStockContainer;
+import com.divudi.entity.pharmacy.Vmp;
+import com.divudi.facade.AmpFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.ItemFacade;
@@ -43,6 +45,7 @@ import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
 import com.divudi.facade.UserStockContainerFacade;
 import com.divudi.facade.UserStockFacade;
+import com.divudi.facade.VmpFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -102,6 +105,8 @@ public class PharmacySaleController implements Serializable {
     private PharmaceuticalBillItemFacade pharmaceuticalBillItemFacade;
     @EJB
     BillNumberBean billNumberBean;
+    @EJB
+    VmpFacade vmpFacade;
 /////////////////////////
     Item selectedAvailableAmp;
     private PreBill preBill;
@@ -124,10 +129,12 @@ public class PharmacySaleController implements Serializable {
     private String patientTabId = "tabNewPt";
     private String strTenderedValue = "";
     boolean billPreview = false;
+    Vmp selectedGeneric;
     /////////////////
     List<Stock> replaceableStocks;
     List<Item> itemsWithoutStocks;
     List<Stock> stocksWithGeneric;
+    List<Vmp> selectedGenerics;
     /////////////////////////   
     double cashPaid;
     double netTotal;
@@ -402,6 +409,25 @@ public class PharmacySaleController implements Serializable {
                 + "order by i.itemBatch.item.name";
         replaceableStocks = getStockFacade().findBySQL(sql, m);
     }
+    
+    public void selectStocksFromGeneric() {
+        if (selectedGeneric == null ) {
+            stocksWithGeneric = new ArrayList<>();
+            return;
+        }
+        String sql;
+        Map m = new HashMap();
+        double d = 0.0;
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        m.put("s", d);
+        m.put("vmp", selectedGeneric);
+        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
+                + "where i.stock >:s and "
+                + "i.department=:d and "
+                + "amp.vmp=:vmp "
+                + "order by i.itemBatch.item.name";
+        selectedGenerics = getStockFacade().findBySQL(sql, m,10);
+    }
 
     public List<Item> getItemsWithoutStocks() {
         return itemsWithoutStocks;
@@ -479,6 +505,16 @@ public class PharmacySaleController implements Serializable {
         return stocks;
     }
 
+    public void completeGenerics(String qry) {
+        Map m = new HashMap<>();
+        String sql;
+        sql = "select i from Vmp "
+                + "where upper(i.name) like :n "
+                + "order by i.name";
+        m.put("n", "%" + qry + "%");
+        selectedGenerics = getVmpFacade().findBySQL(sql, m);
+    }
+
     public List<Stock> completeAvailableStocks(String qry) {
         List<Stock> items;
         String sql;
@@ -504,6 +540,7 @@ public class PharmacySaleController implements Serializable {
             handleSelectAction();
         } else if (!qry.trim().equals("") && qry.length() > 4) {
             itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
+            completeGenerics(qry);
             stocksWithGeneric = completeRetailSaleItemsFromGeneric(qry);
         }
         return items;
@@ -1058,6 +1095,13 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void handleSelectAction() {
+        if (stock == null) {
+            System.out.println("Stock NOT selected.");
+        }
+        if (getBillItem() == null || getBillItem().getPharmaceuticalBillItem() == null) {
+            System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
+        }
+
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
         calculateRates(billItem);
     }
@@ -1442,4 +1486,30 @@ public class PharmacySaleController implements Serializable {
         this.cashTransactionBean = cashTransactionBean;
     }
 
+    public List<Vmp> getSelectedGenerics() {
+        return selectedGenerics;
+    }
+
+    public void setSelectedGenerics(List<Vmp> selectedGenerics) {
+        this.selectedGenerics = selectedGenerics;
+    }
+
+    public VmpFacade getVmpFacade() {
+        return vmpFacade;
+    }
+
+    public void setVmpFacade(VmpFacade vmpFacade) {
+        this.vmpFacade = vmpFacade;
+    }
+
+    public Vmp getSelectedGeneric() {
+        return selectedGeneric;
+    }
+
+    public void setSelectedGeneric(Vmp selectedGeneric) {
+        this.selectedGeneric = selectedGeneric;
+    }
+
+    
+    
 }

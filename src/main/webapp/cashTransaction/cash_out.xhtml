@@ -15,7 +15,10 @@
                     <f:facet name="header">
                         <h:outputLabel value="CASH OUT"/>                        
                     </f:facet>
-                    <h:panelGrid columns="3">
+                    <h:panelGrid columns="4">
+                        <p:panel header="Comments">
+                            <p:inputTextarea value="#{cashOutController.bill.comments}"/>
+                        </p:panel>
                         <p:panel>
                             <f:facet name="header">
                                 <h:outputLabel value="NOTE"/>

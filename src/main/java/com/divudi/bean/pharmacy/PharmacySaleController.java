@@ -148,6 +148,7 @@ public class PharmacySaleController implements Serializable {
 
     String errorMessage;
 
+    
     public List<Stock> getStocksWithGeneric() {
         return stocksWithGeneric;
     }
@@ -392,14 +393,14 @@ public class PharmacySaleController implements Serializable {
     }
 
     public void makeStockAsBillItemStock(){
-        System.out.println("replacableStock = " + replacableStock);
+        //System.out.println("replacableStock = " + replacableStock);
         setStock(replacableStock);
-        System.out.println("getStock() = " + getStock());
+        //System.out.println("getStock() = " + getStock());
     }
     
     public void selectReplaceableStocks() {
-        System.out.println("selectedAvailableAmp = " + selectedAvailableAmp);
-        System.out.println("!selectedAvailableAmp instanceof Amp = " + !(selectedAvailableAmp instanceof Amp));
+        //System.out.println("selectedAvailableAmp = " + selectedAvailableAmp);
+        //System.out.println("!selectedAvailableAmp instanceof Amp = " + !(selectedAvailableAmp instanceof Amp));
         
         if (selectedAvailableAmp == null || !(selectedAvailableAmp instanceof Amp)) {
             replaceableStocks = new ArrayList<>();
@@ -418,10 +419,10 @@ public class PharmacySaleController implements Serializable {
                 + "i.department=:d and "
                 + "amp.vmp=:vmp "
                 + "order by i.itemBatch.item.name";
-        System.out.println("m = " + m);
-        System.out.println("sql = " + sql);
+        //System.out.println("m = " + m);
+        //System.out.println("sql = " + sql);
         replaceableStocks = getStockFacade().findBySQL(sql, m);
-        System.out.println("replaceableStocks.size() = " + replaceableStocks.size());
+        //System.out.println("replaceableStocks.size() = " + replaceableStocks.size());
     }
 
 //    public void selectStocksFromGeneric() {
@@ -1162,10 +1163,10 @@ public class PharmacySaleController implements Serializable {
 
     public void handleSelectAction() {
         if (stock == null) {
-            System.out.println("Stock NOT selected.");
+            //System.out.println("Stock NOT selected.");
         }
         if (getBillItem() == null || getBillItem().getPharmaceuticalBillItem() == null) {
-            System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
+            //System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
         }
 
         getBillItem().getPharmaceuticalBillItem().setStock(stock);

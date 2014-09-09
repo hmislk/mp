@@ -148,7 +148,8 @@
                                                                                                 </h:outputLabel>
                                                                                             </p:column>
                                                                                             <p:column headerText="Expiary">
-                                                                                                <h:outputLabel value="#{i.itemBatch.dateOfExpire}"  style="width: 100px!important;">
+                                                                                                <h:outputLabel value="#{i.itemBatch.dateOfExpire}"  
+                                                                                                               style="width: 100px!important;#{commonController.currentDateTime > i.itemBatch.dateOfExpire ?'color: red; background-color: yellow;':''}">
                                                                                                     <f:convertDateTime pattern="dd/MM/yyyy" ></f:convertDateTime>
                                                                                                 </h:outputLabel>
                                                                                             </p:column>
@@ -242,7 +243,7 @@
                                                                                             <div style="min-width: 80px;" ></div>
                                                                                             <h:outputLabel value="Expiary" style="min-width: 300px;" ></h:outputLabel>
                                                                                         </f:facet>
-                                                                                        <h:outputLabel value="#{bi.pharmaceuticalBillItem.itemBatch.dateOfExpire}" >
+                                                                                        <h:outputLabel value="#{bi.pharmaceuticalBillItem.itemBatch.dateOfExpire}" style="#{commonController.currentDateTime > bi.pharmaceuticalBillItem.itemBatch.dateOfExpire ?'color: red; background-color: yellow;':''}" >
                                                                                             <f:convertDateTime pattern="dd/MMM/yyyy" ></f:convertDateTime>
                                                                                         </h:outputLabel>
                                                                                     </p:column>
@@ -281,7 +282,7 @@
                                                                         <f:convertNumber pattern="#,##0.00" />
                                                                     </h:outputLabel>
                                                                     <h:outputLabel  value="Tendered" ></h:outputLabel>
-                                                                    <p:inputText accesskey="t" autocomplete="off" id="paid" value="#{pharmacySaleController.cashPaid}" >
+                                                                    <p:inputText accesskey="t" autocomplete="off" id="paid" value="#{pharmacySaleController.cashPaidStr}" >
                                                                         <p:ajax process="total dis netTotal paid" update="balance netTotal" event="blur"/>
                                                                     </p:inputText>
                                                                     <h:outputLabel  value="Balance " ></h:outputLabel>
@@ -333,7 +334,7 @@
                                                                 </h:outputLabel>
                                                             </p:column>
                                                             <p:column headerText="Expiary">
-                                                                <h:outputLabel value="#{ri.itemBatch.dateOfExpire}"  style="width: 100px!important;">
+                                                                <h:outputLabel value="#{ri.itemBatch.dateOfExpire}"  style="width: 100px!important; #{commonController.currentDateTime > ri.itemBatch.dateOfExpire ?'color: red; background-color: yellow;':''}">
                                                                     <f:convertDateTime pattern="dd/MM/yy" ></f:convertDateTime>
                                                                 </h:outputLabel>
                                                             </p:column>

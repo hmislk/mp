@@ -148,7 +148,6 @@ public class PharmacySaleController implements Serializable {
 
     String errorMessage;
 
-    
     public List<Stock> getStocksWithGeneric() {
         return stocksWithGeneric;
     }
@@ -392,37 +391,36 @@ public class PharmacySaleController implements Serializable {
         this.selectedAvailableAmp = selectedAvailableAmp;
     }
 
-    public void makeStockAsBillItemStock(){
+    public void makeStockAsBillItemStock() {
         //System.out.println("replacableStock = " + replacableStock);
         setStock(replacableStock);
         //System.out.println("getStock() = " + getStock());
     }
-    
-    public void selectReplaceableStocks() {
-        //System.out.println("selectedAvailableAmp = " + selectedAvailableAmp);
-        //System.out.println("!selectedAvailableAmp instanceof Amp = " + !(selectedAvailableAmp instanceof Amp));
-        
-        if (selectedAvailableAmp == null || !(selectedAvailableAmp instanceof Amp)) {
-            replaceableStocks = new ArrayList<>();
-            return;
-        }
-        
+
+    public void fillReplaceableStocksForAmp(Amp ampIn) {
         String sql;
         Map m = new HashMap();
         double d = 0.0;
-        Amp amp = (Amp) selectedAvailableAmp;
+        Amp amp = (Amp) ampIn;
         m.put("d", getSessionController().getLoggedUser().getDepartment());
         m.put("s", d);
         m.put("vmp", amp.getVmp());
+        m.put("a", amp);
         sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
                 + "where i.stock >:s and "
                 + "i.department=:d and "
                 + "amp.vmp=:vmp "
+                + "and amp<>:a "
                 + "order by i.itemBatch.item.name";
-        //System.out.println("m = " + m);
-        //System.out.println("sql = " + sql);
         replaceableStocks = getStockFacade().findBySQL(sql, m);
-        //System.out.println("replaceableStocks.size() = " + replaceableStocks.size());
+    }
+
+    public void selectReplaceableStocks() {
+        if (selectedAvailableAmp == null || !(selectedAvailableAmp instanceof Amp)) {
+            replaceableStocks = new ArrayList<>();
+            return;
+        }
+        fillReplaceableStocksForAmp((Amp) selectedAvailableAmp);
     }
 
 //    public void selectStocksFromGeneric() {
@@ -443,7 +441,6 @@ public class PharmacySaleController implements Serializable {
 //                + "order by i.itemBatch.item.name";
 //        selectedGenerics = getStockFacade().findBySQL(sql, m, 10);
 //    }
-
     public List<Item> getItemsWithoutStocks() {
         return itemsWithoutStocks;
     }
@@ -1171,6 +1168,9 @@ public class PharmacySaleController implements Serializable {
 
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
         calculateRates(billItem);
+        if (stock != null && stock.getItemBatch() != null) {
+            fillReplaceableStocksForAmp((Amp) stock.getItemBatch().getItem());
+        }
     }
 
     public void paymentSchemeChanged(AjaxBehaviorEvent ajaxBehavior) {
@@ -1585,6 +1585,4 @@ public class PharmacySaleController implements Serializable {
         this.replacableStock = replacableStock;
     }
 
-    
-    
 }

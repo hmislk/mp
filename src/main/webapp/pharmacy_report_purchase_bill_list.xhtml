@@ -14,7 +14,7 @@
 
         <h:panelGroup rendered="true" >
             <h:form>
-                <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="Approximate Gross Profit by Bills">
+                <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="APurchase Bill List">
 
                     <p:defaultCommand target="btnRefresh"/>
 
@@ -38,7 +38,7 @@
 
                     <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                      styleClass="noPrintButton" 
-                                     action="#{commonReportSession.listProfitBills()}"></p:commandButton>
+                                     action="#{commonReportSession.listPurchaseAndGrnBills()}"></p:commandButton>
 
                     <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                         <pe:exporter type="xlsx" target="tblBills" fileName="Purchase/GRN Bill List - #{commonReportSession.department.name} - #{commonReportSession.dealer.name}"  ></pe:exporter>

@@ -81,16 +81,138 @@ public class CommonReportSession implements Serializable {
     //////////////////    
     private List<String1Value1> dataTableData;
 
-    
-    
-     List<Bill> profitBills;
-     List<DailySummeryRow> dailySummeryRows;
+    List<Bill> profitBills;
+    List<Bill> purchaseBills;
+    List<DailySummeryRow> dailySummeryRows;
+    Institution dealer;
 
     Double profitTotal = 0.0;
     double grossTotal = 0.0;
     double netTotal = 0.0;
     double discountTotal = 0.0;
     double freeTotal = 0.0;
+
+    public List<Bill> getPurchaseBills() {
+        return purchaseBills;
+    }
+
+    public void setPurchaseBills(List<Bill> purchaseBills) {
+        this.purchaseBills = purchaseBills;
+    }
+
+    
+    
+    public String listPurchaseAndGrnBills() {
+        System.out.println("list profit bills");
+        String sql = "SELECT b FROM Bill b "
+                + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
+                + " and b.retired=false "
+                + " and (b.billType=:bt1 or b.billType=:bt2) "
+                + " and b.createdAt between :fromDate and :toDate ";
+
+        Map temMap = new HashMap();
+
+        if (department != null) {
+            sql += " and b.department=:d ";
+            temMap.put("d", department);
+        }
+
+        if (dealer != null) {
+            sql += " and b.fromInstitution=:fi ";
+            temMap.put("fi", dealer);
+        }
+        
+        sql += " order by b.deptId  ";
+
+        temMap.put("bc1", BilledBill.class);
+        temMap.put("bc2", RefundBill.class);
+        temMap.put("bc3", CancelledBill.class);
+
+        temMap.put("bt1", BillType.PharmacyPurchaseBill);
+        temMap.put("bt2", BillType.PharmacyGrnBill);
+
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+
+        purchaseBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        profitTotal = 0.0;
+        grossTotal = 0.0;
+        netTotal = 0.0;
+        discountTotal = 0.0;
+        freeTotal = 0.0;
+
+        for (Bill b : purchaseBills) {
+            grossTotal += b.getTotal();
+            netTotal += b.getNetTotal();
+            profitTotal += b.getNetTotal();
+            discountTotal += b.getDiscount();
+            if (discountTotal != 0.00) {
+                System.out.println("b = " + b);
+                System.out.println("b.getDiscount() = " + b.getDiscount());
+                System.out.println("b.getId() = " + b.getId());
+            }
+            freeTotal += b.getFreeValue();
+        }
+        return "pharmacy_report_purchase_bill_list";
+    }
+
+    public String listPurchaseAndGrnBillsDailySummery() {
+        System.out.println("list profit bills");
+        String jpql;
+        jpql = "SELECT new com.divudi.data.DailySummeryRow(FUNC('DATE',b.createdAt), sum(b.freeValue), sum(b.netTotal), sum(b.discount),  sum(b.total)) "
+                + " FROM Bill b "
+                + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
+                + " and b.retired=false "
+                + " and (b.billType=:bt1 or b.billType=:bt2) "
+                + " and FUNC('DATE',b.createdAt) between :fromDate and :toDate ";
+
+        Map temMap = new HashMap();
+
+        if (department != null) {
+            jpql += " and b.department=:d ";
+            temMap.put("d", department);
+        }
+
+        if (dealer != null) {
+            jpql += " and b.fromInstitution=:fi ";
+            temMap.put("fi", dealer);
+        }
+        
+        jpql += " group by FUNC('DATE',b.createdAt) "
+                + "order by FUNC('DATE',b.createdAt)  ";
+
+        temMap.put("bc1", BilledBill.class);
+        temMap.put("bc2", RefundBill.class);
+        temMap.put("bc3", CancelledBill.class);
+
+        temMap.put("bt1", BillType.PharmacyPurchaseBill);
+        temMap.put("bt2", BillType.PharmacyGrnBill);
+
+
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+
+        List<Object[]> dsso = getBillFacade().findAggregates(jpql, temMap, TemporalType.DATE);
+        grossTotal = 0.0;
+        profitTotal = 0.0;
+        discountTotal = 0.0;
+        freeTotal = 0.0;
+        dailySummeryRows = new ArrayList<>();
+        if (dsso == null) {
+            dsso = new ArrayList<>();
+            System.out.println("new list as null");
+        }
+        for (Object b : dsso) {
+            DailySummeryRow dsr = (DailySummeryRow) b;
+            grossTotal += dsr.getGrossTotal();
+            profitTotal += dsr.getProfit();
+            discountTotal += dsr.getDiscounts();
+            freeTotal += dsr.getFreeAmounts();
+            dailySummeryRows.add(dsr);
+        }
+        return "pharmacy_report_purchase_bill_list_ds";
+    }
 
     public String listProfitBills() {
         System.out.println("list profit bills");
@@ -107,6 +229,10 @@ public class CommonReportSession implements Serializable {
             temMap.put("d", department);
         }
 
+//        if (dealer != null) {
+//            sql += " and b.fromInstitution=:fi ";
+//            temMap.put("fi", dealer);
+//        }
         sql += " order by b.deptId  ";
 
         temMap.put("bc1", BilledBill.class);
@@ -121,31 +247,40 @@ public class CommonReportSession implements Serializable {
         temMap.put("toDate", getToDate());
 
         profitBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
         profitTotal = 0.0;
+        grossTotal = 0.0;
+        netTotal = 0.0;
+        discountTotal = 0.0;
+        freeTotal = 0.0;
 
 //        System.out.println("temMap = " + temMap);
 //        System.out.println("sql = " + sql);
         for (Bill b : profitBills) {
-            grossTotal+=b.getTotal();
-            netTotal+=b.getNetTotal();
+            grossTotal += b.getTotal();
+            netTotal += b.getNetTotal();
             profitTotal += b.getNetTotal();
             discountTotal += b.getDiscount();
+//            if (discountTotal != 0.00) {
+//                System.out.println("b = " + b);
+//                System.out.println("b.getDiscount() = " + b.getDiscount());
+//                System.out.println("b.getId() = " + b.getId());
+//            }
             freeTotal += b.getFreeValue();
         }
         return "pharmacy_report_gross_profit_by_bills";
     }
 
-    
     public String listProfitBillsDailySummery() {
         System.out.println("list profit bills");
         String jpql;
-         jpql = "SELECT new com.divudi.data.DailySummeryRow(FUNC('DATE',b.createdAt), sum(b.freeValue), sum(b.netTotal), sum(b.discount)) "
+        jpql = "SELECT new com.divudi.data.DailySummeryRow(FUNC('DATE',b.createdAt), sum(b.freeValue), sum(b.netTotal), sum(b.discount),  sum(b.total)) "
                 + " FROM Bill b "
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "
                 + " and (b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3) "
                 + " and FUNC('DATE',b.createdAt) between :fromDate and :toDate ";
-        
+
         Map temMap = new HashMap();
 
         if (department != null) {
@@ -153,6 +288,10 @@ public class CommonReportSession implements Serializable {
             temMap.put("d", department);
         }
 
+//        if (dealer != null) {
+//            jpql += " and b.fromInstitution=:fi ";
+//            temMap.put("fi", dealer);
+//        }
         jpql += " group by FUNC('DATE',b.createdAt) "
                 + "order by FUNC('DATE',b.createdAt)  ";
 
@@ -168,16 +307,18 @@ public class CommonReportSession implements Serializable {
         temMap.put("toDate", getToDate());
 
         List<Object[]> dsso = getBillFacade().findAggregates(jpql, temMap, TemporalType.DATE);
+        grossTotal = 0.0;
         profitTotal = 0.0;
         discountTotal = 0.0;
-        freeTotal =0.0;
+        freeTotal = 0.0;
         dailySummeryRows = new ArrayList<>();
-        if(dsso==null){
+        if (dsso == null) {
             dsso = new ArrayList<>();
             System.out.println("new list as null");
         }
         for (Object b : dsso) {
             DailySummeryRow dsr = (DailySummeryRow) b;
+            grossTotal += dsr.getGrossTotal();
             profitTotal += dsr.getProfit();
             discountTotal += dsr.getDiscounts();
             freeTotal += dsr.getFreeAmounts();
@@ -186,7 +327,6 @@ public class CommonReportSession implements Serializable {
         return "pharmacy_report_gross_profit_by_bills_ds";
     }
 
-    
     public List<Bill> getProfitBills() {
         return profitBills;
     }
@@ -235,15 +375,6 @@ public class CommonReportSession implements Serializable {
         this.freeTotal = freeTotal;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * Creates a new instance of CommonReport
      */
@@ -574,8 +705,8 @@ public class CommonReportSession implements Serializable {
         if (refundedBillsPh == null) {
             getRefundedBillsPh().setBills(userPharmacyBillsOwn(new RefundBill(), BillType.PharmacySale, getWebUser()));
         }
-        
-         if (refundedBillsPh2 == null) {
+
+        if (refundedBillsPh2 == null) {
             getRefundedBillsPh2().setBills(userPharmacyBillsOther(new RefundBill(), BillType.PharmacySale, getWebUser()));
         }
         // calTot(getRefundedBills());
@@ -602,8 +733,8 @@ public class CommonReportSession implements Serializable {
         if (cancellededBillsPh == null) {
             getCancellededBillsPh().setBills(userPharmacyBillsOwn(new CancelledBill(), BillType.PharmacySale, getWebUser()));
         }
-        
-         if (cancellededBillsPh2 == null) {
+
+        if (cancellededBillsPh2 == null) {
             getCancellededBillsPh2().setBills(userPharmacyBillsOther(new CancelledBill(), BillType.PharmacySale, getWebUser()));
         }
         //   calTot(getCancellededBills());
@@ -643,9 +774,8 @@ public class CommonReportSession implements Serializable {
         temMap.put("btp", billType);
         temMap.put("web", webUser);
         temMap.put("ins", getSessionController().getInstitution());
-        
-//        checkOtherInstiution
 
+//        checkOtherInstiution
         return getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
@@ -663,7 +793,7 @@ public class CommonReportSession implements Serializable {
 
         Bill b = getBillFacade().findFirstBySQL(sql, temMap, TemporalType.DATE);
 
-        if (b != null && institution==null) {
+        if (b != null && institution == null) {
             ////System.err.println("SYS "+b.getInstitution().getName());
             institution = b.getInstitution();
         }
@@ -721,12 +851,12 @@ public class CommonReportSession implements Serializable {
             getBilledBillsPh().setBills(userPharmacyBillsOwn(new BilledBill(), BillType.PharmacySale, getWebUser()));
             //   calTot(getBilledBills());
         }
-        
-         if (billedBillsPh2 == null) {
+
+        if (billedBillsPh2 == null) {
             getBilledBillsPh2().setBills(userPharmacyBillsOther(new BilledBill(), BillType.PharmacySale, getWebUser()));
             //   calTot(getBilledBills());
         }
-         
+
         return billedBillsPh;
     }
 
@@ -1115,7 +1245,7 @@ public class CommonReportSession implements Serializable {
         inwardPayments = null;
         inwardPaymentCancel = null;
         dataTableData = null;
-        institution=null;
+        institution = null;
 
     }
 
@@ -1357,12 +1487,12 @@ public class CommonReportSession implements Serializable {
 
         return list;
     }
-    
-     public List<String1Value1> getCreditSlipSum2() {
-        List<BillsTotals> list2 = new ArrayList<>();      
+
+    public List<String1Value1> getCreditSlipSum2() {
+        List<BillsTotals> list2 = new ArrayList<>();
         list2.add(billedBillsPh2);
         list2.add(cancellededBillsPh2);
-        list2.add(refundedBillsPh2);      
+        list2.add(refundedBillsPh2);
 
         List<String1Value1> list = new ArrayList<>();
         String1Value1 tmp1 = new String1Value1();
@@ -1539,12 +1669,12 @@ public class CommonReportSession implements Serializable {
         list.add(tmp4);
         return list;
     }
-    
-      public List<String1Value1> getCashChequeSum2() {
-        List<BillsTotals> list2 = new ArrayList<>();        
+
+    public List<String1Value1> getCashChequeSum2() {
+        List<BillsTotals> list2 = new ArrayList<>();
         list2.add(billedBillsPh2);
         list2.add(cancellededBillsPh2);
-        list2.add(refundedBillsPh2);        
+        list2.add(refundedBillsPh2);
 
         List<String1Value1> list = new ArrayList<>();
 
@@ -1633,8 +1763,8 @@ public class CommonReportSession implements Serializable {
     }
 
     public BillsTotals getBilledBillsPh2() {
-        if(billedBillsPh2==null){
-            billedBillsPh2=new BillsTotals();
+        if (billedBillsPh2 == null) {
+            billedBillsPh2 = new BillsTotals();
         }
         return billedBillsPh2;
     }
@@ -1644,8 +1774,8 @@ public class CommonReportSession implements Serializable {
     }
 
     public BillsTotals getCancellededBillsPh2() {
-         if(cancellededBillsPh2==null){
-            cancellededBillsPh2=new BillsTotals();
+        if (cancellededBillsPh2 == null) {
+            cancellededBillsPh2 = new BillsTotals();
         }
         return cancellededBillsPh2;
     }
@@ -1655,8 +1785,8 @@ public class CommonReportSession implements Serializable {
     }
 
     public BillsTotals getRefundedBillsPh2() {
-        if(refundedBillsPh2==null){
-            refundedBillsPh2=new BillsTotals();
+        if (refundedBillsPh2 == null) {
+            refundedBillsPh2 = new BillsTotals();
         }
         return refundedBillsPh2;
     }
@@ -1682,7 +1812,13 @@ public class CommonReportSession implements Serializable {
         fromDate = CommonDateFunctions.startOfDate(billDate);
         toDate = CommonDateFunctions.endOfDate(billDate);
     }
-    
-    
-    
+
+    public Institution getDealer() {
+        return dealer;
+    }
+
+    public void setDealer(Institution dealer) {
+        this.dealer = dealer;
+    }
+
 }

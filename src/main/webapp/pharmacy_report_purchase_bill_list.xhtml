@@ -27,16 +27,21 @@
                     <p:autoComplete  value="#{commonReportSession.department}"  
                                      completeMethod="#{departmentController.completeDept}" var="dept"
                                      itemValue="#{dept}" itemLabel="#{dept.name}" 
-                                     forceSelection="true" rendered="true"
-                                     requiredMessage="You must select a department" >
+                                     forceSelection="true" >
                     </p:autoComplete>
 
+                    <p:outputLabel value="Dealor"/>
+                    <p:autoComplete converter="deal" value="#{commonReportSession.dealer}" 
+                                    forceSelection="true"
+                                    completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
 
 
-                    <p:commandButton id="btnRefresh" ajax="false" value="Fill" styleClass="noPrintButton" action="#{commonReportSession.listProfitBills()}"></p:commandButton>
+                    <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
+                                     styleClass="noPrintButton" 
+                                     action="#{commonReportSession.listProfitBills()}"></p:commandButton>
 
                     <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
-                        <pe:exporter type="xlsx" target="tblBills" fileName="Approximate Bill-vice Gross Profit Report #{commonReportSession.department.name}"  ></pe:exporter>
+                        <pe:exporter type="xlsx" target="tblBills" fileName="Purchase/GRN Bill List - #{commonReportSession.department.name} - #{commonReportSession.dealer.name}"  ></pe:exporter>
                     </p:commandButton>
 
                     <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >
@@ -48,8 +53,9 @@
 
 
 
-                    <p:dataTable id="tblBills"  
-                                 value="#{commonReportSession.profitBills}" var="b"
+                    <p:dataTable id="tblBills" 
+                                 rowKey="#{b.id}"
+                                 value="#{commonReportSession.purchaseBills}" var="b"
                                  paginator="true" paginatorAlwaysVisible="true"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="10,20,50"
@@ -57,30 +63,36 @@
                                  rowIndexVar="ri">
 
                         <f:facet name="header">
-                            <h:outputLabel value="Approximate Item-vice Gross Profit"/>
+                            <h:outputLabel value="Purchase/GRN Bill List - #{commonReportSession.department.name} - #{commonReportSession.dealer.name}"/>
                         </f:facet>
 
-                        <p:column headerText="Bill" style="width: 70px;" 
+                        <p:column headerText="Date/Time" style="width: 70px;" 
                                   sortBy="#{b.createdAt}" >
                             <f:facet name="header">
-                                <h:outputLabel value="Bill"/>
+                                <h:outputLabel value="Date/Time"/>
                             </f:facet>
-                            <h:outputLabel value="#{b.deptId}" ></h:outputLabel>
-
+                            <h:outputLabel  id="BilledAt" value="#{b.createdAt}" >
+                                <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
+                            </h:outputLabel>
                             <p:tooltip for="BilledAt" >
-                                <h:outputLabel  id="BilledAt" value="#{b.createdAt}" >
-                                    <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
-                                </h:outputLabel>    
-                                <br/>
                                 <h:outputLabel value="Bill Type : #{b.billType}" ></h:outputLabel>
                                 <br/>
                                 <h:outputLabel value="Bill Class : #{b.billClass}" ></h:outputLabel>
                                 <br/>
                                 <h:outputLabel value="Bill Id : #{b.insId}" ></h:outputLabel>
                                 <br/>
-
+                                <h:outputLabel value="#{b.deptId}" ></h:outputLabel>
                                 <br/>
                             </p:tooltip>
+                        </p:column>
+                        
+                         <p:column headerText="Date/Time" style="width: 70px;" 
+                                   sortBy="#{b.fromInstitution.name}" filterBy="#{b.fromInstitution.name}" filterMatchMode="contains" >
+                            <f:facet name="header">
+                                <h:outputLabel value="Dealer"/>
+                            </f:facet>
+                             <h:outputLabel  id="lblDealer" value="#{b.fromInstitution.name}" >
+                            </h:outputLabel>
                         </p:column>
 
                         <p:column headerText="Total" 
@@ -90,7 +102,7 @@
                                 <h:outputLabel value="Total"/>
                             </f:facet>
                             <h:outputLabel value="#{b.total}"  >
-                                <f:convertNumber pattern="#,###" ></f:convertNumber>
+                                <f:convertNumber pattern="#,###.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
@@ -104,6 +116,16 @@
                             </h:outputLabel>
                         </p:column>
 
+                         <p:column headerText="Net Total"  sortBy="#{b.netTotal}"  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Net Total"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.netTotal}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+                        
+                        
                         <p:column headerText="Free Offer" 
                                   sortBy="#{b.freeValue}"  style="text-align: right;">
                             <f:facet name="header">
@@ -115,28 +137,21 @@
                         </p:column>
 
 
-                        <p:column headerText="Discount + Free Offer"  sortBy="#{b.discount}"
+                        <p:column headerText="Discount + Free Offer"  sortBy="#{b.discount + b.freeValue}"
                                   style="text-align: right;">
                             <h:outputLabel value="#{b.discount + b.freeValue}"  >
                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Net Total"  sortBy="#{b.netTotal}"  style="text-align: right;">
-                            <f:facet name="header">
-                                <h:outputLabel value="Net Total"/>
-                            </f:facet>
-                            <h:outputLabel value="#{b.netTotal}"  >
-                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                            </h:outputLabel>
-                        </p:column>
+                       
 
 
 
 
                         <p:columnGroup type="footer">
                             <p:row>
-                                <p:column  >
+                                <p:column colspan="2" >
                                     <f:facet name="footer">
                                         <h:outputLabel value="Total" />
                                     </f:facet>
@@ -144,7 +159,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.grossTotal}" >
-                                            <f:convertNumber pattern="#,##0.00" />
+                                            <f:convertNumber pattern ="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>

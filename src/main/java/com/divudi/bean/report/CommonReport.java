@@ -106,8 +106,23 @@ public class CommonReport implements Serializable {
     BillsTotals cashOutBillsCancel;
     BillsTotals cashAdjustmentBills;
     BillsTotals InwardPaymentBill;
+    //Purchase Bills
+    List<Bill> purchaseBills;
+    Institution dealer;
+    double purchaseBillNetTotal;
+    double purchaseBillGrossTotal;
+    double purchaseBillDiscountTotal;
+    double purchaseBillFreeTotal;
+    double purchaseBillFreeAndDiscountTotal;
 
-   
+    public Institution getDealer() {
+        return dealer;
+    }
+
+    public void setDealer(Institution dealer) {
+        this.dealer = dealer;
+    }
+
     public BillsTotals getInwardPaymentBill() {
         return InwardPaymentBill;
     }
@@ -1562,6 +1577,44 @@ public class CommonReport implements Serializable {
 
     }
 
+    public void listAllPurchaseBills() {
+        String jpql;
+        Map m = new HashMap();
+        jpql = "select b from Bill b where b.retired=false and b.billType in :bts and b.createdAt between :fd and :td ";
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyGrnBill);
+        bts.add(BillType.PharmacyGrnReturn);
+        bts.add(BillType.PharmacyPurchaseBill);
+        m.put("bts", bts);
+
+        if (dealer != null) {
+            jpql += " and b.fromDepartment =:dealer";
+            m.put("dealer", dealer);
+        }
+        if (department != null) {
+            jpql += " and b.department =:dept";
+            m.put("dept", department);
+        }
+        purchaseBills = getBillFacade().findBySQL(jpql, m, TemporalType.DATE);
+
+        purchaseBillNetTotal = 0.0;
+        purchaseBillGrossTotal = 0.0;
+        purchaseBillDiscountTotal = 0.0;
+        purchaseBillFreeTotal = 0.0;
+        purchaseBillFreeAndDiscountTotal = 0.0;
+
+        for (Bill b : purchaseBills) {
+            purchaseBillNetTotal += b.getNetTotal();
+            purchaseBillGrossTotal += b.getTotal();
+            purchaseBillDiscountTotal += b.getDiscount();
+            purchaseBillFreeTotal = b.getFreeValue();
+            purchaseBillFreeAndDiscountTotal = b.getFreeValue() + b.getDiscount();
+        }
+
+    }
+
     public void createPurchaseDetailTable() {
         recreteModal();
 
@@ -2609,5 +2662,52 @@ public class CommonReport implements Serializable {
         this.cashChequeSumAfter = cashChequeSumAfter;
     }
 
-    
+    public List<Bill> getPurchaseBills() {
+        return purchaseBills;
+    }
+
+    public void setPurchaseBills(List<Bill> purchaseBills) {
+        this.purchaseBills = purchaseBills;
+    }
+
+    public double getPurchaseBillNetTotal() {
+        return purchaseBillNetTotal;
+    }
+
+    public void setPurchaseBillNetTotal(double purchaseBillNetTotal) {
+        this.purchaseBillNetTotal = purchaseBillNetTotal;
+    }
+
+    public double getPurchaseBillGrossTotal() {
+        return purchaseBillGrossTotal;
+    }
+
+    public void setPurchaseBillGrossTotal(double purchaseBillGrossTotal) {
+        this.purchaseBillGrossTotal = purchaseBillGrossTotal;
+    }
+
+    public double getPurchaseBillDiscountTotal() {
+        return purchaseBillDiscountTotal;
+    }
+
+    public void setPurchaseBillDiscountTotal(double purchaseBillDiscountTotal) {
+        this.purchaseBillDiscountTotal = purchaseBillDiscountTotal;
+    }
+
+    public double getPurchaseBillFreeTotal() {
+        return purchaseBillFreeTotal;
+    }
+
+    public void setPurchaseBillFreeTotal(double purchaseBillFreeTotal) {
+        this.purchaseBillFreeTotal = purchaseBillFreeTotal;
+    }
+
+    public double getPurchaseBillFreeAndDiscountTotal() {
+        return purchaseBillFreeAndDiscountTotal;
+    }
+
+    public void setPurchaseBillFreeAndDiscountTotal(double purchaseBillFreeAndDiscountTotal) {
+        this.purchaseBillFreeAndDiscountTotal = purchaseBillFreeAndDiscountTotal;
+    }
+
 }

@@ -18,17 +18,20 @@ public class DailySummeryRow {
     Double freeAmounts;
     Double profit;
     Double discounts;
+    Double grossTotal;
+    
     
 
     //com.divudi.data.DailySummeryRow(Date summeryDate, Double freeAmounts, Double profit, Double discounts)
-    public DailySummeryRow(Date summeryDate, Double freeAmounts, Double profit, Double discounts) {
+    public DailySummeryRow(Date summeryDate, Double freeAmounts, Double profit, Double discounts, Double grossTotal) {
         this.summeryDate = summeryDate;
         this.freeAmounts = freeAmounts;
         this.profit = profit;
         this.discounts = discounts;
+        this.grossTotal = grossTotal;
     }
 
-    public DailySummeryRow(Object summeryDateOfMonth, Double freeAmounts, Double profit, Double discounts) {
+    public DailySummeryRow(Object summeryDateOfMonth, Double freeAmounts, Double profit, Double discounts, Double grossTotal) {
         try {
             this.summeryDate = (Date) summeryDateOfMonth;
         } catch (Exception e) {
@@ -37,11 +40,22 @@ public class DailySummeryRow {
         this.freeAmounts = freeAmounts;
         this.profit = profit;
         this.discounts = discounts;
+        this.grossTotal = grossTotal;
     }
 
     public DailySummeryRow() {
     }
 
+    public Double getGrossTotal() {
+        return grossTotal;
+    }
+
+    public void setGrossTotal(Double grossTotal) {
+        this.grossTotal = grossTotal;
+    }
+
+    
+    
     public Date getSummeryDate() {
         return summeryDate;
     }

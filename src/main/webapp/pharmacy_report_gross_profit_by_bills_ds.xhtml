@@ -31,8 +31,7 @@
                         <p:autoComplete  value="#{commonReportSession.department}"  
                                          completeMethod="#{departmentController.completeDept}" var="dept"
                                          itemValue="#{dept}" itemLabel="#{dept.name}" 
-                                         forceSelection="true" rendered="true"
-                                         requiredMessage="You must select a department" >
+                                          >
                         </p:autoComplete>
 
 
@@ -72,6 +71,16 @@
                             </f:facet>
                             <h:outputLabel  id="BilledAt" value="#{b.summeryDate}" >
                                 <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
+                            </h:outputLabel>
+                        </p:column>
+                        
+                        <p:column headerText="Gross Total"  sortBy="#{b.grossTotal}"
+                                  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Gross Total"/>
+                            </f:facet>
+                             <h:outputLabel value="#{b.grossTotal}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
@@ -126,11 +135,19 @@
                                         <h:outputLabel value="Total" />
                                     </f:facet>
                                 </p:column>
+                                
+                                 <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.grossTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
 
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.discountTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -138,7 +155,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.freeTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -147,7 +164,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.discountTotal + commonReportSession.freeTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -156,7 +173,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.profitTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>

@@ -127,7 +127,7 @@
                         </p:column>
 
                         <p:column headerText="Actions"  >
-                            <p:commandButton ajax="false" value="View All Bills" action="#{commonReportSession.listProfitBills()}">
+                            <p:commandButton ajax="false" value="View All Bills" action="#{commonReportSession.listPurchaseAndGrnBills()}">
                                 <f:setPropertyActionListener value="#{b.summeryDate}" target="#{commonReportSession.billDate}" ></f:setPropertyActionListener>
                             </p:commandButton>
                         </p:column>

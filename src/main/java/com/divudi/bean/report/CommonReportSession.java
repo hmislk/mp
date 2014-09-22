@@ -142,7 +142,7 @@ public class CommonReportSession implements Serializable {
         discountTotal = 0.0;
         freeTotal = 0.0;
 
-        for (Bill b : profitBills) {
+        for (Bill b : purchaseBills) {
             grossTotal += b.getTotal();
             netTotal += b.getNetTotal();
             profitTotal += b.getNetTotal();
@@ -261,11 +261,11 @@ public class CommonReportSession implements Serializable {
             netTotal += b.getNetTotal();
             profitTotal += b.getNetTotal();
             discountTotal += b.getDiscount();
-            if (discountTotal != 0.00) {
-                System.out.println("b = " + b);
-                System.out.println("b.getDiscount() = " + b.getDiscount());
-                System.out.println("b.getId() = " + b.getId());
-            }
+//            if (discountTotal != 0.00) {
+//                System.out.println("b = " + b);
+//                System.out.println("b.getDiscount() = " + b.getDiscount());
+//                System.out.println("b.getId() = " + b.getId());
+//            }
             freeTotal += b.getFreeValue();
         }
         return "pharmacy_report_gross_profit_by_bills";

@@ -60,22 +60,25 @@
                             <h:outputLabel value="Approximate Item-vice Gross Profit"/>
                         </f:facet>
 
-                        <p:column headerText="Date/Time" style="width: 70px;" 
+                        <p:column headerText="Bill" style="width: 70px;" 
                                   sortBy="#{b.createdAt}" >
                             <f:facet name="header">
-                                <h:outputLabel value="Date/Time"/>
+                                <h:outputLabel value="Bill"/>
                             </f:facet>
-                            <h:outputLabel  id="BilledAt" value="#{b.createdAt}" >
-                                <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
-                            </h:outputLabel>
+                            <h:outputLabel value="#{b.deptId}" ></h:outputLabel>
+
                             <p:tooltip for="BilledAt" >
+                                <h:outputLabel  id="BilledAt" value="#{b.createdAt}" >
+                                    <f:convertDateTime pattern="dd/MMM/yyyy - hh:mm a" ></f:convertDateTime>
+                                </h:outputLabel>    
+                                <br/>
                                 <h:outputLabel value="Bill Type : #{b.billType}" ></h:outputLabel>
                                 <br/>
                                 <h:outputLabel value="Bill Class : #{b.billClass}" ></h:outputLabel>
                                 <br/>
                                 <h:outputLabel value="Bill Id : #{b.insId}" ></h:outputLabel>
                                 <br/>
-                                <h:outputLabel value="#{b.deptId}" ></h:outputLabel>
+
                                 <br/>
                             </p:tooltip>
                         </p:column>
@@ -121,7 +124,7 @@
 
                         <p:column headerText="Net Total"  sortBy="#{b.netTotal}"  style="text-align: right;">
                             <f:facet name="header">
-                                <h:outputLabel value="Profite Value"/>
+                                <h:outputLabel value="Net Total"/>
                             </f:facet>
                             <h:outputLabel value="#{b.netTotal}"  >
                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
@@ -141,7 +144,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.grossTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -149,7 +152,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.discountTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -157,7 +160,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.freeTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -166,7 +169,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.discountTotal + commonReportSession.freeTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -175,7 +178,7 @@
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.netTotal}" >
-                                            <f:convertNumber parent="#,##0.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>

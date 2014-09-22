@@ -18,36 +18,41 @@
 
                     <p:defaultCommand target="btnRefresh"/>
 
-                    
-                        <h:outputLabel value="From Date"/>
-                        <p:calendar id="frmDate" value="#{commonReportSession.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
-                        </p:calendar>
 
-                        <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{commonReportSession.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
-                        </p:calendar>
+                    <h:outputLabel value="From Date"/>
+                    <p:calendar id="frmDate" value="#{commonReportSession.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
+                    </p:calendar>
 
-                        <h:outputLabel  value="Department"  ></h:outputLabel>
-                        <p:autoComplete  value="#{commonReportSession.department}"  
-                                         completeMethod="#{departmentController.completeDept}" var="dept"
-                                         itemValue="#{dept}" itemLabel="#{dept.name}" 
-                                          >
-                        </p:autoComplete>
+                    <h:outputLabel value="To Date"/>
+                    <p:calendar id="toDate" value="#{commonReportSession.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
+                    </p:calendar>
+
+                    <h:outputLabel  value="Department"  ></h:outputLabel>
+                    <p:autoComplete  value="#{commonReportSession.department}"  
+                                     completeMethod="#{departmentController.completeDept}" var="dept"
+                                     itemValue="#{dept}" itemLabel="#{dept.name}" 
+                                     forceSelection="true" rendered="true"
+                                     requiredMessage="You must select a department" >
+                    </p:autoComplete>
+
+                    <p:outputLabel value="Dealor"/>
+                    <p:autoComplete converter="deal" value="#{commonReportSession.dealer}" 
+                                    forceSelection="true"
+                                    completeMethod="#{dealerController.completeDealor}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
 
 
+                    <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
+                                     styleClass="noPrintButton" 
+                                     action="#{commonReportSession.listProfitBillsDailySummery()}"/>  
 
-                        <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
-                                         styleClass="noPrintButton" 
-                                         action="#{commonReportSession.listProfitBillsDailySummery()}"/>  
+                    <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                        <pe:exporter type="xlsx" target="tblBills" fileName="Approximate Bill-vice Gross Profit Report #{commonReportSession.department.name}"  />
+                    </p:commandButton>
 
-                        <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
-                            <pe:exporter type="xlsx" target="tblBills" fileName="Approximate Bill-vice Gross Profit Report #{commonReportSession.department.name}"  />
-                        </p:commandButton>
+                    <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >
+                        <p:printer target="tblBills"/>
+                    </p:commandButton>  
 
-                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >
-                            <p:printer target="tblBills"/>
-                        </p:commandButton>  
-                    
 
 
 
@@ -71,6 +76,16 @@
                             </f:facet>
                             <h:outputLabel  id="BilledAt" value="#{b.summeryDate}" >
                                 <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
+                            </h:outputLabel>
+                        </p:column>
+                        
+                        <p:column headerText="Gross Total"  sortBy="#{b.discounts}"
+                                  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Gross Total"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.grossTotal}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                             </h:outputLabel>
                         </p:column>
 
@@ -112,7 +127,7 @@
                         </p:column>
 
                         <p:column headerText="Actions"  >
-                            <p:commandButton ajax="false" value="View All Bills" action="#{commonReportSession.listPurchaseAndGrnBills()}">
+                            <p:commandButton ajax="false" value="View All Bills" action="#{commonReportSession.listProfitBills()}">
                                 <f:setPropertyActionListener value="#{b.summeryDate}" target="#{commonReportSession.billDate}" ></f:setPropertyActionListener>
                             </p:commandButton>
                         </p:column>
@@ -126,6 +141,14 @@
                                     </f:facet>
                                 </p:column>
 
+                                 <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.grossTotal}" >
+                                            <f:convertNumber parent="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+                                
                                 <p:column style="text-align: right;" >
                                     <f:facet name="footer" >
                                         <h:outputLabel value="#{commonReportSession.discountTotal}" >

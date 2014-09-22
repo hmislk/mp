@@ -186,14 +186,13 @@ public class PharmacyPurchaseController implements Serializable {
             UtilityController.addErrorMessage("Select Dealor");
             return;
         }
-
         //Need to Add History
         String msg = errorCheck();
         if (!msg.isEmpty()) {
             UtilityController.addErrorMessage(msg);
             return;
         }
-        System.out.println("to save");
+        calTotal();
         saveBill();
         //   saveBillComponent();
         System.out.println("bill saved");
@@ -228,24 +227,22 @@ public class PharmacyPurchaseController implements Serializable {
             getBill().getBillItems().add(i);
         }
 
-        System.err.println("getBill().getFreeValue() = " + getBill().getFreeValue());
+        System.err.println("Saving the bill for the last time.");
+        System.err.println("Free Value = " + getBill().getFreeValue());
+        System.err.println("Total = " + getBill().getTotal());
+        System.err.println("Discount = " + getBill().getDiscount());
+        System.err.println("Tax = " + getBill().getTax());
+        System.err.println("Net = " + getBill().getNetTotal());
         
         getBillFacade().edit(getBill());
-
+        
         WebUser wb = getCashTransactionBean().saveBillCashOutTransaction(getBill(), getSessionController().getLoggedUser());
         getSessionController().setLoggedUser(wb);
-
+        
         UtilityController.addSuccessMessage("Successfully Billed");
         printPreview = true;
-        //   recreate();
     }
-//
-//    public void recreate() {
-//       
-////        cashPaid = 0.0;
-//        currentPharmacyItemData = null;
-//        pharmacyItemDatas = null;
-//    }
+    
 
     private List<BillItem> billItems;
 
@@ -327,34 +324,38 @@ public class PharmacyPurchaseController implements Serializable {
     }
 
     public double getNetTotal() {
-
-        double tmp = getBill().getTotal() + getBill().getTax() - getBill().getDiscount();
-        getBill().setNetTotal(0 - tmp);
-
+        System.out.println("Calculating net total");
+        System.out.println("getBill().getTotal() = " + getBill().getTotal());
+        System.out.println("getBill().getTax() = " + getBill().getTax());
+        System.out.println("getBill().getDiscount() = " + getBill().getDiscount());
+        double tmp = getBill().getTotal() - getBill().getTax() + getBill().getDiscount();
+        System.out.println("tmp = " + tmp);
         return tmp;
     }
 
     public void calTotal() {
         double tot = 0.0;
-        
+        double freeTotal =0.0;
         int serialNo = 0;
         for (BillItem p : getBillItems()) {
             p.setQty((double) p.getPharmaceuticalBillItem().getQtyInUnit());
             p.setRate(p.getPharmaceuticalBillItem().getPurchaseRateInUnit());
+            p.setNetRate(p.getRate());
             p.setSearialNo(serialNo++);
+            
             double netValue = p.getQty() * p.getRate();
-            double freeTotal = p.getPharmaceuticalBillItem().getFreeQty() * p.getRate();
+            freeTotal += p.getPharmaceuticalBillItem().getFreeQty() * p.getRate();
+            
+            p.setGrossValue(0-netValue);
             p.setNetValue(0 - netValue);
-
+            
+            
             tot += p.getNetValue();
-          
-
         }
-
+        
         getBill().setTotal(tot);
-        getBill().setNetTotal(tot);
-     
-
+        getBill().setNetTotal(getNetTotal());
+        getBill().setFreeValue(freeTotal);
     }
 
     public BilledBill getBill() {

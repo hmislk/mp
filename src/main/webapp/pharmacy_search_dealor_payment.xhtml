@@ -147,6 +147,19 @@
                                 <h:outputLabel  rendered="#{bill.cancelledBill ne null}" value="#{bill.cancelledBill.comments}" >
                                 </h:outputLabel>
                             </p:column>
+                            <p:column headerText="Cheque Realization">
+                                <h:outputLabel rendered="#{bill.reactivated eq true}" value="Realized at" >
+                                </h:outputLabel>
+                                <h:outputLabel rendered="#{bill.reactivated eq true}" value="#{bill.approveAt}" >
+                                    <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
+                                </h:outputLabel>
+                                <h:outputLabel rendered="#{bill.reactivated ne true}" value="Not Realized" >
+                                </h:outputLabel>
+                                <p:commandButton  rendered="#{bill.reactivated ne true}" ajax="false" value="Mark As Realized" action="#{searchController.realizingBill}"  >
+                                    <f:setPropertyActionListener value="#{bill}" target="#{searchController.realizingBill}" ></f:setPropertyActionListener>
+                                </p:commandButton>
+                            </p:column>
+                            
                         </p:dataTable>
 
 

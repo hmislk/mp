@@ -41,6 +41,7 @@ import javax.inject.Named;
 import javax.persistence.TemporalType;
 import static ch.lambdaj.Lambda.*;
 import com.divudi.entity.Department;
+import com.divudi.facade.util.JsfUtil;
 
 /**
  *
@@ -85,6 +86,29 @@ public class SearchController implements Serializable {
     Institution institution;
     Department department;
 
+    Bill realizingBill;
+    
+    public void realizeBill(){
+        if(realizingBill==null){
+            JsfUtil.addErrorMessage("Please select a  bill");
+            return;
+        }
+        realizingBill.setReactivated(true);
+        realizingBill.setApproveAt(new Date());
+        getBillFacade().edit(realizingBill);
+        createGrnPaymentTable();
+    }
+
+    public Bill getRealizingBill() {
+        return realizingBill;
+    }
+
+    public void setRealizingBill(Bill realizingBill) {
+        this.realizingBill = realizingBill;
+    }
+    
+    
+    
     public Department getDepartment() {
         return department;
     }

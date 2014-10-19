@@ -64,7 +64,7 @@ public class TimedItemController implements Serializable {
 
     public List<Department> getInstitutionDepatrments() {
         List<Department> d;
-        //System.out.println("gettin ins dep ");
+        ////System.out.println("gettin ins dep ");
         if (getCurrent().getInstitution() == null) {
             return new ArrayList<>();
         } else {
@@ -84,7 +84,7 @@ public class TimedItemController implements Serializable {
             suggestions = new ArrayList<TimedItem>();
         } else {
             sql = "select c from TimedItem c where c.retired=false and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-            //System.out.println(sql);
+            ////System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -172,7 +172,7 @@ public class TimedItemController implements Serializable {
                 String ix = w.get(1);
                 String ic = w.get(2);
                 String f = w.get(4);
-                //System.out.println(code + " " + ix + " " + ic + " " + f);
+                ////System.out.println(code + " " + ix + " " + ic + " " + f);
 
                 TimedItem tix = new TimedItem();
                 tix.setCode(code);
@@ -200,7 +200,7 @@ public class TimedItemController implements Serializable {
     public void saveSelected() {
         if (getCurrent().getId() != null && getCurrent().getId() > 0) {
             if (billedAs == false) {
-                //System.out.println("2");
+                ////System.out.println("2");
                 getCurrent().setBilledAs(getCurrent());
 
             }

@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form >
+                    <p:panel header="Pharmacy Reports" >
+                        <p:panelGrid columns="4" styleClass="alignTop">
+
+                            <p:panel header="Profit Reports" >
+                                <p:panelGrid columns="1" styleClass="alignTop">
+                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - Daily Summery" 
+                                                   action="pharmacy_report_gross_profit_by_bills_ds" ajax="false" >
+                                    </p:commandLink> 
+
+                                    <p:commandLink value="Approximate Item-vice Gross Profit Report - List All Bills" 
+                                                   action="pharmacy_report_gross_profit_by_item" ajax="false" >
+                                    </p:commandLink> 
+
+                                    <p:commandLink value="Approximate Bill-vice Gross Profit Report - List All Bills" 
+                                                   action="pharmacy_report_gross_profit_by_bills" ajax="false" >
+                                    </p:commandLink> 
+
+                                    <p:commandLink value="Purchase Bill Report - Daily Summery" 
+                                                   action="pharmacy_report_purchase_bill_list_ds" ajax="false" >
+                                    </p:commandLink> 
+
+                                    <p:commandLink value="Purchase Bill Report - List All Bills" 
+                                                   action="pharmacy_report_purchase_bill_list" ajax="false" >
+                                    </p:commandLink> 
+
+
+                                </p:panelGrid>
+                            </p:panel>
+
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+</html>

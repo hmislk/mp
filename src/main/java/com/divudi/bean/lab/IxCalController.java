@@ -105,12 +105,12 @@ public  class IxCalController implements Serializable {
             return;
         }
         addingIxCal.setCalIxItem(cal);
-        //System.out.println("id is " + addingIxCal.getId());
+        ////System.out.println("id is " + addingIxCal.getId());
         if (addingIxCal.getId() == null || addingIxCal.getId() == 0) {
-            //System.out.println("iivc creating");
+            ////System.out.println("iivc creating");
             getIivcFacade().create(addingIxCal);
         } else {
-            //System.out.println("iivc editing");
+            ////System.out.println("iivc editing");
             getIivcFacade().edit(addingIxCal);
         }
         items.add(addingIxCal);
@@ -122,22 +122,22 @@ public  class IxCalController implements Serializable {
     public IxCal lastCal() {
         IxCal tcal = null;
         if (items != null || items.isEmpty()!=true) {
-            //System.out.println("items are null or empty");
+            ////System.out.println("items are null or empty");
             tcal = items.get(items.size() - 1);
         }
         return tcal;
     }
 
     public void removeLastCal() {
-        //System.out.println("removing last cal");
+        ////System.out.println("removing last cal");
         if (items != null && items.isEmpty() != true) {
-            //System.out.println("not empty");
+            ////System.out.println("not empty");
             IxCal tcal = lastCal();
-            //System.out.println("last cal is - " + lastCal());
+            ////System.out.println("last cal is - " + lastCal());
             items.remove(tcal);
-            //System.out.println("remoed from list");
+            ////System.out.println("remoed from list");
             getIivcFacade().remove(tcal);
-            //System.out.println("removed from db");
+            ////System.out.println("removed from db");
         }
     }
 
@@ -206,11 +206,11 @@ public  class IxCalController implements Serializable {
         }
 //        cals = new ArrayList<InvestigationItem>();
         if (ix != null) {
-            //System.out.println("ii count is " + ix.getReportItems().size());
+            ////System.out.println("ii count is " + ix.getReportItems().size());
             for (ReportItem ii : ix.getReportItems()) {
                 
                 if (ii instanceof InvestigationItem && ii.getIxItemType() == InvestigationItemType.Calculation) {
-                    //System.out.println("ii is " + ii);
+                    ////System.out.println("ii is " + ii);
                 }
             }
         }

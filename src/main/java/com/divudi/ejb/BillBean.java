@@ -114,9 +114,9 @@ public class BillBean {
     }
 
     public void setBillFees(BillFee bf, boolean foreign, PaymentScheme paymentScheme, Item item) {
-        System.err.println(paymentScheme);
-        System.err.println(paymentScheme.getPaymentMethod());
-        System.err.println(paymentScheme.getMembershipScheme());
+        //System.err.println(paymentScheme);
+        //System.err.println(paymentScheme.getPaymentMethod());
+        //System.err.println(paymentScheme.getMembershipScheme());
         boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
         PriceMatrix priceMatrix = getPriceMatrixBean().getOpdMemberDisCount(paymentScheme.getPaymentMethod(), paymentScheme.getMembershipScheme(), item.getDepartment(), item.getCategory());
 
@@ -458,7 +458,7 @@ public class BillBean {
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
         lstBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //System.err.println("Search : " + sql);
+        ////System.err.println("Search : " + sql);
         if (lstBills == null) {
             lstBills = new ArrayList<>();
         }
@@ -495,7 +495,7 @@ public class BillBean {
         temMap.put("billType", type);
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
-        //System.out.println("sql ");
+        ////System.out.println("sql ");
         lstBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         if (lstBills == null) {
@@ -516,7 +516,7 @@ public class BillBean {
         temMap.put("billType", type);
         temMap.put("toDate", toDate);
         temMap.put("fromDate", fromDate);
-        //System.out.println("sql ");
+        ////System.out.println("sql ");
         lstBills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         if (lstBills == null) {
@@ -767,7 +767,7 @@ public class BillBean {
             e.getBillItem().setCreater(wu);
             e.getBillItem().setBill(b);
             getBillItemFacade().create(e.getBillItem());
-            ////System.out.println("Saving Bill Item : " + e.getBillItem().getItem().getName());
+            //////System.out.println("Saving Bill Item : " + e.getBillItem().getItem().getName());
 
             saveBillComponent(e, b, wu);
             saveBillFee(e, b, wu);
@@ -778,7 +778,7 @@ public class BillBean {
 
             getBillItemFacade().edit(e.getBillItem());
 
-            System.err.println("1 " + e.getBillItem());
+            //System.err.println("1 " + e.getBillItem());
 
             if (b.getBillType() == BillType.InwardBill) {
                 updateMatrix(e.getBillItem());
@@ -809,7 +809,7 @@ public class BillBean {
         e.getBillItem().setCreater(wu);
         e.getBillItem().setBill(b);
         getBillItemFacade().create(e.getBillItem());
-        ////System.out.println("Saving Bill Item : " + e.getBillItem().getItem().getName());
+        //////System.out.println("Saving Bill Item : " + e.getBillItem().getItem().getName());
 
         saveBillComponent(e, b, wu);
         saveBillFee(e, b, wu);
@@ -865,7 +865,7 @@ public class BillBean {
             getBillFeeFacade().create(marginFee);
         }
 
-        System.err.println("2 " + billItem);
+        //System.err.println("2 " + billItem);
         calBillItemTotal(billItem);
 
     }
@@ -881,7 +881,7 @@ public class BillBean {
 
         billItem.setNetValue(val);
 
-        System.err.println("3 " + billItem);
+        //System.err.println("3 " + billItem);
         getBillItemFacade().edit(billItem);
 
     }
@@ -977,7 +977,7 @@ public class BillBean {
             b.setBillItem(billItem);
             b.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             b.setItem(billItem.getItem());
-            //System.out.println("Bill Item is " + billItem.getItem());
+            ////System.out.println("Bill Item is " + billItem.getItem());
             b.setName(billItem.getItem().getName());
             b.setPackege(null);
             b.setStaff(billItem.getItem().getStaff());
@@ -1012,7 +1012,7 @@ public class BillBean {
             f = new BillFee();
             f.setFee(i);
             f.setFeeValue(i.getFee());
-            //      //System.out.println("Fee Value is " + f.getFeeValue());
+            //      ////System.out.println("Fee Value is " + f.getFeeValue());
             // f.setBill(billItem.getBill());
             f.setBillItem(billItem);
             f.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
@@ -1129,7 +1129,7 @@ public class BillBean {
                 f = new BillFee();
                 f.setFee(i);
                 f.setFeeValue(i.getFee());
-                //System.out.println("Fee Value is " + f.getFeeValue());
+                ////System.out.println("Fee Value is " + f.getFeeValue());
                 // f.setBill(billItem.getBill());
                 f.setBillItem(billItem);
                 f.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());

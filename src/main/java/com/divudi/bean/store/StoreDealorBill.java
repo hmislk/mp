@@ -113,7 +113,7 @@ public class StoreDealorBill implements Serializable {
 
         double ballanceAmt = getReferenceBallance(getCurrentBillItem());
 
-        System.err.println("Ballance Amount " + ballanceAmt);
+        //System.err.println("Ballance Amount " + ballanceAmt);
         if (ballanceAmt > 0.1) {
             getCurrentBillItem().setNetValue(ballanceAmt);
         }
@@ -149,8 +149,8 @@ public class StoreDealorBill implements Serializable {
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
         if (getCurrentBillItem().getNetValue() != 0) {
-            //  System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
-            //   System.err.println("aa " + getCurrentBillItem().getNetValue());
+            //  //System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
+            //   //System.err.println("aa " + getCurrentBillItem().getNetValue());
             getCurrentBillItem().setSearialNo(getBillItems().size());
             getBillItems().add(getCurrentBillItem());
         }
@@ -176,7 +176,7 @@ public class StoreDealorBill implements Serializable {
             n += b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
-        // //System.out.println("AAA : " + n);
+        // ////System.out.println("AAA : " + n);
     }
 
     public void calTotalWithResetingIndex() {
@@ -187,14 +187,14 @@ public class StoreDealorBill implements Serializable {
             n += b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
-        // //System.out.println("AAA : " + n);
+        // ////System.out.println("AAA : " + n);
     }
 
     public void removeAll() {
         for (BillItem b : selectedBillItems) {
 
-            System.err.println("Removing Index " + b.getSearialNo());
-            System.err.println("Grn No " + b.getReferenceBill().getDeptId());
+            //System.err.println("Removing Index " + b.getSearialNo());
+            //System.err.println("Grn No " + b.getReferenceBill().getDeptId());
             remove(b);
         }
 
@@ -313,16 +313,16 @@ public class StoreDealorBill implements Serializable {
         double refBallance = getReferenceBallance(tmp);
         double netValue = Math.abs(tmp.getNetValue());
 
-        System.err.println("RefBallance " + refBallance);
-        System.err.println("Net Value " + tmp.getNetValue());
+        //System.err.println("RefBallance " + refBallance);
+        //System.err.println("Net Value " + tmp.getNetValue());
         //   ballance=refBallance-tmp.getNetValue();
         if (refBallance >= netValue) {
-            System.err.println("1");
+            //System.err.println("1");
             return true;
         }
 
         if (netValue - refBallance < 0.1) {
-            System.err.println("2");
+            //System.err.println("2");
             return true;
         }
 

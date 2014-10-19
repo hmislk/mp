@@ -106,8 +106,8 @@ public class PharmacySaleReport1 implements Serializable {
         sql = "select sum(i.netTotal) from Bill i where i.department=:d and i.referenceBill.billType=:refType "
                 + " and i.billType=:btp and i.createdAt between :fd and :td ";
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
-        //System.err.println("from " + fromDate);
-        //System.err.println("Sale Value " + saleValue);
+        ////System.err.println("from " + fromDate);
+        ////System.err.println("Sale Value " + saleValue);
         return saleValue;
 
     }
@@ -148,8 +148,8 @@ public class PharmacySaleReport1 implements Serializable {
                 + " i.referenceBill.department=:d and type(i)=:class "
                 + " and i.billType=:btp and i.createdAt between :fd and :td ";
         double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
-        //   //System.err.println("from " + fromDate);
-        //  //System.err.println("Sale Value " + saleValue);
+        //   ////System.err.println("from " + fromDate);
+        //  ////System.err.println("Sale Value " + saleValue);
         return saleValue;
 
     }
@@ -188,8 +188,8 @@ public class PharmacySaleReport1 implements Serializable {
 //        sql = "select sum(i.discount) from Bill i where i.department=:d and i.referenceBill.billType=:refType "
 //                + " and i.billType=:btp and i.createdAt between :fd and :td ";
 //        double saleValue = getBillFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
-//        //System.err.println("from " + fromDate);
-//        //System.err.println("Sale Value " + saleValue);
+//        ////System.err.println("from " + fromDate);
+//        ////System.err.println("Sale Value " + saleValue);
 //        return saleValue;
 //
 //    }

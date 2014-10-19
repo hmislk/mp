@@ -34,7 +34,9 @@
                                     <p:commandButton ajax="false" value="Manufacturers" action="pharmacy_manufacturer" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Importers" action="pharmacy_importer" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Distributor" action="pharmacy_dealer" ></p:commandButton>                                
-                                    <p:commandButton ajax="false" value="Item Distributors" action="pharmacy_items_distributors" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Item Distributors" action="#{itemsDistributorsController.toFillDistributorsForItem()}" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Distributor Items" action="#{itemsDistributorsController.toFillItemsForDistributor()}" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Search Items and Distributors" action="pharmacy_item_by_distributor" ></p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
 
@@ -45,9 +47,12 @@
                                     <p:commandButton rendered="false" ajax="false" value="Items Categories" action="pharmacy_items_categories" ></p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
-                            <p:panel header="Check Entered Data">
+                            <p:panel header="Lists">
                                 <h:panelGrid columns="1">
-                                    <p:commandButton ajax="false" value="Item Distributor" action="pharmacy_item_by_distributor" ></p:commandButton>
+                                    <p:commandButton ajax="false" 
+                                                     action="#{ampController.listAllAmps}" 
+                                                     value="List All Items"  
+                             ></p:commandButton>
                                 </h:panelGrid>
 
                             </p:panel>
@@ -58,6 +63,7 @@
                                     <p:commandButton ajax="false" value="Error Detection Repport" action="pharmacy_report_department_error" ></p:commandButton>                                   
 
 
+                                    <p:commandButton ajax="false" value="Update Free Value" action="#{pharmacyItemExcelManager.calculatePreviousFreeValues()}" ></p:commandButton>                                   
 
 
                                     <h:panelGroup rendered="false">

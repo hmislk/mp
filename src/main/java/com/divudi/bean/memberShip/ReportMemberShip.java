@@ -82,7 +82,7 @@ public class ReportMemberShip {
     public void createOpdPriceAdjustments() {
         opdMemberShip = new ArrayList<>();
         for (MembershipScheme pm : getMembershipSchemeController().getItems()) {
-            System.err.println("Mem " + pm.getName());
+            //System.err.println("Mem " + pm.getName());
             OpdMemberShip subTable = new OpdMemberShip();
             subTable.setMembershipScheme(pm);
             List<PriceMatrix> list = getPriceMatrixBean().getOpdMemberShipDiscountsDepartment(pm);

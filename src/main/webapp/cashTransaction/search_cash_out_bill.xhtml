@@ -37,7 +37,12 @@
 
                         </f:facet>
 
-                        <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill"  style="min-width: 100%;"  >
+                        <p:dataTable rowIndexVar="i" id="tblBills" 
+                                     value="#{searchController.bills}" var="bill" 
+                                     style="min-width: 100%;"  paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,30,50"
+                                 rows="50">
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
@@ -71,7 +76,7 @@
                                 </h:outputLabel>                                 
                             </p:column>                                                   
                             <p:column headerText="Comments" >
-                                <h:outputLabel  rendered="#{bill.cancelledBill ne null}" value="#{bill.cancelledBill.comments}" >
+                                <h:outputLabel  value="#{bill.comments}" >
                                 </h:outputLabel>
                             </p:column>
                         </p:dataTable>

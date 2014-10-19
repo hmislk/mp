@@ -199,9 +199,9 @@ public class InwardBean {
                 double billed = calBillItemCount(new BilledBill(), itm, patientEncounter, forwardRefBill);
                 double cancelld = calBillItemCount(new CancelledBill(), itm, patientEncounter, forwardRefBill);
                 double refund = calBillItemCount(new RefundBill(), itm, patientEncounter, forwardRefBill);
-//                System.err.println("Billed " + billed);
-//                System.err.println("Cancelled " + cancelld);
-//                System.err.println("Refun " + refund);
+//                //System.err.println("Billed " + billed);
+//                //System.err.println("Cancelled " + cancelld);
+//                //System.err.println("Refun " + refund);
                 itm.setTransBillItemCount(billed - (cancelld + refund));
             }
 
@@ -248,8 +248,8 @@ public class InwardBean {
         Bill b = getBillFacade().findFirstBySQL(sql, hm);
 
         double paid = getPaidValue(patientEncounter);
-//        System.err.println("NET " + b.getNetTotal());
-//        System.err.println("PAID " + paid);
+//        //System.err.println("NET " + b.getNetTotal());
+//        //System.err.println("PAID " + paid);
 
         b.setPaidAmount(0 - paid);
         getBillFacade().edit(b);
@@ -484,10 +484,10 @@ public class InwardBean {
 
         matrix.setFee(inwardPriceAdjustment.getMargin());
 
-        ////System.out.println("Margin : " + is.get(0).getMargin());
+        //////System.out.println("Margin : " + is.get(0).getMargin());
         f.setInstitution(i.getItem().getDepartment().getInstitution());
         f.setFeeValue(matrix.getFee());
-        ////System.out.println("Margin : " + is.get(0).getMargin());
+        //////System.out.println("Margin : " + is.get(0).getMargin());
 
         if (matrix.getId() == null) {
             getFeeFacade().create(matrix);
@@ -809,9 +809,9 @@ public class InwardBean {
             count = (long) (consumeTimeM / duration);
         }
 
-        //  System.err.println("Min " + duration);
-        //     System.err.println("Consume " + consumeTimeM);
-        //   System.err.println("Count " + count);
+        //  //System.err.println("Min " + duration);
+        //     //System.err.println("Consume " + consumeTimeM);
+        //   //System.err.println("Count " + count);
         if (0 != (consumeTimeM % duration)) {
             count++;
         }
@@ -850,11 +850,11 @@ public class InwardBean {
             }
         }
 
-//        System.err.println("Duration " + duration);
-//        System.err.println("OverShoot " + overShoot);
-//        System.err.println("Consume " + consumeTime);
-//        System.err.println("Count " + count);
-//        System.err.println("Calcualtion " + calculation);
+//        //System.err.println("Duration " + duration);
+//        //System.err.println("OverShoot " + overShoot);
+//        //System.err.println("Consume " + consumeTime);
+//        //System.err.println("Count " + count);
+//        //System.err.println("Calcualtion " + calculation);
         return count;
     }
 

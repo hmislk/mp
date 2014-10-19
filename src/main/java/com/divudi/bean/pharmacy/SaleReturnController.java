@@ -268,8 +268,8 @@ public class SaleReturnController implements Serializable {
 //        PharmaceuticalBillItem po = getPharmaceuticalBillItemFacade().findFirstBySQL(sql);
 //        po.setRemainingQty(po.getRemainingQty() + pharmacyItemData.getPharmaceuticalBillItem().getQty());
 //
-//        //System.err.println("Added Remaini Qty " + pharmacyItemData.getPharmaceuticalBillItem().getQty());
-//        //System.err.println("Final Remaini Qty " + po.getRemainingQty());
+//        ////System.err.println("Added Remaini Qty " + pharmacyItemData.getPharmaceuticalBillItem().getQty());
+//        ////System.err.println("Final Remaini Qty " + po.getRemainingQty());
 //        getPharmaceuticalBillItemFacade().edit(po);
 //
 //    }
@@ -335,9 +335,9 @@ public class SaleReturnController implements Serializable {
             double rFund = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacyPre, new RefundBill());
             //  double rCacnelled = getPharmacyRecieveBean().getTotalQty(i.getBillItem(), BillType.PharmacySale, new CancelledBill());
 
-            //System.err.println("Refund " + rFund);
-//                //System.err.println("Cancelled "+rCacnelled);
-//                //System.err.println("Net "+(rBilled-rCacnelled));
+            ////System.err.println("Refund " + rFund);
+//                ////System.err.println("Cancelled "+rCacnelled);
+//                ////System.err.println("Net "+(rBilled-rCacnelled));
             tmp.setQtyInUnit((double) (Math.abs(i.getQty()) - Math.abs(rFund)));
 
             bi.setPharmaceuticalBillItem(tmp);

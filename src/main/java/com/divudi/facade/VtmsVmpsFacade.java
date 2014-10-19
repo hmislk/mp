@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class VtmsVmpsFacade extends AbstractFacade<VtmsVmps> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

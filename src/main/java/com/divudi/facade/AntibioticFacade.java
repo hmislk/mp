@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class AntibioticFacade extends  AbstractFacade<Antibiotic> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

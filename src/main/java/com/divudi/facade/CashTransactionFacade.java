@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class CashTransactionFacade extends AbstractFacade<CashTransaction> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

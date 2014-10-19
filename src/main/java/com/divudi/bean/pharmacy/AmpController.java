@@ -65,9 +65,8 @@ public class AmpController implements Serializable {
     private VtmsVmpsFacade vivFacade;
     List<Amp> itemsByCode = null;
     private List<Amp> lstAmps = null;
-    
-    
-    public String listAllAmps(){
+
+    public String listAllAmps() {
         lstAmps = getFacade().findBySQL("select a from Amp a where a.retired=false order by a.name");
         return "pharmacy_list_amps";
     }
@@ -75,7 +74,6 @@ public class AmpController implements Serializable {
     public List<Amp> getLstAmps() {
         return lstAmps;
     }
-
 
     public List<Amp> getItemsByCode() {
         if (itemsByCode == null) {
@@ -106,10 +104,18 @@ public class AmpController implements Serializable {
         Map m = new HashMap();
         if (qry != null) {
             m.put("n", "%" + qry.toUpperCase() + "%");
-            a = getFacade().findBySQL("select c from Amp c where "
-                    + " c.retired=false and "
-                    + "(upper(c.name) like :n or upper(c.code)  "
-                    + "like :n or upper(c.barcode) like :n) order by c.name", m, 30);
+            if (qry.length() > 4) {
+                a = getFacade().findBySQL("select c from Amp c where "
+                        + " c.retired=false and "
+                        + "(upper(c.name) like :n or upper(c.code)  "
+                        + "like :n) order by c.name", m, 30);
+
+            } else {
+                a = getFacade().findBySQL("select c from Amp c where "
+                        + " c.retired=false and "
+                        + "(upper(c.name) like :n or upper(c.code)  "
+                        + "like :n or upper(c.barcode) like :n) order by c.name", m, 30);
+            }
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -370,28 +376,27 @@ public class AmpController implements Serializable {
         return items;
     }
 
-    
-    public String fillAmpsByName(){
-        String jpql ;
+    public String fillAmpsByName() {
+        String jpql;
         jpql = "select amp from Amp as amp where amp.retired=false order by amp.name";
-        items= getFacade().findBySQL(jpql);
+        items = getFacade().findBySQL(jpql);
         return "pharmacy_report_amp_by_name";
     }
-    
-    public String fillAmpsByCode(){
-        String jpql ;
+
+    public String fillAmpsByCode() {
+        String jpql;
         jpql = "select amp from Amp as amp where amp.retired=false order by amp.code";
-        items= getFacade().findBySQL(jpql);
+        items = getFacade().findBySQL(jpql);
         return "pharmacy_report_amp_by_code";
     }
-    
-    public String fillAmpsByVmp(){
-        String jpql ;
+
+    public String fillAmpsByVmp() {
+        String jpql;
         jpql = "select amp from Amp as amp where amp.retired=false order by amp.vmp.name";
-        items= getFacade().findBySQL(jpql);
+        items = getFacade().findBySQL(jpql);
         return "pharmacy_report_amp_by_vmp";
     }
-    
+
     public Vtm getVtm() {
         return vtm;
     }

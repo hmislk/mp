@@ -17,7 +17,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class RoomFacilityChargeFacade extends AbstractFacade<RoomFacilityCharge> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

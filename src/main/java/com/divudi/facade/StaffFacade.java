@@ -15,7 +15,7 @@ import com.divudi.entity.Staff;
  */
 @Stateless
 public class StaffFacade extends AbstractFacade<Staff> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

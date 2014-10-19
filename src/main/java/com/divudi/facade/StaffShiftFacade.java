@@ -21,7 +21,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class StaffShiftFacade extends AbstractFacade<StaffShift> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

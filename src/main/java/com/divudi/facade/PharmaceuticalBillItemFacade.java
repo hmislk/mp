@@ -19,7 +19,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class PharmaceuticalBillItemFacade extends AbstractFacade<PharmaceuticalBillItem> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

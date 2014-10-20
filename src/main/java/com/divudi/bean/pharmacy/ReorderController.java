@@ -1,6 +1,7 @@
 package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.UtilityController;
+import com.divudi.data.BillType;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Person;
@@ -12,6 +13,7 @@ import com.divudi.facade.ReorderFacade;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.apache.tools.ant.util.facade.FacadeTaskHelper;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.primefaces.event.RowEditEvent;
 
 @Named
@@ -73,6 +78,49 @@ public class ReorderController implements Serializable {
             }
             items.add(r);
         }
+    }
+
+    public Long calculateOrderingCycleDurationInDays(Amp amp) {
+        String jpql;
+        Map m = new HashMap();
+        jpql = "Select max(b.createdAt),min(b.createdAt),count(b) "
+                + " from BillItem bi "
+                + " join bi.bill b "
+                + " where b.billType in :bts"
+                + " and b.item=:amp";
+
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyPurchaseBill);
+        bts.add(BillType.PharmacyGrnBill);
+        m.put("bts", bts);
+        m.put("amp", amp);
+
+        Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
+        if (obj == null) {
+            return 14l;
+        }
+        Date minDate;
+        Date maxDate;
+        Long count;
+
+        try {
+            minDate = (Date) obj[0];
+        } catch (Exception e) {
+            minDate = new Date();
+        }
+        try {
+            maxDate = (Date) obj[1];
+        } catch (Exception e) {
+            maxDate = new Date();
+        }
+        try {
+            count = (Long) obj[2];
+        } catch (Exception e) {
+            count = 1l;
+        }
+
+        return count;
+
     }
 
     public AmpController getAmpController() {

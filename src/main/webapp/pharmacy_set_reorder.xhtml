@@ -28,9 +28,6 @@
                     </h:panelGrid>
                     <p:dataTable value="#{reorderController.items}" var="i" editable="true" >
                         <p:ajax event="rowEdit" listener="#{reorderController.onEdit}" />  
-                     
-
-
                         <p:column headerText="Item">#{i.item.name}</p:column>
                         <p:column headerText="Reorder Level">
                             <p:cellEditor>  
@@ -57,8 +54,6 @@
                             </p:rowEditor>
                         </p:column>                     
                     </p:dataTable>
-
-
                 </h:form>
             </ui:define>
 

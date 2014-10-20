@@ -38,6 +38,94 @@ public class Reorder implements Serializable {
     double rol;
     double roq;
 
+    /**
+     *
+     * Demand the amount of items consumed by customers, on average, per unit
+     * time.
+     *
+     */
+    double demandInUnitsPerDay;
+
+    /**
+     *
+     * Lead Time
+     *
+     * The delay between the time the reorder point (inventory level which
+     * initiates an order) is reached and renewed availability.
+     *
+     */
+    int leadTimeInDays;
+
+    /**
+     *
+     *
+     *
+     */
+    double bufferStocks;
+
+    /**
+     * Service Level The desired probability that a chosen level of safety stock
+     * will not lead to a stockout. Naturally, when the desired service level is
+     * increased, the required safety stock increases as well.
+     *     
+*/
+    double serviceLevel;
+    int purchaseCycleDurationInDays;
+
+    @ManyToOne
+    Institution supplier;
+
+    public double getDemandInUnitsPerDay() {
+        return demandInUnitsPerDay;
+    }
+
+    public void setDemandInUnitsPerDay(double demandInUnitsPerDay) {
+        this.demandInUnitsPerDay = demandInUnitsPerDay;
+    }
+
+    public int getLeadTimeInDays() {
+        return leadTimeInDays;
+    }
+
+    public void setLeadTimeInDays(int leadTimeInDays) {
+        this.leadTimeInDays = leadTimeInDays;
+    }
+
+    public double getBufferStocks() {
+        return bufferStocks;
+    }
+
+    public void setBufferStocks(double bufferStocks) {
+        this.bufferStocks = bufferStocks;
+    }
+
+    public double getServiceLevel() {
+        return serviceLevel;
+    }
+
+    public void setServiceLevel(double serviceLevel) {
+        this.serviceLevel = serviceLevel;
+    }
+
+    public int getPurchaseCycleDurationInDays() {
+        return purchaseCycleDurationInDays;
+    }
+
+    public void setPurchaseCycleDurationInDays(int purchaseCycleDurationInDays) {
+        this.purchaseCycleDurationInDays = purchaseCycleDurationInDays;
+    }
+
+    public Institution getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Institution supplier) {
+        this.supplier = supplier;
+    }
+    
+    
+    
+
     public Item getItem() {
         return item;
     }

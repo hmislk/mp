@@ -102,6 +102,16 @@ public class ReorderController implements Serializable {
         return numberOfDaysToOrder * reorder.getDemandInUnitsPerDay();
     }
     
+    public double calculateRol(Reorder reorder){
+        int numberOfDaysToOrder;
+        if(reorder.getPurchaseCycleDurationInDays() < reorder.getLeadTimeInDays()){
+           numberOfDaysToOrder = reorder.getLeadTimeInDays();
+        }else{
+            numberOfDaysToOrder = reorder.getPurchaseCycleDurationInDays();
+        }
+        return numberOfDaysToOrder * reorder.getDemandInUnitsPerDay();
+    }
+    
     public int calculateLeadTime(Reorder reorder) {
         String jpql;
         Map m = new HashMap();

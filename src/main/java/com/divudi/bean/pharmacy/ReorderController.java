@@ -2,6 +2,7 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Person;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import org.apache.tools.ant.util.facade.FacadeTaskHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.Months;
 import org.primefaces.event.RowEditEvent;
 
 @Named
@@ -73,6 +75,16 @@ public class ReorderController implements Serializable {
                 r = new Reorder();
                 r.setDepartment(department);
                 r.setItem(a);
+                r.setMonthsConsideredForShortTermAnalysis(12);
+                r.setYearsConsideredForLognTermAnalysis(5);
+
+                r.setPurchaseCycleDurationInDays(calculateOrderingCycleDurationInDays(r));
+                r.setDemandInUnitsPerDay(calculateDailyDemandInUnits(r));
+                r.setLeadTimeInDays(calculateLeadTime(r));
+                
+                r.setRoq(calculateRoq(r));
+                
+
                 getEjbFacade().create(r);
 
             }
@@ -80,28 +92,102 @@ public class ReorderController implements Serializable {
         }
     }
 
-    public Long calculateOrderingCycleDurationInDays(Amp amp) {
+    public double calculateRoq(Reorder reorder){
+        int numberOfDaysToOrder;
+        if(reorder.getPurchaseCycleDurationInDays() < reorder.getLeadTimeInDays()){
+           numberOfDaysToOrder = reorder.getLeadTimeInDays();
+        }else{
+            numberOfDaysToOrder = reorder.getPurchaseCycleDurationInDays();
+        }
+        return numberOfDaysToOrder * reorder.getDemandInUnitsPerDay();
+    }
+    
+    public int calculateLeadTime(Reorder reorder) {
         String jpql;
         Map m = new HashMap();
-        jpql = "Select max(b.createdAt),min(b.createdAt),count(b) "
+        DateTime dt = new DateTime();
+        DateTime tfd = dt.minusMonths(reorder.getMonthsConsideredForShortTermAnalysis());
+        Date fd = tfd.toDate();
+        Date td = new Date();
+
+        BillItem bi = new BillItem();
+        bi.getReferanceBillItem();
+
+        jpql = "Select avg(b.createdAt - rb.createdAt) "
+                + " from BillItem bi "
+                + " join bi.bill b "
+                + " joib bi.referanceBillItem rbi "
+                + " join rbi.bill rb "
+                + " where b.billType in :bts "
+                + " and rb.billType in :rbts "
+                + " and bi.item=:amp "
+                + " and b.createdAt between :fd and :td "
+                + " ";
+
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyOrderApprove);
+
+        List<BillType> rbts = new ArrayList<>();
+        bts.add(BillType.PharmacyGrnBill);
+
+        m.put("bts", bts);
+        m.put("rbts", rbts);
+        m.put("amp", reorder.getItem());
+        m.put("fd", fd);
+        m.put("td", td);
+        Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
+
+        System.err.println("obj = " + obj);
+        
+        if (obj == null) {
+            return 7;
+        }
+        int avgLeadTimeInDays;
+        
+        try {
+            Long avgLeadTimeInMs;
+            avgLeadTimeInMs = (Long) obj[0];
+            avgLeadTimeInDays = (int) ( avgLeadTimeInMs / (1000*60*60*24));
+        } catch (Exception e) {
+            avgLeadTimeInDays = 7;
+        }
+        return avgLeadTimeInDays;
+    }
+
+    public double calculateDailyDemandInUnits(Reorder reorder) {
+        String jpql;
+        Map m = new HashMap();
+        DateTime dt = new DateTime();
+        DateTime tfd = dt.minusMonths(reorder.getMonthsConsideredForShortTermAnalysis());
+        Date fd = tfd.toDate();
+        Date td = new Date();
+
+//        BillItem bi = new BillItem();
+//        bi.getQty();
+        jpql = "Select max(b.createdAt),min(b.createdAt),sum(bi.qty) "
                 + " from BillItem bi "
                 + " join bi.bill b "
                 + " where b.billType in :bts"
-                + " and b.item=:amp";
+                + " and bi.item=:amp "
+                + " and b.createdAt between :fd and :td "
+                + " ";
 
         List<BillType> bts = new ArrayList<>();
-        bts.add(BillType.PharmacyPurchaseBill);
-        bts.add(BillType.PharmacyGrnBill);
+        bts.add(BillType.PharmacyAdjustment);
+        bts.add(BillType.PharmacyPre);
+        bts.add(BillType.PharmacyBhtPre);
+        bts.add(BillType.PharmacyIssue);
         m.put("bts", bts);
-        m.put("amp", amp);
-
+        m.put("amp", reorder.getItem());
+        m.put("fd", fd);
+        m.put("td", td);
         Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
         if (obj == null) {
-            return 14l;
+            return 14;
         }
         Date minDate;
         Date maxDate;
-        Long count;
+        Double totalQty;
 
         try {
             minDate = (Date) obj[0];
@@ -114,12 +200,80 @@ public class ReorderController implements Serializable {
             maxDate = new Date();
         }
         try {
-            count = (Long) obj[2];
+            totalQty = (Double) obj[2];
         } catch (Exception e) {
-            count = 1l;
+            totalQty = 0.0;
         }
 
-        return count;
+        DateTime mind = new DateTime(minDate);
+        DateTime maxd = new DateTime(maxDate);
+        Days daysDiff = Days.daysBetween(mind, maxd);
+
+        int ds = daysDiff.getDays();
+        return (totalQty / ds);
+    }
+
+    public int calculateOrderingCycleDurationInDays(Reorder reorder) {
+        String jpql;
+        Map m = new HashMap();
+
+        DateTime dt = new DateTime();
+        DateTime tfd = dt.minusMonths(reorder.getMonthsConsideredForShortTermAnalysis());
+
+        Date fd = tfd.toDate();
+        Date td = new Date();
+
+        jpql = "Select max(b.createdAt),min(b.createdAt),count(b) "
+                + " from BillItem bi "
+                + " join bi.bill b "
+                + " where b.billType in :bts"
+                + " and bi.item=:amp "
+                + " and b.createdAt between :fd and :td "
+                + " ";
+
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyPurchaseBill);
+        bts.add(BillType.PharmacyGrnBill);
+        m.put("bts", bts);
+        m.put("amp", reorder.getItem());
+        m.put("fd", fd);
+        m.put("td", td);
+
+        Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
+        if (obj == null) {
+            return 14;
+        }
+        Date minDate;
+        Date maxDate;
+        int count;
+
+        try {
+            minDate = (Date) obj[0];
+        } catch (Exception e) {
+            minDate = new Date();
+        }
+        try {
+            maxDate = (Date) obj[1];
+        } catch (Exception e) {
+            maxDate = new Date();
+        }
+        try {
+            count = (int) obj[2];
+        } catch (Exception e) {
+            count = 1;
+        }
+
+        if (count == 0) {
+            count = 1;
+        }
+        DateTime mind = new DateTime(minDate);
+        DateTime maxd = new DateTime(maxDate);
+
+        Days daysDiff = Days.daysBetween(mind, maxd);
+
+        int ds = daysDiff.getDays();
+
+        return (int) (ds / count);
 
     }
 

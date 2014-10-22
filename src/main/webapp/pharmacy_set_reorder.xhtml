@@ -24,8 +24,21 @@
                             <f:selectItem itemLabel="Please select a Department"/>
                             <f:selectItems value="#{serviceController.institutionDepatrments}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat}" />
                         </p:selectOneMenu>
+                        <p:dataTable value="#{ampController.items}" var="amp" rowKey="#{amp.id}" selectionMode="multiple"
+                                     selection="#{reorderController.selectedItems}"      paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,30,50"
+                                 rows="50"       >
+                             <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                             <p:column headerText="Item" >
+                                 #{amp.name}
+                             </p:column>
+                        </p:dataTable>
                         <p:commandButton ajax="false" value="Create Reorder Level" action="#{reorderController.fillDepartmentReorders()}"/>
                     </h:panelGrid>
+                    
+                  
+                    
                     <p:dataTable value="#{reorderController.items}" var="i" editable="true" >
                         <p:ajax event="rowEdit" listener="#{reorderController.onEdit}" />  
                         <p:column headerText="Item">#{i.item.name}</p:column>

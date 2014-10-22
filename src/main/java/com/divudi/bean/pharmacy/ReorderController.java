@@ -5,12 +5,12 @@ import com.divudi.data.BillType;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.Item;
 import com.divudi.entity.Person;
 import com.divudi.entity.pharmacy.Amp;
-import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
-import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.entity.pharmacy.Reorder;
 import com.divudi.facade.ReorderFacade;
+import com.divudi.facade.util.JsfUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,10 +26,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import org.apache.tools.ant.util.facade.FacadeTaskHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.Months;
 import org.primefaces.event.RowEditEvent;
 
 @Named
@@ -57,14 +55,31 @@ public class ReorderController implements Serializable {
         UtilityController.addSuccessMessage("Reorder Level Updted");
     }
 
+    
+    public List<Amp> selectedItems;
+
+    public List<Amp> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public void setSelectedItems(List<Amp> selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+    
+    
+    
+    
     public void fillDepartmentReorders() {
         if (department == null) {
+            JsfUtil.addErrorMessage("Please select a department");
             return;
         }
-        items = new ArrayList<>();
-        List<Amp> amps = getAmpController().getItems();
+        if(selectedItems==null || selectedItems.isEmpty()){
+            JsfUtil.addErrorMessage("Please select one or more items");
+            return;
+        }
 
-        for (Amp a : amps) {
+        for (Amp a : selectedItems) {
             Reorder r;
             Map m = new HashMap();
             m.put("d", department);

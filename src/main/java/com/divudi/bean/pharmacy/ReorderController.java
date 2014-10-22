@@ -2,16 +2,15 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.Person;
-import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Reorder;
 import com.divudi.facade.ReorderFacade;
 import com.divudi.facade.util.JsfUtil;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,37 +54,47 @@ public class ReorderController implements Serializable {
         UtilityController.addSuccessMessage("Reorder Level Updted");
     }
 
-    
-    public List<Amp> selectedItems;
+    List<Item> selectedItems;
 
-    public List<Amp> getSelectedItems() {
+    public List<Item> getSelectedItems() {
         return selectedItems;
     }
 
-    public void setSelectedItems(List<Amp> selectedItems) {
+    public void setSelectedItems(List<Item> selectedItems) {
         this.selectedItems = selectedItems;
     }
-    
-    
-    
-    
+
     public void fillDepartmentReorders() {
+        Map m = new HashMap();
+        m.put("d", department);
+        m.put("items", selectedItems);
+        String sql = "Select r from Reorder r where r.item in ( :items ) and r.department=:d";
+        System.out.println("sql = " + sql);
+        System.out.println("m = " + m);
+        items = getEjbFacade().findBySQL(sql, m);
+    }
+
+    public void createDepartmentReorders() {
+        items = new ArrayList<>();
         if (department == null) {
             JsfUtil.addErrorMessage("Please select a department");
             return;
         }
-        if(selectedItems==null || selectedItems.isEmpty()){
+        if (selectedItems == null || selectedItems.isEmpty()) {
             JsfUtil.addErrorMessage("Please select one or more items");
             return;
         }
-
-        for (Amp a : selectedItems) {
+        System.out.println("selectedItems = " + selectedItems);
+        for (Item a : selectedItems) {
             Reorder r;
             Map m = new HashMap();
             m.put("d", department);
             m.put("i", a);
+            System.out.println("m = " + m);
             String sql = "Select r from Reorder r where r.item=:i and r.department=:d";
+            System.out.println("sql = " + sql);
             r = getEjbFacade().findFirstBySQL(sql, m);
+            System.out.println("r = " + r);
             if (r == null) {
                 r = new Reorder();
                 r.setDepartment(department);
@@ -96,9 +105,8 @@ public class ReorderController implements Serializable {
                 r.setPurchaseCycleDurationInDays(calculateOrderingCycleDurationInDays(r));
                 r.setDemandInUnitsPerDay(calculateDailyDemandInUnits(r));
                 r.setLeadTimeInDays(calculateLeadTime(r));
-                
+
                 r.setRoq(calculateRoq(r));
-                
 
                 getEjbFacade().create(r);
 
@@ -107,26 +115,26 @@ public class ReorderController implements Serializable {
         }
     }
 
-    public double calculateRoq(Reorder reorder){
+    public double calculateRoq(Reorder reorder) {
         int numberOfDaysToOrder;
-        if(reorder.getPurchaseCycleDurationInDays() < reorder.getLeadTimeInDays()){
-           numberOfDaysToOrder = reorder.getLeadTimeInDays();
-        }else{
+        if (reorder.getPurchaseCycleDurationInDays() < reorder.getLeadTimeInDays()) {
+            numberOfDaysToOrder = reorder.getLeadTimeInDays();
+        } else {
             numberOfDaysToOrder = reorder.getPurchaseCycleDurationInDays();
         }
         return numberOfDaysToOrder * reorder.getDemandInUnitsPerDay();
     }
-    
-    public double calculateRol(Reorder reorder){
+
+    public double calculateRol(Reorder reorder) {
         int numberOfDaysToOrder;
-        if(reorder.getPurchaseCycleDurationInDays() < reorder.getLeadTimeInDays()){
-           numberOfDaysToOrder = reorder.getLeadTimeInDays();
-        }else{
+        if (reorder.getPurchaseCycleDurationInDays() < reorder.getLeadTimeInDays()) {
+            numberOfDaysToOrder = reorder.getLeadTimeInDays();
+        } else {
             numberOfDaysToOrder = reorder.getPurchaseCycleDurationInDays();
         }
         return numberOfDaysToOrder * reorder.getDemandInUnitsPerDay();
     }
-    
+
     public int calculateLeadTime(Reorder reorder) {
         String jpql;
         Map m = new HashMap();
@@ -138,10 +146,10 @@ public class ReorderController implements Serializable {
         BillItem bi = new BillItem();
         bi.getReferanceBillItem();
 
-        jpql = "Select avg(b.createdAt - rb.createdAt) "
+        jpql = "Select b, rb "
                 + " from BillItem bi "
                 + " join bi.bill b "
-                + " joib bi.referanceBillItem rbi "
+                + " join bi.referanceBillItem rbi "
                 + " join rbi.bill rb "
                 + " where b.billType in :bts "
                 + " and rb.billType in :rbts "
@@ -160,19 +168,31 @@ public class ReorderController implements Serializable {
         m.put("amp", reorder.getItem());
         m.put("fd", fd);
         m.put("td", td);
-        Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
-
-        System.err.println("obj = " + obj);
+        List<Object[]> obj = ejbFacade.findAggregates(jpql, m);
         
-        if (obj == null) {
+        if(obj==null){
             return 7;
         }
-        int avgLeadTimeInDays;
         
+        int count=0;
+        long differenceInMs=0l;
+        for(Object[] objc : obj){
+            Bill b = (Bill) objc[0];
+            System.out.println("b = " + b);
+            Bill rf = (Bill)objc[1];
+            System.out.println("rf = " + rf);
+            count++;
+            System.out.println("count = " + count);
+            differenceInMs = differenceInMs + (rf.getCreatedAt().getTime() - b.getCreatedAt().getTime());
+            System.out.println("differenceInMs = " + differenceInMs);
+        }
+        
+       
+        int avgLeadTimeInDays;
+
         try {
-            Long avgLeadTimeInMs;
-            avgLeadTimeInMs = (Long) obj[0];
-            avgLeadTimeInDays = (int) ( avgLeadTimeInMs / (1000*60*60*24));
+            Long avgLeadTimeInMs = differenceInMs/count;
+            avgLeadTimeInDays = (int) (avgLeadTimeInMs / (1000 * 60 * 60 * 24));
         } catch (Exception e) {
             avgLeadTimeInDays = 7;
         }
@@ -239,6 +259,7 @@ public class ReorderController implements Serializable {
     }
 
     public int calculateOrderingCycleDurationInDays(Reorder reorder) {
+        System.out.println("calculating ordering cycle duration");
         String jpql;
         Map m = new HashMap();
 
@@ -264,7 +285,13 @@ public class ReorderController implements Serializable {
         m.put("fd", fd);
         m.put("td", td);
 
+        System.out.println("jpql = " + jpql);
+        System.out.println("m = " + m);
+        
         Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
+        
+        System.out.println("obj = " + obj);
+        
         if (obj == null) {
             return 14;
         }

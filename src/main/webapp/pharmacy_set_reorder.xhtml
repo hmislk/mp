@@ -44,18 +44,33 @@
 
                     <p:dataTable value="#{reorderController.items}" var="i" editable="true" >
                         <p:ajax event="rowEdit" listener="#{reorderController.onEdit}" />  
-                        <p:column headerText="Item">#{i.item.name}</p:column>
-                        <p:column headerText="Reorder Level">
-
+                        <p:column headerText="Item">
+                            #{i.item.name}
+                        </p:column>
+                        <p:column headerText="Buffer Stock">
+                            <p:inputText  value="#{i.bufferStocks}"/>
+                        </p:column>
+                        <p:column headerText="Reorder Level">                           
                             <p:inputText  value="#{i.rol}"/>
-
                         </p:column>
-                        <p:column headerText="Reorder Quantity">                           
-
+                        <p:column headerText="Reorder Quentity">
                             <p:inputText  value="#{i.roq}"/>
-
                         </p:column>
-
+                        <p:column headerText="Daily Usage">                           
+                            <p:inputText  value="#{i.demandInUnitsPerDay}"/>
+                        </p:column>
+                        <p:column headerText="Lead time in days">                           
+                            <p:inputText  value="#{i.leadTimeInDays}"/>
+                        </p:column>
+                        <p:column headerText="Purchase Cycle in Days">                           
+                            <p:inputText  value="#{i.purchaseCycleDurationInDays}"/>
+                        </p:column>
+                        <p:column headerText="Months considered for short term analysis">                           
+                            <p:inputText  value="#{i.monthsConsideredForShortTermAnalysis}"/>
+                        </p:column>
+                        <p:column headerText="Years considered for long term analysis">                           
+                            <p:inputText  value="#{i.yearsConsideredForLognTermAnalysis}"/>
+                        </p:column>                        
                     </p:dataTable>
                 </h:form>
             </ui:define>

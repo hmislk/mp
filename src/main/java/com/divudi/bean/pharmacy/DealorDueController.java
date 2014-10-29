@@ -50,6 +50,9 @@ public class DealorDueController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private CreditBean creditBean;
+    
+    double grantTotal;
+    double billCount;
 
     public void makeNull() {
         fromDate = null;
@@ -133,11 +136,20 @@ public class DealorDueController implements Serializable {
         setIns.addAll(list);
         //System.err.println("size " + setIns.size());
         items = new ArrayList<>();
+        billCount=0.0;
         for (Institution ins : setIns) {
             //     //System.err.println("Ins " + ins.getName());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
             List<Bill> lst = getCreditBean().getBills(ins, getFromDate(), getToDate());
+            
+            double tmp=0.0;
+            tmp=(double)lst.size();
+            System.out.println("tmp = " + tmp);
+            System.out.println("lst.size() = " + lst.size());
+            System.out.println("billCount = " + billCount);
+            billCount+=tmp;
+            System.out.println("billCount = " + billCount);
 
             newIns.setBills(lst);
 
@@ -165,6 +177,11 @@ public class DealorDueController implements Serializable {
                 items.add(newIns);
             }
         }
+        grantTotal=0.0;
+        for (InstitutionBills its : items) {
+           grantTotal+=its.getTotal();
+        }
+        System.out.println("grantTotal = " + grantTotal);
     }
 
     public void fillItemsStore() {
@@ -387,5 +404,21 @@ public class DealorDueController implements Serializable {
 
     public void setCreditBean(CreditBean creditBean) {
         this.creditBean = creditBean;
+    }
+
+    public double getGrantTotal() {
+        return grantTotal;
+    }
+
+    public void setGrantTotal(double grantTotal) {
+        this.grantTotal = grantTotal;
+    }
+
+    public double getBillCount() {
+        return billCount;
+    }
+
+    public void setBillCount(double billCount) {
+        this.billCount = billCount;
     }
 }

@@ -113,6 +113,16 @@
                         </p:subTable>
 
                     </p:dataTable>
+                    <p:panel>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Bill Count" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.billCount}" style="text-align: right;"/>
+                            <p:outputLabel value="Grand Total" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.grantTotal}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                        </p:panelGrid>
+                    </p:panel>
                 </h:form>
             </ui:define>
 

@@ -50,10 +50,19 @@ public class DealorDueController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private CreditBean creditBean;
-    
+
     double grantTotal;
     double billCount;
-
+    double billedAmount;
+    double returnedAmount;
+    double paidAmount;
+    
+    double value1;
+    double value2;
+    double value3;
+    double value4;
+    double GrandDealorAge;
+    
     public void makeNull() {
         fromDate = null;
         toDate = null;
@@ -106,7 +115,6 @@ public class DealorDueController implements Serializable {
             //System.err.println("Return  " + b.getTmpReturnTotal());
             //System.err.println("Paid " + b.getPaidAmount());
             //System.err.println("Final " + finalValue);
-
             if (dayCount < 30) {
                 dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
             } else if (dayCount < 60) {
@@ -136,19 +144,19 @@ public class DealorDueController implements Serializable {
         setIns.addAll(list);
         //System.err.println("size " + setIns.size());
         items = new ArrayList<>();
-        billCount=0.0;
+        billCount = 0.0;
         for (Institution ins : setIns) {
             //     //System.err.println("Ins " + ins.getName());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
             List<Bill> lst = getCreditBean().getBills(ins, getFromDate(), getToDate());
-            
-            double tmp=0.0;
-            tmp=(double)lst.size();
+
+            double tmp = 0.0;
+            tmp = (double) lst.size();
             System.out.println("tmp = " + tmp);
             System.out.println("lst.size() = " + lst.size());
             System.out.println("billCount = " + billCount);
-            billCount+=tmp;
+            billCount += tmp;
             System.out.println("billCount = " + billCount);
 
             newIns.setBills(lst);
@@ -177,9 +185,16 @@ public class DealorDueController implements Serializable {
                 items.add(newIns);
             }
         }
-        grantTotal=0.0;
+        billedAmount = 0.0;
+        returnedAmount = 0.0;
+        paidAmount = 0.0;
+        grantTotal = 0.0;
         for (InstitutionBills its : items) {
-           grantTotal+=its.getTotal();
+            billedAmount += its.getTotal();
+            returnedAmount += its.getReturned();
+            paidAmount +=its.getPaidTotal();
+            grantTotal +=its.getPaidTotal()+its.getReturned()+its.getTotal();
+            
         }
         System.out.println("grantTotal = " + grantTotal);
     }
@@ -261,8 +276,21 @@ public class DealorDueController implements Serializable {
             }
         }
 
+        value1 = 0.0;
+        value2 = 0.0;
+        value3 = 0.0;
+        value4 = 0.0;
+        GrandDealorAge = 0.0;
+        
+        for (String1Value5 stv : dealorCreditAge){
+            value1 += stv.getValue1();
+            value2 += stv.getValue2();
+            value3 += stv.getValue3();
+            value4 += stv.getValue4();
+            
+        }
     }
-    
+
     public void createAgeTableStore() {
         makeNull();
         //System.err.println("Fill Items");
@@ -421,4 +449,71 @@ public class DealorDueController implements Serializable {
     public void setBillCount(double billCount) {
         this.billCount = billCount;
     }
+
+    public double getBilledAmount() {
+        return billedAmount;
+    }
+
+    public void setBilledAmount(double billedAmount) {
+        this.billedAmount = billedAmount;
+    }
+
+    public double getReturnedAmount() {
+        return returnedAmount;
+    }
+
+    public void setReturnedAmount(double returnedAmount) {
+        this.returnedAmount = returnedAmount;
+    }
+
+    public double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(double paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public double getValue1() {
+        return value1;
+    }
+
+    public void setValue1(double value1) {
+        this.value1 = value1;
+    }
+
+    public double getValue2() {
+        return value2;
+    }
+
+    public void setValue2(double value2) {
+        this.value2 = value2;
+    }
+
+    public double getValue3() {
+        return value3;
+    }
+
+    public void setValue3(double value3) {
+        this.value3 = value3;
+    }
+
+    public double getValue4() {
+        return value4;
+    }
+
+    public void setValue4(double value4) {
+        this.value4 = value4;
+    }
+
+    public double getGrandDealorAge() {
+        return GrandDealorAge;
+    }
+
+    public void setGrandDealorAge(double GrandDealorAge) {
+        this.GrandDealorAge = GrandDealorAge;
+    }
+
+   
+
 }

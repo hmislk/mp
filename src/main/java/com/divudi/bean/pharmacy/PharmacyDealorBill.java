@@ -60,6 +60,8 @@ public class PharmacyDealorBill implements Serializable {
     //Inject
     @Inject
     private SessionController sessionController;
+    double payingAmount;
+    List<BillItem> payingBillItems;
 
     public void makeNull() {
         printPreview = false;
@@ -156,6 +158,11 @@ public class PharmacyDealorBill implements Serializable {
 
         currentBillItem = null;
         calTotal();
+        payingAmount = 0.0;
+        for (BillItem items : billItems) {
+
+            payingAmount += items.getNetValue();
+        }
     }
 
     public void changeNetValueListener(BillItem billItem) {
@@ -472,6 +479,22 @@ public class PharmacyDealorBill implements Serializable {
 
     public void setCreditBean(CreditBean creditBean) {
         this.creditBean = creditBean;
+    }
+
+    public double getPayingAmount() {
+        return payingAmount;
+    }
+
+    public void setPayingAmount(double payingAmount) {
+        this.payingAmount = payingAmount;
+    }
+
+    public List<BillItem> getPayingBillItems() {
+        return payingBillItems;
+    }
+
+    public void setPayingBillItems(List<BillItem> payingBillItems) {
+        this.payingBillItems = payingBillItems;
     }
 
 }

@@ -117,6 +117,18 @@
                         <p:panelGrid columns="2">
                             <p:outputLabel value="Bill Count" ></p:outputLabel>
                             <p:outputLabel value="#{dealorDueController.billCount}" style="text-align: right;"/>
+                            <p:outputLabel value="Billed Amount" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.billedAmount}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Returned Amount" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.returnedAmount}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Paid Amount" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.paidAmount}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
                             <p:outputLabel value="Grand Total" ></p:outputLabel>
                             <p:outputLabel value="#{dealorDueController.grantTotal}" style="text-align: right;">
                                 <f:convertNumber pattern="###,###.00" />

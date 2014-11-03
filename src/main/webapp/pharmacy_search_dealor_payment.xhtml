@@ -155,7 +155,7 @@
                                 </h:outputLabel>
                                 <h:outputLabel rendered="#{bill.reactivated ne true}" value="Not Realized" >
                                 </h:outputLabel>
-                                <p:commandButton  rendered="#{bill.reactivated ne true}" ajax="false" value="Mark As Realized" action="#{searchController.realizingBill}"  >
+                                <p:commandButton  rendered="#{bill.reactivated ne true}" ajax="false" value="Mark As Realized" action="#{searchController.realizeBill()}"  >
                                     <f:setPropertyActionListener value="#{bill}" target="#{searchController.realizingBill}" ></f:setPropertyActionListener>
                                 </p:commandButton>
                             </p:column>

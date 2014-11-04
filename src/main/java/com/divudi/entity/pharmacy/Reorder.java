@@ -71,9 +71,30 @@ public class Reorder implements Serializable {
 */
     double serviceLevel;
     int purchaseCycleDurationInDays;
+    
+    int monthsConsideredForShortTermAnalysis;
+    int yearsConsideredForLognTermAnalysis;
 
     @ManyToOne
     Institution supplier;
+
+    public int getMonthsConsideredForShortTermAnalysis() {
+        return monthsConsideredForShortTermAnalysis;
+    }
+
+    public void setMonthsConsideredForShortTermAnalysis(int monthsConsideredForShortTermAnalysis) {
+        this.monthsConsideredForShortTermAnalysis = monthsConsideredForShortTermAnalysis;
+    }
+
+    public int getYearsConsideredForLognTermAnalysis() {
+        return yearsConsideredForLognTermAnalysis;
+    }
+
+    public void setYearsConsideredForLognTermAnalysis(int yearsConsideredForLognTermAnalysis) {
+        this.yearsConsideredForLognTermAnalysis = yearsConsideredForLognTermAnalysis;
+    }
+    
+    
 
     public double getDemandInUnitsPerDay() {
         return demandInUnitsPerDay;

@@ -77,6 +77,7 @@
                                     <p:menuitem  ajax="false" action="/pharmacy_search_adjustment_bill_item"  value="Search Adjustment Bills"  ></p:menuitem>
                                 </p:submenu>
                                 <p:submenu label="Dealor Payment" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}">
+                                    <p:menuitem  ajax="false" action="/pharmacy_search_dealor"  value="Dealor Transactions"  rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="/pharmacy_search_dealor_due"  value="Dealor Due Search"  rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}" ></p:menuitem>
                                     <p:menuitem ajax="false" action="/pharmacy_search_dealor_due_age" actionListener="#{dealorDueController.makeNull}" value="Dealor Due By Age" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>
                                     <p:submenu label="Payment">

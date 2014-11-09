@@ -111,7 +111,7 @@
                         <h:dataTable value="#{cc.attrs.controller.billItems}" var="bip1" style="font-size:  80%!important;"  >
                             <h:column>
                                 <h:outputLabel value="#{bip1.netValue}"  style="margin: 4px;" >
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </h:outputLabel>
                             </h:column>
                         </h:dataTable>
@@ -119,7 +119,7 @@
                             <tr>
                                 <td>
                                     <h:outputLabel value="#{-cc.attrs.bill.netTotal}"  style="font-size:  80%!important;">
-                                        <f:convertNumber pattern="#,000.00" />
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </td>
                             </tr>

@@ -91,7 +91,7 @@
                             <p:column headerText="Net Value" >
                                 <h:commandLink action="agent_bill_reprint" >
                                     <h:outputLabel value="#{bill.netTotal}" >
-                                        <f:convertNumber pattern="#,000.00"/>
+                                        <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{agentPaymentReceiveSearchController.bill}"/>
                                 </h:commandLink>

@@ -86,31 +86,31 @@
 
                                 <p:column style="text-align: right;">
                                     <h:outputLabel value="#{dt.cash}">
-                                        <f:convertNumber pattern="#,000.00" />
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
                                     <h:outputLabel value="#{dt.credit}" >
-                                        <f:convertNumber pattern="#,000.00" />
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </p:column>
 
                                 <p:column style="text-align: right;">
                                     <h:outputLabel value="#{dt.card}" >
-                                        <f:convertNumber pattern="#,000.00" />
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>                                
                                 </p:column>
 
                                 <p:column style="text-align: right;">
                                     <h:outputLabel value="#{dt.cheque}">
-                                        <f:convertNumber pattern="#,000.00" />
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>                                
                                 </p:column>
 
                                 <p:column style="text-align: right;" >
                                     <h:outputLabel value="#{dt.slip}" >
-                                        <f:convertNumber pattern="#,000.00" />
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>                                
                                 </p:column>
                             </p:subTable>
@@ -125,7 +125,7 @@
                                 <p:column footerText="#{cashierReportController.finalCashTot}" style="text-align: right;">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{cashierReportController.finalCashTot}">
-                                            <f:convertNumber pattern="#,000.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -133,7 +133,7 @@
                                 <p:column footerText="#{cashierReportController.finalCreditTot}" style="text-align: right;">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{cashierReportController.finalCreditTot}">
-                                            <f:convertNumber pattern="#,000.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -141,7 +141,7 @@
                                 <p:column footerText="#{cashierReportController.finalCardTot}" style="text-align: right;">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{cashierReportController.finalCardTot}">
-                                            <f:convertNumber pattern="#,000.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -149,7 +149,7 @@
                                 <p:column footerText="#{cashierReportController.finalChequeTot}" style="text-align: right;">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{cashierReportController.finalChequeTot}">
-                                            <f:convertNumber pattern="#,000.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -157,7 +157,7 @@
                                 <p:column footerText="#{cashierReportController.finalSlipTot}" style="text-align: right;">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{cashierReportController.finalSlipTot}">
-                                            <f:convertNumber pattern="#,000.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>

@@ -91,29 +91,29 @@
                             </p:column> 
                             <p:column headerText="GRN Amount">
                                 <p:outputLabel value="#{b.referenceBill.netTotal}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="GRN Return Amount">
                                 <p:outputLabel value="#{b.referenceBill.tmpReturnTotal}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Paid Amount">
                                 <p:outputLabel value="#{b.referenceBill.paidAmount}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Recievable Amount">
                                 <p:outputLabel value="#{(b.referenceBill.netTotal+
                                                         b.referenceBill.tmpReturnTotal+
                                                         b.referenceBill.paidAmount)}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Paying Amount">
                                 <p:inputText value="#{b.netValue}">    
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                     <f:ajax event="blur" execute="@this" render="@all" listener="#{storeDealorBill.changeNetValueListener(b)}"/>
                                 </p:inputText>
                             </p:column>
@@ -130,7 +130,7 @@
                         <p:panelGrid  columns="2" >
                             <p:outputLabel value="Net Total" />
                             <p:outputLabel  value="#{storeDealorBill.current.netTotal}">
-                                <f:convertNumber pattern="#,000.00" />
+                                <f:convertNumber pattern="#,##0.00" />
                             </p:outputLabel>
 
                             <p:outputLabel value="Description"/>

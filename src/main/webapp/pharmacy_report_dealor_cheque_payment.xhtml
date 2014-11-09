@@ -106,11 +106,11 @@
                                 </p:column>
                                 <p:column headerText="Net Value" >
                                     <h:outputLabel value="#{bill.netTotal}" >
-                                        <f:convertNumber pattern="#,000.00"/>
+                                        <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{searchController.netTotal}" >
-                                            <f:convertNumber pattern="#,000.00"/>
+                                            <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>

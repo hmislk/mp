@@ -94,12 +94,12 @@
                             </p:column>    
                             <p:column headerText="Service Name"  >
                                 <h:outputLabel value="#{bi.paidForBillFee.billItem.item.name}" >
-                                    <f:convertNumber pattern="#,000.00"/>
+                                    <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
                             </p:column>
                             <p:column headerText="Charges"  >
                                 <h:outputLabel value="#{bi.paidForBillFee.feeValue}" >
-                                    <f:convertNumber pattern="#,000.00"/>
+                                    <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
 
                             </p:column>

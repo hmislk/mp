@@ -80,7 +80,7 @@
 
                 <p:column headerText="Hospital Fee" style="text-align: right;">
                     <p:outputLabel value="#{d.hospitalFee}">
-                        <f:convertNumber pattern="#,000.00"/>
+                        <f:convertNumber pattern="#,##0.00"/>
                     </p:outputLabel>
 
                 </p:column>              
@@ -105,7 +105,7 @@
                         <p:column style="text-align: right;" footerText="#{serviceSummery.value}" >
                             <f:facet name="footer">
                                 <h:outputLabel value="#{serviceSummery.value}">
-                                    <f:convertNumber pattern="#,000.00"/>
+                                    <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
                             </f:facet>
                         </p:column>

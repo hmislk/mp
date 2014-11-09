@@ -121,7 +121,7 @@
                                 <p:column headerText="Amount" style="text-align: right;">
                                     <h:panelGroup rendered="#{fe.feeValue ne 0}">
                                         <h:outputLabel value="#{fe.feeValue}">
-                                            <f:convertNumber pattern="#,000.00" />
+                                            <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </h:panelGroup>
                                 </p:column>
@@ -131,7 +131,7 @@
                                         <p:column style="text-align: right;" >
                                             <f:facet name="footer">
                                                 <h:outputLabel  value="#{bip.netValue}">
-                                                    <f:convertNumber pattern="#,000.00" />
+                                                    <f:convertNumber pattern="#,##0.00" />
                                                 </h:outputLabel>
                                             </f:facet>
                                         </p:column>

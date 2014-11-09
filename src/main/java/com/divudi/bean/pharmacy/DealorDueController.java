@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -103,7 +104,6 @@ public class DealorDueController implements Serializable {
             //System.err.println("Return  " + b.getTmpReturnTotal());
             //System.err.println("Paid " + b.getPaidAmount());
             //System.err.println("Final " + finalValue);
-
             if (dayCount < 30) {
                 dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
             } else if (dayCount < 60) {
@@ -122,6 +122,74 @@ public class DealorDueController implements Serializable {
     private BillController billController;
     @Inject
     private PharmacyDealorBill pharmacyDealorBill;
+
+    List<Bill> bills;
+    List<Bill> filteredBills;
+    double billsNetTotal;
+    double billsPaidTotal;
+    double billsBalanceTotal;
+
+    public void calculateFilteredBillTotals(List<Bill> billsToCal) {
+        billsNetTotal = 0.0;
+        billsPaidTotal = 0.0;
+        billsBalanceTotal = 0.0;
+        if (billsToCal == null) {
+            return;
+        }
+        for (Bill b : billsToCal) {
+            billsNetTotal += b.getNetTotal();
+            billsPaidTotal += b.getPaidAmount();
+        }
+        billsBalanceTotal = Math.abs(billsNetTotal) - Math.abs(billsPaidTotal);
+    }
+
+    public String fillSingleDealerTransactions() {
+        String jpql;
+        Map m;
+        jpql = "Select b from Bill b where b.retired=false and (b.fromInstitution=:ins or b.toInstitution=:ins ) order by b.id";
+        m = new HashMap();
+        m.put("ins", institution);
+        bills = getBillFacade().findBySQL(jpql, m);
+        calculateFilteredBillTotals(bills);
+        return "pharmacy_search_dealer";
+    }
+
+    public double getBillsNetTotal() {
+        return billsNetTotal;
+    }
+
+    public void setBillsNetTotal(double billsNetTotal) {
+        this.billsNetTotal = billsNetTotal;
+    }
+
+    public double getBillsPaidTotal() {
+        return billsPaidTotal;
+    }
+
+    public void setBillsPaidTotal(double billsPaidTotal) {
+        this.billsPaidTotal = billsPaidTotal;
+    }
+
+    public double getBillsBalanceTotal() {
+        return billsBalanceTotal;
+    }
+
+    public void setBillsBalanceTotal(double billsBalanceTotal) {
+        this.billsBalanceTotal = billsBalanceTotal;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public List<Bill> getFilteredBills() {
+        return filteredBills;
+    }
+
+    public void setFilteredBills(List<Bill> filteredBills) {
+        this.filteredBills = filteredBills;
+        calculateFilteredBillTotals(filteredBills);
+    }
 
     public void fillItems() {
         //System.err.println("Fill Items");
@@ -245,7 +313,7 @@ public class DealorDueController implements Serializable {
         }
 
     }
-    
+
     public void createAgeTableStore() {
         makeNull();
         //System.err.println("Fill Items");

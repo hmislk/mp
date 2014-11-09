@@ -171,8 +171,12 @@ public class ReportsStock implements Serializable {
         }
         Map m = new HashMap();
         String sql;
-        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(s.itemBatch.item.code, s.itemBatch.item.name, sum(s.stock), "
-                + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow"
+                + "(s.itemBatch.item.code, "
+                + "s.itemBatch.item.name, "
+                + "sum(s.stock), "
+                + "sum(s.itemBatch.purcahseRate * s.stock), "
+                + "sum(s.itemBatch.retailsaleRate * s.stock))  "
                 + "from Stock s where s.stock>:z and s.department=:d "
                 + "group by s.itemBatch.item.name, s.itemBatch.item.code "
                 + "order by s.itemBatch.item.name";

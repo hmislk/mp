@@ -73,7 +73,7 @@
                                 <h:outputLabel value="Paying Institution : "/>
                                 <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
                                 <p:commandButton ajax="false" action="#{pharmacyDealorBill.removeAll()}" value="Remove Selected"/>
-                                
+
                             </f:facet>
 
                             <p:column selectionMode="multiple" />                                        
@@ -125,17 +125,36 @@
                         </p:dataTable>
 
                     </h:panelGrid>
-                    <p:panel  id="total" style="min-width: 100%;">
+                    <p:panel  id="total" style="min-width: 100%;" >
+                        <h:panelGrid columns="2" styleClass="alignTop">
+                            <p:panelGrid  columns="2" >
+                                <p:outputLabel value="Net Total" />
+                                <p:outputLabel  value="#{pharmacyDealorBill.current.netTotal}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
 
-                        <p:panelGrid  columns="2" >
-                            <p:outputLabel value="Net Total" />
-                            <p:outputLabel  value="#{pharmacyDealorBill.current.netTotal}">
-                                <f:convertNumber pattern="#,##0.00" />
-                            </p:outputLabel>
-
-                            <p:outputLabel value="Description"/>
-                            <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         
-                        </p:panelGrid>
+                                <p:outputLabel value="Description"/>
+                                <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         
+                            </p:panelGrid>
+                            <p:panelGrid  columns="2" >
+                                <p:outputLabel value="Total GRN Return Amount"></p:outputLabel>
+                                <p:outputLabel value="#{pharmacyDealorBill.current.tmpReturnTotal}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                                <p:outputLabel value="Total Paid Amount"></p:outputLabel>
+                                <p:outputLabel value="#{pharmacyDealorBill.current.paidAmount}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                                <p:outputLabel value="Total Recievable Amount"></p:outputLabel>
+                                <p:outputLabel value="#{0-(pharmacyDealorBill.current.netTotal+pharmacyDealorBill.current.tmpRefBill+pharmacyDealorBill.current.paidAmount)}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                                <p:outputLabel value="Total Paying Amount"></p:outputLabel>
+                                <p:outputLabel value="#{pharmacyDealorBill.payingAmount}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>                                                       
+                            </p:panelGrid>
+                        </h:panelGrid>
                     </p:panel>
                 </p:panel>
 

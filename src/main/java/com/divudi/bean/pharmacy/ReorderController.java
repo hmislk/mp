@@ -75,6 +75,7 @@ public class ReorderController implements Serializable {
     }
 
     public void createDepartmentReorders() {
+        System.out.println("create department reorders");
         items = new ArrayList<>();
         if (department == null) {
             JsfUtil.addErrorMessage("Please select a department");
@@ -96,19 +97,61 @@ public class ReorderController implements Serializable {
             r = getEjbFacade().findFirstBySQL(sql, m);
             System.out.println("r = " + r);
             if (r == null) {
+
                 r = new Reorder();
+               
                 r.setDepartment(department);
+                
+
+                r.setInstitution(institution);
+                
+
                 r.setItem(a);
+                
+
                 r.setMonthsConsideredForShortTermAnalysis(12);
+                
+
                 r.setYearsConsideredForLognTermAnalysis(5);
+                
 
-                r.setPurchaseCycleDurationInDays(calculateOrderingCycleDurationInDays(r));
-                r.setDemandInUnitsPerDay(calculateDailyDemandInUnits(r));
-                r.setLeadTimeInDays(calculateLeadTime(r));
+                r.setPerson(null);
+                
 
-                r.setRoq(calculateRoq(r));
+                r.setServiceLevel(0.0);
+                
 
-                getEjbFacade().create(r);
+                r.setSupplier(null);
+                
+
+                int cd = calculateOrderingCycleDurationInDays(r);
+                System.out.println("cd = " + cd);
+                r.setPurchaseCycleDurationInDays(cd);
+                
+
+                double dpdiu = calculateDailyDemandInUnits(r);
+                System.out.println("dpdiu = " + dpdiu);
+                r.setDemandInUnitsPerDay(dpdiu);
+                
+
+                int lt = calculateLeadTime(r);
+                System.out.println("lt = " + lt);
+                r.setLeadTimeInDays(lt);
+                
+
+                double roq = calculateRoq(r);
+                System.out.println("roq = " + roq);
+                r.setRoq(roq);
+                
+
+                double bufferStocks = dpdiu * 7;
+                System.out.println("bufferStocks = " + bufferStocks);
+                r.setBufferStocks(bufferStocks);
+                
+                
+                
+                 getEjbFacade().create(r);
+
 
             }
             items.add(r);
@@ -169,29 +212,28 @@ public class ReorderController implements Serializable {
         m.put("fd", fd);
         m.put("td", td);
         List<Object[]> obj = ejbFacade.findAggregates(jpql, m);
-        
-        if(obj==null){
+
+        if (obj == null) {
             return 7;
         }
-        
-        int count=0;
-        long differenceInMs=0l;
-        for(Object[] objc : obj){
+
+        int count = 0;
+        long differenceInMs = 0l;
+        for (Object[] objc : obj) {
             Bill b = (Bill) objc[0];
             System.out.println("b = " + b);
-            Bill rf = (Bill)objc[1];
+            Bill rf = (Bill) objc[1];
             System.out.println("rf = " + rf);
             count++;
             System.out.println("count = " + count);
             differenceInMs = differenceInMs + (rf.getCreatedAt().getTime() - b.getCreatedAt().getTime());
             System.out.println("differenceInMs = " + differenceInMs);
         }
-        
-       
+
         int avgLeadTimeInDays;
 
         try {
-            Long avgLeadTimeInMs = differenceInMs/count;
+            Long avgLeadTimeInMs = differenceInMs / count;
             avgLeadTimeInDays = (int) (avgLeadTimeInMs / (1000 * 60 * 60 * 24));
         } catch (Exception e) {
             avgLeadTimeInDays = 7;
@@ -200,6 +242,7 @@ public class ReorderController implements Serializable {
     }
 
     public double calculateDailyDemandInUnits(Reorder reorder) {
+        System.out.println("Calculate daily demand in Units - reorder = " + reorder);
         String jpql;
         Map m = new HashMap();
         DateTime dt = new DateTime();
@@ -207,26 +250,28 @@ public class ReorderController implements Serializable {
         Date fd = tfd.toDate();
         Date td = new Date();
 
-//        BillItem bi = new BillItem();
-//        bi.getQty();
-        jpql = "Select max(b.createdAt),min(b.createdAt),sum(bi.qty) "
-                + " from BillItem bi "
-                + " join bi.bill b "
-                + " where b.billType in :bts"
-                + " and bi.item=:amp "
-                + " and b.createdAt between :fd and :td "
-                + " ";
-
+     
         List<BillType> bts = new ArrayList<>();
+
+        jpql = "Select max(bi.bill.createdAt), min(bi.bill.createdAt), sum(bi.qty) "
+                + " from BillItem bi "
+                + " where bi.bill.billType in :bts "
+                + " and bi.item=:amp "
+                + " and bi.bill.createdAt between :fd and :td ";
+
         bts.add(BillType.PharmacyAdjustment);
         bts.add(BillType.PharmacyPre);
         bts.add(BillType.PharmacyBhtPre);
         bts.add(BillType.PharmacyIssue);
+        bts.add(BillType.PharmacyTransferIssue);
         m.put("bts", bts);
         m.put("amp", reorder.getItem());
         m.put("fd", fd);
         m.put("td", td);
+        System.out.println("m = " + m);
+        System.out.println("jpql = " + jpql);
         Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
+        System.out.println("obj = " + obj);
         if (obj == null) {
             return 14;
         }
@@ -235,17 +280,20 @@ public class ReorderController implements Serializable {
         Double totalQty;
 
         try {
+            System.out.println(" obj[0] = " + obj[0]);
             minDate = (Date) obj[0];
         } catch (Exception e) {
             minDate = new Date();
         }
         try {
+            System.out.println(" obj[1] = " + obj[1]);
             maxDate = (Date) obj[1];
         } catch (Exception e) {
             maxDate = new Date();
         }
         try {
-            totalQty = (Double) obj[2];
+            System.out.println(" obj[2] = " + obj[2]);
+            totalQty = Math.abs((Double) obj[2]);
         } catch (Exception e) {
             totalQty = 0.0;
         }
@@ -255,7 +303,23 @@ public class ReorderController implements Serializable {
         Days daysDiff = Days.daysBetween(mind, maxd);
 
         int ds = daysDiff.getDays();
-        return (totalQty / ds);
+        System.out.println("ds = " + ds);
+        System.out.println("totalQty = " + totalQty);
+       
+        double dailyDemand = 0;
+        if(ds==0){
+            ds=1;
+        }
+        try {
+            dailyDemand = totalQty / ds;
+        } catch (Exception e) {
+            dailyDemand = 1.0;
+        }
+        if (dailyDemand == 0.0) {
+            dailyDemand = 1.0;
+        }
+        System.out.println("dailyDemand = " + dailyDemand);
+        return dailyDemand;
     }
 
     public int calculateOrderingCycleDurationInDays(Reorder reorder) {
@@ -269,17 +333,17 @@ public class ReorderController implements Serializable {
         Date fd = tfd.toDate();
         Date td = new Date();
 
-        jpql = "Select max(b.createdAt),min(b.createdAt),count(b) "
+        jpql = "Select max(bi.bill.createdAt),min(bi.bill.createdAt),count(bi) "
                 + " from BillItem bi "
-                + " join bi.bill b "
-                + " where b.billType in :bts"
+                + " where bi.bill.billType in :bts"
                 + " and bi.item=:amp "
-                + " and b.createdAt between :fd and :td "
-                + " ";
+                + " and bi.bill.createdAt between :fd and :td "
+                + " group by bi.bill";
 
         List<BillType> bts = new ArrayList<>();
         bts.add(BillType.PharmacyPurchaseBill);
         bts.add(BillType.PharmacyGrnBill);
+        
         m.put("bts", bts);
         m.put("amp", reorder.getItem());
         m.put("fd", fd);
@@ -287,11 +351,11 @@ public class ReorderController implements Serializable {
 
         System.out.println("jpql = " + jpql);
         System.out.println("m = " + m);
-        
+
         Object[] obj = ejbFacade.findSingleAggregate(jpql, m);
-        
+
         System.out.println("obj = " + obj);
-        
+
         if (obj == null) {
             return 14;
         }
@@ -300,16 +364,19 @@ public class ReorderController implements Serializable {
         int count;
 
         try {
+            System.out.println(" obj[0] = " + obj[0]);
             minDate = (Date) obj[0];
         } catch (Exception e) {
             minDate = new Date();
         }
         try {
+            System.out.println(" obj[1] = " + obj[1]);
             maxDate = (Date) obj[1];
         } catch (Exception e) {
             maxDate = new Date();
         }
         try {
+            System.out.println(" obj[2] = " + obj[2]);
             count = (int) obj[2];
         } catch (Exception e) {
             count = 1;
@@ -321,10 +388,11 @@ public class ReorderController implements Serializable {
         DateTime mind = new DateTime(minDate);
         DateTime maxd = new DateTime(maxDate);
 
-        Days daysDiff = Days.daysBetween(mind, maxd);
+        Days daysDiff = Days.daysBetween(maxd, mind);
 
         int ds = daysDiff.getDays();
-
+        System.out.println("ds = " + ds);
+        System.out.println("count = " + count);
         return (int) (ds / count);
 
     }

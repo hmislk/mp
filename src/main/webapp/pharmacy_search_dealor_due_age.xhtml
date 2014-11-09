@@ -38,6 +38,27 @@
                              </h:outputLabel>
                         </p:column>                      
                     </p:dataTable>
+                    <p:panel>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="0 - 30 Catagory" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.value1}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                            <p:outputLabel value="30 - 60 Catagory" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.value2}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                            <p:outputLabel value="60 - 90 Catagory" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.value3}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                            <p:outputLabel value="90+ Catagory" ></p:outputLabel>
+                            <p:outputLabel value="#{dealorDueController.value4}" style="text-align: right;">
+                                <f:convertNumber pattern="###,###.00" />
+                            </p:outputLabel>
+                            
+                        </p:panelGrid>
+                    </p:panel>
                 </h:form>
             </ui:define>
 

@@ -114,7 +114,7 @@
                                 <h:outputLabel value="Cash"/>
                             </f:facet> 
                             <h:outputLabel rendered="#{b.paymentMethod=='Cash'}" value="#{b.netTotal}" >
-                                <f:convertNumber pattern="#,000.00"/>
+                                <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
                             <h:outputLabel rendered="#{b.paymentMethod!='Cash'}" value="0.00" />
                         </p:column>
@@ -124,7 +124,7 @@
                                 <h:outputLabel value="Credit"/>
                             </f:facet> 
                             <h:outputLabel rendered="#{b.paymentMethod=='Credit'}" value="#{b.netTotal}"  >
-                                <f:convertNumber pattern="#,000.00"/>
+                                <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
                             <h:outputLabel rendered="#{b.paymentMethod!='Credit'}" value="0.00"/>
                         </p:column>
@@ -142,7 +142,7 @@
                                 <p:column style="text-align: right;" footerText="#{commonReport.purchaseBilled.cash}">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{commonReport.purchaseBilled.cash}">
-                                            <f:convertNumber pattern="#,000.00"/>
+                                            <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
@@ -150,7 +150,7 @@
                                 <p:column style="text-align: right;" footerText="#{commonReport.purchaseBilled.credit}">
                                     <f:facet name="footer">
                                         <h:outputLabel value="#{commonReport.purchaseBilled.credit}">
-                                            <f:convertNumber pattern="#,000.00"/>
+                                            <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>  

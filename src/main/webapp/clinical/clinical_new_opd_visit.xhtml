@@ -38,7 +38,7 @@
                                 <p:inputTextarea id="txtComments" style="width: 90%;" value="#{patientEncounterController.current.comments}" >
                                     <f:ajax event="blur" execute="@this" listener="#{patientEncounterController.saveSelected()}" ></f:ajax>
                                 </p:inputTextarea>
-                                <p:watermark forElement="txtComments" value="Write comments here." ></p:watermark>
+                                <p:watermark for="txtComments" value="Write comments here." ></p:watermark>
                             </h:form>
 
                             <p:panel header="Diagnosis" styleClass="alignTop" >

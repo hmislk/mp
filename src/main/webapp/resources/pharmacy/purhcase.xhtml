@@ -135,9 +135,9 @@
                         </p:row>
                         <p:row rendered="#{cc.attrs.bill.discount!=0}">
                             <p:column colspan="9" footerText="Discount"/>
-                            <p:column footerText="#{0-cc.attrs.bill.discount}">
+                            <p:column footerText="#{cc.attrs.bill.discount}">
                                 <f:facet name="footer">
-                                    <h:outputLabel value="#{0-cc.attrs.bill.discount}">
+                                    <h:outputLabel value="#{cc.attrs.bill.discount}">
                                         <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </f:facet>

@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+    <ui:define name="content">
+
+        <h:panelGroup rendered="true" >
+            <h:form>
+                <p:panel id="reportPrint" styleClass="noBorder summeryBorder" header="Approximate Gross Profit by Bills">
+
+                    <p:defaultCommand target="btnRefresh"/>
+
+                    
+                        <h:outputLabel value="From Date"/>
+                        <p:calendar id="frmDate" value="#{commonReportSession.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
+                        </p:calendar>
+
+                        <h:outputLabel value="To Date"/>
+                        <p:calendar id="toDate" value="#{commonReportSession.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
+                        </p:calendar>
+
+                        <h:outputLabel  value="Department"  ></h:outputLabel>
+                        <p:autoComplete  value="#{commonReportSession.department}"  
+                                         completeMethod="#{departmentController.completeDept}" var="dept"
+                                         itemValue="#{dept}" itemLabel="#{dept.name}" 
+                                          >
+                        </p:autoComplete>
+
+
+
+                        <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
+                                         styleClass="noPrintButton" 
+                                         action="#{commonReportSession.listProfitBillsDailySummery()}"/>  
+
+                        <p:commandButton ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                            <pe:exporter type="xlsx" target="tblBills" fileName="Approximate Bill-vice Gross Profit Report #{commonReportSession.department.name}"  />
+                        </p:commandButton>
+
+                        <p:commandButton ajax="false" value="Print" styleClass="noPrintButton" >
+                            <p:printer target="tblBills"/>
+                        </p:commandButton>  
+                    
+
+
+
+
+
+                    <p:dataTable id="tblBills"  
+                                 value="#{commonReportSession.dailySummeryRows}" var="b"
+                                 paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50"
+                                 rows="10"
+                                 rowIndexVar="ri">
+
+                        <f:facet name="header">
+                            <h:outputLabel value="Approximate Item-vice Gross Profit"/>
+                        </f:facet>
+
+                        <p:column headerText="Date/Time"  sortBy="#{b.summeryDate}" >
+                            <f:facet name="header">
+                                <h:outputLabel value="Date/Time"/>
+                            </f:facet>
+                            <h:outputLabel  id="BilledAt" value="#{b.summeryDate}" >
+                                <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
+                            </h:outputLabel>
+                        </p:column>
+                        
+                        <p:column headerText="Gross Total"  sortBy="#{b.grossTotal}"
+                                  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Gross Total"/>
+                            </f:facet>
+                             <h:outputLabel value="#{b.grossTotal}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Discount"  sortBy="#{b.discounts}"
+                                  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Discount"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.discounts}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Free Offer" 
+                                  sortBy="#{b.freeAmounts}"  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Free Offers"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.freeAmounts}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+
+
+                        <p:column headerText="Discount + Free Offer"  sortBy="#{b.discounts + b.freeAmounts}"
+                                  style="text-align: right;">
+                            <h:outputLabel value="#{b.discounts + b.freeAmounts}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Net Total"  sortBy="#{b.profit}"  style="text-align: right;">
+                            <f:facet name="header">
+                                <h:outputLabel value="Profite Value"/>
+                            </f:facet>
+                            <h:outputLabel value="#{b.profit}"  >
+                                <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                            </h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Actions"  >
+                            <p:commandButton ajax="false" value="View All Bills" action="#{commonReportSession.listProfitBills()}">
+                                <f:setPropertyActionListener value="#{b.summeryDate}" target="#{commonReportSession.billDate}" ></f:setPropertyActionListener>
+                            </p:commandButton>
+                        </p:column>
+
+
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column  >
+                                    <f:facet name="footer">
+                                        <h:outputLabel value="Total" />
+                                    </f:facet>
+                                </p:column>
+                                
+                                 <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.grossTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.discountTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.freeTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.discountTotal + commonReportSession.freeTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+
+                                <p:column style="text-align: right;" >
+                                    <f:facet name="footer" >
+                                        <h:outputLabel value="#{commonReportSession.profitTotal}" >
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+
+                            </p:row>
+                        </p:columnGroup>
+
+                    </p:dataTable>
+
+
+                </p:panel>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+
+</ui:composition>

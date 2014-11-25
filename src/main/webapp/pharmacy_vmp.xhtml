@@ -10,7 +10,7 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="Manage VMPs" >
-                <p:panelGrid columns="2" style="min-width: 100%;" >
+                <h:panelGrid columns="2" style="min-width: 100%;" styleClass="alignTop" >
                     <p:panel header="List of VMPs" >
                         <h:inputText  value="#{vmpController.selectText}" >
                             <f:ajax execute="@this" render="lstSelect" event="keyup" />
@@ -31,57 +31,73 @@
                         </p:panelGrid>
                     </p:panel>
                     <p:panel id="gpDetail" header="Details of VMP" >
-                        <p:panelGrid columns="2" >
+                        <p:panel header="Item Details" >
 
-                            <h:outputLabel value="Select Generic Name" ></h:outputLabel>
-                            <p:autoComplete converter="vtm" value="#{vmpController.addingVtmInVmp.vtm}" 
-                                            forceSelection="true"
-                                            completeMethod="#{vtmController.completeVtm}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
-                            </p:autoComplete>
-                            <h:outputLabel value="Strength" >
-                            </h:outputLabel>
-                            <h:panelGroup >
-                                <p:inputText value="#{vmpController.addingVtmInVmp.strength}" ></p:inputText>
-                                <p:selectOneMenu value="#{vmpController.addingVtmInVmp.strengthUnit}">
-                                    <f:selectItems value="#{measurementUnitController.items}" var="m" itemValue="#{m}" itemLabel="#{m.name}"/>
-                                </p:selectOneMenu>                          
-                            </h:panelGroup>
-                            <h:outputLabel value="Type" ></h:outputLabel>
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel value="Name" ></h:outputLabel>
+                                <p:inputText value="#{vmpController.current.name}" style="width: 500px;" ></p:inputText>
+                                <h:outputLabel value="Type" ></h:outputLabel>
 
-                            <p:selectOneMenu value="#{vmpController.current.category}">
-                                <f:selectItems value="#{pharmaceuticalItemTypeController.items}" var="cat" itemValue="#{cat}" itemLabel="#{cat.name}"/>
-                            </p:selectOneMenu>
+                                <p:selectOneMenu value="#{vmpController.current.category}">
+                                    <f:selectItems value="#{pharmaceuticalItemTypeController.items}" var="cat" itemValue="#{cat}" itemLabel="#{cat.name}"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
 
-                            <h:outputLabel value="Name" ></h:outputLabel>
-                            <p:inputText value="#{vmpController.current.name}" ></p:inputText>
+                        </p:panel>
 
-                            <h:outputLabel value=""></h:outputLabel>
-                            <p:commandButton value="Add" ajax="false" action="#{vmpController.addVtmInVmp()}" >
-                            </p:commandButton>
+                        <p:panel header="Item Contents" >
+                            <f:facet name="header" >
+                                <h:panelGrid  columns="10">
+                                    <h:outputLabel value="Item Contents" ></h:outputLabel>
+                                    <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" ></h:outputLabel>
+                                    <p:autoComplete id="acGeneric" converter="vtm" value="#{vmpController.addingVtmInVmp.vtm}" 
+                                                    forceSelection="true"
+                                                    completeMethod="#{vtmController.completeVtm}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
+                                    </p:autoComplete>
+                                    <p:inputText id="txtStrength" value="#{vmpController.addingVtmInVmp.strength}" ></p:inputText>
+                                    <p:selectOneMenu value="#{vmpController.addingVtmInVmp.strengthUnit}">
+                                        <f:selectItem itemLabel="Strength Unit" ></f:selectItem>
+                                        <f:selectItems value="#{measurementUnitController.items}" var="m" itemValue="#{m}" itemLabel="#{m.name}"/>
+                                    </p:selectOneMenu>                          
+                                    <p:commandButton value="Add" ajax="false" action="#{vmpController.addVtmInVmp()}" >
+                                    </p:commandButton>
+                                    <p:watermark for="acGeneric" value="Generic Name" ></p:watermark>
+                                    <p:watermark for="txtStrength" value="Strength Value" ></p:watermark>
+                                </h:panelGrid>
+                                
+                            </f:facet>
+                            <p:panelGrid columns="2" >
+                                <h:outputLabel value="Select Generic Name" ></h:outputLabel>
+                                <h:outputLabel value="Strength" >
+                                </h:outputLabel>
+                                <h:panelGroup >
 
-                        </p:panelGrid>
+                                </h:panelGroup>
+                            </p:panelGrid>
 
-                        <p:dataTable id="viv" value="#{vmpController.vivs}" var="v" >
+                            <p:dataTable id="viv" value="#{vmpController.vivs}" var="v" >
 
-                            <p:column headerText="VTM">
-                                #{v.vtm.name}
-                            </p:column>
-                            <p:column headerText="Strength">
-                                #{v.strength} #{v.strengthUnit.name}
-                            </p:column>
-                            <p:column headerText="Remove">
+                                <p:column headerText="VTM">
+                                    #{v.vtm.name}
+                                </p:column>
+                                <p:column headerText="Strength">
+                                    #{v.strength} &nbsp; #{v.strengthUnit.name}
+                                </p:column>
+                                <p:column headerText="Remove">
 
-                                <p:commandButton value="Remove" ajax="false"  action="#{vmpController.remove}">
-                                    <f:setPropertyActionListener value="#{v}" target="#{vmpController.removingVtmInVmp}"/>
-                                </p:commandButton>
-                            </p:column>
-                        </p:dataTable>
+                                    <p:commandButton value="Remove" ajax="false"  action="#{vmpController.remove}">
+                                        <f:setPropertyActionListener value="#{v}" target="#{vmpController.removingVtmInVmp}"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+
 
                         <p:commandButton  action="#{vmpController.saveSelected()}"  ajax="false" value="Save" ></p:commandButton>
 
                     </p:panel>
 
-                </p:panelGrid>
+                </h:panelGrid>
 
             </p:panel>
         </h:form>

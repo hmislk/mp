@@ -74,15 +74,15 @@ public class PurchaseOrderController implements Serializable {
     private LazyDataModel<Bill> searchBills;
 
     public void removeSelected() {
-        //  //System.err.println("1");
+        //  ////System.err.println("1");
         if (selectedItems == null) {
-            //   //System.err.println("2");
+            //   ////System.err.println("2");
             return;
         }
 
-        //System.err.println("3");
+        ////System.err.println("3");
         for (BillItem b : selectedItems) {
-            //  //System.err.println("4");
+            //  ////System.err.println("4");
             getBillItems().remove(b.getSearialNo());
             calTotal();
         }

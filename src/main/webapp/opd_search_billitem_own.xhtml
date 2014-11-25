@@ -112,7 +112,7 @@
                             <p:column headerText="Gross Value"   >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.total}" >
-                                        <f:convertNumber pattern="#,000.00"/>
+                                        <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
@@ -120,7 +120,7 @@
                             <p:column headerText="Discount"   >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.discount}" >
-                                        <f:convertNumber pattern="#,000.00"/>
+                                        <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>
@@ -128,7 +128,7 @@
                             <p:column headerText="Net Value"  >
                                 <h:commandLink action="bill_reprint" >
                                     <h:outputLabel value="#{pi.bill.netTotal}" >
-                                        <f:convertNumber pattern="#,000.00"/>
+                                        <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{pi.bill}" target="#{billSearch.bill}"/>
                                 </h:commandLink>

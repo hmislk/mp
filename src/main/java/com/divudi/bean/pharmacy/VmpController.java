@@ -11,8 +11,10 @@ package com.divudi.bean.pharmacy;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.ejb.BillBean;
+import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Vmp;
 import com.divudi.entity.pharmacy.VtmsVmps;
+import com.divudi.facade.AmpFacade;
 import com.divudi.facade.SpecialityFacade;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VtmsVmpsFacade;
@@ -20,9 +22,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -35,7 +39,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -70,7 +74,7 @@ public class VmpController implements Serializable {
             suggestions = new ArrayList<Vmp>();
         } else {
             sql = "select c from Vmp c where c.retired=false and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-            //System.out.println(sql);
+            ////System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -108,7 +112,7 @@ public class VmpController implements Serializable {
             return true;
         }
 //        TODO:Message
-        if (current == null) {            
+        if (current == null) {
             return true;
         }
         if (addingVtmInVmp.getStrength() == 0.0) {
@@ -135,14 +139,10 @@ public class VmpController implements Serializable {
         saveVmp();
         getAddingVtmInVmp().setVmp(current);
         getVivFacade().create(getAddingVtmInVmp());
-        
+
         UtilityController.addSuccessMessage("Added");
 
         addingVtmInVmp = null;
-
-
-
-
 
     }
 
@@ -197,7 +197,7 @@ public class VmpController implements Serializable {
             suggestions = new ArrayList<Vmp>();
         } else {
             sql = "select c from Vmp c where c.retired=false and upper(c.name) like '%" + query.toUpperCase() + "%' order by c.name";
-            //System.out.println(sql);
+            ////System.out.println(sql);
             suggestions = getFacade().findBySQL(sql);
         }
         return suggestions;
@@ -262,15 +262,12 @@ public class VmpController implements Serializable {
                 String ix = w.get(1);
                 String ic = w.get(2);
                 String f = w.get(4);
-                //System.out.println(code + " " + ix + " " + ic + " " + f);
-
+                ////System.out.println(code + " " + ix + " " + ic + " " + f);
 
                 Vmp tix = new Vmp();
                 tix.setCode(code);
                 tix.setName(ix);
                 tix.setDepartment(null);
-
-
 
             } catch (Exception e) {
             }
@@ -378,6 +375,62 @@ public class VmpController implements Serializable {
 
     public void setSpecialityFacade(SpecialityFacade specialityFacade) {
         this.specialityFacade = specialityFacade;
+    }
+
+    @EJB
+    AmpFacade ampFacade;
+
+    public void fixVmps() {
+        List<Vmp> vmps1;
+        List<Vmp> vmps2;
+        String jpql;
+        Map m;
+        jpql = "select v from Vmp v where v.retired=false";
+        vmps1 = getFacade().findBySQL(jpql);
+
+        for (Vmp v1 : vmps1) {
+            if (!v1.getName().contains("Tablet")) {
+                v1.setName(v1.getName().replace(" Tab", " Tablet"));
+            }
+            if (!v1.getName().contains("Capsule")) {
+                v1.setName(v1.getName().replace(" Cap", " Capsule"));
+            }
+            getFacade().edit(v1);
+            
+            System.out.println("Considering v1 = " + v1.getName());
+            jpql = "select v from Vmp v where v.retired=false and upper(v.name)=:name";
+            m = new HashMap();
+            m.put("name", v1.getName().toUpperCase());
+            vmps2 = getFacade().findBySQL(jpql, m);
+            Vmp v3 = getFacade().find(v1.getId());
+
+            for (Vmp v2 : vmps2) {
+
+                if (!v3.isRetired()) {
+
+                    if (v1.getName().equalsIgnoreCase(v2.getName())) {
+                        if (!v1.equals(v2)) {
+                            v2.setRetired(true);
+                            v2.setRetiredAt(new Date());
+                            v2.setRetirer(getSessionController().getLoggedUser());
+                            v2.setRetireComments("fixVmps");
+                            getFacade().edit(v2);
+                            System.out.println("v2 retired = " + v2.getName());
+                            jpql = "select a from Amp a where a.retired=false and a.vmp=:vmp";
+                            m = new HashMap();
+                            m.put("vmp", v2);
+                            List<Amp> amps = ampFacade.findBySQL(jpql, m);
+                            for (Amp a : amps) {
+                                a.setVmp(v1);
+                                ampFacade.edit(a);
+                                System.out.println("amp updates = " + a.getName());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     /**

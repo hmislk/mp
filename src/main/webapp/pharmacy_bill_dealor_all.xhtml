@@ -73,7 +73,7 @@
                                 <h:outputLabel value="Paying Institution : "/>
                                 <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
                                 <p:commandButton ajax="false" action="#{pharmacyDealorBill.removeAll()}" value="Remove Selected"/>
-                                
+
                             </f:facet>
 
                             <p:column selectionMode="multiple" />                                        
@@ -91,29 +91,29 @@
                             </p:column> 
                             <p:column headerText="GRN Amount">
                                 <p:outputLabel value="#{b.referenceBill.netTotal}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="GRN Return Amount">
                                 <p:outputLabel value="#{b.referenceBill.tmpReturnTotal}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Paid Amount">
                                 <p:outputLabel value="#{b.referenceBill.paidAmount}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Recievable Amount">
                                 <p:outputLabel value="#{(b.referenceBill.netTotal+
                                                         b.referenceBill.tmpReturnTotal+
                                                         b.referenceBill.paidAmount)}">
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Paying Amount">
                                 <p:inputText value="#{b.netValue}">    
-                                    <f:convertNumber pattern="#,000.00" />
+                                    <f:convertNumber pattern="#,##0.00" />
                                     <f:ajax event="blur" execute="@this" render="@all" listener="#{pharmacyDealorBill.changeNetValueListener(b)}"/>
                                 </p:inputText>
                             </p:column>
@@ -125,17 +125,36 @@
                         </p:dataTable>
 
                     </h:panelGrid>
-                    <p:panel  id="total" style="min-width: 100%;">
+                    <p:panel  id="total" style="min-width: 100%;" >
+                        <h:panelGrid columns="2" styleClass="alignTop">
+                            <p:panelGrid  columns="2" >
+                                <p:outputLabel value="Net Total" />
+                                <p:outputLabel  value="#{pharmacyDealorBill.current.netTotal}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
 
-                        <p:panelGrid  columns="2" >
-                            <p:outputLabel value="Net Total" />
-                            <p:outputLabel  value="#{pharmacyDealorBill.current.netTotal}">
-                                <f:convertNumber pattern="#,000.00" />
-                            </p:outputLabel>
-
-                            <p:outputLabel value="Description"/>
-                            <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         
-                        </p:panelGrid>
+                                <p:outputLabel value="Description"/>
+                                <p:inputTextarea value="#{pharmacyDealorBill.current.comments}"/>                                                         
+                            </p:panelGrid>
+                            <p:panelGrid  columns="2" >
+                                <p:outputLabel value="Total GRN Return Amount"></p:outputLabel>
+                                <p:outputLabel value="#{pharmacyDealorBill.current.tmpReturnTotal}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                                <p:outputLabel value="Total Paid Amount"></p:outputLabel>
+                                <p:outputLabel value="#{pharmacyDealorBill.current.paidAmount}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                                <p:outputLabel value="Total Recievable Amount"></p:outputLabel>
+                                <p:outputLabel value="#{0-(pharmacyDealorBill.current.netTotal+pharmacyDealorBill.current.tmpRefBill+pharmacyDealorBill.current.paidAmount)}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>
+                                <p:outputLabel value="Total Paying Amount"></p:outputLabel>
+                                <p:outputLabel value="#{pharmacyDealorBill.payingAmount}">
+                                    <f:convertNumber pattern="#,000.00" />
+                                </p:outputLabel>                                                       
+                            </p:panelGrid>
+                        </h:panelGrid>
                     </p:panel>
                 </p:panel>
 

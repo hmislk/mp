@@ -23,23 +23,34 @@ public class PharmacyStockRow {
     public PharmacyStockRow() {
     }
 
-    public PharmacyStockRow(String name, Double qty, Double purchaseValue, Double saleValue) {
-        this.name = name;
+    public PharmacyStockRow(Item item, Double qty, Double purchaseValue, Double saleValue) {
         this.qty = qty;
         this.purchaseValue = purchaseValue;
         this.saleValue = saleValue;
+        this.item = item;
+        
+
     }
 
-    
-    
     public PharmacyStockRow(String code, String name, Double qty, Double purchaseValue, Double saleValue) {
         this.code = code;
         this.name = name;
         this.qty = qty;
         this.purchaseValue = purchaseValue;
         this.saleValue = saleValue;
+        String sql;
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow"
+                + "(s.itemBatch.item.code, "
+                + "s.itemBatch.item.name, "
+                + "sum(s.stock), "
+                + "sum(s.itemBatch.purcahseRate * s.stock), "
+                + "sum(s.itemBatch.retailsaleRate * s.stock))  "
+                + "from Stock s where s.stock>:z and s.department=:d "
+                + "group by s.itemBatch.item.name, s.itemBatch.item.code "
+                + "order by s.itemBatch.item.name";
     }
 
+    
     
     
     public String getCode() {
@@ -89,14 +100,5 @@ public class PharmacyStockRow {
     public void setItem(Item item) {
         this.item = item;
     }
-
-    public PharmacyStockRow(Item item, Double qty, Double purchaseValue, Double saleValue) {
-        this.qty = qty;
-        this.purchaseValue = purchaseValue;
-        this.saleValue = saleValue;
-        this.item = item;
-    }
-
-    
 
 }

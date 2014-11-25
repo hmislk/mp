@@ -67,6 +67,15 @@ public class ReportsStock implements Serializable {
     Date toDate;
     Date fromDateE;
     Date toDateE;
+    Vmp vmp;
+
+    public Vmp getVmp() {
+        return vmp;
+    }
+
+    public void setVmp(Vmp vmp) {
+        this.vmp = vmp;
+    }
 
     /**
      * Managed Beans
@@ -106,15 +115,16 @@ public class ReportsStock implements Serializable {
     }
 
     public void fillDepartmentNonEmptyStocks() {
-        if (department == null) {
-            UtilityController.addErrorMessage("Please select a department");
-            return;
-        }
         Map m = new HashMap();
         String sql;
-        sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
-        m.put("d", department);
-        m.put("z", 0.0);
+        if (department == null) {
+            sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+            m.put("d", department);
+            m.put("z", 0.0);
+        } else {
+            sql = "select s from Stock s where s.stock>:z order by s.itemBatch.item.name";
+            m.put("z", 0.0);
+        }
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
@@ -124,6 +134,36 @@ public class ReportsStock implements Serializable {
         }
     }
 
+    public String fillDepartmentNonEmptyStocksByVmp() {
+
+        Map m = new HashMap();
+        String sql;
+
+        if (department == null) {
+            sql = "select s from Stock s join TREAT(s.itemBatch.item as Amp) amp "
+                    + "where s.stock>:z and amp.vmp=:vmp "
+                    + "order by s.itemBatch.item.name";
+            m.put("z", 0.0);
+            m.put("vmp", vmp);
+        } else {
+            sql = "select s from Stock s join TREAT(s.itemBatch.item as Amp) amp "
+                    + "where s.stock>:z and s.department=:d and amp.vmp=:vmp "
+                    + "order by s.itemBatch.item.name";
+            m.put("d", department);
+            m.put("z", 0.0);
+            m.put("vmp", vmp);
+        }
+        //System.err.println("");
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+        for (Stock ts : stocks) {
+            stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
+            stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
+        }
+        return "pharmacy_report_department_stock_by_single_product";
+    }
+
     public void fillDepartmentNonEmptyItemStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
@@ -131,8 +171,12 @@ public class ReportsStock implements Serializable {
         }
         Map m = new HashMap();
         String sql;
-        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(s.itemBatch.item.code, s.itemBatch.item.name, sum(s.stock), "
-                + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow"
+                + "(s.itemBatch.item.code, "
+                + "s.itemBatch.item.name, "
+                + "sum(s.stock), "
+                + "sum(s.itemBatch.purcahseRate * s.stock), "
+                + "sum(s.itemBatch.retailsaleRate * s.stock))  "
                 + "from Stock s where s.stock>:z and s.department=:d "
                 + "group by s.itemBatch.item.name, s.itemBatch.item.code "
                 + "order by s.itemBatch.item.name";
@@ -150,36 +194,36 @@ public class ReportsStock implements Serializable {
     }
 
     public void fillDepartmentNonEmptyProductStocks() {
-        if (department == null) {
-            UtilityController.addErrorMessage("Please select a department");
-            return;
-        }
+
         Map m = new HashMap();
         String sql;
-        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(s.itemBatch.item.code, s.itemBatch.item.name, sum(s.stock), "
-                + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
-                + "from Stock s where s.stock>:z and s.department=:d "
-                + "group by s.itemBatch.item.name, s.itemBatch.item.code "
-                + "order by s.itemBatch.item.name";
-        m.put("d", department);
-        m.put("z", 0.0);
+        if (department == null) {
+            sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(vmp, sum(s.stock), "
+                    + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+                    + "from Stock s join s.itemBatch.item as amp join amp.vmp as vmp "
+                    + "where s.stock>:z  "
+                    + "group by vmp, vmp.name "
+                    + "order by vmp.name";
+            m.put("z", 0.0);
+        } else {
+            sql = "select new com.divudi.data.dataStructure.PharmacyStockRow(vmp, sum(s.stock), "
+                    + "sum(s.itemBatch.purcahseRate * s.stock), sum(s.itemBatch.retailsaleRate * s.stock))  "
+                    + "from Stock s join s.itemBatch.item as amp join amp.vmp as vmp "
+                    + "where s.stock>:z and s.department=:d "
+                    + "group by vmp, vmp.name "
+                    + "order by vmp.name";
+            m.put("d", department);
+            m.put("z", 0.0);
+        }
+//        //System.out.println("sql = " + sql);
+//        //System.out.println("m = " + m);
+//        //System.out.println("getStockFacade().findObjects(sql, m) = " + getStockFacade().findObjects(sql, m));
         List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
         stockPurchaseValue = 0.0;
-        stockSaleValue += 0.0;
-        Map<String, PharmacyStockRow> vmps = new HashMap<>();
+        stockSaleValue = 0.0;
         for (PharmacyStockRow r : lsts) {
             stockPurchaseValue += r.getPurchaseValue();
             stockSaleValue += r.getSaleValue();
-            if (r.getItem() instanceof Amp) {
-                Amp a = (Amp) r.getItem();
-                Double d;
-                String s = a.getVmp().getName();
-                PharmacyStockRow vr = vmps.get(s);
-                
-            } else {
-
-            }
-
         }
         pharmacyStockRows = lsts;
     }
@@ -253,17 +297,17 @@ public class ReportsStock implements Serializable {
         List<PharmaceuticalBillItem> list = getPharmaceuticalBillItemFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         for (PharmaceuticalBillItem b : list) {
-            System.err.println("Item Name " + b.getBillItem().getItem().getName());
-            System.err.println("History Id " + b.getStockHistory().getId());
-            System.err.println("Stock History " + b.getStockHistory().getStockQty());
-            System.err.println("Department " + b.getBillItem().getBill().getDepartment().getName());
+            //System.err.println("Item Name " + b.getBillItem().getItem().getName());
+            //System.err.println("History Id " + b.getStockHistory().getId());
+            //System.err.println("Stock History " + b.getStockHistory().getStockQty());
+            //System.err.println("Department " + b.getBillItem().getBill().getDepartment().getName());
             StockHistory sh = getPreviousStockHistoryByBatch(b.getItemBatch(), b.getBillItem().getBill().getDepartment(), b.getBillItem().getCreatedAt());
             PharmaceuticalBillItem phi = getPreviousPharmacuticalBillByBatch(b.getStock().getItemBatch(), b.getBillItem().getBill().getDepartment(), b.getBillItem().getCreatedAt());
 
             double calculatedStk = 0;
             boolean flg = false;
             if (sh != null) {
-                System.out.println("Previuos Stock " + sh.getStockQty());
+                //System.out.println("Previuos Stock " + sh.getStockQty());
                 calculatedStk = (sh.getStockQty() + sh.getPbItem().getQtyInUnit() + sh.getPbItem().getFreeQtyInUnit());
                 flg = true;
             } else if (phi != null) {
@@ -271,14 +315,14 @@ public class ReportsStock implements Serializable {
                 flg = true;
             }
 
-            System.out.println("calculated History Qty " + calculatedStk);
+            //System.out.println("calculated History Qty " + calculatedStk);
 
             if (flg == true && b.getStockHistory().getStockQty() != calculatedStk) {
                 stockSet.add(b.getStock());
-                System.out.println("TRUE");
+                //System.out.println("TRUE");
             }
 
-            System.out.println("#########");
+            //System.out.println("#########");
 
         }
 
@@ -374,21 +418,21 @@ public class ReportsStock implements Serializable {
                 }
 
                 if (calcualtedQty != curHistory) {
-                    System.err.println("Itm " + ph.getBillItem().getItem().getName());
-                    System.err.println("Prv History Qty " + preHistoryQty);
-                    System.err.println("Prv Qty " + previousPh.getQtyInUnit());
-                    System.err.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
-                    System.err.println("History " + curHistory);
-                    System.err.println("######");
+                    //System.err.println("Itm " + ph.getBillItem().getItem().getName());
+                    //System.err.println("Prv History Qty " + preHistoryQty);
+                    //System.err.println("Prv Qty " + previousPh.getQtyInUnit());
+                    //System.err.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
+                    //System.err.println("History " + curHistory);
+                    //System.err.println("######");
                     st.setCalculated(calculatedStock);
                     tmpStockList.add(st);
                 } else {
-                    System.out.println("Itm " + ph.getBillItem().getItem().getName());
-                    System.out.println("Prv History Qty " + preHistoryQty);
-                    System.out.println("Prv Qty " + previousPh.getQtyInUnit());
-                    System.out.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
-                    System.out.println("History " + curHistory);
-                    System.out.println("######");
+                    //System.out.println("Itm " + ph.getBillItem().getItem().getName());
+                    //System.out.println("Prv History Qty " + preHistoryQty);
+                    //System.out.println("Prv Qty " + previousPh.getQtyInUnit());
+                    //System.out.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
+                    //System.out.println("History " + curHistory);
+                    //System.out.println("######");
                 }
 
                 previousPh = ph;
@@ -528,7 +572,7 @@ public class ReportsStock implements Serializable {
         records = new ArrayList<>();
         List<Institution> dealers = getDealerController().getItems();
         for (Institution i : dealers) {
-            //System.out.println("i = " + i);
+            ////System.out.println("i = " + i);
             m = new HashMap();
             m.put("ins", i);
             sql = "select sum(s.stock),sum(s.stock * s.itemBatch.purcahseRate),sum(s.stock * s.itemBatch.retailsaleRate)"
@@ -536,7 +580,7 @@ public class ReportsStock implements Serializable {
             Object[] objs = getStockFacade().findSingleAggregate(sql, m);
             if (objs[0] != null && (Double) objs[0] > 0) {
                 StockReportRecord r = new StockReportRecord();
-                //System.out.println("objs = " + objs);
+                ////System.out.println("objs = " + objs);
                 r.setInstitution(i);
                 r.setQty((Double) objs[0]);
                 r.setPurchaseValue((Double) objs[1]);

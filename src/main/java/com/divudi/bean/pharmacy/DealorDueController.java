@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -51,6 +52,18 @@ public class DealorDueController implements Serializable {
     @EJB
     private CreditBean creditBean;
 
+    double grantTotal;
+    double billCount;
+    double billedAmount;
+    double returnedAmount;
+    double paidAmount;
+    
+    double value1;
+    double value2;
+    double value3;
+    double value4;
+    double GrandDealorAge;
+    
     public void makeNull() {
         fromDate = null;
         toDate = null;
@@ -87,7 +100,7 @@ public class DealorDueController implements Serializable {
     private void setValues(Institution inst, String1Value5 dataTable5Value) {
 
         List<Bill> lst = getCreditBean().getBills(inst);
-        System.err.println("Institution Ins " + inst.getName());
+        //System.err.println("Institution Ins " + inst.getName());
         for (Bill b : lst) {
             double rt = getCreditBean().getGrnReturnValue(b);
 
@@ -98,12 +111,11 @@ public class DealorDueController implements Serializable {
 
             double finalValue = (b.getNetTotal() + b.getPaidAmount() + b.getTmpReturnTotal());
 
-            System.err.println("DayCount " + dayCount);
-            System.err.println("NetTotal " + b.getNetTotal());
-            System.err.println("Return  " + b.getTmpReturnTotal());
-            System.err.println("Paid " + b.getPaidAmount());
-            System.err.println("Final " + finalValue);
-
+            //System.err.println("DayCount " + dayCount);
+            //System.err.println("NetTotal " + b.getNetTotal());
+            //System.err.println("Return  " + b.getTmpReturnTotal());
+            //System.err.println("Paid " + b.getPaidAmount());
+            //System.err.println("Final " + finalValue);
             if (dayCount < 30) {
                 dataTable5Value.setValue1(dataTable5Value.getValue1() + finalValue);
             } else if (dayCount < 60) {
@@ -123,21 +135,98 @@ public class DealorDueController implements Serializable {
     @Inject
     private PharmacyDealorBill pharmacyDealorBill;
 
+    List<Bill> bills;
+    List<Bill> filteredBills;
+    double billsNetTotal;
+    double billsPaidTotal;
+    double billsBalanceTotal;
+
+    public void calculateFilteredBillTotals(List<Bill> billsToCal) {
+        billsNetTotal = 0.0;
+        billsPaidTotal = 0.0;
+        billsBalanceTotal = 0.0;
+        if (billsToCal == null) {
+            return;
+        }
+        for (Bill b : billsToCal) {
+            billsNetTotal += b.getNetTotal();
+            billsPaidTotal += b.getPaidAmount();
+        }
+        billsBalanceTotal = Math.abs(billsNetTotal) - Math.abs(billsPaidTotal);
+    }
+
+    public String fillSingleDealerTransactions() {
+        String jpql;
+        Map m;
+        jpql = "Select b from Bill b where b.retired=false and (b.fromInstitution=:ins or b.toInstitution=:ins ) order by b.id";
+        m = new HashMap();
+        m.put("ins", institution);
+        bills = getBillFacade().findBySQL(jpql, m);
+        calculateFilteredBillTotals(bills);
+        return "pharmacy_search_dealer";
+    }
+
+    public double getBillsNetTotal() {
+        return billsNetTotal;
+    }
+
+    public void setBillsNetTotal(double billsNetTotal) {
+        this.billsNetTotal = billsNetTotal;
+    }
+
+    public double getBillsPaidTotal() {
+        return billsPaidTotal;
+    }
+
+    public void setBillsPaidTotal(double billsPaidTotal) {
+        this.billsPaidTotal = billsPaidTotal;
+    }
+
+    public double getBillsBalanceTotal() {
+        return billsBalanceTotal;
+    }
+
+    public void setBillsBalanceTotal(double billsBalanceTotal) {
+        this.billsBalanceTotal = billsBalanceTotal;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public List<Bill> getFilteredBills() {
+        return filteredBills;
+    }
+
+    public void setFilteredBills(List<Bill> filteredBills) {
+        this.filteredBills = filteredBills;
+        calculateFilteredBillTotals(filteredBills);
+    }
+
     public void fillItems() {
-        System.err.println("Fill Items");
+        //System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate(), InstitutionType.Dealer);
         list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate(), InstitutionType.Dealer));
 
         setIns.addAll(list);
-        System.err.println("size " + setIns.size());
+        //System.err.println("size " + setIns.size());
         items = new ArrayList<>();
+        billCount = 0.0;
         for (Institution ins : setIns) {
-            //     System.err.println("Ins " + ins.getName());
+            //     //System.err.println("Ins " + ins.getName());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
             List<Bill> lst = getCreditBean().getBills(ins, getFromDate(), getToDate());
+
+            double tmp = 0.0;
+            tmp = (double) lst.size();
+            System.out.println("tmp = " + tmp);
+            System.out.println("lst.size() = " + lst.size());
+            System.out.println("billCount = " + billCount);
+            billCount += tmp;
+            System.out.println("billCount = " + billCount);
 
             newIns.setBills(lst);
 
@@ -153,32 +242,44 @@ public class DealorDueController implements Serializable {
                     newIns.setTotal(newIns.getTotal() + b.getNetTotal());
                     newIns.setPaidTotal(newIns.getPaidTotal() + b.getPaidAmount());
 
-                    //    System.err.println("Net Total " + b.getNetTotal());
-                    //     System.err.println("Paid " + b.getPaidAmount());
-                    System.err.println("Return " + b.getTmpReturnTotal());
+                    //    //System.err.println("Net Total " + b.getNetTotal());
+                    //     //System.err.println("Paid " + b.getPaidAmount());
+                    //System.err.println("Return " + b.getTmpReturnTotal());
                 }
             }
 
             double finalValue = (newIns.getPaidTotal() + newIns.getTotal() + newIns.getReturned());
-            System.err.println("Final Value " + finalValue);
+            //System.err.println("Final Value " + finalValue);
             if (finalValue != 0 && finalValue < 0.1) {
                 items.add(newIns);
             }
         }
+        billedAmount = 0.0;
+        returnedAmount = 0.0;
+        paidAmount = 0.0;
+        grantTotal = 0.0;
+        for (InstitutionBills its : items) {
+            billedAmount += its.getTotal();
+            returnedAmount += its.getReturned();
+            paidAmount +=its.getPaidTotal();
+            grantTotal +=its.getPaidTotal()+its.getReturned()+its.getTotal();
+            
+        }
+        System.out.println("grantTotal = " + grantTotal);
     }
 
     public void fillItemsStore() {
-        System.err.println("Fill Items");
+        //System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate(), InstitutionType.StoreDealor);
         list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate(), InstitutionType.StoreDealor));
 
         setIns.addAll(list);
-        System.err.println("size " + setIns.size());
+        //System.err.println("size " + setIns.size());
         items = new ArrayList<>();
         for (Institution ins : setIns) {
-            //     System.err.println("Ins " + ins.getName());
+            //     //System.err.println("Ins " + ins.getName());
             InstitutionBills newIns = new InstitutionBills();
             newIns.setInstitution(ins);
             List<Bill> lst = getCreditBean().getBills(ins, getFromDate(), getToDate());
@@ -197,14 +298,14 @@ public class DealorDueController implements Serializable {
                     newIns.setTotal(newIns.getTotal() + b.getNetTotal());
                     newIns.setPaidTotal(newIns.getPaidTotal() + b.getPaidAmount());
 
-                    //    System.err.println("Net Total " + b.getNetTotal());
-                    //     System.err.println("Paid " + b.getPaidAmount());
-                    System.err.println("Return " + b.getTmpReturnTotal());
+                    //    //System.err.println("Net Total " + b.getNetTotal());
+                    //     //System.err.println("Paid " + b.getPaidAmount());
+                    //System.err.println("Return " + b.getTmpReturnTotal());
                 }
             }
 
             double finalValue = (newIns.getPaidTotal() + newIns.getTotal() + newIns.getReturned());
-            System.err.println("Final Value " + finalValue);
+            //System.err.println("Final Value " + finalValue);
             if (finalValue != 0 && finalValue < 0.1) {
                 items.add(newIns);
             }
@@ -217,14 +318,14 @@ public class DealorDueController implements Serializable {
 
     public void createAgeTable() {
         makeNull();
-        System.err.println("Fill Items");
+        //System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(InstitutionType.Dealer);
         list.addAll(getCreditBean().getDealorFromReturnBills(InstitutionType.Dealer));
 
         setIns.addAll(list);
-        System.err.println("size " + setIns.size());
+        //System.err.println("size " + setIns.size());
 
         dealorCreditAge = new ArrayList<>();
         for (Institution ins : setIns) {
@@ -244,18 +345,31 @@ public class DealorDueController implements Serializable {
             }
         }
 
+        value1 = 0.0;
+        value2 = 0.0;
+        value3 = 0.0;
+        value4 = 0.0;
+        GrandDealorAge = 0.0;
+        
+        for (String1Value5 stv : dealorCreditAge){
+            value1 += stv.getValue1();
+            value2 += stv.getValue2();
+            value3 += stv.getValue3();
+            value4 += stv.getValue4();
+            
+        }
     }
-    
+
     public void createAgeTableStore() {
         makeNull();
-        System.err.println("Fill Items");
+        //System.err.println("Fill Items");
         Set<Institution> setIns = new HashSet<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(InstitutionType.StoreDealor);
         list.addAll(getCreditBean().getDealorFromReturnBills(InstitutionType.StoreDealor));
 
         setIns.addAll(list);
-        System.err.println("size " + setIns.size());
+        //System.err.println("size " + setIns.size());
 
         dealorCreditAge = new ArrayList<>();
         for (Institution ins : setIns) {
@@ -388,4 +502,87 @@ public class DealorDueController implements Serializable {
     public void setCreditBean(CreditBean creditBean) {
         this.creditBean = creditBean;
     }
+
+    public double getGrantTotal() {
+        return grantTotal;
+    }
+
+    public void setGrantTotal(double grantTotal) {
+        this.grantTotal = grantTotal;
+    }
+
+    public double getBillCount() {
+        return billCount;
+    }
+
+    public void setBillCount(double billCount) {
+        this.billCount = billCount;
+    }
+
+    public double getBilledAmount() {
+        return billedAmount;
+    }
+
+    public void setBilledAmount(double billedAmount) {
+        this.billedAmount = billedAmount;
+    }
+
+    public double getReturnedAmount() {
+        return returnedAmount;
+    }
+
+    public void setReturnedAmount(double returnedAmount) {
+        this.returnedAmount = returnedAmount;
+    }
+
+    public double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(double paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public double getValue1() {
+        return value1;
+    }
+
+    public void setValue1(double value1) {
+        this.value1 = value1;
+    }
+
+    public double getValue2() {
+        return value2;
+    }
+
+    public void setValue2(double value2) {
+        this.value2 = value2;
+    }
+
+    public double getValue3() {
+        return value3;
+    }
+
+    public void setValue3(double value3) {
+        this.value3 = value3;
+    }
+
+    public double getValue4() {
+        return value4;
+    }
+
+    public void setValue4(double value4) {
+        this.value4 = value4;
+    }
+
+    public double getGrandDealorAge() {
+        return GrandDealorAge;
+    }
+
+    public void setGrandDealorAge(double GrandDealorAge) {
+        this.GrandDealorAge = GrandDealorAge;
+    }
+
+   
+
 }

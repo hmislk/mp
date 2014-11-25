@@ -15,7 +15,7 @@ import com.divudi.entity.WebTheme;
  */
 @Stateless
 public class WebThemeFacade extends AbstractFacade<WebTheme> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

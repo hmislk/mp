@@ -19,7 +19,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class PharmaceuticalBillItemFacade extends AbstractFacade<PharmaceuticalBillItem> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override
@@ -36,7 +36,7 @@ public class PharmaceuticalBillItemFacade extends AbstractFacade<PharmaceuticalB
         HashMap hm = new HashMap();
         hm.put("b", bill);
         List<PharmaceuticalBillItem> btm= findBySQL(sql, hm);
-        //System.err.println("Getting Bills Item"+btm.size());
+        ////System.err.println("Getting Bills Item"+btm.size());
         return btm;
     }
 

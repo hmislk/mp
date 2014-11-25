@@ -208,7 +208,7 @@ public class CashierReportController implements Serializable {
             BillsTotals newOut = createRowInOut(BillType.CashOut, "Billed", new BilledBill(), webUser);
 
             if (newOut.getCard() != 0 || newOut.getCash() != 0 || newOut.getCheque() != 0 || newOut.getCredit() != 0 || newOut.getSlip() != 0) {
-                System.err.println("New Out ");
+                //System.err.println("New Out ");
                 billls.add(newOut);
             }
 
@@ -261,7 +261,7 @@ public class CashierReportController implements Serializable {
             newSum.setSlip(uSlip);
 
             if (newSum.getCard() != 0 || newSum.getCash() != 0 || newSum.getCheque() != 0 || newSum.getCredit() != 0 || newSum.getSlip() != 0) {
-                System.err.println("SUNN ");
+                //System.err.println("SUNN ");
                 billls.add(newSum);
             }
 
@@ -409,7 +409,7 @@ public class CashierReportController implements Serializable {
 
         double dbl = getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
 
-        System.err.println("Cash " + dbl);
+        //System.err.println("Cash " + dbl);
         return dbl;
 
     }

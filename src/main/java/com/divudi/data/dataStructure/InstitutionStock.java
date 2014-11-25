@@ -18,6 +18,8 @@ public class InstitutionStock {
     private double institutionTotal;
     private double institutionAverage;
     private Institution institution;
+    private double institutionPurchaseTotal;
+    private double institutionRetailSaleTotal;
 
     public List<DepartmentStock> getDepatmentStocks() {
         return depatmentStocks;
@@ -50,4 +52,21 @@ public class InstitutionStock {
     public void setInstitutionAverage(double institutionAverage) {
         this.institutionAverage = institutionAverage;
     }
+
+    public double getInstitutionPurchaseTotal() {
+        return institutionPurchaseTotal;
+    }
+
+    public void setInstitutionPurchaseTotal(double institutionPurchaseTotal) {
+        this.institutionPurchaseTotal = institutionPurchaseTotal;
+    }
+
+    public double getInstitutionRetailSaleTotal() {
+        return institutionRetailSaleTotal;
+    }
+
+    public void setInstitutionRetailSaleTotal(double institutionRetailSaleTotal) {
+        this.institutionRetailSaleTotal = institutionRetailSaleTotal;
+    }
+
 }

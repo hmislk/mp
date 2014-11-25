@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./resources/template/template.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+
+                    <p:panel header="Institution Item Movement and Stock" >
+
+                        <h:panelGrid columns="4" >
+                            <h:outputLabel value="Item Distributor" ></h:outputLabel>
+                            <p:autoComplete 
+                                completeMethod="#{institutionController.completeSupplier}" 
+                                var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" 
+                                forceSelection="true" value="#{itemController.instituion}"
+                                converter="institutionConverter" >
+                            </p:autoComplete>
+                            <p:commandButton ajax="false" value="Process"
+                                             actionListener="#{pharmacyController.createStockDealorAllDepartments()}" ></p:commandButton>
+
+                        </h:panelGrid>
+
+                        <p:dataGrid value="#{pharmacyController.stockAverages}" var="sA" columns="1">
+
+                            #{sA.item.name}   #{sA.item.code}
+                            <p:dataTable styleClass="noBorder" value="#{sA.institutionStocks}" var="ins">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Department Name
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Current Stock
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Purchase Rate
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Purchase Value
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Retail Sale Rate
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Retail Sale Value
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:subTable  value="#{ins.depatmentStocks}" var="dep">
+
+                                    <f:facet name="header">
+                                        #{ins.institution.name}
+                                    </f:facet> 
+
+                                    <p:column style="text-align: left;">
+                                        #{dep.department.name}
+                                    </p:column>
+                                    <p:column style="text-align: left;">
+                                        <h:outputLabel value="#{dep.stock}" style="color: red;">       
+                                            <f:convertNumber pattern="#,##0" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:column style="text-align: left;">
+                                        <h:outputLabel value="#{dep.purchaseRate}"> 
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:column style="text-align: left;">
+                                        <h:outputLabel value="#{dep.purchaseRate*dep.stock}"> 
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:column style="text-align: left;">
+                                        <h:outputLabel value="#{dep.retailSale}">       
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:column style="text-align: left;">
+                                        <h:outputLabel value="#{dep.retailSale*dep.stock}">       
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+
+                                    <p:columnGroup type="footer">
+                                        <p:row>
+                                            <p:column footerText="Total "></p:column>   
+                                            <p:column style="text-align: left;"
+                                                      footerText="#{ins.institutionTotal}">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="#{ins.institutionTotal}">
+                                                        <f:convertNumber pattern="#,##0" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;"
+                                                      footerText="">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;"
+                                                      footerText="#{ins.institutionPurchaseTotal}">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="#{ins.institutionPurchaseTotal}">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;" 
+                                                      footerText="">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: left;" 
+                                                      footerText="#{ins.institutionRetailSaleTotal}">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="#{ins.institutionRetailSaleTotal}">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                        </p:row>
+                                    </p:columnGroup>
+                                </p:subTable>  
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer" >
+                                                Total Institution Stock
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{sA.itemStockTotal}">
+                                                    <f:convertNumber pattern="#,##0" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{sA.itemPurchaseTotal}">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{sA.itemRetailSalekTotal}">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+
+
+                            </p:dataTable>     
+                            <hr/><hr/>
+                        </p:dataGrid>
+                        <p:panel>
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="" />
+                                <p:outputLabel value="Institution Total" />
+
+                                <p:outputLabel value="Stock" />
+                                <h:outputLabel value="#{pharmacyController.totalStock}" style="text-align: right;">
+                                    <f:convertNumber pattern="#,##0" ></f:convertNumber>
+                                </h:outputLabel>
+
+                                <p:outputLabel value="Purchase Rate" />
+                                <h:outputLabel value="#{pharmacyController.totalPurchase}" style="text-align: right;">
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+
+                                <p:outputLabel value="Retail Sale Rate" />
+                                <h:outputLabel  value="#{pharmacyController.totalRetailSale}" style="text-align: right;">
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:panel>
+                </h:form>
+
+
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

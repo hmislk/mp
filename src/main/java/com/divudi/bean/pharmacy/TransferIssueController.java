@@ -147,7 +147,7 @@ public class TransferIssueController implements Serializable {
 
             double issuableQty = i.getQtyInUnit() - (Math.abs(billedIssue) - Math.abs(cancelledIssue));
 
-            System.err.println("Issueable Qty " + issuableQty);
+            //System.err.println("Issueable Qty " + issuableQty);
 
             List<StockQty> stockQtys = getPharmacyBean().getStockByQty(i.getBillItem().getItem(), issuableQty, getSessionController().getDepartment());
 
@@ -155,21 +155,21 @@ public class TransferIssueController implements Serializable {
                 if (sq.getQty() == 0) {
                     continue;
                 }
-                System.err.println("Stock " + sq.getStock());
-                System.err.println("QTY " + sq.getQty());
+                //System.err.println("Stock " + sq.getStock());
+                //System.err.println("QTY " + sq.getQty());
                 BillItem bItem = new BillItem();
                 bItem.setSearialNo(getBillItems().size());
                 bItem.setItem(i.getBillItem().getItem());
                 bItem.setReferanceBillItem(i.getBillItem());
                 bItem.setTmpQty(sq.getQty());
-                System.err.println("Bill Item QTY " + bItem.getQty());
+                //System.err.println("Bill Item QTY " + bItem.getQty());
 
 //               s bItem.setTmpSuggession(getSuggession(i.getBillItem().getItem()));
-                //     //System.err.println("List "+bItem.getTmpSuggession());
+                //     ////System.err.println("List "+bItem.getTmpSuggession());
                 PharmaceuticalBillItem phItem = new PharmaceuticalBillItem();
                 phItem.setBillItem(bItem);
                 phItem.setQtyInUnit((double) sq.getQty());
-                System.err.println("Pharmac Item QTY " + phItem.getQtyInUnit());
+                //System.err.println("Pharmac Item QTY " + phItem.getQtyInUnit());
                 phItem.setFreeQtyInUnit(i.getFreeQtyInUnit());
                 phItem.setPurchaseRateInUnit((double) sq.getStock().getItemBatch().getPurcahseRate());
                 phItem.setRetailRateInUnit((double) sq.getStock().getItemBatch().getRetailsaleRate());
@@ -301,14 +301,14 @@ public class TransferIssueController implements Serializable {
 
     public void onEdit(RowEditEvent event) {
         BillItem tmp = (BillItem) event.getObject();
-//        //System.err.println("1 " + tmp);
-//        //System.err.println("2 " + tmp.getPharmaceuticalBillItem());
-//        //System.err.println("3 " + tmp.getPharmaceuticalBillItem().getItemBatch());
-//        //System.err.println("4 " + getSessionController().getDepartment());
+//        ////System.err.println("1 " + tmp);
+//        ////System.err.println("2 " + tmp.getPharmaceuticalBillItem());
+//        ////System.err.println("3 " + tmp.getPharmaceuticalBillItem().getItemBatch());
+//        ////System.err.println("4 " + getSessionController().getDepartment());
         double availableStock = getPharmacyBean().getStockQty(tmp.getPharmaceuticalBillItem().getItemBatch(), getSessionController().getDepartment());
 //        double oldValue = (getPharmaceuticalBillItemFacade().find(tmp.getPharmaceuticalBillItem().getId())).getQty();
-//        //System.err.println("AvailableStock " + availableStock);
-//        //System.err.println("Old Value " + oldValue);
+//        ////System.err.println("AvailableStock " + availableStock);
+//        ////System.err.println("Old Value " + oldValue);
         if (availableStock < tmp.getPharmaceuticalBillItem().getQtyInUnit()) {
             tmp.setTmpQty(0.0);
             UtilityController.addErrorMessage("You cant issue over than Stock Qty setted Old Value");

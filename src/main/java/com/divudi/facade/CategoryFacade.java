@@ -15,7 +15,7 @@ import com.divudi.entity.Category;
  */
 @Stateless
 public class CategoryFacade extends AbstractFacade<Category> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

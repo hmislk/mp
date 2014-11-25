@@ -7,7 +7,6 @@ package com.divudi.entity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.primefaces.model.LazyDataModel;
@@ -38,7 +37,7 @@ public class LazyBillFee extends LazyDataModel<BillFee> {
     }
 
     @Override
-    public List<BillFee> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+    public List<BillFee> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         List<BillFee> data = new ArrayList<>();
 
         //filter  
@@ -48,21 +47,14 @@ public class LazyBillFee extends LazyDataModel<BillFee> {
             for (Iterator<String> it = filters.keySet().iterator(); it.hasNext();) {
                 try {
                     String property = it.next();
-                    Object filterValue = filters.get(property);
-                    String stringValue;
-                    if(filterValue instanceof String){
-                        stringValue = (String)filterValue;
-                    }else{
-                        stringValue="";
-                    }
-//                    String stringValue = filters.get(property).toLowerCase();
+                    String stringValue = filters.get(property).toLowerCase();
                     String fieldValue = "";
 
                     String[] arr = property.split("\\.");
 
-                    //System.out.println("Property " + property);
-                    //System.out.println("String Value " + stringValue);
-                    //System.out.println("Arr Size: " + arr.length);
+                    ////System.out.println("Property " + property);
+                    ////System.out.println("String Value " + stringValue);
+                    ////System.out.println("Arr Size: " + arr.length);
                     if (arr.length == 1) {
                         fieldValue = String.valueOf(billFee.getClass().getDeclaredField(property).get(billFee));
                     } else if (arr.length == 2) {

@@ -60,6 +60,8 @@ public class PharmacyDealorBill implements Serializable {
     //Inject
     @Inject
     private SessionController sessionController;
+    double payingAmount;
+    List<BillItem> payingBillItems;
 
     public void makeNull() {
         printPreview = false;
@@ -112,7 +114,7 @@ public class PharmacyDealorBill implements Serializable {
 
         double ballanceAmt = getReferenceBallance(getCurrentBillItem());
 
-        System.err.println("Ballance Amount " + ballanceAmt);
+        //System.err.println("Ballance Amount " + ballanceAmt);
         if (ballanceAmt > 0.1) {
             getCurrentBillItem().setNetValue(ballanceAmt);
         }
@@ -148,14 +150,19 @@ public class PharmacyDealorBill implements Serializable {
         //     getCurrentBillItem().getBill().setTotal(getCurrent().getNetTotal());
 
         if (getCurrentBillItem().getNetValue() != 0) {
-            //  System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
-            //   System.err.println("aa " + getCurrentBillItem().getNetValue());
+            //  //System.err.println("11 " + getCurrentBillItem().getReferenceBill().getDeptId());
+            //   //System.err.println("aa " + getCurrentBillItem().getNetValue());
             getCurrentBillItem().setSearialNo(getBillItems().size());
             getBillItems().add(getCurrentBillItem());
         }
 
         currentBillItem = null;
         calTotal();
+        payingAmount = 0.0;
+        for (BillItem items : billItems) {
+
+            payingAmount += items.getNetValue();
+        }
     }
 
     public void changeNetValueListener(BillItem billItem) {
@@ -175,7 +182,7 @@ public class PharmacyDealorBill implements Serializable {
             n += b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
-        // //System.out.println("AAA : " + n);
+        // ////System.out.println("AAA : " + n);
     }
 
     public void calTotalWithResetingIndex() {
@@ -186,14 +193,14 @@ public class PharmacyDealorBill implements Serializable {
             n += b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
-        // //System.out.println("AAA : " + n);
+        // ////System.out.println("AAA : " + n);
     }
 
     public void removeAll() {
         for (BillItem b : selectedBillItems) {
 
-            System.err.println("Removing Index " + b.getSearialNo());
-            System.err.println("Grn No " + b.getReferenceBill().getDeptId());
+            //System.err.println("Removing Index " + b.getSearialNo());
+            //System.err.println("Grn No " + b.getReferenceBill().getDeptId());
             remove(b);
         }
 
@@ -312,16 +319,16 @@ public class PharmacyDealorBill implements Serializable {
         double refBallance = getReferenceBallance(tmp);
         double netValue = Math.abs(tmp.getNetValue());
 
-        System.err.println("RefBallance " + refBallance);
-        System.err.println("Net Value " + tmp.getNetValue());
+        //System.err.println("RefBallance " + refBallance);
+        //System.err.println("Net Value " + tmp.getNetValue());
         //   ballance=refBallance-tmp.getNetValue();
         if (refBallance >= netValue) {
-            System.err.println("1");
+            //System.err.println("1");
             return true;
         }
 
         if (netValue - refBallance < 0.1) {
-            System.err.println("2");
+            //System.err.println("2");
             return true;
         }
 
@@ -472,6 +479,22 @@ public class PharmacyDealorBill implements Serializable {
 
     public void setCreditBean(CreditBean creditBean) {
         this.creditBean = creditBean;
+    }
+
+    public double getPayingAmount() {
+        return payingAmount;
+    }
+
+    public void setPayingAmount(double payingAmount) {
+        this.payingAmount = payingAmount;
+    }
+
+    public List<BillItem> getPayingBillItems() {
+        return payingBillItems;
+    }
+
+    public void setPayingBillItems(List<BillItem> payingBillItems) {
+        this.payingBillItems = payingBillItems;
     }
 
 }

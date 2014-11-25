@@ -148,7 +148,7 @@ public class BillSearch implements Serializable {
     }
 
     public String preSettle(String b) {
-        //System.err.println("Bill " + b);
+        ////System.err.println("Bill " + b);
         getPharmacyPreSettleController().setPreBill(getBillFacade().find(b));
         return "pharmacy_preBill_settle";
     }
@@ -234,11 +234,11 @@ public class BillSearch implements Serializable {
         List<Bill> userBills;
         if (getUser() == null) {
             userBills = new ArrayList<>();
-            //System.out.println("user is null");
+            ////System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), getSessionController().getInstitution(), BillType.OpdBill);
 
-            //System.out.println("user ok");
+            ////System.out.println("user ok");
         }
         if (userBills == null) {
             userBills = new ArrayList<>();
@@ -326,7 +326,7 @@ public class BillSearch implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
         List<Bill> lst = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-        //System.err.println("SIZE : " + lst.size());
+        ////System.err.println("SIZE : " + lst.size());
 
         lazyBills = new LazyBill(lst);
     }
@@ -371,7 +371,7 @@ public class BillSearch implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("dept", getSessionController().getInstitution());
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-        //     //System.err.println("SIZE : " + lst.size());
+        //     ////System.err.println("SIZE : " + lst.size());
 
     }
 
@@ -1180,13 +1180,13 @@ public class BillSearch implements Serializable {
     }
 
     public List<Bill> getOpdBillsToApproveCancellation() {
-        //System.out.println("1");
+        ////System.out.println("1");
         billsToApproveCancellation = ejbApplication.getOpdBillsToCancel();
         return billsToApproveCancellation;
     }
 
     public List<Bill> getBillsToApproveCancellation() {
-        //System.out.println("1");
+        ////System.out.println("1");
         billsToApproveCancellation = ejbApplication.getBillsToCancel();
         return billsToApproveCancellation;
     }
@@ -1382,13 +1382,13 @@ public class BillSearch implements Serializable {
 
     public List<Bill> getUserBills() {
         List<Bill> userBills;
-        //System.out.println("getting user bills");
+        ////System.out.println("getting user bills");
         if (getUser() == null) {
             userBills = new ArrayList<>();
-            //System.out.println("user is null");
+            ////System.out.println("user is null");
         } else {
             userBills = getBillBean().billsFromSearchForUser(txtSearch, getFromDate(), getToDate(), getUser(), BillType.OpdBill);
-            //System.out.println("user ok");
+            ////System.out.println("user ok");
         }
         if (userBills == null) {
             userBills = new ArrayList<>();
@@ -1429,7 +1429,7 @@ public class BillSearch implements Serializable {
 
     public void setBill(BilledBill bill) {
         recreateModel();
-        System.err.println("Bill " + bill);
+        //System.err.println("Bill " + bill);
         this.bill = bill;
     }
 
@@ -1450,8 +1450,8 @@ public class BillSearch implements Serializable {
                 sql = "SELECT b FROM BillItem b WHERE b.retired=false and b.bill.id=" + getBill().getRefundedBill().getId();
             }
             billItems = getBillItemFacede().findBySQL(sql);
-            // //System.out.println("sql for bill item search is " + sql);
-            // //System.out.println("results for bill item search is " + billItems);
+            // ////System.out.println("sql for bill item search is " + sql);
+            // ////System.out.println("results for bill item search is " + billItems);
             if (billItems == null) {
                 billItems = new ArrayList<>();
             }
@@ -1613,7 +1613,7 @@ public class BillSearch implements Serializable {
         }
         double tot = 0.0;
         for (BillFee f : getBillFees()) {
-            //System.out.println("Tot" + f.getFeeValue());
+            ////System.out.println("Tot" + f.getFeeValue());
             tot += f.getFeeValue();
         }
         getBillForRefund().setTotal(tot);

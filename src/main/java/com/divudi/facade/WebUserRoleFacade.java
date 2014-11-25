@@ -15,7 +15,7 @@ import com.divudi.entity.WebUserRole;
  */
 @Stateless
 public class WebUserRoleFacade extends AbstractFacade<WebUserRole> {
-    @PersistenceContext(unitName = "hmisPU")
+    @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
     @Override

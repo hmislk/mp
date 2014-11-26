@@ -36,7 +36,7 @@
 
                         <h:outputLabel  value="Supplier"  ></h:outputLabel>
                         <p:autoComplete converter="deal" 
-                                        value="#{commonReport.institution}"
+                                        value="#{commonReport.supplier}"
                                         completeMethod="#{dealerController.completeDealor}"
                                          forceSelection="true" rendered="true"
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
@@ -81,34 +81,33 @@
                         </h:outputLabel>
                     </h:panelGrid>
 
-
-                    <p:dataTable id="billed"  value="#{commonReport.grnPaymentBill.bills}" var="b" 
-                                 rendered="#{commonReport.grnPaymentBill.bills.size()!=0}" 
-                                 sortBy="#{b.billType}"  >
+                    <p:dataTable id="billed"  value="#{commonReport.grnPaymentBill.billItems}" var="b" 
+                                 
+                                 sortBy="#{b.bill.billType}"  >
 
                         <f:facet name="header">  
                             <h:outputLabel value="GRN Payment"/>
                         </f:facet>
 
-                        <p:column headerText="GRN No" >
+                        <p:column headerText="Payment No" >
                             <f:facet name="header">  
-                                <h:outputLabel value="GRN No"/>
+                                <h:outputLabel value="Payment No"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b.deptId}"/>
+                            <h:outputLabel value="#{b.bill.insId}"/>
                         </p:column>
 
                         <p:column headerText="Invoice No" >
                             <f:facet name="header">  
                                 <h:outputLabel value="Invoice No"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b.invoiceNumber}"/>
+                            <h:outputLabel value="#{b.referenceBill.invoiceNumber}"/>
                         </p:column>
 
                         <p:column headerText="Created At"  >
                             <f:facet name="header">  
                                 <h:outputLabel value="Created At"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b.createdAt}" >
+                            <h:outputLabel value="#{b.bill.createdAt}" >
                                 <f:convertDateTime pattern="dd MM yy hh:mm a"/>
                             </h:outputLabel>
                         </p:column>
@@ -117,7 +116,8 @@
                             <f:facet name="header">  
                                 <h:outputLabel value="Suplier Name"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b.fromInstitution.name}"/>
+                            <h:outputLabel value="#{b.bill.toInstitution.name}" rendered="#{b.bill.toInstitution.name ne null}"/>
+                            <h:outputLabel value="#{b.bill.fromInstitution.name}" rendered="#{b.bill.fromInstitution.name ne null}"/>
 
                         </p:column>
 
@@ -125,33 +125,33 @@
                             <f:facet name="header">  
                                 <h:outputLabel value="PO No"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b.referenceBill.deptId}"/>
+                            <h:outputLabel value="#{b.referenceBill.referenceBill.deptId}"/>
                         </p:column>
 
                         <p:column headerText="Cash" style=" text-align: right"  >
                             <f:facet name="header">  
                                 <h:outputLabel value="Cash"/>
                             </f:facet> 
-                            <h:outputLabel rendered="#{b.paymentMethod=='Cash'}" value="#{b.netTotal}" >
+                            <h:outputLabel rendered="#{b.bill.paymentMethod=='Cash'}" value="#{b.referenceBill.netTotal}" >
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
-                            <h:outputLabel rendered="#{b.paymentMethod!='Cash'}" value="0.00" />
+                            <h:outputLabel rendered="#{b.bill.paymentMethod!='Cash'}" value="0.00" />
                         </p:column>
 
                         <p:column headerText="Credit" style=" text-align: right" >
                             <f:facet name="header">  
                                 <h:outputLabel value="Credit"/>
                             </f:facet> 
-                            <h:outputLabel rendered="#{b.paymentMethod=='Credit'}" value="#{b.netTotal}"  >
+                            <h:outputLabel rendered="#{b.bill.paymentMethod=='Credit'}" value="#{b.referenceBill.netTotal}"  >
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
-                            <h:outputLabel rendered="#{b.paymentMethod!='Credit'}" value="0.00"/>
+                            <h:outputLabel rendered="#{b.bill.paymentMethod!='Credit'}" value="0.00"/>
                         </p:column>
                         <p:column headerText="Remark" >
                             <f:facet name="header">  
                                 <h:outputLabel value="Remark"/>
                             </f:facet> 
-                            <h:outputLabel value="Cancelled. (#{b.cancelledBill.deptId})" rendered="#{b.cancelled==true}" ></h:outputLabel>
+                            <h:outputLabel value="Cancelled. (#{b.bill.cancelledBill.deptId})" rendered="#{b.bill.cancelled==true}" ></h:outputLabel>
                         </p:column>
 
                         <p:columnGroup type="footer">  
@@ -180,8 +180,8 @@
 
                     <p:spacer height="30"/>
 
-                    <p:dataTable id="cancelled"  value="#{commonReport.grnPaymentCancell.bills}" var="b1"  
-                                 rendered="#{commonReport.grnPaymentCancell.bills.size()!=0}" >
+                    <p:dataTable id="cancelled"  value="#{commonReport.grnPaymentCancell.billItems}" var="b1"  
+                                 rendered="#{commonReport.grnPaymentCancell.billItems.size() != 0}" >
                         <f:facet name="header">  
                             <h:outputLabel value="Cancelled PO "/>
                         </f:facet> 
@@ -190,14 +190,14 @@
                             <f:facet name="header">  
                                 <h:outputLabel value="Cancelled NO"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b1.deptId}"/>
+                            <h:outputLabel value="#{b1.bill.deptId}"/>
                         </p:column>
 
                         <p:column headerText="GRN Payment No" >
                             <f:facet name="header">  
                                 <h:outputLabel value="GRN Payment No"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b1.billedBill.deptId}" >
+                            <h:outputLabel value="#{b1.referenceBill.deptId}" >
                             </h:outputLabel>
                         </p:column>
 
@@ -205,7 +205,7 @@
                             <f:facet name="header">  
                                 <h:outputLabel value="Cancelled At"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b1.createdAt}" >
+                            <h:outputLabel value="#{b1.bill.createdAt}" >
                                 <f:convertDateTime pattern="dd MM yy hh:mm a"/>
                             </h:outputLabel>
                         </p:column>
@@ -214,7 +214,7 @@
                             <f:facet name="header">  
                                 <h:outputLabel value="Comment"/>
                             </f:facet> 
-                            <h:outputLabel value="#{b1.comments}"/>
+                            <h:outputLabel value="#{b1.bill.comments}"/>
 
                         </p:column>
 
@@ -222,19 +222,19 @@
                             <f:facet name="header">  
                                 <h:outputLabel value="Cash"/>
                             </f:facet> 
-                            <h:outputLabel rendered="#{b1.paymentMethod=='Cash'}" value="#{b1.netTotal}" >
+                            <h:outputLabel rendered="#{b1.bill.paymentMethod=='Cash'}" value="#{b1.referenceBill.netTotal}" >
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
-                            <h:outputLabel rendered="#{b1.paymentMethod!='Cash'}" value="0.00"/>
+                            <h:outputLabel rendered="#{b1.bill.paymentMethod!='Cash'}" value="0.00"/>
                         </p:column>
                         <p:column headerText="Credit"  style=" text-align: right" >
                             <f:facet name="header">  
                                 <h:outputLabel value="Credit"/>
                             </f:facet> 
-                            <h:outputLabel rendered="#{b1.paymentMethod=='Credit'}" value="#{b1.netTotal}" >
+                            <h:outputLabel rendered="#{b1.bill.paymentMethod=='Credit'}" value="#{b1.referenceBill.netTotal}" >
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputLabel>
-                            <h:outputLabel rendered="#{b1.paymentMethod!='Credit'}" value="0.00"/>
+                            <h:outputLabel rendered="#{b1.bill.paymentMethod!='Credit'}" value="0.00"/>
 
                         </p:column>
 

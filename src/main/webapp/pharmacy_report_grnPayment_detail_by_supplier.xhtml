@@ -19,15 +19,15 @@
 
                     <p:panelGrid columns="8" style="noPrintButton">
                         <h:outputLabel value="From Date"/>
-                        <p:calendar id="frmDate" value="#{commonReport.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
+                        <p:calendar id="frmDate" value="#{commonReportSession.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
                         </p:calendar>
 
                         <h:outputLabel value="To Date"/>
-                        <p:calendar id="toDate" value="#{commonReport.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
+                        <p:calendar id="toDate" value="#{commonReportSession.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
                         </p:calendar>
 
                         <h:outputLabel  value="Department"  ></h:outputLabel>
-                        <p:autoComplete  value="#{commonReport.department}"  
+                        <p:autoComplete  value="#{commonReportSession.department}"  
                                          completeMethod="#{departmentController.completeDept}" var="dept"
                                          itemValue="#{dept}" itemLabel="#{dept.name}" 
                                          forceSelection="true" rendered="true"
@@ -36,7 +36,7 @@
 
                         <h:outputLabel  value="Supplier"  ></h:outputLabel>
                         <p:autoComplete converter="deal" 
-                                        value="#{commonReport.supplier}"
+                                        value="#{commonReportSession.supplier}"
                                         completeMethod="#{dealerController.completeDealor}"
                                          forceSelection="true" rendered="true"
                                         var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
@@ -48,10 +48,10 @@
                     <h:panelGrid columns="3">
                         <p:commandButton id="btnRefresh" ajax="false" value="Fill" 
                                          styleClass="noPrintButton" 
-                                         actionListener="#{commonReport.createGrnPaymentBySupplierTable()}"
+                                         actionListener="#{commonReportSession.createGrnPaymentBySupplierTable()}"
                                          style="float: right;" /> 
                         
-                        <p:commandButton actionListener="#{commonReport.createGrnPaymentBySupplierTable()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
+                        <p:commandButton actionListener="#{commonReportSession.createGrnPaymentBySupplierTable()}" ajax="false" value="Excel" styleClass="noPrintButton" style="float: right;" >
                                 <pe:exporter type="xlsx" target="billed,cancelled,refunded,returnCancelled,sum," fileName="report_grn_detail_by_supplier"  />
                             </p:commandButton>
 
@@ -68,20 +68,20 @@
                         <h:outputLabel value="GRN Detailed Report "/>
                         <h:outputLabel/>
                         <h:outputLabel value="Institution "/>
-                        <h:outputLabel value="#{commonReport.department.institution.name}"/>
+                        <h:outputLabel value="#{commonReportSession.department.institution.name}"/>
                         <h:outputLabel value="Department "/>
-                        <h:outputLabel value="#{commonReport.department.name}"/>
+                        <h:outputLabel value="#{commonReportSession.department.name}"/>
                         <h:outputLabel value="From" />
-                        <h:outputLabel  value="#{commonReport.fromDate}" >
+                        <h:outputLabel  value="#{commonReportSession.fromDate}" >
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>                          
                         <h:outputLabel value="To"/>
-                        <h:outputLabel  value="#{commonReport.toDate}" style="float: right" >
+                        <h:outputLabel  value="#{commonReportSession.toDate}" style="float: right" >
                             <f:convertDateTime pattern="dd MM yyyy hh:mm a"/>
                         </h:outputLabel>
                     </h:panelGrid>
 
-                    <p:dataTable id="billed"  value="#{commonReport.grnPaymentBill.billItems}" var="b" 
+                    <p:dataTable id="billed"  value="#{commonReportSession.grnPaymentBill.billItems}" var="b" 
                                  
                                  sortBy="#{b.bill.billType}"  >
 
@@ -158,17 +158,17 @@
                             <p:row >  
                                 <p:column colspan="5" style="text-align:left" footerText="Totals:"/>
 
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentBill.cash}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentBill.cash}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentBill.cash}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentBill.cash}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
 
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentBill.credit}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentBill.credit}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentBill.credit}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentBill.credit}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
@@ -180,8 +180,8 @@
 
                     <p:spacer height="30"/>
 
-                    <p:dataTable id="cancelled"  value="#{commonReport.grnPaymentCancell.billItems}" var="b1"  
-                                 rendered="#{commonReport.grnPaymentCancell.billItems.size() != 0}" >
+                    <p:dataTable id="cancelled"  value="#{commonReportSession.grnPaymentCancell.billItems}" var="b1"  
+                                 rendered="#{commonReportSession.grnPaymentCancell.billItems.size() != 0}" >
                         <f:facet name="header">  
                             <h:outputLabel value="Cancelled PO "/>
                         </f:facet> 
@@ -248,17 +248,17 @@
                                 <p:column colspan="4" style="text-align:left" footerText="Totals:">
 
                                 </p:column>
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentCancell.bills}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentCancell.bills}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentCancell.cash}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentCancell.cash}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
 
                                 </p:column>                                                           
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentCancell.credit}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentCancell.credit}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentCancell.credit}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentCancell.credit}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
@@ -273,8 +273,8 @@
                     <p:spacer height="30"/>
 
 
-                    <p:dataTable id="refunded"  value="#{commonReport.grnPaymentReturn.bills}" var="b" 
-                                 rendered="#{commonReport.grnPaymentReturn.bills.size()!=0}" 
+                    <p:dataTable id="refunded"  value="#{commonReportSession.grnPaymentReturn.bills}" var="b" 
+                                 rendered="#{commonReportSession.grnPaymentReturn.bills.size()!=0}" 
                                  sortBy="#{b.billType}"  >
 
                         <f:facet name="header">  
@@ -342,17 +342,17 @@
                             <p:row >  
                                 <p:column colspan="4" style="text-align:left" footerText="Totals:"/>
 
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentReturn.cash}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentReturn.cash}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentReturn.cash}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentReturn.cash}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
                                 </p:column>
 
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentReturn.credit}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentReturn.credit}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentReturn.credit}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentReturn.credit}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
@@ -364,8 +364,8 @@
 
                     <p:spacer height="30"/>
 
-                    <p:dataTable id="returnCancelled"  value="#{commonReport.grnPaymentCancellReturn.bills}" var="b1"  
-                                 rendered="#{commonReport.grnPaymentCancellReturn.bills.size()!=0}" >
+                    <p:dataTable id="returnCancelled"  value="#{commonReportSession.grnPaymentCancellReturn.bills}" var="b1"  
+                                 rendered="#{commonReportSession.grnPaymentCancellReturn.bills.size()!=0}" >
                         <f:facet name="header">  
                             <h:outputLabel value="Cancelled GRN Payment Return "/>
                         </f:facet> 
@@ -432,17 +432,17 @@
                                 <p:column colspan="4" style="text-align:left" footerText="Totals:">
 
                                 </p:column>
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentCancellReturn.bills}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentCancellReturn.bills}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentCancellReturn.cash}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentCancellReturn.cash}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
 
                                 </p:column>                                                           
-                                <p:column style="text-align: right;" footerText="#{commonReport.grnPaymentCancellReturn.credit}">
+                                <p:column style="text-align: right;" footerText="#{commonReportSession.grnPaymentCancellReturn.credit}">
                                     <f:facet name="footer">
-                                        <h:outputLabel value="#{commonReport.grnPaymentCancellReturn.credit}">
+                                        <h:outputLabel value="#{commonReportSession.grnPaymentCancellReturn.credit}">
                                             <f:convertNumber pattern="#,##0.00"/>
                                         </h:outputLabel>
                                     </f:facet>
@@ -456,7 +456,7 @@
 
                     <p:spacer height="30"/>
 
-                    <p:dataTable id="sum" value="#{commonReport.GRNPaymentTotal}"  var="i" >
+                    <p:dataTable id="sum" value="#{commonReportSession.GRNPaymentTotal}"  var="i" >
                         <f:facet name="header">
                             Summery
                         </f:facet>

@@ -7,10 +7,12 @@ package com.divudi.bean.report;
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
 import com.divudi.data.DailySummeryRow;
+import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.BillsTotals;
 import com.divudi.data.table.String1Value1;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
+import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
@@ -18,6 +20,8 @@ import com.divudi.entity.Institution;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
+import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.util.JsfUtil;
 import com.divudi.util.CommonDateFunctions;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -92,6 +96,132 @@ public class CommonReportSession implements Serializable {
     double discountTotal = 0.0;
     double freeTotal = 0.0;
 
+    
+    BillsTotals GrnPaymentBill;
+    BillsTotals GrnPaymentCancell;
+    BillsTotals GrnPaymentReturn;
+    BillsTotals GrnPaymentCancellReturn;
+    private Institution supplier;
+    @EJB
+    BillItemFacade billItemFacade;
+    
+    public void createGrnPaymentBySupplierTable() {
+        recreteModal();
+
+        GrnPaymentBill = new BillsTotals();
+        GrnPaymentCancell = new BillsTotals();
+        GrnPaymentReturn = new BillsTotals();
+        GrnPaymentCancellReturn = new BillsTotals();
+
+        if (getDepartment() == null) {
+            JsfUtil.addErrorMessage("Select Department to proceed");
+            return;
+        }
+
+        //GRN Payment Billed Bills
+        getGrnPaymentBill().setBillItems(grnBillItems(new BilledBill(), BillType.GrnPayment, getDepartment(), getSupplier()));
+        getGrnPaymentBill().setCash(calValueUsingBillItem(new BilledBill(), BillType.GrnPayment, PaymentMethod.Cash, getDepartment(), getSupplier()));
+        getGrnPaymentBill().setCredit(calValueUsingBillItem(new BilledBill(), BillType.GrnPayment, PaymentMethod.Credit, getDepartment(), getSupplier()));
+
+        //GRN Payment Cancelled Bill
+        getGrnPaymentCancell().setBillItems(grnBillItems(new CancelledBill(), BillType.GrnPayment, getDepartment(), getSupplier()));
+        getGrnPaymentCancell().setCash(calValueUsingBillItem(new CancelledBill(), BillType.GrnPayment, PaymentMethod.Cash, getDepartment(), getSupplier()));
+        getGrnPaymentCancell().setCredit(calValueUsingBillItem(new CancelledBill(), BillType.GrnPayment, PaymentMethod.Credit, getDepartment(), getSupplier()));
+
+        //GRN Payment Refunded Bill
+        getGrnPaymentReturn().setBillItems(grnBillItems(new BilledBill(), BillType.GrnPayment, getDepartment(), getSupplier()));
+        getGrnPaymentReturn().setCash(calValueUsingBillItem(new BilledBill(), BillType.GrnPayment, PaymentMethod.Cash, getDepartment(), getSupplier()));
+        getGrnPaymentReturn().setCredit(calValueUsingBillItem(new BilledBill(), BillType.GrnPayment, PaymentMethod.Credit, getDepartment(), getSupplier()));
+
+        //GRN Payment Refunded Bill Cancel
+        getGrnPaymentCancellReturn().setBillItems(grnBillItems(new CancelledBill(), BillType.GrnPayment, getDepartment(), getSupplier()));
+        getGrnPaymentCancellReturn().setCash(calValueUsingBillItem(new CancelledBill(), BillType.GrnPayment, PaymentMethod.Cash, getDepartment(), getSupplier()));
+        getGrnPaymentCancellReturn().setCredit(calValueUsingBillItem(new CancelledBill(), BillType.GrnPayment, PaymentMethod.Credit, getDepartment(), getSupplier()));
+
+    }
+    
+    private List<BillItem> grnBillItems(Bill billClass, BillType billType, Department dep, Institution ins) {
+
+        Map temMap = new HashMap();
+
+        String sql = "SELECT b FROM BillItem b WHERE type(b.bill)=:bill "
+                + " and b.bill.retired=false "
+                + " and b.bill.billType = :btp "
+                + " and b.bill.department=:d "
+                + " and b.bill.createdAt between :fromDate and :toDate ";
+
+        if (ins != null) {
+            sql += " and (b.bill.fromInstitution=:ins or b.bill.toInstitution=:ins ) ";
+            temMap.put("ins", ins);
+        }
+        sql += " order by b.bill.deptId";
+
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+        temMap.put("bill", billClass.getClass());
+        temMap.put("btp", billType);
+        temMap.put("d", dep);
+
+        return getBillItemFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+
+    private double calValueUsingBillItem(Bill billClass, BillType billType, PaymentMethod paymentMethod, Department dep, Institution ins) {
+        
+         Map temMap = new HashMap();
+        
+        String sql = "SELECT sum(b.referenceBill.netTotal) FROM BillItem b WHERE type(b.bill)=:bill "
+                + " and b.bill.retired=false "
+                + " and b.bill.billType=:btp "
+                + " and b.bill.department=:d "
+                + " and b.bill.paymentMethod=:pm "
+                + " and b.bill.createdAt between :fromDate and :toDate";
+        
+        if(ins != null){
+           sql += " and (b.bill.fromInstitution=:ins or b.bill.toInstitution=:ins) ";
+           temMap.put("ins", ins);
+        }
+        
+       
+        temMap.put("fromDate", getFromDate());
+        temMap.put("toDate", getToDate());
+        temMap.put("btp", billType);
+        temMap.put("pm", paymentMethod);
+        temMap.put("d", dep);
+        temMap.put("bill", billClass.getClass());
+
+        return getBillItemFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+    
+    public List<String1Value1> getGRNPaymentTotal() {
+        List<BillsTotals> list = new ArrayList<>();
+        list.add(getGrnPaymentBill());
+        list.add(getGrnPaymentCancell());
+        list.add(getGrnPaymentReturn());
+        list.add(getGrnPaymentCancellReturn());
+
+        dataTableData = new ArrayList<>();
+        String1Value1 tmp1 = new String1Value1();
+        tmp1.setString("Final Credit Total");
+        tmp1.setValue(getFinalCreditTotal(list));
+
+        String1Value1 tmp5 = new String1Value1();
+        tmp5.setString("Final Cash Total");
+        tmp5.setValue(getFinalCashTotal(list));
+
+        String1Value1 tmp6 = new String1Value1();
+        tmp6.setString("Final Credit & Cash Total");
+        tmp6.setValue(getFinalCashTotal(list) + getFinalCreditTotal(list));
+
+        dataTableData.add(tmp1);
+        dataTableData.add(tmp5);
+        dataTableData.add(tmp6);
+
+        return dataTableData;
+    }
+    
+    
     public List<Bill> getPurchaseBills() {
         return purchaseBills;
     }
@@ -1246,7 +1376,7 @@ public class CommonReportSession implements Serializable {
         inwardPaymentCancel = null;
         dataTableData = null;
         institution = null;
-
+        
     }
 
     public Institution getCollectingIns() {
@@ -1819,6 +1949,54 @@ public class CommonReportSession implements Serializable {
 
     public void setDealer(Institution dealer) {
         this.dealer = dealer;
+    }
+
+    public BillsTotals getGrnPaymentBill() {
+        return GrnPaymentBill;
+    }
+
+    public void setGrnPaymentBill(BillsTotals GrnPaymentBill) {
+        this.GrnPaymentBill = GrnPaymentBill;
+    }
+
+    public BillsTotals getGrnPaymentCancell() {
+        return GrnPaymentCancell;
+    }
+
+    public void setGrnPaymentCancell(BillsTotals GrnPaymentCancell) {
+        this.GrnPaymentCancell = GrnPaymentCancell;
+    }
+
+    public BillsTotals getGrnPaymentReturn() {
+        return GrnPaymentReturn;
+    }
+
+    public void setGrnPaymentReturn(BillsTotals GrnPaymentReturn) {
+        this.GrnPaymentReturn = GrnPaymentReturn;
+    }
+
+    public BillsTotals getGrnPaymentCancellReturn() {
+        return GrnPaymentCancellReturn;
+    }
+
+    public void setGrnPaymentCancellReturn(BillsTotals GrnPaymentCancellReturn) {
+        this.GrnPaymentCancellReturn = GrnPaymentCancellReturn;
+    }
+
+    public Institution getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Institution supplier) {
+        this.supplier = supplier;
+    }
+
+    public BillItemFacade getBillItemFacade() {
+        return billItemFacade;
+    }
+
+    public void setBillItemFacade(BillItemFacade billItemFacade) {
+        this.billItemFacade = billItemFacade;
     }
 
 }

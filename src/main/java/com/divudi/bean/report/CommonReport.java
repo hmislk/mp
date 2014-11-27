@@ -1892,6 +1892,7 @@ public class CommonReport implements Serializable {
         grnCancelled = null;
         grnReturn = null;
         grnReturnCancel = null;
+        supplier = null;
     }
 
     public void recreteModal() {

@@ -13,20 +13,21 @@
                     <p:panel>
                         <f:facet name="header" >
                             <h:outputLabel value="CASH BILL SEARCH "/>                          
-                            <h:panelGrid columns="5" >
+                            <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createTableCashIn()}"/>
-                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search by Logged User" action="#{searchController.createTableCashIn()}"/>
+                                <p:commandButton id="btnSearchAll" ajax="false" value="Search by All Users" action="#{searchController.createTableCashInAll()}"/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
                                 <h:outputLabel value="From Person"/>
                                 <h:outputLabel value="Total"/>
-                                <h:outputLabel/><h:outputLabel/>
+                                <h:outputLabel/><h:outputLabel/><h:outputLabel/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
                                 <p:inputText  value="#{searchController.searchKeyword.personName}" />
                                 <p:inputText  value="#{searchController.searchKeyword.netTotal}" />

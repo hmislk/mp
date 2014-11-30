@@ -396,6 +396,8 @@
                                 <td>
 
                                     <p:panel header="Patient Detail">                                        
+                                        <p:autoComplete forceSelection="true" id="cmbDoc" value="#{pharmacySaleController.preBill.referredBy}" completeMethod="#{doctorController.completeDoctor}" var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
+                                        </p:autoComplete>
                                         <p:tabView id="tvPt" style="min-height: 250px;"  >
                                             <p:ajax event="tabChange"  process="@this" listener="#{pharmacySaleController.onTabChange}" />
 
@@ -408,6 +410,9 @@
 
                                         </p:tabView>
                                     </p:panel>
+
+
+
                                 </td>
                             </tr>
                         </table>

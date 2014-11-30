@@ -28,7 +28,15 @@
                         <p:columnGroup type="header">
                             <p:row>
                                 <p:column headerText="GRN No">                                    
-                                </p:column>                               
+                                </p:column> 
+                                <p:column headerText="GRN Date">                                    
+                                </p:column> 
+                                <p:column headerText="Invoice No">                                    
+                                </p:column> 
+                                <p:column headerText="Invoice Date">                                    
+                                </p:column> 
+                                <p:column headerText="Department">                                    
+                                </p:column> 
                                 <p:column headerText="Billed Amount">                                    
                                 </p:column>
                                 <p:column headerText="Returned Amount">                                    
@@ -39,16 +47,47 @@
                                 </p:column>
                             </p:row>
                         </p:columnGroup>
+
                         <p:subTable value="#{i.bills}" var="b" >
                             <f:facet name="header">
                                 <h:outputLabel  value="#{i.institution.name}"/>
                             </f:facet>
-                            <p:column>        
+                            <p:column >        
                                 <h:panelGroup rendered="#{b.transBoolean}">
                                     <h:outputLabel value="#{b.deptId}" />   
                                     <h:outputText value="( #{b.billType} )"></h:outputText>
                                 </h:panelGroup>
+                            </p:column>  
+                            <p:column>        
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.createdAt}" >   
+                                        <f:convertDateTime pattern="dd MM yy" ></f:convertDateTime>
+                                    </h:outputLabel>
+                                </h:panelGroup>
+                            </p:column>  
+
+                            <p:column>        
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.invoiceNumber}" />   
+                                </h:panelGroup>
                             </p:column>                           
+
+
+                            <p:column>        
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.invoiceDate}" >   
+                                        <f:convertDateTime pattern="dd MM yy" ></f:convertDateTime>
+                                    </h:outputLabel>
+                                </h:panelGroup>
+                            </p:column>                           
+
+                            <p:column>        
+                                <h:panelGroup rendered="#{b.transBoolean}">
+                                    <h:outputLabel value="#{b.department.name}" />   
+                                </h:panelGroup>
+                            </p:column>    
+
+
                             <p:column style="text-align: right;">   
                                 <h:panelGroup rendered="#{b.transBoolean}">
                                     <h:outputLabel value="#{b.netTotal}" >
@@ -79,7 +118,7 @@
                             </p:column>
                             <p:columnGroup type="footer">
                                 <p:row>
-                                    <p:column footerText="Total" colspan="1" />
+                                    <p:column footerText="Total" colspan="5" />
                                     <p:column style="text-align: right;">
                                         <f:facet name="footer">
                                             <h:outputLabel value="#{i.total}">
@@ -119,19 +158,19 @@
                             <p:outputLabel value="#{dealorDueController.billCount}" style="text-align: right;"/>
                             <p:outputLabel value="Billed Amount" ></p:outputLabel>
                             <p:outputLabel value="#{dealorDueController.billedAmount}" style="text-align: right;">
-                                <f:convertNumber pattern="###,###.00" />
+                                <f:convertNumber pattern="###,##0.00" />
                             </p:outputLabel>
                             <p:outputLabel value="Returned Amount" ></p:outputLabel>
                             <p:outputLabel value="#{dealorDueController.returnedAmount}" style="text-align: right;">
-                                <f:convertNumber pattern="###,###.00" />
+                                <f:convertNumber pattern="###,##0.00" />
                             </p:outputLabel>
                             <p:outputLabel value="Paid Amount" ></p:outputLabel>
                             <p:outputLabel value="#{dealorDueController.paidAmount}" style="text-align: right;">
-                                <f:convertNumber pattern="###,###.00" />
+                                <f:convertNumber pattern="###,##0.00" />
                             </p:outputLabel>
                             <p:outputLabel value="Grand Total" ></p:outputLabel>
                             <p:outputLabel value="#{dealorDueController.grantTotal}" style="text-align: right;">
-                                <f:convertNumber pattern="###,###.00" />
+                                <f:convertNumber pattern="###,##0.00" />
                             </p:outputLabel>
                         </p:panelGrid>
                     </p:panel>

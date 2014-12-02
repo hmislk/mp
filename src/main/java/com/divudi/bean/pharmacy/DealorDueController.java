@@ -17,7 +17,9 @@ import com.divudi.entity.Institution;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.InstitutionFacade;
 import java.io.Serializable;
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -205,12 +207,17 @@ public class DealorDueController implements Serializable {
 
     public void fillItems() {
         //System.err.println("Fill Items");
-        Set<Institution> setIns = new HashSet<>();
+//        Set<Institution> setIns = new HashSet<>();
+        
+        List<Institution>setIns=new ArrayList<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate(), InstitutionType.Dealer);
         list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate(), InstitutionType.Dealer));
 
         setIns.addAll(list);
+        
+       
+        
         //System.err.println("size " + setIns.size());
         items = new ArrayList<>();
         billCount = 0.0;
@@ -319,7 +326,8 @@ public class DealorDueController implements Serializable {
     public void createAgeTable() {
         makeNull();
         //System.err.println("Fill Items");
-        Set<Institution> setIns = new HashSet<>();
+//        Set<Institution> setIns = new HashSet<>();
+        List<Institution> setIns = new ArrayList<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(InstitutionType.Dealer);
         list.addAll(getCreditBean().getDealorFromReturnBills(InstitutionType.Dealer));

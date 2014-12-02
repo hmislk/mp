@@ -268,7 +268,8 @@ public class CreditBean {
                 + " and b.paymentMethod=:pm "
                 + " and b.fromInstitution.institutionType=:insTp "
                 + " and ((abs(b.netTotal)-abs(b.paidAmount))> :val) "
-                + " and (b.billType=:tp1 or b.billType=:tp2) ";
+                + " and (b.billType=:tp1 or b.billType=:tp2) "
+                + " order by b.fromInstitution.name ";
         hm = new HashMap();
         hm.put("val", 0.1);
         hm.put("pm", PaymentMethod.Credit);
@@ -418,7 +419,8 @@ public class CreditBean {
                 + " and b.fromInstitution.institutionType=:insTp"
                 + " and ((abs(b.netTotal)-abs(b.paidAmount))> :val) "
                 + " and b.createdAt between :frm and :to "
-                + " and (b.billType=:tp1 or b.billType=:tp2) ";
+                + " and (b.billType=:tp1 or b.billType=:tp2) "
+                + " order by b.fromInstitution.name ";
         hm = new HashMap();
         hm.put("frm", frmDate);
         hm.put("to", toDate);

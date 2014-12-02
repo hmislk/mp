@@ -68,7 +68,9 @@ public class ReorderController implements Serializable {
         Map m = new HashMap();
         m.put("d", department);
         m.put("items", selectedItems);
-        String sql = "Select r from Reorder r where r.item in ( :items ) and r.department=:d";
+        
+        String sql = "Select r from Reorder r where r.item in :items and r.department=:d";
+        System.out.println(sql);
         System.out.println("sql = " + sql);
         System.out.println("m = " + m);
         items = getEjbFacade().findBySQL(sql, m);

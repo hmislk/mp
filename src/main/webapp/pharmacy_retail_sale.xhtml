@@ -13,8 +13,10 @@
             <ui:define name="content">
                 <h:form id="bill" >
                     <p:defaultCommand  target="btnAdd" />  
+
                     <p:panel rendered="#{!pharmacySaleController.billPreview}"  >
                         <f:facet name="header" >
+
                             <table style="vertical-align: central;">
                                 <tr style="vertical-align: central;">
                                     <td  style="vertical-align: central;">
@@ -40,7 +42,7 @@
                                     <td  style="vertical-align: central;">
                                         <p:commandButton ajax= "false" accesskey="s" value="Settle" 
                                                          action="#{pharmacySaleController.settleBillWithPay}" 
-                                                         update=":#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}">
+                                                         update=" :#{p:component('panelErrorMessage')} :#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacySaleController.calculateAllRates}">
                                             <f:facet name="title" >
                                                 <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
                                                 <h:outputLabel value="ettle"  ></h:outputLabel>
@@ -79,6 +81,15 @@
                             </table>
                         </f:facet>
                         <table  >
+
+                            <tr>
+                                <td>
+                                    <h:panelGroup rendered="#{pharmacySaleController.errorMessage ne null}" id="panelErrorMessage" >
+                                        <p:outputLabel value="#{pharmacySaleController.errorMessage}" style="color: red; padding: 2px; margin: 2px; border: 1px solid red;" ></p:outputLabel>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+
                             <tr style="vertical-align: top;">
                                 <td>
                                     <table  >
@@ -165,7 +176,7 @@
                                                                                         <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
                                                                                                           action="#{pharmacySaleController.addBillItem}" 
                                                                                                           process="@this acStock txtQty :#{p:component('cmbPs')}" 
-                                                                                                          update=":#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem :#{p:component('tabI')}" ></p:commandButton>
+                                                                                                          update=" :#{p:component('panelErrorMessage')} :#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem :#{p:component('tabI')}" ></p:commandButton>
                                                                                     </td>
                                                                                     <td style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
                                                                                         <p:outputLabel id="txtRate" value="#{pharmacySaleController.billItem.netRate}" >

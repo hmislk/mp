@@ -1193,7 +1193,9 @@ public class PharmacyBean {
         }
         name = name.trim();
         PharmaceuticalItemCategory cat;
-        cat = getPharmaceuticalItemCategoryFacade().findFirstBySQL("SELECT c FROM PharmaceuticalItemCategory c Where upper(c.name) = '" + name.toUpperCase() + "' ");
+        Map m = new HashMap();
+        m.put("name", name.toUpperCase());
+        cat = getPharmaceuticalItemCategoryFacade().findFirstBySQL("SELECT c FROM PharmaceuticalItemCategory c Where upper(c.name) =:name ",m);
         if (cat == null && createNew == true) {
             cat = new PharmaceuticalItemCategory();
             cat.setName(name);

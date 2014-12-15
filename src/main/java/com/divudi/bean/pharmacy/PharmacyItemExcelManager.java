@@ -713,7 +713,7 @@ public class PharmacyItemExcelManager implements Serializable {
 
     }
 
-    public String importToExcelWithStock() {
+      public String importToExcelWithStock() {
         ////System.out.println("importing to excel");
         String strCat;
         String strAmp;
@@ -972,6 +972,294 @@ public class PharmacyItemExcelManager implements Serializable {
                     doe = new Date();
                 }
 
+                getPharmacyPurchaseController().getCurrentBillItem().setItem(amp);
+                getPharmacyPurchaseController().getCurrentBillItem().setTmpQty(stockQty);
+                getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setPurchaseRate(pp);
+                getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setRetailRate(sp);
+                getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setDoe(doe);
+                if (batch == null || batch.trim().equals("")) {
+                    getPharmacyPurchaseController().setBatch();
+                } else {
+                    getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setStringValue(batch);
+                }
+                getPharmacyPurchaseController().addItem();
+
+            }
+            UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
+            return "/pharmacy_purchase";
+        } catch (IOException ex) {
+            UtilityController.addErrorMessage(ex.getMessage());
+            return "";
+        } catch (BiffException e) {
+            UtilityController.addErrorMessage(e.getMessage());
+            return "";
+        }
+    }
+
+    
+    public String importToExcelWithStockIfNoExistingStocks() {
+        ////System.out.println("importing to excel");
+        String strCat;
+        String strAmp;
+        String strCode;
+        String strBarcode;
+        String strGenericName;
+        String strStrength;
+        String strStrengthUnit;
+        String strPackSize;
+        String strIssueUnit;
+        String strPackUnit;
+        String strDistributor;
+        String strManufacturer;
+        String strImporter;
+
+        PharmaceuticalItemCategory cat;
+        Vtm vtm;
+        Atm atm;
+        Vmp vmp;
+        Amp amp;
+        Ampp ampp;
+        Vmpp vmpp;
+        VtmsVmps vtmsvmps;
+        MeasurementUnit issueUnit;
+        MeasurementUnit strengthUnit;
+        MeasurementUnit packUnit;
+        double strengthUnitsPerIssueUnit;
+        double issueUnitsPerPack;
+        Institution distributor;
+        Institution manufacturer;
+        Institution importer;
+
+        double stockQty;
+        double pp;
+        double sp;
+        String batch;
+        Date doe;
+
+        File inputWorkbook;
+        Workbook w;
+        Cell cell;
+        InputStream in;
+        UtilityController.addSuccessMessage(file.getFileName());
+        try {
+            UtilityController.addSuccessMessage(file.getFileName());
+            in = file.getInputstream();
+            File f;
+            f = new File(Calendar.getInstance().getTimeInMillis() + file.getFileName());
+            FileOutputStream out = new FileOutputStream(f);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            inputWorkbook = new File(f.getAbsolutePath());
+
+            UtilityController.addSuccessMessage("Excel File Opened");
+            w = Workbook.getWorkbook(inputWorkbook);
+            Sheet sheet = w.getSheet(0);
+
+            getPharmacyPurchaseController().makeNull();
+
+            for (int i = startRow; i < sheet.getRows(); i++) {
+
+                Map m = new HashMap();
+
+                //Category
+                cell = sheet.getCell(catCol, i);
+                strCat = cell.getContents();
+                ////System.out.println("strCat is " + strCat);
+                cat = getPharmacyBean().getPharmaceuticalCategoryByName(strCat);
+                if (cat == null) {
+                    continue;
+                }
+                ////System.out.println("cat = " + cat.getName());
+
+                //Strength Unit
+                cell = sheet.getCell(strengthUnitCol, i);
+                strStrengthUnit = cell.getContents();
+                ////System.out.println("strStrengthUnit is " + strengthUnitCol);
+                strengthUnit = getPharmacyBean().getUnitByName(strStrengthUnit);
+                if (strengthUnit == null) {
+                    continue;
+                }
+                ////System.out.println("strengthUnit = " + strengthUnit.getName());
+                //Pack Unit
+                cell = sheet.getCell(packUnitCol, i);
+                strPackUnit = cell.getContents();
+                ////System.out.println("strPackUnit = " + strPackUnit);
+                packUnit = getPharmacyBean().getUnitByName(strPackUnit);
+                if (packUnit == null) {
+                    continue;
+                }
+                ////System.out.println("packUnit = " + packUnit.getName());
+                //Issue Unit
+                cell = sheet.getCell(issueUnitCol, i);
+                strIssueUnit = cell.getContents();
+                ////System.out.println("strIssueUnit is " + strIssueUnit);
+                issueUnit = getPharmacyBean().getUnitByName(strIssueUnit);
+                if (issueUnit == null) {
+                    continue;
+                }
+                //StrengthOfAnMeasurementUnit
+                cell = sheet.getCell(strengthOfIssueUnitCol, i);
+                strStrength = cell.getContents();
+                ////System.out.println("strStrength = " + strStrength);
+                if (!strStrength.equals("")) {
+                    try {
+                        strengthUnitsPerIssueUnit = Double.parseDouble(strStrength);
+                    } catch (NumberFormatException e) {
+                        strengthUnitsPerIssueUnit = 0.0;
+                    }
+                } else {
+                    strengthUnitsPerIssueUnit = 0.0;
+                }
+
+                //Issue Units Per Pack
+                cell = sheet.getCell(issueUnitsPerPackCol, i);
+                strPackSize = cell.getContents();
+                ////System.out.println("strPackSize = " + strPackSize);
+                if (!strPackSize.equals("")) {
+                    try {
+                        issueUnitsPerPack = Double.parseDouble(strPackSize);
+                    } catch (NumberFormatException e) {
+                        issueUnitsPerPack = 0.0;
+                    }
+                } else {
+                    issueUnitsPerPack = 0.0;
+                }
+
+                //Vtm
+                cell = sheet.getCell(vtmCol, i);
+                strGenericName = cell.getContents();
+                ////System.out.println("strGenericName = " + strGenericName);
+                if (!strGenericName.equals("")) {
+                    vtm = getPharmacyBean().getVtmByName(strGenericName);
+                } else {
+                    ////System.out.println("vtm is null");
+                    vtm = null;
+                }
+
+                //Vmp
+                vmp = getPharmacyBean().getVmp(vtm, strengthUnitsPerIssueUnit, strengthUnit, cat);
+                if (vmp == null) {
+                    ////System.out.println("vmp is null");
+                    continue;
+                }
+                ////System.out.println("vmp = " + vmp.getName());
+                //Amp
+                cell = sheet.getCell(ampCol, i);
+                strAmp = cell.getContents();
+                ////System.out.println("strAmp = " + strAmp);
+                m = new HashMap();
+                m.put("v", vmp);
+                m.put("n", strAmp);
+                if (!strCat.equals("")) {
+                    amp = ampFacade.findFirstBySQL("SELECT c FROM Amp c Where upper(c.name)=:n AND c.vmp=:v", m);
+                    if (amp == null) {
+                        amp = new Amp();
+                        amp.setName(strAmp);
+                        amp.setMeasurementUnit(strengthUnit);
+                        amp.setDblValue((double) strengthUnitsPerIssueUnit);
+                        amp.setCategory(cat);
+                        amp.setVmp(vmp);
+                        getAmpFacade().create(amp);
+                    } else {
+                        amp.setRetired(false);
+                        getAmpFacade().edit(amp);
+                    }
+                } else {
+                    amp = null;
+                    ////System.out.println("amp is null");
+                }
+                if (amp == null) {
+                    continue;
+                }
+                ////System.out.println("amp = " + amp.getName());
+                //Ampp
+                ampp = getPharmacyBean().getAmpp(amp, issueUnitsPerPack, packUnit);
+
+                //Code
+                cell = sheet.getCell(codeCol, i);
+                strCode = cell.getContents();
+                ////System.out.println("strCode = " + strCode);
+                amp.setCode(strCode);
+                getAmpFacade().edit(amp);
+                //Code
+                cell = sheet.getCell(barcodeCol, i);
+                strBarcode = cell.getContents();
+                ////System.out.println("strBarCode = " + strBarcode);
+                amp.setCode(strBarcode);
+                getAmpFacade().edit(amp);
+                //Distributor
+                cell = sheet.getCell(distributorCol, i);
+                strDistributor = cell.getContents();
+                distributor = getInstitutionController().getInstitutionByName(strDistributor, InstitutionType.Dealer);
+                if (distributor != null) {
+                    ////System.out.println("distributor = " + distributor.getName());
+                    ItemsDistributors id = new ItemsDistributors();
+                    id.setInstitution(distributor);
+                    id.setItem(amp);
+                    id.setOrderNo(0);
+                    getItemsDistributorsFacade().create(id);
+                } else {
+                    ////System.out.println("distributor is null");
+                }
+                //Manufacture
+                cell = sheet.getCell(manufacturerCol, i);
+                strManufacturer = cell.getContents();
+                manufacturer = getInstitutionController().getInstitutionByName(strManufacturer, InstitutionType.Manufacturer);
+                amp.setManufacturer(manufacturer);
+                //Importer
+                cell = sheet.getCell(importerCol, i);
+                strImporter = cell.getContents();
+                importer = getInstitutionController().getInstitutionByName(strImporter, InstitutionType.Importer);
+                amp.setManufacturer(importer);
+                //
+                String temStr;
+
+                cell = sheet.getCell(stockQtyCol, i);
+                temStr = cell.getContents();
+                try {
+                    stockQty = Double.valueOf(temStr);
+                } catch (Exception e) {
+                    stockQty = 0;
+                }
+
+                cell = sheet.getCell(pruchaseRateCol, i);
+                temStr = cell.getContents();
+                try {
+                    pp = Double.valueOf(temStr);
+                } catch (Exception e) {
+                    pp = 0;
+                }
+
+                cell = sheet.getCell(saleRateCol, i);
+                temStr = cell.getContents();
+                try {
+                    sp = Double.valueOf(temStr);
+                } catch (Exception e) {
+                    sp = 0;
+                }
+
+                cell = sheet.getCell(batchCol, i);
+                batch = cell.getContents();
+
+                cell = sheet.getCell(doeCol, i);
+                temStr = cell.getContents();
+                try {
+                    doe = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH).parse(temStr);
+                } catch (Exception e) {
+                    doe = new Date();
+                }
+
+                if(getPharmacyBean().getStockQty(amp, getSessionController().getDepartment()) > 1){
+                    continue;
+                }
+                
                 getPharmacyPurchaseController().getCurrentBillItem().setItem(amp);
                 getPharmacyPurchaseController().getCurrentBillItem().setTmpQty(stockQty);
                 getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setPurchaseRate(pp);

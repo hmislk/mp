@@ -1074,6 +1074,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 ////System.out.println("strCat is " + strCat);
                 cat = getPharmacyBean().getPharmaceuticalCategoryByName(strCat);
                 if (cat == null) {
+                    System.out.println("cat null. exiciting");
                     continue;
                 }
                 ////System.out.println("cat = " + cat.getName());
@@ -1084,6 +1085,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 ////System.out.println("strStrengthUnit is " + strengthUnitCol);
                 strengthUnit = getPharmacyBean().getUnitByName(strStrengthUnit);
                 if (strengthUnit == null) {
+                    System.out.println("strenght unit null. exiciting ");
                     continue;
                 }
                 ////System.out.println("strengthUnit = " + strengthUnit.getName());
@@ -1093,6 +1095,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 ////System.out.println("strPackUnit = " + strPackUnit);
                 packUnit = getPharmacyBean().getUnitByName(strPackUnit);
                 if (packUnit == null) {
+                    System.out.println("pack unit null. exiciting");
                     continue;
                 }
                 ////System.out.println("packUnit = " + packUnit.getName());
@@ -1102,6 +1105,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 ////System.out.println("strIssueUnit is " + strIssueUnit);
                 issueUnit = getPharmacyBean().getUnitByName(strIssueUnit);
                 if (issueUnit == null) {
+                    System.out.println("issue unit null. exciting ");
                     continue;
                 }
                 //StrengthOfAnMeasurementUnit
@@ -1143,9 +1147,14 @@ public class PharmacyItemExcelManager implements Serializable {
                     vtm = null;
                 }
 
+                System.out.println("vtm = " + vtm);
+                System.out.println("strengthUnitsPerIssueUnit = " + strengthUnitsPerIssueUnit);
+                System.out.println("strengthUnit = " + strengthUnit);
+                System.out.println("cat = " + cat);
                 //Vmp
                 vmp = getPharmacyBean().getVmp(vtm, strengthUnitsPerIssueUnit, strengthUnit, cat);
                 if (vmp == null) {
+                    System.out.println("vmp null. exiciting");
                     ////System.out.println("vmp is null");
                     continue;
                 }
@@ -1256,7 +1265,10 @@ public class PharmacyItemExcelManager implements Serializable {
                     doe = new Date();
                 }
 
-                if(getPharmacyBean().getStockQty(amp, getSessionController().getDepartment()) > 1){
+                double td = getPharmacyBean().getStockQty(amp, getSessionController().getDepartment()) ;
+                System.out.println("td = " + td);
+                if(td > 0){
+                    System.out.println("loop excitted = " );
                     continue;
                 }
                 

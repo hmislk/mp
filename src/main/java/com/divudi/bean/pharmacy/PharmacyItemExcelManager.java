@@ -13,6 +13,7 @@ import com.divudi.data.InstitutionType;
 import com.divudi.data.dataStructure.PharmacyImportCol;
 import com.divudi.data.inward.InwardChargeType;
 import com.divudi.ejb.PharmacyBean;
+import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
@@ -31,6 +32,7 @@ import com.divudi.entity.pharmacy.MeasurementUnit;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItem;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
+import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.entity.pharmacy.StoreItemCategory;
 import com.divudi.entity.pharmacy.Vmp;
@@ -59,6 +61,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -113,6 +116,8 @@ public class PharmacyItemExcelManager implements Serializable {
     private PharmacyBean pharmacyBean;
     @EJB
     StoreItemCategoryFacade storeItemCategoryFacade;
+    @EJB
+    PharmacyCalculation pharmacyBillBean;
 
     List<PharmacyImportCol> itemNotPresent;
     List<String> itemsWithDifferentGenericName;
@@ -396,17 +401,17 @@ public class PharmacyItemExcelManager implements Serializable {
         System.out.println("completedId = " + completedId);
 
         int loopCount;
-        completedId= completedId/1000;
+        completedId = completedId / 1000;
         loopCount = completedId.intValue();
-        
+
         System.out.println("loopCount = " + loopCount);
-        
+
         long nextId = 0l;
-        
+
         for (int i = 0; i >= loopCount; i++) {
 
-            System.out.println("i = " + ((i*1000)-1));
-            
+            System.out.println("i = " + ((i * 1000) - 1));
+
             sql = "Select b from Bill b where b.id>:bid and ( b.billType=:bt1 or b.billType=:bt2 or b.billType=:bt3)";
             Map m = new HashMap();
             m.put("bt1", BillType.PharmacyPurchaseBill);
@@ -442,7 +447,6 @@ public class PharmacyItemExcelManager implements Serializable {
                 nextId = b.getId();
             }
 
-            
         }
     }
 
@@ -713,7 +717,7 @@ public class PharmacyItemExcelManager implements Serializable {
 
     }
 
-      public String importToExcelWithStock() {
+    public String importToExcelWithStock() {
         ////System.out.println("importing to excel");
         String strCat;
         String strAmp;
@@ -996,8 +1000,7 @@ public class PharmacyItemExcelManager implements Serializable {
         }
     }
 
-    
-    public String importToExcelWithStockIfNoExistingStocks() {
+    public String directIncreaseStocks() {
         ////System.out.println("importing to excel");
         String strCat;
         String strAmp;
@@ -1063,6 +1066,12 @@ public class PharmacyItemExcelManager implements Serializable {
             Sheet sheet = w.getSheet(0);
 
             getPharmacyPurchaseController().makeNull();
+
+            BilledBill b = new BilledBill();
+            b.setCreatedAt(new Date());
+            b.setCreater(getSessionController().getLoggedUser());
+            b.setBillType(BillType.PharmacyPurchaseBill);
+            getBillFacade().create(b);
 
             for (int i = startRow; i < sheet.getRows(); i++) {
 
@@ -1265,28 +1274,51 @@ public class PharmacyItemExcelManager implements Serializable {
                     doe = new Date();
                 }
 
-                double td = getPharmacyBean().getStockQty(amp, getSessionController().getDepartment()) ;
+                double td = getPharmacyBean().getStockQty(amp, getSessionController().getDepartment());
                 System.out.println("td = " + td);
-                if(td > 0){
-                    System.out.println("loop excitted = " );
+                if (td > 0) {
+                    System.out.println("loop excitted = ");
                     continue;
                 }
-                
-                getPharmacyPurchaseController().getCurrentBillItem().setItem(amp);
-                getPharmacyPurchaseController().getCurrentBillItem().setTmpQty(stockQty);
-                getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setPurchaseRate(pp);
-                getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setRetailRate(sp);
-                getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setDoe(doe);
+
+                BillItem bi = new BillItem();
+                bi.setBill(b);
+                bi.setItem(amp);
+                getBillItemFacade().create(bi);
+
+                PharmaceuticalBillItem pbi = new PharmaceuticalBillItem();
+                getPharmaceuticalBillItemFacade().create(pbi);
+
+                pbi.setBillItem(bi);
+                bi.setPharmaceuticalBillItem(pbi);
+
+                bi.setItem(amp);
+                bi.setTmpQty(stockQty);
+                bi.getPharmaceuticalBillItem().setPurchaseRate(pp);
+                bi.getPharmaceuticalBillItem().setRetailRate(sp);
+                bi.getPharmaceuticalBillItem().setDoe(doe);
                 if (batch == null || batch.trim().equals("")) {
-                    getPharmacyPurchaseController().setBatch();
+                    Date date = pbi.getDoe();
+                    DateFormat df = new SimpleDateFormat("ddMMyyyy");
+                    String reportDate = df.format(date);
+                    pbi.setStringValue(reportDate);
                 } else {
-                    getPharmacyPurchaseController().getCurrentBillItem().getPharmaceuticalBillItem().setStringValue(batch);
+                    pbi.setStringValue(batch);
                 }
-                getPharmacyPurchaseController().addItem();
+                ItemBatch itemBatch = getPharmacyBillBean().saveItemBatch(bi);
+                pbi.setItemBatch(itemBatch);
+                Stock stock = getPharmacyBean().addToStock(pbi, Math.abs(stockQty), getSessionController().getDepartment());
+                pbi.setStock(stock);
+                
+                getBillItemFacade().edit(bi);
+                getPharmaceuticalBillItemFacade().edit(pbi);
+                b.getBillItems().add(bi);
 
             }
+            getBillFacade().edit(b);
+            
             UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
-            return "/pharmacy_purchase";
+            return "";
         } catch (IOException ex) {
             UtilityController.addErrorMessage(ex.getMessage());
             return "";
@@ -2285,6 +2317,10 @@ public class PharmacyItemExcelManager implements Serializable {
 
     public void setPharmacyPurchaseController(PharmacyPurchaseController pharmacyPurchaseController) {
         this.pharmacyPurchaseController = pharmacyPurchaseController;
+    }
+
+    public PharmacyCalculation getPharmacyBillBean() {
+        return pharmacyBillBean;
     }
 
 }

@@ -24,6 +24,7 @@ import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.entity.pharmacy.Vmp;
 import com.divudi.facade.AmpFacade;
+import com.divudi.facade.ItemBatchFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
@@ -316,14 +317,12 @@ public class ReportsStock implements Serializable {
             }
 
             //System.out.println("calculated History Qty " + calculatedStk);
-
             if (flg == true && b.getStockHistory().getStockQty() != calculatedStk) {
                 stockSet.add(b.getStock());
                 //System.out.println("TRUE");
             }
 
             //System.out.println("#########");
-
         }
 
         stocks = new ArrayList<>();
@@ -560,6 +559,44 @@ public class ReportsStock implements Serializable {
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
 
+    }
+
+    List<Stock> bulkAdjustmentStocks;
+
+    public List<Stock> getBulkAdjustmentStocks() {
+        return bulkAdjustmentStocks;
+    }
+
+    public void setBulkAdjustmentStocks(List<Stock> bulkAdjustmentStocks) {
+        this.bulkAdjustmentStocks = bulkAdjustmentStocks;
+    }
+
+    public void updateStock(Stock s){
+        getStockFacade().edit(s);
+        getItemBatchFacade().edit(s.getItemBatch());
+    }
+    
+    @EJB
+    ItemBatchFacade itemBatchFacade;
+
+    public ItemBatchFacade getItemBatchFacade() {
+        return itemBatchFacade;
+    }
+    
+    
+    
+    public void fillCategoryStocksForBulkAdjustment() {
+        if (department == null || category == null) {
+            UtilityController.addErrorMessage("Please select a department && Category");
+            return;
+        }
+        Map m;
+        String sql;
+        m = new HashMap();
+        m.put("cat", category);
+        m.put("dep", department);
+        sql = "select s from Stock s where s.department=:dep and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
+        bulkAdjustmentStocks = getStockFacade().findBySQL(sql, m);
     }
 
     public void fillAllDistributorStocks() {

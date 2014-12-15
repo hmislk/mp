@@ -35,8 +35,8 @@
             </p:panelGrid>
 
             <p:fileUpload value="#{pharmacyItemExcelManager.file}" mode="simple"/>
-            <h:commandButton value="Import All" action="#{pharmacyItemExcelManager.importToExcelWithStock}"/>
-            <h:commandButton value="Import If no stocks" action="#{pharmacyItemExcelManager.directIncreaseStocks()}"/>
+            <h:commandButton value="Import With Bills" action="#{pharmacyItemExcelManager.importToExcelWithStock}"/>
+            <h:commandButton value="Direct Import" action="#{pharmacyItemExcelManager.directIncreaseStocks()}"/>
         </h:form>
 
        

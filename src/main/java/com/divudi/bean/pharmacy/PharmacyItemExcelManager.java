@@ -1274,12 +1274,12 @@ public class PharmacyItemExcelManager implements Serializable {
                     doe = new Date();
                 }
 
-                double td = getPharmacyBean().getStockQty(amp, getSessionController().getDepartment());
-                System.out.println("td = " + td);
-                if (td > 0) {
-                    System.out.println("loop excitted = ");
-                    continue;
-                }
+//                double td = getPharmacyBean().getStockQty(amp, getSessionController().getDepartment());
+//                System.out.println("td = " + td);
+//                if (td > 0) {
+//                    System.out.println("loop excitted = ");
+//                    continue;
+//                }
 
                 BillItem bi = new BillItem();
                 bi.setBill(b);

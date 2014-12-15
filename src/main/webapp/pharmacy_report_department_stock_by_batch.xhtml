@@ -58,7 +58,7 @@
                                     <h:outputLabel value="#{i.itemBatch.item.code}" ></h:outputLabel>
                                 </p:column>
 
-                                <p:column headerText="Item" width="300px;" sortBy="#{i.itemBatch.item.name}">
+                                <p:column headerText="Item" width="300px;" sortBy="#{i.itemBatch.item.name}" filterBy="#{i.itemBatch.item.name}">
                                     <f:facet name="header">
                                         <h:outputLabel value="Item"/>
                                     </f:facet>

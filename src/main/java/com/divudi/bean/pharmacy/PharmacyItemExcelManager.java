@@ -1269,7 +1269,7 @@ public class PharmacyItemExcelManager implements Serializable {
                 cell = sheet.getCell(doeCol, i);
                 temStr = cell.getContents();
                 try {
-                    doe = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH).parse(temStr);
+                    doe = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(temStr);
                 } catch (Exception e) {
                     doe = new Date();
                 }
@@ -1313,6 +1313,10 @@ public class PharmacyItemExcelManager implements Serializable {
                 getBillItemFacade().edit(bi);
                 getPharmaceuticalBillItemFacade().edit(pbi);
                 b.getBillItems().add(bi);
+                
+                System.out.println("i = " + i);
+                System.out.println("amp.namw = " + amp.getName());
+                
 
             }
             getBillFacade().edit(b);

@@ -44,12 +44,14 @@ import com.divudi.facade.AmppFacade;
 import com.divudi.facade.AtmFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.ItemBatchFacade;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemsDistributorsFacade;
 import com.divudi.facade.MeasurementUnitFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
 import com.divudi.facade.PharmaceuticalItemFacade;
+import com.divudi.facade.StockFacade;
 import com.divudi.facade.StockHistoryFacade;
 import com.divudi.facade.StoreItemCategoryFacade;
 import com.divudi.facade.VmpFacade;
@@ -1280,7 +1282,6 @@ public class PharmacyItemExcelManager implements Serializable {
 //                    System.out.println("loop excitted = ");
 //                    continue;
 //                }
-
                 BillItem bi = new BillItem();
                 bi.setBill(b);
                 bi.setItem(amp);
@@ -1309,18 +1310,17 @@ public class PharmacyItemExcelManager implements Serializable {
                 pbi.setItemBatch(itemBatch);
                 Stock stock = getPharmacyBean().addToStock(pbi, Math.abs(stockQty), getSessionController().getDepartment());
                 pbi.setStock(stock);
-                
+
                 getBillItemFacade().edit(bi);
                 getPharmaceuticalBillItemFacade().edit(pbi);
                 b.getBillItems().add(bi);
-                
+
                 System.out.println("i = " + i);
                 System.out.println("amp.namw = " + amp.getName());
-                
 
             }
             getBillFacade().edit(b);
-            
+
             UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
             return "";
         } catch (IOException ex) {
@@ -1832,6 +1832,95 @@ public class PharmacyItemExcelManager implements Serializable {
 
                 getAmpFacade().edit(amp);
 
+            }
+
+            UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");
+            return "";
+        } catch (IOException ex) {
+            UtilityController.addErrorMessage(ex.getMessage());
+            return "";
+        } catch (BiffException e) {
+            UtilityController.addErrorMessage(e.getMessage());
+            return "";
+        }
+    }
+
+    @EJB
+    StockFacade stockFacade;
+    @EJB
+    ItemBatchFacade itemBatchFacade;
+    
+    public String importToExcelRates() {
+        String strCode;
+        String strPr;
+        String strSr;
+        Double pr;
+        Double sr;
+
+        File inputWorkbook;
+        Workbook w;
+        Cell cell;
+        InputStream in;
+        UtilityController.addSuccessMessage(file.getFileName());
+        try {
+            UtilityController.addSuccessMessage(file.getFileName());
+            in = file.getInputstream();
+            File f;
+            f = new File(Calendar.getInstance().getTimeInMillis() + file.getFileName());
+            FileOutputStream out = new FileOutputStream(f);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            inputWorkbook = new File(f.getAbsolutePath());
+
+            UtilityController.addSuccessMessage("Excel File Opened");
+            w = Workbook.getWorkbook(inputWorkbook);
+            Sheet sheet = w.getSheet(0);
+
+            for (int i = startRow; i < sheet.getRows(); i++) {
+                
+                cell = sheet.getCell(0, i);
+                strCode = cell.getContents();
+
+                cell = sheet.getCell(1, i);
+                strPr = cell.getContents();
+
+                cell = sheet.getCell(1, i);
+                strSr = cell.getContents();
+
+                try{
+                    sr = Double.valueOf(strSr);
+                } catch (Exception e){
+                    continue;
+                }
+                
+                try{
+                    pr = Double.valueOf(strPr);
+                } catch (Exception e){
+                    continue;
+                }
+                Map m ;
+
+                m = new HashMap();
+
+                m.put("n", strCode);
+
+                
+                List<Stock> stocks;
+                stocks = stockFacade.findBySQL("SELECT c FROM Stock c Where c.itemBatch.item.code=:n", m);
+                
+                for(Stock s:stocks){
+                    s.getItemBatch().setPurcahseRate(pr);
+                    s.getItemBatch().setRetailsaleRate(sr);
+                    itemBatchFacade.edit(s.getItemBatch());
+                }
+                
             }
 
             UtilityController.addSuccessMessage("Succesful. All the data in Excel File Impoted to the database");

@@ -20,8 +20,8 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search by Logged User" action="#{searchController.createTableCashIn()}"/>
-                                <p:commandButton id="btnSearchAll" ajax="false" value="Search by All Users" action="#{searchController.createTableashInAll()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search by Logged User" action="#{searchController.createTableCashInOut()}"/>
+                                <p:commandButton id="btnSearchAll" ajax="false" value="Search by All Users" action="#{searchController.createTableCashInOutAll()}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
@@ -42,23 +42,17 @@
                                      value="#{searchController.bills}" var="bill"  
                                      style="min-width: 100%;"  
                                      paginator="true" paginatorAlwaysVisible="true"
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="10,30,50"
-                                 rows="50">
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="10,30,50"
+                                     rows="50">
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
-                            <p:column headerText="View Bill">
-                                <p:commandButton ajax="false" value="View Bill" action="cash_in_reprint">
-                                    <f:setPropertyActionListener value="#{bill}" target="#{billSearch.bill}"/>
-                                </p:commandButton>
-                            </p:column>
+
                             <p:column headerText="Bill No" >                                
                                 <h:outputLabel  value="#{bill.insId}"></h:outputLabel>
                             </p:column>                            
-                            <p:column headerText="From User"  >                                
-                                <h:outputLabel  value="#{bill.fromWebUser.webUserPerson.nameWithTitle}"></h:outputLabel>                                
-                            </p:column>
+
                             <p:column headerText="Billed at"  >
                                 <h:outputLabel value="#{bill.createdAt}" >
                                     <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
@@ -71,16 +65,44 @@
                                     </h:outputLabel>
                                 </h:panelGroup>
                             </p:column>  
-
-                            <p:column headerText="Value"  >                                
-                                <h:outputLabel value="#{bill.netTotal}" >
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputLabel>                                 
-                            </p:column>                                                   
                             <p:column headerText="Comments" >
                                 <h:outputLabel  value="#{bill.comments}" >
                                 </h:outputLabel>
                             </p:column>
+                            <p:column headerText="Cash In Value" >                                
+                                <h:outputLabel style="float: right" value="#{bill.netTotal}" rendered="#{bill.billType eq 'CashIn'}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>                                 
+                            </p:column>   
+
+                            <p:column headerText="Cash Out Value" >                                
+                                <h:outputLabel style="float: right" value="#{bill.netTotal}" rendered="#{bill.billType eq 'CashOut'}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>                                 
+                            </p:column>
+
+                            <p:column headerText="Transaction" >                                
+                                <h:outputLabel style="float: right" value="#{bill.tmp}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>                                 
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="6" footerText="Total">
+                                        <f:facet name="footer">
+                                            <h:outputLabel value="Total" />
+                                        </f:facet>
+                                    </p:column>
+                                    <p:column style="text-align: right;" footerText="#{searchController.cashInOutVal}">
+                                        <f:facet name="footer" >
+                                            <h:outputLabel value="#{searchController.cashInOutVal}" >
+                                                <f:convertNumber parent="#,##0.00" />
+                                            </h:outputLabel>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+
+                            </p:columnGroup>
                         </p:dataTable>
 
 

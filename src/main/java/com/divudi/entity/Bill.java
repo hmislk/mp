@@ -231,6 +231,8 @@ public class Bill implements Serializable {
     @ManyToOne
     private WebUser fromWebUser;
     double claimableTotal;
+    
+    transient double tmp;
 
     public double getClaimableTotal() {
         return claimableTotal;
@@ -1239,6 +1241,14 @@ public class Bill implements Serializable {
 
     public void setCashTransaction(CashTransaction cashTransaction) {
         this.cashTransaction = cashTransaction;
+    }
+
+    public double getTmp() {
+        return tmp;
+    }
+
+    public void setTmp(double tmp) {
+        this.tmp = tmp;
     }
 
 }

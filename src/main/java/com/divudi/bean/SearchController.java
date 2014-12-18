@@ -87,6 +87,9 @@ public class SearchController implements Serializable {
     Department department;
 
     Bill realizingBill;
+    
+    double cashInOutVal;
+    double cashTranVal;
 
     public void realizeBill() {
         if (realizingBill == null) {
@@ -1973,7 +1976,57 @@ public class SearchController implements Serializable {
         temMap.put("w", getSessionController().getLoggedUser());
 
         ////System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+    }
+    
+    public void createTableCashInOut() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where (b.billType = :billType1 or b.billType = :billType2) "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false"
+                + " and b.creater=:w ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
+            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.billTime desc  ";
+//    
+        temMap.put("billType1", BillType.CashIn);
+        temMap.put("billType2", BillType.CashOut);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("w", getSessionController().getLoggedUser());
+
+        ////System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        cashInOutVal = 0.0;
+        cashTranVal = 0.0;
+        
+
+        for (Bill b : bills) {
+            cashInOutVal = cashInOutVal + (b.getNetTotal());
+            cashTranVal = cashTranVal + (b.getNetTotal());
+            b.setTmp(cashTranVal);
+        }
 
     }
 
@@ -2010,10 +2063,57 @@ public class SearchController implements Serializable {
         temMap.put("ins", getSessionController().getInstitution());
 
         ////System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
 
+    public void createTableCashInOutAll() {
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where (b.billType = :billType1 or b.billType = :billType2) "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
+            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.billTime desc  ";
+//    
+        temMap.put("billType1", BillType.CashIn);
+        temMap.put("billType2", BillType.CashOut);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+
+        ////System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        cashInOutVal = 0.0;
+        cashTranVal = 0.0;
+
+        for (Bill b : bills) {
+            cashInOutVal = cashInOutVal + (b.getNetTotal());
+            cashTranVal = cashTranVal + (b.getNetTotal());
+            b.setTmp(cashTranVal);
+        }
+        
+    }
+    
     public void createTableCashOut() {
         bills = null;
         String sql;
@@ -2049,7 +2149,7 @@ public class SearchController implements Serializable {
         temMap.put("w", getSessionController().getLoggedUser());
 
         ////System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
 
@@ -2086,7 +2186,7 @@ public class SearchController implements Serializable {
         temMap.put("ins", getSessionController().getInstitution());
 
         ////System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
 
@@ -3026,6 +3126,22 @@ public class SearchController implements Serializable {
 
     public void setNetTotal(double netTotal) {
         this.netTotal = netTotal;
+    }
+
+    public double getCashInOutVal() {
+        return cashInOutVal;
+    }
+
+    public void setCashInOutVal(double cashInOutVal) {
+        this.cashInOutVal = cashInOutVal;
+    }
+
+    public double getCashTranVal() {
+        return cashTranVal;
+    }
+
+    public void setCashTranVal(double cashTranVal) {
+        this.cashTranVal = cashTranVal;
     }
 
 }

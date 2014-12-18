@@ -45,15 +45,15 @@
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      rowsPerPageTemplate="10,30,50"
                                      rows="50">
-                            <p:column headerText="No" styleClass="alignTop">
+                            <p:column headerText="No" styleClass="alignTop" width="25">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
 
-                            <p:column headerText="Bill No" >                                
+                            <p:column headerText="Bill No" width="125">                                
                                 <h:outputLabel  value="#{bill.insId}"></h:outputLabel>
                             </p:column>                            
 
-                            <p:column headerText="Billed at"  >
+                            <p:column headerText="Billed at" width="175" >
                                 <h:outputLabel value="#{bill.createdAt}" >
                                     <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                 </h:outputLabel>
@@ -69,19 +69,19 @@
                                 <h:outputLabel  value="#{bill.comments}" >
                                 </h:outputLabel>
                             </p:column>
-                            <p:column headerText="Cash In Value" >                                
+                            <p:column headerText="Cash In Value" width="100">                                
                                 <h:outputLabel style="float: right" value="#{bill.netTotal}" rendered="#{bill.billType eq 'CashIn'}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>                                 
                             </p:column>   
 
-                            <p:column headerText="Cash Out Value" >                                
+                            <p:column headerText="Cash Out Value" width="100">                                
                                 <h:outputLabel style="float: right" value="#{bill.netTotal}" rendered="#{bill.billType eq 'CashOut'}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>                                 
                             </p:column>
 
-                            <p:column headerText="Transaction" >                                
+                            <p:column headerText="Transaction" width="100">                                
                                 <h:outputLabel style="float: right" value="#{bill.tmp}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>                                 

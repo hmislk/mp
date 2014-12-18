@@ -129,7 +129,7 @@
                             <p:submenu label="Cash Transaction" rendered="#{webUserController.hasPrivilege('CashTransaction')}">
                                 <p:menuitem ajax="false" action="/cashTransaction/cash_in" value="Cash In" actionListener="#{cashInController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashIn')}" />
                                 <p:menuitem ajax="false" action="/cashTransaction/cash_out"  value="Cash Out" actionListener="#{cashOutController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashOut')}" />                                      
-                                                                    
+                                <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill" value="Cash Transaction "/>                                   
                             </p:submenu>
                             <p:submenu label="User"  >
                                 <p:menuitem  ajax="false"  action="/user_change_password" value="Change Password"  ></p:menuitem>
@@ -142,24 +142,24 @@
                                 <p:menuitem  ajax="false"  action="/admin_manage_staff_index" value="Manage Staff" rendered="#{webUserController.hasPrivilege('AdminStaff')}" ></p:menuitem>
                                 <p:menuitem  ajax="false"  action="/admin_fees" value="Manage Prices/Charges/Packages" rendered="#{webUserController.hasPrivilege('AdminPrices')}" ></p:menuitem>
                                 <p:menuitem ajax="false" action="/dataAdmin/admin_data_administration" value="Data Administration" rendered="#{webUserController.hasPrivilege('AdminItems')}" ></p:menuitem>
-                                
-                                
+
+
                                 <p:submenu label="Cash Transaction">
-                                     <p:menuitem ajax="false" action="/cashTransaction/list_to_cash_recieve"  value="List To Cash Recieve" rendered="#{webUserController.hasPrivilege('CashTransactionListToCashRecieve')}" actionListener="#{searchController.makeNull()}"/>   
-                                <p:submenu label="Search">
-                                    <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_bill" value="Cash In "/>
-                                    <p:menuitem ajax="false" action="/cashTransaction/search_cash_out_bill" value="Cash Out "/>                                        
-                                    <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill" value="Cash Transaction "/>
-                                </p:submenu>
-                                <p:submenu label="Adjustment">
-                                    <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cash" value="Cash"/>                                        
-                                    <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cheque" value="Cheque"/>                                        
-                                    <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_credit_card" value="Credit Card"/>                                        
-                                    <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_slip" value="Slip"/>                                        
-                                    <p:menuitem ajax="false" action="/cashTransaction/search_adjustment_bill" value="Search"/>                                        
-                                </p:submenu>
-                                <p:menuitem ajax="false" action="/cashTransaction/administration"  value="Administration"  />   
-                                <p:menuitem ajax="false" action="/cashTransaction/report"  value="Reports"  /> 
+                                    <p:menuitem ajax="false" action="/cashTransaction/list_to_cash_recieve"  value="List To Cash Recieve" rendered="#{webUserController.hasPrivilege('CashTransactionListToCashRecieve')}" actionListener="#{searchController.makeNull()}"/>   
+                                    <p:submenu label="Search">
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_bill" value="Cash In "/>
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_cash_out_bill" value="Cash Out "/>                                        
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill" value="Cash Transaction "/>
+                                    </p:submenu>
+                                    <p:submenu label="Adjustment">
+                                        <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cash" value="Cash"/>                                        
+                                        <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cheque" value="Cheque"/>                                        
+                                        <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_credit_card" value="Credit Card"/>                                        
+                                        <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_slip" value="Slip"/>                                        
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_adjustment_bill" value="Search"/>                                        
+                                    </p:submenu>
+                                    <p:menuitem ajax="false" action="/cashTransaction/administration"  value="Administration"  />   
+                                    <p:menuitem ajax="false" action="/cashTransaction/report"  value="Reports"  /> 
                                 </p:submenu>
                             </p:submenu>
                             <p:submenu label="Search" rendered="#{webUserController.hasPrivilege('Search')}">

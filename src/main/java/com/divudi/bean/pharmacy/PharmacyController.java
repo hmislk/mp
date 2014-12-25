@@ -291,7 +291,7 @@ public class PharmacyController implements Serializable {
         sql = "select i.department,sum(i.stock),i.itemBatch.dateOfExpire,i.itemBatch.purcahseRate,i.itemBatch.retailsaleRate from Stock i where "
                 + " i.department.institution=:ins and i.itemBatch.item=:i"
                 + " group by i.department"
-                + " having sum(i.stock) > 0 ";
+                + " having sum(i.stock) >= 0 ";
 
         return getBillItemFacade().findAggregates(sql, m);
 
@@ -895,7 +895,7 @@ public class PharmacyController implements Serializable {
 //                    //System.out.println("calPerStock = " + calPerStock);
 //                    //System.out.println("insStockTotal = " + insStockTotal);
 //                    //System.out.println("insAverageTotal = " + insAverageTotal);
-                    if ((insStock < calPerStock) && r.getStock() != 0) {
+                    if ((insStock < calPerStock) && r.getStock() >= 0) {
                         //System.out.println("*insStock = " + insStock);
                         //System.out.println("*calPerStock = " + calPerStock);
                         insStockTotal += r.getStock();

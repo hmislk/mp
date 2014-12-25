@@ -612,9 +612,11 @@ public class ReportsStock implements Serializable {
             ////System.out.println("i = " + i);
             m = new HashMap();
             m.put("ins", i);
+            m.put("d", department);
             sql = "select sum(s.stock),sum(s.stock * s.itemBatch.purcahseRate),sum(s.stock * s.itemBatch.retailsaleRate)"
                     + " from Stock s where s.department=:d and s.itemBatch.item.id in (select item.id from ItemsDistributors id join id.item as item where id.retired=false and id.institution=:ins)";
             Object[] objs = getStockFacade().findSingleAggregate(sql, m);
+            
             if (objs[0] != null && (Double) objs[0] > 0) {
                 StockReportRecord r = new StockReportRecord();
                 ////System.out.println("objs = " + objs);

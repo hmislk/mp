@@ -1981,6 +1981,11 @@ public class SearchController implements Serializable {
     }
     
     public void createTableCashInOut() {
+        
+        if(department==null){
+            UtilityController.addErrorMessage("Select a Department");
+            return;
+        }
         bills = null;
         String sql;
         Map temMap = new HashMap();
@@ -1989,7 +1994,8 @@ public class SearchController implements Serializable {
                 + " and b.institution=:ins "
                 + " and b.createdAt between :fromDate and :toDate "
                 + " and b.retired=false"
-                + " and b.creater=:w ";
+                + " and b.creater=:w "
+                + " and b.department=:dep ";
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
@@ -2014,20 +2020,49 @@ public class SearchController implements Serializable {
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
         temMap.put("w", getSessionController().getLoggedUser());
+        temMap.put("dep", department);
 
         ////System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         cashInOutVal = 0.0;
         cashTranVal = 0.0;
-        
 
         for (Bill b : bills) {
             cashInOutVal = cashInOutVal + (b.getNetTotal());
             cashTranVal = cashTranVal + (b.getNetTotal());
             b.setTmp(cashTranVal);
         }
+        
+        Bill bill=new Bill();
+        bill.setComments("Sale Bill Total "+department.getName()+" Department");
+        bill.setTmp(getDepartmentSale(department));
+        bills.add(bill);
 
+    }
+    
+    private double getDepartmentSale(Department d) {
+        String sql = "Select sum(b.netTotal) from Bill b "
+                + " where b.retired=false"
+                + " and  b.billType=:bType"
+                + " and b.referenceBill.department=:dep "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and (b.paymentMethod = :pm1 "
+                + " or  b.paymentMethod = :pm2 "
+                + " or  b.paymentMethod = :pm3 "
+                + " or  b.paymentMethod = :pm4)";
+        HashMap hm = new HashMap();
+        hm.put("bType", BillType.PharmacySale);
+        hm.put("dep", d);
+        hm.put("fromDate", getFromDate());
+        hm.put("toDate", getToDate());
+        hm.put("pm1", PaymentMethod.Cash);
+        hm.put("pm2", PaymentMethod.Card);
+        hm.put("pm3", PaymentMethod.Cheque);
+        hm.put("pm4", PaymentMethod.Slip);
+        double netTotal = getBillFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
+
+        return netTotal;
     }
 
     public void createTableCashInAll() {
@@ -2068,6 +2103,10 @@ public class SearchController implements Serializable {
     }
 
     public void createTableCashInOutAll() {
+        if(department==null){
+            UtilityController.addErrorMessage("Select a Department");
+            return;
+        }
         bills = null;
         String sql;
         Map temMap = new HashMap();
@@ -2075,7 +2114,8 @@ public class SearchController implements Serializable {
         sql = "select b from BilledBill b where (b.billType = :billType1 or b.billType = :billType2) "
                 + " and b.institution=:ins "
                 + " and b.createdAt between :fromDate and :toDate "
-                + " and b.retired=false";
+                + " and b.retired=false "
+                + " and b.department=:dep ";
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
@@ -2091,6 +2131,7 @@ public class SearchController implements Serializable {
             sql += " and  (upper(b.netTotal) like :total )";
             temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
         }
+        
 
         sql += " order by b.billTime desc  ";
 //    
@@ -2099,18 +2140,26 @@ public class SearchController implements Serializable {
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("dep", department);
 
         ////System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
         cashInOutVal = 0.0;
         cashTranVal = 0.0;
+        
 
         for (Bill b : bills) {
             cashInOutVal = cashInOutVal + (b.getNetTotal());
             cashTranVal = cashTranVal + (b.getNetTotal());
             b.setTmp(cashTranVal);
         }
+        
+        
+        Bill bill=new Bill();
+        bill.setComments("Sale Bill Total "+department.getName()+" Department");
+        bill.setTmp(getDepartmentSale(department));
+        bills.add(bill);
         
     }
     

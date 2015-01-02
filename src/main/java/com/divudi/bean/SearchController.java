@@ -2027,6 +2027,12 @@ public class SearchController implements Serializable {
 
         cashInOutVal = 0.0;
         cashTranVal = 0.0;
+        
+        Bill bill=new Bill();
+        bill.setComments("Sale Bill Total "+department.getName()+" Department");
+        bill.setNetTotal(getDepartmentSale(department));
+        bill.setBillType(BillType.CashIn);
+        bills.add(bill);
 
         for (Bill b : bills) {
             cashInOutVal = cashInOutVal + (b.getNetTotal());
@@ -2034,11 +2040,6 @@ public class SearchController implements Serializable {
             b.setTmp(cashTranVal);
         }
         
-        Bill bill=new Bill();
-        bill.setComments("Sale Bill Total "+department.getName()+" Department");
-        bill.setTmp(getDepartmentSale(department));
-        bills.add(bill);
-
     }
     
     private double getDepartmentSale(Department d) {
@@ -2148,18 +2149,17 @@ public class SearchController implements Serializable {
         cashInOutVal = 0.0;
         cashTranVal = 0.0;
         
+        Bill bill=new Bill();
+        bill.setComments("Sale Bill Total "+department.getName()+" Department");
+        bill.setNetTotal(getDepartmentSale(department));
+        bill.setBillType(BillType.CashIn);
+        bills.add(bill);
 
         for (Bill b : bills) {
             cashInOutVal = cashInOutVal + (b.getNetTotal());
             cashTranVal = cashTranVal + (b.getNetTotal());
             b.setTmp(cashTranVal);
         }
-        
-        
-        Bill bill=new Bill();
-        bill.setComments("Sale Bill Total "+department.getName()+" Department");
-        bill.setTmp(getDepartmentSale(department));
-        bills.add(bill);
         
     }
     

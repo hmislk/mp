@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
 import static ch.lambdaj.Lambda.*;
 import com.divudi.entity.Department;
 import com.divudi.facade.util.JsfUtil;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -87,7 +88,7 @@ public class SearchController implements Serializable {
     Department department;
 
     Bill realizingBill;
-    
+
     double cashInOutVal;
     double cashTranVal;
 
@@ -324,11 +325,10 @@ public class SearchController implements Serializable {
                 + " and type(b)=:class "
                 + " and type(b.referenceBill)=:rClass ";
 
-
         sql += " order by b.createdAt ";
-        
+
         prescreptionBills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-        
+
     }
 
     public void createPharmacyTable() {
@@ -1979,10 +1979,20 @@ public class SearchController implements Serializable {
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
-    
+
+    List<Bill> billlist;
+
+    public List<Bill> getBilllist() {
+        return billlist;
+    }
+
+    public void setBilllist(List<Bill> billlist) {
+        this.billlist = billlist;
+    }
+
     public void createTableCashInOut() {
-        
-        if(department==null){
+
+        if (department == null) {
             UtilityController.addErrorMessage("Select a Department");
             return;
         }
@@ -2027,9 +2037,9 @@ public class SearchController implements Serializable {
 
         cashInOutVal = 0.0;
         cashTranVal = 0.0;
-        
-        Bill bill=new Bill();
-        bill.setComments("Sale Bill Total "+department.getName()+" Department");
+
+        Bill bill = new Bill();
+        bill.setComments("Sale Bill Total " + department.getName() + " Department");
         bill.setNetTotal(getDepartmentSale(department));
         bill.setBillType(BillType.CashIn);
         bills.add(bill);
@@ -2039,9 +2049,9 @@ public class SearchController implements Serializable {
             cashTranVal = cashTranVal + (b.getNetTotal());
             b.setTmp(cashTranVal);
         }
-        
+
     }
-    
+
     private double getDepartmentSale(Department d) {
         String sql = "Select sum(b.netTotal) from Bill b "
                 + " where b.retired=false"
@@ -2104,7 +2114,7 @@ public class SearchController implements Serializable {
     }
 
     public void createTableCashInOutAll() {
-        if(department==null){
+        if (department == null) {
             UtilityController.addErrorMessage("Select a Department");
             return;
         }
@@ -2132,9 +2142,8 @@ public class SearchController implements Serializable {
             sql += " and  (upper(b.netTotal) like :total )";
             temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
         }
-        
 
-        sql += " order by b.billTime desc  ";
+        sql += " order by b.billTime desc ";
 //    
         temMap.put("billType1", BillType.CashIn);
         temMap.put("billType2", BillType.CashOut);
@@ -2148,9 +2157,9 @@ public class SearchController implements Serializable {
 
         cashInOutVal = 0.0;
         cashTranVal = 0.0;
-        
-        Bill bill=new Bill();
-        bill.setComments("Sale Bill Total "+department.getName()+" Department");
+
+        Bill bill = new Bill();
+        bill.setComments("Sale Bill Total " + department.getName() + " Department");
         bill.setNetTotal(getDepartmentSale(department));
         bill.setBillType(BillType.CashIn);
         bills.add(bill);
@@ -2160,9 +2169,182 @@ public class SearchController implements Serializable {
             cashTranVal = cashTranVal + (b.getNetTotal());
             b.setTmp(cashTranVal);
         }
-        
+
     }
-    
+
+    public void createTableCashInOutNew() {
+
+        if (department == null) {
+            UtilityController.addErrorMessage("Select a Department");
+            return;
+        }
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where (b.billType = :billType1 or b.billType = :billType2) "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false"
+                + " and b.creater=:w "
+                + " and b.department=:dep ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
+            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.createdAt ";
+//    
+        temMap.put("billType1", BillType.CashIn);
+        temMap.put("billType2", BillType.CashOut);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("w", getSessionController().getLoggedUser());
+        temMap.put("dep", department);
+
+        ////System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        cashInOutVal = 0.0;
+        cashTranVal = 0.0;
+
+        Date dateFrist = fromDate;
+        Date dateSecond = toDate;
+        Date dateTemp;
+        billlist = new ArrayList<>();
+        for (Bill b : bills) {
+            dateTemp = b.getCreatedAt();
+            dateSecond = dateTemp;
+            billlist.add(b);
+            Bill bill = new Bill();
+            bill.setComments("Sale Bill Total " + department.getName() + " Department");
+            bill.setCreatedAt(dateSecond);
+            bill.setNetTotal(getDepartmentSale(department, dateFrist, dateSecond));
+            bill.setBillType(BillType.CashIn);
+            billlist.add(bill);
+
+            dateSecond = dateFrist;
+            dateFrist = dateTemp;
+
+        }
+
+        for (Bill b : billlist) {
+            cashInOutVal = cashInOutVal + (b.getNetTotal());
+            cashTranVal = cashTranVal + (b.getNetTotal());
+            b.setTmp(cashTranVal);
+        }
+
+    }
+
+    public void createTableCashInOutAllNew() {
+        if (department == null) {
+            UtilityController.addErrorMessage("Select a Department");
+            return;
+        }
+        bills = null;
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from BilledBill b where (b.billType = :billType1 or b.billType = :billType2) "
+                + " and b.institution=:ins "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and b.retired=false "
+                + " and b.department=:dep ";
+
+        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
+            sql += " and  (upper(b.insId) like :billNo )";
+            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
+            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
+            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
+        }
+
+        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
+            sql += " and  (upper(b.netTotal) like :total )";
+            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
+        }
+
+        sql += " order by b.createdAt ";
+//    
+        temMap.put("billType1", BillType.CashIn);
+        temMap.put("billType2", BillType.CashOut);
+        temMap.put("toDate", getToDate());
+        temMap.put("fromDate", getFromDate());
+        temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("dep", department);
+
+        ////System.err.println("Sql " + sql);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        cashInOutVal = 0.0;
+        cashTranVal = 0.0;
+
+        Date dateFrist = fromDate;
+        Date dateSecond;
+        Date dateTemp;
+        billlist = new ArrayList<>();
+        for (Bill b : bills) {
+            dateTemp = b.getCreatedAt();
+            dateSecond = dateTemp;
+            billlist.add(b);
+            Bill bill = new Bill();
+            bill.setComments("Sale Bill Total " + department.getName() + " Department");
+            bill.setCreatedAt(dateSecond);
+            bill.setNetTotal(getDepartmentSale(department, dateFrist, dateSecond));
+            bill.setBillType(BillType.CashIn);
+            billlist.add(bill);
+
+            dateSecond = dateFrist;
+            dateFrist = dateTemp;
+
+        }
+
+        for (Bill b : billlist) {
+            cashInOutVal = cashInOutVal + (b.getNetTotal());
+            cashTranVal = cashTranVal + (b.getNetTotal());
+            b.setTmp(cashTranVal);
+        }
+
+    }
+
+    private double getDepartmentSale(Department d, Date df, Date ds) {
+        String sql = "Select sum(b.netTotal) from Bill b "
+                + " where b.retired=false"
+                + " and  b.billType=:bType"
+                + " and b.referenceBill.department=:dep "
+                + " and b.createdAt between :fromDate and :toDate "
+                + " and (b.paymentMethod = :pm1 "
+                + " or  b.paymentMethod = :pm2 "
+                + " or  b.paymentMethod = :pm3 "
+                + " or  b.paymentMethod = :pm4)";
+        HashMap hm = new HashMap();
+        hm.put("bType", BillType.PharmacySale);
+        hm.put("dep", d);
+        hm.put("fromDate", df);
+        hm.put("toDate", ds);
+        hm.put("pm1", PaymentMethod.Cash);
+        hm.put("pm2", PaymentMethod.Card);
+        hm.put("pm3", PaymentMethod.Cheque);
+        hm.put("pm4", PaymentMethod.Slip);
+        double netTotal = getBillFacade().findDoubleByJpql(sql, hm, TemporalType.TIMESTAMP);
+
+        return netTotal;
+    }
+
     public void createTableCashOut() {
         bills = null;
         String sql;

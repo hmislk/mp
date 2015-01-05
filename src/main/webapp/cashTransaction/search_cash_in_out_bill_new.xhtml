@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+        <ui:composition template="/resources/template/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <p:panel>
+                        <f:facet name="header" >
+                            <h:outputLabel value="CASH BILL SEARCH(New) "/>                          
+                            <h:panelGrid columns="6" >
+                                <h:outputLabel value="From Date"/>
+                                <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
+                                </p:calendar>
+                                <h:outputLabel value="To Date"/>
+                                <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
+                                </p:calendar>
+                                <h:outputLabel value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
+                                <p:autoComplete value="#{searchController.department}" 
+                                                style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;" 
+                                                completeMethod="#{departmentController.completeDept}"
+                                                var="dept" itemValue="#{dept}" itemLabel="#{dept.name}"
+                                                forceSelection="true" rendered="true"
+                                                requiredMessage="You must select a department" 
+                                                converter="dep">
+                                    <p:column headerText="Department">
+                                        <h:outputLabel value="#{dept.name}"/>
+                                    </p:column>
+                                    <p:column headerText="Institution">
+                                        <h:outputLabel value="#{dept.institution.name}"/>
+                                    </p:column>
+                                </p:autoComplete>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search by Logged User" action="#{searchController.createTableCashInOutNew()}"/>
+                                <p:commandButton id="btnSearchAll" ajax="false" value="Search by All Users" action="#{searchController.createTableCashInOutAllNew()}"/>
+                                <h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+
+                                <h:outputLabel value="Bill No"/>
+                                <h:outputLabel value="From Person"/>
+                                <h:outputLabel value="Total"/>
+                                <h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+                                <p:inputText  value="#{searchController.searchKeyword.personName}" />
+                                <p:inputText  value="#{searchController.searchKeyword.netTotal}" />
+
+                            </h:panelGrid>
+                            <p:defaultCommand target="btnSearch" />
+
+
+                        </f:facet>
+
+                        <p:dataTable rowIndexVar="i" id="tblBills" 
+                                     value="#{searchController.billlist}" var="bill"  
+                                     style="min-width: 100%;"  
+                                     paginator="true" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="10,30,50"
+                                     rows="50">
+                            <p:column headerText="No" styleClass="alignTop" width="25">
+                                <h:outputLabel value="#{i+1}"/>
+                            </p:column>
+
+                            <p:column headerText="Bill No" width="125">                                
+                                <h:outputLabel  value="#{bill.insId}"></h:outputLabel>
+                            </p:column>                            
+
+                            <p:column headerText="Billed at" width="175" >
+                                <h:outputLabel value="#{bill.createdAt}" >
+                                    <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
+                                </h:outputLabel>
+                                <br/>
+                                <h:panelGroup rendered="#{bill.cancelled}" >
+                                    <h:outputLabel style="color: red;" value="Cancelled at " />
+                                    <h:outputLabel style="color: red;" rendered="#{bill.cancelled}" value="#{bill.cancelledBill.createdAt}" >
+                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
+                                    </h:outputLabel>
+                                </h:panelGroup>
+                            </p:column>  
+                            <p:column headerText="Comments" >
+                                <h:outputLabel  value="#{bill.comments}" >
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column headerText="Department" >
+                                <h:outputLabel  value="#{bill.department.name}" >
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column headerText="Cash In Value" width="100">                                
+                                <h:outputLabel style="float: right" value="#{bill.netTotal}" rendered="#{bill.billType eq 'CashIn'}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>                                 
+                            </p:column>   
+
+                            <p:column headerText="Cash Out Value" width="100">                                
+                                <h:outputLabel style="float: right" value="#{bill.netTotal}" rendered="#{bill.billType eq 'CashOut'}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>                                 
+                            </p:column>
+
+                            <p:column headerText="Transaction" width="100">                                
+                                <h:outputLabel style="float: right" value="#{bill.tmp}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputLabel>                                 
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="6" footerText="Total">
+                                        <f:facet name="footer">
+                                            <h:outputLabel value="Total" />
+                                        </f:facet>
+                                    </p:column>
+                                    <p:column style="text-align: right;" footerText="#{searchController.cashInOutVal}">
+                                        <f:facet name="footer" >
+                                            <h:outputLabel value="#{searchController.cashInOutVal}" >
+                                                <f:convertNumber parent="#,##0.00" />
+                                            </h:outputLabel>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+
+                            </p:columnGroup>
+                        </p:dataTable>
+
+
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

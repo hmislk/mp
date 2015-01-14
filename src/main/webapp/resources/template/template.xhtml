@@ -129,7 +129,8 @@
                             <p:submenu label="Cash Transaction" rendered="#{webUserController.hasPrivilege('CashTransaction')}">
                                 <p:menuitem ajax="false" action="/cashTransaction/cash_in" value="Cash In" actionListener="#{cashInController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashIn')}" />
                                 <p:menuitem ajax="false" action="/cashTransaction/cash_out"  value="Cash Out" actionListener="#{cashOutController.makeNull()}" rendered="#{webUserController.hasPrivilege('CashTransactionCashOut')}" />                                      
-                                <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill" value="Cash Transaction "/>                                   
+                                <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill" value="Cash Transaction "/>
+                                <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill_new" value="Cash Transaction(New) "/>
                             </p:submenu>
                             <p:submenu label="User"  >
                                 <p:menuitem  ajax="false"  action="/user_change_password" value="Change Password"  ></p:menuitem>
@@ -150,6 +151,7 @@
                                         <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_bill" value="Cash In "/>
                                         <p:menuitem ajax="false" action="/cashTransaction/search_cash_out_bill" value="Cash Out "/>                                        
                                         <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill" value="Cash Transaction "/>
+                                        <p:menuitem ajax="false" action="/cashTransaction/search_cash_in_out_bill_new" value="Cash Transaction(New) "/>
                                     </p:submenu>
                                     <p:submenu label="Adjustment">
                                         <p:menuitem ajax="false" action="/cashTransaction/drawer_adjustment_cash" value="Cash"/>                                        

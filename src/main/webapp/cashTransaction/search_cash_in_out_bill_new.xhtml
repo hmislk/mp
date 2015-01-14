@@ -12,7 +12,7 @@
                 <h:form>
                     <p:panel>
                         <f:facet name="header" >
-                            <h:outputLabel value="CASH BILL SEARCH "/>                          
+                            <h:outputLabel value="CASH BILL SEARCH(New) "/>                          
                             <h:panelGrid columns="6" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
@@ -35,8 +35,8 @@
                                         <h:outputLabel value="#{dept.institution.name}"/>
                                     </p:column>
                                 </p:autoComplete>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search by Logged User" action="#{searchController.createTableCashInOut()}"/>
-                                <p:commandButton id="btnSearchAll" ajax="false" value="Search by All Users" action="#{searchController.createTableCashInOutAll()}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search by Logged User" action="#{searchController.createTableCashInOutNew()}"/>
+                                <p:commandButton id="btnSearchAll" ajax="false" value="Search by All Users" action="#{searchController.createTableCashInOutAllNew()}"/>
                                 <h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
@@ -55,7 +55,7 @@
                         </f:facet>
 
                         <p:dataTable rowIndexVar="i" id="tblBills" 
-                                     value="#{searchController.bills}" var="bill"  
+                                     value="#{searchController.billlist}" var="bill"  
                                      style="min-width: 100%;"  
                                      paginator="true" paginatorAlwaysVisible="true"
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

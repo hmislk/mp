@@ -608,6 +608,8 @@ public class ReportsStock implements Serializable {
         String sql;
         records = new ArrayList<>();
         List<Institution> dealers = getDealerController().getItems();
+        stockSaleValue=0.0;
+        stockPurchaseValue=0.0;
         for (Institution i : dealers) {
             ////System.out.println("i = " + i);
             m = new HashMap();

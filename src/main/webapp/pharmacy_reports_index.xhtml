@@ -29,7 +29,8 @@
                                     <p:commandButton value="Suppliers' Stock All Institution (New)" action="pharmacy_report_institution_stock_all" ajax="false" ></p:commandButton>
                                     <p:commandButton value="Category Stock" action="pharmacy_report_category_stock_by_batch" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="All Suppliers' Stock" action="pharmacy_report_all_supplier_stock" ajax="false" ></p:commandButton>                            
-                                    <p:commandButton value="Department Stock By Batch minus" action="pharmacy_report_department_stock_by_batch_minus" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Department Stock By Batch minus" action="pharmacy_report_department_stock_by_batch_minus" ajax="false" ></p:commandButton>     
+                                     <p:commandButton value="All Department Stock By Item" action="#{reportsStock.fillAllDepartmentStocksByAmp()}" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
                             <p:panel header="Sale Reports" >

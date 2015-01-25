@@ -18,15 +18,13 @@
                     <p:panel header="Department Stock of Single Product" >
 
                         <h:panelGrid columns="5" >
-                            <h:outputLabel value="Department" ></h:outputLabel>
-                            <p:autoComplete completeMethod="#{departmentController.completeDept}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStock.department}" converter="dep" >
-                            </p:autoComplete>
-                            <p:autoComplete completeMethod="#{vmpController.completeVmp}" var="vmp"
-                                            itemLabel="#{vmp.name}" itemValue="#{vmp}"
-                                            value="#{reportsStock.vmp}"></p:autoComplete>
+                            <h:outputLabel value="Item" ></h:outputLabel>
+                            <p:autoComplete completeMethod="#{ampController.completeAmp}" var="amp"
+                                            itemLabel="#{amp.name}" itemValue="#{amp}"
+                                            value="#{reportsStock.item}"></p:autoComplete>
                             
                             <p:commandButton ajax="false" value="Process" 
-                                             actionListener="#{reportsStock.fillDepartmentNonEmptyStocksByVmp()}" ></p:commandButton>
+                                             action="#{reportsStock.fillAllDepartmentStocksByAmp()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
@@ -48,33 +46,22 @@
                                          rows="10"
                                          >
                                 <f:facet name="header">
-                                    <h:outputLabel value="Department Stock by Batch - #{reportsStock.department.name}"/>                                     
+                                    <h:outputLabel value="All Department Stock by Item"/>                                     
                                 </f:facet> 
 
                                 <p:column width="40px;" headerText="No" sortBy="#{ii}">
                                     <h:outputLabel value="#{ii+1}" />
                                 </p:column>
 
-                                <p:column headerText="Code" width="50px;" sortBy="#{i.itemBatch.item.code}">
+                                <p:column headerText="Department" width="50px;" sortBy="#{i.itemBatch.item.code}">
                                     <f:facet name="header">
                                         <h:outputLabel value="Code"/>
                                     </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.item.code}" ></h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Item" width="300px;" sortBy="#{i.itemBatch.item.name}">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Item"/>
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
+                                    <h:outputLabel value="#{i.department.name}" ></h:outputLabel>
                                 </p:column>
                                 
-                                 <p:column headerText="Product" width="300px;" sortBy="#{i.itemBatch.item.name}">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Item"/>
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.item.vmp.name}" ></h:outputLabel>
-                                </p:column>
+                               
+
 
                                 <p:column headerText="Quantity" style="text-align: right;" sortBy="#{i.stock}">
                                     <f:facet name="header">
@@ -85,33 +72,7 @@
                                     </h:outputLabel>                                 
                                 </p:column>
 
-                                <p:column headerText="Expiry" sortBy="#{i.itemBatch.dateOfExpire}">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Expiry"/>                                     
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.dateOfExpire}"  >
-                                        <f:convertDateTime pattern="MMM yy" ></f:convertDateTime>
-                                    </h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Batch No" sortBy="#{i.itemBatch.batchNo}">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Batch No"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.batchNo}"  >                                        
-                                    </h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Purchase Rate" 
-                                          style="text-align: right;"
-                                          sortBy="#{i.itemBatch.purcahseRate}">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Purchase Rate"/>                                     
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.purcahseRate}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                </p:column>
+                              
 
                                 <p:column headerText="Purchase Value" style="text-align: right;" sortBy="#{i.itemBatch.purcahseRate * i.stock}">
                                     <f:facet name="header">
@@ -122,14 +83,7 @@
                                     </h:outputLabel>
                                 </p:column>
 
-                                <p:column headerText="Retail Price" style="text-align: right;" sortBy="#{i.itemBatch.retailsaleRate}">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Retail Price"/>                                     
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.retailsaleRate}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                </p:column>
+                                
 
                                 <p:column headerText="Retail Sale Value" style="text-align: right;" sortBy="#{i.itemBatch.retailsaleRate * i.stock}">
                                     <f:facet name="header">
@@ -139,9 +93,10 @@
                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                     </h:outputLabel>
                                 </p:column>
+                                
                                 <p:columnGroup type="footer">
                                     <p:row>
-                                        <p:column colspan="8" footerText="Total">
+                                        <p:column colspan="2" footerText="Total">
                                             <f:facet name="footer">
                                                 <h:outputLabel value="Total" />
                                             </f:facet>

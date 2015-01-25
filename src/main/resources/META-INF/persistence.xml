@@ -5,8 +5,6 @@
     <jta-data-source>dsMp1</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <shared-cache-mode>ALL</shared-cache-mode>
-    <properties>
-      <property name="eclipselink.ddl-generation" value="create-tables"/>
-    </properties>
+    
   </persistence-unit>
 </persistence>

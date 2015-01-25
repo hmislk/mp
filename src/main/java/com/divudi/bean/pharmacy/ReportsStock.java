@@ -14,6 +14,7 @@ import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Category;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.Item;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
 import com.divudi.entity.Staff;
@@ -61,6 +62,7 @@ public class ReportsStock implements Serializable {
     private Category category;
     List<Stock> stocks;
     List<PharmacyStockRow> pharmacyStockRows;
+    List<PharmacyStockRow> pharmacyStockRowsOne;
     double stockSaleValue;
     double stockPurchaseValue;
     List<StockReportRecord> records;
@@ -133,6 +135,56 @@ public class ReportsStock implements Serializable {
             stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
+    }
+
+    Item item;
+
+    public List<PharmacyStockRow> getPharmacyStockRowsOne() {
+        return pharmacyStockRowsOne;
+    }
+
+    public void setPharmacyStockRowsOne(List<PharmacyStockRow> pharmacyStockRowsOne) {
+        this.pharmacyStockRowsOne = pharmacyStockRowsOne;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+    
+    
+    
+    public String fillAllDepartmentStocksByAmp() {
+        Map m = new HashMap();
+        String sql;
+        sql = "select new com.divudi.data.dataStructure.PharmacyStockRow"
+                + "(s.department, s.itemBatch.item.code, "
+                + "s.itemBatch.item.name, "
+                + "sum(s.stock), "
+                + "sum(s.itemBatch.purcahseRate * s.stock), "
+                + "sum(s.itemBatch.retailsaleRate * s.stock))  "
+                + "from Stock s where s.stock>:z "
+                + "and s.itemBatch.item=:item "
+                + "group by s.department, s.itemBatch.item.name, s.itemBatch.item.code "
+                + "order by s.department, s.itemBatch.item.name";
+        m.put("z", 0.0);
+        m.put("item", item);
+        List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue += 0.0;
+
+        Stock s;
+        
+        for (PharmacyStockRow r : lsts) {
+            stockPurchaseValue += r.getPurchaseValue();
+            stockSaleValue += r.getSaleValue();
+        }
+        pharmacyStockRows = lsts;
+
+        return "pharmacy_report_all_department_stock_by_item";
     }
 
     public String fillDepartmentNonEmptyStocksByVmp() {
@@ -571,20 +623,18 @@ public class ReportsStock implements Serializable {
         this.bulkAdjustmentStocks = bulkAdjustmentStocks;
     }
 
-    public void updateStock(Stock s){
+    public void updateStock(Stock s) {
         getStockFacade().edit(s);
         getItemBatchFacade().edit(s.getItemBatch());
     }
-    
+
     @EJB
     ItemBatchFacade itemBatchFacade;
 
     public ItemBatchFacade getItemBatchFacade() {
         return itemBatchFacade;
     }
-    
-    
-    
+
     public void fillCategoryStocksForBulkAdjustment() {
         if (department == null || category == null) {
             UtilityController.addErrorMessage("Please select a department && Category");
@@ -608,8 +658,8 @@ public class ReportsStock implements Serializable {
         String sql;
         records = new ArrayList<>();
         List<Institution> dealers = getDealerController().getItems();
-        stockSaleValue=0.0;
-        stockPurchaseValue=0.0;
+        stockSaleValue = 0.0;
+        stockPurchaseValue = 0.0;
         for (Institution i : dealers) {
             ////System.out.println("i = " + i);
             m = new HashMap();
@@ -618,7 +668,7 @@ public class ReportsStock implements Serializable {
             sql = "select sum(s.stock),sum(s.stock * s.itemBatch.purcahseRate),sum(s.stock * s.itemBatch.retailsaleRate)"
                     + " from Stock s where s.department=:d and s.itemBatch.item.id in (select item.id from ItemsDistributors id join id.item as item where id.retired=false and id.institution=:ins)";
             Object[] objs = getStockFacade().findSingleAggregate(sql, m);
-            
+
             if (objs[0] != null && (Double) objs[0] > 0) {
                 StockReportRecord r = new StockReportRecord();
                 ////System.out.println("objs = " + objs);

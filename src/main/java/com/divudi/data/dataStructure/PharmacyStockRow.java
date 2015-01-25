@@ -5,6 +5,7 @@
  */
 package com.divudi.data.dataStructure;
 
+import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 
 /**
@@ -19,6 +20,17 @@ public class PharmacyStockRow {
     Double purchaseValue;
     Double saleValue;
     Item item;
+    Department department;
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+    
+    
 
     public PharmacyStockRow() {
     }
@@ -30,6 +42,15 @@ public class PharmacyStockRow {
         this.item = item;
         
 
+    }
+    
+    public PharmacyStockRow(Department department, String code, String name, Double qty, Double purchaseValue, Double saleValue) {
+        this.department = department;
+        this.code = code;
+        this.name = name;
+        this.qty = qty;
+        this.purchaseValue = purchaseValue;
+        this.saleValue = saleValue;
     }
 
     public PharmacyStockRow(String code, String name, Double qty, Double purchaseValue, Double saleValue) {

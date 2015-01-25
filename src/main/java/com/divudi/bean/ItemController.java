@@ -156,6 +156,38 @@ public class ItemController implements Serializable {
 
     }
 
+    public List<Item> completeAmpsAndVmps(String query) {
+        List<Item> suggestions;
+        String sql;
+        HashMap tmpMap = new HashMap();
+        if (query == null) {
+            suggestions = new ArrayList<>();
+        } else {
+            if (query.length() > 5) {
+                sql = "select c from Item c "
+                        + " where c.retired=false "
+                        + " and (type(c)= :amp or type(c)= :vmp) "
+                        + " and (c.departmentType is null or c.departmentType!=:dep ) "
+                        + " and (upper(c.name) like :q  or upper(c.code) like :q or upper(c.barcode) like :q ) "
+                        + " order by c.name";
+            } else {
+                sql = "select c from Item c "
+                        + " where c.retired=false "
+                        + " and (type(c)= :amp or type(c)= :vmp) "
+                        + " and (c.departmentType is null or c.departmentType!=:dep ) "
+                        + " and (upper(c.name) like :q  or upper(c.code) like :q) "
+                        + " order by c.name";
+            }
+            tmpMap.put("amp", Amp.class);
+            tmpMap.put("vmp", Vmp.class);
+            tmpMap.put("dep", DepartmentType.Store);
+            tmpMap.put("q", "%" + query.toUpperCase() + "%");
+            suggestions = getFacade().findBySQL(sql, tmpMap, TemporalType.TIMESTAMP, 10);
+        }
+        return suggestions;
+
+    }
+
     public List<Item> completeAmpItem(String query) {
         List<Item> suggestions;
         String sql;

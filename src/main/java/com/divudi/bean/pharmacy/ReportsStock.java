@@ -65,6 +65,7 @@ public class ReportsStock implements Serializable {
     List<PharmacyStockRow> pharmacyStockRowsOne;
     double stockSaleValue;
     double stockPurchaseValue;
+    double stockQty;
     List<StockReportRecord> records;
     Date fromDate;
     Date toDate;
@@ -72,6 +73,16 @@ public class ReportsStock implements Serializable {
     Date toDateE;
     Vmp vmp;
 
+    public double getStockQty() {
+        return stockQty;
+    }
+
+    public void setStockQty(double stockQty) {
+        this.stockQty = stockQty;
+    }
+
+    
+    
     public Vmp getVmp() {
         return vmp;
     }
@@ -215,6 +226,49 @@ public class ReportsStock implements Serializable {
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
         }
         return "pharmacy_report_department_stock_by_single_product";
+    }
+
+    Item ampOrVmp;
+
+    public Item getAmpOrVmp() {
+        return ampOrVmp;
+    }
+
+    public void setAmpOrVmp(Item ampOrVmp) {
+        this.ampOrVmp = ampOrVmp;
+    }
+    
+    
+
+    public String fillAllDepartmentNonEmptyStocksByVmpOrAmp() {
+        Map m = new HashMap();
+        String sql;
+        if (ampOrVmp instanceof Vmp) {
+            sql = "select s from Stock s join TREAT(s.itemBatch.item as Amp) amp "
+                    + "where s.stock>:z and amp.vmp=:vmp "
+                    + "order by s.itemBatch.item.name";
+            m.put("z", 0.0);
+            m.put("vmp", ampOrVmp);
+        } else if (ampOrVmp instanceof Amp) {
+            sql = "select s from Stock s join TREAT(s.itemBatch.item as Amp) amp "
+                    + "where s.stock>:z and amp=:amp "
+                    + "order by s.itemBatch.item.name";
+            m.put("z", 0.0);
+            m.put("amp", ampOrVmp);
+        } else {
+            return "";
+        }
+        //System.err.println("");
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+        stockQty = 0.0;
+        for (Stock ts : stocks) {
+            stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
+            stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
+            stockQty = stockQty + ts.getStock();
+        }
+        return "/pharmacy/report_all_department_stock_by_single_product_or_item";
     }
 
     public void fillDepartmentNonEmptyItemStocks() {

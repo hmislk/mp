@@ -645,6 +645,10 @@ public class ReportsStock implements Serializable {
         this.bulkAdjustmentStocks = bulkAdjustmentStocks;
     }
 
+    public void updateItemBatch(ItemBatch s) {
+        getItemBatchFacade().edit(s);
+    }
+
     public void updateStock(Stock s) {
         getStockFacade().edit(s);
         getItemBatchFacade().edit(s.getItemBatch());
@@ -671,6 +675,19 @@ public class ReportsStock implements Serializable {
         bulkAdjustmentStocks = getStockFacade().findBySQL(sql, m);
     }
 
+    public void fillCategoryStocksForBulkAdjustmentForBatchesWithoutDept() {
+        if (category == null) {
+            UtilityController.addErrorMessage("Please select a department");
+            return;
+        }
+        Map m;
+        String sql;
+        m = new HashMap();
+        m.put("cat", category);
+        sql = "select s from Stock s where (s.department is null and s.staff is null) and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
+        bulkAdjustmentStocks = getStockFacade().findBySQL(sql, m);
+    }
+    
     public void fillAllDistributorStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");

@@ -16,21 +16,20 @@
                             <p:panel header="Stock Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
                                     <p:commandButton value="Department Stock By Batch" action="pharmacy_report_department_stock_by_batch" ajax="false" ></p:commandButton>                            
-                                    
                                     <p:commandButton value="Department Stock By Expiary" action="pharmacy_report_department_stock_by_batch_expiary" ajax="false" ></p:commandButton>                                                               
-                                    
                                     <p:commandButton value="Department Stock By Item" action="pharmacy_report_department_stock_by_item" ajax="false" ></p:commandButton>                            
-                                    
                                     <p:commandButton value="Department Stock By Product" action="pharmacy_report_department_stock_by_product" ajax="false" ></p:commandButton>                            
-                                    <p:commandButton value="Department Stock By A SingleProduct" action="pharmacy_report_department_stock_by_single_product" ajax="false" ></p:commandButton>                            
-                                    
-                                    <p:commandButton value="Stock By A Single Product or Item" action="/pharmacy/report_all_department_stock_by_single_product_or_item" ajax="false" ></p:commandButton>                            
-                                    
+                                    <p:commandButton value="Department Stock By A Single Product" action="pharmacy_report_department_stock_by_single_product" ajax="false" ></p:commandButton>                            
+
+                                    <p:commandButton value="All Department Stocks By A Single Product or Item" action="/pharmacy/report_all_department_stock_by_single_product_or_item" ajax="false" ></p:commandButton>                            
+
                                     <p:commandButton value="Staff Stock By Batch" action="pharmacy_report_staff_stock_by_batch" ajax="false" ></p:commandButton>                            
-                                    <p:commandButton value="Suppliers' Stock" action="pharmacy_report_supplier_stock_by_batch" ajax="false" ></p:commandButton>       
-                                    <p:commandButton value="Suppliers' Stock All Institution (New)" action="pharmacy_report_institution_stock_all" ajax="false" ></p:commandButton>
-                                    <p:commandButton value="Category Stock" action="pharmacy_report_category_stock_by_batch" ajax="false" ></p:commandButton>                            
-                                    <p:commandButton value="All Suppliers' Stock" action="pharmacy_report_all_supplier_stock" ajax="false" ></p:commandButton>                            
+                                    <p:commandButton value="Single Department Item Stock by a Supplier" action="pharmacy_report_supplier_stock_by_batch" ajax="false" ></p:commandButton>       
+                                    <p:commandButton value="All Department Item Stock by a Supplier" action="pharmacy_report_institution_stock_all" ajax="false" ></p:commandButton>
+
+                                    <p:commandButton value="Stocks by a Single Category" action="pharmacy_report_category_stock_by_batch" ajax="false" ></p:commandButton>                            
+
+                                    <p:commandButton value="Supplier Stock by Department" action="pharmacy_report_all_supplier_stock" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Department Stock By Batch minus" action="pharmacy_report_department_stock_by_batch_minus" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
@@ -45,7 +44,7 @@
                                     <p:commandButton value="Non Moving" action="pharmacy_report_department_non_moving" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
-                           <p:panel header="Transfer Reports" >
+                            <p:panel header="Transfer Reports" >
                                 <p:panelGrid columns="1" styleClass="alignTop">
                                     <p:commandButton value="Transfer Issue By Bill Item" action="pharmacy_report_transfer_issue_bill_item" ajax="false" ></p:commandButton>                            
                                     <p:commandButton value="Transfer Receive By Bill Item" action="pharmacy_report_transfer_receive_bill_item" ajax="false" ></p:commandButton>                            
@@ -71,6 +70,14 @@
                                     <p:commandButton value="Cheque Payment Report(New)" action="pharmacy_report_dealor_cheque_payment" ajax="false" ></p:commandButton>                            
                                 </p:panelGrid>
                             </p:panel>
+                            <p:panel header="Reports for ordering" >
+                                <p:panelGrid columns="1" styleClass="alignTop">
+                                    <p:commandButton value="Institution Item Movement" action="pharmacy_report_institution_movement" ajax="false" ></p:commandButton> 
+                                    <p:commandButton value="Institution Item Movement By Percentage(New)" action="pharmacy_report_institution_movement_by_persentage" ajax="false" ></p:commandButton>
+                                    <p:commandButton value="All Department Stocks By A Single Product or Item" action="/pharmacy/report_all_department_stock_by_single_product_or_item" ajax="false" ></p:commandButton>                            
+                                </p:panelGrid>
+                            </p:panel>
+
                         </p:panelGrid>
 
                     </p:panel>

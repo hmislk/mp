@@ -113,7 +113,7 @@ public class PharmacyController implements Serializable {
 
         return items;
     }
-    
+
     public List<Stock> completeExistingStocks(String qry) {
         List<Stock> items;
         String sql;
@@ -446,10 +446,11 @@ public class PharmacyController implements Serializable {
 
         stockAverages = new ArrayList<>();
         List<Item> items = getItemController().getDealorItem();
+        System.out.println("items = " + items.size());
         List<Institution> insList = getCompany();
         for (Item i : items) {
 
-            //System.err.println("i.getName() = " + i.getName());
+            System.err.println("i.getName() = " + i.getName());
 
             double itemStockTotal = 0;
             double itemAverageTotal = 0;
@@ -471,16 +472,20 @@ public class PharmacyController implements Serializable {
                     r.setDepartment((Department) obj[0]);
                     r.setStock((Double) obj[1]);
 
-                    double qty = calDepartmentSaleQty(r.getDepartment(), i);
-                    qty = 0 - qty;
-                    if (qty != 0 && dayCount != 0) {
-                        double avg = qty / dayCount;
-                        r.setAverage(avg);
-                    }
+                    try {
+                        double qty = calDepartmentSaleQty(r.getDepartment(), i);
+                        qty = 0 - qty;
+                        if (qty != 0 && dayCount != 0) {
+                            double avg = qty / dayCount;
+                            r.setAverage(avg);
+                        }
 
-                    insStockTotal += r.getStock();
-                    insAverageTotal += r.getAverage();
-                    newTable.getDepatmentStocks().add(r);
+                        insStockTotal += r.getStock();
+                        insAverageTotal += r.getAverage();
+                        newTable.getDepatmentStocks().add(r);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                 }
 

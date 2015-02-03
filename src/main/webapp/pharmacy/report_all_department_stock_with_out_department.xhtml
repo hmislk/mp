@@ -23,7 +23,7 @@
                                             value="#{reportsStock.ampOrVmp}"></p:autoComplete>
                             
                             <p:commandButton ajax="false" value="Process" 
-                                             actionListener="#{reportsStock.fillAllDepartmentNonEmptyStocksByVmpOrAmp()}" ></p:commandButton>
+                                             actionListener="#{reportsStock.fillAllDepartmentEmptyStocks()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
@@ -52,12 +52,18 @@
                                     <h:outputLabel value="#{ii+1}" />
                                 </p:column>
                                 
-                                <p:column width="50px;" sortBy="#{i.department.name}">
+                                <p:column headerText="Item" width="50px;" sortBy="#{i.itemBatch.item.name}">
                                     <f:facet name="header">
-                                        <h:outputLabel value="Department/Staff"/>
+                                        <h:outputLabel value="Department"/>
+                                    </f:facet>
+                                    <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
+                                </p:column>
+                                
+                                <p:column headerText="Department" width="50px;" sortBy="#{i.department.name}">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Department"/>
                                     </f:facet>
                                     <h:outputLabel value="#{i.department.name}" ></h:outputLabel>
-                                    <h:outputLabel value="#{i.staff.person.name}" ></h:outputLabel>
                                 </p:column>
 
                                 <p:column headerText="Code" width="50px;" sortBy="#{i.itemBatch.item.code}">

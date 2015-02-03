@@ -26,7 +26,10 @@
                             <p:autoComplete completeMethod="#{pharmaceuticalItemCategoryController.completeCategory}" var="dept" 
                                             itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{reportsStock.category}" >
                             </p:autoComplete>
+                            
                             <p:commandButton ajax="false" value="Process" actionListener="#{reportsStock.fillCategoryStocksForBulkAdjustment()}" ></p:commandButton>
+                            <p:commandButton ajax="false" value="List batches without Department" actionListener="#{reportsStock.fillCategoryStocksForBulkAdjustmentForBatchesWithoutDept()}" ></p:commandButton>
+                           
                             <p:commandButton value="Print" ajax="false" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
@@ -58,27 +61,37 @@
                                     <f:facet name="header">
                                         <h:outputLabel value="Stock Quantity"/>    
                                     </f:facet>
-                                    <p:inputText id="txtStockQty" value="#{i.stock}"  >
+                                    <h:inputText id="txtStockQty" value="#{i.stock}"  >
                                         <f:ajax event="blur" execute="txtStockQty" listener="#{reportsStock.updateStock(i)}" ></f:ajax>
-                                    </p:inputText>                                  
+                                    </h:inputText>                                  
                                 </p:column>
 
                                 <p:column headerText="Purchase Rate">
                                     <f:facet name="header">
                                         <h:outputLabel value="Purchase Rate"/>    
                                     </f:facet>
-                                    <p:inputText id="txtStockPr" value="#{i.itemBatch.purcahseRate}"  >
+                                    <h:inputText id="txtStockPr" value="#{i.itemBatch.purcahseRate}"  >
                                         <f:ajax event="blur" execute="txtStockPr" listener="#{reportsStock.updateStock(i)}" ></f:ajax>
-                                    </p:inputText>                                  
+                                    </h:inputText>                                  
                                 </p:column>
 
                                 <p:column headerText="Sale Rate">
                                     <f:facet name="header">
                                         <h:outputLabel value="Sale Rate"/>    
                                     </f:facet>
-                                    <p:inputText id="txtStockSr" value="#{i.itemBatch.retailsaleRate}">
+                                    <h:inputText id="txtStockSr" value="#{i.itemBatch.retailsaleRate}">
                                         <f:ajax event="blur" execute="txtStockSr" listener="#{reportsStock.updateStock(i)}" ></f:ajax>
-                                    </p:inputText>                                  
+                                    </h:inputText>                                  
+                                </p:column>
+                                
+                                 <p:column headerText="Date of Expiary (dd MM yy)">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Date of Expiary (dd MM yy)"/>    
+                                    </f:facet>
+                                     <h:inputText id="calDoe" value="#{i.itemBatch.dateOfExpire}" >
+                                         <f:convertDateTime pattern="dd MM yy" ></f:convertDateTime>
+                                        <p:ajax event="blur" process="tbl" listener="#{reportsStock.updateItemBatch(i.itemBatch)}" ></p:ajax>
+                                    </h:inputText>                                  
                                 </p:column>
 
 

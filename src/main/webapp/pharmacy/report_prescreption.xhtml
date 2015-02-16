@@ -34,10 +34,10 @@
 
                         <h:outputScript library="js" name="excellentexport.js" ></h:outputScript>
 
-                        <h:panelGrid columns="2" style="margin: 10px; padding: 10px;" >
+                      
                             <p:commandButton id="btnSearch" ajax="false" 
                                              value="Process" 
-                                             action="#{searchController.createPharmacyTable}"/>
+                                             action="#{searchController.createPrescreptionBills}"/>
                             <a download="prescreption_report.xls" 
                                href="#" 
                                onclick="return ExcellentExport.excel(this, 'tblBills', 'Sheet1');"
@@ -45,12 +45,10 @@
                                styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c noPrintButton" >Export to Excel</a>
 
 
-                        </h:panelGrid>
-
 
 
                         <p:dataTable rowIndexVar="i" 
-                                     id="tblBills" 
+                                     id="tblBills" widgetVar="tblBills"
                                      value="#{searchController.prescreptionBills}"
                                      var="bill" styleClass="alignTop" 
 
@@ -67,7 +65,7 @@
                                 </p:commandLink>
                             </p:column>
 
-                            <p:column headerText="Department" rendered="#{searchController.department ne null}"  >                                
+                            <p:column headerText="Department" rendered="#{searchController.department eq null}"  >                                
                                 <h:outputLabel value="#{bill.department.name}" />                                    
                             </p:column>   
 

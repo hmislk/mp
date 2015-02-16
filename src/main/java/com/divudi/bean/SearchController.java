@@ -324,6 +324,11 @@ public class SearchController implements Serializable {
                 + " and b.referenceBill.billType=:rBt "
                 + " and type(b)=:class "
                 + " and type(b.referenceBill)=:rClass ";
+        
+        if(department!=null){
+            sql+=" and b.department=:dept ";
+            m.put("dept", department);
+        }
 
         sql += " order by b.createdAt ";
 

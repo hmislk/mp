@@ -1896,7 +1896,7 @@ public class SearchController implements Serializable {
       //  temMap.put("ins", getSessionController().getInstitution());
 
         ////System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
     

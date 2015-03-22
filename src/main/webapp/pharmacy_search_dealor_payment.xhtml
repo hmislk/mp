@@ -45,7 +45,12 @@
 
 
 
-                        <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill"  >
+                        <p:dataTable id="tblBills" value="#{searchController.bills}" var="bill" 
+                                     rows="10"
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15"
+                                     >
                             <p:column headerText="Bill No" >
                                 <h:commandLink action="pharmacy_reprint_bill_dealor" value="#{bill.insId}">
                                     <h:outputLabel  ></h:outputLabel>
@@ -161,7 +166,7 @@
                                     <f:setPropertyActionListener value="#{bill}" target="#{searchController.realizingBill}" ></f:setPropertyActionListener>
                                 </p:commandButton>
                             </p:column>
-                            
+
                         </p:dataTable>
 
 

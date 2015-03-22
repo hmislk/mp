@@ -4,9 +4,10 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      >
 
-    <body>
+    <h:body>
         <ui:composition template="/resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
@@ -14,24 +15,44 @@
                         <f:facet name="header" >                          
                             <h:outputLabel value="Prescreption Report"/>                         
                         </f:facet>
-                        <h:panelGrid columns="3" >
+                        <h:panelGrid columns="2" style="padding: 10px; margin: 2px;" >
                             <h:outputLabel value="From Date"/>
                             <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                             </p:calendar>
-                            <p:commandButton id="btnSearch" ajax="false" 
-                                             value="Search" 
-                                             action="#{searchController.createPharmacyTable}"/>
                             <h:outputLabel value="To Date"/>
                             <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                             </p:calendar>
-
+                            <h:outputLabel value="Department"/>
+                            <p:autoComplete completeMethod="#{departmentController.completeDept}" 
+                                            var="dept" itemLabel="#{dept.name}" 
+                                            itemValue="#{dept}" 
+                                            forceSelection="true" 
+                                            value="#{searchController.department}" 
+                                            converter="dep" ></p:autoComplete>
 
                         </h:panelGrid>
 
+                        <h:outputScript library="js" name="excellentexport.js" ></h:outputScript>
+
+                      
+                            <p:commandButton id="btnSearch" ajax="false" 
+                                             value="Process" 
+                                             action="#{searchController.createPrescreptionBills}"/>
+                            <a download="prescreption_report.xls" 
+                               href="#" 
+                               onclick="return ExcellentExport.excel(this, 'tblBills', 'Sheet1');"
+                               style="padding: .3em 1em;  background: #D7D0C0; " 
+                               styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c noPrintButton" >Export to Excel</a>
+
+
+
+
                         <p:dataTable rowIndexVar="i" 
-                                     id="tblBills" 
-                                     value="#{searchController.bills}"
-                                     var="bill" styleClass="alignTop"  >
+                                     id="tblBills" widgetVar="tblBills"
+                                     value="#{searchController.prescreptionBills}"
+                                     var="bill" styleClass="alignTop" 
+
+                                     >
 
                             <p:column headerText="No" styleClass="alignTop">
                                 <h:outputLabel value="#{i+1}"/>
@@ -39,12 +60,12 @@
 
                             <p:column headerText="Bill No" > 
                                 <p:commandLink ajax="false" value="#{bill.deptId}"
-                                                 action="pharmacy_reprint_bill_sale">
+                                               action="pharmacy_reprint_bill_sale">
                                     <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>   
                                 </p:commandLink>
                             </p:column>
 
-                            <p:column headerText="Department"  >                                
+                            <p:column headerText="Department" rendered="#{searchController.department eq null}"  >                                
                                 <h:outputLabel value="#{bill.department.name}" />                                    
                             </p:column>   
 
@@ -62,21 +83,25 @@
                                 <h:outputLabel value="#{bill.patient.person.nameWithTitle}" />
                             </p:column>
 
+                            <p:column >
+                                <p:outputLabel value="#{bi.item.name}"></p:outputLabel>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="#{bi.qty}"></p:outputLabel>    
+                            </p:column>
 
                             <p:column headerText="Medicines" >
 
-                                <table >
+                                <table style="width: 100%; padding: 0px;margin: 0px;border: none!important;" >
                                     <ui:repeat value="#{bill.billItems}" var="bi" >
-
-                                        <tr>
+                                        <tr style="border-bottom: 1px solid;">
                                             <td>
                                                 #{bi.item.name}
                                             </td>
-                                            <td>
+                                            <td style="border-left: 1px solid;  text-align: right; padding-right: 10px;">
                                                 #{bi.qty}
                                             </td>
                                         </tr>
-
                                     </ui:repeat>
                                 </table>
 
@@ -104,7 +129,10 @@
             </ui:define>
 
 
+
+
+
         </ui:composition>
 
-    </body>
+    </h:body>
 </html>

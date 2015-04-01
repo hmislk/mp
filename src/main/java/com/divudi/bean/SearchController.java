@@ -1723,8 +1723,8 @@ public class SearchController implements Serializable {
             temMap.put("chequeNo", "%" + getSearchKeyword().getNumber().trim().toUpperCase() + "%");
         }
 
-        sql += " order by b.chequeDate desc  ";
-//    
+        sql += " order by b.chequeDate ";
+//      sql += " order by b.chequeDate desc  ";
         temMap.put("billType", BillType.GrnPayment);
         temMap.put("insTp", InstitutionType.Dealer);
         temMap.put("toDate", getToDate());
@@ -1941,8 +1941,8 @@ public class SearchController implements Serializable {
             temMap.put("total", "%" + getSearchKeyword().getTotal().trim().toUpperCase() + "%");
         }
 
-        sql += " order by b.chequeDate desc  ";
-//    
+        sql += " order by b.chequeDate ";
+//      sql += " order by b.chequeDate desc  ";
         temMap.put("billType", BillType.GrnPayment);
         temMap.put("insTp", InstitutionType.Dealer);
         temMap.put("toDate", getToDate());
@@ -1950,7 +1950,7 @@ public class SearchController implements Serializable {
       //  temMap.put("ins", getSessionController().getInstitution());
 
         ////System.err.println("Sql " + sql);
-        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
     }
 

@@ -117,9 +117,42 @@
                             <td style="width: 30%" >
                             </td>
                         </tr>
+                        <tr>
+                            <td style="width: 15% ;text-align: left;" >
+                                <h:outputLabel value="Age" ></h:outputLabel>
+                            </td>
+                            <td>:</td>
+                            <td style="width: 30%;" >
+                                <h:outputLabel value="#{cc.attrs.bill.patient.age}"  >
+                                </h:outputLabel>
+                            </td>
+                            <td style="width: 10%" >
+                            </td>
+                            <td style="width: 15%" >
+                            </td>
+                            <td style="width: 30%" >
+                            </td>
+                        </tr>
                     </h:panelGroup>
 
-
+                    <h:panelGroup rendered="#{cc.attrs.bill.referredBy ne null}" >
+                        <tr>
+                            <td style="width: 15% ;text-align: left;" >
+                                <h:outputLabel value="Doctor Name" ></h:outputLabel>
+                            </td>
+                            <td>:</td>
+                            <td style="width: 30%;" >
+                                <h:outputLabel value="#{cc.attrs.bill.referredBy.person.name}"  >
+                                </h:outputLabel>
+                            </td>
+                            <td style="width: 10%" >
+                            </td>
+                            <td style="width: 15%" >
+                            </td>
+                            <td style="width: 30%" >
+                            </td>
+                        </tr>
+                    </h:panelGroup>
                 </table>
 
 

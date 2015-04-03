@@ -5,7 +5,6 @@
 package com.divudi.entity;
 
 import com.divudi.data.FeeType;
-import com.divudi.entity.inward.PatientRoom;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -51,10 +50,6 @@ public class BillFee implements Serializable {
     @ManyToOne
     Patient patient;
     @ManyToOne
-    PatientEncounter patienEncounter;
-    @ManyToOne
-    PatientEncounter childEncounter;
-    @ManyToOne
     Staff staff;
     @ManyToOne
     Institution institution;
@@ -86,20 +81,15 @@ public class BillFee implements Serializable {
 
     @Transient
     private double transSerial;
-    @ManyToOne
-    private PatientRoom referencePatientRoom;
 
     public void copy(BillFee billFee) {
         fee = billFee.getFee();
         patient = billFee.getPatient();
-        patienEncounter = billFee.getPatienEncounter();
-        childEncounter = billFee.getChildEncounter();
         staff = billFee.getStaff();
         institution = billFee.getInstitution();
         department = billFee.getDepartment();
         speciality = billFee.getSpeciality();
         FeeAt = billFee.getFeeAt();
-
     }
 
     public void invertValue(BillFee billFee) {
@@ -413,21 +403,6 @@ public class BillFee implements Serializable {
         this.patient = patient;
     }
 
-    public PatientEncounter getPatienEncounter() {
-        return patienEncounter;
-    }
-
-    public void setPatienEncounter(PatientEncounter patienEncounter) {
-        this.patienEncounter = patienEncounter;
-    }
-
-    public PatientEncounter getChildEncounter() {
-        return childEncounter;
-    }
-
-    public void setChildEncounter(PatientEncounter childEncounter) {
-        this.childEncounter = childEncounter;
-    }
 
     public BillItem getBillItem() {
         return billItem;
@@ -581,12 +556,5 @@ public class BillFee implements Serializable {
         this.referenceBillItem = referenceBillItem;
     }
 
-    public PatientRoom getReferencePatientRoom() {
-        return referencePatientRoom;
-    }
-
-    public void setReferencePatientRoom(PatientRoom referencePatientRoom) {
-        this.referencePatientRoom = referencePatientRoom;
-    }
 
 }

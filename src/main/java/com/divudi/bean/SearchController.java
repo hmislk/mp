@@ -13,19 +13,15 @@ import com.divudi.data.dataStructure.SearchKeyword;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
-import com.divudi.entity.BatchBill;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.PreBill;
-import com.divudi.entity.lab.PatientInvestigation;
-import com.divudi.facade.BatchBillFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
-import com.divudi.facade.PatientInvestigationFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +38,6 @@ import javax.persistence.TemporalType;
 import static ch.lambdaj.Lambda.*;
 import com.divudi.entity.Department;
 import com.divudi.facade.util.JsfUtil;
-import javax.persistence.Temporal;
 
 /**
  *
@@ -62,8 +57,6 @@ public class SearchController implements Serializable {
     private List<Bill> selectedBills;
     private List<BillFee> billFees;
     private List<BillItem> billItems;
-    private List<PatientInvestigation> patientInvestigations;
-    private List<PatientInvestigation> patientInvestigationsSigle;
     ////////////
     @EJB
     private CommonFunctions commonFunctions;
@@ -73,8 +66,6 @@ public class SearchController implements Serializable {
     private BillFeeFacade billFeeFacade;
     @EJB
     private BillItemFacade billItemFacade;
-    @EJB
-    private PatientInvestigationFacade patientInvestigationFacade;
     @EJB
     private BillBean billBean;
     @EJB
@@ -133,7 +124,6 @@ public class SearchController implements Serializable {
         selectedBills = null;
         billFees = null;
         billItems = null;
-        patientInvestigations = null;
     }
 
     public void createPreRefundTable() {
@@ -1466,62 +1456,9 @@ public class SearchController implements Serializable {
         temMap.put("fromDate", getFromDate());
 
         ////System.err.println("Sql " + sql);
-        patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-
     }
 
-    public void createPatientInvestigationsTableSingle() {
-        String sql = "select pi from PatientInvestigation pi join pi.investigation  "
-                + " i join pi.billItem.bill b join b.patient p where "
-                + " p=:pt ";
-        Map temMap = new HashMap();
-        sql += " order by pi.id desc  ";
-        temMap.put("pt", getTransferController().getPatient());
-//        ////System.out.println("temMap = " + temMap);
-//        ////System.out.println("sql = " + sql);
-        patientInvestigationsSigle = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
-//        ////System.out.println("patientInvestigations.size() = " + patientInvestigations.size());
-    }
-
-    public void createPatientInvestigationsTableAll() {
-
-        String sql = "select pi from PatientInvestigation pi join pi.investigation  "
-                + " i join pi.billItem.bill b join b.patient.person p where "
-                + " b.createdAt between :fromDate and :toDate  ";
-
-        Map temMap = new HashMap();
-
-        if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
-            sql += " and  (upper(p.name) like :patientName )";
-            temMap.put("patientName", "%" + getSearchKeyword().getPatientName().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.insId) like :billNo )";
-            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getPatientPhone() != null && !getSearchKeyword().getPatientPhone().trim().equals("")) {
-            sql += " and  (upper(p.phone) like :patientPhone )";
-            temMap.put("patientPhone", "%" + getSearchKeyword().getPatientPhone().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getItemName() != null && !getSearchKeyword().getItemName().trim().equals("")) {
-            sql += " and  (upper(i.phone) like :itm )";
-            temMap.put("itm", "%" + getSearchKeyword().getItemName().trim().toUpperCase() + "%");
-        }
-
-        sql += " order by pi.id desc  ";
-//    
-
-        temMap.put("toDate", getToDate());
-        temMap.put("fromDate", getFromDate());
-
-        ////System.err.println("Sql " + sql);
-        patientInvestigations = getPatientInvestigationFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-
-    }
-
+    
     public void createPreBillsForReturn() {
         bills = null;
         String sql;
@@ -3374,21 +3311,6 @@ public class SearchController implements Serializable {
         this.billFees = billFees;
     }
 
-    public List<PatientInvestigation> getPatientInvestigations() {
-        return patientInvestigations;
-    }
-
-    public void setPatientInvestigations(List<PatientInvestigation> patientInvestigations) {
-        this.patientInvestigations = patientInvestigations;
-    }
-
-    public PatientInvestigationFacade getPatientInvestigationFacade() {
-        return patientInvestigationFacade;
-    }
-
-    public void setPatientInvestigationFacade(PatientInvestigationFacade patientInvestigationFacade) {
-        this.patientInvestigationFacade = patientInvestigationFacade;
-    }
 
     public List<BillItem> getBillItems() {
         return billItems;
@@ -3445,17 +3367,6 @@ public class SearchController implements Serializable {
 
     public void setTransferController(TransferController transferController) {
         this.transferController = transferController;
-    }
-
-    public List<PatientInvestigation> getPatientInvestigationsSigle() {
-        if (patientInvestigationsSigle == null) {
-            createPatientInvestigationsTableSingle();
-        }
-        return patientInvestigationsSigle;
-    }
-
-    public void setPatientInvestigationsSigle(List<PatientInvestigation> patientInvestigationsSigle) {
-        this.patientInvestigationsSigle = patientInvestigationsSigle;
     }
 
     public double getNetTotal() {

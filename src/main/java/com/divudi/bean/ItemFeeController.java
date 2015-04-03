@@ -9,11 +9,11 @@
 package com.divudi.bean;
 
 import com.divudi.entity.Department;
+import com.divudi.entity.Item;
 import com.divudi.entity.ItemFee;
 import com.divudi.entity.Staff;
-import com.divudi.entity.lab.Investigation;
 import com.divudi.facade.DepartmentFacade;
-import com.divudi.facade.InvestigationFacade;
+import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemFeeFacade;
 import com.divudi.facade.StaffFacade;
 import java.io.Serializable;
@@ -43,11 +43,8 @@ public class ItemFeeController implements Serializable {
     @Inject
     SessionController sessionController;
     @EJB
-    private InvestigationFacade ejbFacade;
-    @EJB
     private ItemFeeFacade itemFeeFacade;
     private List<ItemFee> fees;
-    private Investigation currentIx;
     private ItemFee currentFee;
     private ItemFee removingItemFee;
     @EJB
@@ -84,6 +81,8 @@ public class ItemFeeController implements Serializable {
 
         return d;
     }
+    
+    Item currentIx;
 
     public void saveCharge() {
         if (currentIx == null) {
@@ -110,6 +109,17 @@ public class ItemFeeController implements Serializable {
         setCharges(null);
         currentFee = null;
     }
+    
+    @EJB
+    ItemFacade facede;
+
+    public ItemFacade getEjbFacade() {
+        return facede;
+    }
+
+   
+    
+    
 
     private double calTot() {
         double tot = 0.0;
@@ -120,14 +130,17 @@ public class ItemFeeController implements Serializable {
         return tot;
     }
 
-    public InvestigationFacade getEjbFacade() {
-        return ejbFacade;
+    public Item getCurrentIx() {
+        return currentIx;
     }
 
-    public void setEjbFacade(InvestigationFacade ejbFacade) {
-        this.ejbFacade = ejbFacade;
+    public void setCurrentIx(Item currentIx) {
+        this.currentIx = currentIx;
     }
 
+
+    
+    
     public SessionController getSessionController() {
         return sessionController;
     }
@@ -139,14 +152,7 @@ public class ItemFeeController implements Serializable {
     public ItemFeeController() {
     }
 
-    public Investigation getCurrentIx() {
-        return currentIx;
-    }
-
-    public void setCurrentIx(Investigation ix) {
-        this.currentIx = ix;
-
-    }
+    
 
     public void removeFee() {
         if (currentIx == null) {
@@ -183,7 +189,7 @@ public class ItemFeeController implements Serializable {
             currentIx.setRetired(true);
             currentIx.setRetiredAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
             currentIx.setRetirer(getSessionController().getLoggedUser());
-            getFacade().edit(currentIx);
+            getEjbFacade().edit(currentIx);
             UtilityController.addSuccessMessage("DeleteSuccessfull");
         } else {
             UtilityController.addSuccessMessage("NothingToDelete");
@@ -193,9 +199,6 @@ public class ItemFeeController implements Serializable {
         setCharges(null);
     }
 
-    private InvestigationFacade getFacade() {
-        return ejbFacade;
-    }
 
     public List<ItemFee> getCharges() {
         if (currentIx != null && currentIx.getId() != null) {

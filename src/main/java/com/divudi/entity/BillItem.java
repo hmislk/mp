@@ -4,7 +4,7 @@
  */
 package com.divudi.entity;
 
-import com.divudi.data.inward.InwardChargeType;
+
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.UserStock;
@@ -91,14 +91,12 @@ public class BillItem implements Serializable {
     BillItem referanceBillItem;
     @OneToOne
     BillFee paidForBillFee;
-    @ManyToOne
-    PatientEncounter patientEncounter;
+    
     @Temporal(javax.persistence.TemporalType.DATE)
     Date sessionDate;
     @ManyToOne
     Bill referenceBill;
-    @Enumerated(EnumType.STRING)
-    InwardChargeType inwardChargeType;
+    
     String agentRefNo;
 
 //    @Transient
@@ -121,8 +119,7 @@ public class BillItem implements Serializable {
     public void copy(BillItem billItem) {
         item = billItem.getItem();
         sessionDate = billItem.getSessionDate();
-        patientEncounter = billItem.getPatientEncounter();
-        inwardChargeType = billItem.getInwardChargeType();
+       
         agentRefNo = billItem.getAgentRefNo();
         item = billItem.getItem();
         qty = billItem.getQty();
@@ -432,13 +429,7 @@ public class BillItem implements Serializable {
         this.remainingQty = remainingQty;
     }
 
-    public PatientEncounter getPatientEncounter() {
-        return patientEncounter;
-    }
-
-    public void setPatientEncounter(PatientEncounter patientEncounter) {
-        this.patientEncounter = patientEncounter;
-    }
+  
 
     public Bill getReferenceBill() {
         return referenceBill;
@@ -448,13 +439,6 @@ public class BillItem implements Serializable {
         this.referenceBill = referenceBill;
     }
 
-    public InwardChargeType getInwardChargeType() {
-        return inwardChargeType;
-    }
-
-    public void setInwardChargeType(InwardChargeType inwardChargeType) {
-        this.inwardChargeType = inwardChargeType;
-    }
 
     public String getAgentRefNo() {
         return agentRefNo;

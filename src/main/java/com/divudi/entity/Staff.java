@@ -4,20 +4,6 @@
  */
 package com.divudi.entity;
 
-import com.divudi.bean.hr.BankAccount;
-import com.divudi.data.hr.EmployeeLeavingStatus;
-import com.divudi.data.hr.EmployeeStatus;
-import com.divudi.data.hr.SalaryPaymentFrequency;
-import com.divudi.data.hr.SalaryPaymentMethod;
-import com.divudi.entity.hr.Grade;
-import com.divudi.entity.hr.Designation;
-import com.divudi.entity.hr.PaysheetComponent;
-import com.divudi.entity.hr.Roster;
-import com.divudi.entity.hr.Shift;
-import com.divudi.entity.hr.ShiftPreference;
-import com.divudi.entity.hr.StaffCategory;
-
-import com.divudi.entity.hr.StaffEmployment;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -42,22 +28,7 @@ import javax.persistence.Transient;
 @Entity
 public class Staff implements Serializable {
 
-    @ManyToOne
-    Roster roster;
-
-    @OneToOne(mappedBy = "staff")
-    StaffEmployment staffEmployment;
-    @OneToOne(mappedBy = "staff")
-    PaysheetComponent paysheetComponent;
-    @ManyToOne
-    Designation designation;
-    @ManyToOne
-    Grade grade;
-    @ManyToOne
-    StaffCategory staffCategory;
     int orderNo;
-    @OneToOne(mappedBy = "staff")
-    ShiftPreference shiftPreference;
     static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -97,22 +68,12 @@ public class Staff implements Serializable {
     //////////////////
     @OneToOne
     Department workingDepartment;
-    @Enumerated(EnumType.STRING)
-    EmployeeLeavingStatus employeeLeavingStatus;
-    @Enumerated(EnumType.STRING)
-    EmployeeStatus employeeStatus;
-    @Enumerated(EnumType.STRING)
-    SalaryPaymentFrequency payingMethod;
-    @Enumerated(EnumType.STRING)
-    SalaryPaymentMethod salaryPaymentMethod;
     @Temporal(javax.persistence.TemporalType.DATE)
     Date dateJoined;
     @Temporal(javax.persistence.TemporalType.DATE)
     Date dateLeft;
     @Transient
     double basic;
-    @OneToOne(cascade = CascadeType.ALL)
-    BankAccount bankAccount;
     String epfNo;
 
     String acNo;
@@ -299,92 +260,6 @@ public class Staff implements Serializable {
         this.staffCode = staffCode;
     }
 
-    public ShiftPreference getShiftPreference() {
-        return shiftPreference;
-    }
-
-    public void setShiftPreference(ShiftPreference shiftPreference) {
-        this.shiftPreference = shiftPreference;
-    }
-    @Transient
-    Shift shift;
-
-    public Shift getShift() {
-        return shift;
-    }
-
-    public void setShift(Shift shift) {
-        if (this.shift == null && getRepeatedDay() > 0) {
-            this.shift = shift;
-        }
-    }
-    @Transient
-    int repeatedDay;
-
-    public int getRepeatedDay() {
-        return repeatedDay;
-    }
-
-    public void setRepeatedDay(int repeatedDay) {
-        if (this.repeatedDay == 0) {
-            this.repeatedDay = repeatedDay;
-        } else {
-            this.repeatedDay = repeatedDay--;
-        }
-
-    }
-    @Transient
-    boolean dayOff;
-
-    public boolean isDayOff() {
-        return dayOff;
-    }
-
-    public void setDayOff(boolean dayOff) {
-
-        this.dayOff = dayOff;
-
-    }
-
-    public Department getWorkingDepartment() {
-        return workingDepartment;
-    }
-
-    public void setWorkingDepartment(Department workingDepartment) {
-        this.workingDepartment = workingDepartment;
-    }
-
-    public EmployeeLeavingStatus getEmployeeLeavingStatus() {
-        return employeeLeavingStatus;
-    }
-
-    public void setEmployeeLeavingStatus(EmployeeLeavingStatus employeeLeavingStatus) {
-        this.employeeLeavingStatus = employeeLeavingStatus;
-    }
-
-    public EmployeeStatus getEmployeeStatus() {
-        return employeeStatus;
-    }
-
-    public void setEmployeeStatus(EmployeeStatus employeeStatus) {
-        this.employeeStatus = employeeStatus;
-    }
-
-    public SalaryPaymentFrequency getPayingMethod() {
-        return payingMethod;
-    }
-
-    public void setPayingMethod(SalaryPaymentFrequency payingMethod) {
-        this.payingMethod = payingMethod;
-    }
-
-    public SalaryPaymentMethod getSalaryPaymentMethod() {
-        return salaryPaymentMethod;
-    }
-
-    public void setSalaryPaymentMethod(SalaryPaymentMethod salaryPaymentMethod) {
-        this.salaryPaymentMethod = salaryPaymentMethod;
-    }
 
     public Date getDateJoined() {
         return dateJoined;
@@ -402,48 +277,6 @@ public class Staff implements Serializable {
         this.dateLeft = dateLeft;
     }
 
-    public Designation getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(Designation designation) {
-        this.designation = designation;
-    }
-
-    public Grade getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Grade grade) {
-        this.grade = grade;
-    }
-
-    public StaffCategory getStaffCategory() {
-        return staffCategory;
-    }
-
-    public void setStaffCategory(StaffCategory staffCategory) {
-        this.staffCategory = staffCategory;
-    }
-
-    public PaysheetComponent getPaysheetComponent() {
-        return paysheetComponent;
-    }
-
-    public void setPaysheetComponent(PaysheetComponent paysheetComponent) {
-        this.paysheetComponent = paysheetComponent;
-    }
-    @Transient
-    boolean tmp;
-
-    public boolean isTmp() {
-        return tmp;
-    }
-
-    public void setTmp(boolean tmp) {
-        this.tmp = tmp;
-    }
-
     public int getOrderNo() {
         return orderNo;
     }
@@ -452,12 +285,20 @@ public class Staff implements Serializable {
         this.orderNo = orderNo;
     }
 
-    public StaffEmployment getStaffEmployment() {
-        return staffEmployment;
+    public double getCharge() {
+        return charge;
     }
 
-    public void setStaffEmployment(StaffEmployment staffEmployment) {
-        this.staffEmployment = staffEmployment;
+    public void setCharge(double charge) {
+        this.charge = charge;
+    }
+
+    public Department getWorkingDepartment() {
+        return workingDepartment;
+    }
+
+    public void setWorkingDepartment(Department workingDepartment) {
+        this.workingDepartment = workingDepartment;
     }
 
     public double getBasic() {
@@ -468,31 +309,12 @@ public class Staff implements Serializable {
         this.basic = basic;
     }
 
-    public BankAccount getBankAccount() {
-        if (bankAccount == null) {
-            bankAccount = new BankAccount();
-        }
-        return bankAccount;
-    }
-
-    public void setBankAccount(BankAccount bankAccount) {
-        this.bankAccount = bankAccount;
-    }
-
     public String getEpfNo() {
         return epfNo;
     }
 
     public void setEpfNo(String epfNo) {
         this.epfNo = epfNo;
-    }
-
-    public Roster getRoster() {
-        return roster;
-    }
-
-    public void setRoster(Roster roster) {
-        this.roster = roster;
     }
 
     public String getAcNo() {
@@ -511,11 +333,6 @@ public class Staff implements Serializable {
         this.workingHour = workingHour;
     }
 
-    public double getCharge() {
-        return charge;
-    }
 
-    public void setCharge(double charge) {
-        this.charge = charge;
-    }
+
 }

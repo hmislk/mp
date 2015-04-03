@@ -10,11 +10,9 @@ import com.divudi.data.InstitutionType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
-import com.divudi.entity.PatientEncounter;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.InstitutionFacade;
-import com.divudi.facade.PatientEncounterFacade;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,8 +33,6 @@ public class CreditBean {
     private InstitutionFacade institutionFacade;
     @EJB
     private BillFacade billFacade;
-    @EJB
-    PatientEncounterFacade patientEncounterFacade;
 
     public List<Bill> getCreditBills(Institution ins, BillType billType, Date fromDate, Date toDate, boolean lessThan) {
         String sql = "Select b From BilledBill b"
@@ -97,31 +93,6 @@ public class CreditBean {
         return setIns;
     }
 
-    public List<PatientEncounter> getCreditPatientEncounter(Institution institution, Date fromDate, Date toDate, PaymentMethod paymentMethod, boolean lessThan) {
-        String sql;
-        HashMap hm;
-        sql = "Select b From PatientEncounter b "
-                + " where b.retired=false ";
-        if (lessThan) {
-            sql += " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount)) >:val ";
-        } else {
-            sql += " and (abs(b.creditUsedAmount)-abs(b.creditPaidAmount)) <:val ";
-        }
-        sql += " and b.dateOfDischarge between :frm and :to "
-                + " and b.paymentFinalized = true "
-                + " and b.paymentMethod= :pm "
-                + " and b.creditCompany=:ins  ";
-
-        hm = new HashMap();
-        hm.put("frm", fromDate);
-        hm.put("to", toDate);
-        hm.put("pm", paymentMethod);
-        hm.put("ins", institution);
-        hm.put("val", 0.1);
-        List<PatientEncounter> lst = getPatientEncounterFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-
-        return lst;
-    }
 
     public List<Institution> getCreditCompanyFromBht(boolean lessThan,PaymentMethod paymentMethod) {
         String sql;
@@ -184,19 +155,6 @@ public class CreditBean {
 
     }
 
-    public double getPaidAmount(PatientEncounter p, BillType billType) {
-        String sql = "Select sum(b.netValue) From BillItem b "
-                + " where b.retired=false "
-                + " and b.patientEncounter=:pe "
-                + " and b.bill.billType=:btp ";
-
-        HashMap hm = new HashMap();
-        hm.put("pe", p);
-        hm.put("btp", billType);
-
-        return getBillItemFacade().findDoubleByJpql(sql, hm);
-
-    }
 
     public List<Institution> getDealorFromReturnBills(Date frmDate, Date toDate, InstitutionType institutionType) {
         String sql;
@@ -387,26 +345,6 @@ public class CreditBean {
 
     }
 
-    public List<PatientEncounter> getCreditPatientEncounters(Institution institution, boolean lessThan,PaymentMethod paymentMethod) {
-        String sql;
-        HashMap hm = new HashMap();
-        sql = "Select b From PatientEncounter b "
-                + " where b.retired=false "
-                + " and b.paymentFinalized=true "
-                + " and b.paymentMethod=:pm "
-                + " and (b.creditCompany=:ins ) ";
-
-        if (lessThan) {
-            sql += " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)> :val ";
-        } else {
-            sql += " and abs(b.creditUsedAmount)-abs(b.creditPaidAmount)< :val ";
-        }
-
-        hm.put("val", 0.1);
-        hm.put("ins", institution);
-        hm.put("pm", paymentMethod);
-        return getPatientEncounterFacade().findBySQL(sql, hm, TemporalType.TIMESTAMP);
-    }
 
     public List<Institution> getDealorFromBills(Date frmDate, Date toDate, InstitutionType institutionType) {
         String sql;
@@ -459,12 +397,5 @@ public class CreditBean {
         this.billFacade = billFacade;
     }
 
-    public PatientEncounterFacade getPatientEncounterFacade() {
-        return patientEncounterFacade;
-    }
-
-    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
-        this.patientEncounterFacade = patientEncounterFacade;
-    }
 
 }

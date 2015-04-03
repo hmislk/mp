@@ -9,7 +9,7 @@
 package com.divudi.bean;
 
 import com.divudi.data.FeeType;
-import com.divudi.data.inward.InwardChargeType;
+
 import com.divudi.data.dataStructure.ServiceFee;
 import com.divudi.data.SessionNumberType;
 import com.divudi.ejb.BillBean;
@@ -499,10 +499,6 @@ public class ServiceController implements Serializable {
 
     public void setBillBean(BillBean billBean) {
         this.billBean = billBean;
-    }
-
-    public InwardChargeType[] getInwardChargeTypes() {
-        return InwardChargeType.values();
     }
 
     public SessionNumberType[] getSessionNumberType() {

@@ -13,7 +13,6 @@ import com.divudi.ejb.CashTransactionBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
-import com.divudi.entity.PatientEncounter;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
@@ -48,7 +47,6 @@ public class AgentPaymentRecieveBillController implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private InstitutionFacade institutionFacade;
-    private PatientEncounter patientEncounter;
     private BillItem currentBillItem;
     private List<BillItem> billItems;
     private int index;
@@ -168,7 +166,6 @@ public class AgentPaymentRecieveBillController implements Serializable {
         current = null;
         printPreview = false;
         currentBillItem = null;
-        patientEncounter = null;
         paymentMethodData = null;
         billItems = null;
 
@@ -228,14 +225,6 @@ public class AgentPaymentRecieveBillController implements Serializable {
 
     public void setBillItemFacade(BillItemFacade billItemFacade) {
         this.billItemFacade = billItemFacade;
-    }
-
-    public PatientEncounter getPatientEncounter() {
-        return patientEncounter;
-    }
-
-    public void setPatientEncounter(PatientEncounter patientEncounter) {
-        this.patientEncounter = patientEncounter;
     }
 
     public BillItem getCurrentBillItem() {

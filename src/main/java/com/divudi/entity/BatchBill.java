@@ -6,9 +6,7 @@ package com.divudi.entity;
 
 import com.divudi.data.BillType;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
@@ -30,10 +27,6 @@ public class BatchBill implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    @ManyToOne
-    private PatientEncounter patientEncounter;
-    @ManyToOne
-    private PatientEncounter procedure;
     @Enumerated(EnumType.STRING)
     private BillType billType;
     private double total;
@@ -133,13 +126,6 @@ public class BatchBill implements Serializable {
         this.retireComments = retireComments;
     }
 
-    public PatientEncounter getPatientEncounter() {
-        return patientEncounter;
-    }
-
-    public void setPatientEncounter(PatientEncounter patientEncounter) {
-        this.patientEncounter = patientEncounter;
-    }
 
     public BillType getBillType() {
         return billType;
@@ -149,14 +135,7 @@ public class BatchBill implements Serializable {
         this.billType = billType;
     }
 
-    public PatientEncounter getProcedure() {
-        return procedure;
-    }
-
-    public void setProcedure(PatientEncounter procedure) {
-        this.procedure = procedure;
-    }
-
+    
     public double getTotal() {
         return total;
     }

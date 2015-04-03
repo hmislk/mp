@@ -9,10 +9,6 @@ import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.SessionNumberType;
 import com.divudi.data.SymanticType;
-import com.divudi.data.inward.InwardChargeType;
-import com.divudi.entity.lab.InvestigationItem;
-import com.divudi.entity.lab.ReportItem;
-import com.divudi.entity.lab.WorksheetItem;
 import com.divudi.entity.pharmacy.MeasurementUnit;
 import com.divudi.entity.pharmacy.Vmp;
 import java.io.Serializable;
@@ -41,12 +37,6 @@ import javax.persistence.Transient;
 @Entity
 public class Item implements Serializable {
 
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    List<InvestigationItem> reportItems;
-    //
-
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    List<WorksheetItem> worksheetItems;
 
     static final long serialVersionUID = 1L;
 
@@ -100,8 +90,6 @@ public class Item implements Serializable {
     @ManyToOne
     Item parentItem;
     boolean userChangable;
-    @Enumerated(EnumType.STRING)
-    InwardChargeType inwardChargeType;
     private double dblValue = 0.0f;
     SessionNumberType sessionNumberType;
     boolean priceByBatch;
@@ -143,31 +131,11 @@ public class Item implements Serializable {
         this.vmp = vmp;
     }
     
-    public List<WorksheetItem> getWorksheetItems() {
-        if (worksheetItems != null) {
-            Collections.sort(worksheetItems, new ReportItemComparator());
-        } else {
-            worksheetItems = new ArrayList<>();
-        }
-        return worksheetItems;
-    }
-
-    public void setWorksheetItems(List<WorksheetItem> worksheetItems) {
-        this.worksheetItems = worksheetItems;
-    }
 
     public Item() {
 
     }
 
-    public List<InvestigationItem> getReportItems() {
-        if (reportItems != null) {
-            Collections.sort(reportItems, new ReportItemComparator());
-        } else {
-            reportItems = new ArrayList<>();
-        }
-        return reportItems;
-    }
 
     @Override
     public int hashCode() {
@@ -449,14 +417,6 @@ public class Item implements Serializable {
         this.userChangable = userChangable;
     }
 
-    public InwardChargeType getInwardChargeType() {
-        return inwardChargeType;
-    }
-
-    public void setInwardChargeType(InwardChargeType inwardChargeType) {
-        this.inwardChargeType = inwardChargeType;
-    }
-
     public boolean isPriceByBatch() {
         return priceByBatch;
     }
@@ -631,26 +591,6 @@ public class Item implements Serializable {
 
     public void setImporter(Institution importer) {
         this.importer = importer;
-    }
-
-    static class ReportItemComparator implements Comparator<ReportItem> {
-
-        @Override
-        public int compare(ReportItem o1, ReportItem o2) {
-            if (o1 == null) {
-                return 1;
-            }
-            if (o2 == null) {
-                return -1;
-            }
-            if (o1.getCssTop() == null) {
-                return 1;
-            }
-            if (o2.getCssTop() == null) {
-                return -1;
-            }
-            return o1.getCssTop().compareTo(o2.getCssTop());  //To change body of generated methods, choose Tools | Templates.
-        }
     }
 
 }

@@ -17,7 +17,6 @@ import com.divudi.entity.MedicalPackageFee;
 import com.divudi.entity.MedicalPackageItem;
 import com.divudi.entity.Staff;
 import com.divudi.facade.DepartmentFacade;
-import com.divudi.facade.InvestigationFacade;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.MedicalPackageFeeFacade;
 import com.divudi.facade.MedicalPackageItemFacade;
@@ -63,8 +62,6 @@ public class MedicalPackageItemFeeController implements Serializable {
     private MedicalPackageItemFacade packageItemFacade;
     @EJB
     private PackegeFacade packegeFacade;
-    @EJB
-    private InvestigationFacade investigationFacade;
     private MedicalPackage currentPackege;
     private List<MedicalPackageFee> fees;
     private Item currentIx;
@@ -340,13 +337,6 @@ public class MedicalPackageItemFeeController implements Serializable {
         this.packegeFacade = packegeFacade;
     }
 
-    public InvestigationFacade getInvestigationFacade() {
-        return investigationFacade;
-    }
-
-    public void setInvestigationFacade(InvestigationFacade investigationFacade) {
-        this.investigationFacade = investigationFacade;
-    }
 
     public DepartmentFacade getDepartmentFacade() {
         return departmentFacade;

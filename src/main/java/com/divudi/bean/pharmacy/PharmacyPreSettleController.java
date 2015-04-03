@@ -14,7 +14,7 @@ import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.data.dataStructure.PaymentMethodData;
 import com.divudi.data.dataStructure.YearMonthDay;
-import com.divudi.data.inward.InwardChargeType;
+
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CashTransactionBean;
@@ -372,8 +372,6 @@ public class PharmacyPreSettleController implements Serializable {
             BillItem newBil = new BillItem();
             newBil.copy(tbi);
             newBil.setBill(getSaleBill());
-            newBil.setInwardChargeType(InwardChargeType.Medicine);
-            //      newBil.setBill(getSaleBill());
             newBil.setCreatedAt(Calendar.getInstance().getTime());
             newBil.setCreater(getSessionController().getLoggedUser());
             getBillItemFacade().create(newBil);

@@ -39,7 +39,8 @@
 
                             <p:submenu label="Pharmacy"  rendered="#{webUserController.hasPrivilege('Pharmacy')}">
                                 <p:submenu label="Sale" rendered="#{webUserController.hasPrivilege('PharmacySale')}"> 
-                                    <p:menuitem  ajax="false" action="/pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStock()}" ></p:menuitem>                                                                               
+                                    <p:menuitem  ajax="false" action="/pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStock()}" ></p:menuitem>    
+                                    <p:menuitem  ajax="false" action="/pharmacy_retail_sale_withouttracing"  value="Sale without Tracing" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStock()}" ></p:menuitem>    
                                     <p:menuitem  ajax="false" action="/pharmacy_retail_sale_for_cashier"  value="Sale for cashier" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStockForCashier()}" ></p:menuitem>                                       
                                     <p:submenu label="Search">
                                         <p:menuitem  ajax="false" action="/pharmacy_search_sale_bill"  value="Search Sale Bill"

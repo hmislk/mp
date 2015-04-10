@@ -9,7 +9,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.YearMonthDay;
-import com.divudi.data.inward.InwardChargeType;
+
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -262,7 +262,6 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setGrossValue(getStock().getItemBatch().getRetailsaleRate() * qty);
         tbi.setNetValue(qty * tbi.getNetRate());
         tbi.setDiscount(tbi.getGrossValue() - tbi.getNetValue());
-        tbi.setInwardChargeType(InwardChargeType.Medicine);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setBill(getDeptAdjustmentPreBill());
         tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);
@@ -303,7 +302,6 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setGrossValue(getStock().getItemBatch().getRetailsaleRate() * getStock().getStock());
         tbi.setNetValue(getStock().getStock() * tbi.getNetRate());
         tbi.setDiscount(tbi.getGrossValue() - tbi.getNetValue());
-        tbi.setInwardChargeType(InwardChargeType.Medicine);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setBill(getDeptAdjustmentPreBill());
         tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);
@@ -337,7 +335,6 @@ public class PharmacyAdjustmentController implements Serializable {
         tbi.setGrossValue(getStock().getItemBatch().getRetailsaleRate() * getStock().getStock());
         tbi.setNetValue(getStock().getStock() * tbi.getNetRate());
         tbi.setDiscount(tbi.getGrossValue() - tbi.getNetValue());
-        tbi.setInwardChargeType(InwardChargeType.Medicine);
         tbi.setItem(getStock().getItemBatch().getItem());
         tbi.setBill(getDeptAdjustmentPreBill());
         tbi.setSearialNo(getDeptAdjustmentPreBill().getBillItems().size() + 1);

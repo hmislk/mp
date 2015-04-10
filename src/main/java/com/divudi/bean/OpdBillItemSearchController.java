@@ -16,10 +16,8 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.LazyBillItem;
 import com.divudi.entity.RefundBill;
-import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
-import com.divudi.facade.PatientInvestigationFacade;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -75,9 +72,6 @@ public class OpdBillItemSearchController implements Serializable {
     double labHandoverR;
     List<BillItem> billItemsOwn;
     List<BillItem> billItemsAll;
-    List<PatientInvestigation> patientInvestigations;
-    @EJB
-    PatientInvestigationFacade piFacade;
     @EJB
     BillItemFacade billItemFacade;
     @Inject
@@ -920,39 +914,9 @@ public class OpdBillItemSearchController implements Serializable {
     }
 
     private void recreteModal() {
-        patientInvestigations = null;
         labBills = null;
         billItemsOwn = null;
         billItemsAll = null;
-    }
-
-    public PatientInvestigationFacade getPiFacade() {
-        return piFacade;
-    }
-
-    public void setPiFacade(PatientInvestigationFacade piFacade) {
-        this.piFacade = piFacade;
-    }
-
-    public List<PatientInvestigation> getPatientInvestigations() {
-        String sql;
-        if (patientInvestigations == null) {
-            Map m = new HashMap();
-            m.put("toDate", toDate);
-            m.put("fromDate", fromDate);
-            if (txtSearch == null || txtSearch.trim().equals("")) {
-                sql = "select pi from PatientInvestigation pi join pi.investigation i join pi.billItem.bill b join b.patient.person p where b.createdAt between :fromDate and :toDate order by pi.id desc";
-                patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 100);
-            } else {
-                sql = "select pi from PatientInvestigation pi join pi.investigation i join pi.billItem.bill b join b.patient.person p where (upper(p.name) like '%" + txtSearch.toUpperCase() + "%' or upper(b.insId) like '%" + txtSearch.toUpperCase() + "%' or p.phone like '%" + txtSearch + "%' or upper(i.name) like '%" + txtSearch.toUpperCase() + "%' ) and b.createdAt between :fromDate and :toDate order by pi.id desc";
-                patientInvestigations = getPiFacade().findBySQL(sql, m, TemporalType.TIMESTAMP);
-            }
-        }
-        return patientInvestigations;
-    }
-
-    public void setPatientInvestigations(List<PatientInvestigation> patientInvestigations) {
-        this.patientInvestigations = patientInvestigations;
     }
 
     /**

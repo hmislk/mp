@@ -13,8 +13,6 @@ import com.divudi.entity.Category;
 import com.divudi.entity.ConsumableCategory;
 import com.divudi.entity.ServiceCategory;
 import com.divudi.entity.ServiceSubCategory;
-import com.divudi.entity.inward.TimedItemCategory;
-import com.divudi.entity.lab.InvestigationCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalCategory;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.entity.pharmacy.StoreItemCategory;
@@ -92,8 +90,8 @@ public class CategoryController implements Serializable {
 
         temMap.put("service", ServiceCategory.class);
         temMap.put("sub", ServiceSubCategory.class);
-        temMap.put("invest", InvestigationCategory.class);
-        temMap.put("time", TimedItemCategory.class);
+        temMap.put("invest", ServiceSubCategory.class);
+        temMap.put("time", ServiceSubCategory.class);
         temMap.put("parm", PharmaceuticalItemCategory.class);
         temMap.put("con", ConsumableCategory.class);
         temMap.put("q", "%" + qry.toUpperCase() + "%");
@@ -143,7 +141,7 @@ public class CategoryController implements Serializable {
 
         temMap.put("service", ServiceCategory.class);
         temMap.put("sub", ServiceSubCategory.class);
-        temMap.put("invest", InvestigationCategory.class);
+        temMap.put("invest", ServiceSubCategory.class);
         temMap.put("q", "%" + qry.toUpperCase() + "%");
 
         c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);
@@ -206,7 +204,7 @@ public class CategoryController implements Serializable {
                 + " and (type(c)= :invest ) and upper(c.name)"
                 + " like :q order by c.name";
 
-        temMap.put("invest", InvestigationCategory.class);
+        temMap.put("invest", ServiceSubCategory.class);
         temMap.put("q", "%" + qry.toUpperCase() + "%");
 
         c = getFacade().findBySQL(sql, temMap, TemporalType.DATE);

@@ -15,26 +15,41 @@
 
                     <p:panel header="Institution Item Movement and Stock" >
 
-                        <h:panelGrid columns="4" >
-                            <h:outputLabel value="Item Distributor" ></h:outputLabel>
+                        <h:panelGrid columns="5" >
+
+                            <h:outputLabel value="Supplier" ></h:outputLabel>
                             <p:autoComplete 
                                 completeMethod="#{institutionController.completeSupplier}" 
                                 var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" 
                                 forceSelection="true" value="#{itemController.instituion}"
                                 converter="institutionConverter" >
                             </p:autoComplete>
-                            <h:outputLabel value="Persentage" ></h:outputLabel>
-                            <h:inputText value="#{pharmacyController.persentage}" />
+
+                            <h:outputLabel value="" ></h:outputLabel>
+
                             <h:outputLabel value="From" ></h:outputLabel>
                             <p:calendar value="#{pharmacyController.fromDate}"
                                         pattern="dd MM yyyy hh mm a" ></p:calendar>
+                            
+
+                            <h:outputLabel value="Persentage" ></h:outputLabel>
+                            <h:panelGroup id="gpPer" >
+                                <p:tooltip id="ttPer" for="gpPer" value="#{pharmacyController.persentage}" ></p:tooltip>
+                                <h:inputHidden id="txtPer" value="#{pharmacyController.persentage}" />
+                                <p:slider for="txtPer" maxValue="200" minValue="0" display="ttPer"  ></p:slider>
+                            </h:panelGroup>
+                            
+                            <p:spacer style="width: 50px;" ></p:spacer>
                             <h:outputLabel value="To" ></h:outputLabel>
                             <p:calendar value="#{pharmacyController.toDate}"
                                         pattern="dd MM yyyy hh mm a" ></p:calendar>
                             <h:outputLabel value="" ></h:outputLabel>
-                            <p:commandButton ajax="false" value="Average By Date"
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" >
+                            <p:commandButton ajax="false" value="Average per Day"
                                              actionListener="#{pharmacyController.averageByDatePercentage()}" ></p:commandButton>
-                            <p:commandButton ajax="false" value="Average By Month"
+                            <p:commandButton ajax="false" value="Average per Month"
                                              actionListener="#{pharmacyController.averageByMonthByPercentage()}" ></p:commandButton>
                         </h:panelGrid>
 

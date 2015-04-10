@@ -38,7 +38,7 @@ import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.Staff;
 import com.divudi.entity.WebUser;
-import com.divudi.entity.memberShip.MembershipScheme;
+
 import com.divudi.facade.BatchBillFacade;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
@@ -46,9 +46,8 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
 import com.divudi.facade.InstitutionFacade;
-import com.divudi.facade.PatientEncounterFacade;
 import com.divudi.facade.PatientFacade;
-import com.divudi.facade.PatientInvestigationFacade;
+
 import com.divudi.facade.PersonFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -92,8 +91,6 @@ public class BillController implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private InstitutionFacade institutionFacade;
-    @EJB
-    private PatientEncounterFacade patientEncounterFacade;
     @Inject
     private EnumController enumController;
     private boolean printPreview;
@@ -117,8 +114,6 @@ public class BillController implements Serializable {
     private List<BillItem> lstBillItems;
     private List<BillEntry> lstBillEntries;
     private Integer index;
-    @EJB
-    private PatientInvestigationFacade patientInvestigationFacade;
     @EJB
     private BillBean billBean;
     @EJB
@@ -151,16 +146,7 @@ public class BillController implements Serializable {
     }
 
     private void createPaymentSchemeItems() {
-
-        if (getSearchedPatient() != null && getSearchedPatient().getPerson() != null) {
-            //    //System.err.println("2");
-            getPaymentSchemeController().setMembershipScheme(getSearchedPatient().getPerson().getMembershipScheme());
-        } else {
-            getPaymentSchemeController().setMembershipScheme(null);
-        }
-
         getPaymentSchemeController().createList();
-
         if (!getPaymentSchemeController().getList().isEmpty()) {
             setPaymentScheme(getPaymentSchemeController().getList().get(0));
         }
@@ -234,8 +220,6 @@ public class BillController implements Serializable {
         return a;
     }
 
-    
-    
     public List<Bill> completeBillFromDealor(String qry) {
         List<Bill> a = null;
         String sql;
@@ -836,16 +820,9 @@ public class BillController implements Serializable {
         }
 
         //System.out.println("calculating totals 222 " + paymentScheme.getName());
-
         double disPercent = 0.0;
         double billGross = 0.0;
         double billNet = 0.0;
-        MembershipScheme membershipScheme = null;
-
-        if (getSearchedPatient() != null
-                && getSearchedPatient().getPerson() != null) {
-            membershipScheme = getSearchedPatient().getPerson().getMembershipScheme();
-        }
 
         for (BillEntry be : getLstBillEntries()) {
             ////System.out.println("bill item entry");
@@ -856,11 +833,7 @@ public class BillController implements Serializable {
 
             for (BillFee bf : be.getLstBillFees()) {
 
-                if (membershipScheme != null) {
-                    getBillBean().setBillFees(bf, isForeigner(), getPaymentScheme(), bi.getItem());
-                } else {
-                    getBillBean().setBillFees(bf, isForeigner(), getPaymentScheme(), getCreditCompany());
-                }
+                getBillBean().setBillFees(bf, isForeigner(), getPaymentScheme(), bi.getItem());
 
                 entryGross += bf.getFeeGrossValue();
                 entryNet += bf.getFeeValue();
@@ -1260,14 +1233,6 @@ public class BillController implements Serializable {
         this.tmpPatient = tmpPatient;
     }
 
-    public PatientInvestigationFacade getPatientInvestigationFacade() {
-        return patientInvestigationFacade;
-    }
-
-    public void setPatientInvestigationFacade(PatientInvestigationFacade patientInvestigationFacade) {
-        this.patientInvestigationFacade = patientInvestigationFacade;
-    }
-
     public BillItemFacade getBillItemFacade() {
         return billItemFacade;
     }
@@ -1358,13 +1323,6 @@ public class BillController implements Serializable {
 
     }
 
-    public PatientEncounterFacade getPatientEncounterFacade() {
-        return patientEncounterFacade;
-    }
-
-    public void setPatientEncounterFacade(PatientEncounterFacade patientEncounterFacade) {
-        this.patientEncounterFacade = patientEncounterFacade;
-    }
 
     public CashTransactionBean getCashTransactionBean() {
         return cashTransactionBean;

@@ -43,7 +43,7 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
 import com.divudi.facade.PatientFacade;
-import com.divudi.facade.PatientInvestigationFacade;
+
 import com.divudi.facade.PersonFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -102,8 +102,6 @@ public class BillPackageController implements Serializable {
     private List<BillItem> lstBillItems;
     private List<BillEntry> lstBillEntries;
     private Integer index;
-    @EJB
-    private PatientInvestigationFacade patientInvestigationFacade;
     @EJB
     private BillBean billBean;
     @EJB
@@ -913,13 +911,6 @@ public class BillPackageController implements Serializable {
         this.tmpPatient = tmpPatient;
     }
 
-    public PatientInvestigationFacade getPatientInvestigationFacade() {
-        return patientInvestigationFacade;
-    }
-
-    public void setPatientInvestigationFacade(PatientInvestigationFacade patientInvestigationFacade) {
-        this.patientInvestigationFacade = patientInvestigationFacade;
-    }
 
     public BillItemFacade getBillItemFacade() {
         return billItemFacade;

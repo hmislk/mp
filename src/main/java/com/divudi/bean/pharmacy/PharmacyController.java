@@ -8,6 +8,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.DepartmentController;
 import com.divudi.bean.ItemController;
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
@@ -35,6 +36,7 @@ import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,7 +86,7 @@ public class PharmacyController implements Serializable {
     private List<BillItem> grns;
     private List<BillItem> pos;
     private List<BillItem> directPurchase;
-    double persentage;
+    Double persentage;
 
     public void makeNull() {
         departmentSale = null;
@@ -290,11 +292,53 @@ public class PharmacyController implements Serializable {
         m.put("i", itm);
         sql = "select i.department,sum(i.stock),i.itemBatch.dateOfExpire,i.itemBatch.purcahseRate,i.itemBatch.retailsaleRate from Stock i where "
                 + " i.department.institution=:ins and i.itemBatch.item=:i"
-                + " group by i.department"
-                + " having sum(i.stock) >= 0 ";
+                + " group by i.department";
+//                + " having sum(i.stock) >= 0 ";
 
         return getBillItemFacade().findAggregates(sql, m);
 
+    }
+
+    @Inject
+    DepartmentController departmentController;
+
+    public List<Object[]> calAllDepartmentStock(Institution institution, Item itm) {
+        System.out.println("calAllDepartmentStock");
+        List<Object[]> objs = new ArrayList<>();
+        if (itm instanceof Ampp) {
+            itm = ((Ampp) itm).getAmp();
+        }
+
+        List<Department> deps = departmentController.getInstitutionDepatrments(getSessionController().getInstitution());
+        System.out.println("deps = " + deps);
+        String sql;
+        Map m;
+        for (Department dep : deps) {
+
+            m = new HashMap();
+            m.put("dep", dep);
+            m.put("i", itm);
+            sql = "select sum(i.stock),i.itemBatch.dateOfExpire,i.itemBatch.purcahseRate,i.itemBatch.retailsaleRate "
+                    + " from Stock i "
+                    + " where  i.department=:dep "
+                    + " and i.itemBatch.item=:i";
+            List<Object> lobjs = new ArrayList<>();
+            lobjs.add(dep);
+            Object[] tobjs = getBillItemFacade().findSingleAggregate(sql, m);
+            System.out.println("tobjs = " + Arrays.toString(tobjs));
+            if (tobjs != null && tobjs[0] != null) {
+                lobjs.addAll(Arrays.asList(tobjs));
+            } else {
+                lobjs.add(0.0);
+                lobjs.add(null);
+                lobjs.add(0.0);
+                lobjs.add(0.0);
+            }
+            Object[] obj = lobjs.toArray();
+            System.out.println("obj = " + Arrays.toString(obj));
+            objs.add(obj);
+        }
+        return objs;
     }
 
     public List<Object[]> calDepartmentTransferIssue(Institution institution) {
@@ -845,6 +889,7 @@ public class PharmacyController implements Serializable {
     }
 
     public void averageByDatePercentage() {
+        System.out.println("averageByDatePercentage = " );
         Calendar frm = Calendar.getInstance();
         frm.setTime(fromDate);
         Calendar to = Calendar.getInstance();
@@ -862,11 +907,16 @@ public class PharmacyController implements Serializable {
     }
 
     public void createStockAverageByPer(double dayCount) {
-
+        System.out.println("dayCount = " + dayCount);
+        System.out.println("createStockAverageByPer");
         stockAverages = new ArrayList<>();
         List<Item> items = getItemController().getDealorItem();
-        List<Institution> insList = getCompany();
+        List<Institution> insList; // = getCompany();
+        insList = new ArrayList<>();
+        insList.add(getSessionController().getInstitution());
+        System.out.println("items = " + items);
         for (Item i : items) {
+            System.out.println("i = " + i);
             double itemStockTotal = 0;
             double itemAverageTotal = 0;
             StockAverage stockAverage = new StockAverage();
@@ -874,15 +924,19 @@ public class PharmacyController implements Serializable {
             stockAverage.setInstitutionStocks(new ArrayList<InstitutionStock>());
 
             for (Institution ins : insList) {
+                System.out.println("ins = " + ins);
                 double insStockTotal = 0;
                 double insAverageTotal = 0;
                 double insStock = 0.0;
                 InstitutionStock newTable = new InstitutionStock();
                 newTable.setInstitution(ins);
                 newTable.setDepatmentStocks(new ArrayList<DepartmentStock>());
-                List<Object[]> objs = calDepartmentStock(ins, i);
+                System.out.println("calAllDepartmentStock");
+                List<Object[]> objs = calAllDepartmentStock(ins, i);
                 double calPerStock = 0.0;
+                System.out.println("objs = " + objs);
                 for (Object[] obj : objs) {
+                    System.out.println("obj = " + Arrays.toString(obj));
 //                    //System.err.println("Inside ");
                     DepartmentStock r = new DepartmentStock();
                     r.setDepartment((Department) obj[0]);
@@ -890,23 +944,23 @@ public class PharmacyController implements Serializable {
 
                     double qty = calDepartmentSaleQtyByPer(r.getDepartment(), i);
                     qty = 0 - qty;
-                    if (qty != 0 && dayCount != 0) {
-                        double avg = qty / dayCount;
-                        calPerStock = (avg * persentage) / 100;
-                        insStock = r.getStock();
-                        r.setAverage(avg);
-                    }
+//                    if (qty != 0 && dayCount != 0) {
+                    double avg = qty / dayCount;
+                    calPerStock = (avg * persentage) / 100;
+                    insStock = r.getStock();
+                    r.setAverage(avg);
+//                    }
 
 //                    //System.out.println("calPerStock = " + calPerStock);
 //                    //System.out.println("insStockTotal = " + insStockTotal);
 //                    //System.out.println("insAverageTotal = " + insAverageTotal);
-                    if ((insStock < calPerStock) && r.getStock() >= 0) {
-                        //System.out.println("*insStock = " + insStock);
-                        //System.out.println("*calPerStock = " + calPerStock);
-                        insStockTotal += r.getStock();
-                        insAverageTotal += r.getAverage();
-                        newTable.getDepatmentStocks().add(r);
-                    }
+                    // if ((insStock < calPerStock)) {
+                    //System.out.println("*insStock = " + insStock);
+                    //System.out.println("*calPerStock = " + calPerStock);
+                    insStockTotal += r.getStock();
+                    insAverageTotal += r.getAverage();
+                    newTable.getDepatmentStocks().add(r);
+                    //}
 
                 }
 
@@ -916,18 +970,18 @@ public class PharmacyController implements Serializable {
                 newTable.setInstitutionTotal(insStockTotal);
                 newTable.setInstitutionAverage(insAverageTotal);
 
-                if ((insStockTotal != 0 || insAverageTotal != 0) && insStock < calPerStock) {
-                    stockAverage.getInstitutionStocks().add(newTable);
-                    itemStockTotal += insStockTotal;
-                    itemAverageTotal += insAverageTotal;
-                }
+//                if ((insStockTotal != 0 || insAverageTotal != 0) && insStock < calPerStock) {
+                stockAverage.getInstitutionStocks().add(newTable);
+                itemStockTotal += insStockTotal;
+                itemAverageTotal += insAverageTotal;
+//                }
             }
 
-            if (itemAverageTotal != 0 || itemStockTotal != 0) {
-                stockAverage.setItemAverageTotal(itemAverageTotal);
-                stockAverage.setItemStockTotal(itemStockTotal);
-                stockAverages.add(stockAverage);
-            }
+//            if (itemAverageTotal != 0 || itemStockTotal != 0) {
+            stockAverage.setItemAverageTotal(itemAverageTotal);
+            stockAverage.setItemStockTotal(itemStockTotal);
+            stockAverages.add(stockAverage);
+//            }
 
         }
 
@@ -1219,11 +1273,14 @@ public class PharmacyController implements Serializable {
         this.itemController = itemController;
     }
 
-    public double getPersentage() {
+    public Double getPersentage() {
+        if (persentage == null) {
+            persentage = 100.0;
+        }
         return persentage;
     }
 
-    public void setPersentage(double persentage) {
+    public void setPersentage(Double persentage) {
         this.persentage = persentage;
     }
 

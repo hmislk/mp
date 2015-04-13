@@ -396,4 +396,14 @@ public class CommonFunctions {
 
         return result;
     }
+    
+    public static double roundToTwoDecimalPlaces(double num){
+        return roundToTwoDecimalPlaces(num, 2);
+    }
+    
+    public static double roundToTwoDecimalPlaces(double num, int decimalPlaces){
+        double mul = Math.pow(10, decimalPlaces);
+        double roundOff = (double) Math.round(num * mul) / mul;
+        return roundOff;
+    }
 }

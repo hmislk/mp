@@ -40,13 +40,12 @@ public abstract class AbstractFacade<T> {
             if (m.getValue() instanceof Date) {
                 Date pVal = (Date) m.getValue();
                 qry.setParameter(pPara, pVal, TemporalType.DATE);
-//                ////System.out.println("Parameter " + pPara + "\tVal" + pVal);
             } else {
                 Object pVal = (Object) m.getValue();
                 qry.setParameter(pPara, pVal);
-//                ////System.out.println("Parameter " + pPara + "\tVal" + pVal);
             }
         }
+        qry.setMaxResults(1);
         List<T> l = qry.getResultList();
         if (l != null && l.isEmpty() == false) {
             return l.get(0);
@@ -199,6 +198,35 @@ public abstract class AbstractFacade<T> {
         }
     }
 
+    public Date findDateByJpql(String temSQL, Map<String, Object> parameters) {
+        return findDateByJpql(temSQL, parameters, TemporalType.DATE);
+    }
+    
+    public Date findDateByJpql(String temSQL, Map<String, Object> parameters, TemporalType tt) {
+        TypedQuery<Date> qry = (TypedQuery<Date>) getEntityManager().createQuery(temSQL);
+        Set s = parameters.entrySet();
+        Iterator it = s.iterator();
+        while (it.hasNext()) {
+            Map.Entry m = (Map.Entry) it.next();
+            Object pVal = m.getValue();
+            String pPara = (String) m.getKey();
+            if (pVal instanceof Date) {
+                Date d = (Date) pVal;
+                qry.setParameter(pPara, d, tt);
+            } else {
+                qry.setParameter(pPara, pVal);
+            }
+        }
+        try {
+            Date td= (Date) qry.getSingleResult();
+            System.out.println("td = " + td);
+            return td;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    
     public double findDoubleByJpql(String temSQL, Map<String, Object> parameters) {
         return findDoubleByJpql(temSQL, parameters, TemporalType.DATE);
     }
@@ -382,10 +410,10 @@ public abstract class AbstractFacade<T> {
 
     public T findFirstBySQL(String temSQL) {
         TypedQuery<T> qry = getEntityManager().createQuery(temSQL, entityClass);
+        qry.setMaxResults(1);
         try {
             return qry.getResultList().get(0);
         } catch (Exception e) {
-//            ////System.out.println(e.getMessage());
             return null;
         }
     }
@@ -404,9 +432,8 @@ public abstract class AbstractFacade<T> {
             } else {
                 qry.setParameter(pPara, pVal);
             }
-            //    ////System.out.println("Parameter " + pPara + "\tVal" + pVal);
         }
-
+        qry.setMaxResults(1);
         if (!qry.getResultList().isEmpty()) {
             return qry.getResultList().get(0);
         } else {

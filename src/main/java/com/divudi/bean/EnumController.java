@@ -73,7 +73,8 @@ public class EnumController implements Serializable {
             BillType.PurchaseReturn,
             BillType.GrnPayment,
             BillType.PharmacyTransferRequest,
-            BillType.PharmacyTransferIssue,};
+            BillType.PharmacyTransferIssue,
+            BillType.PharmacyIssue};
 
         return b;
     }
@@ -135,7 +136,6 @@ public class EnumController implements Serializable {
         return false;
 
     }
-
 
     /**
      * Creates a new instance of EnumController

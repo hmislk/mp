@@ -871,7 +871,7 @@ public class Bill implements Serializable {
         this.invoiceDate = invoiceDate;
     }
 
-    public String getInvoiceNumber() {
+     public String getInvoiceNumber() {
         return invoiceNumber;
     }
 

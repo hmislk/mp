@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 /**
  *
@@ -44,7 +45,7 @@ public class Reorder implements Serializable {
      * time.
      *
      */
-    double demandInUnitsPerDay;
+        double demandInUnitsPerDay;
 
     /**
      *
@@ -77,6 +78,31 @@ public class Reorder implements Serializable {
 
     @ManyToOne
     Institution supplier;
+    
+    @Transient
+    Double transientStock;
+    @Transient
+    Double transientOrderingQty;
+
+    public Double getTransientOrderingQty() {
+        return transientOrderingQty;
+    }
+
+    public void setTransientOrderingQty(Double transientOrderingQty) {
+        this.transientOrderingQty = transientOrderingQty;
+    }
+    
+    
+
+    public Double getTransientStock() {
+        return transientStock;
+    }
+
+    public void setTransientStock(Double transientStock) {
+        this.transientStock = transientStock;
+    }
+    
+    
 
     public int getMonthsConsideredForShortTermAnalysis() {
         return monthsConsideredForShortTermAnalysis;

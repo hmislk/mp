@@ -87,17 +87,24 @@ public class PharmacyController implements Serializable {
     private List<BillItem> pos;
     private List<BillItem> directPurchase;
     Double persentage;
+    int orderForInDays;
+
+    public int getOrderForInDays() {
+        return orderForInDays;
+    }
+
+    public void setOrderForInDays(int orderForInDays) {
+        this.orderForInDays = orderForInDays;
+    }
 
     public void makeNull() {
         departmentSale = null;
-//        departmentStocks = null;
         pos = null;
         grns = null;
         institutionSales = null;
         institutionStocks = null;
         institutionTransferIssue = null;
         directPurchase = null;
-
     }
 
     public List<Stock> completeAllStocks(String qry) {
@@ -889,7 +896,7 @@ public class PharmacyController implements Serializable {
     }
 
     public void averageByDatePercentage() {
-        System.out.println("averageByDatePercentage = " );
+        System.out.println("averageByDatePercentage = ");
         Calendar frm = Calendar.getInstance();
         frm.setTime(fromDate);
         Calendar to = Calendar.getInstance();
@@ -985,6 +992,58 @@ public class PharmacyController implements Serializable {
 
         }
 
+    }
+
+    public double findPharmacyMovement(Department department, Item itm, BillType[] bts, Date fd, Date td) {
+        if (itm instanceof Ampp) {
+            itm = ((Ampp) pharmacyItem).getAmp();
+        }
+        String sql;
+        Map m = new HashMap();
+        m.put("itm", itm);
+        m.put("dep", department);
+        m.put("frm", fd);
+        m.put("to", td);
+        List<BillType> bts1 = Arrays.asList(bts);
+        m.put("bts", bts1);
+        sql = "select sum(i.pharmaceuticalBillItem.qty) "
+                + " from BillItem i "
+                + " where i.bill.department=:dep"
+                + " and i.item=:itm "
+                + " and i.bill.billType in :bts "
+                + " and i.createdAt between :frm and :to  ";
+        return getBillItemFacade().findDoubleByJpql(sql, m, TemporalType.TIMESTAMP);
+    }
+
+    public Date findFirstPharmacyMovementDate(Department department, Item itm, BillType[] bts, Date fd, Date td) {
+        if (itm instanceof Ampp) {
+            itm = ((Ampp) pharmacyItem).getAmp();
+        }
+        String sql;
+        Map m = new HashMap();
+        m.put("itm", itm);
+        m.put("dep", department);
+        m.put("frm", fd);
+        m.put("to", td);
+        List<BillType> bts1 = Arrays.asList(bts);
+        m.put("bts", bts1);
+        sql = "select i "
+                + " from BillItem i "
+                + " where i.bill.department=:dep"
+                + " and i.item=:itm "
+                + " and i.bill.billType in :bts "
+                + " and i.bill.createdAt between :frm and :to  "
+                + " order by i.id";
+        BillItem d = getBillItemFacade().findFirstBySQL(sql, m, TemporalType.TIMESTAMP);
+        if (d == null) {
+            return fd;
+        } else if (d.getBill()!=null && d.getBill().getCreatedAt()!=null) {
+            return d.getBill().getCreatedAt();
+        }else if (d.getCreatedAt()!=null){
+            return d.getCreatedAt();
+        }else{
+            return fd;
+        }
     }
 
     public double calDepartmentSaleQtyByPer(Department department, Item itm) {

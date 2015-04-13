@@ -82,5 +82,5 @@ public enum BillNumberSuffix {
     CSIN,//Cashier Cash Out
     CSINCAN,//Cash In Cancel
     CSOUT,//Cashier CAsh IN
-    CSOUTCAN,//Cash Out Cancel
+    CSOUTCAN, DI, PHDIRRET,//Cash Out Cancel
 }

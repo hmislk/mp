@@ -711,4 +711,15 @@ a:hover {
 }
 
 
-/*Table Column Styles*/
+.averageNumberColumn{
+    width: 80px;
+    text-align: right;
+}
+
+.averageNumberColumn.ui-datatable thead th, .averageNumberColumn.ui-datatable tfoot td {
+  text-align: right;
+}
+.averageNumberText{
+    width: 70px;
+    text-align: right;
+}

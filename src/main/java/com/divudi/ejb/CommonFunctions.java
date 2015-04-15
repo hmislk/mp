@@ -44,6 +44,9 @@ public class CommonFunctions {
         return dateRange;
     }
 
+    
+  
+    
     public DateRange getDateRange(Date from, int range) {
         DateRange dateRange = new DateRange();
         Calendar cal = Calendar.getInstance();

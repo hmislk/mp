@@ -11,7 +11,7 @@
 
     <body>
 
-        <ui:composition template="./resources/template/template.xhtml">
+        <ui:composition template="/resources/template/template.xhtml">
 
             <ui:define name="content">
 
@@ -22,15 +22,15 @@
 
 
 
-                    <p:panel rendered="#{!pharmacyReturnwithouttresing.billPreview}"  >
+                    <p:panel rendered="#{!directPurchaseReturn.billPreview}"  >
                         <h:panelGrid id="sale" columns="2" class="alignTop" >
                             <p:panel >
                                 
                                   <h:panelGroup id="panelError" >
                             <h:panelGroup  
-                                rendered="#{pharmacyReturnwithouttresing.errorMessage ne null}"
+                                rendered="#{directPurchaseReturn.errorMessage ne null}"
                                 style="background-color: yellow; color: red; display: block; margin: 2px; border: 1px solid red; padding: 3px; width: 95%;">
-                                <p:outputLabel value="#{pharmacyReturnwithouttresing.errorMessage}" ></p:outputLabel>
+                                <p:outputLabel value="#{directPurchaseReturn.errorMessage}" ></p:outputLabel>
                             </h:panelGroup>
                         </h:panelGroup>
                                 
@@ -42,21 +42,20 @@
                                                     styleClass="noPrintButton"
                                                     forceSelection="true"
                                                     var="w" itemLabel="#{w.name}" itemValue="#{w}"
-                                                    value="#{pharmacyReturnwithouttresing.toInstitution }" 
+                                                    value="#{directPurchaseReturn.bill.toInstitution}" 
                                                     id="acDept">
                                         <p:column headerText="Department Name">
                                              <h:outputLabel value=" #{w.name}" />
-                                           
                                         </p:column>
                                         <p:column headerText="Institution Name">
                                           <h:outputLabel value=" #{w.institution.name}" />  
                                            
                                         </p:column>
                                         <p:ajax process="acDept" update=":#{p:component('pBillDetails')} #{p:component('tblBillItem')} " 
-                                                event="itemSelect"  listener="#{pharmacyReturnwithouttresing.calculateAllRates}" />
+                                                event="itemSelect"  listener="#{directPurchaseReturn.calculateAllRates}" />
                                     </p:autoComplete>
 
-                                    <p:inputText value="#{pharmacyReturnwithouttresing.preBill.invoiceNumber}" id="req"/>
+                                    <p:inputText value="#{directPurchaseReturn.preBill.invoiceNumber}" id="req"/>
 
                                     <p:watermark value="Request Number" for="req"/>
                                     <p:watermark value="Return  Dealer/Supplier" for="acDept"/>
@@ -80,9 +79,9 @@
                                                             .ui-autocomplete{display: block!important;}
                                                         </style>
                                                         <p:autoComplete accesskey="i"   forceSelection="true"  id="acStock" 
-                                                                        value="#{pharmacySaleController.stock}" 
+                                                                        value="#{directPurchaseReturn.stock}" 
                                                                         converter="stockCon" 
-                                                                        completeMethod="#{pharmacySaleController.completeAvailableStocks}" 
+                                                                        completeMethod="#{directPurchaseReturn.completeAvailableStocks}" 
                                                                         var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
                                                                         style="width: 50px!important;">
                                                             <p:column headerText="Item">
@@ -107,35 +106,34 @@
                                                                 </h:outputLabel>
                                                             </p:column>
                                                             <p:ajax event="focus" process="acStock :#{p:component('acDept')}"  ></p:ajax>
-                                                            <p:ajax event="itemSelect"   listener="#{pharmacySaleController.handleSelect}"  update="txtQty txtRate focusQty" ></p:ajax>
+                                                            <p:ajax event="itemSelect"   listener="#{directPurchaseReturn.handleSelect}"  update="txtQty txtRate focusQty" ></p:ajax>
                                                         </p:autoComplete>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <p:watermark for="txtQty" value="Quentity" ></p:watermark>
-                                                        <!--<p:tooltip for="txtQty" value="Enter the quentity" ></p:tooltip>-->
-                                                        <p:inputText  accesskey="q"  autocomplete="off" id="txtQty" value="#{pharmacySaleController.qty}" style="width: 50px!important;"   >
-                                                            <p:ajax event="keyup"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('acDept')}" update="txtRate txtVal" ></p:ajax>
-                                                            <p:ajax event="blur"  listener="#{pharmacySaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('acDept')}" update="txtRate txtVal" ></p:ajax>
+                                                        <p:inputText  accesskey="q"  autocomplete="off" id="txtQty" value="#{directPurchaseReturn.qty}" style="width: 50px!important;"   >
+                                                            <p:ajax event="keyup"  listener="#{directPurchaseReturn.calculateBillItemListner}" process="acStock txtQty :#{p:component('acDept')}" update="txtRate txtVal" ></p:ajax>
+                                                            <p:ajax event="blur"  listener="#{directPurchaseReturn.calculateBillItemListner}" process="acStock txtQty :#{p:component('acDept')}" update="txtRate txtVal" ></p:ajax>
                                                         </p:inputText>
                                                     </td>
                                                     <td>
                                                         <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
-                                                                          action="#{pharmacySaleController.addBillItem}" process="@this acStock txtQty :#{p:component('acDept')}" update=":#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem tabI" ></p:commandButton>
+                                                                          action="#{directPurchaseReturn.addBillItem}" process="@this acStock txtQty :#{p:component('acDept')}" update=":#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem tabI" ></p:commandButton>
 
                                                         <p:focus id="focusQty" for="txtQty" ></p:focus>
                                                         <p:focus id="focusItem" for="acStock" ></p:focus>
                                                     </td>
                                                     <td style="padding: 5px;margin: auto;">
                                                         <p:outputLabel value="Rate : " ></p:outputLabel>
-                                                        <p:outputLabel id="txtRate" value="#{pharmacySaleController.billItem.netRate}" >
+                                                        <p:outputLabel id="txtRate" value="#{directPurchaseReturn.billItem.netRate}" >
                                                             <f:convertNumber pattern="#,##0.00" />
                                                         </p:outputLabel>
                                                     </td>
                                                     <td  style="padding: 5px;margin: auto;">
                                                         <p:outputLabel value="Value : " ></p:outputLabel>
-                                                        <p:outputLabel id="txtVal" value="#{pharmacySaleController.billItem.netValue}" >
+                                                        <p:outputLabel id="txtVal" value="#{directPurchaseReturn.billItem.netValue}" >
                                                             <f:convertNumber pattern="#,##0.00" />
                                                         </p:outputLabel>
                                                     </td>
@@ -150,19 +148,19 @@
                                     <tr>
                                         <td>
 
-                                            <p:tabView id="tabI" dynamic="true" activeIndex="#{pharmacySaleController.activeIndex}" >
+                                            <p:tabView id="tabI" dynamic="true" activeIndex="#{directPurchaseReturn.activeIndex}" >
 
                                                 <p:tab title="Availability" >
                                                     <h:panelGrid columns="1" >
                                                         <p:panel header="Not Available" >
-                                                            <p:selectOneListbox id="lstSelectItems" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" value="#{pharmacySaleController.selectedAvailableAmp}"  >
-                                                                <f:selectItems  value="#{pharmacySaleController.itemsWithoutStocks}" var="si" itemLabel="#{si.name}" itemValue="#{si}" ></f:selectItems>
-                                                                <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{pharmacySaleController.selectReplaceableStocks}" ></p:ajax>
+                                                            <p:selectOneListbox id="lstSelectItems" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;" value="#{directPurchaseReturn.selectedAvailableAmp}"  >
+                                                                <f:selectItems  value="#{directPurchaseReturn.itemsWithoutStocks}" var="si" itemLabel="#{si.name}" itemValue="#{si}" ></f:selectItems>
+                                                                <p:ajax event="change" process="lstSelectItems" update="lstReplaceableBatch" listener="#{directPurchaseReturn.selectReplaceableStocks}" ></p:ajax>
                                                             </p:selectOneListbox>
                                                         </p:panel>
                                                         <p:panel header="Available" >
                                                             <p:selectOneListbox id="lstReplaceableBatch" style="width: 300px; height: 200px; max-width: 300px; max-height: 200px; min-width: 300px; min-height: 200px;"  >
-                                                                <f:selectItems  value="#{pharmacySaleController.replaceableStocks}" var="rs" itemLabel="#{rs.itemBatch.item.name}" itemValue="#{rs}" ></f:selectItems>
+                                                                <f:selectItems  value="#{directPurchaseReturn.replaceableStocks}" var="rs" itemLabel="#{rs.itemBatch.item.name}" itemValue="#{rs}" ></f:selectItems>
                                                             </p:selectOneListbox>
                                                         </p:panel>
                                                     </h:panelGrid>
@@ -170,11 +168,11 @@
                                                 <p:tab title="Bill Items" >
                                                     <h:panelGrid columns="1">
                                                         <p:panel header="Bill Items" id="pBis">
-                                                            <p:dataTable id="tblBillItem" value="#{pharmacySaleController.preBill.billItems}"
+                                                            <p:dataTable id="tblBillItem" value="#{directPurchaseReturn.preBill.billItems}"
                                                                          var="bi" rowIndexVar="s" editable="true" sortBy="#{bi.searialNo}" >
 
-                                                                <p:ajax event="rowEdit" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" />  
-                                                                <p:ajax event="rowEditCancel" listener="#{pharmacySaleController.onEdit}" update="@this gros :#{p:component('pBillDetails')}" /> 
+                                                                <p:ajax event="rowEdit" listener="#{directPurchaseReturn.onEdit}" update="@this gros :#{p:component('pBillDetails')}" />  
+                                                                <p:ajax event="rowEditCancel" listener="#{directPurchaseReturn.onEdit}" update="@this gros :#{p:component('pBillDetails')}" /> 
 
 
                                                                 <p:column headerText="Item">
@@ -215,7 +213,7 @@
 
                                                                 </p:column>
                                                                 <p:column headerText="Remove">
-                                                                    <p:commandButton value="Remove" action="#{pharmacySaleController.removeBillItem(bi)}" ajax="false" >
+                                                                    <p:commandButton value="Remove" action="#{directPurchaseReturn.removeBillItem(bi)}" ajax="false" >
 
                                                                     </p:commandButton>
                                                                 </p:column>
@@ -235,9 +233,9 @@
                                    <f:facet name="header" >
                                     <h:panelGrid columns="20"  >
                                         <p:commandButton  accesskey="s" value="Return" 
-                                                          action="#{pharmacyReturnwithouttresing.settleBill()}" 
+                                                          action="#{directPurchaseReturn.settleBill()}" 
                                                           onclick="onSubmitButton();"
-                                                          actionListener="#{pharmacyReturnwithouttresing.calculateAllRates}">
+                                                          actionListener="#{directPurchaseReturn.calculateAllRates}">
                                             <f:facet name="title" >
                                                 <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
                                                 <h:outputLabel value="ettle"  ></h:outputLabel>
@@ -246,7 +244,7 @@
                                         <p:commandButton accesskey="n" value="New Issue Bill"  
                                                          onclick="onSubmitButton();"
                                                          ajax="false" action="/pharmacy_retail_sale"
-                                                         actionListener="#{pharmacyReturnwithouttresing.resetAll()}"  ></p:commandButton>
+                                                         actionListener="#{directPurchaseReturn.resetAll()}"  ></p:commandButton>
 
 
                                     </h:panelGrid>
@@ -259,16 +257,16 @@
                                 <p:panel header="Bill Details" id="pBillDetails"  >
                                     <p:panelGrid columns="2" columnClasses="numberCol, textCol"  >
                                         <h:outputLabel value="Total" ></h:outputLabel>
-                                        <h:outputLabel id="total" value="#{pharmacySaleController.preBill.total}" >
+                                        <h:outputLabel id="total" value="#{directPurchaseReturn.preBill.total}" >
                                             <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                         <h:outputLabel value="Discount" ></h:outputLabel>
-                                        <h:outputLabel id="dis" value="#{pharmacySaleController.preBill.discount}" >
+                                        <h:outputLabel id="dis" value="#{directPurchaseReturn.preBill.discount}" >
                                             <f:convertNumber pattern="#,##0.00" />
                                             <p:ajax process="total dis netTotal" update=" netTotal" event="blur"/>
                                         </h:outputLabel>
                                         <h:outputLabel value="Net Total" ></h:outputLabel>
-                                        <h:outputLabel id="netTotal" value="#{pharmacySaleController.preBill.netTotal}" >
+                                        <h:outputLabel id="netTotal" value="#{directPurchaseReturn.preBill.netTotal}" >
                                             <f:convertNumber pattern="#,##0.00" />
                                         </h:outputLabel>
                                     </p:panelGrid>
@@ -289,7 +287,7 @@
                 <h:form>
 
 
-                    <p:panel  rendered="#{pharmacySaleController.billPreview}" >
+                    <p:panel  rendered="#{directPurchaseReturn.billPreview}" >
 
 
 
@@ -301,12 +299,12 @@
                             <p:commandButton accesskey="p" id="btnPrint" value="Print" ajax="false" action="#" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
-                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBillForCashier()}" ></p:commandButton>
+                            <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{directPurchaseReturn.newSaleBillForCashier()}" ></p:commandButton>
 
                         </div>
                         <div >
                             <h:panelGroup   id="gpBillPreview"   > 
-                                <phi:saleBill bill="#{pharmacySaleController.printBill}"></phi:saleBill>
+                                <phi:saleBill bill="#{directPurchaseReturn.printBill}"></phi:saleBill>
                             </h:panelGroup>
                         </div>
 

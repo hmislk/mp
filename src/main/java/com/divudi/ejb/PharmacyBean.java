@@ -1363,8 +1363,6 @@ public class PharmacyBean {
     //    System.out.println("strengthUnit = " + strengthUnit);
     //    System.out.println("cat = " + cat);
         if (strength == 0 || strengthUnit == null || cat == null) {
-        //    System.out.println("returning"
-                    + "");
             return null;
         }
         Map m = new HashMap();

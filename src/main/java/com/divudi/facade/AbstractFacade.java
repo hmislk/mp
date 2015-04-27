@@ -219,7 +219,7 @@ public abstract class AbstractFacade<T> {
         }
         try {
             Date td= (Date) qry.getSingleResult();
-            System.out.println("td = " + td);
+        //    System.out.println("td = " + td);
             return td;
         } catch (Exception e) {
             return null;
@@ -584,7 +584,7 @@ public abstract class AbstractFacade<T> {
         try {
             return qry.getResultList();
         } catch (Exception e) {
-            System.out.println("e = " + e);
+        //    System.out.println("e = " + e);
             return null;
         }
     }

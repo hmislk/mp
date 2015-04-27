@@ -397,7 +397,7 @@ public class VmpController implements Serializable {
             }
             getFacade().edit(v1);
             
-            System.out.println("Considering v1 = " + v1.getName());
+        //    System.out.println("Considering v1 = " + v1.getName());
             jpql = "select v from Vmp v where v.retired=false and upper(v.name)=:name";
             m = new HashMap();
             m.put("name", v1.getName().toUpperCase());
@@ -415,7 +415,7 @@ public class VmpController implements Serializable {
                             v2.setRetirer(getSessionController().getLoggedUser());
                             v2.setRetireComments("fixVmps");
                             getFacade().edit(v2);
-                            System.out.println("v2 retired = " + v2.getName());
+                        //    System.out.println("v2 retired = " + v2.getName());
                             jpql = "select a from Amp a where a.retired=false and a.vmp=:vmp";
                             m = new HashMap();
                             m.put("vmp", v2);
@@ -423,7 +423,7 @@ public class VmpController implements Serializable {
                             for (Amp a : amps) {
                                 a.setVmp(v1);
                                 ampFacade.edit(a);
-                                System.out.println("amp updates = " + a.getName());
+                            //    System.out.println("amp updates = " + a.getName());
                             }
                         }
                     }

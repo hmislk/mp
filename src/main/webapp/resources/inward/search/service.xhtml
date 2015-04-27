@@ -23,9 +23,7 @@
                 <h:outputLabel value="#{bill.insId}"></h:outputLabel>                                
             </p:column>
 
-            <p:column headerText="Bht No">                              
-                <h:outputLabel value="#{bill.patientEncounter.bhtNo}"  ></h:outputLabel>                                    
-            </p:column>
+           
 
             <p:column headerText="Bill Date" >
                 <h:outputLabel value="#{bill.createdAt}" />>
@@ -48,11 +46,7 @@
                     </h:outputLabel>
                 </h:panelGroup>
             </p:column>
-
-            <p:column headerText="Client">                              
-                <h:outputLabel value="#{bill.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-
-            </p:column>   
+   
             <p:column headerText="Gross Value" >
 
                 <h:outputLabel value="#{bill.total}" >

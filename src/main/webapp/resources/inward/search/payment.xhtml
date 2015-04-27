@@ -24,9 +24,7 @@
                 <h:outputLabel value="#{bb.insId}" ></h:outputLabel>
             </p:column>
 
-            <p:column headerText="Bht No" >
-                <h:outputLabel value="#{bb.patientEncounter.bhtNo}" ></h:outputLabel>
-            </p:column>
+            
 
             <p:column headerText="Billed At" >   
                 <h:outputLabel value="#{bb.createdAt}" />>
@@ -50,9 +48,7 @@
                 </h:panelGroup>
             </p:column>
 
-            <p:column headerText="Client" >
-                <h:outputLabel value="#{bb.patientEncounter.patient.person.nameWithTitle}" ></h:outputLabel>
-            </p:column>         
+                
             <p:column headerText="PaymentMethod">                            
                 <h:outputLabel value="#{bb.paymentMethod}" ></h:outputLabel>                                   
             </p:column>

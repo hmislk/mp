@@ -20,12 +20,10 @@
             <p:subTable value="#{c.billItems}" var="b">
 
                 <p:column headerText="#{c.bill.fromInstitution.name}" style="width: 200px;">  
-                    <p:outputLabel value="#{b.referenceBill.insId}(opd)" rendered="#{b.patientEncounter eq null}"/>
-                    <p:outputLabel value="#{b.patientEncounter.bhtNo}(bht)" rendered="#{b.patientEncounter ne null}"/>
+                    <p:outputLabel value="#{b.referenceBill.insId}(opd)" />
                 </p:column>                                    
                 <p:column headerText="Patient Name" style="width: 40%;">
-                    <p:outputLabel value="#{b.referenceBill.patient.person.name}" rendered="#{b.patientEncounter eq null}"/>
-                    <p:outputLabel value="#{b.patientEncounter.patient.person.name}" rendered="#{b.patientEncounter ne null}"/>
+                    <p:outputLabel value="#{b.referenceBill.patient.person.name}" />
                 </p:column>                                    
                 <p:column headerText="Total" style="width: 200px;text-align: right;">
                     <h:outputLabel value="#{b.netValue}">

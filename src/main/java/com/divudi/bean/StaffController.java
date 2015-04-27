@@ -478,8 +478,8 @@ public class StaffController implements Serializable {
             return;
         }
 
-        System.out.println("current.getId() = " + current.getId());
-        System.out.println("current.getPerson().getId() = " + current.getPerson().getId());
+    //    System.out.println("current.getId() = " + current.getId());
+    //    System.out.println("current.getPerson().getId() = " + current.getPerson().getId());
 
 //        if (current.getPerson().getId() == null || current.getPerson().getId() == 0) {
 //            getPersonFacade().create(current.getPerson());

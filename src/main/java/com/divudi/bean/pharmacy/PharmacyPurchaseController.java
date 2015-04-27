@@ -181,7 +181,7 @@ public class PharmacyPurchaseController implements Serializable {
     }
 
     public void settle() {
-        System.out.println("settling");
+    //    System.out.println("settling");
         if (getBill().getFromInstitution() == null) {
             UtilityController.addErrorMessage("Select Dealor");
             return;
@@ -195,9 +195,9 @@ public class PharmacyPurchaseController implements Serializable {
         calTotal();
         saveBill();
         //   saveBillComponent();
-        System.out.println("bill saved");
+    //    System.out.println("bill saved");
         getPharmacyBillBean().calSaleFreeValue(getBill(),getBillItems());
-        System.out.println("cal sale completed");
+    //    System.out.println("cal sale completed");
         for (BillItem i : getBillItems()) {
             if (i.getPharmaceuticalBillItem().getQty() == 0.0) {
                 continue;
@@ -324,12 +324,12 @@ public class PharmacyPurchaseController implements Serializable {
     }
 
     public double getNetTotal() {
-        System.out.println("Calculating net total");
-        System.out.println("getBill().getTotal() = " + getBill().getTotal());
-        System.out.println("getBill().getTax() = " + getBill().getTax());
-        System.out.println("getBill().getDiscount() = " + getBill().getDiscount());
+    //    System.out.println("Calculating net total");
+    //    System.out.println("getBill().getTotal() = " + getBill().getTotal());
+    //    System.out.println("getBill().getTax() = " + getBill().getTax());
+    //    System.out.println("getBill().getDiscount() = " + getBill().getDiscount());
         double tmp = getBill().getTotal() - getBill().getTax() + getBill().getDiscount();
-        System.out.println("tmp = " + tmp);
+    //    System.out.println("tmp = " + tmp);
         return tmp;
     }
 

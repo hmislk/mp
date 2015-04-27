@@ -6,16 +6,13 @@ package com.divudi.bean.report;
 
 import com.divudi.bean.CategoryController;
 import com.divudi.bean.UtilityController;
-import com.divudi.bean.inward.AdmissionTypeController;
 import com.divudi.data.BillType;
 import com.divudi.data.FeeType;
 import com.divudi.data.dataStructure.BillsItems;
-import com.divudi.data.dataStructure.CategoryWithItem;
 import com.divudi.data.dataStructure.DailyCash;
 import com.divudi.data.dataStructure.DepartmentPayment;
 import com.divudi.data.dataStructure.ItemWithFee;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.dataStructure.AdmissionTypeBills;
 import com.divudi.data.table.String1Value2;
 import com.divudi.data.table.String1Value3;
 import com.divudi.data.table.String1Value1;
@@ -31,7 +28,6 @@ import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
-import com.divudi.entity.inward.AdmissionType;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
@@ -106,13 +102,10 @@ public class CashSummeryControllerExcel1 implements Serializable {
     private List<Bill> chequeBill;
     private List<DailyCash> pharmacySales;
     private double pharmacyTotal;
-    @Inject
-    private AdmissionTypeController admissionTypeController;
     private List<String1Value1> finalSumery;
     private List<String1Value2> string1Value2s;
     private List<String1Value1> collections2Hos;
     private List<String1Value1> inwardProfessions;
-    private List<AdmissionTypeBills> admissionTypeBillses;
     @Inject
     private CategoryController categoryController;
 
@@ -214,27 +207,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
 
     }
 
-    private void createInwardProfessions() {
-        //System.err.println("createInwardProfessions");
-        inwardProfTot = 0.0;
-        inwardProfessions = new ArrayList<>();
-
-        for (AdmissionType at : getAdmissionTypeController().getItems()) {
-            AdmissionTypeBills admB = new AdmissionTypeBills();
-            admB.setAdmissionType(at);
-            admB.setTotal(getInwardProfTot(at));
-            inwardProfTot += admB.getTotal();
-
-            if (admB.getTotal() != 0) {
-                String1Value1 dd;
-                dd = new String1Value1();
-                dd.setString(admB.getAdmissionType().getName());
-                dd.setValue(admB.getTotal());
-                inwardProfessions.add(dd);
-            }
-        }
-
-    }
+ 
 
     private List<Department> getDepartmentOfInstitution() {
         String sql = "select d from Department d where d.retired=false and d.institution=:ins";
@@ -542,88 +515,7 @@ public class CashSummeryControllerExcel1 implements Serializable {
 
     }
 
-    public void createInwardCollection() {
-        //System.err.println("createInwardCollection");
-        inwardTot = 0.0;
-        admissionTypeBillses = new ArrayList<>();
-        for (AdmissionType at : getAdmissionTypeController().getItems()) {
-            AdmissionTypeBills admB = new AdmissionTypeBills();
-            admB.setAdmissionType(at);
-            admB.setBills(getInwardBills(at));
-            admB.setTotal(getInwardBillTotal(at));
-            inwardTot += admB.getTotal();
-            admissionTypeBillses.add(admB);
-        }
-    }
 
-    public List<AdmissionTypeBills> getInwardCollection() {
-
-        return admissionTypeBillses;
-    }
-
-//    public List<String2Value1> getInwardCollection(){
-//        for(AdmissionTypeBills adm:)
-//    
-//    }
-    private List<Bill> getInwardBills(AdmissionType admissionType) {
-        String sql;
-        sql = "SELECT b FROM Bill b WHERE "
-                + " (type(b)=:class1 or type(b)=:class2 or type(b)=:class3) and"
-                + " b.retired=false and b.billType = :bTp "
-                + "and b.patientEncounter.admissionType=:adm  and b.institution=:ins"
-                + " and b.createdAt between :fromDate and :toDate order by b.id";
-        Map temMap = new HashMap();
-        temMap.put("class1", BilledBill.class);
-        temMap.put("class2", CancelledBill.class);
-        temMap.put("class3", RefundBill.class);
-        temMap.put("fromDate", getFromDate());
-        temMap.put("toDate", getToDate());
-        temMap.put("bTp", BillType.InwardPaymentBill);
-        temMap.put("adm", admissionType);
-        temMap.put("ins", getInstitution());
-        return getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-    }
-
-    private double getInwardBillTotal(AdmissionType admissionType) {
-        String sql;
-        sql = "SELECT sum(b.netTotal) FROM Bill b WHERE "
-                + " (type(b)=:class1 or type(b)=:class2 or type(b)=:class3) and"
-                + " b.retired=false and b.billType = :bTp "
-                + "and b.patientEncounter.admissionType=:adm  and b.institution=:ins"
-                + " and b.createdAt between :fromDate and :toDate order by b.id";
-        Map temMap = new HashMap();
-        temMap.put("class1", BilledBill.class);
-        temMap.put("class2", CancelledBill.class);
-        temMap.put("class3", RefundBill.class);
-        temMap.put("fromDate", getFromDate());
-        temMap.put("toDate", getToDate());
-        temMap.put("bTp", BillType.InwardPaymentBill);
-        temMap.put("adm", admissionType);
-        temMap.put("ins", getInstitution());
-        return getBillFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
-    }
-
-    public double getInwardProfTot(AdmissionType adt) {
-
-        HashMap temMap = new HashMap();
-
-        String sql = "SELECT sum(b.netValue) FROM BillItem b WHERE "
-                + " b.bill.billType=:btp"
-                + " and b.referenceBill.billType=:refBtp1 "
-                + " and b.referenceBill.billType=:refBtp2 "
-                + " and b.referenceBill.patientEncounter.admissionType=:admis"
-                + " and b.retired=false "
-                + " and b.bill.createdAt between :fromDate and :toDate";
-
-        temMap.put("fromDate", getFromDate());
-        temMap.put("toDate", getToDate());
-        temMap.put("btp", BillType.PaymentBill);
-        temMap.put("refBtp1", BillType.InwardBill);
-        temMap.put("refBtp2", BillType.InwardProfessional);
-        temMap.put("admis", adt);
-        return getBillItemFacade().findDoubleByJpql(sql, temMap, TemporalType.TIMESTAMP);
-
-    }
 
     private List<Department> getDepartmentList() {
         String sql = "SELECT distinct(b.referanceBillItem.item.department)"
@@ -947,12 +839,10 @@ public class CashSummeryControllerExcel1 implements Serializable {
         createOPdCategoryTable();
         createOtherInstituion();
         createPharmacySale();
-        createInwardCollection();
         createAgentCollection();
         createCreditCompanyCollection();
         createCollections2Hos();
         createDepartmentPayment();
-        createInwardProfessions();
         createCardBill();
         createChequeBill();
         createSlipBill();
@@ -1140,14 +1030,6 @@ public class CashSummeryControllerExcel1 implements Serializable {
         this.doctorPaymentTot = doctorPaymentTot;
     }
 
-    public AdmissionTypeController getAdmissionTypeController() {
-        return admissionTypeController;
-    }
-
-    public void setAdmissionTypeController(AdmissionTypeController admissionTypeController) {
-        this.admissionTypeController = admissionTypeController;
-    }
-
     public double getInwardTot() {
         return inwardTot;
     }
@@ -1196,13 +1078,6 @@ public class CashSummeryControllerExcel1 implements Serializable {
         this.string1Value2s = string1Value2s;
     }
 
-    public List<AdmissionTypeBills> getAdmissionTypeBillses() {
-        return admissionTypeBillses;
-    }
-
-    public void setAdmissionTypeBillses(List<AdmissionTypeBills> admissionTypeBillses) {
-        this.admissionTypeBillses = admissionTypeBillses;
-    }
 
     public List<DailyCash> getPharmacySales() {
         return pharmacySales;

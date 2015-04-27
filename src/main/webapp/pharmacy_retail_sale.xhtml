@@ -439,10 +439,19 @@
                         <p:defaultCommand  target="btnPrint" />  
 
                         <div class="nonPrintBlock" >
-                            <p:commandButton accesskey="p" id="btnPrint" value="Print" ajax="false" action="#" >
+                            <p:commandButton accesskey="p" id="btnPrint" value="Print" ajax="false" action="#{pharmacySaleController.newSaleBill()}" actionListener="#{pharmacySaleController.newSaleBill()}" >
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
                             <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacySaleController.newSaleBill()}" ></p:commandButton>
+
+
+                            <p:remoteCommand name="rc" update="@all"  actionListener="#{pharmacySaleController.newSaleBill()}" />
+
+                            <p:commandButton value="Imprimir" type="button" 
+                                             icon="ui-icon-print" oncomplete="rc();alert('AA');" ajax="false"
+                                             style="display:block;margin-bottom: 20px">
+                                <p:printer target="gpBillPreview" />
+                            </p:commandButton>
 
                         </div>
                         <div >

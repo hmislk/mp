@@ -63,7 +63,11 @@ public enum BillType {
     GrnPaymentCancell,
     GrnPaymentCancellReturn,
     CashIn,
+    PharmacyReturnWithoutTraising,
     CashOut;
+      
+
+          
 
     public String getLabel() {
         switch (this) {
@@ -109,9 +113,13 @@ public enum BillType {
                 return "Cash In Transaction";
             case CashOut:
                 return "Cash Out Transaction";
+           
 
         }
 
         return "";
+    }
+    
+    private BillType() {
     }
 }

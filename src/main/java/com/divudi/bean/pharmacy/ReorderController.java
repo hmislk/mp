@@ -1,18 +1,26 @@
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.DepartmentController;
+import com.divudi.bean.ItemController;
+import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
+import com.divudi.data.dataStructure.ItemReorders;
+import com.divudi.ejb.CommonFunctions;
+import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.Person;
+import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Reorder;
 import com.divudi.facade.ReorderFacade;
 import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,19 +41,270 @@ import org.primefaces.event.RowEditEvent;
 @SessionScoped
 public class ReorderController implements Serializable {
 
-    private Reorder current;
-    private List<Reorder> items = null;
+//    Controllers
+@Inject
+    AmpController ampController;
+    @Inject
+    StockController stockController;
+    @Inject
+    TransferRequestController transferRequestController;
+    @Inject
+    PharmacyController pharmacyController;
+    @Inject
+    SessionController sessionController;
+    @Inject
+    DepartmentController departmentController;
+    @Inject
+    ItemController itemController;
+    @Inject
+    PurchaseOrderRequestController purchaseOrderRequestController;
+
+//    EJBs
     @EJB
     ReorderFacade ejbFacade;
-
+    @EJB
+    ReorderFacade reorderFacade;
+    @EJB
+    PharmacyBean pharmacyBean;
+    
+//    Attributes
+    private Reorder current;
+    private List<Reorder> items = null;
+    List<Reorder> departmentReorders;
     Department department;
+    Department fromDepartment;
+    Department toDepartment;
     Institution institution;
     Person person;
+    Date fromDate;
+    Date toDate;
+    Date orderingDate;
+    Date expectedDeliveryDate;
+    Date nextDeliveryDate;
+    List<Reorder> reorders;
+    List<ItemReorders> itemReorders;
+    List<Item> selectedItems;
+    boolean readOnly = true;
+    BillType[] billTypes;
 
-    @Inject
-    AmpController ampController;
+    public Department getToDepartment() {
+        return toDepartment;
+    }
 
-    List<Reorder> departmentReorders;
+    public void setToDepartment(Department toDepartment) {
+        this.toDepartment = toDepartment;
+    }
+
+    public Department getFromDepartment() {
+        if (fromDepartment == null) {
+            fromDepartment = sessionController.getDepartment();
+        }
+        return fromDepartment;
+    }
+
+    public void setFromDepartment(Department fromDepartment) {
+        this.fromDepartment = fromDepartment;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public Date getNextDeliveryDate() {
+        if (nextDeliveryDate == null) {
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 17);
+            nextDeliveryDate = c.getTime();
+        }
+        return nextDeliveryDate;
+    }
+
+    public void setNextDeliveryDate(Date nextDeliveryDate) {
+        this.nextDeliveryDate = nextDeliveryDate;
+    }
+
+    public Date getOrderingDate() {
+        if (orderingDate == null) {
+            orderingDate = new Date();
+        }
+        return orderingDate;
+    }
+
+    public void setOrderingDate(Date orderingDate) {
+        this.orderingDate = orderingDate;
+    }
+
+    public Date getExpectedDeliveryDate() {
+        if (expectedDeliveryDate == null) {
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 3);
+            expectedDeliveryDate = c.getTime();
+        }
+        return expectedDeliveryDate;
+    }
+
+    public void setExpectedDeliveryDate(Date expectedDeliveryDate) {
+        this.expectedDeliveryDate = expectedDeliveryDate;
+    }
+
+    public Date getFromDate() {
+        if (fromDate == null) {
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.YEAR, -1);
+            fromDate = c.getTime();
+        }
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        if (toDate == null) {
+            toDate = new Date();
+        }
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public BillType[] getBillTypes() {
+        if (billTypes == null) {
+            billTypes = new BillType[]{BillType.PharmacySale};
+        }
+        return billTypes;
+    }
+
+    public void setBillTypes(BillType[] billTypes) {
+        this.billTypes = billTypes;
+    }
+
+    public void fillReorders() {
+        generateReorders(false);
+    }
+
+    public List<Reorder> getReorders() {
+        return reorders;
+    }
+
+    public void setReorders(List<Reorder> reorders) {
+        this.reorders = reorders;
+    }
+
+    public List<ItemReorders> getItemReorders() {
+        if (itemReorders == null) {
+            itemReorders = new ArrayList<>();
+        }
+        return itemReorders;
+    }
+
+    public void setItemReorders(List<ItemReorders> itemReorders) {
+        this.itemReorders = itemReorders;
+    }
+
+    public void generateReorders() {
+        generateReorders(true);
+    }
+
+    public void generateReorders(boolean overWrite) {
+        List<Item> iss = itemController.getDealorItem();
+        itemReorders = new ArrayList<>();
+        int days = ((Long) ((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24))).intValue();
+        List<Department> deps = departmentController.getInstitutionDepatrments(sessionController.getInstitution());
+        for (Item i : iss) {
+            ItemReorders ir = new ItemReorders();
+            ir.setItem(i);
+            int temNo = 0;
+            for (Department dept : deps) {
+                Reorder r = findReorder(dept, i);
+                double useQty = pharmacyController.findPharmacyMovement(dept, i, billTypes, fromDate, toDate);
+                Date firstDate = pharmacyController.findFirstPharmacyMovementDate(dept, i, billTypes, fromDate, toDate);
+
+                if (firstDate.getTime() > fromDate.getTime()) {
+                    int tdays = ((Long) ((toDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24))).intValue();
+                    r.setDemandInUnitsPerDay(0 - (useQty / tdays));
+                } else {
+                    r.setDemandInUnitsPerDay(0 - (useQty / days));
+                }
+
+                r.setDemandInUnitsPerDay(CommonFunctions.roundToTwoDecimalPlaces(r.getDemandInUnitsPerDay()));
+                r.setTransientStock(stockController.departmentItemStock(dept, i));
+
+                if (r.getPurchaseCycleDurationInDays() == 0 || overWrite) {
+                    r.setPurchaseCycleDurationInDays(((Long) ((nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24))).intValue());
+                }
+
+                if (temNo == 1) {
+                    System.out.println("nextDeliveryDate = " + nextDeliveryDate);
+                    System.out.println("nextDeliveryDate.getTime() = " + nextDeliveryDate.getTime());
+                    System.out.println("expectedDeliveryDate = " + expectedDeliveryDate);
+                    System.out.println("expectedDeliveryDate.getTime() = " + expectedDeliveryDate.getTime());
+                    System.out.println("nextDeliveryDate.getTime() - expectedDeliveryDate.getTime() = " + (nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()));
+                    System.out.println("(nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24) = " + (nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24));
+                    System.out.println("((int) (nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24)) = " + ((int) (nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24)));
+                    System.out.println("((int) ((nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24))) = " + ((int) ((nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24))));
+                    System.out.println("((Long) ((nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24))).intValue() = " + ((Long) ((nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24))).intValue());
+                }
+                temNo++;
+
+                if (r.getLeadTimeInDays() == 0 || overWrite) {
+                    r.setLeadTimeInDays(((Long) ((expectedDeliveryDate.getTime() - orderingDate.getTime()) / (1000 * 60 * 60 * 24))).intValue());
+                }
+                if (r.getBufferStocks() == 0 || overWrite) {
+                    r.setBufferStocks(CommonFunctions.roundToTwoDecimalPlaces(r.getDemandInUnitsPerDay() * r.getPurchaseCycleDurationInDays(), 0));
+                }
+
+                if (r.getRol() == 0 || overWrite) {
+                    r.setRol(CommonFunctions.roundToTwoDecimalPlaces(r.getBufferStocks() + (r.getDemandInUnitsPerDay() * r.getLeadTimeInDays()), 0));
+                }
+
+                if (r.getRoq() == 0 || overWrite) {
+                    r.setRoq(CommonFunctions.roundToTwoDecimalPlaces(r.getDemandInUnitsPerDay() * r.getPurchaseCycleDurationInDays(), 0));
+                }
+
+                r.setTransientOrderingQty(CommonFunctions.roundToTwoDecimalPlaces((r.getBufferStocks() - r.getTransientStock() + (r.getDemandInUnitsPerDay() * (r.getLeadTimeInDays() + r.getPurchaseCycleDurationInDays()))), 0));
+
+                if (r.getTransientOrderingQty() < 0) {
+                    r.setTransientOrderingQty(0.0);
+                }
+                ir.getReorders().add(r);
+
+            }
+            itemReorders.add(ir);
+        }
+    }
+
+    public Reorder findReorder(Department dept, Item item) {
+        String sql;
+        Map m = new HashMap();
+        m.put("dept", dept);
+        m.put("item", item);
+        sql = "select r from Reorder r where r.department=:dept and r.item=:item";
+        Reorder r = reorderFacade.findFirstBySQL(sql, m);
+        if (r == null) {
+            r = new Reorder();
+            r.setDepartment(dept);
+            r.setItem(item);
+            reorderFacade.create(r);
+        }
+        return r;
+    }
+
+    public void saveReorders() {
+        for (ItemReorders ir : itemReorders) {
+            for (Reorder r : ir.getReorders()) {
+                reorderFacade.edit(r);
+            }
+        }
+        JsfUtil.addSuccessMessage("Saved.");
+    }
 
     public void onEdit(RowEditEvent event) {
 
@@ -54,7 +313,6 @@ public class ReorderController implements Serializable {
         UtilityController.addSuccessMessage("Reorder Level Updted");
     }
 
-    List<Item> selectedItems;
 
     public List<Item> getSelectedItems() {
         return selectedItems;
@@ -64,11 +322,121 @@ public class ReorderController implements Serializable {
         this.selectedItems = selectedItems;
     }
 
+    public String createPharmacyOrderRequest() {
+        if (department == null) {
+            JsfUtil.addErrorMessage("Please select a department");
+            return "";
+        }
+        if (!department.equals(sessionController.getDepartment())) {
+            JsfUtil.addErrorMessage("Please re-login to that department to create an order");
+            sessionController.setLogged(false);
+            sessionController.setDepartment(department);
+            return "";
+        }
+        purchaseOrderRequestController.recreate();
+        purchaseOrderRequestController.getCurrentBill().setToInstitution(itemController.getInstituion());
+        pharmacyController.setFromDate(fromDate);
+        pharmacyController.setToDate(toDate);
+        generatePharmacyOrderBillComponents();
+        return "/pharmacy_purhcase_order_request";
+    }
+
+    
+
+    public String createPharmacyTransferRequest() {
+        if (fromDepartment == null) {
+            JsfUtil.addErrorMessage("Please select a department");
+            return "";
+        }
+        if (!fromDepartment.equals(sessionController.getDepartment())) {
+            JsfUtil.addErrorMessage("Please re-login to that department to create an order");
+            sessionController.setLogged(false);
+            sessionController.setDepartment(fromDepartment);
+            return "";
+        }
+        transferRequestController.recreate();
+        transferRequestController.getBill().setToDepartment(toDepartment);
+        transferRequestController.getBill().setFromDepartment(fromDepartment);
+        pharmacyController.setFromDate(fromDate);
+        pharmacyController.setToDate(toDate);
+        generatePharmacyTransferRequestBillComponents();
+        return "/pharmacy_transfer_request";
+    }
+
+    private void generatePharmacyTransferRequestBillComponents() {
+        purchaseOrderRequestController.setBillItems(new ArrayList<BillItem>());
+        System.out.println("fromDepartment = " + fromDepartment);
+        System.out.println("toDepartment = " + toDepartment);
+        for (ItemReorders i : itemReorders) {
+            System.out.println("i.getItem().getName() = " + i.getItem().getName());
+            Reorder fromReorder = new Reorder();
+            Reorder toReorder = new Reorder();
+
+            for (Reorder r : i.getReorders()) {
+                if (r.getDepartment().equals(fromDepartment)) {
+                    System.out.println("from");
+                    System.out.println("r.getTransientOrderingQty() = " + r.getTransientOrderingQty());
+                    fromReorder = r;
+                }
+                if (r.getDepartment().equals(toDepartment)) {
+                    System.out.println("to");
+                    System.out.println("r.getTransientStock() = " + r.getTransientStock());
+                    toReorder = r;
+                }
+            }
+            System.out.println("toReorder.getTransientOrderingQty() = " + toReorder.getTransientOrderingQty());
+            
+            if (fromReorder.getTransientOrderingQty() <= 0) {
+                System.out.println("continuing"
+                        + "");
+                continue;
+            }
+
+            double availableToRequest;
+            double requestingQty;
+
+            availableToRequest = toReorder.getTransientStock() - (toReorder.getTransientOrderingQty()+ toReorder.getBufferStocks());
+            System.out.println("availableToRequest = " + availableToRequest);
+            if (availableToRequest > fromReorder.getTransientOrderingQty()) {
+                requestingQty = fromReorder.getTransientOrderingQty();
+            } else {
+                requestingQty = availableToRequest;
+            }
+            System.out.println("requestingQty = " + requestingQty);
+            transferRequestController.getCurrentBillItem().setItem(i.getItem());
+            transferRequestController.getCurrentBillItem().setTmpQty(requestingQty);
+            transferRequestController.addItem();
+        }
+    }
+
+    private void generatePharmacyOrderBillComponents() {
+        purchaseOrderRequestController.setBillItems(new ArrayList<BillItem>());
+        for (ItemReorders i : itemReorders) {
+            BillItem bi = new BillItem();
+            for (Reorder r : i.getReorders()) {
+                if (r.getDepartment().equals(department)) {
+                    if (r.getTransientOrderingQty() > 0) {
+                        bi.setItem(i.getItem());
+                        PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
+                        tmp.setBillItem(bi);
+                        tmp.setQty(CommonFunctions.roundToTwoDecimalPlaces(r.getTransientOrderingQty(), 0));
+                        tmp.setPurchaseRateInUnit(getPharmacyBean().getLastPurchaseRate(bi.getItem(), getSessionController().getDepartment()));
+                        tmp.setRetailRateInUnit(getPharmacyBean().getLastRetailRate(bi.getItem(), getSessionController().getDepartment()));
+                        bi.setTmpQty(CommonFunctions.roundToTwoDecimalPlaces(r.getTransientOrderingQty(), 0));
+                        bi.setPharmaceuticalBillItem(tmp);
+                        purchaseOrderRequestController.getBillItems().add(bi);
+                    }
+                }
+            }
+        }
+        purchaseOrderRequestController.calTotal();
+    }
+
     public void fillDepartmentReorders() {
         Map m = new HashMap();
         m.put("d", department);
         m.put("items", selectedItems);
-        
+
         String sql = "Select r from Reorder r where r.item in :items and r.department=:d";
         System.out.println(sql);
         System.out.println("sql = " + sql);
@@ -101,59 +469,44 @@ public class ReorderController implements Serializable {
             if (r == null) {
 
                 r = new Reorder();
-               
+
                 r.setDepartment(department);
-                
 
                 r.setInstitution(institution);
-                
 
                 r.setItem(a);
-                
 
                 r.setMonthsConsideredForShortTermAnalysis(12);
-                
 
                 r.setYearsConsideredForLognTermAnalysis(5);
-                
 
                 r.setPerson(null);
-                
 
                 r.setServiceLevel(0.0);
-                
 
                 r.setSupplier(null);
-                
 
                 int cd = calculateOrderingCycleDurationInDays(r);
                 System.out.println("cd = " + cd);
                 r.setPurchaseCycleDurationInDays(cd);
-                
 
                 double dpdiu = calculateDailyDemandInUnits(r);
                 System.out.println("dpdiu = " + dpdiu);
                 r.setDemandInUnitsPerDay(dpdiu);
-                
 
                 int lt = calculateLeadTime(r);
                 System.out.println("lt = " + lt);
                 r.setLeadTimeInDays(lt);
-                
 
                 double roq = calculateRoq(r);
                 System.out.println("roq = " + roq);
                 r.setRoq(roq);
-                
 
                 double bufferStocks = dpdiu * 7;
                 System.out.println("bufferStocks = " + bufferStocks);
                 r.setBufferStocks(bufferStocks);
-                
-                
-                
-                 getEjbFacade().create(r);
 
+                getEjbFacade().create(r);
 
             }
             items.add(r);
@@ -236,7 +589,7 @@ public class ReorderController implements Serializable {
 
         try {
             Long avgLeadTimeInMs = differenceInMs / count;
-            avgLeadTimeInDays = (int) (avgLeadTimeInMs / (1000 * 60 * 60 * 24));
+            avgLeadTimeInDays = ((Long) (avgLeadTimeInMs / (1000 * 60 * 60 * 24))).intValue();
         } catch (Exception e) {
             avgLeadTimeInDays = 7;
         }
@@ -252,7 +605,6 @@ public class ReorderController implements Serializable {
         Date fd = tfd.toDate();
         Date td = new Date();
 
-     
         List<BillType> bts = new ArrayList<>();
 
         jpql = "Select max(bi.bill.createdAt), min(bi.bill.createdAt), sum(bi.qty) "
@@ -307,10 +659,10 @@ public class ReorderController implements Serializable {
         int ds = daysDiff.getDays();
         System.out.println("ds = " + ds);
         System.out.println("totalQty = " + totalQty);
-       
+
         double dailyDemand = 0;
-        if(ds==0){
-            ds=1;
+        if (ds == 0) {
+            ds = 1;
         }
         try {
             dailyDemand = totalQty / ds;
@@ -345,7 +697,7 @@ public class ReorderController implements Serializable {
         List<BillType> bts = new ArrayList<>();
         bts.add(BillType.PharmacyPurchaseBill);
         bts.add(BillType.PharmacyGrnBill);
-        
+
         m.put("bts", bts);
         m.put("amp", reorder.getItem());
         m.put("fd", fd);
@@ -443,6 +795,9 @@ public class ReorderController implements Serializable {
     }
 
     public Department getDepartment() {
+        if (department == null) {
+            department = sessionController.getDepartment();
+        }
         return department;
     }
 
@@ -471,6 +826,38 @@ public class ReorderController implements Serializable {
 
     public Reorder getReorder(java.lang.Long id) {
         return ejbFacade.find(id);
+    }
+
+    public ItemController getItemController() {
+        return itemController;
+    }
+
+    public PurchaseOrderRequestController getPurchaseOrderRequestController() {
+        return purchaseOrderRequestController;
+    }
+
+    public PharmacyController getPharmacyController() {
+        return pharmacyController;
+    }
+
+    public SessionController getSessionController() {
+        return sessionController;
+    }
+
+    public DepartmentController getDepartmentController() {
+        return departmentController;
+    }
+
+    public StockController getStockController() {
+        return stockController;
+    }
+
+    public ReorderFacade getReorderFacade() {
+        return reorderFacade;
+    }
+
+    public PharmacyBean getPharmacyBean() {
+        return pharmacyBean;
     }
 
     @FacesConverter(forClass = Reorder.class)

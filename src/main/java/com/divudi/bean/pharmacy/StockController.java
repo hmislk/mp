@@ -75,6 +75,18 @@ public class StockController implements Serializable {
         return a;
     }
 
+    public Double departmentItemStock(Department dept, Item item){
+        String sql;
+        Map m = new HashMap();
+        m.put("dept", dept);
+        m.put("item", item);
+        sql = "select sum(c.stock) "
+                + " from Stock c where "
+                + " c.department=:dept "
+                + " and c.itemBatch.item=:item";
+        return getFacade().findDoubleByJpql(sql, m);
+    }
+    
     public void prepareAdd() {
         current = new Stock();
     }

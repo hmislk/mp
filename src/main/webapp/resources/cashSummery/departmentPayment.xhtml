@@ -41,34 +41,6 @@
         </p:dataTable>   
       
         
-        <p:dataTable value="#{cc.attrs.controller.inwardProfessions}" var="b" rendered="#{cc.attrs.controller.inwardProfessions.size()!=0}" >
-            <f:facet name="header">               
-                <p:outputLabel value="Inward Professional Payment" />    
-            </f:facet>
-            <p:column>
-                <h:outputLabel value="#{b.string}" rendered="#{b.value!=0}"/>
-            </p:column> 
-            <p:column style="text-align: right;">
-                <h:outputLabel value="#{-b.value}" rendered="#{b.value!=0}">
-                    <f:convertNumber pattern="#,##0.00"/>
-                </h:outputLabel>
-            </p:column> 
-            <p:columnGroup type="footer">
-                <p:row>
-                    <p:column>
-                        <f:facet name="footer">
-                            Total Inward Professions
-                        </f:facet>
-                    </p:column>
-                    <p:column style="text-align: right;">
-                        <f:facet name="footer">
-                            <h:outputLabel value="#{-cc.attrs.controller.inwardProfTot}">
-                                 <f:convertNumber pattern="#,##0.00"/>
-                            </h:outputLabel>
-                        </f:facet>
-                    </p:column>
-                </p:row>
-            </p:columnGroup>
-        </p:dataTable>
+      
     </cc:implementation>
 </html>

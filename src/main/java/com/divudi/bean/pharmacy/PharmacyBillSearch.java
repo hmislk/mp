@@ -442,7 +442,6 @@ public class PharmacyBillSearch implements Serializable {
 
         rb.setNetTotal(refundAmount);
         rb.setPatient(getBill().getPatient());
-        rb.setPatientEncounter(getBill().getPatientEncounter());
         rb.setPaymentScheme(paymentScheme);
         rb.setReferredBy(getBill().getReferredBy());
         rb.setTotal(0 - refundAmount);
@@ -523,7 +522,6 @@ public class PharmacyBillSearch implements Serializable {
 
         rb.setNetTotal(refundAmount);
         rb.setPatient(getBill().getPatient());
-        rb.setPatientEncounter(getBill().getPatientEncounter());
         rb.setPaymentScheme(paymentScheme);
         rb.setReferredBy(getBill().getReferredBy());
         rb.setTotal(0 - refundAmount);
@@ -1708,7 +1706,6 @@ public class PharmacyBillSearch implements Serializable {
         for (BillFee nB : tmp) {
             BillFee bf = new BillFee();
             bf.setFee(nB.getFee());
-            bf.setPatienEncounter(nB.getPatienEncounter());
             bf.setPatient(nB.getPatient());
             bf.setDepartment(nB.getDepartment());
             bf.setInstitution(nB.getInstitution());
@@ -2201,7 +2198,6 @@ public class PharmacyBillSearch implements Serializable {
         billForRefund.setInstitution(getBill().getInstitution());
 
         billForRefund.setPatient(getBill().getPatient());
-        billForRefund.setPatientEncounter(getBill().getPatientEncounter());
         billForRefund.setPaymentScheme(getBill().getPaymentScheme());
         billForRefund.setPaymentSchemeInstitution(getBill().getPaymentSchemeInstitution());
 

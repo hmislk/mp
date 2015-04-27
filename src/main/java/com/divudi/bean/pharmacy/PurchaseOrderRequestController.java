@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -207,11 +206,8 @@ public class PurchaseOrderRequestController implements Serializable {
     public void createOrderWithItems() {
         if (getCurrentBill().getToInstitution() == null) {
             UtilityController.addErrorMessage("Please Select Dealor");
-
         }
-
         generateBillComponent();
-
     }
 
     public void request() {
@@ -219,32 +215,21 @@ public class PurchaseOrderRequestController implements Serializable {
             UtilityController.addErrorMessage("Please Select Paymntmethod");
             return;
         }
-//
-//        if (checkItemPrice()) {
-//            UtilityController.addErrorMessage("Please enter purchase price for all");
-//            return;
-//        }
-
         saveBill();
         saveBillComponent();
-
         UtilityController.addSuccessMessage("Request Succesfully Created");
-
         recreate();
-
     }
 
     public void calTotal() {
         double tmp = 0;
-        int serialNo = 0;
+        int serialNo = 1;
         for (BillItem b : getBillItems()) {
             tmp += b.getPharmaceuticalBillItem().getQty() * b.getPharmaceuticalBillItem().getPurchaseRate();
             b.setSearialNo(serialNo++);
         }
-
         getCurrentBill().setTotal(tmp);
         getCurrentBill().setNetTotal(tmp);
-
     }
 
     public PurchaseOrderRequestController() {

@@ -15,7 +15,6 @@ import com.divudi.entity.Packege;
 import com.divudi.facade.PackageItemFacade;
 import com.divudi.entity.PackageItem;
 import com.divudi.entity.Service;
-import com.divudi.entity.lab.Investigation;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.PackageFeeFacade;
 
@@ -73,7 +72,7 @@ public class PackageItemController implements Serializable {
             String temSql;
             HashMap h = new HashMap();
             temSql = "SELECT i FROM Item i where (type(i)=:t1 or type(i)=:t2 ) and i.retired=false order by i.department.name";
-            h.put("t1", Investigation.class);
+            h.put("t1", Service.class);
             h.put("t2", Service.class);
             serviceItems = getItemFacade().findBySQL(temSql, h, TemporalType.TIME);
 

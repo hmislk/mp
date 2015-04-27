@@ -352,11 +352,18 @@
                         <p:column headerText="GRN No">
                             #{dd2.bill.deptId}
                         </p:column>
-                        <p:column headerText="GRN No">
-                            #{dd2.bill.department.name}
+                        <p:column headerText="GRN Date">
+                            <p:outputLabel value="#{dd2.bill.createdAt}" >
+                                <f:convertDateTime pattern="dd MMM yyyy" ></f:convertDateTime>
+                            </p:outputLabel>
                         </p:column>
                         <p:column headerText="PO No">
                             #{dd2.bill.referenceBill.deptId}
+                        </p:column>
+                        <p:column headerText="PO Date">
+                            <p:outputLabel value="#{dd2.bill.referenceBill.createdAt}" >
+                                <f:convertDateTime pattern="dd MMM yyyy" ></f:convertDateTime>
+                            </p:outputLabel>
                         </p:column>
                         <p:column headerText="Dealor">
                             #{dd2.bill.fromInstitution.name}
@@ -381,6 +388,11 @@
                     <p:dataTable styleClass="noBorder" id="po" value="#{pharmacyController.pos}" var="dd3" scrollable="true" scrollHeight="150" >
                         <p:column headerText="Po No">
                             #{dd3.bill.deptId}
+                        </p:column>
+                         <p:column headerText="PO Date">
+                            <p:outputLabel value="#{dd3.bill.createdAt}" >
+                                <f:convertDateTime pattern="dd MMM yyyy" ></f:convertDateTime>
+                            </p:outputLabel>
                         </p:column>
                         <p:column headerText="Dealor">
                             #{dd3.bill.toInstitution.name}

@@ -15,7 +15,6 @@ import com.divudi.facade.ItemFacade;
 import com.divudi.entity.Item;
 
 import com.divudi.entity.Service;
-import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Vmp;
@@ -37,7 +36,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.persistence.TemporalType;
 import com.divudi.entity.Packege;
-import com.divudi.entity.inward.InwardService;
 
 /**
  *
@@ -335,7 +333,7 @@ public class ItemController implements Serializable {
                     + " order by c.name";
             m.put("pac", Packege.class);
             m.put("ser", Service.class);
-            m.put("inv", Investigation.class);
+            m.put("inv", Service.class);
             m.put("q", "%" + query.toUpperCase() + "%");
             //    ////System.out.println(sql);
             suggestions = getFacade().findBySQL(sql, m, 20);
@@ -359,9 +357,9 @@ public class ItemController implements Serializable {
                     + " and upper(c.name) like :q"
                     + " order by c.name";
             m.put("pac", Packege.class);
-            m.put("inw", InwardService.class);
+            m.put("inw", Service.class);
             m.put("ser", Service.class);
-            m.put("inv", Investigation.class);
+            m.put("inv", Service.class);
             m.put("q", "%" + query.toUpperCase() + "%");
             //    ////System.out.println(sql);
             suggestions = getFacade().findBySQL(sql, m, 20);
@@ -462,7 +460,7 @@ public class ItemController implements Serializable {
         String temSql;
         HashMap h = new HashMap();
         temSql = "SELECT i FROM Item i where (type(i)=:t1 or type(i)=:t2 ) and i.retired=false order by i.department.name";
-        h.put("t1", Investigation.class);
+        h.put("t1", Service.class);
         h.put("t2", Service.class);
         items = getFacade().findBySQL(temSql, h, TemporalType.TIME);
         return items;

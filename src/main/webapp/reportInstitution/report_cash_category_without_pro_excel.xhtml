@@ -22,7 +22,7 @@
                     </p:commandButton>
                     <p:commandButton value="Excel" ajax="false" styleClass="noPrintButton" style="float: right;">
                         <pe:exporter type="xlsx" target="opd,other,pharmacy,
-                                     agent,inwProf,col,dept,card,slip,cheque,finalSum" fileName="Book_Keeping_Summery"
+                                     agent,,col,dept,card,slip,cheque,finalSum" fileName="Book_Keeping_Summery"
 
                                      facetFontStyle="BOLD"   cellFontStyle="NORMAL"  
                                      fontName="Courier New"  />
@@ -194,38 +194,7 @@
                         <p:column headerText="Payment"/>                       
                     </p:row>
                 </p:columnGroup>
-                <p:subTable value="#{inw.bills}" var="b" rendered="#{inw.total>0}" >
-                    <f:facet name="header">
-                        #{inw.admissionType.name}
-                    </f:facet>
-                    <p:column>
-                        #{b.patientEncounter.bhtNo}
-                    </p:column>
-                    <p:column>
-                        <h:outputLabel value="#{b.patientEncounter.patient.person.nameWithTitle}"/>                        
-                    </p:column>
-                    <p:column style="text-align: right;" >
-                        <h:outputLabel value="#{b.netTotal}" >
-                            <f:convertNumber pattern="#,##0.00"/>
-                        </h:outputLabel>
-                    </p:column>
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column colspan="2"  >
-                                <f:facet name="footer">
-                                    Total
-                                </f:facet>
-                            </p:column>
-                            <p:column style="text-align: right;">
-                                <f:facet name="footer">
-                                    <h:outputLabel value="#{inw.total}" >
-                                        <f:convertNumber pattern="#,##0.00"/>
-                                    </h:outputLabel>
-                                </f:facet>
-                            </p:column>
-                        </p:row>
-                    </p:columnGroup>
-                </p:subTable>
+                
 
                 <p:columnGroup type="footer" >
                     <p:row>
@@ -288,34 +257,7 @@
                 <f:facet name="header">
                     <p:outputLabel value="Credit Company Collection"/>    
                 </f:facet>                               
-                <p:subTable value="#{c.billItems}" var="b">
-
-                    <p:column headerText="#{c.bill.fromInstitution.name}" style="width: 200px;">  
-                        <p:outputLabel value="#{b.referenceBill.insId}(opd)" rendered="#{b.patientEncounter eq null}"/>
-                        <p:outputLabel value="#{b.patientEncounter.bhtNo}(bht)" rendered="#{b.patientEncounter ne null}"/>
-                    </p:column>                                    
-                    <p:column headerText="Patient Name" style="width: 40%;">
-                        <p:outputLabel value="#{b.referenceBill.patient.person.name}" rendered="#{b.patientEncounter eq null}"/>
-                        <p:outputLabel value="#{b.patientEncounter.patient.person.name}" rendered="#{b.patientEncounter ne null}"/>
-                    </p:column>                                    
-                    <p:column headerText="Total" style="width: 200px;text-align: right;">
-                        <h:outputLabel value="#{b.netValue}">
-                            <f:convertNumber pattern="#,##0.00"/>
-                        </h:outputLabel>
-                    </p:column> 
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column colspan="2" footerText="Total"/>
-                            <p:column style="text-align: right;">
-                                <f:facet name="footer">
-                                    <h:outputLabel value="#{c.bill.netTotal}">
-                                        <f:convertNumber pattern="#,##0.00"/>
-                                    </h:outputLabel>   
-                                </f:facet>
-                            </p:column>
-                        </p:row>
-                    </p:columnGroup>
-                </p:subTable>
+            
 
                 <p:columnGroup type="footer">
                     <p:row>
@@ -376,35 +318,7 @@
             </p:dataTable>   
 
 
-            <p:dataTable id="inwProf" value="#{cashSummeryControllerExcel1.inwardProfessions}" var="b" rendered="#{cashSummeryControllerExcel1.inwardProfessions.size()>0}" >
-                <f:facet name="header">               
-                    <p:outputLabel value="Inward Professional Payment" />    
-                </f:facet>
-                <p:column>
-                    <h:outputLabel value="#{b.string}" rendered="#{b.value>0}"/>
-                </p:column> 
-                <p:column style="text-align: right;">
-                    <h:outputLabel value="#{0-b.value}" rendered="#{b.value>0}">
-                        <f:convertNumber pattern="#,##0.00"/>
-                    </h:outputLabel>
-                </p:column> 
-                <p:columnGroup type="footer">
-                    <p:row>
-                        <p:column>
-                            <f:facet name="footer">
-                                Total Inward Professions
-                            </f:facet>
-                        </p:column>
-                        <p:column style="text-align: right;">
-                            <f:facet name="footer">
-                                <h:outputLabel value="#{0-cashSummeryControllerExcel1.inwardProfTot}">
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputLabel>
-                            </f:facet>
-                        </p:column>
-                    </p:row>
-                </p:columnGroup>
-            </p:dataTable>
+         
 
             <p:spacer height="30"/>
 

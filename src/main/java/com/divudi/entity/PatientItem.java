@@ -42,8 +42,6 @@ public class PatientItem implements Serializable {
     @ManyToOne
     Patient patient;
     @ManyToOne
-    PatientEncounter patientEncounter;
-    @ManyToOne
     Bill bill;
     @ManyToOne
     BillItem billItem;
@@ -90,14 +88,6 @@ public class PatientItem implements Serializable {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
-    }
-
-    public PatientEncounter getPatientEncounter() {
-        return patientEncounter;
-    }
-
-    public void setPatientEncounter(PatientEncounter patientEncounter) {
-        this.patientEncounter = patientEncounter;
     }
 
     public Bill getBill() {

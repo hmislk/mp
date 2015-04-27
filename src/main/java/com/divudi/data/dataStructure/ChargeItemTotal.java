@@ -4,10 +4,8 @@
  */
 package com.divudi.data.dataStructure;
 
-import com.divudi.data.inward.InwardChargeType;
+
 import com.divudi.entity.Item;
-import com.divudi.entity.PatientItem;
-import com.divudi.entity.inward.PatientRoom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +15,11 @@ import java.util.List;
  */
 public class ChargeItemTotal {
 
-    private InwardChargeType inwardChargeType;
     private List<Item> list;
     private double total = 0.0;
     private double discount = 0;
     private double netTotal = 0;
     private double adjustedTotal = 0.0;
-    private List<PatientRoom> patientRooms;
 
     public List<Item> getList() {
         return list;
@@ -31,14 +27,6 @@ public class ChargeItemTotal {
 
     public void setList(List<Item> list) {
         this.list = list;
-    }
-
-    public InwardChargeType getInwardChargeType() {
-        return inwardChargeType;
-    }
-
-    public void setInwardChargeType(InwardChargeType inwardChargeType) {
-        this.inwardChargeType = inwardChargeType;
     }
 
     public double getDiscount() {
@@ -73,15 +61,5 @@ public class ChargeItemTotal {
         this.adjustedTotal = adjustedTotal;
     }
 
-    public List<PatientRoom> getPatientRooms() {
-        if (patientRooms == null) {
-            patientRooms = new ArrayList<>();
-        }
-        return patientRooms;
-    }
-
-    public void setPatientRooms(List<PatientRoom> patientRooms) {
-        this.patientRooms = patientRooms;
-    }
 
 }

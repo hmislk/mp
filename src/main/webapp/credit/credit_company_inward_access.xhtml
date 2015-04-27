@@ -40,58 +40,7 @@
                                 </p:column>
                             </p:row>
                         </p:columnGroup>
-                        <p:subTable value="#{i.patientEncounters}" var="b">
-                            <f:facet name="header">
-                                <h:outputLabel  value="#{i.institution.name}"/>
-                            </f:facet>
-                            <p:column>                              
-                                <h:outputLabel value="#{b.bhtNo}" />                                
-                            </p:column>
-                            <p:column>                               
-                                <h:outputLabel value="#{b.patient.person.nameWithTitle}" />                                 
-                            </p:column>
-                            <p:column style="text-align: right;">                                
-                                <h:outputLabel value="#{b.creditUsedAmount}" >
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </h:outputLabel>                                 
-                            </p:column>
-                            <p:column style="text-align: right;">                              
-                                <h:outputLabel value="#{b.creditPaidAmount}" >
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </h:outputLabel>
-                            </p:column>
-                            <p:column style="text-align: right;">                              
-                                <h:outputLabel value="#{b.creditUsedAmount+b.creditPaidAmount}" >
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </h:outputLabel>
-                            </p:column>
-                            <p:columnGroup type="footer">
-                                <p:row>
-                                    <p:column footerText="Total" colspan="2" />
-                                    <p:column style="text-align: right;">
-                                        <f:facet name="footer">
-                                            <h:outputLabel value="#{i.total}">
-                                                <f:convertNumber pattern="#,##0.00" />
-                                            </h:outputLabel>
-                                        </f:facet>
-                                    </p:column>
-                                    <p:column style="text-align: right;" >
-                                        <f:facet name="footer">
-                                            <h:outputLabel value="#{i.paidTotal}">
-                                                <f:convertNumber pattern="#,##0.00" />
-                                            </h:outputLabel>
-                                        </f:facet>
-                                    </p:column>
-                                     <p:column style="text-align: right;" >
-                                        <f:facet name="footer">
-                                            <h:outputLabel value="#{i.total+i.paidTotal}">
-                                                <f:convertNumber pattern="#,##0.00" />
-                                            </h:outputLabel>
-                                        </f:facet>
-                                    </p:column>
-                                </p:row>
-                            </p:columnGroup>
-                        </p:subTable>
+                        
 
                     </p:dataTable>
                 </h:form>

@@ -73,12 +73,12 @@ import org.primefaces.event.TabChangeEvent;
 
 @Named
 @SessionScoped
-public class PharmacySaleController implements Serializable {
+public class DirectPurchaseReturn implements Serializable {
 
     /**
      * Creates a new instance of PharmacySaleController
      */
-    public PharmacySaleController() {
+    public DirectPurchaseReturn() {
     }
 
     @Inject

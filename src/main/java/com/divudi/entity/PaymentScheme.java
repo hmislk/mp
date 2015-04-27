@@ -6,7 +6,7 @@ package com.divudi.entity;
 
 import com.divudi.data.CliantType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.entity.memberShip.MembershipScheme;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -58,16 +58,6 @@ public class PaymentScheme implements Serializable {
     boolean validForBilledBills;
     boolean validForCrBills;
     
-    @ManyToOne
-    MembershipScheme membershipScheme;
-
-    public MembershipScheme getMembershipScheme() {
-        return membershipScheme;
-    }
-
-    public void setMembershipScheme(MembershipScheme membershipScheme) {
-        this.membershipScheme = membershipScheme;
-    }
     
     public double getDiscountPercentForPharmacy() {
         return discountPercentForPharmacy;

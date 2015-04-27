@@ -44,6 +44,9 @@ public class CommonFunctions {
         return dateRange;
     }
 
+    
+  
+    
     public DateRange getDateRange(Date from, int range) {
         DateRange dateRange = new DateRange();
         Calendar cal = Calendar.getInstance();
@@ -395,5 +398,15 @@ public class CommonFunctions {
         }
 
         return result;
+    }
+    
+    public static double roundToTwoDecimalPlaces(double num){
+        return roundToTwoDecimalPlaces(num, 2);
+    }
+    
+    public static double roundToTwoDecimalPlaces(double num, int decimalPlaces){
+        double mul = Math.pow(10, decimalPlaces);
+        double roundOff = (double) Math.round(num * mul) / mul;
+        return roundOff;
     }
 }

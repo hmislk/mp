@@ -14,7 +14,6 @@ import static com.divudi.data.PaymentMethod.Cheque;
 import static com.divudi.data.PaymentMethod.Credit;
 import static com.divudi.data.PaymentMethod.Slip;
 import com.divudi.data.dataStructure.PaymentMethodData;
-import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillComponent;
 import com.divudi.entity.BillEntry;
@@ -29,23 +28,17 @@ import com.divudi.entity.ItemFee;
 import com.divudi.entity.PackageFee;
 import com.divudi.entity.Packege;
 import com.divudi.entity.PaymentScheme;
-import com.divudi.entity.PriceMatrix;
 import com.divudi.entity.WebUser;
-import com.divudi.entity.inward.EncounterComponent;
-import com.divudi.entity.lab.Investigation;
-import com.divudi.entity.lab.PatientInvestigation;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.BillSessionFacade;
-import com.divudi.facade.EncounterComponentFacade;
 import com.divudi.facade.FeeFacade;
 import com.divudi.facade.ItemFacade;
 import com.divudi.facade.ItemFeeFacade;
 import com.divudi.facade.PackageFeeFacade;
 import com.divudi.facade.PackegeFacade;
-import com.divudi.facade.PatientInvestigationFacade;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,8 +57,6 @@ import javax.persistence.TemporalType;
 @Stateless
 public class BillBean {
 
-    @EJB
-    private PatientInvestigationFacade patientInvestigationFacade;
     @EJB
     BillFacade billFacade;
     @EJB
@@ -88,16 +79,6 @@ public class BillBean {
     PackageFeeFacade packageFeeFacade;
     @EJB
     ServiceSessionBean serviceSessionBean;
-    @EJB
-    PriceMatrixBean priceMatrixBean;
-
-    public PriceMatrixBean getPriceMatrixBean() {
-        return priceMatrixBean;
-    }
-
-    public void setPriceMatrixBean(PriceMatrixBean priceMatrixBean) {
-        this.priceMatrixBean = priceMatrixBean;
-    }
 
     public void setBillFees(BillFee bf, boolean foreign, PaymentScheme paymentScheme, Institution creditCompany) {
         boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
@@ -118,16 +99,11 @@ public class BillBean {
         //System.err.println(paymentScheme.getPaymentMethod());
         //System.err.println(paymentScheme.getMembershipScheme());
         boolean discountAllowed = bf.getBillItem().getItem().isDiscountAllowed();
-        PriceMatrix priceMatrix = getPriceMatrixBean().getOpdMemberDisCount(paymentScheme.getPaymentMethod(), paymentScheme.getMembershipScheme(), item.getDepartment(), item.getCategory());
 
         if (discountAllowed == false) {
             bf.setFeeValue(foreign);
         } else {
-            if (priceMatrix != null) {
-                bf.setFeeValue(foreign, priceMatrix.getDiscountPercent());
-            } else {
-                bf.setFeeValue(foreign, 0);
-            }
+            bf.setFeeValue(foreign, 0);
         }
     }
 
@@ -180,46 +156,7 @@ public class BillBean {
 
     }
 
-    public void saveEncounterComponents(List<Bill> bills, Bill batchBill, WebUser user) {
-        for (BillFee bf : getBillFeeFromBills(bills)) {
-            saveEncounterComponent(bf, batchBill, user);
-        }
 
-    }
-
-    public void saveEncounterComponents(Bill bill, Bill batchBill, WebUser user) {
-        for (BillFee bf : getBillFee(bill)) {
-            saveEncounterComponent(bf, batchBill, user);
-        }
-
-    }
-
-    public void setSurgeryData(Bill bill, Bill batchBill, SurgeryBillType surgeryBillType) {
-        if (batchBill == null) {
-            return;
-        }
-
-        bill.setForwardReferenceBill(batchBill);
-        bill.setSurgeryBillType(surgeryBillType);
-
-    }
-
-    public void saveEncounterComponent(BillFee bf, Bill batchBill, WebUser user) {
-        EncounterComponent ec = new EncounterComponent();
-        ec.setPatientEncounter(batchBill.getPatientEncounter());
-        ec.setChildEncounter(batchBill.getProcedure());
-        ec.setBillFee(bf);
-        ec.setBillItem(bf.getBillItem());
-        ec.setCreatedAt(Calendar.getInstance().getTime());
-        ec.setCreater(user);
-        ec.setPatientEncounter(batchBill.getProcedure());
-        if (ec.getBillFee() != null) {
-            ec.setStaff(ec.getBillFee().getStaff());
-        }
-
-        getEncounterComponentFacade().create(ec);
-
-    }
 
     public void updateBatchBill(Bill b) {
         double value = getTotalByBill(b);
@@ -780,10 +717,6 @@ public class BillBean {
 
             //System.err.println("1 " + e.getBillItem());
 
-            if (b.getBillType() == BillType.InwardBill) {
-                updateMatrix(e.getBillItem());
-            }
-
             list.add(e.getBillItem());
         }
 
@@ -826,9 +759,6 @@ public class BillBean {
             bf.setCreatedAt(Calendar.getInstance().getTime());
             bf.setCreater(wu);
 
-            if (bf.getPatienEncounter() != null) {
-                bf.setPatienEncounter(b.getPatientEncounter());
-            }
             bf.setPatient(b.getPatient());
 
             bf.setBill(b);
@@ -836,39 +766,8 @@ public class BillBean {
         }
 
     }
-    @EJB
-    InwardBean inwardBean;
 
-    public InwardBean getInwardBean() {
-        return inwardBean;
-    }
-
-    public void setInwardBean(InwardBean inwardBean) {
-        this.inwardBean = inwardBean;
-    }
-
-    private void updateMatrix(BillItem billItem) {
-        double serviceValue = 0;
-        BillFee marginFee = null;
-        marginFee = getInwardBean().getBillFeeMatrix(billItem, billItem.getBill().getInstitution());
-        serviceValue = getInwardBean().getHospitalFeeByBillItem(billItem);
-
-        double matrixValue = getInwardBean().calInwardMargin(billItem, serviceValue, billItem.getBill().getFromDepartment());
-        marginFee.setBill(billItem.getBill());
-        marginFee.setFeeValue(matrixValue);
-
-        if (marginFee.getId() != null) {
-            getBillFeeFacade().edit(marginFee);
-        }
-
-        if (marginFee.getId() == null && marginFee.getFeeValue() != 0) {
-            getBillFeeFacade().create(marginFee);
-        }
-
-        //System.err.println("2 " + billItem);
-        calBillItemTotal(billItem);
-
-    }
+    
 
     private void calBillItemTotal(BillItem billItem) {
         String sql = "SELECT sum(b.feeValue) "
@@ -886,52 +785,6 @@ public class BillBean {
 
     }
 
-    private void savePatientInvestigation(BillEntry e, BillComponent bc, WebUser wu) {
-        PatientInvestigation ptIx = new PatientInvestigation();
-
-        ptIx.setCreatedAt(Calendar.getInstance().getTime());
-        ptIx.setCreater(wu);
-
-        ptIx.setBillItem(e.getBillItem());
-        ptIx.setBillComponent(bc);
-        ptIx.setPackege(bc.getPackege());
-        ptIx.setApproved(Boolean.FALSE);
-        ptIx.setCancelled(Boolean.FALSE);
-        ptIx.setCollected(Boolean.FALSE);
-        ptIx.setDataEntered(Boolean.FALSE);
-        ptIx.setInvestigation((Investigation) bc.getItem());
-        ptIx.setOutsourced(Boolean.FALSE);
-        ptIx.setPatient(e.getBillItem().getBill().getPatient());
-
-        if (e.getBillItem().getBill().getPatientEncounter() != null) {
-            ptIx.setEncounter(e.getBillItem().getBill().getPatientEncounter());
-        }
-
-        ptIx.setPerformed(Boolean.FALSE);
-        ptIx.setPrinted(Boolean.FALSE);
-        ptIx.setPrinted(Boolean.FALSE);
-        ptIx.setReceived(Boolean.FALSE);
-
-        ptIx.setReceiveDepartment(e.getBillItem().getItem().getDepartment());
-        ptIx.setApproveDepartment(e.getBillItem().getItem().getDepartment());
-        ptIx.setDataEntryDepartment(e.getBillItem().getItem().getDepartment());
-        ptIx.setPrintingDepartment(e.getBillItem().getItem().getDepartment());
-        ptIx.setPerformDepartment(e.getBillItem().getItem().getDepartment());
-
-        if (e.getBillItem().getItem() == null) {
-            UtilityController.addErrorMessage("No Bill Item Selected");
-        } else if (e.getBillItem().getItem().getDepartment() == null) {
-            UtilityController.addErrorMessage("Under administration, add a Department for this investigation " + e.getBillItem().getItem().getName());
-        } else if (e.getBillItem().getItem().getDepartment().getInstitution() == null) {
-            UtilityController.addErrorMessage("Under administration, add an Institution for the department " + e.getBillItem().getItem().getDepartment());
-        } else if (e.getBillItem().getItem().getDepartment().getInstitution() != wu.getInstitution()) {
-            ptIx.setOutsourcedInstitution(e.getBillItem().getItem().getInstitution());
-        }
-
-        ptIx.setRetired(false);
-        getPatientInvestigationFacade().create(ptIx);
-
-    }
 
     private void saveBillComponent(BillEntry e, Bill b, WebUser wu) {
         for (BillComponent bc : e.getLstBillComponents()) {
@@ -944,10 +797,6 @@ public class BillBean {
 
             bc.setBill(b);
             getBillComponentFacade().create(bc);
-
-            if (bc.getItem() instanceof Investigation) {
-                savePatientInvestigation(e, bc, wu);
-            }
 
         }
     }
@@ -1244,13 +1093,6 @@ public class BillBean {
         this.feeFacade = feeFacade;
     }
 
-    public PatientInvestigationFacade getPatientInvestigationFacade() {
-        return patientInvestigationFacade;
-    }
-
-    public void setPatientInvestigationFacade(PatientInvestigationFacade patientInvestigationFacade) {
-        this.patientInvestigationFacade = patientInvestigationFacade;
-    }
 
     public String checkPaymentMethod(PaymentMethod paymentMethod, Institution institution, String string, Date date) {
         switch (paymentMethod) {
@@ -1303,27 +1145,5 @@ public class BillBean {
         }
 
         return billFees;
-    }
-    @EJB
-    private EncounterComponentFacade encounterComponentFacade;
-
-    public List<EncounterComponent> getEncounterBillComponents(BillItem billItem) {
-
-        String sql = "SELECT b FROM EncounterComponent b "
-                + " WHERE b.retired=false "
-                + " and b.billItem=:b ";
-        HashMap hs = new HashMap();
-        hs.put("b", billItem);
-        List<EncounterComponent> list = getEncounterComponentFacade().findBySQL(sql, hs);
-
-        return list;
-    }
-
-    public EncounterComponentFacade getEncounterComponentFacade() {
-        return encounterComponentFacade;
-    }
-
-    public void setEncounterComponentFacade(EncounterComponentFacade encounterComponentFacade) {
-        this.encounterComponentFacade = encounterComponentFacade;
     }
 }

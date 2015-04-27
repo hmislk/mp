@@ -26,9 +26,10 @@
                             <p:outputLabel id="tot"  value="Total :  #{purchaseOrderController.aprovedBill.netTotal}"/>    
                         </h:panelGrid>
                     </f:facet>
+                    
                     <p:dataTable scrollable="true" styleClass="noBorder" scrollHeight="250"
                                  var="bi" value="#{purchaseOrderController.billItems}"
-                                 id="itemList" sortBy="#{bi.searialNo}"  rowKey="#{bi.searialNo}"
+                                 id="itemList" rowKey="#{bi.searialNo}"
                                  selection="#{purchaseOrderController.selectedItems}">  
 
                         <f:facet name="header">  
@@ -40,11 +41,11 @@
 
 
                         <p:column headerText="No" style="width: 25px;">
-                            #{bi.searialNo}
+                            <h:outputLabel value="#{bi.searialNo}" ></h:outputLabel>
                         </p:column>
 
                         <p:column headerText="Item Name" style="width:50px;">  
-                            #{bi.item.name} 
+                            <h:outputLabel value="#{bi.item.name}" ></h:outputLabel> 
                         </p:column>  
 
                         <p:column headerText="Qty" style="width:25px!important;">                         

@@ -7,10 +7,10 @@
  */
 package com.divudi.entity;
 
-import com.divudi.entity.memberShip.MembershipScheme;
+
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
-import com.divudi.entity.clinical.ClinicalFindingValue;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -33,8 +33,6 @@ import javax.persistence.Transient;
 @Entity
 public class Person implements Serializable {
 
-    @OneToMany(mappedBy = "person")
-    private List<ClinicalFindingValue> clinicalFindingValues;
 
     static final long serialVersionUID = 1L;
     @Id
@@ -81,8 +79,6 @@ public class Person implements Serializable {
     String nameWithTitle;
     boolean foreigner = false;
 
-    @ManyToOne
-    private MembershipScheme membershipScheme;
 
     public boolean isForeigner() {
         return foreigner;
@@ -357,19 +353,4 @@ public class Person implements Serializable {
         this.nic = nic;
     }
 
-    public List<ClinicalFindingValue> getClinicalFindingValues() {
-        return clinicalFindingValues;
-    }
-
-    public void setClinicalFindingValues(List<ClinicalFindingValue> clinicalFindingValues) {
-        this.clinicalFindingValues = clinicalFindingValues;
-    }
-
-    public MembershipScheme getMembershipScheme() {
-        return membershipScheme;
-    }
-
-    public void setMembershipScheme(MembershipScheme membershipScheme) {
-        this.membershipScheme = membershipScheme;
-    }
 }

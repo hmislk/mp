@@ -6,7 +6,6 @@ package com.divudi.entity;
 
 import com.divudi.data.BillType;
 import com.divudi.data.PaymentMethod;
-import com.divudi.data.inward.SurgeryBillType;
 import com.divudi.entity.cashTransaction.CashTransaction;
 import com.divudi.entity.pharmacy.StockVarientBillItem;
 import java.io.Serializable;
@@ -203,10 +202,6 @@ public class Bill implements Serializable {
     Patient patient;
     @ManyToOne
     Doctor referredBy;
-    @ManyToOne
-    PatientEncounter patientEncounter;
-    @ManyToOne
-    private PatientEncounter procedure;
     @Transient
     List<Bill> listOfBill;
 
@@ -224,8 +219,6 @@ public class Bill implements Serializable {
     private double tmpReturnTotal;
     @Transient
     private boolean transBoolean;
-    @Enumerated(EnumType.STRING)
-    private SurgeryBillType surgeryBillType;
     @ManyToOne
     private WebUser toWebUser;
     @ManyToOne
@@ -271,13 +264,8 @@ public class Bill implements Serializable {
         fromInstitution = bill.getFromInstitution();
         discountPercent = bill.getDiscountPercent();
         patient = bill.getPatient();
-        patientEncounter = bill.getPatientEncounter();
         referredBy = bill.getReferredBy();
         referringDepartment = bill.getReferringDepartment();
-        surgeryBillType = bill.getSurgeryBillType();
-        //      referenceBill=bill.getReferenceBill();
-        //  paymentScheme=bill.getPaymentScheme();
-        //   paymentMethod=bill.getPaymentMethod();
         comments = bill.getComments();
 
     }
@@ -581,14 +569,6 @@ public class Bill implements Serializable {
         this.paymentSchemeInstitution = paymentSchemeInstitution;
     }
 
-    public PatientEncounter getPatientEncounter() {
-        return patientEncounter;
-    }
-
-    public void setPatientEncounter(PatientEncounter patientEncounter) {
-        this.patientEncounter = patientEncounter;
-    }
-
     public Long getId() {
         return id;
     }
@@ -670,12 +650,6 @@ public class Bill implements Serializable {
         this.retireComments = retireComments;
     }
 
-    public Patient getPatient() {
-        if (patientEncounter != null) {
-            patient = patientEncounter.getPatient();
-        }
-        return patient;
-    }
 
     public void setPatient(Patient patient) {
         this.patient = patient;
@@ -897,7 +871,7 @@ public class Bill implements Serializable {
         this.invoiceDate = invoiceDate;
     }
 
-    public String getInvoiceNumber() {
+     public String getInvoiceNumber() {
         return invoiceNumber;
     }
 
@@ -1061,21 +1035,6 @@ public class Bill implements Serializable {
         this.transActiveBillItem = transActiveBillItem;
     }
 
-    public PatientEncounter getProcedure() {
-        return procedure;
-    }
-
-    public void setProcedure(PatientEncounter procedure) {
-        this.procedure = procedure;
-    }
-
-    public SurgeryBillType getSurgeryBillType() {
-        return surgeryBillType;
-    }
-
-    public void setSurgeryBillType(SurgeryBillType surgeryBillType) {
-        this.surgeryBillType = surgeryBillType;
-    }
 
     public List<Bill> getReturnPreBills() {
         List<Bill> bills = new ArrayList<>();
@@ -1251,4 +1210,10 @@ public class Bill implements Serializable {
         this.tmp = tmp;
     }
 
+    public Patient getPatient() {
+        return patient;
+    }
+ 
+    
+    
 }

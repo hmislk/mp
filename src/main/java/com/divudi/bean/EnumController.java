@@ -10,9 +10,6 @@ import com.divudi.data.InvestigationItemValueType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
-import com.divudi.data.inward.AdmissionTypeEnum;
-import com.divudi.data.inward.InwardChargeType;
-import com.divudi.data.inward.PatientEncounterComponentType;
 import com.divudi.entity.PaymentScheme;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -29,14 +26,12 @@ public class EnumController implements Serializable {
 
     private PaymentScheme paymentScheme;
 
-     InvestigationItemValueType[] investigationItemValueTypes;
+    InvestigationItemValueType[] investigationItemValueTypes;
 
     public InvestigationItemValueType[] getInvestigationItemValueTypes() {
-        return InvestigationItemValueType.values() ;
+        return InvestigationItemValueType.values();
     }
-    
-    
-    
+
     public Title[] getTitle() {
         return Title.values();
     }
@@ -48,14 +43,6 @@ public class EnumController implements Serializable {
     public PaymentMethod[] getPaymentMethodForAdmission() {
         PaymentMethod[] tmp = {PaymentMethod.Credit, PaymentMethod.Cash};
         return tmp;
-    }
-
-    public InwardChargeType[] getInwardChargeTypes() {
-        return InwardChargeType.values();
-    }
-
-    public PatientEncounterComponentType[] getPatientEncounterComponentTypes() {
-        return PatientEncounterComponentType.values();
     }
 
     public BillType[] getCashFlowBillTypes() {
@@ -86,7 +73,8 @@ public class EnumController implements Serializable {
             BillType.PurchaseReturn,
             BillType.GrnPayment,
             BillType.PharmacyTransferRequest,
-            BillType.PharmacyTransferIssue,};
+            BillType.PharmacyTransferIssue,
+            BillType.PharmacyIssue};
 
         return b;
     }
@@ -147,10 +135,6 @@ public class EnumController implements Serializable {
 
         return false;
 
-    }
-
-    public AdmissionTypeEnum[] getAdmissionTypeEnum() {
-        return AdmissionTypeEnum.values();
     }
 
     /**

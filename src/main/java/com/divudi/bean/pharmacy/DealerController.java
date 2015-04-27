@@ -54,15 +54,11 @@ public class DealerController implements Serializable {
         List<Institution> suggestions;
         String sql;
         Map m = new HashMap();
-
         sql = "select c from Institution c where c.retired=false and "
                 + " c.institutionType =:t and upper(c.name) like :q order by c.name";
-        ////System.out.println(sql);
         m.put("t", InstitutionType.Dealer);
         m.put("q", "%" + query.toUpperCase() + "%");
-        suggestions = getEjbFacade().findBySQL(sql, m, 10);
-        ////System.out.println("suggestions = " + suggestions);
-
+        suggestions = getEjbFacade().findBySQL(sql, m);
         return suggestions;
     }
 

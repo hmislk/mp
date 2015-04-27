@@ -11,7 +11,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.InstitutionType;
 import com.divudi.data.dataStructure.PharmacyImportCol;
-import com.divudi.data.inward.InwardChargeType;
+
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.ejb.PharmacyCalculation;
 import com.divudi.entity.Bill;
@@ -22,7 +22,6 @@ import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
 import com.divudi.entity.Service;
-import com.divudi.entity.lab.Investigation;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Atm;
@@ -347,13 +346,8 @@ public class PharmacyItemExcelManager implements Serializable {
         Map temMap = new HashMap();
 
         sql = "select b from Item b where type(b)=:tp ";
-        temMap.put("tp", Investigation.class);
         List<Item> list = getItemFacade().findBySQL(sql, temMap);
 
-        for (Item i : list) {
-            i.setInwardChargeType(InwardChargeType.Laboratory);
-            getItemFacade().edit(i);
-        }
     }
 
     public void resetPaymentmethod() {

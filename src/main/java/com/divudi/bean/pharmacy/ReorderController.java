@@ -387,8 +387,6 @@ public class ReorderController implements Serializable {
         //    System.out.println("toReorder.getTransientOrderingQty() = " + toReorder.getTransientOrderingQty());
             
             if (fromReorder.getTransientOrderingQty() <= 0) {
-            //    System.out.println("continuing"
-                        + "");
                 continue;
             }
 

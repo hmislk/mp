@@ -389,7 +389,7 @@ public class CommonReportSession implements Serializable {
         for (Bill b : profitBills) {
             grossTotal += b.getTotal();
             netTotal += b.getNetTotal();
-            profitTotal += b.getNetTotal();
+            profitTotal += (b.getNetTotal()+ b.getFreeValue());
             discountTotal += b.getDiscount();
 //            if (discountTotal != 0.00) {
 //            //    System.out.println("b = " + b);
@@ -404,7 +404,7 @@ public class CommonReportSession implements Serializable {
     public String listProfitBillsDailySummery() {
     //    System.out.println("list profit bills");
         String jpql;
-        jpql = "SELECT new com.divudi.data.DailySummeryRow(FUNC('DATE',b.createdAt), sum(b.freeValue), sum(b.netTotal), sum(b.discount),  sum(b.total)) "
+        jpql = "SELECT new com.divudi.data.DailySummeryRow(FUNC('DATE',b.createdAt), sum(b.freeValue), sum(b.netTotal+b.freeValue), sum(b.discount),  sum(b.total)) "
                 + " FROM Bill b "
                 + " WHERE (type(b)=:bc1 or type(b)=:bc2 or type(b)=:bc3 ) "
                 + " and b.retired=false "

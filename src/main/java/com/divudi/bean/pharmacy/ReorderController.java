@@ -153,9 +153,10 @@ public class ReorderController implements Serializable {
 
     public Date getFromDate() {
         if (fromDate == null) {
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.YEAR, -1);
-            fromDate = c.getTime();
+//            Calendar c = Calendar.getInstance();
+//            c.add(Calendar.YEAR, -1);
+//            fromDate = c.getTime();
+            fromDate=new Date();//request by Mr.Mahinda
         }
         return fromDate;
     }

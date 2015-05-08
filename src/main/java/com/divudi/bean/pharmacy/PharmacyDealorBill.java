@@ -31,6 +31,8 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.BilledBillFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.util.ArrayList;
 
 /**
@@ -242,6 +244,18 @@ public class PharmacyDealorBill implements Serializable {
 
         return false;
     }
+    
+    public boolean checkBillAlreadyPaid() {
+        for (BillItem bi : getBillItems()) {
+            Bill b=getBillFacade().find(bi.getReferenceBill().getId());
+            if ((b.getNetTotal() + b.getPaidAmount()) == 0.0) {
+                JsfUtil.addErrorMessage("This Bill Is All Ready Paid");
+                getBillItems().remove(bi);
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void saveBill(BillType billType) {
 
@@ -290,6 +304,10 @@ public class PharmacyDealorBill implements Serializable {
 
         getCurrent().setTotal(getCurrent().getNetTotal());
 
+        if (checkBillAlreadyPaid()) {
+            return;
+        }
+
         saveBill(BillType.GrnPayment);
         saveBillItem();
 
@@ -337,10 +355,10 @@ public class PharmacyDealorBill implements Serializable {
 
     private void updateReferenceBill(BillItem tmp) {
         double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.GrnPayment);
-
+        System.out.println("dbl = " + dbl);
         tmp.getReferenceBill().setPaidAmount(0 - dbl);
         getBillFacade().edit(tmp.getReferenceBill());
-
+        System.out.println("1 = " + tmp.getReferenceBill().getPaidAmount());
     }
 
     /**

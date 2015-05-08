@@ -1705,11 +1705,11 @@ public class SearchController implements Serializable {
         //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 //        netTotal = 0.0;
-        netTotal = sumFrom(bills).getNetTotal();
+//        netTotal = sumFrom(bills).getNetTotal();
 
-//        for (Bill b : bills) {
-//            netTotal += b.getNetTotal();
-//        }
+        for (Bill b : bills) {
+            netTotal += b.getNetTotal();
+        }
     }
 
 //    public void createGrnChequePaymentAll() {

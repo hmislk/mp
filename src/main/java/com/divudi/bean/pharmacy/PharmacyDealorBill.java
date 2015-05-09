@@ -94,6 +94,16 @@ public class PharmacyDealorBill implements Serializable {
                 }
             }
         }
+        
+        for (BillItem b : getBillItems()) {
+            System.out.println("getCurrentBillItem().getReferenceBill().getInsId() = " + getCurrentBillItem().getReferenceBill().getInsId());
+            System.out.println("b.getReferenceBill().getInsId() = " + b.getReferenceBill().getInsId());
+            if (b.getReferenceBill().equals(getCurrentBillItem().getReferenceBill())) {
+                    UtilityController.addErrorMessage("This GRN is Alredy Added");
+                    return true;
+                
+            }
+        }
 
         return false;
     }
@@ -189,10 +199,12 @@ public class PharmacyDealorBill implements Serializable {
 
     public void calTotalWithResetingIndex() {
         double n = 0.0;
+        payingAmount=0.0;
         int index = 0;
         for (BillItem b : billItems) {
             b.setSearialNo(index++);
             n += b.getNetValue();
+            payingAmount+= b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
         // ////System.out.println("AAA : " + n);
@@ -246,15 +258,17 @@ public class PharmacyDealorBill implements Serializable {
     }
     
     public boolean checkBillAlreadyPaid() {
+        boolean flag=false;
+        List<BillItem> removeBillItems=new ArrayList<>();
         for (BillItem bi : getBillItems()) {
             Bill b=getBillFacade().find(bi.getReferenceBill().getId());
-            if ((b.getNetTotal() + b.getPaidAmount()) == 0.0) {
-                JsfUtil.addErrorMessage("This Bill Is All Ready Paid");
-                getBillItems().remove(bi);
-                return true;
+            if (Math.abs(b.getNetTotal() + b.getPaidAmount()) < 1) {
+                removeBillItems.add(bi);
+                flag=true;
             }
         }
-        return false;
+        getBillItems().removeAll(removeBillItems);
+        return flag;
     }
 
     private void saveBill(BillType billType) {
@@ -305,6 +319,7 @@ public class PharmacyDealorBill implements Serializable {
         getCurrent().setTotal(getCurrent().getNetTotal());
 
         if (checkBillAlreadyPaid()) {
+            JsfUtil.addErrorMessage("This Bill Is All Ready Paid");
             return;
         }
 

@@ -150,24 +150,22 @@
                             <p:columnGroup type="header">
                                 <p:row>
                                     <p:column rowspan="2"  headerText="Department" ></p:column>
-                                    <p:column colspan="3"  headerText="Usage" ></p:column>
                                     <p:column  rowspan="2"  headerText="Stocks" ></p:column>
-                                    <p:column colspan="2"  headerText="Timing" ></p:column>
                                     <p:column colspan="4"  headerText="Reordering" ></p:column>
+                                    <p:column colspan="3"  headerText="Usage" ></p:column>
+                                    <p:column colspan="2"  headerText="Timing" ></p:column>
+                                    
                                 </p:row>
                                 <p:row >
+                                    <p:column  headerText="Ordering Qty" />
+                                    <p:column  headerText="Buffer Stocks" />
+                                    <p:column  headerText="Reorder Level" />
+                                    <p:column  headerText="Reorder Quentity" />
                                     <p:column  headerText="Daily Usage" />
                                     <p:column  headerText="Monthly Usage" />
                                     <p:column  headerText="Annual Usage" />
                                     <p:column  headerText="Lead Time" />
                                     <p:column  headerText="Purchase Cycle" />
-                                    <p:column  headerText="Buffer Stocks" />
-                                    <p:column  headerText="Reorder Level" />
-                                    <p:column  headerText="Reorder Quentity" />
-                                    <p:column  headerText="Ordering Qty" />
-
-
-
                                 </p:row>
                             </p:columnGroup>
 
@@ -179,40 +177,16 @@
                                     <p:outputLabel value="#{r.department.name}" styleClass="#{(r.rol gt r.transientStock )?'redText':'greenText'}" ></p:outputLabel>
                                 </p:column>
                                 <p:column style="text-align: right; width:80px!important;">
-                                    <p:outputLabel value="#{r.demandInUnitsPerDay}" >
-                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
-                                    </p:outputLabel>
-                                </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
-                                    <p:outputLabel value="#{(r.demandInUnitsPerDay)*30}" >
-                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
-                                    </p:outputLabel>
-                                </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
-                                    <p:outputLabel value="#{(r.demandInUnitsPerDay)*365}" >
-                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
-                                    </p:outputLabel>
-                                </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
                                     <p:outputLabel value="#{r.transientStock}" >
                                         <f:convertNumber pattern="0.0" ></f:convertNumber>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
-                                    <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.leadTimeInDays}" rendered="#{reorderController.readOnly}" >
-                                        <f:convertNumber pattern="0" ></f:convertNumber>
-                                    </h:outputText>
-                                    <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.leadTimeInDays}" rendered="#{!reorderController.readOnly}" >
+                                <p:column style="text-align: right; width:80px!important; height: 18px!important;">
+                                    <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important; width: 90px;"  value="#{r.transientOrderingQty}" rendered="#{!reorderController.readOnly}" >
                                     </h:inputText>
-
-                                </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
-                                    <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.purchaseCycleDurationInDays}"  rendered="#{reorderController.readOnly}" >
+                                    <p:outputLabel value="#{r.transientOrderingQty}" rendered="#{reorderController.readOnly}">
                                         <f:convertNumber pattern="0" ></f:convertNumber>
-                                    </h:outputText>
-                                    <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important;"  value="#{r.purchaseCycleDurationInDays}"  rendered="#{!reorderController.readOnly}" >
-                                    </h:inputText>
-
+                                    </p:outputLabel>
                                 </p:column>
                                 <p:column style="text-align: right; width:80px!important;">
                                     <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.bufferStocks}" rendered="#{reorderController.readOnly}" >
@@ -234,13 +208,41 @@
                                         <f:convertNumber pattern="0" ></f:convertNumber>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column style="text-align: right; width:80px!important; height: 18px!important;">
-                                    <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important; width: 90px;"  value="#{r.transientOrderingQty}" rendered="#{!reorderController.readOnly}" >
-                                    </h:inputText>
-                                    <p:outputLabel value="#{r.transientOrderingQty}" rendered="#{reorderController.readOnly}">
-                                        <f:convertNumber pattern="0" ></f:convertNumber>
+                                
+                                
+                                <p:column style="text-align: right; width:80px!important;">
+                                    <p:outputLabel value="#{r.demandInUnitsPerDay}" >
+                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
                                     </p:outputLabel>
                                 </p:column>
+                                <p:column style="text-align: right; width:80px!important;">
+                                    <p:outputLabel value="#{(r.demandInUnitsPerDay)*30}" >
+                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="text-align: right; width:80px!important;">
+                                    <p:outputLabel value="#{(r.demandInUnitsPerDay)*365}" >
+                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
+                                    </p:outputLabel>
+                                </p:column>
+                                
+                                <p:column style="text-align: right; width:80px!important;">
+                                    <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.leadTimeInDays}" rendered="#{reorderController.readOnly}" >
+                                        <f:convertNumber pattern="0" ></f:convertNumber>
+                                    </h:outputText>
+                                    <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.leadTimeInDays}" rendered="#{!reorderController.readOnly}" >
+                                    </h:inputText>
+
+                                </p:column>
+                                <p:column style="text-align: right; width:80px!important;">
+                                    <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.purchaseCycleDurationInDays}"  rendered="#{reorderController.readOnly}" >
+                                        <f:convertNumber pattern="0" ></f:convertNumber>
+                                    </h:outputText>
+                                    <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important;"  value="#{r.purchaseCycleDurationInDays}"  rendered="#{!reorderController.readOnly}" >
+                                    </h:inputText>
+
+                                </p:column>
+                                
 
                             </p:subTable>
 

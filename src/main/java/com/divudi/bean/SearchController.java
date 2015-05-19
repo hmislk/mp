@@ -1616,11 +1616,11 @@ public class SearchController implements Serializable {
         temMap.put("ins", getSessionController().getInstitution());
 
         System.err.println("Sql " + sql);
-        System.out.println("temMap = " + temMap);
+    //    System.out.println("temMap = " + temMap);
 
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
-        System.out.println("bills.size() = " + bills.size());
+    //    System.out.println("bills.size() = " + bills.size());
     }
     
     public void createGrnPaymentTableChequeDate() {
@@ -1669,11 +1669,11 @@ public class SearchController implements Serializable {
         temMap.put("ins", getSessionController().getInstitution());
 
         System.err.println("Sql " + sql);
-        System.out.println("temMap = " + temMap);
+    //    System.out.println("temMap = " + temMap);
 
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
 
-        System.out.println("bills.size() = " + bills.size());
+    //    System.out.println("bills.size() = " + bills.size());
     }
 
     double netTotal;
@@ -1705,11 +1705,11 @@ public class SearchController implements Serializable {
         //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 //        netTotal = 0.0;
-        netTotal = sumFrom(bills).getNetTotal();
+//        netTotal = sumFrom(bills).getNetTotal();
 
-//        for (Bill b : bills) {
-//            netTotal += b.getNetTotal();
-//        }
+        for (Bill b : bills) {
+            netTotal += b.getNetTotal();
+        }
     }
 
 //    public void createGrnChequePaymentAll() {

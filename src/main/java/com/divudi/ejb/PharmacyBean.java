@@ -1359,12 +1359,10 @@ public class PharmacyBean {
 
     public Vmp getVmp(Vtm vtm, double strength, MeasurementUnit strengthUnit, PharmaceuticalItemCategory cat) {
         String sql;
-        System.out.println("strength = " + strength);
-        System.out.println("strengthUnit = " + strengthUnit);
-        System.out.println("cat = " + cat);
+    //    System.out.println("strength = " + strength);
+    //    System.out.println("strengthUnit = " + strengthUnit);
+    //    System.out.println("cat = " + cat);
         if (strength == 0 || strengthUnit == null || cat == null) {
-            System.out.println("returning"
-                    + "");
             return null;
         }
         Map m = new HashMap();
@@ -1391,7 +1389,7 @@ public class PharmacyBean {
             v.setVmp(vmp);
             v.setPharmaceuticalItemCategory(cat);
             getVtmsVmpsFacade().create(v);
-            System.out.println("v = " + v);
+        //    System.out.println("v = " + v);
         }
         v.getVmp().setRetired(false);
         return v.getVmp();

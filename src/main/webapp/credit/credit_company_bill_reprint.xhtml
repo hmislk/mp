@@ -48,18 +48,7 @@
                                         </f:facet>
                                         <p:outputLabel value="#{rowIndex+1}"/>
                                     </p:column>
-                                    <p:column >    
-                                        <f:facet name="header">
-                                            <p:outputLabel value="Bht No" rendered="#{b.patientEncounter ne null}"/>
-                                            <p:outputLabel value="Bill No" rendered="#{b.patientEncounter eq null}"/>
-                                        </f:facet>
-                                        <p:outputLabel value="#{b.referenceBill.insId}" rendered="#{b.patientEncounter eq null}"/>
-                                        <p:outputLabel value="#{b.patientEncounter.bhtNo}" rendered="#{b.patientEncounter ne null}"/>
-                                    </p:column>                                    
-                                    <p:column headerText="Patient Name">
-                                        <p:outputLabel value="#{b.referenceBill.patient.person.name}" rendered="#{b.patientEncounter eq null}"/>
-                                        <p:outputLabel value="#{b.patientEncounter.patient.person.name}" rendered="#{b.patientEncounter ne null}"/>
-                                    </p:column>                                    
+                                                                      
                                     <p:column headerText="Net Total">#{b.netValue}</p:column>
                                 </p:dataTable>
                             </p:panel>

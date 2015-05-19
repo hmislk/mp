@@ -35,7 +35,7 @@ public class DailySummeryRow {
         try {
             this.summeryDate = (Date) summeryDateOfMonth;
         } catch (Exception e) {
-            System.out.println("e = " + e);
+        //    System.out.println("e = " + e);
         }
         this.freeAmounts = freeAmounts;
         this.profit = profit;

@@ -310,14 +310,14 @@ public class PharmacyController implements Serializable {
     DepartmentController departmentController;
 
     public List<Object[]> calAllDepartmentStock(Institution institution, Item itm) {
-        System.out.println("calAllDepartmentStock");
+        //    System.out.println("calAllDepartmentStock");
         List<Object[]> objs = new ArrayList<>();
         if (itm instanceof Ampp) {
             itm = ((Ampp) itm).getAmp();
         }
 
         List<Department> deps = departmentController.getInstitutionDepatrments(getSessionController().getInstitution());
-        System.out.println("deps = " + deps);
+        //    System.out.println("deps = " + deps);
         String sql;
         Map m;
         for (Department dep : deps) {
@@ -332,7 +332,7 @@ public class PharmacyController implements Serializable {
             List<Object> lobjs = new ArrayList<>();
             lobjs.add(dep);
             Object[] tobjs = getBillItemFacade().findSingleAggregate(sql, m);
-            System.out.println("tobjs = " + Arrays.toString(tobjs));
+            //    System.out.println("tobjs = " + Arrays.toString(tobjs));
             if (tobjs != null && tobjs[0] != null) {
                 lobjs.addAll(Arrays.asList(tobjs));
             } else {
@@ -342,7 +342,7 @@ public class PharmacyController implements Serializable {
                 lobjs.add(0.0);
             }
             Object[] obj = lobjs.toArray();
-            System.out.println("obj = " + Arrays.toString(obj));
+            //    System.out.println("obj = " + Arrays.toString(obj));
             objs.add(obj);
         }
         return objs;
@@ -497,7 +497,7 @@ public class PharmacyController implements Serializable {
 
         stockAverages = new ArrayList<>();
         List<Item> items = getItemController().getDealorItem();
-        System.out.println("items = " + items.size());
+        //    System.out.println("items = " + items.size());
         List<Institution> insList = getCompany();
         for (Item i : items) {
 
@@ -896,7 +896,7 @@ public class PharmacyController implements Serializable {
     }
 
     public void averageByDatePercentage() {
-        System.out.println("averageByDatePercentage = ");
+        //    System.out.println("averageByDatePercentage = ");
         Calendar frm = Calendar.getInstance();
         frm.setTime(fromDate);
         Calendar to = Calendar.getInstance();
@@ -914,16 +914,16 @@ public class PharmacyController implements Serializable {
     }
 
     public void createStockAverageByPer(double dayCount) {
-        System.out.println("dayCount = " + dayCount);
-        System.out.println("createStockAverageByPer");
+        //    System.out.println("dayCount = " + dayCount);
+        //    System.out.println("createStockAverageByPer");
         stockAverages = new ArrayList<>();
         List<Item> items = getItemController().getDealorItem();
         List<Institution> insList; // = getCompany();
         insList = new ArrayList<>();
         insList.add(getSessionController().getInstitution());
-        System.out.println("items = " + items);
+        //    System.out.println("items = " + items);
         for (Item i : items) {
-            System.out.println("i = " + i);
+            //    System.out.println("i = " + i);
             double itemStockTotal = 0;
             double itemAverageTotal = 0;
             StockAverage stockAverage = new StockAverage();
@@ -931,19 +931,19 @@ public class PharmacyController implements Serializable {
             stockAverage.setInstitutionStocks(new ArrayList<InstitutionStock>());
 
             for (Institution ins : insList) {
-                System.out.println("ins = " + ins);
+                //    System.out.println("ins = " + ins);
                 double insStockTotal = 0;
                 double insAverageTotal = 0;
                 double insStock = 0.0;
                 InstitutionStock newTable = new InstitutionStock();
                 newTable.setInstitution(ins);
                 newTable.setDepatmentStocks(new ArrayList<DepartmentStock>());
-                System.out.println("calAllDepartmentStock");
+                //    System.out.println("calAllDepartmentStock");
                 List<Object[]> objs = calAllDepartmentStock(ins, i);
                 double calPerStock = 0.0;
-                System.out.println("objs = " + objs);
+                //    System.out.println("objs = " + objs);
                 for (Object[] obj : objs) {
-                    System.out.println("obj = " + Arrays.toString(obj));
+                    //    System.out.println("obj = " + Arrays.toString(obj));
 //                    //System.err.println("Inside ");
                     DepartmentStock r = new DepartmentStock();
                     r.setDepartment((Department) obj[0]);
@@ -995,8 +995,12 @@ public class PharmacyController implements Serializable {
     }
 
     public double findPharmacyMovement(Department department, Item itm, BillType[] bts, Date fd, Date td) {
-        if (itm instanceof Ampp) {
-            itm = ((Ampp) pharmacyItem).getAmp();
+        try {
+            if (itm instanceof Ampp) {
+                itm = ((Ampp) pharmacyItem).getAmp();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         String sql;
         Map m = new HashMap();
@@ -1016,8 +1020,12 @@ public class PharmacyController implements Serializable {
     }
 
     public Date findFirstPharmacyMovementDate(Department department, Item itm, BillType[] bts, Date fd, Date td) {
-        if (itm instanceof Ampp) {
-            itm = ((Ampp) pharmacyItem).getAmp();
+        try {
+            if (itm instanceof Ampp) {
+                itm = ((Ampp) pharmacyItem).getAmp();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         String sql;
         Map m = new HashMap();
@@ -1037,11 +1045,11 @@ public class PharmacyController implements Serializable {
         BillItem d = getBillItemFacade().findFirstBySQL(sql, m, TemporalType.TIMESTAMP);
         if (d == null) {
             return fd;
-        } else if (d.getBill()!=null && d.getBill().getCreatedAt()!=null) {
+        } else if (d.getBill() != null && d.getBill().getCreatedAt() != null) {
             return d.getBill().getCreatedAt();
-        }else if (d.getCreatedAt()!=null){
+        } else if (d.getCreatedAt() != null) {
             return d.getCreatedAt();
-        }else{
+        } else {
             return fd;
         }
     }

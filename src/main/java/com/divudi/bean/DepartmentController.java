@@ -27,6 +27,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -60,20 +61,71 @@ public class DepartmentController implements Serializable {
         return items;
     }
 
-    public List<Department> getInstitutionDepatrments(Institution ins) {
-        List<Department> deps;
-        if (ins == null) {
-            deps = new ArrayList<>();
-        } else {
-            Map m = new HashMap();
-            m.put("ins", ins);
-            String sql = "Select d From Department d "
-                    + " where d.retired=false "
-                    + " and d.institution=:ins "
-                    + " order by d.name";
-            deps = getFacade().findBySQL(sql, m);
+    public List<Department> getInstitutionDepatrments(Institution ins, boolean includeAllInstitutionDepartmentsIfInstitutionIsNull) {
+        return getInstitutionDepatrments(ins, false, null);
+    }
+
+    public List<Department> getInstitutionDepatrments(DepartmentType departmentType) {
+        return getInstitutionDepatrments(null, true, departmentType);
+    }
+
+    public List<Department> getInstitutionDepatrments(Institution ins, DepartmentType departmentType) {
+        return getInstitutionDepatrments(ins, false, departmentType);
+    }
+
+    public List<Department> getDepartments(String jpql, Map m) {
+        return getDepartments(jpql, m, null);
+    }
+
+    public List<Department> getDepartments(String jpql) {
+        return getDepartments(jpql, null, null);
+    }
+
+    public List<Department> getDepartments(String jpql,  TemporalType t) {
+        return getDepartments(jpql, null, t);
+    }
+    
+    public List<Department> getDepartments(String jpql, Map m, TemporalType t) {
+        if (jpql == null || jpql.isEmpty() || jpql.trim().equals("")) {
+            return new ArrayList<>();
         }
+        if (t == null) {
+            t = TemporalType.DATE;
+        }
+        if (m == null) {
+            m = new HashMap();
+        }
+        return getFacade().findBySQL(jpql, m, t);
+    }
+
+    public List<Department> getInstitutionDepatrments(Institution ins, boolean includeAllInstitutionDepartmentsIfInstitutionIsNull, DepartmentType departmentType) {
+        List<Department> deps;
+        if (!includeAllInstitutionDepartmentsIfInstitutionIsNull) {
+            if (ins == null) {
+                deps = new ArrayList<>();
+                return deps;
+            }
+        }
+        Map m = new HashMap();
+        String sql = "Select d From Department d "
+                + " where d.retired=false ";
+        if (ins != null) {
+            sql += " and d.institution=:ins ";
+            m.put("ins", ins);
+        }
+//        Department d = new Department();
+//        d.getDepartmentType();
+        if (departmentType != null) {
+            sql += " and d.departmentType=:dt ";
+            m.put("dt", departmentType);
+        }
+        sql += " order by d.name";
+        deps = getFacade().findBySQL(sql, m);
         return deps;
+    }
+
+    public List<Department> getInstitutionDepatrments(Institution ins) {
+        return getInstitutionDepatrments(ins, false);
     }
 
     public List<Department> getLogedDepartments() {

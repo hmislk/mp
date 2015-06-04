@@ -1704,7 +1704,7 @@ public class SearchController implements Serializable {
         sql = sql + " order by b.chequeDate ";
         //System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
-//        netTotal = 0.0;
+        netTotal = 0.0;
 //        netTotal = sumFrom(bills).getNetTotal();
 
         for (Bill b : bills) {

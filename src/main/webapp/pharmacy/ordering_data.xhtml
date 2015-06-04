@@ -150,20 +150,23 @@
                             <p:columnGroup type="header">
                                 <p:row>
                                     <p:column rowspan="2"  headerText="Department" ></p:column>
-                                    <p:column  rowspan="2"  headerText="Stocks" ></p:column>
-                                    <p:column colspan="4"  headerText="Reordering" ></p:column>
+                                    <p:column rowspan="2"  headerText="Stocks" ></p:column>
+                                    <p:column colspan="5"  headerText="Reordering" ></p:column>
                                     <p:column colspan="3"  headerText="Usage" ></p:column>
                                     <p:column colspan="2"  headerText="Timing" ></p:column>
                                     
                                 </p:row>
                                 <p:row >
+                                    <p:column  headerText="Stock Sufficent Days" />
                                     <p:column  headerText="Ordering Qty" />
                                     <p:column  headerText="Buffer Stocks" />
                                     <p:column  headerText="Reorder Level" />
                                     <p:column  headerText="Reorder Quentity" />
+                                    
                                     <p:column  headerText="Daily Usage" />
                                     <p:column  headerText="Monthly Usage" />
                                     <p:column  headerText="Annual Usage" />
+                                    
                                     <p:column  headerText="Lead Time" />
                                     <p:column  headerText="Purchase Cycle" />
                                 </p:row>
@@ -171,17 +174,25 @@
 
                             <p:subTable value="#{ir.reorders}" var="r"  >
                                 <f:facet name="header">
-                                    <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{ir.item.name}"  />
+                                    <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{ir.item.name} - #{ir.item.code}"  />
                                 </f:facet>
                                 <p:column >
                                     <p:outputLabel value="#{r.department.name}" styleClass="#{(r.rol gt r.transientStock )?'redText':'greenText'}" ></p:outputLabel>
                                 </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
+                                <p:column style="text-align: right; width:80px!important; color: skyblue;" >
                                     <p:outputLabel value="#{r.transientStock}" >
                                         <f:convertNumber pattern="0.0" ></f:convertNumber>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column style="text-align: right; width:80px!important; height: 18px!important;">
+                                <p:column style="text-align: right; width:80px!important; color: skyblue;">
+                                    <p:outputLabel value="#{r.transientStock/r.demandInUnitsPerDay}" rendered="#{r.demandInUnitsPerDay ne 0.0}">
+                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="0.0" rendered="#{r.demandInUnitsPerDay eq 0.0}">
+                                        <f:convertNumber pattern="0.0" ></f:convertNumber>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="text-align: right; width:80px!important; height: 18px!important; color: skyblue;">
                                     <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important; width: 90px;"  value="#{r.transientOrderingQty}" rendered="#{!reorderController.readOnly}" >
                                     </h:inputText>
                                     <p:outputLabel value="#{r.transientOrderingQty}" rendered="#{reorderController.readOnly}">

@@ -98,8 +98,6 @@ public class ReorderController implements Serializable {
     BillType[] billTypes;
     DepartmentListMethod departmentListMethod;
 
-    
-    
     public DepartmentListMethod getDepartmentListMethod() {
         if (departmentListMethod == null) {
             departmentListMethod = AllDepartmentsOfLoggedInstitution;
@@ -177,9 +175,9 @@ public class ReorderController implements Serializable {
 
     public Date getFromDate() {
         if (fromDate == null) {
-//            Calendar c = Calendar.getInstance();
-//            c.add(Calendar.YEAR, -1);
-//            fromDate = c.getTime();
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.YEAR, -1);
+            fromDate = c.getTime();
             fromDate = new Date();//request by Mr.Mahinda
         }
         return fromDate;
@@ -191,7 +189,7 @@ public class ReorderController implements Serializable {
 
     public Date getToDate() {
         if (toDate == null) {
-            toDate = new Date();
+           toDate = new Date();
         }
         return toDate;
     }
@@ -214,6 +212,10 @@ public class ReorderController implements Serializable {
     public void fillReorders() {
         generateReorders(false);
     }
+    
+    public void fillReordersForRequiredItems() {
+        generateReorders(false,true);
+    }
 
     public List<Reorder> getReorders() {
         return reorders;
@@ -235,13 +237,18 @@ public class ReorderController implements Serializable {
     }
 
     public void generateReorders() {
-        generateReorders(true, departmentListMethod);
+        generateReorders(true, false, departmentListMethod);
     }
 
     public void generateReorders(boolean overWrite) {
-        generateReorders(overWrite, departmentListMethod);
+        generateReorders(overWrite, false, departmentListMethod);
     }
 
+    public void generateReorders(boolean overWrite, boolean requiredItemOnly) {
+        generateReorders(overWrite, requiredItemOnly, departmentListMethod);
+    }
+
+    
     public List<Department> getActiveDepartments(Institution ins, boolean includeAllInstitutionDepartmentsIfInstitutionIsNull) {
         Map<Long, Department> ds;
         ds = new HashMap<>();
@@ -338,7 +345,6 @@ public class ReorderController implements Serializable {
         return "/pharmacy/auto_ordering_by_distributor";
     }
 
-
     List<Item> listedItems;
 
     public List<Item> getListedItems() {
@@ -348,9 +354,7 @@ public class ReorderController implements Serializable {
     public void setListedItems(List<Item> listedItems) {
         this.listedItems = listedItems;
     }
-    
-    
-    
+
     public List<Item> getSelectedItemList() {
         return selectedItemList;
     }
@@ -359,15 +363,15 @@ public class ReorderController implements Serializable {
         this.selectedItemList = selectedItemList;
     }
 
-    private void generateReorders(boolean overWrite, DepartmentListMethod departmentListMethod) {
-        List<Item> iss =null;
+    private void generateReorders(boolean overWrite, boolean requiredItemsOnly, DepartmentListMethod departmentListMethod) {
+        List<Item> iss = null;
         if (autoOrderMethod == AutoOrderMethod.ByDistributor) {
             itemController.setInstituion(institution);
             iss = itemController.getDealorItem();
-        }else if (autoOrderMethod == AutoOrderMethod.ByRol){
-            
-        }else{
-            
+        } else if (autoOrderMethod == AutoOrderMethod.ByRol) {
+
+        } else {
+
         }
         itemReorders = new ArrayList<>();
         int days = ((Long) ((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24))).intValue();
@@ -454,11 +458,17 @@ public class ReorderController implements Serializable {
 
                 r.setTransientOrderingQty(CommonFunctions.roundToTwoDecimalPlaces((r.getBufferStocks() - r.getTransientStock() + (r.getDemandInUnitsPerDay() * (r.getLeadTimeInDays() + r.getPurchaseCycleDurationInDays()))), 0));
 
-                if (r.getTransientOrderingQty() < 0) {
-                    r.setTransientOrderingQty(0.0);
-                }
-                ir.getReorders().add(r);
+//                if (r.getTransientOrderingQty() < 0) {
+//                    r.setTransientOrderingQty(0.0);
+//                }
 
+                if (requiredItemsOnly) {
+                    if(r.getTransientOrderingQty()>0){
+                        ir.getReorders().add(r);
+                    }
+                } else {
+                    ir.getReorders().add(r);
+                }
             }
             itemReorders.add(ir);
         }

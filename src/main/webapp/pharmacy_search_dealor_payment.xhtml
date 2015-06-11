@@ -27,17 +27,23 @@
                                     <p:commandButton id="btnSearch3" ajax="false" value="Search (Cheque Date)" action="#{searchController.createGrnPaymentTableChequeDate()}"/>
                                     <p:commandButton id="btnSearch4" ajax="false" value="Search All (Cheque Date)" action="#{searchController.createGrnPaymentTableAllChequeDate()}"/>
                                 </h:panelGroup>
-                                <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
+                            </h:panelGrid>
+                            <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
+                            <h:panelGrid columns="5" >
                                 <h:outputLabel value="Bill No"/>
                                 <h:outputLabel value="Distributor Name"/>                               
                                 <h:outputLabel value="Net Total"/>
                                 <h:outputLabel value="Bank"/>
                                 <h:outputLabel value="Check No"/>
                                 <p:inputText  value="#{searchController.searchKeyword.billNo}" />
-                                <p:inputText value="#{searchController.searchKeyword.toInstitution}" />                                
+                                <p:autoComplete completeMethod="#{institutionController.completeSupplier}" var="ins" itemLabel="#{ins.name}" 
+                                                itemValue="#{ins}" forceSelection="true" value="#{searchController.institution}" converter="institutionConverter" >
+                                </p:autoComplete>                               
                                 <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
-                                <p:inputText value="#{searchController.searchKeyword.bank}"/>
+                                <p:autoComplete completeMethod="#{institutionController.completeBanks}" var="ins" itemLabel="#{ins.name}" 
+                                                itemValue="#{ins}" forceSelection="true" value="#{searchController.bank}" converter="institutionConverter">
+                                </p:autoComplete>
                                 <p:inputText value="#{searchController.searchKeyword.number}"/>
                             </h:panelGrid>
 
@@ -125,6 +131,11 @@
                                     </h:outputLabel>
                                     <f:setPropertyActionListener value="#{bill}" target="#{dealorPaymentBillSearch.bill}"/>
                                 </h:commandLink>
+                                <f:facet name="footer">
+                                    <h:outputLabel value="#{searchController.netTotal}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputLabel>
+                                </f:facet>
                             </p:column>
                             <p:column headerText="Bank" >
                                 <h:commandLink action="pharmacy_reprint_bill_dealor" >

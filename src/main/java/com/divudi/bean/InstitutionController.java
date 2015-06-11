@@ -303,6 +303,17 @@ public class InstitutionController implements Serializable {
 
         return items;
     }
+    
+    public List<Institution> completeBanks(String qry) {
+        String sql;
+        HashMap hm = new HashMap();
+        hm.put("type", InstitutionType.Bank);
+        sql = "select c from Institution c where c.retired=false and"
+                + " c.institutionType=:type and upper(c.name)"
+                + " like '%" + qry.toUpperCase() + "%' order by c.name";
+        return getFacade().findBySQL(sql, hm);
+        
+    }
 
     public Boolean getCodeDisabled() {
         return codeDisabled;

@@ -58,20 +58,20 @@
                                         <h:outputLabel value="To" ></h:outputLabel>
                                         <p:calendar value="#{reorderController.toDate}"
                                                     pattern="dd MMM yyyy" ></p:calendar>
-                                        
+
                                         <h:outputLabel value="Bill types" ></h:outputLabel>
                                         <p:selectManyMenu style="width: 300px;height: 150px;"
                                                           value="#{reorderController.billTypes}" >
                                             <f:selectItems value="#{enumController.pharmacyBillTypes}" ></f:selectItems>
                                         </p:selectManyMenu>
-                                        
+
                                         <h:outputLabel value="Department List Method" ></h:outputLabel>
                                         <p:selectOneMenu style="width: 300px;   "
-                                                          value="#{reorderController.departmentListMethod}" >
+                                                         value="#{reorderController.departmentListMethod}" >
                                             <f:selectItems value="#{enumController.departmentListMethods}" ></f:selectItems>
                                         </p:selectOneMenu>
-                                        
-                                        
+
+
                                     </h:panelGrid>
 
                                 </p:panel>
@@ -123,11 +123,17 @@
 
 
 
-                            <h:panelGrid columns="4" >
-                                <p:commandButton ajax="false" value="Fill Reorders"
-                                                 actionListener="#{reorderController.fillReorders()}" ></p:commandButton>
+                            <h:panelGrid columns="5" >
                                 <p:commandButton ajax="false" value="Generate Reorders"
                                                  actionListener="#{reorderController.generateReorders()}" ></p:commandButton>
+
+                                <p:commandButton ajax="false" value="Fill All Items"
+                                                 actionListener="#{reorderController.fillReorders()}" ></p:commandButton>
+
+                                <p:commandButton ajax="false" value="Fill Required Items"
+                                                 actionListener="#{reorderController.fillReordersForRequiredItems()}" ></p:commandButton>
+
+
                                 <p:commandButton ajax="false" value="Save Reorders"
                                                  actionListener="#{reorderController.saveReorders()}" ></p:commandButton>
                                 <p:selectBooleanButton id="value2" value="#{reorderController.readOnly}" 
@@ -160,16 +166,17 @@
                                 <p:row>
                                     <p:column rowspan="2"  headerText="Department" ></p:column>
                                     <p:column  rowspan="2"  headerText="Stocks" ></p:column>
-                                    <p:column colspan="4"  headerText="Reordering" ></p:column>
+                                    <p:column colspan="5"  headerText="Reordering" ></p:column>
                                     <p:column colspan="3"  headerText="Usage" ></p:column>
                                     <p:column colspan="2"  headerText="Timing" ></p:column>
-
                                 </p:row>
                                 <p:row >
                                     <p:column  headerText="Ordering Qty" />
                                     <p:column  headerText="Buffer Stocks" />
+                                    <p:column  headerText="Days" />
                                     <p:column  headerText="Reorder Level" />
                                     <p:column  headerText="Reorder Quentity" />
+                                    
                                     <p:column  headerText="Daily Usage" />
                                     <p:column  headerText="Monthly Usage" />
                                     <p:column  headerText="Annual Usage" />
@@ -190,11 +197,15 @@
                                         <f:convertNumber pattern="0.0" ></f:convertNumber>
                                     </p:outputLabel>
                                 </p:column>
+                                <p:column style="text-align: right; width:80px!important;">
+                                    <p:outputLabel value="#{r.transientStock/r.demandInUnitsPerDay}" >
+                                        <f:convertNumber pattern="0" ></f:convertNumber>
+                                    </p:outputLabel>
+                                </p:column>
                                 <p:column style="text-align: right; width:80px!important; height: 18px!important;">
                                     <h:panelGroup rendered="#{r.transientOrderingQty > 0.0}" >
                                         <p:outputLabel value="#{r.transientOrderingQty}" 
-                                                       rendered="#{reorderController.readOnly}"
-                                                       style="font-weight: bold;">
+                                                       rendered="#{reorderController.readOnly}">
                                             <f:convertNumber pattern="0" ></f:convertNumber>
                                         </p:outputLabel>
                                     </h:panelGroup>

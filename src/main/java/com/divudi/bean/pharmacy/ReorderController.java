@@ -98,9 +98,11 @@ public class ReorderController implements Serializable {
     BillType[] billTypes;
     DepartmentListMethod departmentListMethod;
 
+    
+    
     public DepartmentListMethod getDepartmentListMethod() {
-        if(departmentListMethod==null){
-            departmentListMethod=AllDepartmentsOfLoggedInstitution;
+        if (departmentListMethod == null) {
+            departmentListMethod = AllDepartmentsOfLoggedInstitution;
         }
         return departmentListMethod;
     }
@@ -109,8 +111,6 @@ public class ReorderController implements Serializable {
         this.departmentListMethod = departmentListMethod;
     }
 
-    
-    
     public Department getToDepartment() {
         return toDepartment;
     }
@@ -279,11 +279,11 @@ public class ReorderController implements Serializable {
         m.put("fd", getFromDate());
         m.put("td", getToDate());
         List<Department> depst = departmentController.getDepartments(sql, m);
-        
+
         System.out.println("m = " + m);
         System.out.println("sql = " + sql);
         System.out.println("depst = " + depst);
-        
+
         if (false) {
             Stock s = new Stock();
             s.getDepartment();
@@ -308,7 +308,7 @@ public class ReorderController implements Serializable {
         System.out.println("m = " + m);
         System.out.println("sql = " + sql);
         System.out.println("depst = " + depss);
-        
+
         for (Department d : depst) {
             System.out.println("1. d = " + d);
             ds.put(d.getId(), d);
@@ -317,14 +317,58 @@ public class ReorderController implements Serializable {
             System.out.println("2. d = " + d);
             ds.put(d.getId(), d);
         }
-        
+
         List<Department> deps = new ArrayList<>(ds.values());
-        
+
         return deps;
     }
 
+    List<Item> selectedItemList;
+    AutoOrderMethod autoOrderMethod;
+
+    enum AutoOrderMethod {
+
+        ByDistributor,
+        ByRol,
+        ByAll,
+    }
+
+    public String autoOrderByDistributor() {
+        autoOrderMethod = AutoOrderMethod.ByDistributor;
+        return "/pharmacy/auto_ordering_by_distributor";
+    }
+
+
+    List<Item> listedItems;
+
+    public List<Item> getListedItems() {
+        return listedItems;
+    }
+
+    public void setListedItems(List<Item> listedItems) {
+        this.listedItems = listedItems;
+    }
+    
+    
+    
+    public List<Item> getSelectedItemList() {
+        return selectedItemList;
+    }
+
+    public void setSelectedItemList(List<Item> selectedItemList) {
+        this.selectedItemList = selectedItemList;
+    }
+
     private void generateReorders(boolean overWrite, DepartmentListMethod departmentListMethod) {
-        List<Item> iss = itemController.getDealorItem();
+        List<Item> iss =null;
+        if (autoOrderMethod == AutoOrderMethod.ByDistributor) {
+            itemController.setInstituion(institution);
+            iss = itemController.getDealorItem();
+        }else if (autoOrderMethod == AutoOrderMethod.ByRol){
+            
+        }else{
+            
+        }
         itemReorders = new ArrayList<>();
         int days = ((Long) ((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24))).intValue();
         List<Department> deps = null;

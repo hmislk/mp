@@ -67,7 +67,7 @@
                             <p:submenu label="Purchase" rendered="#{webUserController.hasPrivilege('PharmacyPurchase')}">
                                 <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_request"  value="Manual Ordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                 <p:submenu label="Auto ordering" >
-                                    <p:menuitem  ajax="false" action="/pharmacy/auto_ordering_by_distributor"  value="By Distributor" 
+                                    <p:menuitem  ajax="false" action="#{reorderController.autoOrderByDistributor()}"  value="By Distributor" 
                                                  rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_request"  value="By Items Below ROL" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_request"  value="All Item Reordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>

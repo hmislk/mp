@@ -11,6 +11,7 @@ import com.divudi.data.PaymentMethod;
 import com.divudi.data.Sex;
 import com.divudi.data.Title;
 import com.divudi.entity.PaymentScheme;
+import com.divudi.enums.DepartmentListMethod;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -32,6 +33,10 @@ public class EnumController implements Serializable {
         return InvestigationItemValueType.values();
     }
 
+    public DepartmentListMethod[] getDepartmentListMethods(){
+        return DepartmentListMethod.values();
+    }
+    
     public Title[] getTitle() {
         return Title.values();
     }

@@ -165,7 +165,7 @@
                             <p:columnGroup type="header">
                                 <p:row>
                                     <p:column rowspan="2"  headerText="Department" ></p:column>
-                                    <p:column  rowspan="2"  headerText="Stocks" ></p:column>
+                                    <p:column rowspan="2"  headerText="Stocks" ></p:column>
                                     <p:column colspan="5"  headerText="Reordering" ></p:column>
                                     <p:column colspan="3"  headerText="Usage" ></p:column>
                                     <p:column colspan="2"  headerText="Timing" ></p:column>
@@ -192,25 +192,29 @@
                                 <p:column >
                                     <p:outputLabel value="#{r.department.name}" styleClass="#{(r.rol gt r.transientStock )?'redText':'greenText'}" ></p:outputLabel>
                                 </p:column>
+                                
                                 <p:column style="text-align: right; width:80px!important;">
                                     <p:outputLabel value="#{r.transientStock}" >
                                         <f:convertNumber pattern="0.0" ></f:convertNumber>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column style="text-align: right; width:80px!important;">
-                                    <p:outputLabel value="#{r.transientStock/r.demandInUnitsPerDay}" >
-                                        <f:convertNumber pattern="0" ></f:convertNumber>
-                                    </p:outputLabel>
-                                </p:column>
+                               
                                 <p:column style="text-align: right; width:80px!important; height: 18px!important;">
-                                    <h:panelGroup rendered="#{r.transientOrderingQty > 0.0}" >
-                                        <p:outputLabel value="#{r.transientOrderingQty}" 
+                                    <h:panelGroup rendered="#{r.transientOrderingQty > 0.0}"  >
+                                        <p:outputLabel value="#{r.transientOrderingQty}" style="color: green;" 
                                                        rendered="#{reorderController.readOnly}">
                                             <f:convertNumber pattern="0" ></f:convertNumber>
                                         </p:outputLabel>
                                     </h:panelGroup>
                                     <h:inputText style="text-align: right; padding-right: 10px;width: 60px!important; width: 90px;"  value="#{r.transientOrderingQty}" rendered="#{!reorderController.readOnly}" >
                                     </h:inputText>
+                                </p:column>
+                                
+                                 <p:column style="text-align: right; width:80px!important;">
+                                    <p:outputLabel value="#{r.transientStock div r.demandInUnitsPerDay}" >
+                                        <f:convertNumber pattern="0" ></f:convertNumber>
+                                    </p:outputLabel>
+                                    days
                                 </p:column>
                                 <p:column style="text-align: right; width:80px!important;">
                                     <h:outputText style="text-align: right; padding-right: 10px;width: 60px!important;" value="#{r.bufferStocks}" rendered="#{reorderController.readOnly}" >

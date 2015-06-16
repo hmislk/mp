@@ -20,6 +20,7 @@ import com.divudi.facade.WebUserRoleFacade;
 import com.divudi.entity.WebUser;
 import com.divudi.entity.WebUserPrivilege;
 import com.divudi.facade.DepartmentFacade;
+import com.divudi.facade.DrawerFacade;
 import com.divudi.facade.InstitutionFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.StaffFacade;
@@ -83,7 +84,7 @@ public class WebUserController implements Serializable {
     public void createWebUserDrawers() {
         String sql = "select c from WebUser c "
                 + " where c.retired=false "
-                + " c.drawer is not null "
+                + " and c.drawer is not null "
                 + " order by c.drawer.name,c.webUserPerson.name";
 
         webUsers = getFacade().findBySQL(sql);

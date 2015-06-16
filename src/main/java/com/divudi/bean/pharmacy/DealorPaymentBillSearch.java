@@ -7,6 +7,7 @@ package com.divudi.bean.pharmacy;
 import com.divudi.bean.*;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
+import com.divudi.data.InstitutionType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
@@ -230,6 +231,10 @@ public class DealorPaymentBillSearch implements Serializable {
         cb.setBilledBill(getBill());
         cb.copy(getBill());
         cb.invertValue(getBill());
+
+        cb.setBank(getBill().getBank());
+        cb.setChequeDate(getBill().getChequeDate());
+        cb.setChequeRefNo(getBill().getChequeRefNo());
 
         cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.CashRecieveBill, BillNumberSuffix.CRDCAN));
         cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, BillType.CashRecieveBill, BillNumberSuffix.CRDCAN));

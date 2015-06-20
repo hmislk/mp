@@ -204,13 +204,14 @@ public class CreditBean {
         String sql = "select sum(b.netTotal) from"
                 + " Bill b where "
                 + " b.retired=false "
-                + " and b.paymentMethod=:pm "
+                + " and (b.paymentMethod=:pm1 or b.paymentMethod=:pm2) "
                 + " and b.referenceBill=:refBill "
                 + " and (b.billType=:bType1 or b.billType=:bType2 )";
 
         HashMap hm = new HashMap();
         hm.put("refBill", refBill);
-        hm.put("pm", PaymentMethod.Credit);
+        hm.put("pm1", PaymentMethod.Credit);
+        hm.put("pm2", PaymentMethod.Cash);
         hm.put("bType1", BillType.PharmacyGrnReturn);
         hm.put("bType2", BillType.PurchaseReturn);
         return getBillFacade().findDoubleByJpql(sql, hm, TemporalType.DATE);

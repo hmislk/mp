@@ -7,6 +7,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.dataStructure.ItemReorders;
+import com.divudi.data.dataStructure.ItemTransactionSummeryRow;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -18,6 +19,7 @@ import com.divudi.entity.Person;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Reorder;
 import com.divudi.entity.pharmacy.Stock;
+import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.enums.DepartmentListMethod;
 import static com.divudi.enums.DepartmentListMethod.ActiveDepartmentsOfAllInstitutions;
 import static com.divudi.enums.DepartmentListMethod.ActiveDepartmentsOfLoggedInstitution;
@@ -28,7 +30,6 @@ import static com.divudi.enums.DepartmentListMethod.AllPharmaciesOfLoggedInstitu
 import static com.divudi.enums.DepartmentListMethod.LoggedDepartmentOnly;
 import com.divudi.facade.ReorderFacade;
 import com.divudi.facade.util.JsfUtil;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,9 +44,18 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.primefaces.event.RowEditEvent;
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.DateAxis;
+import org.primefaces.model.chart.LineChartSeries;
 
 @Named
 @SessionScoped
@@ -97,6 +107,46 @@ public class ReorderController implements Serializable {
     boolean readOnly = true;
     BillType[] billTypes;
     DepartmentListMethod departmentListMethod;
+    List<ItemTransactionSummeryRow> dailyStockRow;
+    List<ItemTransactionSummeryRow> dailySaleRow;
+    List<ItemTransactionSummeryRow> dailyPurchaseRow;
+    List<ItemTransactionSummeryRow> dailyTransferOutRow;
+    List<ItemTransactionSummeryRow> dailyTransferInRow;
+
+    Item item;
+    Department historyDept;
+
+    private LineChartModel dateModel;
+
+    public LineChartModel getDateModel() {
+        return dateModel;
+    }
+
+    public void createDateModelForStockHistory() {
+        dateModel = new LineChartModel();
+        LineChartSeries series1 = new LineChartSeries();
+        series1.setLabel("Stock Average");
+
+        for (ItemTransactionSummeryRow r : dailyStockRow) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series1.set(df.format(r.getDate()), r.getQuantity());
+        }
+
+        LineChartSeries series2 = new LineChartSeries();
+
+        dateModel.addSeries(series1);
+//        dateModel.addSeries(series2);
+
+        dateModel.setTitle("Item Stock History");
+        dateModel.setZoom(true);
+        dateModel.getAxis(AxisType.Y).setLabel("Stock");
+        DateAxis axis = new DateAxis("Dates");
+        axis.setTickAngle(-50);
+//        axis.setMax("2014-02-01");
+        axis.setTickFormat("%b %#d, %y");
+
+        dateModel.getAxes().put(AxisType.X, axis);
+    }
 
     public DepartmentListMethod getDepartmentListMethod() {
         if (departmentListMethod == null) {
@@ -173,12 +223,106 @@ public class ReorderController implements Serializable {
         this.expectedDeliveryDate = expectedDeliveryDate;
     }
 
+    public void findDailyStockAverage() {
+        findDailyStockAverage(item, historyDept, fromDate, toDate);
+    }
+
+    public void findDailyStockAverage(Item item, Department dept) {
+        this.item = item;
+        this.historyDept = dept;
+        findDailyStockAverage(item, dept, fromDate, toDate);
+    }
+
+    public void findDailyStockAverage(Item item, Department dept, Date fd, Date td) {
+        String jpql;
+        jpql = "SELECT new com.divudi.data.dataStructure.ItemTransactionSummeryRow(s.item, avg(s.stockQty), FUNC('DATE',s.createdAt)) "
+                + " FROM StockHistory s "
+                + " WHERE s.createdAt between :fd and :td "
+                + " and s.item=:item ";
+        Map temMap = new HashMap();
+        temMap.put("fd", fd);
+        temMap.put("td", td);
+        temMap.put("item", item);
+        if (dept != null) {
+            jpql += " and s.department=:d ";
+            temMap.put("d", dept);
+        }
+        StockHistory sh = new StockHistory();
+        sh.getItem();
+        sh.getStockQty();
+        sh.getDepartment();
+        sh.getCreatedAt();
+
+        jpql += " group by FUNC('DATE',s.createdAt) "
+                + "order by FUNC('DATE',s.createdAt)  ";
+
+        System.out.println("jpql = " + jpql);
+        List<Object[]> dsso = ejbFacade.findAggregates(jpql, temMap, TemporalType.DATE);
+
+        if (dsso == null) {
+            dsso = new ArrayList<>();
+            //    System.out.println("new list as null");
+        }
+        dailyStockRow = new ArrayList<>();
+        for (Object b : dsso) {
+            ItemTransactionSummeryRow dsr = (ItemTransactionSummeryRow) b;
+            dailyStockRow.add(dsr);
+        }
+        createDateModelForStockHistory();
+    }
+
+    public void findDailySaleAverage(Item item, Department dept, Date fd, Date td, List<BillType> billTypes) {
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacySale);
+        findDailyTransactionAverage(item, dept, fd, td, bts);
+    }
+    
+    public void findDailyTransactionAverage(Item item, Department dept, Date fd, Date td, List<BillType> billTypes) {
+        String jpql;
+        jpql = "SELECT new com.divudi.data.dataStructure.ItemTransactionSummeryRow(s.item, sum(s.stockQty), FUNC('DATE',s.bill.createdAt)) "
+                + " FROM BillItem s "
+                + " WHERE s.bill.createdAt between :fd and :td "
+                + " and s.item=:item ";
+        Map temMap = new HashMap();
+        temMap.put("fd", fd);
+        temMap.put("td", td);
+        temMap.put("item", item);
+        if (dept != null) {
+            jpql += " and s.bill.department=:d ";
+            temMap.put("d", dept);
+        }
+        jpql += " and s.bill.billType in :bts ";
+        temMap.put("bts", billTypes);
+        StockHistory sh = new StockHistory();
+        sh.getItem();
+        sh.getStockQty();
+        sh.getDepartment();
+        sh.getCreatedAt();
+
+        jpql += " group by FUNC('DATE',s.bill.createdAt) "
+                + "order by FUNC('DATE',s.bill.createdAt)  ";
+
+        System.out.println("jpql = " + jpql);
+        List<Object[]> dsso = ejbFacade.findAggregates(jpql, temMap, TemporalType.DATE);
+
+        if (dsso == null) {
+            dsso = new ArrayList<>();
+            //    System.out.println("new list as null");
+        }
+        dailyStockRow = new ArrayList<>();
+        for (Object b : dsso) {
+            ItemTransactionSummeryRow dsr = (ItemTransactionSummeryRow) b;
+            dailyStockRow.add(dsr);
+        }
+        createDateModelForStockHistory();
+    }
+
     public Date getFromDate() {
         if (fromDate == null) {
             Calendar c = Calendar.getInstance();
             c.add(Calendar.YEAR, -1);
             fromDate = c.getTime();
-            fromDate = new Date();//request by Mr.Mahinda
+//            fromDate = new Date();//request by Mr.Mahinda
         }
         return fromDate;
     }
@@ -189,7 +333,7 @@ public class ReorderController implements Serializable {
 
     public Date getToDate() {
         if (toDate == null) {
-           toDate = new Date();
+            toDate = new Date();
         }
         return toDate;
     }
@@ -212,9 +356,9 @@ public class ReorderController implements Serializable {
     public void fillReorders() {
         generateReorders(false);
     }
-    
+
     public void fillReordersForRequiredItems() {
-        generateReorders(false,true);
+        generateReorders(false, true);
     }
 
     public List<Reorder> getReorders() {
@@ -248,7 +392,6 @@ public class ReorderController implements Serializable {
         generateReorders(overWrite, requiredItemOnly, departmentListMethod);
     }
 
-    
     public List<Department> getActiveDepartments(Institution ins, boolean includeAllInstitutionDepartmentsIfInstitutionIsNull) {
         Map<Long, Department> ds;
         ds = new HashMap<>();
@@ -461,9 +604,8 @@ public class ReorderController implements Serializable {
 //                if (r.getTransientOrderingQty() < 0) {
 //                    r.setTransientOrderingQty(0.0);
 //                }
-
                 if (requiredItemsOnly) {
-                    if(r.getTransientOrderingQty()>0){
+                    if (r.getTransientOrderingQty() > 0) {
                         ir.getReorders().add(r);
                     }
                 } else {
@@ -1044,6 +1186,30 @@ public class ReorderController implements Serializable {
 
     public PharmacyBean getPharmacyBean() {
         return pharmacyBean;
+    }
+
+    public List<ItemTransactionSummeryRow> getDailyStockRow() {
+        return dailyStockRow;
+    }
+
+    public void setDailyStockRow(List<ItemTransactionSummeryRow> dailyStockRow) {
+        this.dailyStockRow = dailyStockRow;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public Department getHistoryDept() {
+        return historyDept;
+    }
+
+    public void setHistoryDept(Department historyDept) {
+        this.historyDept = historyDept;
     }
 
     @FacesConverter(forClass = Reorder.class)

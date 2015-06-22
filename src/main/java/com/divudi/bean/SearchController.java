@@ -36,8 +36,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
 import static ch.lambdaj.Lambda.*;
+import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.facade.util.JsfUtil;
+import java.util.Arrays;
 
 /**
  *
@@ -83,6 +85,9 @@ public class SearchController implements Serializable {
 
     double cashInOutVal;
     double cashTranVal;
+    
+    boolean withoutCancell=false;
+    boolean onlyRealized=false;
 
     public void realizeBill() {
         if (realizingBill == null) {
@@ -92,7 +97,7 @@ public class SearchController implements Serializable {
         realizingBill.setReactivated(true);
         realizingBill.setApproveAt(new Date());
         getBillFacade().edit(realizingBill);
-        createGrnPaymentTable();
+//        createGrnPaymentTable();
     }
 
     public Bill getRealizingBill() {
@@ -1589,6 +1594,21 @@ public class SearchController implements Serializable {
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.createdAt between :fromDate and :toDate"
                 + " and b.retired=false ";
+        
+        if(onlyRealized){
+            sql+=" and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+            
+            List<PaymentMethod> pms=Arrays.asList(PaymentMethod.Cash,PaymentMethod.Slip,PaymentMethod.Agent,PaymentMethod.Card,PaymentMethod.Credit);
+            
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        }
+
+        if (!withoutCancell) {
+            System.err.println("innnn");
+            //for hide cancell bill
+            sql += " and b.cancelled=false ";
+        }
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
@@ -1660,6 +1680,21 @@ public class SearchController implements Serializable {
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.chequeDate between :fromDate and :toDate"
                 + " and b.retired=false ";
+        
+        if(onlyRealized){
+            sql+=" and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+            
+            List<PaymentMethod> pms=Arrays.asList(PaymentMethod.Cash,PaymentMethod.Slip,PaymentMethod.Agent,PaymentMethod.Card,PaymentMethod.Credit);
+            
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        }
+        
+        if (!withoutCancell) {
+            System.err.println("innnn");
+            //for hide cancell bill
+            sql += " and b.cancelled=false  ";
+        }
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
@@ -1840,6 +1875,21 @@ public class SearchController implements Serializable {
                 + " and b.createdAt between :fromDate and :toDate "
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.retired=false ";
+        
+        if(onlyRealized){
+            sql+=" and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+            
+            List<PaymentMethod> pms=Arrays.asList(PaymentMethod.Cash,PaymentMethod.Slip,PaymentMethod.Agent,PaymentMethod.Card,PaymentMethod.Credit);
+            
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        }
+        
+        if (!withoutCancell) {
+            System.err.println("innnn");
+            //for hide cancell bill
+            sql += " and b.cancelled=false  ";
+        }
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
@@ -1900,6 +1950,21 @@ public class SearchController implements Serializable {
                 + " and b.chequeDate between :fromDate and :toDate "
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.retired=false ";
+        
+        if(onlyRealized){
+            sql+=" and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+            
+            List<PaymentMethod> pms=Arrays.asList(PaymentMethod.Cash,PaymentMethod.Slip,PaymentMethod.Agent,PaymentMethod.Card,PaymentMethod.Credit);
+            
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        }
+        
+        if (!withoutCancell) {
+            System.err.println("innnn");
+            //for hide cancell bill
+            sql += " and b.cancelled=false  ";
+        }
 
         if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
             sql += " and  (upper(b.insId) like :billNo )";
@@ -1950,6 +2015,35 @@ public class SearchController implements Serializable {
 
     }
 
+    public void cancelChequesss() {
+        bills = new ArrayList<>();
+        String sql;
+        Map temMap = new HashMap();
+
+        sql = "select b from Bill b"
+                + " where b.billType = :billType "
+                + " and b.toInstitution.institutionType=:insTp "
+                + " and b.retired=false "
+                + " and type(b)=:class "
+                //                + " and b.bank is null "
+                //                + " and b.chequeRefNo is null "
+                //                + " and b.chequeDate is null "
+                + " and (b.bank is null or b.chequeRefNo is null or b.chequeDate is null) ";
+
+        sql += " order by b.createdAt ";
+//    
+        temMap.put("billType", BillType.GrnPayment);
+        temMap.put("insTp", InstitutionType.Dealer);
+        temMap.put("class", CancelledBill.class);
+
+        System.err.println("Sql " + sql);
+        //    System.out.println("temMap = " + temMap);
+
+        bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
+
+        System.out.println("bills.size() = " + bills.size());
+    }
+    
     public void createGrnPaymentTableAllStore() {
         bills = null;
         String sql;
@@ -3449,6 +3543,22 @@ public class SearchController implements Serializable {
 
     public void setCashTranVal(double cashTranVal) {
         this.cashTranVal = cashTranVal;
+    }
+
+    public boolean isWithoutCancell() {
+        return withoutCancell;
+    }
+
+    public void setWithoutCancell(boolean withoutCancell) {
+        this.withoutCancell = withoutCancell;
+    }
+
+    public boolean isOnlyRealized() {
+        return onlyRealized;
+    }
+
+    public void setOnlyRealized(boolean onlyRealized) {
+        this.onlyRealized = onlyRealized;
     }
 
 }

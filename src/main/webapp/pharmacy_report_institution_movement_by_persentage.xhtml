@@ -30,7 +30,7 @@
                             <h:outputLabel value="From" ></h:outputLabel>
                             <p:calendar value="#{pharmacyController.fromDate}"
                                         pattern="dd MM yyyy hh mm a" ></p:calendar>
-                            
+
 
                             <h:outputLabel value="Persentage" ></h:outputLabel>
                             <h:panelGroup id="gpPer" >
@@ -38,7 +38,7 @@
                                 <h:inputHidden id="txtPer" value="#{pharmacyController.persentage}" />
                                 <p:slider for="txtPer" maxValue="200" minValue="0" display="ttPer"  ></p:slider>
                             </h:panelGroup>
-                            
+
                             <p:spacer style="width: 50px;" ></p:spacer>
                             <h:outputLabel value="To" ></h:outputLabel>
                             <p:calendar value="#{pharmacyController.toDate}"
@@ -54,7 +54,7 @@
                         </h:panelGrid>
 
                         <p:dataGrid value="#{pharmacyController.stockAverages}" var="sA" columns="1">
-
+                            #{sA.item.name}   #{sA.item.code}
                             <p:dataTable styleClass="noBorder" value="#{sA.institutionStocks}" var="ins">
                                 <p:columnGroup type="header">
                                     <p:row>

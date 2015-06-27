@@ -10,16 +10,11 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.BillType;
-import com.divudi.data.dataStructure.DepartmentSale;
-import com.divudi.data.dataStructure.DepartmentStock;
 import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import com.divudi.facade.StockFacade;
 import com.divudi.entity.pharmacy.Stock;
-import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.DepartmentFacade;
-import static com.lowagie.text.SpecialSymbol.get;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

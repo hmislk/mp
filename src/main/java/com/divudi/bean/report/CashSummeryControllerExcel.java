@@ -48,7 +48,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 

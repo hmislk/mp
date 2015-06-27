@@ -20,8 +20,6 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
-import javax.persistence.TemporalType;
-//import org.hamcrest.Matchers;
 
 /**
  *

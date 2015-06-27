@@ -7,6 +7,7 @@ import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.dataStructure.ItemReorders;
+import com.divudi.data.dataStructure.ItemTransactionSummeryRow;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -18,6 +19,7 @@ import com.divudi.entity.Person;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Reorder;
 import com.divudi.entity.pharmacy.Stock;
+import com.divudi.entity.pharmacy.StockHistory;
 import com.divudi.enums.DepartmentListMethod;
 import static com.divudi.enums.DepartmentListMethod.ActiveDepartmentsOfAllInstitutions;
 import static com.divudi.enums.DepartmentListMethod.ActiveDepartmentsOfLoggedInstitution;
@@ -28,7 +30,6 @@ import static com.divudi.enums.DepartmentListMethod.AllPharmaciesOfLoggedInstitu
 import static com.divudi.enums.DepartmentListMethod.LoggedDepartmentOnly;
 import com.divudi.facade.ReorderFacade;
 import com.divudi.facade.util.JsfUtil;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,9 +44,18 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.primefaces.event.RowEditEvent;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.DateAxis;
+import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.LineChartSeries;
 
 @Named
 @SessionScoped
@@ -93,10 +103,95 @@ public class ReorderController implements Serializable {
     Date nextDeliveryDate;
     List<Reorder> reorders;
     List<ItemReorders> itemReorders;
-    List<Item> selectedItems;
+    List<Reorder> userSelectedReorders;
+    List<Item> selectableItems;
+    List<Item> userSelectedItems;
+    AutoOrderMethod autoOrderMethod;
     boolean readOnly = true;
     BillType[] billTypes;
     DepartmentListMethod departmentListMethod;
+    List<Reorder> reordersAvailableForSelection;
+
+    Item item;
+    Department historyDept;
+
+    private LineChartModel dateModel;
+
+    public LineChartModel getDateModel() {
+        return dateModel;
+    }
+
+    public void createDailyItemSummery() {
+        createDailyItemSummery(item, historyDept, fromDate, toDate);
+    }
+
+    public void createDailyItemSummery(Item item, Department dept) {
+        this.item = item;
+        this.historyDept = dept;
+        createDailyItemSummery(item, dept, fromDate, toDate);
+    }
+
+    public void createDailyItemSummery(Item item, Department dept, Date fromDate, Date toDate) {
+        dateModel = new LineChartModel();
+        List<ItemTransactionSummeryRow> rows;
+
+        LineChartSeries series1 = new LineChartSeries();
+        series1.setLabel("Stock Average");
+        rows = findDailyStockAverage(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series1.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series1);
+
+        LineChartSeries series2 = new LineChartSeries();
+        series2.setLabel("Sales");
+        rows = findDailySale(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series2.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series2);
+
+        LineChartSeries series3 = new LineChartSeries();
+        series3.setLabel("Purchase/Good Receive");
+        rows = findDailyPurchase(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series3.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series3);
+
+        LineChartSeries series4 = new LineChartSeries();
+        series4.setLabel("Transfer Issue");
+        rows = findDailyTransferOut(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series4.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series4);
+
+        LineChartSeries series5 = new LineChartSeries();
+        series5.setLabel("Transfer Receive");
+        rows = findDailyTransferIn(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series5.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series5);
+
+        dateModel.setTitle("Item Transactions");
+        dateModel.setZoom(true);
+        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
+        dateModel.setLegendPosition("ne");
+        dateModel.getAxis(AxisType.Y).setLabel("Stock");
+        DateAxis axis = new DateAxis("Dates");
+        axis.setTickAngle(-50);
+//        axis.setMax("2014-02-01");
+        axis.setTickFormat("%b %#d, %y");
+
+        dateModel.getAxes().put(AxisType.X, axis);
+    }
 
     public DepartmentListMethod getDepartmentListMethod() {
         if (departmentListMethod == null) {
@@ -173,12 +268,133 @@ public class ReorderController implements Serializable {
         this.expectedDeliveryDate = expectedDeliveryDate;
     }
 
+    public void findDailyStockAverage() {
+        findDailyStockAverage(item, historyDept, fromDate, toDate);
+    }
+
+    public void findDailyStockAverage(Item item, Department dept) {
+        this.item = item;
+        this.historyDept = dept;
+        findDailyStockAverage(item, dept, fromDate, toDate);
+    }
+
+    public List<ItemTransactionSummeryRow> findDailyStockAverage(Item item, Department dept, Date fd, Date td) {
+        String jpql;
+        List<ItemTransactionSummeryRow> rows;
+        jpql = "SELECT new com.divudi.data.dataStructure.ItemTransactionSummeryRow(s.item, avg(s.stockQty), FUNC('DATE',s.createdAt)) "
+                + " FROM StockHistory s "
+                + " WHERE s.createdAt between :fd and :td "
+                + " and s.item=:item ";
+        Map temMap = new HashMap();
+        temMap.put("fd", fd);
+        temMap.put("td", td);
+        temMap.put("item", item);
+        if (dept != null) {
+            jpql += " and s.department=:d ";
+            temMap.put("d", dept);
+        }
+        StockHistory sh = new StockHistory();
+        sh.getItem();
+        sh.getStockQty();
+        sh.getDepartment();
+        sh.getCreatedAt();
+
+        jpql += " group by FUNC('DATE',s.createdAt) "
+                + "order by FUNC('DATE',s.createdAt)  ";
+
+        System.out.println("jpql = " + jpql);
+        List<Object[]> dsso = ejbFacade.findAggregates(jpql, temMap, TemporalType.DATE);
+
+        if (dsso == null) {
+            dsso = new ArrayList<>();
+            //    System.out.println("new list as null");
+        }
+        rows = new ArrayList<>();
+        for (Object b : dsso) {
+            ItemTransactionSummeryRow dsr = (ItemTransactionSummeryRow) b;
+            rows.add(dsr);
+        }
+        return rows;
+    }
+
+    public List<ItemTransactionSummeryRow> findDailySale(Item item, Department dept, Date fd, Date td) {
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacySale);
+        return findDailyTransactions(item, dept, fd, td, bts);
+    }
+
+    public List<ItemTransactionSummeryRow> findDailyPurchase(Item item, Department dept, Date fd, Date td) {
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyPurchaseBill);
+        bts.add(BillType.PharmacyGrnBill);
+        return findDailyTransactions(item, dept, fd, td, bts);
+    }
+
+    public List<ItemTransactionSummeryRow> findDailyTransferIn(Item item, Department dept, Date fd, Date td) {
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyTransferReceive);
+        return findDailyTransactions(item, dept, fd, td, bts);
+    }
+
+    public List<ItemTransactionSummeryRow> findDailyTransferOut(Item item, Department dept, Date fd, Date td) {
+        List<BillType> bts = new ArrayList<>();
+        bts.add(BillType.PharmacyTransferIssue);
+        return findDailyTransactions(item, dept, fd, td, bts);
+    }
+
+    public List<ItemTransactionSummeryRow> findDailyTransactions(Item item, Department dept, Date fd, Date td, List<BillType> billTypes) {
+        String jpql;
+        List<ItemTransactionSummeryRow> rows;
+        if (false) {
+            BillItem bi = new BillItem();
+            bi.getQty();
+            bi.getItem();
+        }
+        jpql = "SELECT new com.divudi.data.dataStructure.ItemTransactionSummeryRow(s.item, sum(s.qty), FUNC('DATE',s.bill.createdAt)) "
+                + " FROM BillItem s "
+                + " WHERE s.bill.createdAt between :fd and :td "
+                + " and s.item=:item ";
+        Map temMap = new HashMap();
+        temMap.put("fd", fd);
+        temMap.put("td", td);
+        temMap.put("item", item);
+        if (dept != null) {
+            jpql += " and s.bill.department=:d ";
+            temMap.put("d", dept);
+        }
+        jpql += " and s.bill.billType in :bts ";
+        temMap.put("bts", billTypes);
+        StockHistory sh = new StockHistory();
+        sh.getItem();
+        sh.getStockQty();
+        sh.getDepartment();
+        sh.getCreatedAt();
+
+        jpql += " group by FUNC('DATE',s.bill.createdAt) "
+                + "order by FUNC('DATE',s.bill.createdAt)  ";
+
+        System.out.println("jpql = " + jpql);
+        List<Object[]> dsso = ejbFacade.findAggregates(jpql, temMap, TemporalType.DATE);
+
+        if (dsso == null) {
+            dsso = new ArrayList<>();
+            //    System.out.println("new list as null");
+        }
+        rows = new ArrayList<>();
+        for (Object b : dsso) {
+            ItemTransactionSummeryRow dsr = (ItemTransactionSummeryRow) b;
+            dsr.setQuantity(Math.abs(dsr.getQuantity()));
+            rows.add(dsr);
+        }
+        return rows;
+    }
+
     public Date getFromDate() {
         if (fromDate == null) {
             Calendar c = Calendar.getInstance();
             c.add(Calendar.YEAR, -1);
             fromDate = c.getTime();
-            fromDate = new Date();//request by Mr.Mahinda
+//            fromDate = new Date();//request by Mr.Mahinda
         }
         return fromDate;
     }
@@ -189,7 +405,7 @@ public class ReorderController implements Serializable {
 
     public Date getToDate() {
         if (toDate == null) {
-           toDate = new Date();
+            toDate = new Date();
         }
         return toDate;
     }
@@ -212,9 +428,9 @@ public class ReorderController implements Serializable {
     public void fillReorders() {
         generateReorders(false);
     }
-    
+
     public void fillReordersForRequiredItems() {
-        generateReorders(false,true);
+        generateReorders(false, true);
     }
 
     public List<Reorder> getReorders() {
@@ -236,6 +452,60 @@ public class ReorderController implements Serializable {
         this.itemReorders = itemReorders;
     }
 
+    public void listAllItems() {
+        String j;
+        Map m = new HashMap();
+        if (false) {
+            Reorder r = new Reorder();
+            r.getDepartment();
+            r.getRol();
+        }
+        j = "select r from Reorder r where r.department=:dept ";
+        m.put("dept", getDepartment());
+        reordersAvailableForSelection = new ArrayList<>();
+        System.out.println("j = " + j);
+        System.out.println("m = " + m);
+        reordersAvailableForSelection = ejbFacade.findBySQL(j, m);
+        System.out.println("reordersAvailableForSelection.size() = " + reordersAvailableForSelection.size());
+        userSelectedItems = new ArrayList<>();
+        selectableItems = new ArrayList<>();
+        for (Reorder r : reordersAvailableForSelection) {
+            double s = pharmacyBean.getStockQty(r.getItem(), department);
+            r.setTransientStock(s);
+            selectableItems.add(r.getItem());
+        }
+    }
+
+    public void listItemsBelowRol() {
+        String j;
+        Map m = new HashMap();
+        if (false) {
+            Reorder r = new Reorder();
+            r.getDepartment();
+            r.getRol();
+        }
+        j = "select r from Reorder r where r.department=:dept ";
+        m.put("dept", getDepartment());
+        reordersAvailableForSelection = new ArrayList<>();
+        System.out.println("j = " + j);
+        System.out.println("m = " + m);
+        List<Reorder> lst = ejbFacade.findBySQL(j, m);
+        System.out.println("lst.size() = " + lst.size());
+        userSelectedItems = new ArrayList<>();
+        selectableItems = new ArrayList<>();
+        for (Reorder r : lst) {
+
+            double s = pharmacyBean.getStockQty(r.getItem(), department);
+            System.out.println("s = " + s);
+            System.out.println("r.getRol() = " + r.getRol());
+            if (r.getRol() >= s) {
+                r.setTransientStock(s);
+                reordersAvailableForSelection.add(r);
+                selectableItems.add(r.getItem());
+            }
+        }
+    }
+
     public void generateReorders() {
         generateReorders(true, false, departmentListMethod);
     }
@@ -248,7 +518,6 @@ public class ReorderController implements Serializable {
         generateReorders(overWrite, requiredItemOnly, departmentListMethod);
     }
 
-    
     public List<Department> getActiveDepartments(Institution ins, boolean includeAllInstitutionDepartmentsIfInstitutionIsNull) {
         Map<Long, Department> ds;
         ds = new HashMap<>();
@@ -330,9 +599,6 @@ public class ReorderController implements Serializable {
         return deps;
     }
 
-    List<Item> selectedItemList;
-    AutoOrderMethod autoOrderMethod;
-
     enum AutoOrderMethod {
 
         ByDistributor,
@@ -345,6 +611,16 @@ public class ReorderController implements Serializable {
         return "/pharmacy/auto_ordering_by_distributor";
     }
 
+    public String autoOrderByRol() {
+        autoOrderMethod = AutoOrderMethod.ByDistributor;
+        return "/pharmacy/auto_ordering_by_items_below_rol";
+    }
+
+    public String autoOrderByAllItems() {
+        autoOrderMethod = AutoOrderMethod.ByAll;
+        return "/pharmacy/auto_ordering_by_all_items";
+    }
+
     List<Item> listedItems;
 
     public List<Item> getListedItems() {
@@ -355,23 +631,39 @@ public class ReorderController implements Serializable {
         this.listedItems = listedItems;
     }
 
-    public List<Item> getSelectedItemList() {
-        return selectedItemList;
+    public List<Item> getUserSelectedItems() {
+        return userSelectedItems;
     }
 
-    public void setSelectedItemList(List<Item> selectedItemList) {
-        this.selectedItemList = selectedItemList;
+    public void setUserSelectedItems(List<Item> userSelectedItems) {
+        this.userSelectedItems = userSelectedItems;
+    }
+
+    public void generateUserSelectedItemsFromUserSelectedReorders() {
+        userSelectedItems = new ArrayList<>();
+        System.out.println("userSelectedItems.size() = " + userSelectedItems.size());
+        for (Reorder r : userSelectedReorders) {
+            userSelectedItems.add(r.getItem());
+        }
+        System.out.println("userSelectedItems.size() = " + userSelectedItems.size());
     }
 
     private void generateReorders(boolean overWrite, boolean requiredItemsOnly, DepartmentListMethod departmentListMethod) {
         List<Item> iss = null;
+        System.out.println("generateReorders");
+        System.out.println("iss = " + iss);
+        
         if (autoOrderMethod == AutoOrderMethod.ByDistributor) {
             itemController.setInstituion(institution);
             iss = itemController.getDealorItem();
         } else if (autoOrderMethod == AutoOrderMethod.ByRol) {
-
+            itemController.setInstituion(institution);
+//            generateUserSelectedItemsFromUserSelectedReorders();
+            iss = userSelectedItems;
         } else {
-
+            itemController.setInstituion(institution);
+//            generateUserSelectedItemsFromUserSelectedReorders();
+            iss = userSelectedItems;
         }
         itemReorders = new ArrayList<>();
         int days = ((Long) ((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24))).intValue();
@@ -406,6 +698,7 @@ public class ReorderController implements Serializable {
         }
 
         for (Item i : iss) {
+            System.out.println("i.getName() = " + i.getName());
             ItemReorders ir = new ItemReorders();
             ir.setItem(i);
             int temNo = 0;
@@ -461,9 +754,8 @@ public class ReorderController implements Serializable {
 //                if (r.getTransientOrderingQty() < 0) {
 //                    r.setTransientOrderingQty(0.0);
 //                }
-
                 if (requiredItemsOnly) {
-                    if(r.getTransientOrderingQty()>0){
+                    if (r.getTransientOrderingQty() > 0) {
                         ir.getReorders().add(r);
                     }
                 } else {
@@ -506,12 +798,12 @@ public class ReorderController implements Serializable {
         UtilityController.addSuccessMessage("Reorder Level Updted");
     }
 
-    public List<Item> getSelectedItems() {
-        return selectedItems;
+    public List<Item> getSelectableItems() {
+        return selectableItems;
     }
 
-    public void setSelectedItems(List<Item> selectedItems) {
-        this.selectedItems = selectedItems;
+    public void setSelectableItems(List<Item> selectableItems) {
+        this.selectableItems = selectableItems;
     }
 
     public String createPharmacyOrderRequest() {
@@ -618,87 +910,6 @@ public class ReorderController implements Serializable {
             }
         }
         purchaseOrderRequestController.calTotal();
-    }
-
-    public void fillDepartmentReorders() {
-        Map m = new HashMap();
-        m.put("d", department);
-        m.put("items", selectedItems);
-
-        String sql = "Select r from Reorder r where r.item in :items and r.department=:d";
-        //    System.out.println(sql);
-        //    System.out.println("sql = " + sql);
-        //    System.out.println("m = " + m);
-        items = getEjbFacade().findBySQL(sql, m);
-    }
-
-    public void createDepartmentReorders() {
-        //    System.out.println("create department reorders");
-        items = new ArrayList<>();
-        if (department == null) {
-            JsfUtil.addErrorMessage("Please select a department");
-            return;
-        }
-        if (selectedItems == null || selectedItems.isEmpty()) {
-            JsfUtil.addErrorMessage("Please select one or more items");
-            return;
-        }
-        //    System.out.println("selectedItems = " + selectedItems);
-        for (Item a : selectedItems) {
-            Reorder r;
-            Map m = new HashMap();
-            m.put("d", department);
-            m.put("i", a);
-            //    System.out.println("m = " + m);
-            String sql = "Select r from Reorder r where r.item=:i and r.department=:d";
-            //    System.out.println("sql = " + sql);
-            r = getEjbFacade().findFirstBySQL(sql, m);
-            //    System.out.println("r = " + r);
-            if (r == null) {
-
-                r = new Reorder();
-
-                r.setDepartment(department);
-
-                r.setInstitution(institution);
-
-                r.setItem(a);
-
-                r.setMonthsConsideredForShortTermAnalysis(12);
-
-                r.setYearsConsideredForLognTermAnalysis(5);
-
-                r.setPerson(null);
-
-                r.setServiceLevel(0.0);
-
-                r.setSupplier(null);
-
-                int cd = calculateOrderingCycleDurationInDays(r);
-                //    System.out.println("cd = " + cd);
-                r.setPurchaseCycleDurationInDays(cd);
-
-                double dpdiu = calculateDailyDemandInUnits(r);
-                //    System.out.println("dpdiu = " + dpdiu);
-                r.setDemandInUnitsPerDay(dpdiu);
-
-                int lt = calculateLeadTime(r);
-                //    System.out.println("lt = " + lt);
-                r.setLeadTimeInDays(lt);
-
-                double roq = calculateRoq(r);
-                //    System.out.println("roq = " + roq);
-                r.setRoq(roq);
-
-                double bufferStocks = dpdiu * 7;
-                //    System.out.println("bufferStocks = " + bufferStocks);
-                r.setBufferStocks(bufferStocks);
-
-                getEjbFacade().create(r);
-
-            }
-            items.add(r);
-        }
     }
 
     public double calculateRoq(Reorder reorder) {
@@ -1044,6 +1255,38 @@ public class ReorderController implements Serializable {
 
     public PharmacyBean getPharmacyBean() {
         return pharmacyBean;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public Department getHistoryDept() {
+        return historyDept;
+    }
+
+    public void setHistoryDept(Department historyDept) {
+        this.historyDept = historyDept;
+    }
+
+    public List<Reorder> getReordersAvailableForSelection() {
+        return reordersAvailableForSelection;
+    }
+
+    public void setReordersAvailableForSelection(List<Reorder> reordersAvailableForSelection) {
+        this.reordersAvailableForSelection = reordersAvailableForSelection;
+    }
+
+    public List<Reorder> getUserSelectedReorders() {
+        return userSelectedReorders;
+    }
+
+    public void setUserSelectedReorders(List<Reorder> userSelectedReorders) {
+        this.userSelectedReorders = userSelectedReorders;
     }
 
     @FacesConverter(forClass = Reorder.class)

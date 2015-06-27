@@ -8,12 +8,9 @@ import com.divudi.facade.WebUserFacade;
 import java.io.Serializable;
 import javax.inject.Named; import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.inject.Inject;
 
 /**

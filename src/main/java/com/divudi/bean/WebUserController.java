@@ -30,7 +30,6 @@ import java.util.Calendar;
 import java.util.List;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -83,7 +82,7 @@ public class WebUserController implements Serializable {
     public void createWebUserDrawers() {
         String sql = "select c from WebUser c "
                 + " where c.retired=false "
-                + " c.drawer is not null "
+                + " and c.drawer is not null "
                 + " order by c.drawer.name,c.webUserPerson.name";
 
         webUsers = getFacade().findBySQL(sql);

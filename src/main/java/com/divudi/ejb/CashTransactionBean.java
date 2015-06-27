@@ -6,7 +6,6 @@
 package com.divudi.ejb;
 
 import com.divudi.data.InOutType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.entity.Bill;
 import com.divudi.entity.cashTransaction.CashTransaction;
 import com.divudi.entity.cashTransaction.CashTransactionHistory;

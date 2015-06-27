@@ -47,45 +47,18 @@
 
                             <p:spacer ></p:spacer>
                             <p:commandButton ajax="false" value="Fill Stock History"
-                                             actionListener="#{reorderController.findDailyStockAverage()}" ></p:commandButton>
+                                             actionListener="#{reorderController.createDailyItemSummery() }" ></p:commandButton>
 
                         </h:panelGrid>
 
-                        <h:panelGrid columns="2" >
+                      
 
-                            <p:dataTable id="tbl"
-                                         styleClass="noBorder" value="#{reorderController.dailyStockRow}" var="ir"
-                                         rows="20"
-                                         paginator="true"
-                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                         rowsPerPageTemplate="20,50,100"
-                                         editable="true"
-                                         editMode="cell"
-                                         >
-                                <f:facet name="header">
-                                    <h:outputLabel value="Item Stock History" ></h:outputLabel>
-                                </f:facet>
-
-                                <p:column headerText="Date" >
-                                    <h:outputLabel value="#{ir.date}" >
-                                        <f:convertDateTime pattern="dd MMMM yyyy" ></f:convertDateTime>
-                                    </h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Stock" >
-                                    <h:outputLabel value="#{ir.quantity}" >
-                                        <f:convertNumber pattern="#,##0" ></f:convertNumber>
-                                    </h:outputLabel>
-                                </p:column>
-
-
-                            </p:dataTable>     
-
-
-                        </h:panelGrid>
-
-                        <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
-                        <p:chart widgetVar="chart"  type="line" model="#{reorderController.dateModel}" style="height:400px;"/>
+                        <p:commandButton rendered="#{reorderController.dateModel ne null}" type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
+                        <p:chart rendered="#{reorderController.dateModel ne null}" widgetVar="chart"  type="line" 
+                                 model="#{reorderController.dateModel}" 
+                                 style="height:400px;"
+                                 />
+                        
 
 
                     </p:panel>

@@ -10,9 +10,7 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.SearchKeyword;
-import com.divudi.entity.Bill;
 import com.divudi.entity.Institution;
 import java.util.TimeZone;
 import com.divudi.entity.Item;
@@ -37,8 +35,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.persistence.TemporalType;
-import org.jfree.base.log.LogConfiguration;
 
 /**
  *

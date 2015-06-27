@@ -12,7 +12,6 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.DepartmentType;
 import com.divudi.ejb.BillNumberBean;
-import com.divudi.entity.Department;
 import com.divudi.facade.AmpFacade;
 import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Vmp;

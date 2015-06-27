@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named; import javax.ejb.EJB;
 import javax.persistence.TemporalType;

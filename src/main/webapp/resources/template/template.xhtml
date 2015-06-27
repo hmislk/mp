@@ -69,8 +69,8 @@
                                 <p:submenu label="Auto ordering" >
                                     <p:menuitem  ajax="false" action="#{reorderController.autoOrderByDistributor()}"  value="By Distributor" 
                                                  rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_request"  value="By Items Below ROL" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
-                                    <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_request"  value="All Item Reordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
+                                    <p:menuitem  ajax="false" action="#{reorderController.autoOrderByRol()}"  value="By Items Below ROL" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
+                                    <p:menuitem  ajax="false" action="#{reorderController.autoOrderByAllItems()}"  value="All Item Reordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                 </p:submenu>
                                 <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_list_to_approve"  value="Order Approval" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_purchase_order_list_for_recieve"  value="Good Receive"  actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyGoodReceive')}" ></p:menuitem>                                        

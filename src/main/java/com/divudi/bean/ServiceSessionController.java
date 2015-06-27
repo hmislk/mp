@@ -8,18 +8,13 @@
  */
 package com.divudi.bean;
 
-import com.divudi.data.InstitutionType;
-import com.divudi.entity.Institution;
 import com.divudi.facade.ServiceSessionFacade;
 import com.divudi.entity.ServiceSession;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.inject.Named; import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;

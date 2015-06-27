@@ -6,17 +6,14 @@
 
 package com.divudi.bean;
 
-import com.divudi.entity.BillFee;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillEntryFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
-import com.divudi.facade.util.JsfUtil;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 /**
  *

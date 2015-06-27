@@ -7,7 +7,6 @@ package com.divudi.bean.pharmacy;
 import com.divudi.bean.*;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
-import com.divudi.data.PaymentMethod;
 import com.divudi.ejb.BillBean;
 import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.CashTransactionBean;
@@ -21,7 +20,6 @@ import com.divudi.entity.BillFee;
 import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
-import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.WebUser;
 import com.divudi.facade.BillComponentFacade;
 import com.divudi.facade.BillFacade;
@@ -40,7 +38,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.inject.Named;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.enterprise.context.SessionScoped;
 import javax.persistence.Temporal;
@@ -230,6 +227,10 @@ public class DealorPaymentBillSearch implements Serializable {
         cb.setBilledBill(getBill());
         cb.copy(getBill());
         cb.invertValue(getBill());
+
+        cb.setBank(getBill().getBank());
+        cb.setChequeDate(getBill().getChequeDate());
+        cb.setChequeRefNo(getBill().getChequeRefNo());
 
         cb.setDeptId(getBillNumberBean().departmentCancelledBill(getSessionController().getDepartment(), BillType.CashRecieveBill, BillNumberSuffix.CRDCAN));
         cb.setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), cb, BillType.CashRecieveBill, BillNumberSuffix.CRDCAN));

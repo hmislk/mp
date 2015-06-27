@@ -9,7 +9,6 @@
 package com.divudi.bean;
 
 import java.util.TimeZone;
-import com.divudi.data.DepartmentType;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.WebUser;
@@ -21,10 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import javax.inject.Inject;
 import javax.inject.Named; import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.faces.bean.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

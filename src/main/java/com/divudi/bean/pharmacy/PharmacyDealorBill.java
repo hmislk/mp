@@ -31,7 +31,6 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
-import com.divudi.facade.BilledBillFacade;
 import com.divudi.facade.util.JsfUtil;
 import java.util.ArrayList;
 

@@ -5,7 +5,6 @@
  */
 package com.divudi.bean;
 
-import com.divudi.entity.Patient;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.Barcode39;

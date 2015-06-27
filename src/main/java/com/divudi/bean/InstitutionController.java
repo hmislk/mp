@@ -9,7 +9,6 @@
 package com.divudi.bean;
 
 import com.divudi.data.InstitutionType;
-import com.divudi.entity.Department;
 import java.util.TimeZone;
 import com.divudi.facade.InstitutionFacade;
 import com.divudi.entity.Institution;
@@ -19,7 +18,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;

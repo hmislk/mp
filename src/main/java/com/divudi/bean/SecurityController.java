@@ -8,8 +8,7 @@
 package com.divudi.bean;
 
 import java.io.Serializable;
-import javax.inject.Named; import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;import javax.enterprise.context.SessionScoped;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 

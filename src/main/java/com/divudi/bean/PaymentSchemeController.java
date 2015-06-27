@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;

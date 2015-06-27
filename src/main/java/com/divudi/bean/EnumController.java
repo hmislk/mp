@@ -15,7 +15,6 @@ import com.divudi.enums.DepartmentListMethod;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import javax.inject.Inject;
 
 /**
  *

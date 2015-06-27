@@ -35,7 +35,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TemporalType;
-import static ch.lambdaj.Lambda.*;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.facade.util.JsfUtil;

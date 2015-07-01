@@ -51,10 +51,11 @@ import org.primefaces.event.RowEditEvent;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.LineChartModel;
-import org.primefaces.model.chart.DateAxis;
-import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.CartesianChartModel;
+//import org.primefaces.model.chart.AxisType;
+//import org.primefaces.model.chart.LineChartModel;
+//import org.primefaces.model.chart.DateAxis;
+//import org.primefaces.model.chart.LegendPlacement;
 import org.primefaces.model.chart.LineChartSeries;
 
 @Named
@@ -115,9 +116,9 @@ public class ReorderController implements Serializable {
     Item item;
     Department historyDept;
 
-    private LineChartModel dateModel;
+    private CartesianChartModel dateModel;
 
-    public LineChartModel getDateModel() {
+    public CartesianChartModel getDateModel() {
         return dateModel;
     }
 
@@ -132,7 +133,7 @@ public class ReorderController implements Serializable {
     }
 
     public void createDailyItemSummery(Item item, Department dept, Date fromDate, Date toDate) {
-        dateModel = new LineChartModel();
+        dateModel = new CartesianChartModel();
         List<ItemTransactionSummeryRow> rows;
 
         LineChartSeries series1 = new LineChartSeries();
@@ -179,18 +180,20 @@ public class ReorderController implements Serializable {
             series5.set(df.format(r.getDate()), r.getQuantity());
         }
         dateModel.addSeries(series5);
+        
+        
+        
+//        dateModel.setTitle("Item Transactions");
+//        dateModel.setZoom(true);
+//        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
+//        dateModel.setLegendPosition("ne");
+//        dateModel.getAxis(AxisType.Y).setLabel("Stock");
+//        DateAxis axis = new DateAxis("Dates");
+//        axis.setTickAngle(-50);
+////        axis.setMax("2014-02-01");
+//        axis.setTickFormat("%b %#d, %y");
 
-        dateModel.setTitle("Item Transactions");
-        dateModel.setZoom(true);
-        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
-        dateModel.setLegendPosition("ne");
-        dateModel.getAxis(AxisType.Y).setLabel("Stock");
-        DateAxis axis = new DateAxis("Dates");
-        axis.setTickAngle(-50);
-//        axis.setMax("2014-02-01");
-        axis.setTickFormat("%b %#d, %y");
-
-        dateModel.getAxes().put(AxisType.X, axis);
+//        dateModel.getAxes().put(AxisType.X, axis);
     }
 
     public DepartmentListMethod getDepartmentListMethod() {

@@ -52,10 +52,10 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.primefaces.model.chart.CartesianChartModel;
-//import org.primefaces.model.chart.AxisType;
-//import org.primefaces.model.chart.LineChartModel;
-//import org.primefaces.model.chart.DateAxis;
-//import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.DateAxis;
+import org.primefaces.model.chart.LegendPlacement;
 import org.primefaces.model.chart.LineChartSeries;
 
 @Named
@@ -183,17 +183,17 @@ public class ReorderController implements Serializable {
         
         
         
-//        dateModel.setTitle("Item Transactions");
-//        dateModel.setZoom(true);
-//        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
-//        dateModel.setLegendPosition("ne");
-//        dateModel.getAxis(AxisType.Y).setLabel("Stock");
-//        DateAxis axis = new DateAxis("Dates");
-//        axis.setTickAngle(-50);
-////        axis.setMax("2014-02-01");
-//        axis.setTickFormat("%b %#d, %y");
+        dateModel.setTitle("Item Transactions");
+        dateModel.setZoom(true);
+        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
+        dateModel.setLegendPosition("ne");
+        dateModel.getAxis(AxisType.Y).setLabel("Stock");
+        DateAxis axis = new DateAxis("Dates");
+        axis.setTickAngle(-50);
+//        axis.setMax("2014-02-01");
+        axis.setTickFormat("%b %#d, %y");
 
-//        dateModel.getAxes().put(AxisType.X, axis);
+        dateModel.getAxes().put(AxisType.X, axis);
     }
 
     public DepartmentListMethod getDepartmentListMethod() {
@@ -603,10 +603,10 @@ public class ReorderController implements Serializable {
     }
 
     enum AutoOrderMethod {
-
         ByDistributor,
         ByRol,
         ByAll,
+        ByGeneric,
     }
 
     public String autoOrderByDistributor() {
@@ -622,6 +622,11 @@ public class ReorderController implements Serializable {
     public String autoOrderByAllItems() {
         autoOrderMethod = AutoOrderMethod.ByAll;
         return "/pharmacy/auto_ordering_by_all_items";
+    }
+    
+    public String autoOrderByGenerics() {
+        autoOrderMethod = AutoOrderMethod.ByGeneric;
+        return "/pharmacy/auto_ordering_by_items_by_generic";
     }
 
     List<Item> listedItems;

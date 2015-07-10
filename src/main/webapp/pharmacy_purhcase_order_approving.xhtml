@@ -46,7 +46,12 @@
 
                         <p:column headerText="Item Name" style="width:50px;">  
                             <h:outputLabel value="#{bi.item.name}" ></h:outputLabel> 
-                        </p:column>  
+                        </p:column>
+                        
+                        <p:column headerText="Free Qty" style="width:25px!important;">                         
+                            <p:inputText id="FreeQty" value="#{bi.pharmaceuticalBillItem.freeQty}" style="width:100%" label="FreeQty">                                
+                            </p:inputText>
+                        </p:column>
 
                         <p:column headerText="Qty" style="width:25px!important;">                         
                             <p:inputText id="qty" value="#{bi.tmpQty}" style="width:100%" label="Qty">
@@ -81,7 +86,14 @@
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>
                             </h:panelGroup>
-                        </p:column>  
+                        </p:column>
+                        
+                        <p:column headerText="Comment" style="width:25px!important;text-align: right;">  
+                            <h:panelGroup id="Comment">
+                                <h:inputText value="#{bi.retireComments}" >
+                                </h:inputText>
+                            </h:panelGroup>
+                        </p:column>
 
                         <p:column style="width:10px!important;">
                             <p:commandButton value="Remove" ajax="false" action="#{purchaseOrderController.removeItem(bi)}"/>

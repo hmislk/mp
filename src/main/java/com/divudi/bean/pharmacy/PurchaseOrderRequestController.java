@@ -65,19 +65,26 @@ public class PurchaseOrderRequestController implements Serializable {
     PharmacyCalculation pharmacyBillBean;
 
     public void removeSelected() {
-        //  ////System.err.println("1");
+        System.err.println("1");
         if (selectedBillItems == null) {
-            //   ////System.err.println("2");
+        System.err.println("2");
             return;
         }
 
-        for (BillItem b : selectedBillItems) {
-            ////System.err.println("SerialNO " + b.getSearialNo());
-            ////System.err.println("Item " + b.getItem().getName());
-            BillItem tmp = getBillItems().remove(b.getSearialNo());
-            ////System.err.println("Removed Item " + tmp.getItem().getName());
-            calTotal();
-        }
+//        for (BillItem b : selectedBillItems) {
+//            System.err.println("SerialNO " + b.getSearialNo());
+//            System.err.println("Item " + b.getItem().getName());
+//            try {
+//                getBillItems().remove(b.getSearialNo());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            
+//            
+//        }
+        getBillItems().removeAll(selectedBillItems);
+        
+        calTotal();
 
         selectedBillItems = null;
     }
@@ -159,12 +166,16 @@ public class PurchaseOrderRequestController implements Serializable {
     }
 
     public void generateBillComponent() {
-       // int serialNo = 0;
+        //int serialNo = 0;
         setBillItems(new ArrayList<BillItem>());
         for (Item i : getPharmacyBillBean().getItemsForDealor(getCurrentBill().getToInstitution())) {
             BillItem bi = new BillItem();
+            //serialNo++;
             bi.setItem(i);
-       
+            //bi.setSearialNo(serialNo);
+            //System.out.println("serialNo = " + serialNo);
+            //System.out.println("bi.getSearialNo() = " + bi.getSearialNo());
+
             PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
             tmp.setBillItem(bi);
             tmp.setQty(getPharmacyBean().getOrderingQty(bi.getItem(), getSessionController().getDepartment()));
@@ -276,7 +287,7 @@ public class PurchaseOrderRequestController implements Serializable {
     public Bill getCurrentBill() {
         if (currentBill == null) {
             currentBill = new BilledBill();
-            currentBill.setBillType(BillType.PharmacyOrder);           
+            currentBill.setBillType(BillType.PharmacyOrder);
         }
         return currentBill;
     }
@@ -357,7 +368,7 @@ public class PurchaseOrderRequestController implements Serializable {
 
     public List<BillItem> getBillItems() {
         if (billItems == null) {
-            billItems = new ArrayList<>();       
+            billItems = new ArrayList<>();
         }
         return billItems;
     }
@@ -366,5 +377,4 @@ public class PurchaseOrderRequestController implements Serializable {
         this.billItems = billItems;
     }
 
-  
 }

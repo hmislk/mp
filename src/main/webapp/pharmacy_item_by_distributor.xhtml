@@ -22,21 +22,21 @@
                 <h:outputLabel/><h:outputLabel/>
             </h:panelGrid>
 
-            <p:dataTable rowIndexVar="r" value="#{itemsDistributorsController.searchItems}" var="i">
+            <p:dataTable rowIndexVar="r" value="#{itemsDistributorsController.searchItems}" var="i" stickyHeader="true">
                 <p:column>
                     #{r+1}
                 </p:column>
-                <p:column headerText="Distributor">
+                <p:column headerText="Distributor" sortBy="#{i.institution.name}">
                     <h:outputLabel value="#{i.institution.name}"/>
                 </p:column>
-                <p:column headerText="Item Name" >
+                <p:column headerText="Item Name" sortBy="#{i.item.name}">
                     <h:outputLabel value="#{i.item.name}"/>
                 </p:column>   
-                <p:column headerText="Item CODE" >
+                <p:column headerText="Item CODE" sortBy="#{i.item.code}">
                     <h:outputLabel value="#{i.item.code}"/>
                 </p:column>   
 
-                <p:column headerText="Catogory" >
+                <p:column headerText="Catogory" sortBy="#{i.item.category.name}">
                     <h:outputLabel value="#{i.item.category.name}"/>
                 </p:column>               
             </p:dataTable>

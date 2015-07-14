@@ -559,7 +559,15 @@ public abstract class AbstractFacade<T> {
         }
     }
     
-    
+    public List<Object[]> findAggregates(String temSQL) {
+        TypedQuery<Object[]> qry = getEntityManager().createQuery(temSQL, Object[].class);
+        try {
+            return qry.getResultList();
+        } catch (Exception e) {
+            //   //System.out.println("e = " + e.getMessage());
+            return null;
+        }
+    }
     
     public List<Object[]> findAggregates(String temSQL, Map<String, Object> parameters) {
 //        ////System.out.println("find aggregates 2" );

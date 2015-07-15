@@ -3,16 +3,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
     <!--Author : Dr. M H B Ariyaratne, MO(Health Information), buddhika.ari@gmail.com-->
     <body>
 
         <ui:composition template="./resources/template/template.xhtml">
 
 
+
             <ui:define name="content">
 
                 <h:form>
+
+
+
+
 
                     <h:panelGrid columns="3" styleClass="alignTop">
 
@@ -39,7 +45,7 @@
                             </p:submenu>
                         </p:menu>
 
-                         <p:menu >
+                        <p:menu >
                             <p:submenu label="Transfer">
                                 <p:menuitem  ajax="false" action="/pharmacy_transfer_request"  value="Request" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_transfer_request_list"  value="Issue" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>                                           
@@ -48,7 +54,7 @@
                             </p:submenu>                                   
                         </p:menu>
 
-                        
+
                         <p:menu>
                             <p:submenu label="Adjustments" >
                                 <p:menuitem  ajax="false" action="/pharmacy_adjustment_department"  value="Department Stock(QTY)" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}" ></p:menuitem>
@@ -84,7 +90,17 @@
                         </p:menu>
 
                     </h:panelGrid>
-                    
+
+
+
+
+                    <p:autoComplete id="advanced" accesskey="i" 
+                                    value="#{ampController.current}" 
+                                    completeMethod="#{ampController.completeAmp}" var="amp" 
+                                    itemLabel="#{amp.name}" itemValue="#{amp}" />
+
+
+
                 </h:form>
 
             </ui:define>

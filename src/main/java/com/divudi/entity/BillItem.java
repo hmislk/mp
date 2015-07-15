@@ -131,6 +131,7 @@ public class BillItem implements Serializable {
         searialNo = billItem.getSearialNo();
         tmpQty = billItem.tmpQty;
         referenceBill = billItem.getReferenceBill();
+        retireComments=billItem.getRetireComments();
         //  referanceBillItem=billItem.getReferanceBillItem();
     }
 

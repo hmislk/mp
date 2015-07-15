@@ -19,7 +19,9 @@
                                     completeMethod="#{dealerController.completeDealor}" 
                                     forceSelection="true"
                                     var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
-
+                    
+                    <h:outputLabel value="Phone Number: #{grnController.grnBill.comments}"/>
+                    
 
                     <p:selectOneMenu   id="cmbPs" value="#{grnController.grnBill.paymentMethod}">    
                         <f:selectItem itemLabel="SelectPayment method"/>
@@ -156,6 +158,10 @@
 
                     <p:column style="width:6%">  
                         <p:rowEditor />  
+                    </p:column>
+                    
+                    <p:column headerText="Comment" style="width:6%">  
+                        <h:outputLabel value="#{bi.retireComments}"/>
                     </p:column>
 
 

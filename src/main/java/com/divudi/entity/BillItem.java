@@ -76,7 +76,6 @@ public class BillItem implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date retiredAt;
     String retireComments;
-    String comments;
     String insId;
     String deptId;
     String catId;
@@ -132,7 +131,7 @@ public class BillItem implements Serializable {
         searialNo = billItem.getSearialNo();
         tmpQty = billItem.tmpQty;
         referenceBill = billItem.getReferenceBill();
-        comments=billItem.getComments();
+        retireComments=billItem.getRetireComments();
         //  referanceBillItem=billItem.getReferanceBillItem();
     }
 
@@ -321,14 +320,6 @@ public class BillItem implements Serializable {
 
     public void setRetireComments(String retireComments) {
         this.retireComments = retireComments;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
     }
 
     public String getInsId() {

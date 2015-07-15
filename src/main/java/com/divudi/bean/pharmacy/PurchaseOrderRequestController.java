@@ -237,7 +237,10 @@ public class PurchaseOrderRequestController implements Serializable {
         for (BillItem b : getBillItems()) {
             tmp += b.getPharmaceuticalBillItem().getQty() * b.getPharmaceuticalBillItem().getPurchaseRate();
             b.setSearialNo(serialNo++);
+            System.out.println("Free Qty = " +b.getPharmaceuticalBillItem().getFreeQty() );
+            System.out.println("Free Qty = " +b.getRetireComments());
         }
+        
         getCurrentBill().setTotal(tmp);
         getCurrentBill().setNetTotal(tmp);
     }

@@ -23,7 +23,7 @@
                         <f:ajax event="itemSelect" execute="@this" render="itemList" listener="#{purchaseOrderRequestController.setInsListener}"/>
                     </p:autoComplete>
 
-                    <p:inputMask mask="999-9999999" id="txtNewPtPhone" autocomplete="off" maxlength="11" value="#{purchaseOrderRequestController.currentBill.phoneNumber}">
+                    <p:inputMask mask="999-9999999" id="txtNewPtPhone" autocomplete="off" maxlength="11" value="#{purchaseOrderRequestController.currentBill.comments}">
                     </p:inputMask>
 
                     <p:watermark value="Phone Number" for="txtNewPtPhone"></p:watermark>
@@ -136,6 +136,7 @@
                         <p:inputText  id="freeQty" value="#{bi.pharmaceuticalBillItem.freeQty}" label="freeQty"
                                       styleClass="averageNumberText">  
                             <f:convertNumber pattern="#00.00"/>
+                            <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
                         </p:inputText>
                     </p:column>
 

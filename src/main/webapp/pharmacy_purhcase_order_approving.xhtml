@@ -23,7 +23,14 @@
                                 <f:selectItem itemLabel="SelectPayment method"/>
                                 <f:selectItems value="#{enumController.paymentMethodsForPo}"/>
                             </p:selectOneMenu>
-                            <p:outputLabel id="tot"  value="Total :  #{purchaseOrderController.aprovedBill.netTotal}"/>    
+                            <p:outputLabel id="tot"  value="Total :  #{purchaseOrderController.aprovedBill.netTotal}"/>
+                            
+                            <p:outputLabel id="lblTxtSup"  value="Supplier : #{purchaseOrderController.aprovedBill.toInstitution.name}"/>
+                            
+                            
+                            <p:outputLabel id="lblTxtPhNu"  value="Phone Number : #{purchaseOrderController.aprovedBill.comments}"/>
+                            
+                            
                         </h:panelGrid>
                     </f:facet>
                     

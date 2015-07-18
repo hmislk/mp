@@ -1029,6 +1029,7 @@ public class PharmacySaleReport implements Serializable {
         sql = "SELECT i FROM ItemsDistributors i "
                 + " where i.retired=false "
                 + " and i.institution=:ins "
+                + " and i.item.retired=false "
                 + " order by i.item.name ";
 
         m.put("ins", ins);

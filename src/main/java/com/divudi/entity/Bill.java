@@ -80,6 +80,9 @@ public class Bill implements Serializable {
     // Bank Detail
     String creditCardRefNo;
     String chequeRefNo;
+//    for supplier phone number,this use to recorde instance supplier's
+//    number because supplier(Agent who come to get the order) can be vari
+    
     @ManyToOne
     Institution bank;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -806,7 +809,7 @@ public class Bill implements Serializable {
     public void setCreditCardRefNo(String creditCardRefNo) {
         this.creditCardRefNo = creditCardRefNo;
     }
-
+    
     public String getChequeRefNo() {
         return chequeRefNo;
     }

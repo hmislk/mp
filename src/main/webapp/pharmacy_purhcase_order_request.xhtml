@@ -22,6 +22,12 @@
                                     var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                         <f:ajax event="itemSelect" execute="@this" render="itemList" listener="#{purchaseOrderRequestController.setInsListener}"/>
                     </p:autoComplete>
+
+                    <p:inputMask mask="999-9999999" id="txtNewPtPhone" autocomplete="off" maxlength="11" value="#{purchaseOrderRequestController.currentBill.comments}">
+                    </p:inputMask>
+
+                    <p:watermark value="Phone Number" for="txtNewPtPhone"></p:watermark>
+
                     <p:watermark for="cmbDis" value="Select Supplier" ></p:watermark>
                     <p:spacer width="10" height="1" ></p:spacer>
                     <p:commandButton ajax="false" value="Complete Order" action="#{purchaseOrderRequestController.request}"/>
@@ -121,7 +127,18 @@
                             <f:ajax event="click" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
                         </p:outputLabel> 
 
-                    </p:column>  
+                    </p:column>
+                    
+                    <p:column  styleClass="averageNumberColumn"> 
+                        <f:facet name="header" >
+                            <p:outputLabel value="Free Qty"  ></p:outputLabel>
+                        </f:facet>
+                        <p:inputText  id="freeQty" value="#{bi.pharmaceuticalBillItem.freeQty}" label="freeQty"
+                                      styleClass="averageNumberText">  
+                            <f:convertNumber pattern="#00.00"/>
+                            <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
+                        </p:inputText>
+                    </p:column>
 
                     <p:column  styleClass="averageNumberColumn"> 
                         <f:facet name="header" >
@@ -133,7 +150,8 @@
                             <f:ajax event="blur" render="total :#{p:component('tot')} "  execute="@this price" listener="#{purchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
                             <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
                         </p:inputText>
-                    </p:column>  
+                    </p:column>
+
                     <p:column headerText="Purchase Price" styleClass="averageNumberColumn">  
                         <h:panelGroup id="price">
                             <p:inputText value="#{bi.pharmaceuticalBillItem.purchaseRate}" styleClass="averageNumberText">
@@ -151,7 +169,15 @@
                                 <f:convertNumber pattern="#,##0.00"/>
                             </p:outputLabel>
                         </h:panelGroup>
-                    </p:column>  
+                    </p:column>
+                    
+                    <p:column headerText="Comment" styleClass="averageNumberColumn">  
+                        <h:panelGroup id="Comment">
+                            <p:inputText styleClass="averageNumberText"
+                                           value="#{bi.retireComments}" >
+                            </p:inputText>
+                        </h:panelGroup>
+                    </p:column>
 
                     <p:column style="width: 100px;">
                         <p:commandButton value="Remove" ajax="false" action="#{purchaseOrderRequestController.removeItem(bi)}"/>

@@ -306,10 +306,12 @@ public class GrnController implements Serializable {
                 bi.setTmpQty(i.getQtyInUnit() - remains);
                 //Set Suggession
 //                bi.setTmpSuggession(getPharmacyCalculation().getSuggessionOnly(bi.getItem()));
+                bi.setRetireComments(i.getBillItem().getRetireComments());
 
                 PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
                 ph.setBillItem(bi);
                 double tmpQty = bi.getQty();
+                ph.setFreeQty(i.getFreeQty());
                 ph.setQtyInUnit((double) tmpQty);
                 ph.setPurchaseRate(i.getPurchaseRate());
                 ph.setRetailRate(i.getRetailRate());
@@ -327,6 +329,7 @@ public class GrnController implements Serializable {
     public void createGrn() {
         getGrnBill().setPaymentMethod(getApproveBill().getPaymentMethod());
         getGrnBill().setFromInstitution(getApproveBill().getToInstitution());
+        getGrnBill().setComments(getApproveBill().getComments());
         generateBillComponent();
         calGrossTotal();
     }

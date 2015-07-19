@@ -7,6 +7,7 @@ package com.divudi.bean.report;
 
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillType;
+import com.divudi.data.DepartmentType;
 import com.divudi.data.PaymentMethod;
 import com.divudi.data.dataStructure.DatedBills;
 import com.divudi.data.dataStructure.PharmacyDetail;
@@ -20,10 +21,16 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.CancelledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
+import com.divudi.entity.Item;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.RefundBill;
+import com.divudi.entity.pharmacy.Amp;
+import com.divudi.entity.pharmacy.ItemsDistributors;
+import com.divudi.facade.AmpFacade;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
+import com.divudi.facade.InstitutionFacade;
+import com.divudi.facade.ItemsDistributorsFacade;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -66,6 +73,10 @@ public class PharmacySaleReport implements Serializable {
     private PharmacyPaymetMethodSummery billedPaymentSummery;
   //  private List<DatedBills> billDetail;
 
+    List<DistributerWithDestributorItem> distributerWithDestributorItems;
+    List<Amp> amps;
+    List<Item> items;
+
     /////
     @EJB
     private CommonFunctions commonFunctions;
@@ -73,6 +84,12 @@ public class PharmacySaleReport implements Serializable {
     private BillItemFacade billItemFacade;
     @EJB
     private BillFacade billFacade;
+    @EJB
+    AmpFacade ampFacade;
+    @EJB
+    InstitutionFacade institutionFacade;
+    @EJB
+    ItemsDistributorsFacade itemsDistributorsFacade;
 
     public void makeNull() {
         fromDate = null;
@@ -150,7 +167,6 @@ public class PharmacySaleReport implements Serializable {
 
         //System.err.println("From " + fd);
         //System.err.println("To " + td);
-
         Map m = new HashMap();
         m.put("fd", fd);
         m.put("td", td);
@@ -876,10 +892,178 @@ public class PharmacySaleReport implements Serializable {
 
     }
 
+    public void createItemListWithOutItemDistributer() {
+        List<Amp> allAmps = getAllPharmacyItems();
+        //System.out.println("allAmps = " + allAmps.size());
+        List<Amp> ampsWithDealor = getAllDealorItems();
+        //System.out.println("ampsWithOutDealor = " + ampsWithDealor.size());
+        allAmps.removeAll(ampsWithDealor);
+        //System.out.println("After remove allAmps = " + allAmps.size());
+        amps = new ArrayList<>();
+        amps.addAll(allAmps);
+        //System.out.println("amps = " + amps.size());
+    }
+
+    public void createItemsDistributersWithDistributer() {
+        distributerWithDestributorItems = new ArrayList<>();
+        List<Institution> distributors = getAllDealors();
+        System.out.println("distributors.size() = " + distributors.size());
+        for (Institution distributor : distributors) {
+            DistributerWithDestributorItem dwdi = new DistributerWithDestributorItem();
+            System.out.println("distributor = " + distributor.getName());
+            List<ItemsDistributors> list = getAllDealorItems(distributor);
+            System.out.println("list.size() = " + list.size());
+            if (list.size() > 0) {
+                dwdi.setDistributor(distributor);
+                dwdi.setItemsDistributors(list);
+                distributerWithDestributorItems.add(dwdi);
+            }
+        }
+        System.out.println("distributerWithDestributorItems.size() = " + distributerWithDestributorItems.size());
+    }
+
+    public void createItemListOneItemHasGreterThanOneDistributor() {
+        List<Object[]> objs = getAllDealorItemsWithCount();
+        //System.out.println("objs = " + objs);
+        //System.out.println("objs = " + objs.size());
+        amps = new ArrayList<>();
+        for (Object[] obj : objs) {
+            //System.out.println("obj = " + obj);
+            if (obj != null) {
+                Amp item = (Amp) obj[0];
+                //System.out.println("item = " + item.getName());
+                long count = (long) obj[1];
+                //System.out.println("count = " + count);
+                if (count > 1) {
+                    //System.out.println("****Add****");
+                    amps.add(item);
+                }
+            }
+        }
+        //System.out.println("items = " + amps.size());
+
+    }
+
+    public void createItemListOneItemHasGreterThanOneDistributorOther() {
+        List<Amp> ampsWithDealor = getAllDealorItems();
+        //System.out.println("ampsWithDealor = " + ampsWithDealor.size());
+
+        items = new ArrayList<>();
+        for (Item i : ampsWithDealor) {
+            System.err.println("in");
+            //System.out.println("item = " + i.getName());
+            List<Amp> allAmps = getAmpItems(i);
+            //System.out.println("amps = " + allAmps.size());
+            int count = 0;
+            if (allAmps != null) {
+                count = allAmps.size();
+            }
+            //System.out.println("count = " + count);
+            if (count > 1) {
+                //System.out.println("****Add****");
+                items.add(i);
+            }
+            System.err.println("out");
+        }
+        //System.out.println("items = " + items.size());
+
+    }
+
+    public List<Amp> getAllPharmacyItems() {
+        String sql;
+        sql = "select c from Amp c "
+                + " where c.retired=false order by c.name ";
+
+        return ampFacade.findBySQL(sql);
+    }
+
+    public List<Amp> getAllDealorItems() {
+        String sql;
+
+        sql = "SELECT distinct(i.item) FROM ItemsDistributors i "
+                + " where i.retired=false "
+                + " and i.item.retired=false "
+                + " order by i.item.name ";
+
+        return ampFacade.findBySQL(sql);
+    }
+
+    public List<Object[]> getAllDealorItemsWithCount() {
+        String sql;
+
+        sql = "SELECT distinct(i.item),count(i.item) FROM ItemsDistributors i "
+                + " where i.retired=false "
+                + " and i.item.retired=false "
+                + " order by i.item.name ";
+
+        return ampFacade.findAggregates(sql);
+    }
+
+    public List<Amp> getAmpItems(Item a) {
+        String sql;
+        Map m = new HashMap();
+
+        sql = "SELECT i.item FROM ItemsDistributors i "
+                + " where i.retired=false "
+                + " and i.item.retired=false "
+                + " and i.item=:a ";
+
+        m.put("a", a);
+        return ampFacade.findBySQL(sql, m);
+    }
+
+    public List<Institution> getAllDealors() {
+        String sql;
+
+        sql = "SELECT distinct(i.institution) FROM ItemsDistributors i "
+                + " where i.retired=false "
+                + " order by i.institution.name ";
+
+        return institutionFacade.findBySQL(sql);
+    }
+
+    public List<ItemsDistributors> getAllDealorItems(Institution ins) {
+        String sql;
+        Map m = new HashMap();
+
+        sql = "SELECT i FROM ItemsDistributors i "
+                + " where i.retired=false "
+                + " and i.institution=:ins "
+                + " and i.item.retired=false "
+                + " order by i.item.name ";
+
+        m.put("ins", ins);
+
+        return itemsDistributorsFacade.findBySQL(sql, m);
+    }
+
     /**
      * Creates a new instance of PharmacySaleReport
      */
     public PharmacySaleReport() {
+    }
+
+    public class DistributerWithDestributorItem {
+
+        Institution distributor;
+        List<ItemsDistributors> itemsDistributors;
+
+        public Institution getDistributor() {
+            return distributor;
+        }
+
+        public void setDistributor(Institution distributor) {
+            this.distributor = distributor;
+        }
+
+        public List<ItemsDistributors> getItemsDistributors() {
+            return itemsDistributors;
+        }
+
+        public void setItemsDistributors(List<ItemsDistributors> itemsDistributors) {
+            this.itemsDistributors = itemsDistributors;
+        }
+
     }
 
     public Date getFromDate() {
@@ -1048,4 +1232,28 @@ public class PharmacySaleReport implements Serializable {
         this.sessionController = sessionController;
     }
 
+    public List<DistributerWithDestributorItem> getDistributerWithDestributorItems() {
+        return distributerWithDestributorItems;
+    }
+
+    public void setDistributerWithDestributorItems(List<DistributerWithDestributorItem> distributerWithDestributorItems) {
+        this.distributerWithDestributorItems = distributerWithDestributorItems;
+    }
+
+    public List<Amp> getAmps() {
+        return amps;
+    }
+
+    public void setAmps(List<Amp> amps) {
+        this.amps = amps;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+    
 }

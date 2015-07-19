@@ -21,9 +21,11 @@
                         </p:panel>
                         <p:panelGrid columns="1"                         >
                             <p:commandButton ajax="false" 
-                                             action="#{dataAdministrationController}" 
+                                             action="#{dataAdministrationController.removeAllItemsWithoutName()}" 
                                              value="Remove All Items Without Name" ></p:commandButton>
-                            <p:commandButton ajax="false" action="#{dataAdministrationController.removeAllBillsAndBillItems()}" value="Remove All Bills with Bill Items" ></p:commandButton>
+                            <p:commandButton ajax="false" action="#{dataAdministrationController.removeAllDepartmentsWithoutName()}" value="Remove All Departments without a name" ></p:commandButton>
+                            <p:commandButton ajax="false" action="#{dataAdministrationController.removeAllInstitutionsWithoutName()}" value="Remove All Institutions without a name" ></p:commandButton>
+                            
 
                         </p:panelGrid>
 

@@ -55,6 +55,12 @@ public class DataAdministrationController {
         List<Item> iss = itemFacade.findAll();
         Date d = new Date();
         for (Item i : iss) {
+            if (i == null) {
+                return;
+            }
+            if (i.getName() == null) {
+                return;
+            }
             if (i.getName().trim().equals("")) {
                 i.setRetired(true);
                 i.setRetiredAt(d);
@@ -70,6 +76,12 @@ public class DataAdministrationController {
         List<Institution> iss = institutionFacade.findAll();
         Date d = new Date();
         for (Institution i : iss) {
+            if (i == null) {
+                return;
+            }
+            if (i.getName() == null) {
+                return;
+            }
             if (i.getName().trim().equals("")) {
                 i.setRetired(true);
                 i.setRetiredAt(d);
@@ -85,6 +97,12 @@ public class DataAdministrationController {
         List<Department> iss = departmentFacade.findAll();
         Date d = new Date();
         for (Department i : iss) {
+            if (i == null) {
+                return;
+            }
+            if (i.getName() == null) {
+                return;
+            }
             if (i.getName().trim().equals("")) {
                 i.setRetired(true);
                 i.setRetiredAt(d);

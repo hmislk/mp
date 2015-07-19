@@ -1017,6 +1017,7 @@ public class PharmacySaleReport implements Serializable {
 
         sql = "SELECT distinct(i.institution) FROM ItemsDistributors i "
                 + " where i.retired=false "
+                + " and i.institution.retired=false "
                 + " order by i.institution.name ";
 
         return institutionFacade.findBySQL(sql);

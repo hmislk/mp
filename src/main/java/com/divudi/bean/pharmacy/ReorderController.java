@@ -53,7 +53,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.primefaces.model.chart.CartesianChartModel;
 import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.DateAxis;
 import org.primefaces.model.chart.LegendPlacement;
 import org.primefaces.model.chart.LineChartSeries;

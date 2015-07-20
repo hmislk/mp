@@ -471,7 +471,8 @@ public class PharmacyController implements Serializable {
         }
 
         //System.err.println("Day Count " + dayCount);
-        createStockAverage(dayCount);
+        List<Item> items = getItemController().getDealorItem();
+        createStockAverage(dayCount, items);
 
     }
 
@@ -488,14 +489,38 @@ public class PharmacyController implements Serializable {
         }
 
         //System.err.println("Month Count " + monthCount);
-        createStockAverage(Math.abs(monthCount));
+        List<Item> items = getItemController().getDealorItem();
+        createStockAverage(Math.abs(monthCount), items);
 
     }
 
-    public void createStockAverage(double dayCount) {
+    public void averageByMonth(Item item) {
+        Calendar frm = Calendar.getInstance();
+        frm.setTime(fromDate);
+        Calendar to = Calendar.getInstance();
+        to.setTime(toDate);
+        List<Item> items = new ArrayList<>();
+
+        long lValue = to.getTimeInMillis() - frm.getTimeInMillis();
+        double monthCount = 0;
+        if (lValue != 0) {
+            monthCount = lValue / (1000 * 60 * 60 * 24 * 30);
+        }
+
+        if (item == null) {
+            return;
+        }
+        items.add(item);
+        //System.err.println("Month Count " + monthCount);
+        createStockAverage(Math.abs(monthCount), items);
+
+    }
+
+    public void createStockAverage(double dayCount, List<Item> itms) {
 
         stockAverages = new ArrayList<>();
-        List<Item> items = getItemController().getDealorItem();
+
+        List<Item> items = itms;
         //    System.out.println("items = " + items.size());
         List<Institution> insList = getCompany();
         for (Item i : items) {
@@ -1124,6 +1149,7 @@ public class PharmacyController implements Serializable {
         createInstitutionStock();
         createInstitutionTransferIssue();
         createInstitutionTransferReceive();
+        averageByMonth(pharmacyItem);
     }
 
     public BillItemFacade getBillItemFacade() {

@@ -17,18 +17,6 @@
                 <h:outputLabel value="History of : "/>
                 <h:outputLabel value="#{pharmacyController.pharmacyItem.name}"/>
             </h:panelGroup><br/><br/>
-            <h:panelGrid columns="5" style="min-width: 100%;">
-                <h:outputLabel value="From Date"/>
-                <p:calendar id="frmDate" value="#{pharmacyController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
-                    <f:ajax event="dateSelect" execute="@this toDate" render="tab"/>
-                </p:calendar>
-
-                <h:outputLabel value="To Date"/>
-                <p:calendar id="toDate" value="#{pharmacyController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
-                    <f:ajax event="dateSelect" execute="@this toDate" render="tab"/>
-                </p:calendar>
-                <p:commandButton update=":#{p:component('grn')} :#{p:component('po')} :#{p:component('dp')}" action="#{pharmacyController.createTable()}" value="View Detail"/>
-            </h:panelGrid>
             <p:tabView  style="min-height: 250px;"   activeIndex="0" >
                 <p:tab   title="Stock"    >
                     <p:dataTable styleClass="noBorder" value="#{pharmacyController.institutionStocks}" var="ins">
@@ -73,7 +61,7 @@
                         </p:subTable>  
                         <p:columnGroup type="footer">
                             <p:row>
-                                <p:column>
+                                <p:column style="text-align: left;">
                                     <f:facet name="footer">
                                         Total Institution Stock
                                     </f:facet>
@@ -90,6 +78,144 @@
 
                     </p:dataTable>                
                 </p:tab>
+
+                <p:tab   title="Moving"    >
+                    <p:dataTable value="#{pharmacyController.stockAverages}" var="sA" >
+
+                        <p:column >
+
+                            <p:dataTable styleClass="noBorder" value="#{sA.institutionStocks}" var="ins">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="header">
+                                                Department Name
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                Required Stock
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                Current Stock
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                Average Qty
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:subTable  value="#{ins.depatmentStocks}" var="dep">
+
+                                    <f:facet name="header">
+                                        #{ins.institution.name}
+                                    </f:facet> 
+
+                                    <p:column style="text-align: left;">
+                                        #{dep.department.name}
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputLabel value="#{dep.stock-dep.average}">       
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputLabel value="#{dep.stock}">       
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputLabel value="#{dep.average}"> 
+                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                        </h:outputLabel> 
+                                    </p:column>
+                                    <p:columnGroup type="footer">
+                                        <p:row>
+                                            <p:column footerText="Total "></p:column>   
+                                            <p:column style="text-align: right;"
+                                                      footerText="#{ins.institutionTotal-ins.institutionAverage}">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="#{ins.institutionTotal-ins.institutionAverage}">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: right;"
+                                                      footerText="#{ins.institutionTotal}">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="#{ins.institutionTotal}">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                            <p:column style="text-align: right;" 
+                                                      footerText="#{ins.institutionAverage}">
+                                                <f:facet name="footer">
+                                                    <h:outputLabel value="#{ins.institutionAverage}">
+                                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                    </h:outputLabel>
+                                                </f:facet>
+                                            </p:column>
+                                        </p:row>
+                                    </p:columnGroup>
+                                </p:subTable>  
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column style="text-align: left;">
+                                            <f:facet name="footer" >
+                                                Total Institution Stock
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: right;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{sA.itemStockTotal-sA.itemAverageTotal}">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: right;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{sA.itemStockTotal}">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                        <p:column style="text-align: right;">
+                                            <f:facet name="footer">
+                                                <h:outputLabel  value="#{sA.itemAverageTotal}">
+                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                                </h:outputLabel>
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+
+                            </p:dataTable>     
+                            <hr/><hr/>
+
+                        </p:column>
+                    </p:dataTable>               
+                </p:tab>
+
+            </p:tabView>
+            <h:panelGrid columns="5" style="min-width: 100%;">
+                <h:outputLabel value="From Date"/>
+                <p:calendar id="frmDate" value="#{pharmacyController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
+                    <f:ajax event="dateSelect" execute="@this toDate" render="tab"/>
+                </p:calendar>
+
+                <h:outputLabel value="To Date"/>
+                <p:calendar id="toDate" value="#{pharmacyController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
+                    <f:ajax event="dateSelect" execute="@this toDate" render="tab"/>
+                </p:calendar>
+                <p:commandButton update=":#{p:component('grn')} :#{p:component('po')} :#{p:component('dp')}" action="#{pharmacyController.createTable()}" value="View Detail"/>
+            </h:panelGrid>            
+
+            <p:tabView  style="min-height: 250px;"   activeIndex="0" >
 
                 <p:tab   title="Sale"    >
                     <p:dataTable styleClass="noBorder" value="#{pharmacyController.institutionSales}" var="ins">
@@ -389,7 +515,7 @@
                         <p:column headerText="Po No">
                             #{dd3.bill.deptId}
                         </p:column>
-                         <p:column headerText="PO Date">
+                        <p:column headerText="PO Date">
                             <p:outputLabel value="#{dd3.bill.createdAt}" >
                                 <f:convertDateTime pattern="dd MMM yyyy" ></f:convertDateTime>
                             </p:outputLabel>

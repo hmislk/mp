@@ -19,6 +19,7 @@ import com.divudi.entity.pharmacy.Vtm;
 import com.divudi.entity.pharmacy.VtmsVmps;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VtmsVmpsFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +52,8 @@ public class AmpController implements Serializable {
     @EJB
     private AmpFacade ejbFacade;
     List<Amp> selectedItems;
+    List<Amp> ampList;
+    List<Amp> userSelectedItems;
     private Amp current;
     private Vtm vtm;
     private List<Amp> items = null;
@@ -65,13 +68,52 @@ public class AmpController implements Serializable {
     List<Amp> itemsByCode = null;
     private List<Amp> lstAmps = null;
 
-    public String listAllAmps() {
+    public List<Amp> getUserSelectedItems() {
+        return userSelectedItems;
+    }
+
+    public void setUserSelectedItems(List<Amp> userSelectedItems) {
+        this.userSelectedItems = userSelectedItems;
+    }
+
+    public List<Amp> getAmpList() {
+        return ampList;
+    }
+
+    public void setAmpList(List<Amp> ampList) {
+        this.ampList = ampList;
+    }
+
+    public void fillAmpTable() {
+        selectedItems = null;
+        ampList = listAllAmps();
+    }
+
+    public List<Amp> listAllAmps() {
         lstAmps = getFacade().findBySQL("select a from Amp a where a.retired=false order by a.name");
-        return "pharmacy_list_amps";
+        return lstAmps;
     }
 
     public List<Amp> getLstAmps() {
         return lstAmps;
+    }
+
+    public void removeSelected() {
+        System.err.println("1");
+        if (userSelectedItems == null) {
+            JsfUtil.addErrorMessage("Please Select an Item");
+            return;
+        }
+
+        for (Amp a : userSelectedItems) {
+            System.out.println("a.getRetired()"+a.isRetired());
+            a.setRetired(true);
+            System.out.println("a.getRetired()"+a.isRetired());
+            ejbFacade.edit(a);
+        }
+
+        userSelectedItems = null;
+
     }
 
     public List<Amp> getItemsByCode() {
@@ -381,7 +423,7 @@ public class AmpController implements Serializable {
         items = getFacade().findBySQL(jpql);
         return "pharmacy_report_amp_by_name";
     }
-    
+
     public String fillAmpsByCategoryName() {
         String jpql;
         jpql = "select amp from Amp as amp where amp.retired=false order by amp.category.name";
@@ -464,6 +506,7 @@ public class AmpController implements Serializable {
 
     public void setFilteredItems(List<Amp> filteredItems) {
         this.filteredItems = filteredItems;
+
     }
 
     /**

@@ -18,67 +18,7 @@
                 <h:outputLabel value="#{pharmacyController.pharmacyItem.name}"/>
             </h:panelGroup><br/><br/>
             <p:tabView  style="min-height: 250px;"   activeIndex="0" >
-                <p:tab   title="Stock"    >
-                    <p:dataTable styleClass="noBorder" value="#{pharmacyController.institutionStocks}" var="ins">
-                        <p:columnGroup type="header">
-                            <p:row>
-                                <p:column >
-                                    <f:facet name="header">
-                                        Department Name
-                                    </f:facet>
-                                </p:column>
-                                <p:column >
-                                    <f:facet name="header">
-                                        QTY
-                                    </f:facet>
-                                </p:column>
-                            </p:row>
-                        </p:columnGroup>
-                        <p:subTable  value="#{ins.depatmentStocks}" var="dep">
-                            <f:facet name="header">
-                                #{ins.institution.name}
-                            </f:facet>
-                            <p:column>
-                                #{dep.department.name}
-                            </p:column>
-                            <p:column style="text-align: right;">
-                                <h:outputLabel value="#{dep.stock}">       
-                                    <f:convertNumber integerOnly="true" />
-                                </h:outputLabel> 
-                            </p:column>
-                            <p:columnGroup type="footer">
-                                <p:row>
-                                    <p:column footerText="Total Stock"></p:column>
-                                    <p:column style="text-align: right;" footerText="#{ins.institutionTotal}">
-                                        <f:facet name="footer">
-                                            <h:outputLabel value="#{ins.institutionTotal}">
-                                                <f:convertNumber integerOnly="true" />
-                                            </h:outputLabel>
-                                        </f:facet>
-                                    </p:column>
-                                </p:row>
-                            </p:columnGroup>
-                        </p:subTable>  
-                        <p:columnGroup type="footer">
-                            <p:row>
-                                <p:column style="text-align: left;">
-                                    <f:facet name="footer">
-                                        Total Institution Stock
-                                    </f:facet>
-                                </p:column>
-                                <p:column style="text-align: right;">
-                                    <f:facet name="footer">
-                                        <h:outputLabel id="grantTotal" value="#{pharmacyController.grantStock}">
-                                            <f:convertNumber integerOnly="true" />
-                                        </h:outputLabel>
-                                    </f:facet>
-                                </p:column>
-                            </p:row>
-                        </p:columnGroup>
-
-                    </p:dataTable>                
-                </p:tab>
-
+                
                 <p:tab   title="Item Movement"    >
                     <p:dataTable value="#{pharmacyController.stockAverages}" var="sA" >
 
@@ -199,6 +139,66 @@
 
                         </p:column>
                     </p:dataTable>               
+                </p:tab>
+                <p:tab   title="Stock"    >
+                    <p:dataTable styleClass="noBorder" value="#{pharmacyController.institutionStocks}" var="ins">
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column >
+                                    <f:facet name="header">
+                                        Department Name
+                                    </f:facet>
+                                </p:column>
+                                <p:column >
+                                    <f:facet name="header">
+                                        QTY
+                                    </f:facet>
+                                </p:column>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:subTable  value="#{ins.depatmentStocks}" var="dep">
+                            <f:facet name="header">
+                                #{ins.institution.name}
+                            </f:facet>
+                            <p:column>
+                                #{dep.department.name}
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <h:outputLabel value="#{dep.stock}">       
+                                    <f:convertNumber integerOnly="true" />
+                                </h:outputLabel> 
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column footerText="Total Stock"></p:column>
+                                    <p:column style="text-align: right;" footerText="#{ins.institutionTotal}">
+                                        <f:facet name="footer">
+                                            <h:outputLabel value="#{ins.institutionTotal}">
+                                                <f:convertNumber integerOnly="true" />
+                                            </h:outputLabel>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup>
+                        </p:subTable>  
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column style="text-align: left;">
+                                    <f:facet name="footer">
+                                        Total Institution Stock
+                                    </f:facet>
+                                </p:column>
+                                <p:column style="text-align: right;">
+                                    <f:facet name="footer">
+                                        <h:outputLabel id="grantTotal" value="#{pharmacyController.grantStock}">
+                                            <f:convertNumber integerOnly="true" />
+                                        </h:outputLabel>
+                                    </f:facet>
+                                </p:column>
+                            </p:row>
+                        </p:columnGroup>
+
+                    </p:dataTable>                
                 </p:tab>
 
             </p:tabView>

@@ -5,7 +5,6 @@
  */
 package com.divudi.bean.pharmacy;
 
-import com.divudi.bean.UtilityController;
 import com.divudi.data.BillType;
 import com.divudi.data.dataStructure.StockReportRecord;
 import com.divudi.ejb.PharmacyBean;

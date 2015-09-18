@@ -10,7 +10,6 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
-import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.PharmaceuticalItemType;
 import com.divudi.facade.PharmaceuticalItemTypeFacade;
 import java.io.Serializable;
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;

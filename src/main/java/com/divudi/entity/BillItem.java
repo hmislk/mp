@@ -15,8 +15,6 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -133,6 +131,7 @@ public class BillItem implements Serializable {
         searialNo = billItem.getSearialNo();
         tmpQty = billItem.tmpQty;
         referenceBill = billItem.getReferenceBill();
+        retireComments=billItem.getRetireComments();
         //  referanceBillItem=billItem.getReferanceBillItem();
     }
 
@@ -165,6 +164,13 @@ public class BillItem implements Serializable {
             return false;
         }
         BillItem other = (BillItem) object;
+        if (this.id==null && other.id==null) {
+            if (this.searialNo==other.searialNo) {
+                return true;
+            }else{
+                return false;
+            }
+        }
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

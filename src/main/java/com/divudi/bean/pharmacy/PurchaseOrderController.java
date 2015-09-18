@@ -74,15 +74,15 @@ public class PurchaseOrderController implements Serializable {
     private LazyDataModel<Bill> searchBills;
 
     public void removeSelected() {
-        //  ////System.err.println("1");
+        System.err.println("1");
         if (selectedItems == null) {
-            //   ////System.err.println("2");
+            System.err.println("2");
             return;
         }
 
-        ////System.err.println("3");
+        System.err.println("3");
         for (BillItem b : selectedItems) {
-            //  ////System.err.println("4");
+            System.err.println("4");
             getBillItems().remove(b.getSearialNo());
             calTotal();
         }
@@ -96,8 +96,6 @@ public class PurchaseOrderController implements Serializable {
     }
 
     private int maxResult = 50;
-
-   
 
     public void clearList() {
         filteredValue = null;
@@ -225,9 +223,12 @@ public class PurchaseOrderController implements Serializable {
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
             BillItem bi = new BillItem();
             bi.copy(i.getBillItem());
-
+            System.out.println("bi.getComments() = " + bi.getRetireComments());
+            System.out.println("bi.getRate() = " + bi.getRate());
+            
             PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
             ph.setBillItem(bi);
+            ph.setFreeQty(i.getFreeQty());
             ph.setQtyInUnit(i.getQtyInUnit());
             ph.setPurchaseRateInUnit(i.getPurchaseRateInUnit());
             ph.setRetailRateInUnit(i.getRetailRateInUnit());
@@ -247,6 +248,7 @@ public class PurchaseOrderController implements Serializable {
         this.requestedBill = requestedBill;
         getAprovedBill().setPaymentMethod(getRequestedBill().getPaymentMethod());
         getAprovedBill().setToInstitution(getRequestedBill().getToInstitution());
+        getAprovedBill().setComments(getRequestedBill().getComments());
         generateBillComponent();
     }
 

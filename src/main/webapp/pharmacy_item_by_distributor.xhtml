@@ -9,7 +9,7 @@
         <h:form>
             <h:panelGrid columns="5" >              
 
-                <h:outputLabel value="Distributor"/>
+                <h:outputLabel value="Distributor."/>
                 <h:outputLabel value="Item Name"/>
                 <h:outputLabel value="Item Code"/>
                 <h:outputLabel value="Category"/>
@@ -22,17 +22,24 @@
                 <h:outputLabel/><h:outputLabel/>
             </h:panelGrid>
 
-            <p:dataTable rowIndexVar="r" value="#{itemsDistributorsController.searchItems}" var="i">
-                <p:column>
+            <p:dataTable rowIndexVar="r" value="#{itemsDistributorsController.searchItems}" var="i"
+                         rowKey="#{i.id}" paginator="true"
+                         paginatorAlwaysVisible="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="50,100,250"
+                         rows="50"
+
+                         >
+                <p:column style="width: 20px;">
                     #{r+1}
                 </p:column>
-                <p:column headerText="Distributor">
+                <p:column headerText="Distributor" sortBy="#{i.institution.name}" filterBy="#{i.institution.name}" filterMatchMode="contains" >
                     <h:outputLabel value="#{i.institution.name}"/>
                 </p:column>
-                <p:column headerText="Item Name" >
+                <p:column headerText="Item Name"  sortBy="#{i.item.name}" filterBy="#{i.item.name}" filterMatchMode="contains">
                     <h:outputLabel value="#{i.item.name}"/>
                 </p:column>   
-                <p:column headerText="Item CODE" >
+                <p:column headerText="Item Code" >
                     <h:outputLabel value="#{i.item.code}"/>
                 </p:column>   
 

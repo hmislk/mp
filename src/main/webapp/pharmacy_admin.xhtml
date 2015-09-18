@@ -37,6 +37,10 @@
                                     <p:commandButton ajax="false" value="Item Distributors" action="#{itemsDistributorsController.toFillDistributorsForItem()}" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Distributor Items" action="#{itemsDistributorsController.toFillItemsForDistributor()}" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Search Items and Distributors" action="pharmacy_item_by_distributor" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Distributor With Item(New)" action="pharmacy/pharmacy_report_list_distributor_with_distributor_items" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Pharmaceutical Item List Not include any Distributor(New)" action="pharmacy/pharmacy_report_list_amps_with_out_distributor" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="List Items One Item Has More Than One Distributor(New)" action="pharmacy/pharmacy_report_list_grater_than_one_distributor" ></p:commandButton>
+                                    
                                 </h:panelGrid>
                             </p:panel>
 
@@ -58,7 +62,7 @@
                             <p:panel header="Lists">
                                 <h:panelGrid columns="1">
                                     <p:commandButton ajax="false" 
-                                                     action="#{ampController.listAllAmps}" 
+                                                     action="pharmacy_list_amps" 
                                                      value="List All Items"  
                              ></p:commandButton>
                                 </h:panelGrid>

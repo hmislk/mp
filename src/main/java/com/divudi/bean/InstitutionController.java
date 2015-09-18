@@ -9,7 +9,6 @@
 package com.divudi.bean;
 
 import com.divudi.data.InstitutionType;
-import com.divudi.entity.Department;
 import java.util.TimeZone;
 import com.divudi.facade.InstitutionFacade;
 import com.divudi.entity.Institution;
@@ -19,7 +18,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -302,6 +300,17 @@ public class InstitutionController implements Serializable {
         }
 
         return items;
+    }
+    
+    public List<Institution> completeBanks(String qry) {
+        String sql;
+        HashMap hm = new HashMap();
+        hm.put("type", InstitutionType.Bank);
+        sql = "select c from Institution c where c.retired=false and"
+                + " c.institutionType=:type and upper(c.name)"
+                + " like '%" + qry.toUpperCase() + "%' order by c.name";
+        return getFacade().findBySQL(sql, hm);
+        
     }
 
     public Boolean getCodeDisabled() {

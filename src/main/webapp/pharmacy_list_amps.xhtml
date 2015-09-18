@@ -9,17 +9,24 @@
 
         <h:form>
 
-            <p:commandButton action="#{ampController.listAllAmps}" value="List All"  process="@this" update="tbl"
+            <p:commandButton action="#{ampController.fillAmpTable}" value="List All" ajax="false"
+                             ></p:commandButton>
+            <p:commandButton action="#{ampController.removeSelected}" value="Remove Selected" ajax="false"
                              ></p:commandButton>
 
             <p:dataTable id="tbl" rowIndexVar="r" 
-                         value="#{ampController.lstAmps}" 
+                         value="#{ampController.ampList}" 
                          var="i"
                          paginator="true" paginatorAlwaysVisible="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="10,30,50"
-                         rows="50"
+                         rows="50" selection="#{ampController.userSelectedItems}" rowKey="#{i.id}"
                          >
+
+                <p:column selectionMode="multiple" style="width: 10px;">
+
+                </p:column>
+
                 <p:column headerText="No" >
                     <h:outputLabel value="#{r+1}"/>
                 </p:column>

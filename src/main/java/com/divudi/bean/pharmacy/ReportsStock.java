@@ -650,7 +650,8 @@ public class ReportsStock implements Serializable {
         m.put("ins", institution);
         m.put("dep", department);
         sql = "select s from Stock s where s.department=:dep and s.itemBatch.item.id in "
-                + "(select item.id from ItemsDistributors id join id.item as item where id.retired=false and id.institution=:ins)";
+                + "(select item.id from ItemsDistributors id join id.item as item where id.retired=false and id.institution=:ins)"
+                + " order by s.itemBatch.item.name ";
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;

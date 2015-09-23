@@ -27,7 +27,7 @@
                             </p:autoComplete>
                             <p:commandButton ajax="false" value="Process" actionListener="#{reportsStock.fillDistributorStocks()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" >
-                                <p:printer target="gpBillPreview" >
+                                <p:printer target="tbl" >
 
                                 </p:printer>
                             </p:commandButton>
@@ -51,18 +51,19 @@
                                 <p:column headerText="Item" >
                                     <f:facet name="header">
                                         <h:outputLabel value="Item"/>    
-                                    </f:facet>                                    
+                                    </f:facet>
+                                    <h:inputText style="width: 40px;"/>
                                     <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
                                 </p:column>
-                                
-                                <p:column headerText="Code">
+
+                                <p:column headerText="Code" style="text-align: right;">
                                     <f:facet name="header">
                                         <h:outputLabel value="Code"/>
                                     </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.item.code}" style="width: 100px!important;" ></h:outputLabel>
+                                    <h:outputLabel value="#{i.itemBatch.item.code}"></h:outputLabel>
                                 </p:column>
 
-                                <p:column headerText="Stock Quantity">
+                                <p:column headerText="Stock Quantity" style="text-align: right;">
                                     <f:facet name="header">
                                         <h:outputLabel value="Stock Quantity"/>    
                                     </f:facet>
@@ -71,60 +72,14 @@
                                     </h:outputLabel>                                  
                                 </p:column>
 
-                                <p:column headerText="Expiary">
+                                <p:column headerText="Expiary" style="text-align: right;">
                                     <f:facet name="header">
                                         <h:outputLabel value="Expiry"/>    
                                     </f:facet>
                                     <h:outputLabel value="#{i.itemBatch.dateOfExpire}"  >
                                         <f:convertDateTime pattern="MMM yyyy" ></f:convertDateTime>
                                     </h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Purchase Rate" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Purchase Rate"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.purcahseRate}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Purchase Value" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Purchase Value"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.purcahseRate * i.stock}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                    <f:facet name="footer" >
-                                        <h:outputLabel value="#{reportsStock.stockPurchaseValue}" >
-                                            <f:convertNumber parent="#,##0.00" ></f:convertNumber>
-                                        </h:outputLabel>
-                                    </f:facet>
-                                </p:column>
-
-                                <p:column headerText="Retail Sale Rate" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Retail Sale Rate"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.retailsaleRate}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                </p:column>
-
-                                <p:column headerText="Retail Sale Value" style="text-align: right;">
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Retail Sale Value"/>    
-                                    </f:facet>
-                                    <h:outputLabel value="#{i.itemBatch.retailsaleRate * i.stock}"  >
-                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                    </h:outputLabel>
-                                    <f:facet name="footer" >
-                                        <h:outputLabel value="#{reportsStock.stockSaleValue}" >
-                                            <f:convertNumber parent="#,##0.00" ></f:convertNumber>
-                                        </h:outputLabel>
-                                    </f:facet>
-                                </p:column>
+                                </p:column>                                
 
                             </p:dataTable>
                         </h:panelGroup>

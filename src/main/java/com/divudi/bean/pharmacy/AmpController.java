@@ -106,9 +106,9 @@ public class AmpController implements Serializable {
         }
 
         for (Amp a : userSelectedItems) {
-            System.out.println("a.getRetired()"+a.isRetired());
+            //System.out.println("a.getRetired()"+a.isRetired());
             a.setRetired(true);
-            System.out.println("a.getRetired()"+a.isRetired());
+            //System.out.println("a.getRetired()"+a.isRetired());
             ejbFacade.edit(a);
         }
 
@@ -173,7 +173,7 @@ public class AmpController implements Serializable {
             a = getFacade().findBySQL("select c from Amp c where "
                     + " c.retired=false and (c.departmentType is null or c.departmentType!=:dep )and "
                     + "(upper(c.name) like :n ) order by c.name", m, 30);
-            ////System.out.println("a size is " + a.size());
+            //////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -190,7 +190,7 @@ public class AmpController implements Serializable {
             a = getFacade().findBySQL("select c from Amp c where "
                     + " c.retired=false and (c.departmentType is null or c.departmentType!=:dep) and "
                     + "(upper(c.code) like :n ) order by c.code", m, 30);
-            ////System.out.println("a size is " + a.size());
+            //////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();
@@ -206,13 +206,13 @@ public class AmpController implements Serializable {
         String sql = "select c from Amp c where "
                 + " c.retired=false and c.departmentType!=:dep and "
                 + "(upper(c.barcode) like :n ) order by c.barcode";
-        //System.out.println("sql = " + sql);
-        //System.out.println("m = " + m);
+        ////System.out.println("sql = " + sql);
+        ////System.out.println("m = " + m);
 
         if (qry != null) {
             a = getFacade().findBySQL(sql, m, 30);
-            //System.out.println("a = " + a);
-            ////System.out.println("a size is " + a.size());
+            ////System.out.println("a = " + a);
+            //////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();

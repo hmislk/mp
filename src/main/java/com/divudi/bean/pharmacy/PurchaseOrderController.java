@@ -223,8 +223,8 @@ public class PurchaseOrderController implements Serializable {
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
             BillItem bi = new BillItem();
             bi.copy(i.getBillItem());
-            System.out.println("bi.getComments() = " + bi.getRetireComments());
-            System.out.println("bi.getRate() = " + bi.getRate());
+            //System.out.println("bi.getComments() = " + bi.getRetireComments());
+            //System.out.println("bi.getRate() = " + bi.getRate());
             
             PharmaceuticalBillItem ph = new PharmaceuticalBillItem();
             ph.setBillItem(bi);

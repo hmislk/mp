@@ -646,17 +646,17 @@ public class PharmacyCalculation {
     }
 
     public void calSaleFreeValue(Bill b, List<BillItem> bis) {
-    //    System.out.println("cal sale free value");
+    //    //System.out.println("cal sale free value");
         double sale = 0.0;
         double free = 0.0;
         for (BillItem i : bis) {
-        //    System.out.println("i.getPharmaceuticalBillItem().getQty() = " + i.getPharmaceuticalBillItem().getQty());
-        //    System.out.println("i.getPharmaceuticalBillItem().getFreeQty() = " + i.getPharmaceuticalBillItem().getFreeQty());
-        //    System.out.println("i.getPharmaceuticalBillItem().getPurchaseRate() = " + i.getPharmaceuticalBillItem().getPurchaseRate());
+        //    //System.out.println("i.getPharmaceuticalBillItem().getQty() = " + i.getPharmaceuticalBillItem().getQty());
+        //    //System.out.println("i.getPharmaceuticalBillItem().getFreeQty() = " + i.getPharmaceuticalBillItem().getFreeQty());
+        //    //System.out.println("i.getPharmaceuticalBillItem().getPurchaseRate() = " + i.getPharmaceuticalBillItem().getPurchaseRate());
             sale += i.getPharmaceuticalBillItem().getQty() * i.getPharmaceuticalBillItem().getPurchaseRate();
             free += i.getPharmaceuticalBillItem().getFreeQty() * i.getPharmaceuticalBillItem().getPurchaseRate();
-        //    System.out.println("sale = " + sale);
-        //    System.out.println("free = " + free);
+        //    //System.out.println("sale = " + sale);
+        //    //System.out.println("free = " + free);
         }
         b.setSaleValue(sale);
         b.setFreeValue(free);
@@ -689,7 +689,7 @@ public class PharmacyCalculation {
 //
 //        } else {
 //            qty = (ph.getPharmaceuticalBillItem().getQty() + ph.getPharmaceuticalBillItem().getFreeQty()) * item.getDblValue();
-//            //      ////System.out.println("sssssss " + qty);
+//            //      //////System.out.println("sssssss " + qty);
 //        }
 //
 //        if (itb.getId() != null) {

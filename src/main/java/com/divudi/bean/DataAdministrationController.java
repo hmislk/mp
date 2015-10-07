@@ -66,7 +66,7 @@ public class DataAdministrationController {
                 i.setRetiredAt(d);
                 i.setRetirer(sessionController.getLoggedUser());
                 itemFacade.edit(i);
-                System.out.println("i = " + i);
+                //System.out.println("i = " + i);
             }
         }
         JsfUtil.addSuccessMessage("Updated");
@@ -87,7 +87,7 @@ public class DataAdministrationController {
                 i.setRetiredAt(d);
                 i.setRetirer(sessionController.getLoggedUser());
                 institutionFacade.edit(i);
-                System.out.println("i = " + i);
+                //System.out.println("i = " + i);
             }
         }
         JsfUtil.addSuccessMessage("Updated");
@@ -108,7 +108,7 @@ public class DataAdministrationController {
                 i.setRetiredAt(d);
                 i.setRetirer(sessionController.getLoggedUser());
                 departmentFacade.edit(i);
-                System.out.println("i = " + i);
+                //System.out.println("i = " + i);
             }
         }
         JsfUtil.addSuccessMessage("Updated");

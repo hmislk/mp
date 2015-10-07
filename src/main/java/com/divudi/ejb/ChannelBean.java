@@ -149,7 +149,7 @@ public class ChannelBean {
                         newSs.setStaff(ss.getStaff());
                         //Temprory
                         newSs.setRoomNo(rowIndex++);
-                        //////System.out.println("Specific Count : " + sessionDayCount);
+                        ////////System.out.println("Specific Count : " + sessionDayCount);
                         serviceSessions.add(newSs);
 
                         if (tmp != ss.getSessionWeekday()) {
@@ -177,7 +177,7 @@ public class ChannelBean {
                         newSs.setStaff(ss.getStaff());
                         //Temprory
                         newSs.setRoomNo(rowIndex++);
-                        // ////System.out.println("Count : " + sessionDayCount);
+                        // //////System.out.println("Count : " + sessionDayCount);
 
                         serviceSessions.add(newSs);
 

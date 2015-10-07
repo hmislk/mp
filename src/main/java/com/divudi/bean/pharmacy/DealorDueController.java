@@ -227,11 +227,11 @@ public class DealorDueController implements Serializable {
 
             double tmp = 0.0;
             tmp = (double) lst.size();
-        //    System.out.println("tmp = " + tmp);
-        //    System.out.println("lst.size() = " + lst.size());
-        //    System.out.println("billCount = " + billCount);
+        //    //System.out.println("tmp = " + tmp);
+        //    //System.out.println("lst.size() = " + lst.size());
+        //    //System.out.println("billCount = " + billCount);
             billCount += tmp;
-        //    System.out.println("billCount = " + billCount);
+        //    //System.out.println("billCount = " + billCount);
 
             newIns.setBills(lst);
 
@@ -270,7 +270,7 @@ public class DealorDueController implements Serializable {
             grantTotal +=its.getPaidTotal()+its.getReturned()+its.getTotal();
             
         }
-    //    System.out.println("grantTotal = " + grantTotal);
+    //    //System.out.println("grantTotal = " + grantTotal);
     }
 
     public void fillItemsStore() {

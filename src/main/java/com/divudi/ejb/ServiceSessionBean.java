@@ -35,25 +35,25 @@ public class ServiceSessionBean {
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     public List<BillSession> getBillSessions(Item i, Date d) {
-        //System.out.println("getting bill sessions");
+        ////System.out.println("getting bill sessions");
         if (i == null || i.getSessionNumberType() == null) {
             return null;
         }
         switch (i.getSessionNumberType()) {
             case ByCategory:
-                //System.out.println("by cat");
+                ////System.out.println("by cat");
                 if (i.getCategory().getParentCategory() == null) {
-                    //System.out.println("by cat 2");
+                    ////System.out.println("by cat 2");
                     return getBillSessionsByCat(i.getCategory(), d);
                 } else {
-                    //System.out.println("by cat 3");
+                    ////System.out.println("by cat 3");
                     return getBillSessionsByCat(i.getCategory().getParentCategory(), d);
                 }
             case BySubCategory:
-                //System.out.println("by sc");
+                ////System.out.println("by sc");
                 return getBillSessionsByCat(i.getCategory(), d);
             case ByItem:
-                //System.out.println("by items 3");
+                ////System.out.println("by items 3");
                 return getBillSessionsByItem(i, d);
             default:
                 return null;
@@ -78,9 +78,9 @@ public class ServiceSessionBean {
 //        }
 //    }
     public BillSession createBillSession(BillItem bi) {
-        //System.out.println("Going to saving bill item sessions");
+        ////System.out.println("Going to saving bill item sessions");
         if (bi == null || bi.getItem() == null || bi.getItem().getSessionNumberType() == null) {
-            //System.out.println("Bil items sessions not save because of null values");
+            ////System.out.println("Bil items sessions not save because of null values");
             return null;
         }
         Item i = bi.getItem();
@@ -102,19 +102,19 @@ public class ServiceSessionBean {
         bi.setSessionDate(sessDate);
         bs.setSessionDate(sessDate);
 //        bs.setSessionDate(CommonFunctions.removeTime(bi.getSessionDate()));
-        // ////System.out.println("bill item session switch - pre");
+        // //////System.out.println("bill item session switch - pre");
         int count = getBillSessions(i, bi.getSessionDate()).size() + 1;
         //System.err.println("COUNT " + count);
         bs.setSerialNo(count);
         switch (i.getSessionNumberType()) {
             case ByCategory:
-                //System.out.println("by cat");
+                ////System.out.println("by cat");
                 if (i.getCategory().getParentCategory() == null) {
-                    //System.out.println("by cat only ");
+                    ////System.out.println("by cat only ");
                     bs.setCategory(i.getCategory());
 //                    bs.setSerialNo(getIdByCat(i.getCategory(), bi.getSessionDate()) + 1);
                 } else {
-                    //System.out.println("by parent cat");
+                    ////System.out.println("by parent cat");
                     bs.setCategory(i.getCategory().getParentCategory());
 //                    bs.setSerialNo(getIdByCat(i.getCategory().getParentCategory(), bi.getSessionDate()) + 1);
                 }
@@ -176,7 +176,7 @@ public class ServiceSessionBean {
 //        try {
 //            return sn.intValue();
 //        } catch (Exception e) {
-//            ////System.out.println("Error in converting double to int is" + e.getMessage());
+//            //////System.out.println("Error in converting double to int is" + e.getMessage());
 //            return 0;
 //        }
 //    }
@@ -193,12 +193,12 @@ public class ServiceSessionBean {
 //        m.put("catId", c.getId());
 //        m.put("sd", d);
 //        Double sn = getBillSessionFacade().findDoubleByJpql(s, m, TemporalType.DATE);
-//        ////System.out.println("id by cat count is " + sn );
+//        //////System.out.println("id by cat count is " + sn );
 //        try {
-//            ////System.out.println("int val of ount is " + sn.intValue());
+//            //////System.out.println("int val of ount is " + sn.intValue());
 //            return sn.intValue();
 //        } catch (Exception e) {
-//            ////System.out.println("Error in converting double to int is" + e.getMessage());
+//            //////System.out.println("Error in converting double to int is" + e.getMessage());
 //            return 0;
 //        }
 //    }

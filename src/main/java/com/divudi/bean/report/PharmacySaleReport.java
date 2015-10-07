@@ -894,78 +894,78 @@ public class PharmacySaleReport implements Serializable {
 
     public void createItemListWithOutItemDistributer() {
         List<Amp> allAmps = getAllPharmacyItems();
-        //System.out.println("allAmps = " + allAmps.size());
+        ////System.out.println("allAmps = " + allAmps.size());
         List<Amp> ampsWithDealor = getAllDealorItems();
-        //System.out.println("ampsWithOutDealor = " + ampsWithDealor.size());
+        ////System.out.println("ampsWithOutDealor = " + ampsWithDealor.size());
         allAmps.removeAll(ampsWithDealor);
-        //System.out.println("After remove allAmps = " + allAmps.size());
+        ////System.out.println("After remove allAmps = " + allAmps.size());
         amps = new ArrayList<>();
         amps.addAll(allAmps);
-        //System.out.println("amps = " + amps.size());
+        ////System.out.println("amps = " + amps.size());
     }
 
     public void createItemsDistributersWithDistributer() {
         distributerWithDestributorItems = new ArrayList<>();
         List<Institution> distributors = getAllDealors();
-        System.out.println("distributors.size() = " + distributors.size());
+        //System.out.println("distributors.size() = " + distributors.size());
         for (Institution distributor : distributors) {
             DistributerWithDestributorItem dwdi = new DistributerWithDestributorItem();
-            System.out.println("distributor = " + distributor.getName());
+            //System.out.println("distributor = " + distributor.getName());
             List<ItemsDistributors> list = getAllDealorItems(distributor);
-            System.out.println("list.size() = " + list.size());
+            //System.out.println("list.size() = " + list.size());
             if (list.size() > 0) {
                 dwdi.setDistributor(distributor);
                 dwdi.setItemsDistributors(list);
                 distributerWithDestributorItems.add(dwdi);
             }
         }
-        System.out.println("distributerWithDestributorItems.size() = " + distributerWithDestributorItems.size());
+        //System.out.println("distributerWithDestributorItems.size() = " + distributerWithDestributorItems.size());
     }
 
     public void createItemListOneItemHasGreterThanOneDistributor() {
         List<Object[]> objs = getAllDealorItemsWithCount();
-        //System.out.println("objs = " + objs);
-        //System.out.println("objs = " + objs.size());
+        ////System.out.println("objs = " + objs);
+        ////System.out.println("objs = " + objs.size());
         amps = new ArrayList<>();
         for (Object[] obj : objs) {
-            //System.out.println("obj = " + obj);
+            ////System.out.println("obj = " + obj);
             if (obj != null) {
                 Amp item = (Amp) obj[0];
-                //System.out.println("item = " + item.getName());
+                ////System.out.println("item = " + item.getName());
                 long count = (long) obj[1];
-                //System.out.println("count = " + count);
+                ////System.out.println("count = " + count);
                 if (count > 1) {
-                    //System.out.println("****Add****");
+                    ////System.out.println("****Add****");
                     amps.add(item);
                 }
             }
         }
-        //System.out.println("items = " + amps.size());
+        ////System.out.println("items = " + amps.size());
 
     }
 
     public void createItemListOneItemHasGreterThanOneDistributorOther() {
         List<Amp> ampsWithDealor = getAllDealorItems();
-        //System.out.println("ampsWithDealor = " + ampsWithDealor.size());
+        ////System.out.println("ampsWithDealor = " + ampsWithDealor.size());
 
         items = new ArrayList<>();
         for (Item i : ampsWithDealor) {
             System.err.println("in");
-            //System.out.println("item = " + i.getName());
+            ////System.out.println("item = " + i.getName());
             List<Amp> allAmps = getAmpItems(i);
-            //System.out.println("amps = " + allAmps.size());
+            ////System.out.println("amps = " + allAmps.size());
             int count = 0;
             if (allAmps != null) {
                 count = allAmps.size();
             }
-            //System.out.println("count = " + count);
+            ////System.out.println("count = " + count);
             if (count > 1) {
-                //System.out.println("****Add****");
+                ////System.out.println("****Add****");
                 items.add(i);
             }
             System.err.println("out");
         }
-        //System.out.println("items = " + items.size());
+        ////System.out.println("items = " + items.size());
 
     }
 

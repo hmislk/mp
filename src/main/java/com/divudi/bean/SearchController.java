@@ -382,7 +382,7 @@ public class SearchController implements Serializable {
 
         sql += " order by b.createdAt desc  ";
 //    
-        //     ////System.out.println("sql = " + sql);
+        //     //////System.out.println("sql = " + sql);
         bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
@@ -443,7 +443,7 @@ public class SearchController implements Serializable {
 
         sql += " order by b.createdAt desc  ";
 //    
-        //     ////System.out.println("sql = " + sql);
+        //     //////System.out.println("sql = " + sql);
         bills = getBillFacade().findBySQL(sql, m, TemporalType.TIMESTAMP, 50);
 
     }
@@ -1686,12 +1686,12 @@ public class SearchController implements Serializable {
         temMap.put("ins", getSessionController().getInstitution());
 
         System.err.println("Sql " + sql);
-        //    System.out.println("temMap = " + temMap);
+        //    //System.out.println("temMap = " + temMap);
 
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
         getNetTotal(bills);
 
-        //    System.out.println("bills.size() = " + bills.size());
+        //    //System.out.println("bills.size() = " + bills.size());
     }
 
     public void getNetTotal(List<Bill> bills) {
@@ -1772,12 +1772,12 @@ public class SearchController implements Serializable {
         temMap.put("ins", getSessionController().getInstitution());
 
         System.err.println("Sql " + sql);
-        //    System.out.println("temMap = " + temMap);
+        //    //System.out.println("temMap = " + temMap);
 
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);
         getNetTotal(bills);
 
-        //    System.out.println("bills.size() = " + bills.size());
+        //    //System.out.println("bills.size() = " + bills.size());
     }
 
     double netTotal;
@@ -2069,11 +2069,11 @@ public class SearchController implements Serializable {
         temMap.put("class", CancelledBill.class);
 
         System.err.println("Sql " + sql);
-        //    System.out.println("temMap = " + temMap);
+        //    //System.out.println("temMap = " + temMap);
 
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP);
 
-        System.out.println("bills.size() = " + bills.size());
+        //System.out.println("bills.size() = " + bills.size());
     }
 
     public void createGrnPaymentTableAllStore() {

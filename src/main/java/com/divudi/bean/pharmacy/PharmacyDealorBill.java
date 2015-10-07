@@ -95,8 +95,8 @@ public class PharmacyDealorBill implements Serializable {
         }
         
         for (BillItem b : getBillItems()) {
-            System.out.println("getCurrentBillItem().getReferenceBill().getInsId() = " + getCurrentBillItem().getReferenceBill().getInsId());
-            System.out.println("b.getReferenceBill().getInsId() = " + b.getReferenceBill().getInsId());
+            //System.out.println("getCurrentBillItem().getReferenceBill().getInsId() = " + getCurrentBillItem().getReferenceBill().getInsId());
+            //System.out.println("b.getReferenceBill().getInsId() = " + b.getReferenceBill().getInsId());
             if (b.getReferenceBill().equals(getCurrentBillItem().getReferenceBill())) {
                     UtilityController.addErrorMessage("This GRN is Alredy Added");
                     return true;
@@ -193,7 +193,7 @@ public class PharmacyDealorBill implements Serializable {
             n += b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
-        // ////System.out.println("AAA : " + n);
+        // //////System.out.println("AAA : " + n);
     }
 
     public void calTotalWithResetingIndex() {
@@ -206,7 +206,7 @@ public class PharmacyDealorBill implements Serializable {
             payingAmount+= b.getNetValue();
         }
         getCurrent().setNetTotal(0 - n);
-        // ////System.out.println("AAA : " + n);
+        // //////System.out.println("AAA : " + n);
     }
 
     public void removeAll() {
@@ -369,10 +369,10 @@ public class PharmacyDealorBill implements Serializable {
 
     private void updateReferenceBill(BillItem tmp) {
         double dbl = getCreditBean().getPaidAmount(tmp.getReferenceBill(), BillType.GrnPayment);
-        System.out.println("dbl = " + dbl);
+        //System.out.println("dbl = " + dbl);
         tmp.getReferenceBill().setPaidAmount(0 - dbl);
         getBillFacade().edit(tmp.getReferenceBill());
-        System.out.println("1 = " + tmp.getReferenceBill().getPaidAmount());
+        //System.out.println("1 = " + tmp.getReferenceBill().getPaidAmount());
     }
 
     /**

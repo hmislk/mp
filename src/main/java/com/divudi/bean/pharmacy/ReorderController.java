@@ -52,9 +52,9 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.primefaces.model.chart.CartesianChartModel;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.DateAxis;
-import org.primefaces.model.chart.LegendPlacement;
+//import org.primefaces.model.chart.AxisType;
+import org.jfree.chart.axis.DateAxis;
+//import org.primefaces.model.chart.LegendPlacement;
 import org.primefaces.model.chart.LineChartSeries;
 
 @Named
@@ -182,17 +182,17 @@ public class ReorderController implements Serializable {
         
         
         
-        dateModel.setTitle("Item Transactions");
-        dateModel.setZoom(true);
-        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
-        dateModel.setLegendPosition("ne");
-        dateModel.getAxis(AxisType.Y).setLabel("Stock");
-        DateAxis axis = new DateAxis("Dates");
-        axis.setTickAngle(-50);
-//        axis.setMax("2014-02-01");
-        axis.setTickFormat("%b %#d, %y");
-
-        dateModel.getAxes().put(AxisType.X, axis);
+//        dateModel.setTitle("Item Transactions");
+//        dateModel.setZoom(true);
+//        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
+//        dateModel.setLegendPosition("ne");
+//        dateModel.getAxis(AxisType.Y).setLabel("Stock");
+//        DateAxis axis = new DateAxis("Dates");
+//        axis.setTickAngle(-50);
+////        axis.setMax("2014-02-01");
+//        axis.setTickFormat("%b %#d, %y");
+//
+//        dateModel.getAxes().put(AxisType.X, axis);
     }
 
     public DepartmentListMethod getDepartmentListMethod() {

@@ -129,17 +129,31 @@ public class ReportsStock implements Serializable {
     public void fillDepartmentNonEmptyStocks() {
         Map m = new HashMap();
         String sql;
-        if (department == null) {
-            sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+//        if (department == null) {
+//            sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+//            m.put("d", department);
+//            m.put("z", 0.0);
+//        } else {
+//            sql = "select s from Stock s where s.stock>:z order by s.itemBatch.item.name";
+//            m.put("z", 0.0);
+//        }
+
+        sql = "select s from Stock s "
+                + " where s.stock>:z  ";
+
+        if (department != null) {
+            sql += " and s.department=:d ";
             m.put("d", department);
-            m.put("z", 0.0);
-        } else {
-            sql = "select s from Stock s where s.stock>:z order by s.itemBatch.item.name";
-            m.put("z", 0.0);
         }
+
+        sql += " order by s.itemBatch.item.name";
+
+        m.put("z", 0.0);
+
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
+
         for (Stock ts : stocks) {
             stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
@@ -163,9 +177,7 @@ public class ReportsStock implements Serializable {
     public void setItem(Item item) {
         this.item = item;
     }
-    
-    
-    
+
     public String fillAllDepartmentStocksByAmp() {
         Map m = new HashMap();
         String sql;
@@ -186,7 +198,7 @@ public class ReportsStock implements Serializable {
         stockSaleValue += 0.0;
 
         Stock s;
-        
+
         for (PharmacyStockRow r : lsts) {
             stockPurchaseValue += r.getPurchaseValue();
             stockSaleValue += r.getSaleValue();
@@ -739,7 +751,7 @@ public class ReportsStock implements Serializable {
         sql = "select s from Stock s where (s.department is null and s.staff is null) and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
         bulkAdjustmentStocks = getStockFacade().findBySQL(sql, m);
     }
-    
+
     public void fillAllDistributorStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");

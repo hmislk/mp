@@ -17,6 +17,8 @@ import com.divudi.data.dataStructure.DepartmentSale;
 import com.divudi.data.dataStructure.DepartmentStock;
 import com.divudi.data.dataStructure.InstitutionSale;
 import com.divudi.data.dataStructure.InstitutionStock;
+import com.divudi.data.dataStructure.ItemQuantityAndValues;
+import com.divudi.data.dataStructure.ItemTransactionSummeryRow;
 import com.divudi.data.dataStructure.StockAverage;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.BillItem;
@@ -24,6 +26,7 @@ import com.divudi.entity.BilledBill;
 import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
+import com.divudi.entity.pharmacy.Amp;
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.facade.AmpFacade;
@@ -37,6 +40,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,10 +79,19 @@ public class PharmacyController implements Serializable {
     @EJB
     private AmpFacade ampFacade;
     ///////////
+    List<ItemTransactionSummeryRow> itemTransactionSummeryRows;
     private Item pharmacyItem;
     // private double grantStock;
     private Date fromDate;
     private Date toDate;
+    Department department;
+    boolean hasSale;
+    boolean hasWholesale;
+    boolean hasInward;
+    boolean hasIssue;
+    boolean hasTransferOut;
+    boolean hasPurchase;
+    boolean hasTransferIn;
     ////////
     //List<DepartmentStock> departmentStocks;
     private List<DepartmentSale> departmentSale;
@@ -87,6 +100,9 @@ public class PharmacyController implements Serializable {
     private List<BillItem> directPurchase;
     Double persentage;
     int orderForInDays;
+    private List<InstitutionSale> institutionIssue;
+    private double grantIssueQty;
+    private double grantIssueValue;
 
     public int getOrderForInDays() {
         return orderForInDays;
@@ -1399,5 +1415,412 @@ public class PharmacyController implements Serializable {
     public void setTotalRetailSale(double totalRetailSale) {
         this.totalRetailSale = totalRetailSale;
     }
+
+    public void fillDetails() {
+        createInstitutionSale();
+        createInstitutionStock();
+        createInstitutionTransferIssue();
+        createInstitutionIssue();
+        createInstitutionTransferReceive();
+        createGrnTable();
+        createPoTable();
+        createDirectPurchaseTable();
+        createInstitutionIssue();
+    }
+
+    public void createInstitutionIssue() {
+        List<Institution> insList = getCompany();
+
+        institutionIssue = new ArrayList<>();
+        grantIssueQty = 0;
+        grantIssueValue = 0;
+
+        for (Institution ins : insList) {
+            InstitutionSale newTable = new InstitutionSale();
+            List<DepartmentSale> list = new ArrayList<>();
+            double totalValue = 0;
+            double totalQty = 0;
+            List<Object[]> objs = calDepartmentIssue(ins);
+
+            for (Object[] obj : objs) {
+                DepartmentSale r = new DepartmentSale();
+                r.setDepartment((Department) obj[0]);
+                r.setSaleValue((Double) obj[1]);
+                r.setSaleQty((Double) obj[2]);
+                list.add(r);
+                //Total Institution Stock
+                totalValue += r.getSaleValue();
+                totalQty += r.getSaleQty();
+                grantIssueValue += r.getSaleValue();
+                grantIssueQty += r.getSaleQty();
+
+            }
+
+            if (totalQty != 0 || totalValue != 0) {
+                newTable.setDepartmentSales(list);
+                newTable.setInstitution(ins);
+                newTable.setInstitutionQty(totalQty);
+                newTable.setInstitutionValue(totalValue);
+
+                institutionIssue.add(newTable);
+
+            }
+        }
+
+    }
+
+    public List<Object[]> calDepartmentIssue(Institution institution) {
+        Item item;
+
+        if (pharmacyItem instanceof Ampp) {
+            item = ((Ampp) pharmacyItem).getAmp();
+        } else {
+            item = pharmacyItem;
+        }
+
+        String sql;
+        Map m = new HashMap();
+//        m.put("curr", getSessionController().getDepartment());
+        m.put("i", item);
+        m.put("ins", institution);
+        m.put("frm", getFromDate());
+        m.put("to", getToDate());
+        m.put("btp", BillType.PharmacyIssue);
+        //   m.put("refType", BillType.PharmacySale);
+//        sql = "select i.bill.toDepartment,"
+//                + " sum(i.pharmaceuticalBillItem.stock.itemBatch.purcahseRate*i.pharmaceuticalBillItem.qty),"
+//                + " sum(i.pharmaceuticalBillItem.qty) "
+//                + " from BillItem i "
+//                + " where i.bill.toDepartment.institution=:ins "
+//                + " and i.bill.department=:curr "
+//                + " and i.item=:i"
+//                + " and i.bill.billType=:btp "
+//                + " and i.createdAt between :frm and :to"
+//                + " group by i.bill.toDepartment";
+
+        sql = "select i.billItem.bill.toDepartment,"
+                + " sum(i.stock.itemBatch.purcahseRate*i.qty),"
+                + " sum(i.qty) "
+                + " from PharmaceuticalBillItem i "
+                + " where i.billItem.bill.toDepartment.institution=:ins "
+                //                + " and i.billItem.bill.department=:curr "
+                + " and i.billItem.item=:i"
+                + " and i.billItem.bill.billType=:btp "
+                + " and i.billItem.createdAt between :frm and :to"
+                + " group by i.billItem.bill.toDepartment";
+
+        return getBillItemFacade().findAggregates(sql, m, TemporalType.TIMESTAMP);
+
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public List<InstitutionSale> getInstitutionIssue() {
+        return institutionIssue;
+    }
+
+    public void setInstitutionIssue(List<InstitutionSale> institutionIssue) {
+        this.institutionIssue = institutionIssue;
+    }
+
+    public double getGrantIssueQty() {
+        return grantIssueQty;
+    }
+
+    public void setGrantIssueQty(double grantIssueQty) {
+        this.grantIssueQty = grantIssueQty;
+    }
+
+    public double getGrantIssueValue() {
+        return grantIssueValue;
+    }
+
+    public void setGrantIssueValue(double grantIssueValue) {
+        this.grantIssueValue = grantIssueValue;
+    }
+    
+    public void createAllItemTransactionSummery() {
+        hasInward = false;
+        hasIssue = false;
+        hasPurchase = false;
+        hasTransferIn = false;
+        hasSale = false;
+        hasTransferOut = false;
+        hasWholesale = false;
+        String s;
+        s = "select a "
+                + " from BillItem bi join bi.item a "
+                + " where type(a)=:t "
+                + " and bi.bill.billType in :bts "
+                + " and bi.bill.createdAt between :fd and :td "
+                + " and bi.bill.department =:dep "
+                + " group by a "
+                + " order by a.name";
+        BillType[] abts = new BillType[]{BillType.PharmacySale, BillType.PharmacyTransferReceive, BillType.PharmacyPurchaseBill, BillType.PharmacyGrnBill, BillType.PharmacyBhtPre, BillType.PharmacyTransferIssue, BillType.PharmacyIssue, BillType.PharmacyWholeSale};
+
+        Map p = new HashMap();
+        p.put("t", Amp.class);
+        p.put("fd", fromDate);
+        p.put("td", toDate);
+        p.put("dep", department);
+        p.put("bts", Arrays.asList(abts));
+
+        List<Amp> allAmps = ampFacade.findBySQL(s, p);
+
+        Map<Long, ItemTransactionSummeryRow> m = new HashMap();
+
+        for (Amp a : allAmps) {
+            ItemTransactionSummeryRow r = new ItemTransactionSummeryRow();
+            r.setItem(a);
+            m.put(a.getId(), r);
+        }
+
+        BillType[] bts = new BillType[]{BillType.PharmacySale};
+        BillType[] rbts = new BillType[]{BillType.PharmacyPre};
+        List<ItemQuantityAndValues> rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, rbts);
+
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasSale = true;
+                }
+
+                r.setRetailSaleQty(Math.abs(v.getQuantity()));
+                r.setRetailSaleVal(Math.abs(v.getValue()));
+            }
+        }
+
+        bts = new BillType[]{BillType.PharmacyWholeSale};
+        rbts = new BillType[]{BillType.PharmacyWholesalePre};
+        rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, rbts);
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasWholesale = true;
+                }
+                r.setWholeSaleQty(Math.abs(v.getQuantity()));
+                System.out.println("v.getQuantity() = " + v.getQuantity());
+                r.setWholeSaleVal(Math.abs(v.getValue()));
+                System.out.println("v.getValue() = " + v.getValue());
+            }
+        }
+
+        bts = new BillType[]{BillType.PharmacyIssue};
+        rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, rbts);
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                r.setIssueQty(Math.abs(v.getQuantity()));
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasIssue = true;
+                }
+                r.setIssueVal(Math.abs(v.getValue()));
+            }
+        }
+
+        bts = new BillType[]{BillType.PharmacyTransferIssue};
+        rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, rbts);
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasTransferOut = true;
+                }
+                r.setTransferOutQty(Math.abs(v.getQuantity()));
+                r.setTransferOutVal(Math.abs(v.getValue()));
+            }
+        }
+
+        bts = new BillType[]{BillType.PharmacyBhtPre};
+        rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, rbts);
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasInward = true;
+                }
+                r.setBhtSaleQty(Math.abs(v.getQuantity()));
+                r.setBhtSaleVal(Math.abs(v.getValue()));
+            }
+        }
+
+        bts = new BillType[]{BillType.PharmacyPurchaseBill, BillType.PharmacyGrnBill};
+        rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, null);
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasPurchase = true;
+                }
+                r.setPurchaseQty(Math.abs(v.getQuantity()));
+                r.setPurchaseVal(Math.abs(v.getValue()));
+            }
+        }
+
+        bts = new BillType[]{BillType.PharmacyTransferReceive};
+        rs = findPharmacyTrnasactionQuantityAndValues(fromDate,
+                toDate, null, department, null, bts, rbts);
+        for (ItemQuantityAndValues v : rs) {
+            ItemTransactionSummeryRow r = m.get(v.getItem().getId());
+            if (r != null) {
+                if (Math.abs(v.getQuantity()) > 0.0) {
+                    hasTransferIn = true;
+                }
+                r.setTransferInQty(Math.abs(v.getQuantity()));
+                r.setTransferInVal(Math.abs(v.getValue()));
+            }
+        }
+        
+
+//        System.out.println("m = " + m);
+        itemTransactionSummeryRows = new ArrayList<>(m.values());
+        
+        for(ItemTransactionSummeryRow r:itemTransactionSummeryRows){
+            if(r.getBhtSaleQty()==0.0 && r.getIssueQty()==0.0 && r.getPurchaseQty()==0.0 && r.getRetailSaleQty()==0.0 
+                    && r.getWholeSaleQty()==0.0 && r.getTransferOutQty()==0.0 && r.getTransferInQty()==0.0){
+                itemTransactionSummeryRows.remove(r);
+            }
+        }
+        
+        Collections.sort(itemTransactionSummeryRows);
+
+    }
+
+    public List<ItemQuantityAndValues> findPharmacyTrnasactionQuantityAndValues(Date fromDate,
+            Date toDate,
+            Institution ins,
+            Department department,
+            Item item,
+            BillType[] billTypes,
+            BillType[] referenceBillTypes) {
+
+        if (false) {
+            BillItem bi = new BillItem();
+            bi.getNetValue();
+            bi.getPharmaceuticalBillItem().getQty();
+        }
+
+        String sql;
+        Map m = new HashMap();
+        m.put("frm", getFromDate());
+        m.put("to", getToDate());
+        sql = "select new com.divudi.data.dataStructure.ItemQuantityAndValues(i.item, "
+                + "sum(i.pharmaceuticalBillItem.qty), "
+                + "sum(i.netValue)) "
+                + " from BillItem i "
+                + " where i.bill.createdAt between :frm and :to  ";
+        if (department != null) {
+            m.put("dep", department);
+            sql += " and i.bill.department=:dep";
+        }
+        if (item != null) {
+            m.put("item", department);
+            sql += " and i.item=:item ";
+        }
+
+        if (billTypes != null) {
+            List<BillType> bts = Arrays.asList(billTypes);
+            m.put("bts", bts);
+            sql += " and i.bill.billType in :bts ";
+        }
+
+        if (referenceBillTypes != null) {
+            List<BillType> rbts = Arrays.asList(referenceBillTypes);
+            m.put("rbts", rbts);
+            sql += " and i.bill.referenceBill.billType in :rbts ";
+        }
+
+        if (ins != null) {
+            m.put("ins", ins);
+            sql += " and (i.bill.institution=:ins or i.bill.department.institution=:ins) ";
+        }
+        sql += " group by i.item";
+        sql += " order by i.item.name";
+//        System.out.println("m = " + m);
+//        System.out.println("sql = " + sql);
+        List<ItemQuantityAndValues> lst = getBillItemFacade().findItemQuantityAndValuesList(sql, m, TemporalType.DATE);
+        return lst;
+
+    }
+
+    public List<ItemTransactionSummeryRow> getItemTransactionSummeryRows() {
+        return itemTransactionSummeryRows;
+    }
+
+    public void setItemTransactionSummeryRows(List<ItemTransactionSummeryRow> itemTransactionSummeryRows) {
+        this.itemTransactionSummeryRows = itemTransactionSummeryRows;
+    }
+
+    public boolean isHasSale() {
+        return hasSale;
+    }
+
+    public void setHasSale(boolean hasSale) {
+        this.hasSale = hasSale;
+    }
+
+    public boolean isHasWholesale() {
+        return hasWholesale;
+    }
+
+    public void setHasWholesale(boolean hasWholesale) {
+        this.hasWholesale = hasWholesale;
+    }
+
+    public boolean isHasInward() {
+        return hasInward;
+    }
+
+    public void setHasInward(boolean hasInward) {
+        this.hasInward = hasInward;
+    }
+
+    public boolean isHasIssue() {
+        return hasIssue;
+    }
+
+    public void setHasIssue(boolean hasIssue) {
+        this.hasIssue = hasIssue;
+    }
+
+    public boolean isHasTransferOut() {
+        return hasTransferOut;
+    }
+
+    public void setHasTransferOut(boolean hasTransferOut) {
+        this.hasTransferOut = hasTransferOut;
+    }
+
+    public boolean isHasPurchase() {
+        return hasPurchase;
+    }
+
+    public void setHasPurchase(boolean hasPurchase) {
+        this.hasPurchase = hasPurchase;
+    }
+
+    public boolean isHasTransferIn() {
+        return hasTransferIn;
+    }
+
+    public void setHasTransferIn(boolean hasTransferIn) {
+        this.hasTransferIn = hasTransferIn;
+    }
+
+    
 
 }

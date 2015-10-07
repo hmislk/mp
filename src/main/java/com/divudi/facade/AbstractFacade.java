@@ -4,6 +4,7 @@
  */
 package com.divudi.facade;
 
+import com.divudi.data.dataStructure.ItemQuantityAndValues;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -708,10 +709,30 @@ public abstract class AbstractFacade<T> {
         }
 
         try {
-            return (Long) qry.getSingleResult();
+            return qry.getSingleResult();
         } catch (Exception e) {
 //            //////System.out.println(e.getMessage());
             return 0L;
         }
     }
+    
+    public List<ItemQuantityAndValues> findItemQuantityAndValuesList(String temSQL, Map<String, Object> parameters, TemporalType tt) {
+        TypedQuery<ItemQuantityAndValues> qry = getEntityManager().createQuery(temSQL, ItemQuantityAndValues.class);
+        Set s = parameters.entrySet();
+        Iterator it = s.iterator();
+        while (it.hasNext()) {
+            Map.Entry m = (Map.Entry) it.next();
+            Object pVal = m.getValue();
+            String pPara = (String) m.getKey();
+            if (pVal instanceof Date) {
+                Date d = (Date) pVal;
+                qry.setParameter(pPara, d, tt);
+            } else {
+                qry.setParameter(pPara, pVal);
+            }
+            //    ////System.out.println("Parameter " + pPara + "\tVal" + pVal);
+        }
+        return qry.getResultList();
+    }
+
 }

@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.MessageController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -39,6 +40,8 @@ import org.primefaces.model.LazyDataModel;
 @SessionScoped
 public class PurchaseOrderController implements Serializable {
 
+    @Inject
+    MessageController messageController;
     @Inject
     private SessionController sessionController;
     @EJB
@@ -131,6 +134,8 @@ public class PurchaseOrderController implements Serializable {
         saveBill();
         saveBillComponent();
 
+        messageController.invalidateMessages(requestedBill, aprovedBill);
+        
         //Update Requested Bill Reference
         getRequestedBill().setReferenceBill(getAprovedBill());
         getBillFacade().edit(getRequestedBill());

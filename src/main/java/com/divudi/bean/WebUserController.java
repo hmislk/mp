@@ -27,7 +27,9 @@ import com.divudi.facade.WebUserPrivilegeFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -181,6 +183,31 @@ public class WebUserController implements Serializable {
             }
         }
         return hasPri;
+    }
+
+    public boolean hasPrivilege(WebUser user, Privileges privilege) {
+        boolean hasPri = false;
+        if (user == null || privilege == null) {
+            return hasPri;
+        }
+        Map m = new HashMap();
+        m.put("wu", user);
+        m.put("p", privilege);
+        String sql;
+        sql = "select w "
+                + " from WebUserPrivilege w "
+                + " where w.retired=false "
+                + " and w.webUser =:wu "
+                + " and w.privilege=:p";
+        System.out.println("sql = " + sql);
+        System.out.println("m = " + m);
+        List<WebUserPrivilege> ups = webUserPrevilageFacade.findBySQL(sql,m);
+        System.out.println("ups = " + ups);
+        if (ups == null || ups.isEmpty()) {
+            System.out.println("ups.size() = " + ups.size());
+            return hasPri;
+        }
+        return true;
     }
 
     public Speciality getSpeciality() {

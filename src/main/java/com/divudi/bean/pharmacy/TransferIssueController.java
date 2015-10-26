@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.MessageController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -46,6 +47,17 @@ import org.primefaces.event.RowEditEvent;
 @SessionScoped
 public class TransferIssueController implements Serializable {
 
+    /**
+     * EJBs
+     */
+    
+    /**
+     * Controllers
+     */
+    
+    @Inject
+    MessageController messageController;
+    
     private Bill requestedBill;
     private Bill issuedBill;
     private boolean printPreview;
@@ -267,6 +279,9 @@ public class TransferIssueController implements Serializable {
 
         getBillFacade().edit(getIssuedBill());
 
+        messageController.addMessageToWebUsers(issuedBill);
+        messageController.invalidateMessages(requestedBill, issuedBill);
+        
         //Update ReferenceBill
         //     getRequestedBill().setReferenceBill(getIssuedBill());
         getRequestedBill().getForwardReferenceBills().add(getIssuedBill());

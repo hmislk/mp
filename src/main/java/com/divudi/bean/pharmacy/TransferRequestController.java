@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.MessageController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -16,6 +17,7 @@ import com.divudi.entity.BillItem;
 import com.divudi.entity.BilledBill;
 import com.divudi.entity.Institution;
 import com.divudi.entity.Item;
+import com.divudi.entity.Message;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.facade.BillFacade;
 import com.divudi.facade.BillItemFacade;
@@ -40,8 +42,9 @@ import javax.inject.Inject;
 @SessionScoped
 public class TransferRequestController implements Serializable {
 
-    @Inject
-    private SessionController sessionController;
+    /**
+     * EJBs
+     */
     @EJB
     private ItemFacade itemFacade;
     @EJB
@@ -56,12 +59,25 @@ public class TransferRequestController implements Serializable {
     private PharmacyBean pharmacyBean;
     @EJB
     private ItemsDistributorsFacade itemsDistributorsFacade;
+    @EJB
+    private PharmacyCalculation pharmacyBillBean;
+
+    /**
+     * Controllers
+     */
+    @Inject
+    private SessionController sessionController;
+    @Inject
+    MessageController messageController;
+    /**
+     * Properties
+     */
+
     private Bill bill;
     private Institution dealor;
     private BillItem currentBillItem;
     private List<BillItem> billItems;
-    @EJB
-    private PharmacyCalculation pharmacyBillBean;
+
     private boolean printPreview;
 
     public void recreate() {
@@ -189,22 +205,21 @@ public class TransferRequestController implements Serializable {
             getBillItemFacade().create(b);
 
             getPharmaceuticalBillItemFacade().create(tmpPh);
-            
-            
+
             b.setPharmaceuticalBillItem(tmpPh);
             getPharmaceuticalBillItemFacade().edit(tmpPh);
             getBillItemFacade().edit(b);
-            
 
             getBill().getBillItems().add(b);
         }
-        
+
         getBillFacade().edit(getBill());
 
+        messageController.addMessageToWebUsers(bill);
         UtilityController.addSuccessMessage("Transfer Request Succesfully Created");
 
         printPreview = true;
-        
+
     }
 
     public void remove(BillItem billItem) {

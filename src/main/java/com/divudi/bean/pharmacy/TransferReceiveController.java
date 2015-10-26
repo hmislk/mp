@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.MessageController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -70,6 +71,8 @@ public class TransferReceiveController implements Serializable {
     private CommonFunctions commonFunctions;
     @EJB
     private PharmacyCalculation pharmacyCalculation;
+    @Inject
+    MessageController messageController;
     private List<BillItem> billItems;
     private List<Bill> bills;
     private SearchKeyword searchKeyword;
@@ -208,6 +211,8 @@ public class TransferReceiveController implements Serializable {
         getIssuedBill().getForwardReferenceBills().add(getReceivedBill());
         getBillFacade().edit(getIssuedBill());
 
+        messageController.invalidateMessages(issuedBill, receivedBill);
+        
 //        getIssuedBill().setReferenceBill(getReceivedBill());
 //        getBillFacade().edit(getIssuedBill());
         printPreview = true;

@@ -72,7 +72,7 @@
                                     <p:menuitem  ajax="false" action="#{reorderController.autoOrderByRol()}"  value="By Items Below ROL" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="#{reorderController.autoOrderByAllItems()}"  value="All Item Reordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
                                     <p:menuitem  ajax="false" action="#{reorderController.autoOrderByAllItems()}"  value="Generic Reordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
-                               
+
                                 </p:submenu>
                                 <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_list_to_approve"  value="Order Approval" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('Pharmacy')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_purchase_order_list_for_recieve"  value="Good Receive"  actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyGoodReceive')}" ></p:menuitem>                                        
@@ -282,6 +282,35 @@
                 <p:clock pattern="HH:mm a - dd MMMM yyyy" mode="server"  />  
             </div>
 
+
+            <h:panelGroup id="gpMessages"  >
+                <p:panel id="pnl" rendered="#{messageController.hasUserMessages(sessionController.loggedUser)}"
+                         style="width: 300px; top: 10px; right: 10px; position: fixed;">
+                   
+
+                        <p:dataTable value="#{messageController.userMessages(sessionController.loggedUser)}" var="m" >
+
+                            <p:column headerText="Messages" >
+                                <h:outputText rendered="#{m.type eq 'PharmacyApproval'}" 
+                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toInstitution.name}." ></h:outputText>
+                                <h:outputText rendered="#{m.type eq 'PharmacyTransferIssue'}"  
+                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                                <h:outputText rendered="#{m.type eq 'PharmacyTransferRequest'}"  
+                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+
+                                <p:spacer width="5" ></p:spacer>
+                                <p:commandLink value="x" action="#{messageController.makeMessageAsNoted(m)}" 
+                                               update=":#{p:component('gpMessages')}"  ></p:commandLink>
+                            </p:column>
+
+                        </p:dataTable>
+
+                   
+                </p:panel>
+
+            </h:panelGroup>
+            <p:draggable for="pnl" />
+            
         </div>
 
     </h:body>

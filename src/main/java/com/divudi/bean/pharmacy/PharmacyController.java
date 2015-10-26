@@ -1689,12 +1689,16 @@ public class PharmacyController implements Serializable {
 //        System.out.println("m = " + m);
         itemTransactionSummeryRows = new ArrayList<>(m.values());
         
+        List<ItemTransactionSummeryRow> lstRem = new ArrayList<>();
+        
         for(ItemTransactionSummeryRow r:itemTransactionSummeryRows){
             if(r.getBhtSaleQty()==0.0 && r.getIssueQty()==0.0 && r.getPurchaseQty()==0.0 && r.getRetailSaleQty()==0.0 
                     && r.getWholeSaleQty()==0.0 && r.getTransferOutQty()==0.0 && r.getTransferInQty()==0.0){
-                itemTransactionSummeryRows.remove(r);
+                lstRem.add(r);
             }
         }
+        
+        itemTransactionSummeryRows.removeAll(lstRem);
         
         Collections.sort(itemTransactionSummeryRows);
 

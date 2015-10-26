@@ -1,4 +1,3 @@
-
 /*
 Design by Free CSS Templates
 http://www.freecsstemplates.org
@@ -27,11 +26,57 @@ body {
 }
 
 .fullSpread{
-    min-height: 100%;
-    min-height: 100%;
-    padding: 0px;
-    margin: 0px;
+    height: 100vh;
+    padding: 0px!important;
+    margin: 0px!important;
+    border: 0px!important;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.bottomBorderOnly{
+    padding: 0px!important;
+    margin: 0px!important;
     border: 0px;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-bottom: 0px !important;
+}
+
+.horizontalCenteringLarge {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+
+.verticalAndHorizontalCenteringLarge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*display: inline-block;*/
+}
+
+.verticalAndHorizontalCentering {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*display: inline-block;*/
+}
+
+.rightBordrOnly{
+    border-right: 1px solid rgba(0, 0, 0, 0.2)!important;
+    border-left: 0px !important;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
 }
 
 @media screen{
@@ -41,9 +86,18 @@ body {
         position: relative; 
         font-size: 150%;
     }
+
+    .printOnly{
+        display: none;
+    }
 }
 
 @media print {
+
+    .printOnly{
+        display:block;
+    }
+
     .myDivToPrint {
         background-color: red;
         height: 100%;
@@ -58,45 +112,6 @@ body {
     }
 }
 
-h1, h2, h3 {
-    margin: 0px;
-    padding: 0px;
-    letter-spacing: -2px;
-    text-transform: uppercase;
-    font-family: 'Arvo', serif;
-    font-weight: normal;
-    color: #107710;
-    color: red;
-
-}
-
-h1 {
-    font-size: 2em;
-}
-
-h2 {
-    font-size: 2.4em;
-}
-
-h3 {
-    font-size: 1.6em;
-}
-
-p, ul, ol {
-    margin-top: 0;
-    line-height: 180%;
-}
-
-ul, ol {
-}
-
-a {
-    text-decoration: none;
-    color: #107710;
-}
-
-a:hover {
-}
 
 /* Header */
 
@@ -504,12 +519,46 @@ a:hover {
     font-size: 13pt;
 }
 
+.noPaddingMargin{
+    padding: 0px!important;
+    margin: 0px!important;
+}
+
+.noPaddingMargin.ui-panel-content{
+    padding: 0px!important;
+    margin: 0px!important;
+}
+
 .alignTop {
     vertical-align: top;
 }
 
 .alignTop td {
     vertical-align: top;
+}
+
+
+.singleLine
+{
+    text-wrap:none!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:clip!important ;
+    word-wrap: break-word;
+}
+
+.fourEqualColumns{
+    width: 25%!important;
+}
+
+.firstOfTitleAndThreeColumns{
+    width: 55%!important;
+    font-weight: bolder!important; 
+}
+
+.othersOfTitleAndThreeColumns{
+    width: 15%!important;
+    font-weight: lighter!important;
 }
 
 .linkButton
@@ -520,6 +569,7 @@ a:hover {
     border-radius: 5px;
     text-transform: uppercase;
     font-size: 12px;
+    text-align: left!important;
 }
 
 .grid1 {
@@ -569,12 +619,12 @@ a:hover {
 
 
 .opdPanel .ui-panel-titlebar {
-    color: #008000;
-    border-color: #008000;
+    /*    color: #008000;
+        border-color: #008000;*/
 }
 
-.dateTimePicker{
-    width: 350px;
+.dateTimePicker input{
+    width: 280px;
 }
 
 
@@ -695,11 +745,16 @@ a:hover {
     color: red;
 }
 
+.autoComplete75px .ui-autocomplete-input.ui-inputfield{
+    width : 75px !important;
+
+}
+
 
 
 .crossLine{
-   text-decoration: line-through; 
-    
+    text-decoration: line-through; 
+
 }
 
 .displayRow{
@@ -710,16 +765,267 @@ a:hover {
     display: none;
 }
 
+.highLight{
+    //color: red;
+    font-weight: bolder!important;
+    font-style:italic!important;
+    font-size: 125%!important;
 
-.averageNumberColumn{
+}
+
+.highLight2{
+    //color: red;
+    font-weight: bolder!important;
+    font-style:italic!important;
+}
+
+
+.singleLine
+{
+    text-wrap:none!important;
+    white-space:nowrap!important;
+    //overflow:hidden;
+    overflow-x: visible!important;
+    text-overflow:ellipsis!important;
+}
+
+.fonts{
+    font-size: 11px!important;
+
+}
+
+.greentext{
+    background-color: yellow;
+    color: green;
+    padding: 2px;
+    margin: 2px;
+}
+
+.yellowtext{
+    background-color: brown;
+    color: yellow;
+    padding: 2px;
+    margin: 2px;
+}
+
+.redtext{
+    background-color: yellow!important;
+    color: red!important;
+    font-style: italic!important;
+    font-weight: bold!important;
+}
+
+.standedicon{
+    width: 30px;
+    height: 30px;
+
+    border: 1px #888888 solid;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    -moz-box-shadow: 1px 1px 1px 1px #888888;
+    -webkit-box-shadow: 1px 1px 1px 1px #888888;
+    box-shadow: 1px 1px 1px 1px #888888;
+
+
+}
+
+.backButton{
+    height: 30px;
+    border: 1px #888888 solid;
+
+    position: absolute;
+    top: 57.5px;
+    right: 200px;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    -moz-box-shadow: 1px 1px 1px 1px #888888;
+    -webkit-box-shadow: 1px 1px 1px 1px #888888;
+    box-shadow: 1px 1px 1px 1px #888888;
+
+
+}
+
+
+
+.mediuminput{
+    min-width: 400px;
+    max-width: 400px;
+}
+
+.noBorderGrid tr , .noBorderGrid table tbody td , .noBorderGrid table tbody tr td , .noBorderGrid table tbody tr  , noBorderGrid td , noBorderGrid tr td, noBorderGrid tbody , noBorderGrid tbody tr, noBorderGrid tbody tr td ,noBorderGrid tbody td , noBorderGrid tbody td,  noBorderGrid tfoot td{
+    border: 0px none!important;
+    border-width: 0px;
+    border-style: dashed!important;
+    margin: 1px !Important;
+    padding: 1px!important; 
+}
+
+.mediuminput .ui-autocomplete-input {
+    width: 300px!important;
+}
+
+.mediuminput .ui-autocomplete-input.ui-inputfield { 
+    width : 300px!important;
+}
+
+.shortinput .ui-autocomplete-input {
+    width: 200px!important;
+}
+
+.shortinput .ui-inputfield, .shortinput  .ui-widget-content .ui-inputfield {
+    width: 100px!important;
+}
+
+.shortinput .ui-autocomplete-input.ui-inputfield { 
+    width : 100px!important;
+}
+
+.standardList{
+    height: 300px;
+    width: 300px!important;
+}
+
+.standardText{
+    width: 300px!important;
+    font-size: 22px;
+}
+
+
+table.standardTable {
+    font-family: verdana,arial,sans-serif;
+    font-size:11px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #999999;
+    border-collapse: collapse;
+}
+table.standardTable th {
+    background:#b5cfd2;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #999999;
+}
+table.standardTable td {
+    background:#dcddc0;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #999999;
+}
+
+.averageNumericColumn{
+    text-align: right;
     width: 80px;
-    text-align: right;
+    max-width: 80px;
+    padding-right: 5px;
 }
 
-.averageNumberColumn.ui-datatable thead th, .averageNumberColumn.ui-datatable tfoot td {
-  text-align: right;
-}
-.averageNumberText{
-    width: 70px;
+.largeNumericColumn{
     text-align: right;
+    width: 120px;
+    max-width: 120px;
+    padding-right: 5px;
+}
+
+
+.shortNumericColumn{
+    text-align: right;
+    width: 50px;
+    max-width: 50px;
+    padding-right: 2px;
+}
+
+
+.averateNumericText{
+    text-align: right;
+    width: 70px;
+}
+
+.tinyText{
+    font-size: 8px!important;
+}
+
+
+.averageText{
+    width: 260px;
+    padding-right: 5px;
+}
+
+.longText{
+    width: 400px;
+    padding-right: 5px;
+}
+
+.shortText{
+    width: 80px;
+    padding-right: 5px;
+}
+
+.fixedColumn75{
+    width: 75px;
+    max-width: 75px;
+    min-width: 75px;
+    white-space: nowrap;
+    text-wrap: avoid;
+    overflow: hidden;
+}
+
+.fixedColumn100{
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+    white-space: nowrap;
+    text-wrap: avoid;
+    overflow: hidden;
+}
+
+.fixedColumn150{
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
+    white-space: nowrap;
+    text-wrap: avoid;
+    overflow: hidden;
+}
+
+.fixedColumn200{
+    width: 200px;
+    max-width: 200px;
+    min-width: 200px;
+    white-space: nowrap;
+    text-wrap: avoid;
+    overflow: hidden;
+}
+
+.fixedColumn250{
+    width: 250px;
+    max-width: 250px;
+    min-width: 250px;
+    white-space: nowrap;
+    text-wrap: avoid;
+    overflow: hidden;
+}
+
+.fixedColumn300{
+    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
+    white-space: nowrap;
+    text-wrap: avoid;
+    overflow: hidden;
+}
+
+
+
+
+.noBorderGrid1.ui-panelgrid>*>tr,
+.noBorderGrid1.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
 }

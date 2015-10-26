@@ -486,7 +486,7 @@ public class ReorderController implements Serializable {
             r.getDepartment();
             r.getRol();
         }
-        j = "select r from Reorder r where r.department=:dept ";
+        j = "select r from Reorder r where r.department=:dept and r.item.retired=false  ";
         m.put("dept", getDepartment());
         reordersAvailableForSelection = new ArrayList<>();
         System.out.println("j = " + j);
@@ -496,7 +496,6 @@ public class ReorderController implements Serializable {
         userSelectedItems = new ArrayList<>();
         selectableItems = new ArrayList<>();
         for (Reorder r : lst) {
-
             double s = pharmacyBean.getStockQty(r.getItem(), department);
             System.out.println("s = " + s);
             System.out.println("r.getRol() = " + r.getRol());
@@ -652,6 +651,7 @@ public class ReorderController implements Serializable {
         for (Reorder r : userSelectedReorders) {
             userSelectedItems.add(r.getItem());
         }
+        autoOrderMethod=AutoOrderMethod.ByRol;
         System.out.println("userSelectedItems.size() = " + userSelectedItems.size());
     }
 
@@ -1295,6 +1295,16 @@ public class ReorderController implements Serializable {
     public void setUserSelectedReorders(List<Reorder> userSelectedReorders) {
         this.userSelectedReorders = userSelectedReorders;
     }
+
+    public AutoOrderMethod getAutoOrderMethod() {
+        return autoOrderMethod;
+    }
+
+    public void setAutoOrderMethod(AutoOrderMethod autoOrderMethod) {
+        this.autoOrderMethod = autoOrderMethod;
+    }
+    
+    
 
     @FacesConverter(forClass = Reorder.class)
     public static class ReorderControllerConverter implements Converter {

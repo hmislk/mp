@@ -39,6 +39,49 @@ public class ItemTransactionSummeryRow implements Comparable<ItemTransactionSumm
     Date date;
     double quantity;
 
+    public ItemTransactionSummeryRow() {
+    }
+
+    public ItemTransactionSummeryRow(Item item, double quantity, Date date) {
+        this.item = item;
+        this.quantity = quantity;
+        this.date = date;
+    }
+
+    public ItemTransactionSummeryRow(Item item, Double quantity, Date date) {
+        this.item = item;
+        this.quantity = quantity;
+        this.date = date;
+    }
+
+    public ItemTransactionSummeryRow(Item item, double quantity, Double value, Date date) {
+        this.item = item;
+        this.quantity = quantity;
+        this.value = value;
+        this.date = date;
+    }
+
+    public ItemTransactionSummeryRow(Item item, Double quantity, double value, Date date) {
+        this.item = item;
+        this.quantity = quantity;
+        this.value = value;
+        this.date = date;
+    }
+
+    public ItemTransactionSummeryRow(Item item, double quantity, double value, Date date) {
+        this.item = item;
+        this.quantity = quantity;
+        this.value = value;
+        this.date = date;
+    }
+
+    public ItemTransactionSummeryRow(Item item, Double quantity, Double value, Date date) {
+        this.item = item;
+        this.quantity = quantity;
+        this.value = value;
+        this.date = date;
+    }
+
     public double getQuantity() {
         return quantity;
     }

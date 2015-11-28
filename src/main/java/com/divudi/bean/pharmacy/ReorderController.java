@@ -8,6 +8,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.dataStructure.ItemReorders;
 import com.divudi.data.dataStructure.ItemTransactionSummeryRow;
+import com.divudi.data.dataStructure.StockReportRecord;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -75,6 +76,8 @@ public class ReorderController implements Serializable {
     ItemController itemController;
     @Inject
     PurchaseOrderRequestController purchaseOrderRequestController;
+    @Inject
+    ReportsTransfer reportsTransfer;
 
 //    EJBs
     @EJB
@@ -176,9 +179,7 @@ public class ReorderController implements Serializable {
             series5.set(df.format(r.getDate()), r.getQuantity());
         }
         dateModel.addSeries(series5);
-        
-        
-        
+
 //        dateModel.setTitle("Item Transactions");
 //        dateModel.setZoom(true);
 //        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
@@ -475,6 +476,63 @@ public class ReorderController implements Serializable {
         }
     }
 
+    public void listItemsByMovementValue() {
+        List<StockReportRecord> lst = reportsTransfer.getMovementRecordsByValue(department, fromDate, toDate, true);
+        reordersAvailableForSelection = new ArrayList<>();
+        userSelectedItems = new ArrayList<>();
+        selectableItems = new ArrayList<>();
+        String j;
+        Map m = new HashMap();
+        for (StockReportRecord r : lst) {
+            j="select r from Reorder r wehre r.department=:dept and r.item=:item";
+            m.put("dept", department);
+            m.put("item", r.getItem());
+            
+            Reorder ro = reorderFacade.findFirstBySQL(j, m);
+            if(ro==null){
+                ro.setItem(r.getItem());
+                ro.setDepartment(department);
+                reorderFacade.create(ro);
+            }
+            ro.setTransientStock(r.getStockQty());
+            ro.setMovementQty(r.getQty());
+            ro.setMovementPurchaseValue(r.getPurchaseValue());
+            ro.setMovementRetailValue(r.getRetailsaleValue());
+            reordersAvailableForSelection.add(ro);
+            selectableItems.add(r.getItem());
+
+        }
+    }
+
+    
+    public void listItemsByMovementQty() {
+        List<StockReportRecord> lst = reportsTransfer.getMovementRecordsByQty(department, fromDate, toDate, true);
+        reordersAvailableForSelection = new ArrayList<>();
+        userSelectedItems = new ArrayList<>();
+        selectableItems = new ArrayList<>();
+        String j;
+        Map m = new HashMap();
+        for (StockReportRecord r : lst) {
+            j="select r from Reorder r wehre r.department=:dept and r.item=:item";
+            m.put("dept", department);
+            m.put("item", r.getItem());
+            
+            Reorder ro = reorderFacade.findFirstBySQL(j, m);
+            if(ro==null){
+                ro.setItem(r.getItem());
+                ro.setDepartment(department);
+                reorderFacade.create(ro);
+            }
+            ro.setTransientStock(r.getStockQty());
+            ro.setMovementQty(r.getQty());
+            ro.setMovementPurchaseValue(r.getPurchaseValue());
+            ro.setMovementRetailValue(r.getRetailsaleValue());
+            reordersAvailableForSelection.add(ro);
+            selectableItems.add(r.getItem());
+
+        }
+    }
+    
     public void listItemsBelowRol() {
         String j;
         Map m = new HashMap();
@@ -598,10 +656,12 @@ public class ReorderController implements Serializable {
     }
 
     enum AutoOrderMethod {
+
         ByDistributor,
         ByRol,
         ByAll,
         ByGeneric,
+        ByMovement,
     }
 
     public String autoOrderByDistributor() {
@@ -610,7 +670,12 @@ public class ReorderController implements Serializable {
     }
 
     public String autoOrderByRol() {
-        autoOrderMethod = AutoOrderMethod.ByDistributor;
+        autoOrderMethod = AutoOrderMethod.ByRol;
+        return "/pharmacy/auto_ordering_by_items_movement";
+    }
+
+    public String autoOrderByItemMovement() {
+        autoOrderMethod = AutoOrderMethod.ByMovement;
         return "/pharmacy/auto_ordering_by_items_below_rol";
     }
 
@@ -618,7 +683,7 @@ public class ReorderController implements Serializable {
         autoOrderMethod = AutoOrderMethod.ByAll;
         return "/pharmacy/auto_ordering_by_all_items";
     }
-    
+
     public String autoOrderByGenerics() {
         autoOrderMethod = AutoOrderMethod.ByGeneric;
         return "/pharmacy/auto_ordering_by_items_by_generic";
@@ -648,15 +713,15 @@ public class ReorderController implements Serializable {
         for (Reorder r : userSelectedReorders) {
             userSelectedItems.add(r.getItem());
         }
-        autoOrderMethod=AutoOrderMethod.ByRol;
+        autoOrderMethod = AutoOrderMethod.ByRol;
         System.out.println("userSelectedItems.size() = " + userSelectedItems.size());
     }
-
+    
     private void generateReorders(boolean overWrite, boolean requiredItemsOnly, DepartmentListMethod departmentListMethod) {
         List<Item> iss = null;
         System.out.println("generateReorders");
         System.out.println("iss = " + iss);
-        
+
         if (autoOrderMethod == AutoOrderMethod.ByDistributor) {
             itemController.setInstituion(institution);
             iss = itemController.getDealorItem();
@@ -1300,8 +1365,6 @@ public class ReorderController implements Serializable {
     public void setAutoOrderMethod(AutoOrderMethod autoOrderMethod) {
         this.autoOrderMethod = autoOrderMethod;
     }
-    
-    
 
     @FacesConverter(forClass = Reorder.class)
     public static class ReorderControllerConverter implements Converter {

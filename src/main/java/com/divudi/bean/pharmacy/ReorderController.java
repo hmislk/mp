@@ -484,7 +484,7 @@ public class ReorderController implements Serializable {
         String j;
         Map m = new HashMap();
         for (StockReportRecord r : lst) {
-            j="select r from Reorder r wehre r.department=:dept and r.item=:item";
+            j="select r from Reorder r where r.department=:dept and r.item=:item";
             m.put("dept", department);
             m.put("item", r.getItem());
             
@@ -513,7 +513,7 @@ public class ReorderController implements Serializable {
         String j;
         Map m = new HashMap();
         for (StockReportRecord r : lst) {
-            j="select r from Reorder r wehre r.department=:dept and r.item=:item";
+            j="select r from Reorder r where r.department=:dept and r.item=:item";
             m.put("dept", department);
             m.put("item", r.getItem());
             

@@ -83,6 +83,38 @@ public class Reorder implements Serializable {
     Double transientStock;
     @Transient
     Double transientOrderingQty;
+    @Transient
+    Double movementQty;
+    @Transient
+    Double movementPurchaseValue;
+    @Transient
+    Double movementRetailValue;
+
+    public Double getMovementQty() {
+        return movementQty;
+    }
+
+    public void setMovementQty(Double movementQty) {
+        this.movementQty = movementQty;
+    }
+
+    public Double getMovementPurchaseValue() {
+        return movementPurchaseValue;
+    }
+
+    public void setMovementPurchaseValue(Double movementPurchaseValue) {
+        this.movementPurchaseValue = movementPurchaseValue;
+    }
+
+    public Double getMovementRetailValue() {
+        return movementRetailValue;
+    }
+
+    public void setMovementRetailValue(Double movementRetailValue) {
+        this.movementRetailValue = movementRetailValue;
+    }
+    
+    
 
     public Double getTransientOrderingQty() {
         return transientOrderingQty;

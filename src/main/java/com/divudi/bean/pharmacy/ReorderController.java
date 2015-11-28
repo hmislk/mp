@@ -671,12 +671,12 @@ public class ReorderController implements Serializable {
 
     public String autoOrderByRol() {
         autoOrderMethod = AutoOrderMethod.ByRol;
-        return "/pharmacy/auto_ordering_by_items_movement";
+        return "/pharmacy/auto_ordering_by_items_below_rol";
     }
 
     public String autoOrderByItemMovement() {
         autoOrderMethod = AutoOrderMethod.ByMovement;
-        return "/pharmacy/auto_ordering_by_items_below_rol";
+        return "/pharmacy/auto_ordering_by_items_movement";
     }
 
     public String autoOrderByAllItems() {

@@ -35,8 +35,8 @@
                                     converter="institutionConverter" >
                                 </p:autoComplete>
                                 <p:spacer></p:spacer>
-                                <p:commandButton ajax="false" value="Filter by Supplier" 
-                                                 actionListener="#{reorderController.filterItemsBySupplier()}" ></p:commandButton>
+                                <p:commandButton ajax="false" value="Filter by Supplier1" 
+                                                 action="#{reorderController.filterItemsBySupplier()}" ></p:commandButton>
 
                             </h:panelGrid>
                         </h:panelGrid>
@@ -75,7 +75,9 @@
                             </f:facet>
 
                             <p:column style="width: 30px;" selectionMode="multiple" ></p:column>
-
+                            <p:column sortBy="#{irl.item.code}" filterBy="#{irl.item.code}" style="text-align: right; width:80px!important;">
+                                <h:outputText  value="#{irl.item.code}"  />
+                            </p:column>
                             <p:column headerText="Name"  sortBy="#{irl.item.name}" filterBy="#{irl.item.name}">
                                 <h:outputText  value="#{irl.item.name}"  />
                                 <!--                                <p:commandLink value="(Graph)" 
@@ -85,9 +87,7 @@
                                                                 </p:commandLink>-->
                             </p:column>
 
-                            <p:column sortBy="#{irl.item.code}" filterBy="#{irl.item.code}" >
-                                <h:outputText  value="#{irl.item.code}"  />
-                            </p:column>
+
 
                             <p:column sortBy="#{irl.transientStock}" headerText="Stock" style="text-align: right; width:80px!important;">
                                 <p:outputLabel value="#{irl.transientStock}" >

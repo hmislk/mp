@@ -505,9 +505,10 @@ public class ReorderController implements Serializable {
     }
 
     public void filterItemsBySupplier() {
+        System.err.println("filterItemsBySupplier");
         List<Item> distItems = itemController.getDealorItem();
         List<Item> temItems = new ArrayList<>();
-        List<Reorder> temReports = new ArrayList<>();
+        List<Reorder> temReorders = new ArrayList<>();
         String j;
         Map m = new HashMap();
         for (Item r : distItems) {
@@ -517,16 +518,19 @@ public class ReorderController implements Serializable {
 
             Reorder ro = reorderFacade.findFirstBySQL(j, m);
             if (ro == null) {
+                ro = new Reorder();
                 ro.setItem(r);
                 ro.setDepartment(department);
                 reorderFacade.create(ro);
             }
-            temReports.add(ro);
+            temReorders.add(ro);
             temItems.add(r);
 
         }
-        reordersAvailableForSelection.retainAll(temItems);
-        selectableItems.retainAll(items);
+        System.err.println(temReorders);
+        System.err.println(temItems);
+        reordersAvailableForSelection.retainAll(temReorders);
+        selectableItems.retainAll(temItems);
 
     }
 
@@ -543,7 +547,8 @@ public class ReorderController implements Serializable {
             m.put("item", r.getItem());
 
             Reorder ro = reorderFacade.findFirstBySQL(j, m);
-            if (ro == null) {
+            if (ro == null ) {
+                ro = new Reorder();
                 ro.setItem(r.getItem());
                 ro.setDepartment(department);
                 reorderFacade.create(ro);

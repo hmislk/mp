@@ -35,8 +35,9 @@
                                     converter="institutionConverter" >
                                 </p:autoComplete>
                                 <p:spacer></p:spacer>
-                                <h:commandButton value="Filter by Supplier1" 
-                                                 action="#{reorderController.filterItemsBySupplier()}" ></h:commandButton>
+                                <p:commandButton value="Filter by Supplier1" 
+                                                 action="#{reorderController.filterItemsBySupplier()}" 
+                                                 ajax="false"></p:commandButton>
 
                             </h:panelGrid>
                         </h:panelGrid>

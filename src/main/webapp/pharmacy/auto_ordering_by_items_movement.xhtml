@@ -12,17 +12,33 @@
                 <h:form>
 
                     <p:panel header="Auto Ordering by Fast Moving Items" >
-                        <h:panelGrid columns="2" class="alignTop" >
-                            <h:outputLabel value="Department" ></h:outputLabel>
-                            <p:selectOneMenu value="#{reorderController.department}" >
-                                <f:selectItems value="#{departmentController.institutionDepatrments}" var="d"
-                                               itemLabel="#{d.name}" itemValue="#{d}" ></f:selectItems>
-                            </p:selectOneMenu>
-                            <h:outputLabel value="From" ></h:outputLabel>
-                            <p:calendar value="#{reorderController.fromDate}" pattern="dd MM yyyy hh mm a" ></p:calendar>
-                            <h:outputLabel value="To" ></h:outputLabel>
-                            <p:calendar value="#{reorderController.toDate}" pattern="dd MM yyyy hh mm a" ></p:calendar>
+                        <h:panelGrid columns="3" styleClass="alignTop" >
+                            <h:panelGrid columns="2" class="alignTop" >
+                                <h:outputLabel value="Department" ></h:outputLabel>
+                                <p:selectOneMenu value="#{reorderController.department}" >
+                                    <f:selectItems value="#{departmentController.institutionDepatrments}" var="d"
+                                                   itemLabel="#{d.name}" itemValue="#{d}" ></f:selectItems>
+                                </p:selectOneMenu>
+                                <h:outputLabel value="From" ></h:outputLabel>
+                                <p:calendar value="#{reorderController.fromDate}" pattern="dd MM yyyy hh mm a" ></p:calendar>
+                                <h:outputLabel value="To" ></h:outputLabel>
+                                <p:calendar value="#{reorderController.toDate}" pattern="dd MM yyyy hh mm a" ></p:calendar>
 
+                            </h:panelGrid>
+                            <p:spacer width="40" ></p:spacer>
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel value="Supplier" ></h:outputLabel>
+                                <p:autoComplete 
+                                    completeMethod="#{institutionController.completeSupplier}" 
+                                    var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" 
+                                    forceSelection="true" value="#{reorderController.institution}"
+                                    converter="institutionConverter" >
+                                </p:autoComplete>
+                                <p:spacer></p:spacer>
+                                <p:commandButton ajax="false" value="Filter by Supplier" 
+                                                 actionListener="#{reorderController.filterItemsBySupplier()}" ></p:commandButton>
+
+                            </h:panelGrid>
                         </h:panelGrid>
                         <h:panelGrid columns="3" class="alignTop" >
                             <p:commandButton ajax="false" value="List Items By Movement Quentity" 

@@ -484,12 +484,12 @@ public class ReorderController implements Serializable {
         String j;
         Map m = new HashMap();
         for (StockReportRecord r : lst) {
-            j="select r from Reorder r where r.department=:dept and r.item=:item";
+            j = "select r from Reorder r where r.department=:dept and r.item=:item";
             m.put("dept", department);
             m.put("item", r.getItem());
-            
+
             Reorder ro = reorderFacade.findFirstBySQL(j, m);
-            if(ro==null){
+            if (ro == null) {
                 ro.setItem(r.getItem());
                 ro.setDepartment(department);
                 reorderFacade.create(ro);
@@ -504,7 +504,32 @@ public class ReorderController implements Serializable {
         }
     }
 
-    
+    public void filterItemsBySupplier() {
+        List<Item> distItems = itemController.getDealorItem();
+        List<Item> temItems = new ArrayList<>();
+        List<Reorder> temReports = new ArrayList<>();
+        String j;
+        Map m = new HashMap();
+        for (Item r : distItems) {
+            j = "select r from Reorder r where r.department=:dept and r.item=:item";
+            m.put("dept", department);
+            m.put("item", r);
+
+            Reorder ro = reorderFacade.findFirstBySQL(j, m);
+            if (ro == null) {
+                ro.setItem(r);
+                ro.setDepartment(department);
+                reorderFacade.create(ro);
+            }
+            temReports.add(ro);
+            temItems.add(r);
+
+        }
+        reordersAvailableForSelection.retainAll(temItems);
+        selectableItems.retainAll(items);
+
+    }
+
     public void listItemsByMovementQty() {
         List<StockReportRecord> lst = reportsTransfer.getMovementRecordsByQty(department, fromDate, toDate, true);
         reordersAvailableForSelection = new ArrayList<>();
@@ -513,12 +538,12 @@ public class ReorderController implements Serializable {
         String j;
         Map m = new HashMap();
         for (StockReportRecord r : lst) {
-            j="select r from Reorder r where r.department=:dept and r.item=:item";
+            j = "select r from Reorder r where r.department=:dept and r.item=:item";
             m.put("dept", department);
             m.put("item", r.getItem());
-            
+
             Reorder ro = reorderFacade.findFirstBySQL(j, m);
-            if(ro==null){
+            if (ro == null) {
                 ro.setItem(r.getItem());
                 ro.setDepartment(department);
                 reorderFacade.create(ro);
@@ -532,7 +557,7 @@ public class ReorderController implements Serializable {
 
         }
     }
-    
+
     public void listItemsBelowRol() {
         String j;
         Map m = new HashMap();
@@ -716,7 +741,7 @@ public class ReorderController implements Serializable {
         autoOrderMethod = AutoOrderMethod.ByRol;
         System.out.println("userSelectedItems.size() = " + userSelectedItems.size());
     }
-    
+
     private void generateReorders(boolean overWrite, boolean requiredItemsOnly, DepartmentListMethod departmentListMethod) {
         List<Item> iss = null;
         System.out.println("generateReorders");

@@ -64,8 +64,8 @@ public class MessageController {
                 + " where m.userIntended=:wu "
                 + " and m.invalidated=false "
                 + " and m.noted=false";
-        System.out.println("m = " + m);
-        System.out.println("sql = " + sql);
+//        System.out.println("m = " + m);
+//        System.out.println("sql = " + sql);
         return messageFacade.findBySQL(sql, m);
     }
 
@@ -82,8 +82,8 @@ public class MessageController {
                 + " where m.userIntended=:wu "
                 + " and m.invalidated=false "
                 + " and m.noted=false";
-        System.out.println("m = " + m);
-        System.out.println("sql = " + sql);
+//        System.out.println("m = " + m);
+//        System.out.println("sql = " + sql);
         return !messageFacade.findBySQL(sql, m).isEmpty();
     }
 
@@ -98,8 +98,8 @@ public class MessageController {
         sql = "Select m "
                 + " from Message m "
                 + " where m.originatingBill=:b";
-        System.out.println("m = " + hm);
-        System.out.println("sql = " + sql);
+//        System.out.println("m = " + hm);
+//        System.out.println("sql = " + sql);
         List<Message> ms = messageFacade.findBySQL(sql, hm);
         for(Message m:ms){
             m.setInvalidated(true);
@@ -179,10 +179,10 @@ public class MessageController {
         String sql = "select wud.webUser "
                 + " from WebUserDepartment wud "
                 + " where wud.department=:dep";
-        System.out.println("sql = " + sql);
-        System.out.println("m = " + m);
+//        System.out.println("sql = " + sql);
+//        System.out.println("m = " + m);
         List<WebUser> us = webUserFacade.findBySQL(sql, m);
-        System.out.println("us.size() = " + us.size());
+//        System.out.println("us.size() = " + us.size());
         List<WebUser> lst = new ArrayList<>();
 
         for (WebUser u : us) {

@@ -92,6 +92,25 @@ public class ItemController implements Serializable {
         return suggestions;
 
     }
+    
+    public List<Item> getDealorItem(Institution ins) {
+        List<Item> suggestions;
+        String sql;
+        HashMap hm = new HashMap();
+
+        sql = "select c.item from ItemsDistributors c where c.retired=false "
+                + " and c.institution=:ins "
+                + " and c.item is not null "
+                + " and c.item.retired=false "
+                + " order by c.item.name";
+        hm.put("ins", ins);
+
+        //////System.out.println(sql);
+        suggestions = getFacade().findBySQL(sql, hm);
+
+        return suggestions;
+
+    }
 
     public List<Item> completeItem(String query) {
         List<Item> suggestions;

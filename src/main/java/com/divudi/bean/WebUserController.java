@@ -199,10 +199,10 @@ public class WebUserController implements Serializable {
                 + " where w.retired=false "
                 + " and w.webUser =:wu "
                 + " and w.privilege=:p";
-        System.out.println("sql = " + sql);
-        System.out.println("m = " + m);
+//        System.out.println("sql = " + sql);
+//        System.out.println("m = " + m);
         List<WebUserPrivilege> ups = webUserPrevilageFacade.findBySQL(sql,m);
-        System.out.println("ups = " + ups);
+//        System.out.println("ups = " + ups);
         if (ups == null || ups.isEmpty()) {
             System.out.println("ups.size() = " + ups.size());
             return hasPri;

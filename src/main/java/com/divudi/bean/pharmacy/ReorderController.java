@@ -506,7 +506,7 @@ public class ReorderController implements Serializable {
 
     public void filterItemsBySupplier() {
         System.err.println("filterItemsBySupplier");
-        List<Item> distItems = itemController.getDealorItem();
+        List<Item> distItems = itemController.getDealorItem(institution);
         List<Item> temItems = new ArrayList<>();
         List<Reorder> temReorders = new ArrayList<>();
         String j;

@@ -129,17 +129,31 @@ public class ReportsStock implements Serializable {
     public void fillDepartmentNonEmptyStocks() {
         Map m = new HashMap();
         String sql;
-        if (department == null) {
-            sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+//        if (department == null) {
+//            sql = "select s from Stock s where s.stock>:z and s.department=:d order by s.itemBatch.item.name";
+//            m.put("d", department);
+//            m.put("z", 0.0);
+//        } else {
+//            sql = "select s from Stock s where s.stock>:z order by s.itemBatch.item.name";
+//            m.put("z", 0.0);
+//        }
+
+        sql = "select s from Stock s "
+                + " where s.stock>:z  ";
+
+        if (department != null) {
+            sql += " and s.department=:d ";
             m.put("d", department);
-            m.put("z", 0.0);
-        } else {
-            sql = "select s from Stock s where s.stock>:z order by s.itemBatch.item.name";
-            m.put("z", 0.0);
         }
+
+        sql += " order by s.itemBatch.item.name";
+
+        m.put("z", 0.0);
+
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
+
         for (Stock ts : stocks) {
             stockPurchaseValue = stockPurchaseValue + (ts.getItemBatch().getPurcahseRate() * ts.getStock());
             stockSaleValue = stockSaleValue + (ts.getItemBatch().getRetailsaleRate() * ts.getStock());
@@ -163,9 +177,7 @@ public class ReportsStock implements Serializable {
     public void setItem(Item item) {
         this.item = item;
     }
-    
-    
-    
+
     public String fillAllDepartmentStocksByAmp() {
         Map m = new HashMap();
         String sql;
@@ -186,7 +198,7 @@ public class ReportsStock implements Serializable {
         stockSaleValue += 0.0;
 
         Stock s;
-        
+
         for (PharmacyStockRow r : lsts) {
             stockPurchaseValue += r.getPurchaseValue();
             stockSaleValue += r.getSaleValue();
@@ -341,9 +353,9 @@ public class ReportsStock implements Serializable {
             m.put("d", department);
             m.put("z", 0.0);
         }
-//        //System.out.println("sql = " + sql);
-//        //System.out.println("m = " + m);
-//        //System.out.println("getStockFacade().findObjects(sql, m) = " + getStockFacade().findObjects(sql, m));
+//        ////System.out.println("sql = " + sql);
+//        ////System.out.println("m = " + m);
+//        ////System.out.println("getStockFacade().findObjects(sql, m) = " + getStockFacade().findObjects(sql, m));
         List<PharmacyStockRow> lsts = (List) getStockFacade().findObjects(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
@@ -433,7 +445,7 @@ public class ReportsStock implements Serializable {
             double calculatedStk = 0;
             boolean flg = false;
             if (sh != null) {
-                //System.out.println("Previuos Stock " + sh.getStockQty());
+                ////System.out.println("Previuos Stock " + sh.getStockQty());
                 calculatedStk = (sh.getStockQty() + sh.getPbItem().getQtyInUnit() + sh.getPbItem().getFreeQtyInUnit());
                 flg = true;
             } else if (phi != null) {
@@ -441,13 +453,13 @@ public class ReportsStock implements Serializable {
                 flg = true;
             }
 
-            //System.out.println("calculated History Qty " + calculatedStk);
+            ////System.out.println("calculated History Qty " + calculatedStk);
             if (flg == true && b.getStockHistory().getStockQty() != calculatedStk) {
                 stockSet.add(b.getStock());
-                //System.out.println("TRUE");
+                ////System.out.println("TRUE");
             }
 
-            //System.out.println("#########");
+            ////System.out.println("#########");
         }
 
         stocks = new ArrayList<>();
@@ -551,12 +563,12 @@ public class ReportsStock implements Serializable {
                     st.setCalculated(calculatedStock);
                     tmpStockList.add(st);
                 } else {
-                    //System.out.println("Itm " + ph.getBillItem().getItem().getName());
-                    //System.out.println("Prv History Qty " + preHistoryQty);
-                    //System.out.println("Prv Qty " + previousPh.getQtyInUnit());
-                    //System.out.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
-                    //System.out.println("History " + curHistory);
-                    //System.out.println("######");
+                    ////System.out.println("Itm " + ph.getBillItem().getItem().getName());
+                    ////System.out.println("Prv History Qty " + preHistoryQty);
+                    ////System.out.println("Prv Qty " + previousPh.getQtyInUnit());
+                    ////System.out.println("Prv Free Qty " + previousPh.getFreeQtyInUnit());
+                    ////System.out.println("History " + curHistory);
+                    ////System.out.println("######");
                 }
 
                 previousPh = ph;
@@ -650,7 +662,8 @@ public class ReportsStock implements Serializable {
         m.put("ins", institution);
         m.put("dep", department);
         sql = "select s from Stock s where s.department=:dep and s.itemBatch.item.id in "
-                + "(select item.id from ItemsDistributors id join id.item as item where id.retired=false and id.institution=:ins)";
+                + "(select item.id from ItemsDistributors id join id.item as item where id.retired=false and id.institution=:ins)"
+                + " order by s.itemBatch.item.name ";
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;
@@ -738,7 +751,7 @@ public class ReportsStock implements Serializable {
         sql = "select s from Stock s where (s.department is null and s.staff is null) and s.itemBatch.item.category=:cat order by s.itemBatch.item.name";
         bulkAdjustmentStocks = getStockFacade().findBySQL(sql, m);
     }
-    
+
     public void fillAllDistributorStocks() {
         if (department == null) {
             UtilityController.addErrorMessage("Please select a department");
@@ -751,7 +764,7 @@ public class ReportsStock implements Serializable {
         stockSaleValue = 0.0;
         stockPurchaseValue = 0.0;
         for (Institution i : dealers) {
-            ////System.out.println("i = " + i);
+            //////System.out.println("i = " + i);
             m = new HashMap();
             m.put("ins", i);
             m.put("d", department);
@@ -761,7 +774,7 @@ public class ReportsStock implements Serializable {
 
             if (objs[0] != null && (Double) objs[0] > 0) {
                 StockReportRecord r = new StockReportRecord();
-                ////System.out.println("objs = " + objs);
+                //////System.out.println("objs = " + objs);
                 r.setInstitution(i);
                 r.setQty((Double) objs[0]);
                 r.setPurchaseValue((Double) objs[1]);

@@ -41,14 +41,14 @@
 
                         <h:panelGroup styleClass="noBorder summeryBorder"  id="gpBillPreview">
 
-                            <p:dataTable id="tbl" style="min-width: 100%;"  rowStyleClass="#{i.stock eq 0 ?'noDisplayRow' : ''}" value="#{reportsStock.stocks}" var="i"  >
+                            <p:dataTable id="tbl" style="min-width: 100%;" rowStyleClass="#{i.stock eq 0 ?'noDisplayRow' : ''}" value="#{reportsStock.stocks}" var="i"  >
 
                                 <f:facet name="header">
                                     <h:outputLabel value="Stock in #{reportsStock.department.name} "/>   <br/>                                 
                                     <h:outputLabel value="Supplied By #{reportsStock.institution.name}"/>                                    
                                 </f:facet>
 
-                                <p:column headerText="Item">
+                                <p:column headerText="Item" >
                                     <f:facet name="header">
                                         <h:outputLabel value="Item"/>    
                                     </f:facet>                                    

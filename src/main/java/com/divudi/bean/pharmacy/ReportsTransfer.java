@@ -150,7 +150,7 @@ public class ReportsTransfer implements Serializable {
         discountsValue = 0.0;
         netTotalValues = 0.0;
         profitValue = 0.0;
-        stockValue=0.0;
+        stockValue = 0.0;
 
         for (Object[] obj : objs) {
             StockReportRecord r = new StockReportRecord();
@@ -167,23 +167,21 @@ public class ReportsTransfer implements Serializable {
             saleValue += r.getRetailsaleValue();
             purchaseValue += r.getPurchaseValue();
             profitValue += r.getProfitValue();
-            stockValue+=r.getStockQty();
+            stockValue += r.getStockQty();
             movementRecords.add(r);
         }
         return "pharmacy_report_gross_profit_by_item";
     }
 
-    public void fillMoving(boolean fast) {
+    public List<StockReportRecord> getMovementRecordsByValue(Department dept, Date fd, Date td, boolean fast) {
+        List<StockReportRecord> lst;
         String sql;
         Map m = new HashMap();
-//        m.put("r", StockReportRecord.class);
-        m.put("d", department);
+        m.put("d", dept);
         m.put("t1", BillType.PharmacyTransferIssue);
         m.put("t2", BillType.PharmacyPre);
-        m.put("fd", fromDate);
-        m.put("td", toDate);
-        BillItem bi = new BillItem();
-
+        m.put("fd", fd);
+        m.put("td", td);
         if (!fast) {
             sql = "select bi.item, abs(SUM(bi.pharmaceuticalBillItem.qty)), "
                     + "abs(SUM(bi.pharmaceuticalBillItem.stock.itemBatch.purcahseRate * bi.pharmaceuticalBillItem.qty)), "
@@ -204,30 +202,37 @@ public class ReportsTransfer implements Serializable {
                     + "bi.bill.billDate between :fd and :td group by bi.item "
                     + "order by  SUM(bi.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate * bi.pharmaceuticalBillItem.qty) ";
         }
-        ////System.out.println("sql = " + sql);
-        ////System.out.println("m = " + m);
         List<Object[]> objs = getBillItemFacade().findAggregates(sql, m);
-        movementRecords = new ArrayList<>();
+        lst = new ArrayList<>();
         for (Object[] obj : objs) {
             StockReportRecord r = new StockReportRecord();
             r.setItem((Item) obj[0]);
             r.setQty((Double) obj[1]);
             r.setPurchaseValue((Double) obj[2]);
             r.setRetailsaleValue((Double) obj[3]);
-            r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem(), department));
-            movementRecords.add(r);
+            r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem(), dept));
+            lst.add(r);
         }
+        return lst;
+    }
+
+    public void fillMoving(boolean fast) {
+        movementRecords = getMovementRecordsByValue(department,fromDate,toDate,fast);
     }
 
     public void fillMovingQty(boolean fast) {
+        movementRecordsQty = getMovementRecordsByQty(department, fromDate, toDate, fast);
+    }
+    
+    public List<StockReportRecord> getMovementRecordsByQty(Department dept, Date fd, Date td, boolean fast) {
         String sql;
+        List<StockReportRecord> lst;
         Map m = new HashMap();
-        m.put("d", department);
+        m.put("d", dept);
         m.put("t1", BillType.PharmacyTransferIssue);
         m.put("t2", BillType.PharmacyPre);
-        m.put("fd", fromDate);
-        m.put("td", toDate);
-        BillItem bi = new BillItem();
+        m.put("fd", fd);
+        m.put("td", td);
         if (!fast) {
             sql = "select bi.item, abs(SUM(bi.pharmaceuticalBillItem.qty)), "
                     + "abs(SUM(bi.pharmaceuticalBillItem.stock.itemBatch.purcahseRate * bi.pharmaceuticalBillItem.qty)), "
@@ -246,16 +251,17 @@ public class ReportsTransfer implements Serializable {
                     + "order by  SUM(bi.pharmaceuticalBillItem.qty) ";
         }
         List<Object[]> objs = getBillItemFacade().findAggregates(sql, m);
-        movementRecordsQty = new ArrayList<>();
+        lst = new ArrayList<>();
         for (Object[] obj : objs) {
             StockReportRecord r = new StockReportRecord();
             r.setItem((Item) obj[0]);
             r.setQty((Double) obj[1]);
             r.setPurchaseValue((Double) obj[3]);
             r.setRetailsaleValue((Double) obj[2]);
-            r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem(), department));
-            movementRecordsQty.add(r);
+            r.setStockQty(getPharmacyBean().getStockByPurchaseValue(r.getItem(), dept));
+            lst.add(r);
         }
+        return lst;
     }
 
     public void fillDepartmentTransfersReceive() {
@@ -476,7 +482,7 @@ public class ReportsTransfer implements Serializable {
     }
 
     public Date getFromDate() {
-        if(fromDate==null){
+        if (fromDate == null) {
             fromDate = CommonDateFunctions.startOfMonth();
         }
         return fromDate;
@@ -487,7 +493,7 @@ public class ReportsTransfer implements Serializable {
     }
 
     public Date getToDate() {
-        if(toDate==null){
+        if (toDate == null) {
             toDate = CommonDateFunctions.endOfMonth();
         }
         return toDate;
@@ -601,5 +607,4 @@ public class ReportsTransfer implements Serializable {
         this.stockValue = stockValue;
     }
 
-    
 }

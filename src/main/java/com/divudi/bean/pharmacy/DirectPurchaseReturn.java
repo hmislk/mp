@@ -308,11 +308,11 @@ public class DirectPurchaseReturn implements Serializable {
 
     public void editQty(BillItem bi) {
         if (bi == null) {
-            ////System.out.println("No Bill Item to Edit Qty");
+            //////System.out.println("No Bill Item to Edit Qty");
             return;
         }
         if (editingQty == null) {
-            ////System.out.println("Editing qty is null");
+            //////System.out.println("Editing qty is null");
             return;
         }
 
@@ -391,9 +391,9 @@ public class DirectPurchaseReturn implements Serializable {
     }
 
     public void makeStockAsBillItemStock() {
-        //System.out.println("replacableStock = " + replacableStock);
+        ////System.out.println("replacableStock = " + replacableStock);
         setStock(replacableStock);
-        //System.out.println("getStock() = " + getStock());
+        ////System.out.println("getStock() = " + getStock());
     }
 
     public void fillReplaceableStocksForAmp(Amp ampIn) {
@@ -560,7 +560,7 @@ public class DirectPurchaseReturn implements Serializable {
         qry = qry.replaceAll("\r", "");
         m.put("n", "%" + qry.toUpperCase().trim() + "%");
 
-        //System.out.println("qry = " + qry);
+        ////System.out.println("qry = " + qry);
         if (qry.length() > 4) {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n )  order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         } else {
@@ -591,7 +591,7 @@ public class DirectPurchaseReturn implements Serializable {
         qry = qry.replaceAll("\r", "");
         m.put("n", "%" + qry.toUpperCase().trim() + "%");
 
-        //System.out.println("qry = " + qry);
+        ////System.out.println("qry = " + qry);
         if (qry.length() > 4) {
             sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n or upper(i.itemBatch.item.vmp.name) like :n) order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
         } else {
@@ -1135,18 +1135,18 @@ public class DirectPurchaseReturn implements Serializable {
     }
 
     public void calculateBillItemForEditing(BillItem bi) {
-        ////System.out.println("calculateBillItemForEditing");
-        ////System.out.println("bi = " + bi);
+        //////System.out.println("calculateBillItemForEditing");
+        //////System.out.println("bi = " + bi);
         if (getPreBill() == null || bi == null || bi.getPharmaceuticalBillItem() == null || bi.getPharmaceuticalBillItem().getStock() == null) {
-            ////System.out.println("calculateItemForEditingFailedBecause of null");
+            //////System.out.println("calculateItemForEditingFailedBecause of null");
             return;
         }
-        ////System.out.println("bi.getQty() = " + bi.getQty());
-        ////System.out.println("bi.getRate() = " + bi.getRate());
+        //////System.out.println("bi.getQty() = " + bi.getQty());
+        //////System.out.println("bi.getRate() = " + bi.getRate());
         bi.setGrossValue(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getRetailsaleRate() * bi.getQty());
         bi.setNetValue(bi.getQty() * bi.getNetRate());
         bi.setDiscount(bi.getGrossValue() - bi.getNetValue());
-        ////System.out.println("bi.getNetValue() = " + bi.getNetValue());
+        //////System.out.println("bi.getNetValue() = " + bi.getNetValue());
 
     }
 
@@ -1156,10 +1156,10 @@ public class DirectPurchaseReturn implements Serializable {
 
     public void handleSelectAction() {
         if (stock == null) {
-            //System.out.println("Stock NOT selected.");
+            ////System.out.println("Stock NOT selected.");
         }
         if (getBillItem() == null || getBillItem().getPharmaceuticalBillItem() == null) {
-            //System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
+            ////System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
         }
 
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
@@ -1174,7 +1174,7 @@ public class DirectPurchaseReturn implements Serializable {
     }
 
     public void calculateAllRates() {
-        ////System.out.println("calculating all rates");
+        //////System.out.println("calculating all rates");
         for (BillItem tbi : getPreBill().getBillItems()) {
             calculateRates(tbi);
             calculateBillItemForEditing(tbi);
@@ -1187,9 +1187,9 @@ public class DirectPurchaseReturn implements Serializable {
     }
 
     public void calculateRates(BillItem bi) {
-        ////System.out.println("calculating rates");
+        //////System.out.println("calculating rates");
         if (bi.getPharmaceuticalBillItem().getStock() == null) {
-            ////System.out.println("stock is null");
+            //////System.out.println("stock is null");
             return;
         }
         getBillItem();
@@ -1202,22 +1202,22 @@ public class DirectPurchaseReturn implements Serializable {
     }
 
     public double calculateBillItemDiscountRate(BillItem bi) {
-        ////System.out.println("bill item discount rate");
-        ////System.out.println("getPaymentScheme() = " + getPaymentScheme());
+        //////System.out.println("bill item discount rate");
+        //////System.out.println("getPaymentScheme() = " + getPaymentScheme());
         if (bi == null) {
-            ////System.out.println("bi is null");
+            //////System.out.println("bi is null");
             return 0.0;
         }
         if (bi.getPharmaceuticalBillItem() == null) {
-            ////System.out.println("pi is null");
+            //////System.out.println("pi is null");
             return 0.0;
         }
         if (bi.getPharmaceuticalBillItem().getStock() == null) {
-            ////System.out.println("stock is null");
+            //////System.out.println("stock is null");
             return 0.0;
         }
         if (bi.getPharmaceuticalBillItem().getStock().getItemBatch() == null) {
-            ////System.out.println("batch is null");
+            //////System.out.println("batch is null");
             return 0.0;
         }
         bi.setItem(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getItem());

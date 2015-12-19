@@ -27,7 +27,9 @@ import com.divudi.facade.WebUserPrivilegeFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Named;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -181,6 +183,31 @@ public class WebUserController implements Serializable {
             }
         }
         return hasPri;
+    }
+
+    public boolean hasPrivilege(WebUser user, Privileges privilege) {
+        boolean hasPri = false;
+        if (user == null || privilege == null) {
+            return hasPri;
+        }
+        Map m = new HashMap();
+        m.put("wu", user);
+        m.put("p", privilege);
+        String sql;
+        sql = "select w "
+                + " from WebUserPrivilege w "
+                + " where w.retired=false "
+                + " and w.webUser =:wu "
+                + " and w.privilege=:p";
+//        System.out.println("sql = " + sql);
+//        System.out.println("m = " + m);
+        List<WebUserPrivilege> ups = webUserPrevilageFacade.findBySQL(sql,m);
+//        System.out.println("ups = " + ups);
+        if (ups == null || ups.isEmpty()) {
+            System.out.println("ups.size() = " + ups.size());
+            return hasPri;
+        }
+        return true;
     }
 
     public Speciality getSpeciality() {
@@ -339,7 +366,7 @@ public class WebUserController implements Serializable {
 
             if (userName != null && w != null && w.getName() != null) {
                 if (userName.toLowerCase().equals(getSecurityController().decrypt(w.getName()).toLowerCase())) {
-                    ////System.out.println("Ift");
+                    //////System.out.println("Ift");
                     available = true;
                     return available;// ok. that is may be the issue. we will try with it ok
                 }
@@ -366,12 +393,12 @@ public class WebUserController implements Serializable {
         getCurrent().setActivatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().setActivator(getSessionController().getLoggedUser());
 
-        ////System.out.println("Start");
+        //////System.out.println("Start");
         //Save Person
         getCurrent().getWebUserPerson().setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("IST")).getTime());
         getCurrent().getWebUserPerson().setCreater(getSessionController().getLoggedUser());
         getPersonFacade().create(getCurrent().getWebUserPerson());
-        ////System.out.println("Person Saved");
+        //////System.out.println("Person Saved");
         //Save Staff
         staff.setPerson(getCurrent().getWebUserPerson());
         staff.setCreatedAt(Calendar.getInstance().getTime());
@@ -388,7 +415,7 @@ public class WebUserController implements Serializable {
         getCurrent().setCreater(sessionController.loggedUser);
         getCurrent().setStaff(staff);
         getFacade().create(getCurrent());
-        ////System.out.println("Web User Saved");
+        //////System.out.println("Web User Saved");
         //SetPrivilage
 //        for (Privileges p : currentPrivilegeses) {
 //            WebUserPrivilege pv = new WebUserPrivilege();

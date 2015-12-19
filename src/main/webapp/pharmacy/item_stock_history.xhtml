@@ -5,9 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
-
-    <body>
-
+    <h:body>
         <ui:composition template="/resources/template/template.xhtml">
 
             <ui:define name="content">
@@ -54,10 +52,7 @@
                       
 
                         <p:commandButton rendered="#{reorderController.dateModel ne null}" type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
-                        <p:chart rendered="#{reorderController.dateModel ne null}" widgetVar="chart"  type="line" 
-                                 model="#{reorderController.dateModel}" 
-                                 style="height:400px;"
-                                 />
+                       
                         
 
 
@@ -69,6 +64,5 @@
 
 
         </ui:composition>
-
-    </body>
+    </h:body>
 </html>

@@ -139,14 +139,14 @@ public class PaymentSchemeController implements Serializable {
     }
 
     public List<PaymentScheme> getRcItems() {
-        ////System.out.println("getting rc items " + rcItems);
+        //////System.out.println("getting rc items " + rcItems);
         if (rcItems == null) {
-            ////System.out.println("rsItems null");
+            //////System.out.println("rsItems null");
             rcItems = getFacade().findBySQL("select c from PaymentScheme c where c.retired=false and c.validForCrBills = true order by c.name");
             String temSql;
             temSql = "SELECT i FROM PaymentScheme i where i.retired=false order by i.name";
             items = getFacade().findBySQL(temSql);
-            ////System.out.println("noew after getting rs items , it is " + rcItems);
+            //////System.out.println("noew after getting rs items , it is " + rcItems);
         }
         return rcItems;
     }

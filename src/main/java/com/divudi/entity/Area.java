@@ -13,8 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
-
-
 /**
  *
  * @author Dr. M H B Ariyaratne <buddhika.ari at gmail.com>
@@ -26,28 +24,28 @@ import javax.persistence.Temporal;
 @Entity
 public class Area implements Serializable {
 
-     static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-     Long id;
-     String name;
-     String description;
+    Long id;
+    String name;
+    String description;
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
+    Date retiredAt;
+    String retireComments;
     @ManyToOne
-     Area superArea;
-     String sname;
-     String tname;
+    Area superArea;
+    String sname;
+    String tname;
 
     public Long getId() {
         return id;
@@ -66,7 +64,7 @@ public class Area implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Area)) {
             return false;
         }

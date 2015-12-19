@@ -43,10 +43,10 @@ public class DoctorSpecialityController implements Serializable {
     String selectText = "";
 
     public List<DoctorSpeciality> completeSpeciality(String qry) {
-        //System.out.println("qry = " + qry);
+        ////System.out.println("qry = " + qry);
         List<DoctorSpeciality> lst;
         lst = getFacade().findBySQL("select c from DoctorSpeciality c where c.retired=false and upper(c.name) like '%" + qry.toUpperCase() + "%' order by c.name");
-        //System.out.println("lst = " + lst);
+        ////System.out.println("lst = " + lst);
         return lst;
     }
 
@@ -148,7 +148,7 @@ public class DoctorSpecialityController implements Serializable {
 
     public List<DoctorSpeciality> getItems() {
         items = getFacade().findAll("name", true);
-        ////System.out.println("a");
+        //////System.out.println("a");
         return items;
     }
 

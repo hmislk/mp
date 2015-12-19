@@ -4,17 +4,17 @@
  */
 package com.divudi.facade;
 
-import com.divudi.entity.CashierItem;
+import com.divudi.entity.Message;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author buddhika
+ * @author safrin
  */
 @Stateless
-public class CashierItemFacade extends AbstractFacade<CashierItem> {
+public class MessageFacade extends AbstractFacade<Message> {
     @PersistenceContext(unitName = "pu")
     private EntityManager em;
 
@@ -23,8 +23,8 @@ public class CashierItemFacade extends AbstractFacade<CashierItem> {
         return em;
     }
 
-    public CashierItemFacade() {
-        super(CashierItem.class);
+    public MessageFacade() {
+        super(Message.class);
     }
     
 }

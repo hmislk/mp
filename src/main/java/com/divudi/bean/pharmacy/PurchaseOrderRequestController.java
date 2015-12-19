@@ -5,6 +5,7 @@
 package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.ItemController;
+import com.divudi.bean.MessageController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.data.BillNumberSuffix;
@@ -40,6 +41,8 @@ import javax.inject.Inject;
 @SessionScoped
 public class PurchaseOrderRequestController implements Serializable {
 
+    @Inject
+    MessageController messageController;
     @Inject
     private SessionController sessionController;
     @EJB
@@ -173,8 +176,8 @@ public class PurchaseOrderRequestController implements Serializable {
             //serialNo++;
             bi.setItem(i);
             //bi.setSearialNo(serialNo);
-            //System.out.println("serialNo = " + serialNo);
-            //System.out.println("bi.getSearialNo() = " + bi.getSearialNo());
+            ////System.out.println("serialNo = " + serialNo);
+            ////System.out.println("bi.getSearialNo() = " + bi.getSearialNo());
 
             PharmaceuticalBillItem tmp = new PharmaceuticalBillItem();
             tmp.setBillItem(bi);
@@ -227,6 +230,9 @@ public class PurchaseOrderRequestController implements Serializable {
         }
         saveBill();
         saveBillComponent();
+        
+        messageController.addMessageToWebUsers(currentBill);
+        
         UtilityController.addSuccessMessage("Request Succesfully Created");
         recreate();
     }
@@ -237,8 +243,8 @@ public class PurchaseOrderRequestController implements Serializable {
         for (BillItem b : getBillItems()) {
             tmp += b.getPharmaceuticalBillItem().getQty() * b.getPharmaceuticalBillItem().getPurchaseRate();
             b.setSearialNo(serialNo++);
-            System.out.println("Free Qty = " +b.getPharmaceuticalBillItem().getFreeQty() );
-            System.out.println("Free Qty = " +b.getRetireComments());
+            //System.out.println("Free Qty = " +b.getPharmaceuticalBillItem().getFreeQty() );
+            //System.out.println("Free Qty = " +b.getRetireComments());
         }
         
         getCurrentBill().setTotal(tmp);

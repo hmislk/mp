@@ -8,6 +8,7 @@ import com.divudi.data.BillType;
 import com.divudi.data.DepartmentType;
 import com.divudi.data.dataStructure.ItemReorders;
 import com.divudi.data.dataStructure.ItemTransactionSummeryRow;
+import com.divudi.data.dataStructure.StockReportRecord;
 import com.divudi.ejb.CommonFunctions;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
@@ -52,10 +53,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.primefaces.model.chart.CartesianChartModel;
-//import org.primefaces.model.chart.AxisType;
-//import org.primefaces.model.chart.LineChartModel;
-//import org.primefaces.model.chart.DateAxis;
-//import org.primefaces.model.chart.LegendPlacement;
 import org.primefaces.model.chart.LineChartSeries;
 
 @Named
@@ -79,6 +76,8 @@ public class ReorderController implements Serializable {
     ItemController itemController;
     @Inject
     PurchaseOrderRequestController purchaseOrderRequestController;
+    @Inject
+    ReportsTransfer reportsTransfer;
 
 //    EJBs
     @EJB
@@ -122,67 +121,65 @@ public class ReorderController implements Serializable {
         return dateModel;
     }
 
-//    public void createDailyItemSummery() {
-//        createDailyItemSummery(item, historyDept, fromDate, toDate);
-//    }
-//
-//    public void createDailyItemSummery(Item item, Department dept) {
-//        this.item = item;
-//        this.historyDept = dept;
-//        createDailyItemSummery(item, dept, fromDate, toDate);
-//    }
+    public void createDailyItemSummery() {
+        createDailyItemSummery(item, historyDept, fromDate, toDate);
+    }
 
-//    public void createDailyItemSummery(Item item, Department dept, Date fromDate, Date toDate) {
-//        dateModel = new CartesianChartModel();
-//        List<ItemTransactionSummeryRow> rows;
-//
-//        LineChartSeries series1 = new LineChartSeries();
-//        series1.setLabel("Stock Average");
-//        rows = findDailyStockAverage(item, dept, fromDate, toDate);
-//        for (ItemTransactionSummeryRow r : rows) {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//            series1.set(df.format(r.getDate()), r.getQuantity());
-//        }
-//        dateModel.addSeries(series1);
-//
-//        LineChartSeries series2 = new LineChartSeries();
-//        series2.setLabel("Sales");
-//        rows = findDailySale(item, dept, fromDate, toDate);
-//        for (ItemTransactionSummeryRow r : rows) {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//            series2.set(df.format(r.getDate()), r.getQuantity());
-//        }
-//        dateModel.addSeries(series2);
-//
-//        LineChartSeries series3 = new LineChartSeries();
-//        series3.setLabel("Purchase/Good Receive");
-//        rows = findDailyPurchase(item, dept, fromDate, toDate);
-//        for (ItemTransactionSummeryRow r : rows) {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//            series3.set(df.format(r.getDate()), r.getQuantity());
-//        }
-//        dateModel.addSeries(series3);
-//
-//        LineChartSeries series4 = new LineChartSeries();
-//        series4.setLabel("Transfer Issue");
-//        rows = findDailyTransferOut(item, dept, fromDate, toDate);
-//        for (ItemTransactionSummeryRow r : rows) {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//            series4.set(df.format(r.getDate()), r.getQuantity());
-//        }
-//        dateModel.addSeries(series4);
-//
-//        LineChartSeries series5 = new LineChartSeries();
-//        series5.setLabel("Transfer Receive");
-//        rows = findDailyTransferIn(item, dept, fromDate, toDate);
-//        for (ItemTransactionSummeryRow r : rows) {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//            series5.set(df.format(r.getDate()), r.getQuantity());
-//        }
-//        dateModel.addSeries(series5);
-//        
-//        
-//        
+    public void createDailyItemSummery(Item item, Department dept) {
+        this.item = item;
+        this.historyDept = dept;
+        createDailyItemSummery(item, dept, fromDate, toDate);
+    }
+
+    public void createDailyItemSummery(Item item, Department dept, Date fromDate, Date toDate) {
+        dateModel = new CartesianChartModel();
+        List<ItemTransactionSummeryRow> rows;
+
+        LineChartSeries series1 = new LineChartSeries();
+        series1.setLabel("Stock Average");
+        rows = findDailyStockAverage(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series1.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series1);
+
+        LineChartSeries series2 = new LineChartSeries();
+        series2.setLabel("Sales");
+        rows = findDailySale(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series2.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series2);
+
+        LineChartSeries series3 = new LineChartSeries();
+        series3.setLabel("Purchase/Good Receive");
+        rows = findDailyPurchase(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series3.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series3);
+
+        LineChartSeries series4 = new LineChartSeries();
+        series4.setLabel("Transfer Issue");
+        rows = findDailyTransferOut(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series4.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series4);
+
+        LineChartSeries series5 = new LineChartSeries();
+        series5.setLabel("Transfer Receive");
+        rows = findDailyTransferIn(item, dept, fromDate, toDate);
+        for (ItemTransactionSummeryRow r : rows) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            series5.set(df.format(r.getDate()), r.getQuantity());
+        }
+        dateModel.addSeries(series5);
+
 //        dateModel.setTitle("Item Transactions");
 //        dateModel.setZoom(true);
 //        dateModel.setLegendPlacement(LegendPlacement.INSIDE);
@@ -194,7 +191,7 @@ public class ReorderController implements Serializable {
 //        axis.setTickFormat("%b %#d, %y");
 //
 //        dateModel.getAxes().put(AxisType.X, axis);
-//    }
+    }
 
     public DepartmentListMethod getDepartmentListMethod() {
         if (departmentListMethod == null) {
@@ -479,6 +476,93 @@ public class ReorderController implements Serializable {
         }
     }
 
+    public void listItemsByMovementValue() {
+        List<StockReportRecord> lst = reportsTransfer.getMovementRecordsByValue(department, fromDate, toDate, true);
+        reordersAvailableForSelection = new ArrayList<>();
+        userSelectedItems = new ArrayList<>();
+        selectableItems = new ArrayList<>();
+        String j;
+        Map m = new HashMap();
+        for (StockReportRecord r : lst) {
+            j = "select r from Reorder r where r.department=:dept and r.item=:item";
+            m.put("dept", department);
+            m.put("item", r.getItem());
+
+            Reorder ro = reorderFacade.findFirstBySQL(j, m);
+            if (ro == null) {
+                ro.setItem(r.getItem());
+                ro.setDepartment(department);
+                reorderFacade.create(ro);
+            }
+            ro.setTransientStock(r.getStockQty());
+            ro.setMovementQty(r.getQty());
+            ro.setMovementPurchaseValue(r.getPurchaseValue());
+            ro.setMovementRetailValue(r.getRetailsaleValue());
+            reordersAvailableForSelection.add(ro);
+            selectableItems.add(r.getItem());
+
+        }
+    }
+
+    public void filterItemsBySupplier() {
+        System.err.println("filterItemsBySupplier");
+        List<Item> distItems = itemController.getDealorItem(institution);
+        List<Item> temItems = new ArrayList<>();
+        List<Reorder> temReorders = new ArrayList<>();
+        String j;
+        Map m = new HashMap();
+        for (Item r : distItems) {
+            j = "select r from Reorder r where r.department=:dept and r.item=:item";
+            m.put("dept", department);
+            m.put("item", r);
+
+            Reorder ro = reorderFacade.findFirstBySQL(j, m);
+            if (ro == null) {
+                ro = new Reorder();
+                ro.setItem(r);
+                ro.setDepartment(department);
+                reorderFacade.create(ro);
+            }
+            temReorders.add(ro);
+            temItems.add(r);
+
+        }
+        System.err.println(temReorders);
+        System.err.println(temItems);
+        reordersAvailableForSelection.retainAll(temReorders);
+        selectableItems.retainAll(temItems);
+
+    }
+
+    public void listItemsByMovementQty() {
+        List<StockReportRecord> lst = reportsTransfer.getMovementRecordsByQty(department, fromDate, toDate, true);
+        reordersAvailableForSelection = new ArrayList<>();
+        userSelectedItems = new ArrayList<>();
+        selectableItems = new ArrayList<>();
+        String j;
+        Map m = new HashMap();
+        for (StockReportRecord r : lst) {
+            j = "select r from Reorder r where r.department=:dept and r.item=:item";
+            m.put("dept", department);
+            m.put("item", r.getItem());
+
+            Reorder ro = reorderFacade.findFirstBySQL(j, m);
+            if (ro == null) {
+                ro = new Reorder();
+                ro.setItem(r.getItem());
+                ro.setDepartment(department);
+                reorderFacade.create(ro);
+            }
+            ro.setTransientStock(r.getStockQty());
+            ro.setMovementQty(r.getQty());
+            ro.setMovementPurchaseValue(r.getPurchaseValue());
+            ro.setMovementRetailValue(r.getRetailsaleValue());
+            reordersAvailableForSelection.add(ro);
+            selectableItems.add(r.getItem());
+
+        }
+    }
+
     public void listItemsBelowRol() {
         String j;
         Map m = new HashMap();
@@ -487,7 +571,7 @@ public class ReorderController implements Serializable {
             r.getDepartment();
             r.getRol();
         }
-        j = "select r from Reorder r where r.department=:dept ";
+        j = "select r from Reorder r where r.department=:dept and r.item.retired=false  ";
         m.put("dept", getDepartment());
         reordersAvailableForSelection = new ArrayList<>();
         System.out.println("j = " + j);
@@ -497,7 +581,6 @@ public class ReorderController implements Serializable {
         userSelectedItems = new ArrayList<>();
         selectableItems = new ArrayList<>();
         for (Reorder r : lst) {
-
             double s = pharmacyBean.getStockQty(r.getItem(), department);
             System.out.println("s = " + s);
             System.out.println("r.getRol() = " + r.getRol());
@@ -603,10 +686,12 @@ public class ReorderController implements Serializable {
     }
 
     enum AutoOrderMethod {
+
         ByDistributor,
         ByRol,
         ByAll,
         ByGeneric,
+        ByMovement,
     }
 
     public String autoOrderByDistributor() {
@@ -615,15 +700,20 @@ public class ReorderController implements Serializable {
     }
 
     public String autoOrderByRol() {
-        autoOrderMethod = AutoOrderMethod.ByDistributor;
+        autoOrderMethod = AutoOrderMethod.ByRol;
         return "/pharmacy/auto_ordering_by_items_below_rol";
+    }
+
+    public String autoOrderByItemMovement() {
+        autoOrderMethod = AutoOrderMethod.ByMovement;
+        return "/pharmacy/auto_ordering_by_items_movement";
     }
 
     public String autoOrderByAllItems() {
         autoOrderMethod = AutoOrderMethod.ByAll;
         return "/pharmacy/auto_ordering_by_all_items";
     }
-    
+
     public String autoOrderByGenerics() {
         autoOrderMethod = AutoOrderMethod.ByGeneric;
         return "/pharmacy/auto_ordering_by_items_by_generic";
@@ -653,6 +743,7 @@ public class ReorderController implements Serializable {
         for (Reorder r : userSelectedReorders) {
             userSelectedItems.add(r.getItem());
         }
+        autoOrderMethod = AutoOrderMethod.ByRol;
         System.out.println("userSelectedItems.size() = " + userSelectedItems.size());
     }
 
@@ -660,7 +751,7 @@ public class ReorderController implements Serializable {
         List<Item> iss = null;
         System.out.println("generateReorders");
         System.out.println("iss = " + iss);
-        
+
         if (autoOrderMethod == AutoOrderMethod.ByDistributor) {
             itemController.setInstituion(institution);
             iss = itemController.getDealorItem();
@@ -855,42 +946,59 @@ public class ReorderController implements Serializable {
 
     private void generatePharmacyTransferRequestBillComponents() {
         purchaseOrderRequestController.setBillItems(new ArrayList<BillItem>());
-        //    System.out.println("fromDepartment = " + fromDepartment);
-        //    System.out.println("toDepartment = " + toDepartment);
+        double daysToReorder = (nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24);
+        System.out.println("fromDepartment = " + fromDepartment.getName());
+        System.out.println("toDepartment = " + toDepartment.getName());
         for (ItemReorders i : itemReorders) {
-            //    System.out.println("i.getItem().getName() = " + i.getItem().getName());
+            System.out.println("i.getItem().getName() = " + i.getItem().getName());
             Reorder fromReorder = new Reorder();
             Reorder toReorder = new Reorder();
 
             for (Reorder r : i.getReorders()) {
                 if (r.getDepartment().equals(fromDepartment)) {
-                    //    System.out.println("from");
-                    //    System.out.println("r.getTransientOrderingQty() = " + r.getTransientOrderingQty());
+                    System.out.println("from");
+                    System.out.println("r.getTransientOrderingQty() = " + r.getTransientOrderingQty());
                     fromReorder = r;
                 }
                 if (r.getDepartment().equals(toDepartment)) {
-                    //    System.out.println("to");
-                    //    System.out.println("r.getTransientStock() = " + r.getTransientStock());
+                    System.out.println("to");
+                    System.out.println("r.getTransientStock() = " + r.getTransientStock());
                     toReorder = r;
                 }
             }
             //    System.out.println("toReorder.getTransientOrderingQty() = " + toReorder.getTransientOrderingQty());
 
             if (fromReorder.getTransientOrderingQty() <= 0) {
+                System.err.println("No ordering qty");
+                continue;
+            }
+            double daysRemaining;
+            try {
+                daysRemaining = (toReorder.getTransientStock() - toReorder.getBufferStocks()) / toReorder.getDemandInUnitsPerDay();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                daysRemaining = 0;
+            }
+            System.out.println("daysRemaining = " + daysRemaining);
+            System.out.println("daysToReorder = " + daysToReorder);
+
+            if (daysRemaining < daysToReorder) {
+                System.err.println("No sufficient stocks to order");
                 continue;
             }
 
             double availableToRequest;
+
             double requestingQty;
 
-            availableToRequest = toReorder.getTransientStock() - (toReorder.getTransientOrderingQty() + toReorder.getBufferStocks());
-            //    System.out.println("availableToRequest = " + availableToRequest);
+            availableToRequest = toReorder.getTransientStock() - ((toReorder.getDemandInUnitsPerDay() * daysToReorder) + toReorder.getBufferStocks());
+            System.out.println("availableToRequest = " + availableToRequest);
             if (availableToRequest > fromReorder.getTransientOrderingQty()) {
                 requestingQty = fromReorder.getTransientOrderingQty();
             } else {
                 requestingQty = availableToRequest;
             }
-            //    System.out.println("requestingQty = " + requestingQty);
+            System.out.println("requestingQty = " + requestingQty);
             transferRequestController.getCurrentBillItem().setItem(i.getItem());
             transferRequestController.getCurrentBillItem().setTmpQty(requestingQty);
             transferRequestController.addItem();
@@ -1295,6 +1403,14 @@ public class ReorderController implements Serializable {
 
     public void setUserSelectedReorders(List<Reorder> userSelectedReorders) {
         this.userSelectedReorders = userSelectedReorders;
+    }
+
+    public AutoOrderMethod getAutoOrderMethod() {
+        return autoOrderMethod;
+    }
+
+    public void setAutoOrderMethod(AutoOrderMethod autoOrderMethod) {
+        this.autoOrderMethod = autoOrderMethod;
     }
 
     @FacesConverter(forClass = Reorder.class)

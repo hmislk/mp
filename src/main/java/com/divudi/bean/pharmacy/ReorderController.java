@@ -947,8 +947,8 @@ public class ReorderController implements Serializable {
     private void generatePharmacyTransferRequestBillComponents() {
         purchaseOrderRequestController.setBillItems(new ArrayList<BillItem>());
         double daysToReorder = (nextDeliveryDate.getTime() - expectedDeliveryDate.getTime()) / (1000 * 60 * 60 * 24);
-        System.out.println("fromDepartment = " + fromDepartment);
-        System.out.println("toDepartment = " + toDepartment);
+        System.out.println("fromDepartment = " + fromDepartment.getName());
+        System.out.println("toDepartment = " + toDepartment.getName());
         for (ItemReorders i : itemReorders) {
             System.out.println("i.getItem().getName() = " + i.getItem().getName());
             Reorder fromReorder = new Reorder();
@@ -968,13 +968,17 @@ public class ReorderController implements Serializable {
             }
             //    System.out.println("toReorder.getTransientOrderingQty() = " + toReorder.getTransientOrderingQty());
 
-            if (toReorder.getTransientOrderingQty() <= 0) {
+            if (fromReorder.getTransientOrderingQty() <= 0) {
                 System.err.println("No ordering qty");
                 continue;
             }
-
-            double daysRemaining = toReorder.getTransientOrderingQty() / toReorder.getDemandInUnitsPerDay();
-
+            double daysRemaining;
+            try {
+                daysRemaining = (toReorder.getTransientStock() - toReorder.getBufferStocks()) / toReorder.getDemandInUnitsPerDay();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                daysRemaining = 0;
+            }
             System.out.println("daysRemaining = " + daysRemaining);
             System.out.println("daysToReorder = " + daysToReorder);
 
@@ -987,14 +991,14 @@ public class ReorderController implements Serializable {
 
             double requestingQty;
 
-            availableToRequest = toReorder.getTransientStock() - (toReorder.getTransientOrderingQty() + toReorder.getBufferStocks());
-                System.out.println("availableToRequest = " + availableToRequest);
+            availableToRequest = toReorder.getTransientStock() - ((toReorder.getDemandInUnitsPerDay() * daysToReorder) + toReorder.getBufferStocks());
+            System.out.println("availableToRequest = " + availableToRequest);
             if (availableToRequest > fromReorder.getTransientOrderingQty()) {
                 requestingQty = fromReorder.getTransientOrderingQty();
             } else {
                 requestingQty = availableToRequest;
             }
-                System.out.println("requestingQty = " + requestingQty);
+            System.out.println("requestingQty = " + requestingQty);
             transferRequestController.getCurrentBillItem().setItem(i.getItem());
             transferRequestController.getCurrentBillItem().setTmpQty(requestingQty);
             transferRequestController.addItem();

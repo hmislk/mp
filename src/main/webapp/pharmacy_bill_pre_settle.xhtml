@@ -24,7 +24,7 @@
                             <h:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;" style="min-width: 50px;" />
                             <p:selectOneMenu   id="cmbPs" value="#{pharmacyPreSettleController.preBill.paymentScheme}"  disabled="true" >                                                                     
                                 <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                <p:ajax process="cmbPs wsd wcd" update="creditCard cheque slip " event="change" />
+                                <p:ajax process="cmbPs" update="creditCard cheque slip " event="change" />
                             </p:selectOneMenu>
 
                             <h:panelGroup id="creditCard" style="display:#{pharmacyPreSettleController.preBill.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
@@ -41,9 +41,6 @@
 
                             <p:commandButton ajax= "false"  value="Settle and Accept Payment" action="#{pharmacyPreSettleController.settleBillWithPay2}" ></p:commandButton>
 
-
-                            <p:watermark id="wcd" value="Cheque Date" for="chequeDate"/>
-                            <p:watermark id="wsd" value="Slip Date" for="slipDate"/>
                         </h:panelGrid>
 
                         <p:panel>

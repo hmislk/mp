@@ -39,7 +39,7 @@
 
                             <p:submenu label="Sale" rendered="#{webUserController.hasPrivilege('PharmacySale')}"> 
                                 <p:menuitem  ajax="false" action="/pharmacy_retail_sale"  value="Sale" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStock()}" ></p:menuitem>    
-                                <p:menuitem  ajax="false" action="/pharmacy_retail_sale_for_cashier"  value="Sale for cashier" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStockForCashier()}" ></p:menuitem>                                       
+
                                 <p:submenu label="Search">
                                     <p:menuitem  ajax="false" action="/pharmacy_search_sale_bill"  
                                                  value="By Bill"
@@ -56,13 +56,18 @@
                                     <p:menuitem  ajax="false" action="/pharmacy_search_pre_bill_for_return_item_and_cash" actionListener="#{searchController.makeListNull}"   value="Return Item and Cash" rendered="#{webUserController.hasPrivilege('PharmacySale')}"></p:menuitem>                                                                                    
                                     <p:menuitem ajax="false" action="/pharmacy_search_return_bill_pre" actionListener="#{searchController.makeListNull}"  value="Search Return Bill (Item)" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>
                                 </p:submenu>
-                                <p:menuitem  ajax="false" action="/pharmacy_search_pre_bill_not_paid" actionListener="#{searchController.makeListNull}"   value="Add To Stock" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>
+                                
                                 <p:menuitem  ajax="false" action="/pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('PharmacyReports')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_summery_index"  value="Summeries" rendered="#{webUserController.hasPrivilege('PharmacySummery')}" ></p:menuitem>                                    
                                 <p:menuitem  ajax="false" action="/pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                             </p:submenu> 
 
-
+                            <p:submenu label="Casher Sale">
+                                <p:menuitem  ajax="false" action="/pharmacy_retail_sale_for_cashier"  value="Sale for cashier" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacySaleController.newSaleBillWithoutReduceStockForCashier()}" ></p:menuitem>                                       
+                                <p:menuitem ajax="false" action="/pharmacy_search_pre_bill" actionListener="#{searchController.makeListNull}"  value="Accept Payment" ></p:menuitem>
+                                <p:menuitem  ajax="false" action="/pharmacy_search_pre_bill_not_paid" actionListener="#{searchController.makeListNull}"   value="Bills Not Paid to Cashier" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>
+                                <p:menuitem  ajax="false" action="/pharmacy_search_pre_refund_bill_for_return_cash" actionListener="#{searchController.makeListNull}"   value="Refund Cash" ></p:menuitem>                                        
+                            </p:submenu>
 
                             <p:submenu label="Procurement" rendered="#{webUserController.hasPrivilege('PharmacyPurchase')}">
                                 <p:menuitem  ajax="false" action="/pharmacy_purhcase_order_request"  value="Manual Ordering" rendered="#{webUserController.hasPrivilege('PharmacyOrderCreation')}" ></p:menuitem>
@@ -287,31 +292,31 @@
             <h:panelGroup id="gpMessages"  >
                 <p:panel id="pnl" rendered="#{messageController.hasUserMessages(sessionController.loggedUser)}"
                          style="width: 300px; top: 10px; right: 10px; position: fixed;">
-                   
 
-                        <p:dataTable value="#{messageController.userMessages(sessionController.loggedUser)}" var="m" >
 
-                            <p:column headerText="Messages" >
-                                <h:outputText rendered="#{m.type eq 'PharmacyApproval'}" 
-                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toInstitution.name}." ></h:outputText>
-                                <h:outputText rendered="#{m.type eq 'PharmacyTransferIssue'}"  
-                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
-                                <h:outputText rendered="#{m.type eq 'PharmacyTransferRequest'}"  
-                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                    <p:dataTable value="#{messageController.userMessages(sessionController.loggedUser)}" var="m" >
 
-                                <p:spacer width="5" ></p:spacer>
-                                <p:commandLink value="x" action="#{messageController.makeMessageAsNoted(m)}" 
-                                               update=":#{p:component('gpMessages')}"  ></p:commandLink>
-                            </p:column>
+                        <p:column headerText="Messages" >
+                            <h:outputText rendered="#{m.type eq 'PharmacyApproval'}" 
+                                          value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toInstitution.name}." ></h:outputText>
+                            <h:outputText rendered="#{m.type eq 'PharmacyTransferIssue'}"  
+                                          value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                            <h:outputText rendered="#{m.type eq 'PharmacyTransferRequest'}"  
+                                          value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
 
-                        </p:dataTable>
+                            <p:spacer width="5" ></p:spacer>
+                            <p:commandLink value="x" action="#{messageController.makeMessageAsNoted(m)}" 
+                                           update=":#{p:component('gpMessages')}"  ></p:commandLink>
+                        </p:column>
 
-                   
+                    </p:dataTable>
+
+
                 </p:panel>
 
             </h:panelGroup>
             <p:draggable for="pnl" />
-            
+
         </div>
 
     </h:body>

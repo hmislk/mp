@@ -205,41 +205,62 @@
 
                 <p:panel rendered ="#{!sessionController.logged}" style="min-height: 500px; padding: 50px;" styleClass="nonPrintBlock">
                     <ui:insert name="login"   >
-                        <p:panel header="Please login" id="loginbox" style="margin-left: 20%;margin-right: 20%; text-align: center; ">
-                            <h:panelGrid columns="2" >
-                                <h:panelGroup >
-                                    <h:graphicImage  library="image" name="lock.png" />
-                                </h:panelGroup>
-                                <h:panelGroup >
-                                    <h:form id="formLogin">
-                                        <h:panelGrid columns="2">
 
-                                            <h:outputLabel value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
-                                            <p:autoComplete value="#{sessionController.department}" 
-                                                            style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;" 
-                                                            completeMethod="#{departmentController.completeDept}"
-                                                            var="dept" itemValue="#{dept}" itemLabel="#{dept.name}"
-                                                            forceSelection="true" rendered="true"
-                                                            requiredMessage="You must select a department" 
-                                                            converter="dep">
-                                                <p:column headerText="Department">
-                                                    <h:outputLabel value="#{dept.name}"/>
-                                                </p:column>
-                                                <p:column headerText="Institution">
-                                                    <h:outputLabel value="#{dept.institution.name}"/>
-                                                </p:column>
-                                            </p:autoComplete>
-                                            <h:outputLabel value="Username"  style="text-align: left; margin: 5px; padding: 5px;"  ></h:outputLabel>
-                                            <p:inputText autocomplete="off"  value="#{sessionController.userName}"  style="text-align: left; margin: 5px; padding: 5px;" ></p:inputText>
-                                            <h:outputLabel value="Password"  style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
-                                            <p:password value="#{sessionController.passord }"  style="text-align: left; margin: 5px; padding: 5px;" ></p:password>
-                                            <h:outputLabel value=""  style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
-                                            <p:commandButton value="Login" action="#{sessionController.loginAction()}" ajax="false" ></p:commandButton>
+
+                        <table >
+                            <tr>
+                                <td>
+                                    <p:panel header="Please login" id="loginbox" style="margin-left: 20%;margin-right: 20%; text-align: center; ">
+                                        <h:panelGrid columns="2" >
+                                            <h:panelGroup >
+                                                <h:graphicImage  library="image" name="lock.png" />
+                                            </h:panelGroup>
+                                            <h:panelGroup >
+                                                <h:form id="formLogin">
+                                                    <h:panelGrid columns="2">
+
+                                                        <h:outputLabel value="Department" style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
+                                                        <p:autoComplete value="#{sessionController.department}" 
+                                                                        style="text-align: left; margin: 5px; padding: 5px; max-width: 300px!important;" 
+                                                                        completeMethod="#{departmentController.completeDept}"
+                                                                        var="dept" itemValue="#{dept}" itemLabel="#{dept.name}"
+                                                                        forceSelection="true" rendered="true"
+                                                                        requiredMessage="You must select a department" 
+                                                                        converter="dep">
+                                                            <p:column headerText="Department">
+                                                                <h:outputLabel value="#{dept.name}"/>
+                                                            </p:column>
+                                                            <p:column headerText="Institution">
+                                                                <h:outputLabel value="#{dept.institution.name}"/>
+                                                            </p:column>
+                                                        </p:autoComplete>
+                                                        <h:outputLabel value="Username"  style="text-align: left; margin: 5px; padding: 5px;"  ></h:outputLabel>
+                                                        <p:inputText autocomplete="off"  value="#{sessionController.userName}"  style="text-align: left; margin: 5px; padding: 5px;" ></p:inputText>
+                                                        <h:outputLabel value="Password"  style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
+                                                        <p:password value="#{sessionController.passord }"  style="text-align: left; margin: 5px; padding: 5px;" ></p:password>
+                                                        <h:outputLabel value=""  style="text-align: left; margin: 5px; padding: 5px;" ></h:outputLabel>
+                                                        <p:commandButton value="Login" action="#{sessionController.loginAction()}" ajax="false" ></p:commandButton>
+                                                    </h:panelGrid>
+                                                </h:form>
+                                            </h:panelGroup>
                                         </h:panelGrid>
-                                    </h:form>
-                                </h:panelGroup>
-                            </h:panelGrid>
-                        </p:panel>
+                                    </p:panel>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <iframe width="500" 
+                                            height="300" 
+                                            frameBorder="0"
+                                            src="http://localwebteam.com/index.php?option=com_local_web_team&amp;task=customerlist.getCustomerPendingPaymentList&amp;customer_id=58&amp;customer_code=58&amp;tmpl=component">
+                                        <p>Your browser does not support iframes.</p>
+                                    </iframe>
+                                </td>
+                            </tr>
+                        </table>
+
+
+
                     </ui:insert>
                 </p:panel>
                 <p:panel styleClass="nonPrintBlock" >
@@ -287,31 +308,31 @@
             <h:panelGroup id="gpMessages"  >
                 <p:panel id="pnl" rendered="#{messageController.hasUserMessages(sessionController.loggedUser)}"
                          style="width: 300px; top: 10px; right: 10px; position: fixed;">
-                   
 
-                        <p:dataTable value="#{messageController.userMessages(sessionController.loggedUser)}" var="m" >
 
-                            <p:column headerText="Messages" >
-                                <h:outputText rendered="#{m.type eq 'PharmacyApproval'}" 
-                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toInstitution.name}." ></h:outputText>
-                                <h:outputText rendered="#{m.type eq 'PharmacyTransferIssue'}"  
-                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
-                                <h:outputText rendered="#{m.type eq 'PharmacyTransferRequest'}"  
-                                              value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                    <p:dataTable value="#{messageController.userMessages(sessionController.loggedUser)}" var="m" >
 
-                                <p:spacer width="5" ></p:spacer>
-                                <p:commandLink value="x" action="#{messageController.makeMessageAsNoted(m)}" 
-                                               update=":#{p:component('gpMessages')}"  ></p:commandLink>
-                            </p:column>
+                        <p:column headerText="Messages" >
+                            <h:outputText rendered="#{m.type eq 'PharmacyApproval'}" 
+                                          value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toInstitution.name}." ></h:outputText>
+                            <h:outputText rendered="#{m.type eq 'PharmacyTransferIssue'}"  
+                                          value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                            <h:outputText rendered="#{m.type eq 'PharmacyTransferRequest'}"  
+                                          value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
 
-                        </p:dataTable>
+                            <p:spacer width="5" ></p:spacer>
+                            <p:commandLink value="x" action="#{messageController.makeMessageAsNoted(m)}" 
+                                           update=":#{p:component('gpMessages')}"  ></p:commandLink>
+                        </p:column>
 
-                   
+                    </p:dataTable>
+
+
                 </p:panel>
 
             </h:panelGroup>
             <p:draggable for="pnl" />
-            
+
         </div>
 
     </h:body>

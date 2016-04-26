@@ -55,11 +55,7 @@
                                         <f:selectItem itemLabel="Select Payment Method"/>
                                         <f:selectItems value="#{paymentSchemeController.paymentMethods}"/>
                                     </h:selectOneListbox>
-                                    <h:outputText  value="MemberShip Scheme" />
-                                    <h:selectOneListbox  value="#{paymentSchemeController.current.membershipScheme}" size="1" >
-                                        <f:selectItem itemLabel="Select membership Scheme"/>
-                                        <f:selectItems value="#{membershipSchemeController.items}"/>
-                                    </h:selectOneListbox>
+                                    
                                     <h:outputText id="lblOrder" value="Order No" />
                                     <h:inputText id="txtOrder" value="#{paymentSchemeController.current.orderNo}"  />
 

@@ -1576,7 +1576,8 @@ public class SearchController implements Serializable {
         sql = "select b from PreBill b where b.billType = :billType "
                 + " and b.institution=:ins and b.billedBill is null "
                 + " and b.createdAt between :fromDate and :toDate"
-                + " and b.retired=false and b.deptId is not null ";
+                + " and b.retired=false and b.deptId is not null "
+                + " and b.department=:dep ";
 
         if (getSearchKeyword().getPatientName() != null && !getSearchKeyword().getPatientName().trim().equals("")) {
             sql += " and  (upper(b.patient.person.name) like :patientName )";
@@ -1609,6 +1610,7 @@ public class SearchController implements Serializable {
         temMap.put("toDate", getToDate());
         temMap.put("fromDate", getFromDate());
         temMap.put("ins", getSessionController().getInstitution());
+        temMap.put("dep", getSessionController().getDepartment());
 
         ////System.err.println("Sql " + sql);
         bills = getBillFacade().findBySQL(sql, temMap, TemporalType.TIMESTAMP, 50);

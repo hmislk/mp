@@ -127,6 +127,7 @@ public enum Privileges {
     AdminStaff,
     AdminItems,
     AdminPrices,
+    DevelopersOnly,
     ChangeProfessionalFee,
     ChangeCollectingCentre,
     StoreIssue,
@@ -175,5 +176,6 @@ public enum Privileges {
     ChannellingPaymentPayDoctor,
     ChannellingPaymentDueSearch,
     ChannellingPaymentDoneSearch,
+   
 
 }

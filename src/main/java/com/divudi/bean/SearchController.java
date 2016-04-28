@@ -1568,6 +1568,17 @@ public class SearchController implements Serializable {
 
     }
 
+    public void removeStockItems() {
+        for (Bill bb : getSelectedBills()) {
+
+            bb.setRetired(true);
+            bb.setRetireComments("Bulk Bill Remove");
+            getBillFacade().edit(bb);
+        }
+
+        createPreBillsNotPaid();
+    }
+
     public void createPreTable() {
         bills = null;
         String sql;

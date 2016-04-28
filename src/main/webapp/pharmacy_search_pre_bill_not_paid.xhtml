@@ -17,6 +17,8 @@
                                 <p:commandButton ajax="false" value="Refresh" actionListener="#{searchController.createPreBillsNotPaid()}"/>
                                 <p:commandButton ajax="false" value="Add To Stock" action="#{searchController.addToStock}" 
                                                  disabled="#{!webUserController.hasPrivilege('PharmacyReAddToStock')}"/>
+                                <p:commandButton ajax="false" value="Remove" action="#{searchController.removeStockItems()}" 
+                                                disabled="#{!webUserController.hasPrivilege('DevelopersOnly')}" />
                             </h:panelGrid>
 
                         </f:facet>
@@ -26,6 +28,7 @@
                                      selection="#{searchController.selectedBills}">
 
                             <p:column selectionMode="multiple" ></p:column>
+                          
 
 
                             <p:column headerText="Pre Bill No">

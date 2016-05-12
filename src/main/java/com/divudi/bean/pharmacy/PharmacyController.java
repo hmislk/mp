@@ -120,6 +120,7 @@ public class PharmacyController implements Serializable {
         institutionStocks = null;
         institutionTransferIssue = null;
         directPurchase = null;
+        stockAverages=new ArrayList<>();
     }
 
     public List<Stock> completeAllStocks(String qry) {
@@ -1426,6 +1427,23 @@ public class PharmacyController implements Serializable {
         createPoTable();
         createDirectPurchaseTable();
         createInstitutionIssue();
+        
+        Calendar frm = Calendar.getInstance();
+        frm.setTime(fromDate);
+        Calendar to = Calendar.getInstance();
+        to.setTime(toDate);
+
+        long lValue = to.getTimeInMillis() - frm.getTimeInMillis();
+        double dayCount = 0;
+        if (lValue != 0) {
+            dayCount = lValue / (1000 * 60 * 60 * 24);
+        }
+
+        //System.err.println("Day Count " + dayCount);
+        List<Item> items =new ArrayList<>();
+        items.add(pharmacyItem);
+        createStockAverage(dayCount, items);
+        
     }
 
     public void createInstitutionIssue() {

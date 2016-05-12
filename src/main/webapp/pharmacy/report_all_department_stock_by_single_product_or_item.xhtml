@@ -18,10 +18,21 @@
                     <p:panel header="Department Stock Report by Batch" >
 
                         <h:panelGrid columns="5" >
-                            <p:autoComplete completeMethod="#{itemController.completeAmpsAndVmps}" var="vmp"
-                                            itemLabel="#{vmp.name}" itemValue="#{vmp}"
-                                            value="#{reportsStock.ampOrVmp}"></p:autoComplete>
-                            
+                            <p:autoComplete completeMethod="#{itemController.completeAmpsAndVmps}" var="i"
+                                            itemLabel="#{i.name}" itemValue="#{i}"
+                                            value="#{reportsStock.ampOrVmp}">
+
+                                <p:column headerText="Item">
+                                    <h:outputLabel value="#{i.name}"  style="width: 300px!important;"></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Code">
+                                    <h:outputLabel value="#{i.code}" style="width: 50px!important;"></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Generic">
+                                    <h:outputLabel value="#{i.vmp.name}" style="width: 150px!important;"></h:outputLabel>
+                                </p:column>
+                            </p:autoComplete>
+
                             <p:commandButton ajax="false" value="Process" 
                                              actionListener="#{reportsStock.fillAllDepartmentNonEmptyStocksByVmpOrAmp()}" ></p:commandButton>
                             <p:commandButton value="Print" ajax="false" >
@@ -51,7 +62,7 @@
                                 <p:column width="40px;" headerText="No" sortBy="#{ii}">
                                     <h:outputLabel value="#{ii+1}" />
                                 </p:column>
-                                
+
                                 <p:column width="50px;" sortBy="#{i.department.name}">
                                     <f:facet name="header">
                                         <h:outputLabel value="Department/Staff"/>
@@ -73,8 +84,8 @@
                                     </f:facet>
                                     <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
                                 </p:column>
-                                
-                                 <p:column headerText="Product" width="300px;" sortBy="#{i.itemBatch.item.name}">
+
+                                <p:column headerText="Product" width="300px;" sortBy="#{i.itemBatch.item.name}">
                                     <f:facet name="header">
                                         <h:outputLabel value="Item"/>
                                     </f:facet>

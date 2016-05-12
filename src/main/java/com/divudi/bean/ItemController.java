@@ -187,14 +187,14 @@ public class ItemController implements Serializable {
                         + " where c.retired=false "
                         + " and (type(c)= :amp or type(c)= :vmp) "
                         + " and (c.departmentType is null or c.departmentType!=:dep ) "
-                        + " and (upper(c.name) like :q  or upper(c.code) like :q or upper(c.barcode) like :q ) "
+                        + " and (upper(c.name) like :q  or upper(c.code) like :q or upper(c.vmp.name) like :q or upper(c.barcode) like :q ) "
                         + " order by c.name";
             } else {
                 sql = "select c from Item c "
                         + " where c.retired=false "
                         + " and (type(c)= :amp or type(c)= :vmp) "
                         + " and (c.departmentType is null or c.departmentType!=:dep ) "
-                        + " and (upper(c.name) like :q  or upper(c.code) like :q) "
+                        + " and (upper(c.name) like :q  or upper(c.code) like :q or upper(c.vmp.name) like :q) "
                         + " order by c.name";
             }
             tmpMap.put("amp", Amp.class);

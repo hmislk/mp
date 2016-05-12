@@ -84,7 +84,7 @@
                                     <p:commandButton value="Single Department All Item Transaction Summery" 
                                                      action="/pharmacy/raport_all_item_transaction_summery" ajax="false" ></p:commandButton> 
                                     <p:commandButton value="All Department Single Item Transaction Summery" 
-                                                     action="/pharmacy/pharmacy_item_transactions" ajax="false" ></p:commandButton> 
+                                                     action="/pharmacy/pharmacy_item_transactions" ajax="false" actionListener="#{pharmacyController.makeNull}"></p:commandButton> 
                                 </p:panelGrid>
                             </p:panel>
                         </p:panelGrid>

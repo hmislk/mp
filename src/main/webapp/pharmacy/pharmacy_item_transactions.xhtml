@@ -101,7 +101,7 @@
                                                     #{dep.department.name}
                                                 </p:column>
                                                 <p:column style="text-align: right;">
-                                                    <h:outputLabel value="#{dep.stock-dep.average}">       
+                                                    <h:outputLabel value="#{dep.stock-(dep.average * 30)}">       
                                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                     </h:outputLabel> 
                                                 </p:column>
@@ -111,7 +111,7 @@
                                                     </h:outputLabel> 
                                                 </p:column>
                                                 <p:column style="text-align: right;">
-                                                    <h:outputLabel value="#{dep.average}"> 
+                                                    <h:outputLabel value="#{dep.average * 30}"> 
                                                         <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                     </h:outputLabel> 
                                                 </p:column>
@@ -119,9 +119,9 @@
                                                     <p:row>
                                                         <p:column footerText="Total "></p:column>   
                                                         <p:column style="text-align: right;"
-                                                                  footerText="#{ins.institutionTotal-ins.institutionAverage}">
+                                                                  footerText="#{ins.institutionTotal-(ins.institutionAverage)}">
                                                             <f:facet name="footer">
-                                                                <h:outputLabel value="#{ins.institutionTotal-ins.institutionAverage}">
+                                                                <h:outputLabel value="#{ins.institutionTotal-(ins.institutionAverage*30)}">
                                                                     <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                                 </h:outputLabel>
                                                             </f:facet>
@@ -137,7 +137,7 @@
                                                         <p:column style="text-align: right;" 
                                                                   footerText="#{ins.institutionAverage}">
                                                             <f:facet name="footer">
-                                                                <h:outputLabel value="#{ins.institutionAverage}">
+                                                                <h:outputLabel value="#{ins.institutionAverage * 30}">
                                                                     <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                                 </h:outputLabel>
                                                             </f:facet>
@@ -154,7 +154,7 @@
                                                     </p:column>
                                                     <p:column style="text-align: right;">
                                                         <f:facet name="footer">
-                                                            <h:outputLabel  value="#{sA.itemStockTotal-sA.itemAverageTotal}">
+                                                            <h:outputLabel  value="#{sA.itemStockTotal-(sA.itemAverageTotal*30)}">
                                                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                             </h:outputLabel>
                                                         </f:facet>
@@ -168,7 +168,7 @@
                                                     </p:column>
                                                     <p:column style="text-align: right;">
                                                         <f:facet name="footer">
-                                                            <h:outputLabel  value="#{sA.itemAverageTotal}">
+                                                            <h:outputLabel  value="#{sA.itemAverageTotal*30}">
                                                                 <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                             </h:outputLabel>
                                                         </f:facet>

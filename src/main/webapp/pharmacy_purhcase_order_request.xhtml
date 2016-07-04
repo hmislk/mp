@@ -161,6 +161,17 @@
                             </p:inputText>
                         </h:panelGroup>
                     </p:column>  
+                    
+                     <p:column headerText="Expected Price" styleClass="averageNumberColumn">  
+                        <h:panelGroup id="exprice">
+                            <p:inputText value="#{bi.expectedRate}" styleClass="averageNumberText">
+                                <f:convertNumber pattern="#00.00"/>
+                                <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this qty" listener="#{purchaseOrderRequestController.onEdit(bi)}" ></f:ajax>
+                                <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderRequestController.onFocus(bi)}" />
+                            </p:inputText>
+                        </h:panelGroup>
+                    </p:column> 
+                    
 
                     <p:column headerText="Total" styleClass="averageNumberColumn">  
                         <h:panelGroup id="total">

@@ -78,6 +78,15 @@
                             </h:panelGroup>
                         </p:column>  
 
+                          <p:column headerText="Expected Price" style="width:25px!important;" >  
+                            <h:panelGroup id="exprice">
+                                <p:inputText value="#{bi.expectedRate}">   
+                                    <f:convertNumber pattern="#00.00"/>
+                                    <f:ajax event="blur" render="total :#{p:component('tot')}"  execute="@this qty" listener="#{purchaseOrderController.onEdit(bi)}" ></f:ajax>
+                                    <f:ajax event="focus" render=":#{p:component('tab')}" listener="#{purchaseOrderController.onFocus(bi)}" />
+                                </p:inputText>
+                            </h:panelGroup>
+                        </p:column>  
 
                         <p:column headerText="Last Sale Price" style="width:25px!important;text-align: right;">  
                             <h:panelGroup >

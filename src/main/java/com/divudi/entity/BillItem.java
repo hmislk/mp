@@ -49,6 +49,7 @@ public class BillItem implements Serializable {
     double Rate;
     double discountRate;
     double netRate;
+    double expectedRate;
     double grossValue;
     double discount;
     double netValue;
@@ -127,6 +128,7 @@ public class BillItem implements Serializable {
         adjustedValue = billItem.getAdjustedValue();
         discountRate = billItem.getDiscountRate();
         Rate = billItem.getRate();
+        expectedRate = billItem.getExpectedRate();
         netRate = billItem.getNetRate();
         searialNo = billItem.getSearialNo();
         tmpQty = billItem.tmpQty;
@@ -138,6 +140,8 @@ public class BillItem implements Serializable {
     public BillItem() {
     }
 
+    
+    
     public void invertValue(BillItem billItem) {
         if (billItem.getQty() != null) {
             qty = 0 - billItem.getQty();
@@ -145,6 +149,7 @@ public class BillItem implements Serializable {
         Rate = 0 - billItem.getRate();
         discount = 0 - billItem.getDiscount();
         netRate = 0 - billItem.getNetRate();
+        expectedRate = 0 - billItem.getExpectedRate();
         grossValue = 0 - billItem.getGrossValue();
         netValue = 0 - billItem.getNetValue();
         adjustedValue = 0 - billItem.getAdjustedValue();
@@ -202,6 +207,16 @@ public class BillItem implements Serializable {
         return Rate;
     }
 
+    public double getExpectedRate() {
+        return expectedRate;
+    }
+
+    public void setExpectedRate(double expectedRate) {
+        this.expectedRate = expectedRate;
+    }
+
+    
+    
     public void setRate(double Rate) {
         this.Rate = Rate;
     }

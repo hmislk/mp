@@ -83,7 +83,7 @@
                         <h:outputLabel value="#{bip.item.name}"/>
                     </p:column>
                     
-                    <p:column  style="width: 300px!important; text-align: right!important; padding-right: 50px;">
+                    <p:column  style="width: 100px!important; text-align: right!important; padding-right: 50px;">
                         <f:facet name="header">
                             <h:outputLabel value="Free QTY"/>
                         </f:facet>
@@ -92,12 +92,21 @@
                         </h:outputLabel>
                     </p:column>
 
-                    <p:column  style="width: 300px!important; text-align: right!important; padding-right: 50px;">
+                    <p:column  style="width: 100px!important; text-align: right!important; padding-right: 50px;">
                         <f:facet name="header">
                             <h:outputLabel value="QTY"/>
                         </f:facet>
                         <h:outputLabel value="#{bip.pharmaceuticalBillItem.qty}">
                             <f:convertNumber integerOnly="true"/>
+                        </h:outputLabel>
+                    </p:column>
+                    
+                     <p:column  style="width: 100px!important; text-align: right!important; padding-right: 50px;">
+                        <f:facet name="header">
+                            <h:outputLabel value="Expected Rate"/>
+                        </f:facet>
+                        <h:outputLabel value="#{bip.expectedRate}">
+                            <f:convertNumber pattern="#,##0.00"/>
                         </h:outputLabel>
                     </p:column>
 

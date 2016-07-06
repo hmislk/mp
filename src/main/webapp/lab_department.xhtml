@@ -64,6 +64,12 @@
                                     <h:inputText id="txtCode"  value="#{departmentController.current.departmentCode}"  >
                                     </h:inputText>
 
+                                    <h:outputText  value="Gmail Username" ></h:outputText>
+                                    <h:inputText  value="#{departmentController.current.gmailUserName}"  ></h:inputText>
+
+                                    <h:outputText  value="Gmail Password" ></h:outputText>
+                                    <h:inputText  value="#{departmentController.current.gmailPassword}"  ></h:inputText>
+
 
                                     <h:outputText id="lblDept" value="Department Type" ></h:outputText>
                                     <h:selectOneListbox id="cmbDept" value="#{departmentController.current.departmentType}" size="1">

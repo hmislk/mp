@@ -23,7 +23,11 @@
                             <p:commandButton ajax="false" value="Cancel" action="pharmacy_cancel_po"
                                              disabled="#{pharmacyBillSearch.bill.cancelled or
                                                          !webUserController.hasPrivilege('PharmacyOrderCancellation')}">                           
-                            </p:commandButton>                          
+                            </p:commandButton> 
+                            <p:commandButton ajax="false" value="Email" action="#{pharmacyBillSearch.emailOrder()}"
+                                             disabled="#{pharmacyBillSearch.bill.cancelled or
+                                                         !webUserController.hasPrivilege('PharmacyOrderCancellation')}">                           
+                            </p:commandButton> 
                         </f:facet>
 
                     </p:panel>

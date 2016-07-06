@@ -22,52 +22,73 @@ import javax.persistence.Temporal;
  */
 @Entity
 public class Department implements Serializable {
-   
-     static final long serialVersionUID = 1L;
+
+    static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     //Main Properties   
-     Long id;
-     String departmentCode;
-     String name;
-     String sName;
-     String tName;
-     String printingName;
-     String address;
-     String telephone1;
-     String telephone2;
-     String fax;
-     String  email;
+    Long id;
+    String departmentCode;
+    String name;
+    String sName;
+    String tName;
+    String printingName;
+    String address;
+    String telephone1;
+    String telephone2;
+    String fax;
+    String email;
     @ManyToOne
-     Institution institution;
+    Institution institution;
     @ManyToOne
-     Department superDepartment;
+    Department superDepartment;
     @Enumerated(EnumType.STRING)
-     DepartmentType departmentType;
+    DepartmentType departmentType;
     @ManyToOne
-     Department sampleDepartment;
+    Department sampleDepartment;
     @ManyToOne
-     Department labDepartment;
-    
+    Department labDepartment;
+
     @ManyToOne
     Institution sampleInstitution;
     @ManyToOne
     Institution labInstitution;
 //     double maxDiscount;
-    
+
     //Created Properties
     @ManyToOne
-     WebUser creater;
+    WebUser creater;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date createdAt;
+    Date createdAt;
     //Retairing properties
-     boolean retired;
+    boolean retired;
     @ManyToOne
-     WebUser retirer;
+    WebUser retirer;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-     Date retiredAt;
-     String retireComments;
+    Date retiredAt;
+    String retireComments;
 
+    String gmailUserName;
+    String gmailPassword;
+
+    public String getGmailUserName() {
+        return gmailUserName;
+    }
+
+    public void setGmailUserName(String gmailUserName) {
+        this.gmailUserName = gmailUserName;
+    }
+
+    public String getGmailPassword() {
+        return gmailPassword;
+    }
+
+    public void setGmailPassword(String gmailPassword) {
+        this.gmailPassword = gmailPassword;
+    }
+    
+    
+    
     public Institution getSampleInstitution() {
         return sampleInstitution;
     }
@@ -84,9 +105,6 @@ public class Department implements Serializable {
         this.labInstitution = labInstitution;
     }
 
-    
-    
-    
     public Long getId() {
         return id;
     }
@@ -104,7 +122,7 @@ public class Department implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Department)) {
             return false;
         }
@@ -247,7 +265,6 @@ public class Department implements Serializable {
 //    public void setMaxDiscount(double maxDiscount) {
 //        this.maxDiscount = maxDiscount;
 //    }
-
     public String getPrintingName() {
         return printingName;
     }

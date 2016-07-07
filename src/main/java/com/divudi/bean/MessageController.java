@@ -70,7 +70,7 @@ public class MessageController {
     }
 
     public boolean hasUserMessages(WebUser u) {
-        System.out.println("hasUserMessages");
+//        System.out.println("hasUserMessages");
         if (u == null) {
             return false;
         }

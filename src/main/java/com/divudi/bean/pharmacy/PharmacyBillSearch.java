@@ -4,6 +4,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.EmailController;
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.bean.WebUserController;
@@ -33,7 +34,10 @@ import com.divudi.facade.BillFeeFacade;
 import com.divudi.facade.BillItemFacade;
 import com.divudi.facade.ItemBatchFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,6 +51,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.joda.time.LocalDateTime;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.LazyDataModel;
 
@@ -108,6 +113,280 @@ public class PharmacyBillSearch implements Serializable {
     SessionController sessionController;
     @Inject
     private WebUserController webUserController;
+    @Inject
+    EmailController emailController;
+
+    public void emailOrder() {
+        if (bill == null) {
+            JsfUtil.addErrorMessage("No Bill. Email NOT sent");
+            return;
+        }
+        if (bill.getInstitution() == null) {
+            JsfUtil.addErrorMessage("No Institution");
+            return;
+        }
+        if (bill.getToInstitution().getEmail() == null) {
+            JsfUtil.addErrorMessage("No Email for Ordering Institution. Please add an Email from Administration > Manage Institutions > Institutions");
+            return;
+        }
+        if (bill.getReferenceBill() == null) {
+            JsfUtil.addErrorMessage("No Referance Bill");
+            return;
+        }
+        if (bill.getReferenceBill().getCreater() == null) {
+            JsfUtil.addErrorMessage("No Reference Bill Creater");
+            return;
+        }
+        if (bill.getReferenceBill().getDepartment() == null) {
+            JsfUtil.addErrorMessage("No Department For Reference Bill");
+            return;
+        }
+
+        if (bill.getReferenceBill().getDepartment().getEmail() == null) {
+            JsfUtil.addErrorMessage("No Email for the Department of Reference Bill");
+            return;
+        }
+
+        if (bill.getReferenceBill().getDepartment().getGmailUserName() == null) {
+            JsfUtil.addErrorMessage("No Gmail Username for the Department of Reference Bill");
+            return;
+        }
+
+        if (bill.getReferenceBill().getDepartment().getGmailPassword() == null) {
+            JsfUtil.addErrorMessage("No Gmail Username for the Department of Reference Bill");
+            return;
+        }
+
+        /**
+         *
+         * http://www.tablesgenerator.com/html_tables
+         *
+         */
+        SimpleDateFormat d = new SimpleDateFormat("dd-MMMM-yyyy");
+        SimpleDateFormat t = new SimpleDateFormat("hh:mm");
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+
+        String strItemList;
+        strItemList = "<table border=\"1\" style=\"width:100%\">";
+
+        int n = 1;
+
+        strItemList += "<tr>"
+                + "<th>"
+                + "No."
+                + "</th>"
+                + "<th>"
+                + "Item"
+                + "</th>"
+                + "<th>"
+                + "Quantity"
+                + "</th>"
+                + "<th>"
+                + "Free Quantity"
+                + "</th>"
+                + "<th>"
+                + "Expected Rate"
+                + "</th>"
+                + "</tr>";
+
+        for (BillItem bi : bill.getBillItems()) {
+
+            strItemList += "<tr>";
+
+            strItemList += "<td style=\"width: 50px!important; text-align: right!important; padding-right: 20px;\" >"
+                    + n
+                    + "</td>";
+
+            strItemList += "<td style=\"text-align: left!important;min-width: 250px!important;\" >"
+                    + bi.getItem().getName()
+                    + "</td>";
+
+            strItemList += "<td style=\"width: 100px!important; text-align: right!important; padding-right: 50px;\" >"
+                    + df.format(bi.getPharmaceuticalBillItem().getQty())
+                    + "</td>";
+
+            strItemList += "<td style=\"width: 100px!important; text-align: right!important; padding-right: 50px;\" >"
+                    + df.format(bi.getPharmaceuticalBillItem().getFreeQty())
+                    + "</td>";
+
+            strItemList += "<td style=\"width: 100px!important; text-align: right!important; padding-right: 50px;\" >"
+                    + df.format(bi.getExpectedRate())
+                    + "</td>";
+
+            strItemList += "</tr>";
+            n++;
+        }
+
+        strItemList += "</table>";
+
+        String html = "<html>"
+                + "<head>"
+                + "</head>"
+                + "<body>";
+
+        html += "<style type=\"text/css\">\n"
+                + ".tg  {border-collapse:collapse;border-spacing:0;border-color:#999;}\n"
+                + ".tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;}\n"
+                + ".tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;}\n"
+                + ".tg .tg-baqh{text-align:center;vertical-align:top}\n"
+                + ".tg .tg-yw4l{vertical-align:top}\n"
+                + "</style>\n"
+                + "<table class=\"tg\">\n";
+
+        html += "  <tr>\n"
+                + "    <td class=\"tg-yw4l\">";
+
+        html += "<table>"
+                + "<tr>"
+                + "<td>"
+                + "<h2>"
+                + bill.getCreater().getInstitution().getName()
+                + "</h2>"
+                + "</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>"
+                + "<h2>"
+                + "Phone : "
+                + bill.getCreater().getInstitution().getPhone()
+                + " "
+                + bill.getCreater().getDepartment().getTelephone1()
+                + " "
+                + bill.getCreater().getDepartment().getTelephone2()
+                + " "
+                + "</h2>"
+                + "</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>"
+                + "<h2>"
+                + "Fax : "
+                + bill.getCreater().getInstitution().getFax()
+                + " "
+                + bill.getCreater().getDepartment().getFax()
+                + "</h2>"
+                + "</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>"
+                + "<h2>"
+                + "Email : "
+                + bill.getCreater().getInstitution().getEmail()
+                + " "
+                + bill.getCreater().getDepartment().getEmail()
+                + "</h2>"
+                + "</td>"
+                + "</tr>"
+                + "</table>";
+
+        html += "</td>\n"
+                + "  </tr>\n";
+
+        html += "  <tr>\n"
+                + "    <th class=\"tg-baqh\">";
+
+        html += "<h1>Order Request</h1>";
+
+        html += "    </th>\n"
+                + "  </tr>\n";
+
+        html += "<table>"
+                //
+                + "<tr>"
+                + "<td>"
+                + "Supplier Name : "
+                + "</td>"
+                + "<td>"
+                + ""
+                + bill.getToInstitution().getName()
+                + "</td>"
+                + "</tr>"
+                //
+                + "<tr>"
+                + "<td>"
+                + "P.O.No : "
+                + "</td>"
+                + "<td>"
+                + ""
+                + bill.getDeptId()
+                + "</td>"
+                + "</tr>"
+                //              
+                + "<tr>"
+                + "<td>"
+                + "P.O.Date : "
+                + "</td>"
+                + "<td>"
+                + ""
+                + d.format(bill.getCreatedAt())
+                + "</td>"
+                + "</tr>"
+                //              
+                + "<tr>"
+                + "<td>"
+                + "P.O.Time : "
+                + "</td>"
+                + "<td>"
+                + ""
+                + t.format(bill.getCreatedAt())
+                + "</td>"
+                + "</tr>"
+                //              
+
+                + "</table>";
+
+        html += "  <tr>\n"
+                + "    <td class=\"tg-yw4l\">";
+
+        html += strItemList;
+
+        html += "</td>\n"
+                + "  </tr>\n"
+                + "  <tr>\n"
+                + "    <td class=\"tg-yw4l\">";
+
+        html += "Prepaired By : " + bill.getReferenceBill().getCreater().getWebUserPerson().getNameWithTitle() + "<br/>";
+        html += "Authorized By : " + bill.getCreater().getWebUserPerson().getNameWithTitle() + "";
+
+        html += "</td>\n"
+                + "  </tr>\n"
+                + "  <tr>\n"
+                + "    <td class=\"tg-yw4l\">";
+
+        html += "<b>Important Note :</b><br/>"
+                + "1. Purchase order number must appear on all documents pertaining to this purchase.<br/>"
+                + "2. Please be kind enough to supply above goods within 3 days.<br/>"
+                + "3. If unable to supply above goods within above period 10% penalty will be claimed on invoice value.";
+
+        html += "</td>\n"
+                + "  </tr>\n"
+                + "  <tr>\n"
+                + "    <td class=\"tg-yw4l\">";
+
+        html += "<b>Good Receiving time - Monday to Friday 9.00 A.M to 3.30 P.M</b>";
+
+        html += "</td>\n"
+                + "  </tr>\n"
+                + "</table>";
+
+        html += "</body>";
+        String subject;
+        subject = " An Order From " + bill.getReferenceBill().getDepartment().getName();
+
+        boolean ok = emailController.sendEmail(bill.getToInstitution().getEmail(),
+                bill.getReferenceBill().getDepartment().getEmail(),
+                subject,
+                html,
+                bill.getReferenceBill().getDepartment().getGmailUserName(),
+                bill.getReferenceBill().getDepartment().getGmailPassword());
+
+        if (ok) {
+            JsfUtil.addSuccessMessage("Email Sent");
+        } else {
+            JsfUtil.addErrorMessage("EMail NOT Sent");
+        }
+
+    }
 
     public void editBill() {
         if (errorCheckForEdit()) {

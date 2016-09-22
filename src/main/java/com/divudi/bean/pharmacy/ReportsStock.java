@@ -160,6 +160,38 @@ public class ReportsStock implements Serializable {
         }
     }
 
+    public void fillDepartmentNonEmptyStocksZero() {
+        Map m = new HashMap();
+        String sql;
+        if (department == null) {
+            UtilityController.addErrorMessage("Please select the department");
+            return;
+        }
+
+        sql = "select s from Stock s "
+                + " where s.stock>:z";
+
+        if (department != null) {
+            sql += " and s.department=:d ";
+            m.put("d", department);
+        }
+
+        sql += " order by s.itemBatch.item.name";
+
+        m.put("z", 0.0);
+
+        stocks = getStockFacade().findBySQL(sql, m);
+        stockPurchaseValue = 0.0;
+        stockSaleValue = 0.0;
+
+        for (Stock ts : stocks) {
+            ts.setStock(0.0);
+
+            getStockFacade().edit(ts);
+        }
+
+    }
+
     Item item;
 
     public List<PharmacyStockRow> getPharmacyStockRowsOne() {

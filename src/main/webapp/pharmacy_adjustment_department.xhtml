@@ -15,36 +15,61 @@
 
                 <h:form>
 
-                    <p:panel header="Department Stock Adjustment : Quantity" rendered="#{!pharmacyAdjustmentController.printPreview}">
-                        <h:panelGrid columns="2" >
-                            <h:panelGrid columns="2">
+                    <h:panelGrid columns="2" styleClass="alignTop">
+
+                        <p:panel header="Department Stock Adjustment : Quantity" rendered="#{!pharmacyAdjustmentController.printPreview}" >
+                            <h:panelGrid columns="3" >
                                 <h:outputLabel value="Item" ></h:outputLabel>
-                                <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacyAdjustmentController.stock}" 
-                                                  converter="stockCon" 
-                                                  completeMethod="#{pharmacyAdjustmentController.completeAvailableStocks}" var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" >
-                                   <p:column headerText="Code">
-                                        <h:outputLabel value="#{i.itemBatch.item.code}" ></h:outputLabel>
+                                <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacyAdjustmentController.item}" 
+                                                  completeMethod="#{ampController.completeAmp}" var="i" itemLabel="#{i.name}" itemValue="#{i}" >
+                                    <p:column headerText="Code">
+                                        <h:outputLabel value="#{i.code}" ></h:outputLabel>
                                     </p:column>
                                     <p:column headerText="Item">
-                                        <h:outputLabel value="#{i.itemBatch.item.name}" ></h:outputLabel>
+                                        <h:outputLabel value="#{i.name}" ></h:outputLabel>
                                     </p:column>
-                                    <p:column headerText="Rate">
-                                        <h:outputLabel value="#{i.itemBatch.retailsaleRate}" >
-                                            <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                        </h:outputLabel>
-                                    </p:column>
-                                    <p:column headerText="Stocks">
-                                        <h:outputLabel value="#{i.stock}" >
-                                            <f:convertNumber pattern="#,###" ></f:convertNumber>
-                                        </h:outputLabel>
-                                    </p:column>
-                                    <p:column headerText="Expiary">
-                                        <h:outputLabel value="#{i.itemBatch.dateOfExpire}" >
-                                            <f:convertDateTime pattern="MMM yyyy" ></f:convertDateTime>
-                                        </h:outputLabel>
-                                    </p:column>
-                                    <f:ajax event="itemSelect" execute="@this" render="det"/>
                                 </p:autoComplete>
+                                <p:commandButton ajax="false" value="List Batches" action="#{pharmacyAdjustmentController.listStocks}" ></p:commandButton>
+                            </h:panelGrid>
+                            <p:dataTable value="#{pharmacyAdjustmentController.stocks}" var="s" >
+                                <p:column headerText="Name" >
+                                    <h:outputLabel value="#{s.itemBatch.item.name}" ></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Retail Sale Rate" >
+                                    <h:outputLabel value="#{s.itemBatch.retailsaleRate}" >
+                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Purchase Rate">
+                                    <h:outputLabel value="#{s.itemBatch.purcahseRate}" >
+                                        <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Stocks">
+                                    <h:outputLabel value="#{s.stock}" >
+                                        <f:convertNumber pattern="#,###" ></f:convertNumber>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Expiary">
+                                    <h:outputLabel value="#{s.itemBatch.dateOfExpire}" >
+                                        <f:convertDateTime pattern="MMM yyyy" ></f:convertDateTime>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Select the Batch" >
+                                    <p:commandButton ajax="false" value="To Adjust"  >
+                                        <f:setPropertyActionListener target="#{pharmacyAdjustmentController.stock}" value="#{s}" ></f:setPropertyActionListener>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+
+
+
+                        </p:panel>
+
+                        <h:panelGrid columns="2" rendered="#{pharmacyAdjustmentController.stock ne null}" >
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Current Quentity" ></h:outputLabel>
+                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.stock}" ></h:outputLabel>
                                 <h:outputLabel value="New Quentity" ></h:outputLabel>
                                 <p:inputText value="#{pharmacyAdjustmentController.qty}" ></p:inputText>
                                 <h:outputLabel value="Comment" ></h:outputLabel>
@@ -55,46 +80,9 @@
                                 <p:defaultCommand target="btnAdjust"/>
                             </h:panelGrid>
 
-                            <h:panelGrid columns="2" id="det">
-                                <f:facet name="header">
-                                    <h:outputLabel value="DETAIL"/>
-                                </f:facet>
-                                <h:outputLabel value="Stock Id"/>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.id}" ></h:outputLabel>
-                                <h:outputLabel value="ItemBatch ID"/>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.id}" ></h:outputLabel>
-                                <h:outputLabel value="Name"/>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.item.name}" ></h:outputLabel>
-                                <h:outputLabel value="Retail Sale Rate"/>
-
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.retailsaleRate}" >
-                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                </h:outputLabel>
-
-                                <h:outputLabel value="Purchase Rate"/>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.purcahseRate}" >
-                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
-                                </h:outputLabel>
-
-                                <h:outputLabel value="Stocks"/>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.stock}" >
-                                    <f:convertNumber pattern="#,###" ></f:convertNumber>
-                                </h:outputLabel>
-
-                                <h:outputLabel value="Expiary"/>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.itemBatch.dateOfExpire}" >
-                                    <f:convertDateTime pattern="MMM yyyy" ></f:convertDateTime>
-                                </h:outputLabel>
-
-                            </h:panelGrid>
                         </h:panelGrid>
-                    </p:panel>
 
-                    <p:panel rendered="#{pharmacyAdjustmentController.printPreview}">
-                        <p:commandButton ajax="false" action="#{pharmacyAdjustmentController.makeNull()}" value="New Adjustment"/>
-                        <ph:adjustmentBill bill="#{pharmacyAdjustmentController.bill}" />
-                    </p:panel>
-
+                    </h:panelGrid>
                 </h:form>
 
             </ui:define>

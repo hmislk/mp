@@ -95,7 +95,7 @@
                             </p:submenu>  
 
                             <p:submenu label="Adjustments" >
-                                <p:menuitem  ajax="false" action="/pharmacy_adjustment_department"  value="Department Stock(QTY)" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}" ></p:menuitem>
+                                <p:menuitem  ajax="false" action="#{pharmacyAdjustmentController.toAdjustDeptStock}"  value="Department Stock(QTY)" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_adjustment_staff"  value="Staff Stock Adjustment" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_adjustment_purchase_rate"  value="Purchase Rate" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}" ></p:menuitem>
                                 <p:menuitem  ajax="false" action="/pharmacy_adjustment_retail_sale_rate"  value="Sale Rate" rendered="#{webUserController.hasPrivilege('PharmacyStockAdjustment')}" ></p:menuitem>
@@ -252,16 +252,6 @@
                                     </p:panel>
                                 </td>
                             </tr>
-<!--                            <tr>
-                                <td>
-                                    <iframe width="500" 
-                                            height="300" 
-                                            frameBorder="0"
-                                            src="http://localwebteam.com/index.php?option=com_local_web_team&amp;task=customerlist.getCustomerPendingPaymentList&amp;customer_id=58&amp;customer_code=58&amp;tmpl=component">
-                                        <p>Your browser does not support iframes.</p>
-                                    </iframe>
-                                </td>
-                            </tr>-->
                         </table>
 
 
@@ -310,8 +300,8 @@
             </div>
 
 
-            <h:panelGroup id="gpMessages"  >
-                <p:panel id="pnl" rendered="#{messageController.hasUserMessages(sessionController.loggedUser)}"
+            <h:panelGroup id="gpMessages" rendered="false"  >
+                <p:panel id="pnl" rendered="#{messageController.hasUserMessages}"
                          style="width: 300px; top: 10px; right: 10px; position: fixed;">
 
 

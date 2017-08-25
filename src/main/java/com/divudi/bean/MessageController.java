@@ -40,6 +40,8 @@ public class MessageController {
     WebUserFacade webUserFacade;
     @EJB
     MessageFacade messageFacade;
+    @Inject
+    SessionController sessionController;
     /**
      * Controllers
      */
@@ -69,24 +71,56 @@ public class MessageController {
         return messageFacade.findBySQL(sql, m);
     }
 
-    public boolean hasUserMessages(WebUser u) {
-//        System.out.println("hasUserMessages");
+//    public boolean hasUserMessages(WebUser u) {
+//        if (u == null) {
+//            return false;
+//        }
+//        try {
+//            String sql;
+//            Map m = new HashMap();
+//            m.put("wu", u);
+//            sql = "Select m "
+//                    + " from Message m "
+//                    + " where m.userIntended=:wu "
+//                    + " and m.invalidated=false "
+//                    + " and m.noted=false";
+//            List<Message> ms = messageFacade.findBySQL(sql, m);
+//            if (ms == null || ms.isEmpty()) {
+//                return false;
+//            }
+//            return true;
+//        } catch (Exception e) {
+//            System.out.println("e = " + e.getMessage());
+//            return false;
+//        }
+//    }
+
+    
+    public boolean getHasUserMessages() {
+        WebUser u = sessionController.getLoggedUser();
         if (u == null) {
             return false;
         }
-        String sql;
-        Map m = new HashMap();
-        m.put("wu", u);
-        sql = "Select m "
-                + " from Message m "
-                + " where m.userIntended=:wu "
-                + " and m.invalidated=false "
-                + " and m.noted=false";
-//        System.out.println("m = " + m);
-//        System.out.println("sql = " + sql);
-        return !messageFacade.findBySQL(sql, m).isEmpty();
+        try {
+            String sql;
+            Map m = new HashMap();
+            m.put("wu", u);
+            sql = "Select m "
+                    + " from Message m "
+                    + " where m.userIntended=:wu "
+                    + " and m.invalidated=false "
+                    + " and m.noted=false";
+            List<Message> ms = messageFacade.findBySQL(sql, m);
+            if (ms == null || ms.isEmpty()) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            System.out.println("e = " + e.getMessage());
+            return false;
+        }
     }
-
+    
     public void invalidateMessages(Bill originatingbill, Bill invalidatingBill) {
         System.out.println("invalidateMessages");
         if (originatingbill == null) {
@@ -101,7 +135,7 @@ public class MessageController {
 //        System.out.println("m = " + hm);
 //        System.out.println("sql = " + sql);
         List<Message> ms = messageFacade.findBySQL(sql, hm);
-        for(Message m:ms){
+        for (Message m : ms) {
             m.setInvalidated(true);
             m.setInvalidatedAt(new Date());
             m.setInvalidateBill(invalidatingBill);
@@ -123,19 +157,19 @@ public class MessageController {
         List<WebUser> us = getEligibleWebUsers(bill);
         String comments = "";
         String topic = "";
-        MessageType mt=null;
+        MessageType mt = null;
         switch (bill.getBillType()) {
             case PharmacyTransferRequest:
                 topic = "New Request to Issue";
-                mt=MessageType.PharmacyTransferRequest;
+                mt = MessageType.PharmacyTransferRequest;
                 break;
             case PharmacyOrder:
-                mt=MessageType.PharmacyApproval;
+                mt = MessageType.PharmacyApproval;
                 topic = "New Order for Approval";
                 break;
             case PharmacyTransferIssue:
                 topic = "New Issue";
-                mt=MessageType.PharmacyTransferIssue;
+                mt = MessageType.PharmacyTransferIssue;
         }
         for (WebUser u : us) {
             Message m = new Message();

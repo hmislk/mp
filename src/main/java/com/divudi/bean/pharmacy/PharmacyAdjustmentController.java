@@ -27,6 +27,7 @@ import com.divudi.facade.PatientFacade;
 import com.divudi.facade.PersonFacade;
 import com.divudi.facade.PharmaceuticalBillItemFacade;
 import com.divudi.facade.StockFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -86,6 +87,10 @@ public class PharmacyAdjustmentController implements Serializable {
 
     Stock stock;
 
+    List<Stock> stocks;
+    
+    Item item;
+    
     String comment;
 
     private Double qty;
@@ -97,6 +102,33 @@ public class PharmacyAdjustmentController implements Serializable {
 
     List<BillItem> billItems;
     private boolean printPreview;
+
+    public List<Stock> getStocks() {
+        return stocks;
+    }
+
+    public void setStocks(List<Stock> stocks) {
+        this.stocks = stocks;
+    }
+
+    
+    
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    
+    
+    public String toAdjustDeptStock() {
+        printPreview = false;
+        clearBill();
+        clearBillItem();
+        return "/pharmacy_adjustment_department";
+    }
 
     public void makeNull() {
         printPreview = false;
@@ -140,17 +172,42 @@ public class PharmacyAdjustmentController implements Serializable {
         return items;
     }
 
+    
+     public void listStocks() {
+        stocks = new ArrayList<>();
+        try {
+            String sql;
+            Map m = new HashMap();
+            m.put("d", getSessionController().getLoggedUser().getDepartment());
+            double d = 0.0;
+            m.put("s", d);
+            m.put("item", item);
+            sql = "select i from Stock i where i.stock >=:s and i.department=:d and i.itemBatch.item=:item order by i.stock desc ";
+            stocks = getStockFacade().findBySQL(sql, m);
+        } catch (Exception e) {
+            System.out.println("ERROR = " + e.getMessage());
+        }
+    }
+    
     public List<Stock> completeAvailableStocks(String qry) {
-        List<Stock> items;
-        String sql;
-        Map m = new HashMap();
-        m.put("d", getSessionController().getLoggedUser().getDepartment());
-        double d = 0.0;
-        m.put("s", d);
-        m.put("n", "%" + qry.toUpperCase() + "%");
-        sql = "select i from Stock i where i.stock >=:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n ) order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
-        items = getStockFacade().findBySQL(sql, m, 20);
-        return items;
+        List<Stock> items = new ArrayList<>();
+        if (qry == null || qry.trim().equals("")) {
+            return items;
+        }
+        try {
+            String sql;
+            Map m = new HashMap();
+            m.put("d", getSessionController().getLoggedUser().getDepartment());
+            double d = 0.0;
+            m.put("s", d);
+            m.put("n", "%" + qry.toUpperCase() + "%");
+            sql = "select i from Stock i where i.stock >=:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n ) ";
+            items = getStockFacade().findBySQL(sql, m, 30);
+            return items;
+        } catch (Exception e) {
+            System.out.println("ERROR = " + e.getMessage());
+            return items;
+        }
     }
 
     public List<Stock> completeAllStocks(String qry) {
@@ -364,20 +421,21 @@ public class PharmacyAdjustmentController implements Serializable {
         return false;
     }
 
-    public void adjustDepartmentStock() {
-
+    public String adjustDepartmentStock() {
         if (errorCheck()) {
-            return;
+            return "";
         }
-
         saveDeptAdjustmentBill();
         PharmaceuticalBillItem ph = saveDeptAdjustmentBillItems();
         getDeptAdjustmentPreBill().getBillItems().add(getBillItem());
         getBillFacade().edit(getDeptAdjustmentPreBill());
-     //   setBill(getBillFacade().find(getDeptAdjustmentPreBill().getId()));
         getPharmacyBean().resetStock(ph, stock, qty, getSessionController().getDepartment());
-
-        printPreview = true;
+        JsfUtil.addSuccessMessage("Adjusted.");
+        printPreview = false;
+        clearBill();
+        clearBillItem();
+        listStocks();
+        return "";
     }
 
     public void adjustPurchaseRate() {
@@ -399,8 +457,10 @@ public class PharmacyAdjustmentController implements Serializable {
     }
 
     private void clearBill() {
+        stock=null;
         deptAdjustmentPreBill = null;
         billItems = null;
+        qty=0.0;
         comment = "";
     }
 
@@ -598,6 +658,5 @@ public class PharmacyAdjustmentController implements Serializable {
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
     }
-    
 
 }

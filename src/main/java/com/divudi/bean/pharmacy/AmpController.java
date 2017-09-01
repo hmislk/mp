@@ -145,7 +145,7 @@ public class AmpController implements Serializable {
         Map m = new HashMap();
         if (qry != null) {
             m.put("n", "%" + qry.toUpperCase() + "%");
-            if (qry.length() > 4) {
+            if (qry.length() < 4) {
                 a = getFacade().findBySQL("select c from Amp c where "
                         + " c.retired=false and "
                         + "(upper(c.name) like :n or upper(c.code)  "

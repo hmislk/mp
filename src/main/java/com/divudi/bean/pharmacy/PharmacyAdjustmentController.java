@@ -14,6 +14,7 @@ import com.divudi.ejb.BillNumberBean;
 import com.divudi.ejb.PharmacyBean;
 import com.divudi.entity.Bill;
 import com.divudi.entity.BillItem;
+import com.divudi.entity.Department;
 import com.divudi.entity.Item;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.pharmacy.Amp;
@@ -88,9 +89,9 @@ public class PharmacyAdjustmentController implements Serializable {
     Stock stock;
 
     List<Stock> stocks;
-    
+
     Item item;
-    
+
     String comment;
 
     private Double qty;
@@ -103,6 +104,9 @@ public class PharmacyAdjustmentController implements Serializable {
     List<BillItem> billItems;
     private boolean printPreview;
 
+    Department department;
+    String departmentName;
+
     public List<Stock> getStocks() {
         return stocks;
     }
@@ -111,8 +115,6 @@ public class PharmacyAdjustmentController implements Serializable {
         this.stocks = stocks;
     }
 
-    
-    
     public Item getItem() {
         return item;
     }
@@ -121,8 +123,6 @@ public class PharmacyAdjustmentController implements Serializable {
         this.item = item;
     }
 
-    
-    
     public String toAdjustDeptStock() {
         printPreview = false;
         clearBill();
@@ -172,8 +172,7 @@ public class PharmacyAdjustmentController implements Serializable {
         return items;
     }
 
-    
-     public void listStocks() {
+    public void listStocks() {
         stocks = new ArrayList<>();
         try {
             String sql;
@@ -188,7 +187,7 @@ public class PharmacyAdjustmentController implements Serializable {
             System.out.println("ERROR = " + e.getMessage());
         }
     }
-    
+
     public List<Stock> completeAvailableStocks(String qry) {
         List<Stock> items = new ArrayList<>();
         if (qry == null || qry.trim().equals("")) {
@@ -265,6 +264,82 @@ public class PharmacyAdjustmentController implements Serializable {
 
     public void setBillItems(List<BillItem> billItems) {
         this.billItems = billItems;
+    }
+
+    private Bill saveDeptResetBill() {
+        Bill b = new Bill();
+        b.setBillDate(Calendar.getInstance().getTime());
+        b.setBillTime(Calendar.getInstance().getTime());
+        b.setCreatedAt(Calendar.getInstance().getTime());
+        b.setCreater(getSessionController().getLoggedUser());
+        b.setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, b, BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
+        b.setInsId(getBillNumberBean().institutionBillNumberGenerator(department.getInstitution(), b, BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
+        b.setBillType(BillType.PharmacyAdjustment);
+        b.setDepartment(department);
+        b.setInstitution(department.getInstitution());
+        b.setToDepartment(null);
+        b.setToInstitution(null);
+        b.setFromDepartment(department);
+        b.setFromInstitution(department.getInstitution());
+        b.setComments(comment);
+        if (b.getId() == null) {
+            getBillFacade().create(b);
+        } else {
+            getBillFacade().edit(b);
+        }
+        return b;
+    }
+
+    private PharmaceuticalBillItem saveDeptResetBillItem(Stock s, double q, Bill prebill) {
+        billItem = null;
+        BillItem tbi = getBillItem();
+
+        PharmaceuticalBillItem ph = getBillItem().getPharmaceuticalBillItem();
+        tbi.setPharmaceuticalBillItem(null);
+        ph.setStock(s);
+        tbi.setItem(s.getItemBatch().getItem());
+        tbi.setQty(q);
+
+        //pharmaceutical Bill Item
+        ph.setDoe(s.getItemBatch().getDateOfExpire());
+        ph.setFreeQty(0.0f);
+        ph.setItemBatch(s.getItemBatch());
+
+        Stock fetchedStock = getStockFacade().find(s.getId());
+        double stockQty = fetchedStock.getStock();
+        double changingQty;
+
+        changingQty = q - stockQty;
+
+        ph.setQty(changingQty);
+
+        //Rates
+        //Values
+        tbi.setGrossValue(s.getItemBatch().getRetailsaleRate() * q);
+        tbi.setNetValue(q * tbi.getNetRate());
+        tbi.setDiscount(tbi.getGrossValue() - tbi.getNetValue());
+        tbi.setItem(s.getItemBatch().getItem());
+        tbi.setBill(prebill);
+        tbi.setSearialNo(prebill.getBillItems().size() + 1);
+        tbi.setCreatedAt(Calendar.getInstance().getTime());
+        tbi.setCreater(getSessionController().getLoggedUser());
+
+        ph.setBillItem(null);
+        getPharmaceuticalBillItemFacade().create(ph);
+
+        tbi.setPharmaceuticalBillItem(ph);
+
+        getBillItemFacade().create(tbi);
+
+        ph.setBillItem(tbi);
+        getPharmaceuticalBillItemFacade().edit(ph);
+
+        prebill.getBillItems().add(tbi);
+
+        getBillFacade().edit(prebill);
+
+        return ph;
+
     }
 
     private void saveDeptAdjustmentBill() {
@@ -421,6 +496,37 @@ public class PharmacyAdjustmentController implements Serializable {
         return false;
     }
 
+    public String resetAllDepartmentStocks() {
+        if (department == null) {
+            JsfUtil.addErrorMessage("Dept?");
+            return "";
+        }
+        if (!departmentName.equals(department.getName())) {
+            JsfUtil.addErrorMessage("Dept wrong?");
+            return "";
+        }
+        Bill b = saveDeptResetBill();
+        String j = "select s from Stock s "
+                + " where s.department=:dept "
+                + " and s.stock > :stock";
+        Map m = new HashMap();
+        m.put("dept", department);
+        m.put("stock", 0.0);
+        List<Stock> ss = getStockFacade().findBySQL(j, m);
+
+        for (Stock s : ss) {
+            PharmaceuticalBillItem ph = saveDeptResetBillItem(s, 0, b);
+            b.getBillItems().add(getBillItem());
+            getBillFacade().edit(b);
+            getPharmacyBean().resetStock(ph, s, 0, department);
+        }
+        JsfUtil.addSuccessMessage("Adjusted.");
+        clearBill();
+        clearBillItem();
+        listStocks();
+        return "";
+    }
+
     public String adjustDepartmentStock() {
         if (errorCheck()) {
             return "";
@@ -457,10 +563,10 @@ public class PharmacyAdjustmentController implements Serializable {
     }
 
     private void clearBill() {
-        stock=null;
+        stock = null;
         deptAdjustmentPreBill = null;
         billItems = null;
-        qty=0.0;
+        qty = 0.0;
         comment = "";
     }
 
@@ -657,6 +763,22 @@ public class PharmacyAdjustmentController implements Serializable {
 
     public void setYearMonthDay(YearMonthDay yearMonthDay) {
         this.yearMonthDay = yearMonthDay;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
 }

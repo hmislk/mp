@@ -14,20 +14,24 @@
                 <h:form >
                     <p:panel >
                         <f:facet name="header" >
-                            <h:outputLabel value="Data Administration" style="color: red;background: yellow;" ></h:outputLabel>
+                            <h:outputLabel value="REMOVE ALL STOCKS OF SELECTED DEPARTMENT" style="color: red;background: yellow;" ></h:outputLabel>
                         </f:facet>
                         <p:panel >
                             <h:outputLabel value="Very Dangerous Section. Please do not touch this page without the written permission from the lead software developer." style="font-size: 20px; color: red; background: yellow;" ></h:outputLabel>
                         </p:panel>
                         <p:panelGrid columns="1"                         >
+                            <h:outputLabel value="Department" ></h:outputLabel>
+                            <p:autoComplete completeMethod="#{departmentController.completeDept}" var="dept" itemLabel="#{dept.name}" itemValue="#{dept}" forceSelection="true" value="#{pharmacyAdjustmentController.department}" converter="dep" >
+                            </p:autoComplete>
+                            
+                            <h:outputLabel value="Department Name" ></h:outputLabel>
+                            <p:inputText value="#{pharmacyAdjustmentController.departmentName}" required="true" ></p:inputText>
+                            
+                            
                             <p:commandButton ajax="false" 
-                                             action="#{dataAdministrationController.removeAllItemsWithoutName()}" 
-                                             value="Remove All Items Without Name" ></p:commandButton>
-                            <p:commandButton ajax="false" action="#{dataAdministrationController.removeAllDepartmentsWithoutName()}" value="Remove All Departments without a name" ></p:commandButton>
-                            <p:commandButton ajax="false" action="#{dataAdministrationController.removeAllInstitutionsWithoutName()}" value="Remove All Institutions without a name" ></p:commandButton>
-                            <p:commandButton ajax="false" action="/dataAdmin/remove_all_stocks" value="Remove All Stocks" ></p:commandButton>
-
-
+                                             action="#{pharmacyAdjustmentController.resetAllDepartmentStocks()}" 
+                                             value="Reset All Stocks to Zero" ></p:commandButton>
+                            
                         </p:panelGrid>
 
 

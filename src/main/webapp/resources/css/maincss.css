@@ -1025,3 +1025,18 @@ table.standardTable td {
 .noBorderGrid1.ui-panelgrid .ui-panelgrid-cell {
     border: none;
 }
+
+
+.mediuminput.ui-autocomplete-panel {
+   width: 24px !important;
+}
+
+.companyHeaderGrid.ui-panelgrid>*>tr,
+.companyHeaderGrid.ui-panelgrid .ui-panelgrid-cell {
+    border: none!important;
+    
+}
+
+narrowPanel.ui-panel .ui-panel-content {
+    padding: 0;
+}

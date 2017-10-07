@@ -1,22 +1,19 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                template="./resources/template/template.xhtml">
-<!--Author : Dr. M H B Ariyaratne, MO(Health Information), buddhika.ari@gmail.com-->
-    <ui:define name="login">
-        <h2>
-            The Web application has timed-out.
-        </h2>
-        <h1>
-            Please refresh the page. 
-        </h1>
-        <p>Use F5 or refresh button on the browser.</p>
-        
-    </ui:define>
-    
+                template="./resources/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <!--Author : Dr. M H B Ariyaratne, MO(Health Information), buddhika.ari@gmail.com-->
     <ui:define name="content">
-        
+        <h1>
+            The Web application has timed-out.
+        </h1>
+        <h2>
+            <h:form>
+                <p:commandLink value="Please log back again to the application." action="/index" ajax="false" ></p:commandLink>
+            </h:form>
+            or use F5 or refresh button on the browser to refresh the page.
+        </h2>
     </ui:define>
-
-
 </ui:composition>

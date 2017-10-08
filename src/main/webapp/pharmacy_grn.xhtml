@@ -19,9 +19,9 @@
                                     completeMethod="#{dealerController.completeDealor}" 
                                     forceSelection="true"
                                     var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
-                    
+
                     <h:outputLabel value="Phone Number: #{grnController.grnBill.comments}"/>
-                    
+
 
                     <p:selectOneMenu   id="cmbPs" value="#{grnController.grnBill.paymentMethod}">    
                         <f:selectItem itemLabel="SelectPayment method"/>
@@ -33,7 +33,7 @@
 
 
 
-                <p:dataTable var="bi" styleClass="noBorder" 
+                <p:dataTable var="bi"  
                              value="#{grnController.billItems}" 
                              scrollable="true" scrollHeight="250"
                              id="itemList" editable="true">  
@@ -46,18 +46,18 @@
                     <p:ajax event="rowEditCancel" listener="#{grnController.onEdit}" update=":#{p:component('tot')}" /> 
 
 
-                    <p:column headerText="Item Name" style="width: 250px!important;"  > 
+                    <p:column headerText="Item Name" > 
 
                         <h:outputText id="item" value="#{bi.item.name}" >                                   
                         </h:outputText>
 
                     </p:column>  
 
-                    <p:column headerText="Ordered Qty" >  
+                    <p:column headerText="Ordered Qty" width="75" style="text-align: right;" >  
                         <h:outputLabel value="#{bi.referanceBillItem.pharmaceuticalBillItem.qtyInUnit}"/>
                     </p:column>  
 
-                    <p:column headerText="Receiving Qty"  >
+                    <p:column headerText="Receiving Qty" width="75" style="text-align: right;"  >
                         <p:cellEditor>  
                             <f:facet name="output">  
                                 <h:outputLabel value="#{bi.pharmaceuticalBillItem.qtyInUnit}" />                               
@@ -68,7 +68,7 @@
                         </p:cellEditor>
                     </p:column>  
 
-                    <p:column headerText="Free"   >   
+                    <p:column headerText="Free" width="75" style="text-align: right;"   >   
                         <p:cellEditor>  
                             <f:facet name="output">  
                                 <h:outputLabel id="freeQty" value="#{bi.pharmaceuticalBillItem.freeQty}"/>
@@ -79,7 +79,7 @@
                         </p:cellEditor>                        
                     </p:column> 
 
-                    <p:column headerText="Purchase Rate"   >  
+                    <p:column headerText="Purchase Rate"  width="75" style="text-align: right;"  >  
                         <p:cellEditor>  
                             <f:facet name="output">  
                                 <h:panelGroup id="purchase">
@@ -94,7 +94,7 @@
                         </p:cellEditor>                       
                     </p:column>                  
 
-                    <p:column headerText="Sale Price"  > 
+                    <p:column headerText="Sale Price"  width="75" style="text-align: right;"  > 
                         <p:cellEditor>
                             <f:facet name="output">
                                 <h:panelGroup id="retail">
@@ -112,7 +112,62 @@
                         </p:cellEditor>                      
                     </p:column>  
 
-                    <p:column headerText="Total"  >  
+                    <p:column headerText="Wholesale Price"  width="75" style="text-align: right;"  > 
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:panelGroup id="retail">
+                                    <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleRate}"  > 
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                    <p:outputLabel value=" X (#{bi.item.dblValue})" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/> 
+                                </h:panelGroup>
+                            </f:facet>  
+                            <f:facet name="input">
+                                <p:inputText value="#{bi.pharmaceuticalBillItem.wholesaleRate}"  > 
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>                      
+                    </p:column>  
+                    
+
+                    <p:column headerText="Wholesale Free For"  width="75" style="text-align: right;"  > 
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:panelGroup id="retail">
+                                    <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleFreeQty}"  > 
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                    <p:outputLabel value=" X (#{bi.item.dblValue})" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/> 
+                                </h:panelGroup>
+                            </f:facet>  
+                            <f:facet name="input">
+                                <p:inputText value="#{bi.pharmaceuticalBillItem.wholesaleFreeQty}"  > 
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>                      
+                    </p:column>  
+
+                    <p:column headerText="Wholesale Free Qty"  width="75" style="text-align: right;"  > 
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:panelGroup id="retail">
+                                    <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleFreeFor}"  > 
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                    <p:outputLabel value=" X (#{bi.item.dblValue})" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/> 
+                                </h:panelGroup>
+                            </f:facet>  
+                            <f:facet name="input">
+                                <p:inputText value="#{bi.pharmaceuticalBillItem.wholesaleFreeFor}"  > 
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>                      
+                    </p:column>  
+                    
+                    <p:column headerText="Total" width="75" style="text-align: right;"  >  
                         <h:panelGroup id="total">
                             <h:outputText value="#{bi.pharmaceuticalBillItem.purchaseRate*bi.pharmaceuticalBillItem.qty}" >
                                 <f:convertNumber pattern="#,##0.00" />
@@ -120,7 +175,7 @@
                         </h:panelGroup>
                     </p:column>  
 
-                    <p:column headerText="Date of Expiry" >  
+                    <p:column headerText="Date of Expiry" width="100" style="text-align: right;" >  
                         <p:cellEditor >
                             <f:facet name="output">
                                 <h:outputLabel value="#{bi.pharmaceuticalBillItem.doe}">
@@ -136,7 +191,7 @@
                     </p:column> 
 
 
-                    <p:column headerText="Bathch No" >  
+                    <p:column headerText="Bathch No" width="75" style="text-align: right;" >  
                         <p:cellEditor >
                             <f:facet name="output">
                                 <h:outputLabel value="#{bi.pharmaceuticalBillItem.stringValue}" id="txtBatch"/>
@@ -150,23 +205,24 @@
                     </p:column>  
 
 
-                    <p:column headerText="Profit Margin" >  
+                    <p:column headerText="Profit Margin" width="75" style="text-align: right;" >  
                         <h:outputLabel value="#{((bi.pharmaceuticalBillItem.retailRate - bi.pharmaceuticalBillItem.purchaseRate)*100 )/bi.pharmaceuticalBillItem.purchaseRate}" id="txtProfitRange">
                             <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                         </h:outputLabel>
                     </p:column>  
 
-                    <p:column style="width:6%">  
-                        <p:rowEditor />  
-                    </p:column>
-                    
-                    <p:column headerText="Comment" style="width:6%">  
+                    <p:column headerText="Comment" width="150">  
                         <h:outputLabel value="#{bi.retireComments}"/>
                     </p:column>
 
 
-                    <p:column >
-                        <p:commandButton value="Remove" ajax="false" action="#{grnController.removeItem(bi)}"/>
+                    <p:column headerText="Edit/Remove" width="70" >
+                        <h:panelGrid columns="2" style="noborder" >
+                            <p:rowEditor /> 
+                            <p:commandLink  ajax="false" action="#{grnController.removeItem(bi)}" >
+                                <p:graphicImage library="image" name="remove.png" style="width: 20px;" ></p:graphicImage>
+                            </p:commandLink>
+                        </h:panelGrid>
                     </p:column>
 
                 </p:dataTable>  

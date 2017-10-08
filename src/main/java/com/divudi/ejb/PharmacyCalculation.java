@@ -473,14 +473,13 @@ public class PharmacyCalculation {
 
         double purchase = tmp.getPharmaceuticalBillItem().getPurchaseRateInUnit();
         double retail = tmp.getPharmaceuticalBillItem().getRetailRateInUnit();
-
-        ////System.err.println("Puchase :  " + purchase);
-        ////System.err.println("Puchase :  " + retail);
         itemBatch.setDateOfExpire(tmp.getPharmaceuticalBillItem().getDoe());
         itemBatch.setBatchNo(tmp.getPharmaceuticalBillItem().getStringValue());
         itemBatch.setPurcahseRate(purchase);
         itemBatch.setRetailsaleRate(retail);
-
+        itemBatch.setWholesaleRate(tmp.getPharmaceuticalBillItem().getWholesaleRate());
+        itemBatch.setWholesaleFreeFor(tmp.getPharmaceuticalBillItem().getWholesaleFreeFor());
+        itemBatch.setWholesaleFreeQty(tmp.getPharmaceuticalBillItem().getWholesaleFreeQty());
         HashMap hash = new HashMap();
         String sql;
 
@@ -496,16 +495,13 @@ public class PharmacyCalculation {
         List<ItemBatch> i = getItemBatchFacade().findBySQL(sql, hash, TemporalType.TIMESTAMP);
         ////System.err.println("Size " + i.size());
         if (i.size() > 0) {
-//            ////System.err.println("Edit");
-//            i.get(0).setBatchNo(i.get(0).getBatchNo());
-//            i.get(0).setDateOfExpire(i.get(0).getDateOfExpire());
+            i.get(0).setWholesaleRate(i.get(0).getWholesaleRate());
+            i.get(0).setWholesaleFreeFor(i.get(0).getWholesaleFreeFor());
+            i.get(0).setWholesaleFreeQty(i.get(0).getWholesaleFreeQty());
             return i.get(0);
         } else {
-            ////System.err.println("Create");
             getItemBatchFacade().create(itemBatch);
         }
-
-        ////System.err.println("ItemBatc Id " + itemBatch.getId());
         return itemBatch;
     }
 

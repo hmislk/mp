@@ -45,11 +45,15 @@ public class PharmaceuticalBillItem implements Serializable {
     private double lastPurchaseRate;
     double retailRate;
     double wholesaleRate;
+    double wholesaleFreeFor;
+    double wholesaleFreeQty;
     @ManyToOne
     Stock stock;
     @ManyToOne
     private Stock staffStock;
 
+    
+    
     public void copy(PharmaceuticalBillItem ph) {
         qty = ph.qty;
         freeQty = ph.freeQty;
@@ -75,6 +79,24 @@ public class PharmaceuticalBillItem implements Serializable {
       //  wholesaleRate=0-ph.wholesaleRate;
     }
 
+    public double getWholesaleFreeFor() {
+        return wholesaleFreeFor;
+    }
+
+    public void setWholesaleFreeFor(double wholesaleFreeFor) {
+        this.wholesaleFreeFor = wholesaleFreeFor;
+    }
+
+    public double getWholesaleFreeQty() {
+        return wholesaleFreeQty;
+    }
+
+    public void setWholesaleFreeQty(double wholesaleFreeQty) {
+        this.wholesaleFreeQty = wholesaleFreeQty;
+    }
+
+    
+    
     public Stock getStock() {
         return stock;
     }

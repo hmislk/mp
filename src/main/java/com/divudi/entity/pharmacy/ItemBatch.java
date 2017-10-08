@@ -36,7 +36,27 @@ public class ItemBatch implements Serializable {
     double purcahseRate;
     double retailsaleRate;
     double wholesaleRate;
+    double wholesaleFreeFor;
+    double wholesaleFreeQty;
 
+    public double getWholesaleFreeFor() {
+        return wholesaleFreeFor;
+    }
+
+    public void setWholesaleFreeFor(double wholesaleFreeFor) {
+        this.wholesaleFreeFor = wholesaleFreeFor;
+    }
+
+    public double getWholesaleFreeQty() {
+        return wholesaleFreeQty;
+    }
+
+    public void setWholesaleFreeQty(double wholesaleFreeQty) {
+        this.wholesaleFreeQty = wholesaleFreeQty;
+    }
+
+    
+    
     public double getPurcahseRate() {
         return purcahseRate;
     }

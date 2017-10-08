@@ -115,7 +115,7 @@
                     <p:column headerText="Wholesale Price"  width="75" style="text-align: right;"  > 
                         <p:cellEditor>
                             <f:facet name="output">
-                                <h:panelGroup id="retail">
+                                <h:panelGroup id="wholesale">
                                     <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleRate}"  > 
                                         <f:convertNumber pattern="#,##0.00" />
                                     </p:outputLabel>
@@ -129,12 +129,30 @@
                             </f:facet>
                         </p:cellEditor>                      
                     </p:column>  
-                    
+
 
                     <p:column headerText="Wholesale Free For"  width="75" style="text-align: right;"  > 
                         <p:cellEditor>
                             <f:facet name="output">
-                                <h:panelGroup id="retail">
+                                <h:panelGroup id="wholesalefreefor">
+                                    <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleFreeFor}"  > 
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                    <p:outputLabel value=" X (#{bi.item.dblValue})" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/> 
+                                </h:panelGroup>
+                            </f:facet>  
+                            <f:facet name="input">
+                                <p:inputText value="#{bi.pharmaceuticalBillItem.wholesaleFreeFor}"  > 
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>                      
+                    </p:column>  
+
+                    <p:column headerText="Wholesale Free Qty"  width="75" style="text-align: right;"  > 
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:panelGroup id="wholesalefreeqty">
                                     <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleFreeQty}"  > 
                                         <f:convertNumber pattern="#,##0.00" />
                                     </p:outputLabel>
@@ -149,24 +167,6 @@
                         </p:cellEditor>                      
                     </p:column>  
 
-                    <p:column headerText="Wholesale Free Qty"  width="75" style="text-align: right;"  > 
-                        <p:cellEditor>
-                            <f:facet name="output">
-                                <h:panelGroup id="retail">
-                                    <p:outputLabel value="#{bi.pharmaceuticalBillItem.wholesaleFreeFor}"  > 
-                                        <f:convertNumber pattern="#,##0.00" />
-                                    </p:outputLabel>
-                                    <p:outputLabel value=" X (#{bi.item.dblValue})" rendered="#{bi.item.class eq 'class com.divudi.entity.pharmacy.Ampp'}"/> 
-                                </h:panelGroup>
-                            </f:facet>  
-                            <f:facet name="input">
-                                <p:inputText value="#{bi.pharmaceuticalBillItem.wholesaleFreeFor}"  > 
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:inputText>
-                            </f:facet>
-                        </p:cellEditor>                      
-                    </p:column>  
-                    
                     <p:column headerText="Total" width="75" style="text-align: right;"  >  
                         <h:panelGroup id="total">
                             <h:outputText value="#{bi.pharmaceuticalBillItem.purchaseRate*bi.pharmaceuticalBillItem.qty}" >
@@ -216,13 +216,16 @@
                     </p:column>
 
 
-                    <p:column headerText="Edit/Remove" width="70" >
-                        <h:panelGrid columns="2" style="noborder" >
-                            <p:rowEditor /> 
-                            <p:commandLink  ajax="false" action="#{grnController.removeItem(bi)}" >
-                                <p:graphicImage library="image" name="remove.png" style="width: 20px;" ></p:graphicImage>
-                            </p:commandLink>
-                        </h:panelGrid>
+                    <p:column headerText="Edit" width="50" >
+
+                        <p:rowEditor /> 
+
+                    </p:column>
+
+                    <p:column headerText="Edit/Remove" width="50" >
+                        <p:commandLink  ajax="false" action="#{grnController.removeItem(bi)}" style="float: left;" >
+                            <p:graphicImage library="image" name="remove.png" style="width: 20px;" ></p:graphicImage>
+                        </p:commandLink>
                     </p:column>
 
                 </p:dataTable>  

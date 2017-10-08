@@ -98,6 +98,8 @@ public class PharmacyAdjustmentController implements Serializable {
     private Double pr;
     private Double rsr;
     private Double wsr;
+    Double wsff;
+    Double wsfq;
 
     private YearMonthDay yearMonthDay;
 
@@ -200,7 +202,7 @@ public class PharmacyAdjustmentController implements Serializable {
             double d = 0.0;
             m.put("s", d);
             m.put("n", "%" + qry.toUpperCase() + "%");
-            sql = "select i from Stock i where i.stock >=:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n ) ";
+            sql = "select i from Stock i where i.stock >:s and i.department=:d and (upper(i.itemBatch.item.name) like :n or upper(i.itemBatch.item.code) like :n or upper(i.itemBatch.item.barcode) like :n ) ";
             items = getStockFacade().findBySQL(sql, m, 30);
             return items;
         } catch (Exception e) {
@@ -557,6 +559,10 @@ public class PharmacyAdjustmentController implements Serializable {
         saveDeptAdjustmentBill();
         saveRsrAdjustmentBillItems();
         getStock().getItemBatch().setRetailsaleRate(rsr);
+        getStock().getItemBatch().setWholesaleRate(wsr);
+        getStock().getItemBatch().setWholesaleFreeFor(wsff);
+        getStock().getItemBatch().setWholesaleFreeQty(wsfq);
+        
         getItemBatchFacade().edit(getStock().getItemBatch());
         clearBill();
         clearBillItem();
@@ -578,6 +584,8 @@ public class PharmacyAdjustmentController implements Serializable {
         pr = null;
         rsr = null;
         wsr = null;
+        wsff=null;
+        wsfq=null;
         stock = null;
     }
 
@@ -780,5 +788,23 @@ public class PharmacyAdjustmentController implements Serializable {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
+
+    public Double getWsff() {
+        return wsff;
+    }
+
+    public void setWsff(Double wsff) {
+        this.wsff = wsff;
+    }
+
+    public Double getWsfq() {
+        return wsfq;
+    }
+
+    public void setWsfq(Double wsfq) {
+        this.wsfq = wsfq;
+    }
+
+
 
 }

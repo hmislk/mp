@@ -169,6 +169,17 @@
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
+                     <p:column style="text-align: right!important;">
+                        <f:facet name="header">
+                            <h:outputLabel value="Profit" style="font-weight: bold!important;" />
+                            <br/>
+                            <h:outputLabel value="Margin" style="font-weight: bold!important;" />
+                        </f:facet>
+                         <h:outputLabel value="#{((bip.pharmaceuticalBillItem.retailRate - bip.pharmaceuticalBillItem.purchaseRate)*100 )/bip.pharmaceuticalBillItem.purchaseRate}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
+                         
+                    </p:column>
 
                     <p:columnGroup type="footer">
                         <p:row>

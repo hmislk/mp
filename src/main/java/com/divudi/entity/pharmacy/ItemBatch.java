@@ -35,9 +35,30 @@ public class ItemBatch implements Serializable {
     private Item item;
     double purcahseRate;
     double retailsaleRate;
+    double retailMargin;
     double wholesaleRate;
     double wholesaleFreeFor;
     double wholesaleFreeQty;
+    double wholeSaleMargin;
+
+    public double getRetailMargin() {
+        return retailMargin;
+    }
+
+    public void setRetailMargin(double retailMargin) {
+        this.retailMargin = retailMargin;
+    }
+
+    public double getWholeSaleMargin() {
+        return wholeSaleMargin;
+    }
+
+    public void setWholeSaleMargin(double wholeSaleMargin) {
+        this.wholeSaleMargin = wholeSaleMargin;
+    }
+    
+    
+    
 
     public double getWholesaleFreeFor() {
         return wholesaleFreeFor;
@@ -55,8 +76,6 @@ public class ItemBatch implements Serializable {
         this.wholesaleFreeQty = wholesaleFreeQty;
     }
 
-    
-    
     public double getPurcahseRate() {
         return purcahseRate;
     }
@@ -80,8 +99,6 @@ public class ItemBatch implements Serializable {
     public void setWholesaleRate(double wholesaleRate) {
         this.wholesaleRate = wholesaleRate;
     }
-    
-    
 
     public Long getId() {
         return id;
@@ -100,7 +117,7 @@ public class ItemBatch implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof ItemBatch)) {
             return false;
         }

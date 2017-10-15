@@ -44,9 +44,11 @@ public class PharmaceuticalBillItem implements Serializable {
     double purchaseRate;
     private double lastPurchaseRate;
     double retailRate;
+    double retailMargin;
     double wholesaleRate;
     double wholesaleFreeFor;
     double wholesaleFreeQty;
+    double wholeSaleMargin;
     @ManyToOne
     Stock stock;
     @ManyToOne
@@ -97,8 +99,25 @@ public class PharmaceuticalBillItem implements Serializable {
 
     
     
+    
     public Stock getStock() {
         return stock;
+    }
+
+    public double getRetailMargin() {
+        return retailMargin;
+    }
+
+    public void setRetailMargin(double retailMargin) {
+        this.retailMargin = retailMargin;
+    }
+
+    public double getWholeSaleMargin() {
+        return wholeSaleMargin;
+    }
+
+    public void setWholeSaleMargin(double wholeSaleMargin) {
+        this.wholeSaleMargin = wholeSaleMargin;
     }
 
     public void setStock(Stock stock) {

@@ -477,9 +477,13 @@ public class PharmacyCalculation {
         itemBatch.setBatchNo(tmp.getPharmaceuticalBillItem().getStringValue());
         itemBatch.setPurcahseRate(purchase);
         itemBatch.setRetailsaleRate(retail);
+        itemBatch.setRetailMargin(((tmp.getPharmaceuticalBillItem().getRetailRate() -
+                tmp.getPharmaceuticalBillItem().getPurchaseRate())*100 )/
+                tmp.getPharmaceuticalBillItem().getPurchaseRate());
         itemBatch.setWholesaleRate(tmp.getPharmaceuticalBillItem().getWholesaleRate());
         itemBatch.setWholesaleFreeFor(tmp.getPharmaceuticalBillItem().getWholesaleFreeFor());
         itemBatch.setWholesaleFreeQty(tmp.getPharmaceuticalBillItem().getWholesaleFreeQty());
+        itemBatch.setWholeSaleMargin(tmp.getPharmaceuticalBillItem().getWholeSaleMargin());
         HashMap hash = new HashMap();
         String sql;
 
@@ -495,9 +499,11 @@ public class PharmacyCalculation {
         List<ItemBatch> i = getItemBatchFacade().findBySQL(sql, hash, TemporalType.TIMESTAMP);
         ////System.err.println("Size " + i.size());
         if (i.size() > 0) {
-            i.get(0).setWholesaleRate(i.get(0).getWholesaleRate());
-            i.get(0).setWholesaleFreeFor(i.get(0).getWholesaleFreeFor());
-            i.get(0).setWholesaleFreeQty(i.get(0).getWholesaleFreeQty());
+            i.get(0).setWholesaleRate(itemBatch.getWholesaleRate());
+            i.get(0).setWholesaleFreeFor(itemBatch.getWholesaleFreeFor());
+            i.get(0).setWholesaleFreeQty(itemBatch.getWholesaleFreeQty());
+            i.get(0).setWholeSaleMargin(itemBatch.getWholeSaleMargin());
+            i.get(0).setRetailMargin(itemBatch.getRetailMargin());
             return i.get(0);
         } else {
             getItemBatchFacade().create(itemBatch);

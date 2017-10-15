@@ -93,6 +93,80 @@ public class GrnController implements Serializable {
     private List<BillItem> selectedBillItems;
     private SearchKeyword searchKeyword;
     private List<Bill> bills;
+    BillItem selectedBillItem;
+
+    public BillItem getSelectedBillItem() {
+        return selectedBillItem;
+    }
+
+    public void setSelectedBillItem(BillItem selectedBillItem) {
+        this.selectedBillItem = selectedBillItem;
+    }
+
+    public void calculateWholeSaleRates(BillItem bi) {
+        System.out.println("cal ws");
+        System.out.println("bi = " + bi);
+        if (bi == null) {
+            return;
+        }
+//        if (bi.getId() == null) {
+//            return;
+//        }
+        if (bi.getPharmaceuticalBillItem() == null) {
+            return;
+        }
+
+        PharmaceuticalBillItem p = bi.getPharmaceuticalBillItem();
+
+        
+        System.out.println("p = " + p);
+        if (p.getFreeQty() != 0.0) {
+            int[] ints = {10000, 1000, 500, 300, 250, 200, 100, 50, 30, 10};
+            double divFac ;
+            for (int ti : ints) {
+                System.out.println("ti = " + ti);
+                if (findMaxDivFac(p, ti)) {
+                    divFac = ti;
+                    p.setWholesaleFreeFor(divFac);
+                    p.setWholesaleFreeQty(p.getFreeQty()/(p.getQty()/divFac));
+                    System.out.println("p.getWholesaleFreeFor() = " + p.getWholesaleFreeFor());
+                    System.out.println("p.getWholesaleFreeQty() = " + p.getWholesaleFreeQty());
+                    break;
+                }
+            }
+        } else {
+            p.setWholesaleFreeQty(0.0);
+            p.setWholesaleFreeFor(0.0);
+        }
+        
+        p.setWholesaleRate((p.getPurchaseRate()*(100-p.getWholeSaleMargin()))/100);
+
+    }
+
+    private boolean findMaxDivFac(PharmaceuticalBillItem pbi, int divFac) {
+        boolean f = false;
+        System.out.println("findMaxDivFac = " );
+        if (pbi.getQty() < divFac) {
+            System.out.println("1");
+            return f;
+        }
+        if((pbi.getQty()%divFac)>0){
+            System.out.println("2 = " + 2);
+            return f;
+        }
+        double countOfBlocks=pbi.getQty()/divFac;
+        System.out.println("countOfBlocks = " + countOfBlocks);
+        if(pbi.getFreeQty()<countOfBlocks){
+            System.out.println("3");
+            return f;
+        }
+        if((pbi.getFreeQty()%countOfBlocks)>0){
+            System.out.println("4");
+            return f;
+        }
+        f=true;
+        return f;
+    }
 
     public void removeItem(BillItem bi) {
         getBillItems().remove(bi.getSearialNo());
@@ -130,7 +204,7 @@ public class GrnController implements Serializable {
         if (pid.getPharmaceuticalBillItem().getDoe() == null) {
             return;
         }
-
+//        calculateWholeSaleRates(pid);
         if (pid.getPharmaceuticalBillItem().getDoe() != null) {
             if (pid.getPharmaceuticalBillItem().getDoe().getTime() < Calendar.getInstance().getTimeInMillis()) {
                 pid.getPharmaceuticalBillItem().setStringValue(null);
@@ -169,7 +243,7 @@ public class GrnController implements Serializable {
             UtilityController.addErrorMessage(msg);
             return;
         }
-        getPharmacyBillBean().calSaleFreeValue(getGrnBill(),getBillItems());
+        getPharmacyBillBean().calSaleFreeValue(getGrnBill(), getBillItems());
         if (getGrnBill().getInvoiceDate() == null) {
             getGrnBill().setInvoiceDate(getApproveBill().getCreatedAt());
         }

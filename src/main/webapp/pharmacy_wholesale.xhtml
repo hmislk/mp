@@ -14,72 +14,50 @@
                 <h:form id="bill" >
                     <p:defaultCommand  target="btnAdd" />  
 
-                    <p:panel rendered="#{!pharmacyWholesaleController.billPreview}"  >
-                        <f:facet name="header" >
+                    <p:panel rendered="#{!pharmacyWholesaleController.billPreview}"  header="Pharmacy Wholesale Bill" >
+                        <p:panelGrid columns="12" >
+                            <p:outputLabel value="Customer" ></p:outputLabel>
+                            <p:autoComplete value="#{pharmacyWholesaleController.preBill.toInstitution}"
+                                            completeMethod="#{institutionController.completeCompany}"
+                                            var="cu" itemLabel="#{cu.name}" itemValue="#{cu}" ></p:autoComplete>
+                            <p:spacer height="1" width="10"></p:spacer>
+                            <h:outputLabel value="Payment" ></h:outputLabel>
+                            <p:selectOneMenu   id="cmbPs" value="#{pharmacyWholesaleController.preBill.paymentMethod}">     
+                                <f:selectItems value="#{enumController.paymentMethods}"/>
+                                <p:ajax process="cmbPs" update="pBillDetails :#{p:component('tblBillItem')} :#{p:component('panelBillTotals')} :#{p:component('txtQty')} :#{p:component('txtRate')}" 
+                                        event="change"   />
 
-                            <table style="vertical-align: central;">
-                                <tr style="vertical-align: central;">
-                                    <td  style="vertical-align: central;">
-                                        <h:outputLabel value="Pharmacy Retail Bill test" />
-                                    </td>
-                                    <td style="min-width: 100px;">
+                            </p:selectOneMenu>
+                            <p:commandButton ajax= "false" accesskey="s" value="Settle" 
+                                             action="#{pharmacyWholesaleController.settleBillWithPay}" 
+                                             update=" :#{p:component('panelErrorMessage')} :#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacyWholesaleController.calculateAllRates}">
+                                <f:facet name="title" >
+                                    <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
+                                    <h:outputLabel value="ettle"  ></h:outputLabel>
+                                </f:facet>
+                            </p:commandButton>
 
-                                    </td>
-                                    <td>
-                                        <td  style="vertical-align: central;margin: auto;">
-                                            <h:outputLabel value="Payment" ></h:outputLabel>
-                                        </td>
-                                        <td  style="vertical-align: central;margin: auto;">
-                                            <p:selectOneMenu   id="cmbPs" value="#{pharmacyWholesaleController.paymentScheme}">     
+                            <p:commandButton accesskey="n" value="New Bill"  ajax="false" action="#{pharmacyWholesaleController.newSaleBill}"  ></p:commandButton>
+                            <h:panelGrid id="pBillDetails"  >
 
-                                                <f:selectItems value="#{paymentSchemeController.items}" var="paysch" itemLabel="#{paysch.name}" itemValue="#{paysch}"  />
-                                                <p:ajax process="cmbPs" update="pBillDetails creditCard cheque slip :#{p:component('tblBillItem')} :#{p:component('panelBillTotals')} :#{p:component('txtQty')} :#{p:component('txtRate')}" 
-                                                        event="change"  listener="#{pharmacyWholesaleController.paymentSchemeChanged}" />
+                                <h:panelGroup id="creditCardBill" style="display: #{pharmacyWholesaleController.preBill.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
+                                    <pa:creditCard paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                            </p:selectOneMenu>
-                                        </td>
-                                    </td>
-                                    <td  style="vertical-align: central;">
-                                        <p:commandButton ajax= "false" accesskey="s" value="Settle" 
-                                                         action="#{pharmacyWholesaleController.settleBillWithPay}" 
-                                                         update=" :#{p:component('panelErrorMessage')} :#{p:component('tblBillItem')} :#{p:component('txtRate')} :#{p:component('txtQty')} :#{p:component('acStock')}"  process="cmbPs" actionListener="#{pharmacyWholesaleController.calculateAllRates}">
-                                            <f:facet name="title" >
-                                                <h:outputLabel value="S" style="text-decoration: underline;" ></h:outputLabel>
-                                                <h:outputLabel value="ettle"  ></h:outputLabel>
-                                            </f:facet>
-                                        </p:commandButton>
-                                    </td>
-                                    <td  style="vertical-align: central;">
-                                        <p:commandButton accesskey="n" value="New Bill"  ajax="false" action="#{pharmacyWholesaleController.newSaleBill}"  ></p:commandButton>
-                                    </td>
-                                    <td  style="vertical-align: central;">
-                                        <h:panelGroup id="pBillDetails"  >
-                                            <table >
-                                                <tr>
-                                                    <td>
-                                                        <h:panelGroup id="creditCard" style="display: #{pharmacyWholesaleController.paymentScheme.paymentMethod ne 'Card' ? 'none' : 'block'} ; ">
-                                                            <pa:creditCard paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
-                                                        </h:panelGroup>
+                                <h:panelGroup id="chequeBill" style="display: #{pharmacyWholesaleController.preBill.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
+                                    <pa:cheque paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                                        <h:panelGroup id="cheque" style="display: #{pharmacyWholesaleController.paymentScheme.paymentMethod ne 'Cheque' ? 'none' : 'block'} ; " >
-                                                            <pa:cheque paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
-                                                        </h:panelGroup>
+                                <h:panelGroup id="slipBill" style="display: #{pharmacyWholesaleController.preBill.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
+                                    <pa:slip paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
+                                </h:panelGroup>
 
-                                                        <h:panelGroup id="slip" style="display: #{pharmacyWholesaleController.paymentScheme.paymentMethod ne 'Slip' ? 'none' : 'block'} ;">
-                                                            <pa:slip paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
-                                                        </h:panelGroup>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </h:panelGroup>
-                                    </td>
-                                    <td>
+                            </h:panelGrid>
+                        </p:panelGrid>
 
-                                    </td>
-                                </tr>
 
-                            </table>
-                        </f:facet>
+
+
                         <table  >
 
                             <tr>
@@ -114,15 +92,16 @@
                                                                                     <td style="min-width: 50px;font-weight: bolder;">
                                                                                         <p:outputLabel for="txtFreeQty" value="Free" style="padding: 5px;margin: auto; min-width: 75px; text-align: right; font-weight: bolder;"></p:outputLabel>
                                                                                     </td>
-                                                                                    <td>
-                                                                                        <p:focus id="focusQty" for="txtQty" ></p:focus>
-                                                                                        <p:focus id="focusItem" for="acStock" ></p:focus>
-                                                                                    </td>
+
                                                                                     <td style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
                                                                                         <p:outputLabel value="Rate" ></p:outputLabel>
                                                                                     </td>
                                                                                     <td  style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
                                                                                         <p:outputLabel value="Value" ></p:outputLabel>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <p:focus id="focusQty" for="txtQty" ></p:focus>
+                                                                                        <p:focus id="focusItem" for="acStock" ></p:focus>
                                                                                     </td>
                                                                                 </tr>
 
@@ -153,6 +132,10 @@
                                                                                                     <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                                                                 </h:outputLabel>
                                                                                             </p:column>
+                                                                                            <p:column headerText="Wholesale Margin">
+                                                                                                <h:outputLabel value="#{i.itemBatch.wholeSaleMargin}"  style="width: 50px!important;">
+                                                                                                </h:outputLabel>
+                                                                                            </p:column>
                                                                                             <p:column headerText="Wholesale Rate">
                                                                                                 <h:outputLabel value="#{i.itemBatch.wholesaleRate}"  style="width: 50px!important;">
                                                                                                     <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
@@ -160,12 +143,10 @@
                                                                                             </p:column>
                                                                                             <p:column headerText="Free For">
                                                                                                 <h:outputLabel value="#{i.itemBatch.wholesaleFreeFor}"  style="width: 50px!important;">
-                                                                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                                                                 </h:outputLabel>
                                                                                             </p:column>
                                                                                             <p:column headerText="Free Qty">
                                                                                                 <h:outputLabel value="#{i.itemBatch.wholesaleFreeQty}"  style="width: 50px!important;">
-                                                                                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
                                                                                                 </h:outputLabel>
                                                                                             </p:column>
 
@@ -197,24 +178,27 @@
                                                                                             <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtFreeQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
                                                                                         </p:inputText>
                                                                                     </td>
-
-                                                                                    <td>
-                                                                                        <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
-                                                                                                          action="#{pharmacyWholesaleController.addBillItem}" 
-                                                                                                          process="@this acStock txtQty txtFreeQty :#{p:component('cmbPs')}" 
-                                                                                                          update=" :#{p:component('panelErrorMessage')} :#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem :#{p:component('tabI')}" ></p:commandButton>
-                                                                                    </td>
                                                                                     <td style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
-                                                                                        <p:outputLabel id="txtRate" value="#{pharmacyWholesaleController.billItem.netRate}" >
+                                                                                        <p:inputText id="txtRate" value="#{pharmacyWholesaleController.billItem.netRate}" >
                                                                                             <f:convertNumber pattern="#,##0.00" />
-                                                                                        </p:outputLabel>
+                                                                                            <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
+                                                                                            <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
+                                                                                        </p:inputText>
                                                                                     </td>
-
                                                                                     <td  style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
                                                                                         <p:outputLabel id="txtVal" value="#{pharmacyWholesaleController.billItem.netValue}" >
                                                                                             <f:convertNumber pattern="#,##0.00" />
                                                                                         </p:outputLabel>
                                                                                     </td>
+                                                                                    <td>
+                                                                                        <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
+                                                                                                          action="#{pharmacyWholesaleController.addBillItem}" 
+                                                                                                          process="@this acStock txtQty txtFreeQty txtRate :#{p:component('cmbPs')}" 
+                                                                                                          update=" :#{p:component('panelErrorMessage')} :#{p:component('netTotal')} :#{p:component('dis')} :#{p:component('total')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem :#{p:component('tabI')}" ></p:commandButton>
+                                                                                    </td>
+
+
+
                                                                                 </tr>
                                                                             </table>
                                                                         </td>
@@ -232,6 +216,14 @@
                                                                                     <f:facet name="header">
                                                                                         Added Bill Items
                                                                                     </f:facet>
+
+                                                                                    <p:column>
+                                                                                        <f:facet name="header" >
+                                                                                            <div style="min-width: 200px;" ></div>
+                                                                                            <h:outputLabel value="Code" style="min-width: 300px;" ></h:outputLabel>
+                                                                                        </f:facet>
+                                                                                        <h:outputLabel style="min-width: 150px; text-wrap: avoid;" value="#{bi.pharmaceuticalBillItem.itemBatch.item.code}" ></h:outputLabel>
+                                                                                    </p:column>
                                                                                     <p:column>
                                                                                         <f:facet name="header" >
                                                                                             <div style="min-width: 200px;" ></div>
@@ -255,6 +247,24 @@
                                                                                             </f:facet>  
                                                                                         </p:cellEditor> 
                                                                                     </p:column>
+                                                                                    <p:column headerText="Price">
+                                                                                        <f:facet name="header" >
+                                                                                            <div style="min-width: 50px;" ></div>
+                                                                                            <h:outputLabel value="Qty" style="min-width: 300px;" ></h:outputLabel>
+                                                                                        </f:facet>
+                                                                                        <p:cellEditor>  
+                                                                                            <f:facet name="output">  
+                                                                                                <h:outputText value="#{bi.rate}" >
+                                                                                                    <f:convertNumber pattern="#,##0.00" />
+                                                                                                </h:outputText>
+                                                                                            </f:facet>  
+                                                                                            <f:facet name="input">  
+                                                                                                <h:outputText value="#{bi.rate}" >
+                                                                                                    <f:convertNumber pattern="#,##0.00" />
+                                                                                                </h:outputText>
+                                                                                            </f:facet>  
+                                                                                        </p:cellEditor> 
+                                                                                    </p:column>
                                                                                     <p:column headerText="Free">
                                                                                         <f:facet name="header" >
                                                                                             <div style="min-width: 50px;" ></div>
@@ -262,21 +272,20 @@
                                                                                         </f:facet>
                                                                                         <p:cellEditor>  
                                                                                             <f:facet name="output">  
-                                                                                                <h:outputText value="#{bi.pharmaceuticalBillItem.freeQty}" >
-                                                                                                    <f:convertNumber integerOnly="true" />
+                                                                                                <h:outputText value="#{bi.pharmaceuticalBillItem.freeQtyInUnit}" >
                                                                                                 </h:outputText>
                                                                                             </f:facet>  
                                                                                             <f:facet name="input">  
-                                                                                                <p:inputText id="ipTblQtyFree" value="#{bi.pharmaceuticalBillItem.freeQty}" style="width:96%"/>  
+                                                                                                <p:inputText id="ipTblQtyFree" value="#{bi.pharmaceuticalBillItem.freeQtyInUnit}" style="width:96%"/>  
                                                                                             </f:facet>  
                                                                                         </p:cellEditor> 
                                                                                     </p:column>
                                                                                     <p:column >
                                                                                         <f:facet name="header" >
                                                                                             <div style="min-width: 50px;" ></div>
-                                                                                            <h:outputLabel value="Rate" style="min-width: 300px;" ></h:outputLabel>
+                                                                                            <h:outputLabel value="Discount" style="min-width: 300px;" ></h:outputLabel>
                                                                                         </f:facet>
-                                                                                        <h:outputLabel id="rate" value="#{bi.rate}" >
+                                                                                        <h:outputLabel id="rate" value="#{bi.pharmaceuticalBillItem.wholeSaleMargin}" >
                                                                                             <f:convertNumber pattern="#,##0.00" />
                                                                                         </h:outputLabel>
                                                                                     </p:column>
@@ -298,6 +307,7 @@
                                                                                             <f:convertDateTime pattern="dd/MMM/yyyy" ></f:convertDateTime>
                                                                                         </h:outputLabel>
                                                                                     </p:column>
+
                                                                                     <p:column headerText="Edit">
                                                                                         <p:rowEditor ></p:rowEditor>
                                                                                     </p:column>
@@ -446,27 +456,6 @@
                                             </td>
                                         </tr>
                                     </table>
-                                </td>
-                                <td>
-
-                                    <p:panel header="Patient Detail">                                        
-                                        <p:autoComplete forceSelection="true" id="cmbDoc" value="#{pharmacyWholesaleController.preBill.referredBy}" completeMethod="#{doctorController.completeDoctor}" var="ix" itemLabel="#{ix.person.name}" itemValue="#{ix}" size="30"  style="width: 400px;">
-                                        </p:autoComplete>
-                                        <p:tabView id="tvPt" style="min-height: 250px;"  >
-                                            <p:ajax event="tabChange"  process="@this" listener="#{pharmacyWholesaleController.onTabChange}" />
-
-                                            <p:tab id="tabNewPt" title="New Patient"  >
-                                                <bil:newPatient controller="#{pharmacyWholesaleController}"/>
-                                            </p:tab>
-                                            <p:tab id="tabSearchPt" title="Search Patient">
-                                                <bil:searchedPatient controller="#{pharmacyWholesaleController}"/>
-                                            </p:tab>
-
-                                        </p:tabView>
-                                    </p:panel>
-
-
-
                                 </td>
                             </tr>
                         </table>

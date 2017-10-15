@@ -188,10 +188,10 @@ public class BillItem implements Serializable {
     }
 
     public PharmaceuticalBillItem getPharmaceuticalBillItem() {
-//        if (pharmaceuticalBillItem == null) {
-//            pharmaceuticalBillItem = new PharmaceuticalBillItem();
-//            pharmaceuticalBillItem.setBillItem(this);
-//        }
+        if (pharmaceuticalBillItem == null) {
+            pharmaceuticalBillItem = new PharmaceuticalBillItem();
+            pharmaceuticalBillItem.setBillItem(this);
+        }
         return pharmaceuticalBillItem;
     }
 

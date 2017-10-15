@@ -69,7 +69,7 @@
                             <p:menuitem  ajax="false" action="/pharmacy_wholesale"  value="Wholesale" rendered="#{webUserController.hasPrivilege('PharmacySale')}" actionListener="#{pharmacyWholesaleController.newSaleBillWithoutReduceStock()}" ></p:menuitem>    
 
                             <p:submenu label="Search">
-                                <p:menuitem  ajax="false" action="/pharmacy_search_wholesale_bill"  
+                                <p:menuitem  ajax="false" action="#{pharmacyWholesaleController.newSaleBill}"  
                                              value="By Bill"
                                              actionListener="#{searchController.makeListNull}"
                                              rendered="#{webUserController.hasPrivilege('PharmacySale')}"   ></p:menuitem>                                        

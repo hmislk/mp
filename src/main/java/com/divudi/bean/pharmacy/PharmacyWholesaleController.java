@@ -120,7 +120,7 @@ public class PharmacyWholesaleController implements Serializable {
     Stock stock;
     Stock replacableStock;
 
-    PaymentScheme paymentScheme;
+   
 
     int activeIndex;
 
@@ -186,7 +186,6 @@ public class PharmacyWholesaleController implements Serializable {
         qty = null;
         freeQty = null;
         stock = null;
-        paymentScheme = null;
         activeIndex = 0;
         newPatient = null;
         searchedPatient = null;
@@ -726,13 +725,11 @@ public class PharmacyWholesaleController implements Serializable {
         getPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
         getPreBill().setCreatedAt(Calendar.getInstance().getTime());
         getPreBill().setCreater(getSessionController().getLoggedUser());
-        getPreBill().setToDepartment(null);
-        getPreBill().setToInstitution(null);
         getPreBill().setBillDate(new Date());
         getPreBill().setBillTime(new Date());
         getPreBill().setFromDepartment(getSessionController().getLoggedUser().getDepartment());
         getPreBill().setFromInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
-        getBillBean().setPaymentMethodData(getPreBill(), getPaymentScheme().getPaymentMethod(), getPaymentMethodData());
+        getBillBean().setPaymentMethodData(getPreBill(), getPreBill().getPaymentMethod(), getPaymentMethodData());
         getBillFacade().create(getPreBill());
     }
 
@@ -893,20 +890,13 @@ public class PharmacyWholesaleController implements Serializable {
         if (errorCheckForPreBill()) {
             return;
         }
-        Patient pt = savePatient();
-
         List<BillItem> tmpBillItems = getPreBill().getBillItems();
         getPreBill().setBillItems(null);
-
-        savePreBillFinally(pt);
-
+        savePreBillFinally();
         savePreBillItemsFinally(tmpBillItems);
-
         setPrintBill(getBillFacade().find(getPreBill().getId()));
-
         clearBill();
         clearBillItem();
-
         billPreview = true;
     }
 
@@ -924,7 +914,6 @@ public class PharmacyWholesaleController implements Serializable {
             return;
         }
 
-        
         getPreBill().setPaidAmount(getPreBill().getTotal());
 
         List<BillItem> tmpBillItems = getPreBill().getBillItems();
@@ -1005,7 +994,7 @@ public class PharmacyWholesaleController implements Serializable {
         }
 
         billItem.getPharmaceuticalBillItem().setFreeQty(freeQty);
-        
+
         System.out.println("billItem.getPharmaceuticalBillItem().getFreeQty() = " + billItem.getPharmaceuticalBillItem().getFreeQty());
 
         billItem.getPharmaceuticalBillItem().setQtyInUnit((double) (0 - qty));
@@ -1187,53 +1176,12 @@ public class PharmacyWholesaleController implements Serializable {
     }
 
     public void calculateRates(BillItem bi) {
-        //////System.out.println("calculating rates");
         if (bi.getPharmaceuticalBillItem().getStock() == null) {
-            //////System.out.println("stock is null");
             return;
         }
         getBillItem();
         bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
-        //   ////System.err.println("Rate "+bi.getRate());
-        bi.setDiscount(calculateBillItemDiscountRate(bi));
-        //  ////System.err.println("Discount "+bi.getDiscount());
-        bi.setNetRate(bi.getRate() - bi.getDiscount());
-        //  ////System.err.println("Net "+bi.getNetRate());
-    }
-
-    public double calculateBillItemDiscountRate(BillItem bi) {
-        //////System.out.println("bill item discount rate");
-        //////System.out.println("getPaymentScheme() = " + getPaymentScheme());
-        if (bi == null) {
-            //////System.out.println("bi is null");
-            return 0.0;
-        }
-        if (bi.getPharmaceuticalBillItem() == null) {
-            //////System.out.println("pi is null");
-            return 0.0;
-        }
-        if (bi.getPharmaceuticalBillItem().getStock() == null) {
-            //////System.out.println("stock is null");
-            return 0.0;
-        }
-        if (bi.getPharmaceuticalBillItem().getStock().getItemBatch() == null) {
-            //////System.out.println("batch is null");
-            return 0.0;
-        }
-        bi.setItem(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getItem());
-        double tr = bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate();
-        //  ////System.err.println("tr = " + tr);
-        double tdp = getPaymentScheme().getDiscountPercentForPharmacy();
-        //    ////System.err.println("tdp = " + tdp);
-        double dr;
-        dr = (tr * tdp) / 100;
-        //     ////System.err.println("dr = " + dr);
-
-        if (bi.getItem().isDiscountAllowed()) {
-            return dr;
-        } else {
-            return 0;
-        }
+        bi.setNetRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
     }
 
     private void clearBill() {
@@ -1241,18 +1189,15 @@ public class PharmacyWholesaleController implements Serializable {
         saleBill = null;
         newPatient = null;
         searchedPatient = null;
-//        billItems = null;
         patientTabId = "tabNewPt";
         cashPaid = 0;
         netTotal = 0;
         balance = 0;
-        paymentScheme = null;
         userStockContainer = null;
     }
 
     private void clearBillItem() {
         billItem = null;
-//        removingBillItem = null;
         editingBillItem = null;
         qty = null;
         freeQty = null;
@@ -1489,15 +1434,7 @@ public class PharmacyWholesaleController implements Serializable {
         this.PaymentSchemeController = PaymentSchemeController;
     }
 
-    public PaymentScheme getPaymentScheme() {
-        //  ////System.err.println("GEtting Paymen");
-        return paymentScheme;
-    }
-
-    public void setPaymentScheme(PaymentScheme paymentScheme) {
-        //     ////System.err.println("Setting Pay");
-        this.paymentScheme = paymentScheme;
-    }
+   
 
     public StockHistoryFacade getStockHistoryFacade() {
         return stockHistoryFacade;

@@ -18,7 +18,7 @@
                         <p:panelGrid columns="12" >
                             <p:outputLabel value="Customer" ></p:outputLabel>
                             <p:autoComplete value="#{pharmacyWholesaleController.preBill.toInstitution}"
-                                            completeMethod="#{institutionController.completeCompany}"
+                                            completeMethod="#{institutionController.completeCreditCompany}"
                                             var="cu" itemLabel="#{cu.name}" itemValue="#{cu}" ></p:autoComplete>
                             <p:spacer height="1" width="10"></p:spacer>
                             <h:outputLabel value="Payment" ></h:outputLabel>

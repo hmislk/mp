@@ -616,17 +616,6 @@ public class PharmacyBillSearch implements Serializable {
         this.sessionController = sessionController;
     }
 
-    public String toReprint() {
-        return "bill_reprint";
-    }
-
-    public String toCancel() {
-        return "bill_cancel";
-    }
-
-    public String toRefund() {
-        return "bill_refund";
-    }
 
     public PaymentScheme getPaymentScheme() {
         return paymentScheme;

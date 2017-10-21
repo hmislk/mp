@@ -120,8 +120,6 @@ public class PharmacyWholesaleController implements Serializable {
     Stock stock;
     Stock replacableStock;
 
-   
-
     int activeIndex;
 
     private Patient newPatient;
@@ -1116,6 +1114,7 @@ public class PharmacyWholesaleController implements Serializable {
         System.out.println("billItem.getPharmaceuticalBillItem().getFreeQtyInUnit() = " + billItem.getPharmaceuticalBillItem().getFreeQtyInUnit());
         billItem.getPharmaceuticalBillItem().setWholeSaleMargin(((billItem.getPharmaceuticalBillItem().getStock().getItemBatch().getPurcahseRate() - billItem.getNetRate()) * 100) / billItem.getPharmaceuticalBillItem().getStock().getItemBatch().getPurcahseRate());
         //Rates
+        billItem.setRate(getStock().getItemBatch().getWholesaleRate());
         //Values
         billItem.setGrossValue(getStock().getItemBatch().getWholesaleRate() * qty);
         billItem.setNetValue(qty * billItem.getNetRate());
@@ -1180,8 +1179,17 @@ public class PharmacyWholesaleController implements Serializable {
             return;
         }
         getBillItem();
-        bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
-        bi.setNetRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
+        if (bi.getRate() == 0.0) {
+            if (bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate() != 0.0) {
+                bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
+            } else {
+                bi.setRate(bi.getNetRate());
+            }
+        }
+        if (bi.getNetRate() == 0.0) {
+            bi.setNetRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
+            bi.setDiscount(bi.getRate() - bi.getNetRate());
+        }
     }
 
     private void clearBill() {
@@ -1433,8 +1441,6 @@ public class PharmacyWholesaleController implements Serializable {
     public void setPaymentSchemeController(PaymentSchemeController PaymentSchemeController) {
         this.PaymentSchemeController = PaymentSchemeController;
     }
-
-   
 
     public StockHistoryFacade getStockHistoryFacade() {
         return stockHistoryFacade;

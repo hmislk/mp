@@ -45,12 +45,12 @@
                                 <h:panelGrid id="gpDetailText" columns="2">
                                     <h:outputText id="lblName" value="Name" ></h:outputText>
                                     <h:inputText id="txtName" value="#{creditCompanyController.current.name}"  ></h:inputText>
-                                    <h:outputText  value="Discount for Lab Bill" ></h:outputText>
-                                    <h:inputText  value="#{creditCompanyController.current.labBillDiscount}"  ></h:inputText>
-                                    <h:outputText  value="Discount for OPD Bill" ></h:outputText>
-                                    <h:inputText  value="#{creditCompanyController.current.opdBillDiscount}"  ></h:inputText>
-                                    <h:outputText  value="Discount for Inward Bill" ></h:outputText>
-                                    <h:inputText  value="#{creditCompanyController.current.inwardDiscount}"  ></h:inputText>
+                                    <h:outputText  value="Address" ></h:outputText>
+                                    <h:inputTextarea  value="#{creditCompanyController.current.address}"  ></h:inputTextarea>
+                                    <h:outputText  value="Phone" ></h:outputText>
+                                    <h:inputText  value="#{creditCompanyController.current.phone}"  ></h:inputText>
+                                    <h:outputText  value="Email" ></h:outputText>
+                                    <h:inputText  value="#{creditCompanyController.current.email}"  ></h:inputText>
                                 </h:panelGrid>
                                 <h:panelGrid id="gpDetailButtons" columns="2">
                                     <h:commandButton id="btnSave" value="Save"  action="#{creditCompanyController.saveSelected()}" styleClass="buttons">

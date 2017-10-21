@@ -102,6 +102,8 @@ itemsBlockRight{
 .billline{
     text-align: center!important;
     overflow: hidden;
+    width: 95%; 
+    margin: auto;
 }
 
 .headingBill{

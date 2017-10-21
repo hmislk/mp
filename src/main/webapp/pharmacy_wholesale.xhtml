@@ -250,16 +250,16 @@
                                                                                     <p:column headerText="Price">
                                                                                         <f:facet name="header" >
                                                                                             <div style="min-width: 50px;" ></div>
-                                                                                            <h:outputLabel value="Qty" style="min-width: 300px;" ></h:outputLabel>
+                                                                                            <h:outputLabel value="Rate" style="min-width: 300px;" ></h:outputLabel>
                                                                                         </f:facet>
                                                                                         <p:cellEditor>  
                                                                                             <f:facet name="output">  
-                                                                                                <h:outputText value="#{bi.rate}" >
+                                                                                                <h:outputText value="#{bi.netRate}" >
                                                                                                     <f:convertNumber pattern="#,##0.00" />
                                                                                                 </h:outputText>
                                                                                             </f:facet>  
                                                                                             <f:facet name="input">  
-                                                                                                <h:outputText value="#{bi.rate}" >
+                                                                                                <h:outputText value="#{bi.netRate}" >
                                                                                                     <f:convertNumber pattern="#,##0.00" />
                                                                                                 </h:outputText>
                                                                                             </f:facet>  
@@ -283,8 +283,9 @@
                                                                                     <p:column >
                                                                                         <f:facet name="header" >
                                                                                             <div style="min-width: 50px;" ></div>
-                                                                                            <h:outputLabel value="Discount" style="min-width: 300px;" ></h:outputLabel>
+                                                                                            <h:outputLabel value="Discount%" style="min-width: 300px;" ></h:outputLabel>
                                                                                         </f:facet>
+                                                                                        #{bi.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate}
                                                                                         <h:outputLabel id="rate" value="#{bi.pharmaceuticalBillItem.wholeSaleMargin}" >
                                                                                             <f:convertNumber pattern="#,##0.00" />
                                                                                         </h:outputLabel>
@@ -294,7 +295,7 @@
                                                                                             <div style="min-width: 50px;" ></div>
                                                                                             <h:outputLabel value="Value" style="min-width: 300px;" ></h:outputLabel>
                                                                                         </f:facet>
-                                                                                        <h:outputLabel value="#{bi.grossValue}" id="gros">
+                                                                                        <h:outputLabel value="#{bi.netValue}" id="gros">
                                                                                             <f:convertNumber pattern="#,##0.00" />
                                                                                         </h:outputLabel>
                                                                                     </p:column>
@@ -488,7 +489,7 @@
                         </div>
                         <div >
                             <h:panelGroup   id="gpBillPreview"   > 
-                                <phi:saleBill bill="#{pharmacyWholesaleController.printBill}"></phi:saleBill>
+                                <phi:wholesaleBill bill="#{pharmacyWholesaleController.printBill}"></phi:wholesaleBill>
                             </h:panelGroup>
                         </div>
 

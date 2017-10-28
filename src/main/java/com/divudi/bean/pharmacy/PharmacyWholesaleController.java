@@ -29,6 +29,7 @@ import com.divudi.entity.PaymentScheme;
 import com.divudi.entity.Person;
 import com.divudi.entity.PreBill;
 import com.divudi.entity.pharmacy.Amp;
+import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.Stock;
 import com.divudi.entity.pharmacy.UserStock;
@@ -118,6 +119,7 @@ public class PharmacyWholesaleController implements Serializable {
     Double qty;
     Double freeQty;
     Stock stock;
+    Ampp ampp;
     Stock replacableStock;
 
     int activeIndex;
@@ -184,6 +186,7 @@ public class PharmacyWholesaleController implements Serializable {
         qty = null;
         freeQty = null;
         stock = null;
+        ampp=null;
         activeIndex = 0;
         newPatient = null;
         searchedPatient = null;
@@ -388,6 +391,16 @@ public class PharmacyWholesaleController implements Serializable {
         this.stock = stock;
     }
 
+    public Ampp getAmpp() {
+        return ampp;
+    }
+
+    public void setAmpp(Ampp ampp) {
+        this.ampp = ampp;
+    }
+    
+    
+
     public void setReplaceableStocks(List<Stock> replaceableStocks) {
         this.replaceableStocks = replaceableStocks;
     }
@@ -406,50 +419,8 @@ public class PharmacyWholesaleController implements Serializable {
         ////System.out.println("getStock() = " + getStock());
     }
 
-    public void fillReplaceableStocksForAmp(Amp ampIn) {
-        String sql;
-        Map m = new HashMap();
-        double d = 0.0;
-        Amp amp = (Amp) ampIn;
-        m.put("d", getSessionController().getLoggedUser().getDepartment());
-        m.put("s", d);
-        m.put("vmp", amp.getVmp());
-        m.put("a", amp);
-        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
-                + "where i.stock >:s and "
-                + "i.department=:d and "
-                + "amp.vmp=:vmp "
-                + "and amp<>:a "
-                + "order by i.itemBatch.item.name";
-        replaceableStocks = getStockFacade().findBySQL(sql, m);
-    }
+    
 
-    public void selectReplaceableStocks() {
-        if (selectedAvailableAmp == null || !(selectedAvailableAmp instanceof Amp)) {
-            replaceableStocks = new ArrayList<>();
-            return;
-        }
-        fillReplaceableStocksForAmp((Amp) selectedAvailableAmp);
-    }
-
-//    public void selectStocksFromGeneric() {
-//        if (selectedGeneric == null) {
-//            stocksWithGeneric = new ArrayList<>();
-//            return;
-//        }
-//        String sql;
-//        Map m = new HashMap();
-//        double d = 0.0;
-//        m.put("d", getSessionController().getLoggedUser().getDepartment());
-//        m.put("s", d);
-//        m.put("vmp", selectedGeneric);
-//        sql = "select i from Stock i join treat(i.itemBatch.item as Amp) amp "
-//                + "where i.stock >:s and "
-//                + "i.department=:d and "
-//                + "amp.vmp=:vmp "
-//                + "order by i.itemBatch.item.name";
-//        selectedGenerics = getStockFacade().findBySQL(sql, m, 10);
-//    }
     public List<Item> getItemsWithoutStocks() {
         return itemsWithoutStocks;
     }
@@ -1149,12 +1120,8 @@ public class PharmacyWholesaleController implements Serializable {
         if (getBillItem() == null || getBillItem().getPharmaceuticalBillItem() == null) {
             ////System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
         }
-
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
         calculateRates(billItem);
-        if (stock != null && stock.getItemBatch() != null) {
-            fillReplaceableStocksForAmp((Amp) stock.getItemBatch().getItem());
-        }
     }
 
     public void paymentSchemeChanged(AjaxBehaviorEvent ajaxBehavior) {

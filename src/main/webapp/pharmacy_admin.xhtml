@@ -13,23 +13,32 @@
             <ui:define name="content">
 
                 <h:form >
+
+
+
+
+
                     <p:panel header="Pharmacy Administration"  styleClass="alignTop" >
-                        <h:panelGrid columns="4" >
-                            <p:panel header="Medicines" styleClass="alignTop" >
+
+                        <p:tabView orientation="left" >
+
+                            <p:tab title="Medicines" >
+
                                 <h:panelGrid columns="1" >
                                     <p:commandButton ajax="false" value="Categories" action="pharmacy_pharmaceutical_item_category" ></p:commandButton>
-                                    <p:commandButton ajax="false" value="ATC Classification" action="pharmacy_pharmaceutical_item_type" ></p:commandButton>
+                                    <p:commandButton ajax="false" value="Dosage Form" action="pharmacy_pharmaceutical_item_type" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Generic Names" action="pharmacy_vtm" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Products" action="pharmacy_vmp" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Item Master" action="pharmacy_item_master" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Packs" action="pharmacy_ampp" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Measurment Units" action="pharmacy_measurement_unit" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Frequencies" action="pharmacy_frequency_unit" ></p:commandButton>
-
                                 </h:panelGrid>
-                            </p:panel>
 
-                            <p:panel header="Institutions"  styleClass="alignTop" >
+                            </p:tab>
+
+
+                            <p:tab title="Institutions"   >
                                 <h:panelGrid columns="1" >
                                     <p:commandButton ajax="false" value="Manufacturers" action="pharmacy_manufacturer" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Importers" action="pharmacy_importer" ></p:commandButton>
@@ -40,35 +49,35 @@
                                     <p:commandButton ajax="false" value="Distributor With Item(New)" action="pharmacy/pharmacy_report_list_distributor_with_distributor_items" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Pharmaceutical Item List Not include any Distributor(New)" action="pharmacy/pharmacy_report_list_amps_with_out_distributor" ></p:commandButton>
                                     <p:commandButton ajax="false" value="List Items One Item Has More Than One Distributor(New)" action="pharmacy/pharmacy_report_list_grater_than_one_distributor" ></p:commandButton>
-                                    
-                                </h:panelGrid>
-                            </p:panel>
 
-                            <p:panel header="Categories" >
+                                </h:panelGrid>
+                            </p:tab>
+
+                            <p:tab title="Categories" >
                                 <h:panelGrid columns="1" >
                                     <p:commandButton ajax="false" value="Discard Categories" action="pharmacy_discard_category" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Adjustment Categories" action="pharmacy_adjustment_category" ></p:commandButton>
                                     <p:commandButton rendered="false" ajax="false" value="Items Categories" action="pharmacy_items_categories" ></p:commandButton>
                                 </h:panelGrid>
-                            </p:panel>
-                            
-                            
-                            <p:panel header="Ordering" >
+                            </p:tab>
+
+
+                            <p:tab title="Ordering" >
                                 <h:panelGrid columns="1" >
                                     <p:commandButton ajax="false" value="Manage Reordering Data" action="pharmacy_set_reorder" ></p:commandButton>
                                 </h:panelGrid>
-                            </p:panel>
-                            
-                            <p:panel header="Lists">
+                            </p:tab>
+
+                            <p:tab title="Lists">
                                 <h:panelGrid columns="1">
                                     <p:commandButton ajax="false" 
                                                      action="pharmacy_list_amps.xhtml" 
                                                      value="List All Items"  
-                             ></p:commandButton>
+                                                     ></p:commandButton>
                                 </h:panelGrid>
 
-                            </p:panel>
-                            <p:panel header="Error Checking">
+                            </p:tab>
+                            <p:tab title="Error Checking">
                                 <h:panelGrid columns="1">
                                     <p:commandButton ajax="false" value="Error Detection" action="pharmacy_error_checking" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Error Detection By Date" action="pharmacy_error_checking_date" ></p:commandButton>                                   
@@ -91,32 +100,38 @@
 
                                 </h:panelGrid>
 
-                            </p:panel>
+                            </p:tab>
 
-                            <p:panel header="Set up" >
+                            <p:tab title="Set up" >
                                 <h:panelGrid columns="1" >
                                     <p:commandButton ajax="false" value="Check Item Differences with other Database" action="pharmacy_item_mismatch_report" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Import from Excel" action="pharmacy_item_import" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Import from Excel With Stock" action="/pharmacy/pharmacy_item_import_with_stock" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Bulk Adjustment" action="/pharmacy/bulk_adjustment" ></p:commandButton>
-                                    
+
                                     <p:commandButton ajax="false" value="Fix Categories from Excel" action="pharmacy_importer_category" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Fix Barcodes" action="pharmacy_item_import_barcode" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Fix VMPs" action="#{vmpController.fixVmps()}" ></p:commandButton>
                                     <p:commandButton ajax="false" value="Fix Rates" action="pharmacy_item_import_rates" ></p:commandButton>
-                                    
-                                    
-                                </h:panelGrid>
-                            </p:panel>
 
-                            <p:panel header="Major Stock Adjustment">
+
+                                </h:panelGrid>
+                            </p:tab>
+
+                            <p:tab title="Major Stock Adjustment">
                                 <p:commandButton ajax="false" value="1)Stock Variant Report (Before)" 
                                                  action="pharmacy_variant_category_stock_by_item" />
                                 <p:commandButton ajax="false" value="2)Stock Variant Adjustment(After)" 
                                                  action="pharmacy_variant_ajustment_pre_list" />
-                            </p:panel>
+                            </p:tab>
 
-                        </h:panelGrid>
+
+
+                        </p:tabView>
+
+
+
+
 
                     </p:panel>
 

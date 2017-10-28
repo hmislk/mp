@@ -13,7 +13,13 @@
         <h:panelGroup >
             <h:form id="form"  >
                 <p:growl autoUpdate="true" />
-                <p:panel header="Manage Virtual Therapeutic Moiety" >
+                <p:panel  >
+
+                    <f:facet name="header" >
+                        <p:outputLabel value="Manage Virtual Therapeutic Moiety (Generic Names)" ></p:outputLabel>
+                        <p:commandButton ajax="false" value="Back" action="/pharmacy_admin" ></p:commandButton>
+                    </f:facet>
+
                     <h:panelGrid id ="gpVeda" columns="2" styleClass="alignTop" >
                         <h:panelGrid id="gpSelect" columns="1"  >
                             <p:panel header="Search Vtm" >
@@ -49,17 +55,20 @@
                                 <p:commandButton style="float:right;" id="btnSave" value="Save"   action="#{vtmController.saveSelected()}" styleClass="buttons" 
                                                  ajax="false" >
                                 </p:commandButton>
-                                 <p:defaultCommand target="btnSave"/>
+                                <p:defaultCommand target="btnSave"/>
                             </f:facet>
                             <h:panelGrid id="gpDetail" columns="1">
                                 <h:panelGrid id="gpDetailText" columns="2">
                                     <h:outputText id="lblName" value="Name" ></h:outputText>
                                     <h:inputText id="txtName" value="#{vtmController.current.name}" required="true" ></h:inputText>
-                                    
+
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>
                     </h:panelGrid>
+
+                    <p:commandButton value="Removed All Unused Generic Names" ajax="false" action="#{vtmController.removeUnusedVtms()}" ></p:commandButton>
+
                 </p:panel>
             </h:form>
 

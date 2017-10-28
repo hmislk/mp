@@ -12,14 +12,21 @@
 
         <h:panelGroup >
             <h:form  >
-                <p:panel header="Manage Pharmacy Item" styleClass="alignTop">
+                <p:panel >
+
+                    <f:facet name="header" >
+                        <p:outputLabel value="Manage Pharmacy Item" ></p:outputLabel>
+                        <p:commandButton ajax="false" value="Back" action="/pharmacy_admin" ></p:commandButton>
+                    </f:facet>
+
+
                     <h:panelGrid id ="gpVeda" columns="2" >
 
-                        
+
                         <h:panelGrid id="gpSelect" columns="1" styleClass="alignTop" >
                             <p:panel  styleClass="alignTop" >
                                 <h:panelGrid columns="2" id="gpSelectText" >
-                                    
+
                                     <h:outputLabel value="Search By Name"/>
                                     <p:autoComplete id="lstSelect1"   size="10" value="#{ampController.current}" 
                                                     forceSelection="true"
@@ -38,12 +45,12 @@
                                         <f:ajax event="itemSelect" render="gpDetail  " execute="lstSelect1" >
                                         </f:ajax>
                                     </p:autoComplete>
-                                    
-                                    
+
+
                                     <p:commandButton id="btnRefresh" value="Refresh" style="display:none;" ></p:commandButton>
                                     <p:defaultCommand target="btnRefresh" ></p:defaultCommand>
-                                    
-                                    
+
+
                                 </h:panelGrid>
                                 <h:panelGrid id="gpSelectButtons" columns="3"  >
                                     <h:commandButton id="btnAdd" value="Add"  action="#{ampController.prepareAdd()}" styleClass="buttons" >
@@ -118,7 +125,7 @@
                                                                     completeMethod="#{pharmaceuticalItemTypeController.completeCategory}" 
                                                                     var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" >
                                                     </p:autoComplete>
-                                                   
+
 
                                                     <h:outputLabel value="Name" ></h:outputLabel>
                                                     <p:outputLabel value="#{ampController.currentVmp.name}" />

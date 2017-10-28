@@ -10,8 +10,10 @@ package com.divudi.bean.pharmacy;
 
 import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
+import com.divudi.entity.Item;
 import com.divudi.entity.pharmacy.PharmaceuticalItemCategory;
 import com.divudi.facade.PharmaceuticalItemCategoryFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +46,7 @@ public class PharmaceuticalItemCategoryController implements Serializable {
     private PharmaceuticalItemCategoryFacade ejbFacade;
     private PharmaceuticalItemCategory current;
     private List<PharmaceuticalItemCategory> items = null;
-  
+
     public List<PharmaceuticalItemCategory> completeCategory(String qry) {
         List<PharmaceuticalItemCategory> a = null;
         Map m = new HashMap();
@@ -65,8 +67,35 @@ public class PharmaceuticalItemCategoryController implements Serializable {
         current = new PharmaceuticalItemCategory();
     }
 
-   
-    
+    public void removeUnwantedPharmaceuticalCategories() {
+        String j;
+        Map m;
+        j = "select c from "
+                + " PharmaceuticalItemCategory c";
+        List<PharmaceuticalItemCategory> pcs = getFacade().findBySQL(j);
+        int i = 0;
+        for (PharmaceuticalItemCategory pc : pcs) {
+            System.out.println("pc = " + pc);
+            j = "select count(i) from Item i where i.category=:pc";
+            m = new HashMap();
+            m.put("pc", pc);
+            Long c = getFacade().countBySql(j, m);
+            System.out.println("c = " + c);
+            if (c == null || c == 0) {
+                try {
+                    getFacade().remove(pc);
+                    System.out.println("removed"
+                            + "");
+                } catch (Exception e) {
+                    System.out.println("e = " + e);
+                    System.out.println("e = " + e.getMessage());
+                    continue;
+                }
+            }
+            i++;
+        }
+        JsfUtil.addSuccessMessage("removed count = " + i);
+    }
 
     private void recreateModel() {
         items = null;
@@ -87,7 +116,6 @@ public class PharmaceuticalItemCategoryController implements Serializable {
         getItems();
     }
 
-   
     public PharmaceuticalItemCategoryFacade getEjbFacade() {
         return ejbFacade;
     }

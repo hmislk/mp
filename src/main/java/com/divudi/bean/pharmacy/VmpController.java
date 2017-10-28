@@ -18,6 +18,7 @@ import com.divudi.facade.AmpFacade;
 import com.divudi.facade.SpecialityFacade;
 import com.divudi.facade.VmpFacade;
 import com.divudi.facade.VtmsVmpsFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -247,6 +248,29 @@ public class VmpController implements Serializable {
         }
         return selectedItems;
     }
+    
+    public void removeUnusedVtms() {
+        List<Vmp> a = null;
+        a = getFacade().findBySQL("select c from Vmp c ");
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        int i = 0;
+        for (Vmp p : a) {
+            System.out.println("p = " + p);
+            try {
+                getFacade().remove(p);
+                System.out.println("removed");
+            } catch (Exception e) {
+                System.out.println("e = " + e);
+                System.out.println("e = " + e.getMessage());
+                continue;
+            }
+            i++;
+        }
+        JsfUtil.addSuccessMessage("Removed Count " + i);
+    }
+    
 
     public void prepareAdd() {
         current = new Vmp();

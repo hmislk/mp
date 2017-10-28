@@ -12,6 +12,7 @@ import com.divudi.bean.SessionController;
 import com.divudi.bean.UtilityController;
 import com.divudi.entity.pharmacy.PharmaceuticalItemType;
 import com.divudi.facade.PharmaceuticalItemTypeFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +32,7 @@ import javax.faces.convert.FacesConverter;
 /**
  *
  * @author Dr. M. H. B. Ariyaratne, MBBS, PGIM Trainee for MSc(Biomedical
- Informatics)
+ * Informatics)
  */
 @Named
 @SessionScoped
@@ -138,19 +139,43 @@ public class PharmaceuticalItemTypeController implements Serializable {
         return items;
     }
     
-     public List<PharmaceuticalItemType> completeCategory(String qry) {
+    
+
+    public List<PharmaceuticalItemType> completeCategory(String qry) {
         List<PharmaceuticalItemType> a = null;
         Map m = new HashMap();
         m.put("n", "%" + qry + "%");
         if (qry != null) {
             a = getFacade().findBySQL("select c from PharmaceuticalItemType c where "
-                    + " c.retired=false and (upper(c.name) like :n) order by c.name",m,20);
+                    + " c.retired=false and (upper(c.name) like :n) order by c.name", m, 20);
             //////System.out.println("a size is " + a.size());
         }
         if (a == null) {
             a = new ArrayList<>();
         }
         return a;
+    }
+
+    public void removeUnusedCategory() {
+        List<PharmaceuticalItemType> a = null;
+        a = getFacade().findBySQL("select c from PharmaceuticalItemType c");
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        int i = 0;
+        for (PharmaceuticalItemType p : a) {
+            System.out.println("p = " + p);
+            try {
+                getFacade().remove(p);
+                System.out.println("removed");
+            } catch (Exception e) {
+                System.out.println("e = " + e);
+                System.out.println("e = " + e.getMessage());
+                continue;
+            }
+            i++;
+        }
+        JsfUtil.addSuccessMessage("Removed Count " + i);
     }
 
     /**
@@ -195,8 +220,8 @@ public class PharmaceuticalItemTypeController implements Serializable {
             }
         }
     }
-    
-     @FacesConverter("phCategory")
+
+    @FacesConverter("phCategory")
     public static class PharmaceuticalItemTypeConverter implements Converter {
 
         @Override

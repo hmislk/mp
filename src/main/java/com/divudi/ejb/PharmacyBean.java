@@ -1080,6 +1080,9 @@ public class PharmacyBean {
 
     public Vmpp getVmpp(Ampp ampp, MeasurementUnit packUnit) {
         String sql;
+        if (ampp == null || ampp.getAmp() == null || ampp.getAmp().getVmp() == null) {
+            return null;
+        }
         Map m = new HashMap();
         m.put("vmp", ampp.getAmp().getVmp());
         m.put("s", packUnit);
@@ -1195,7 +1198,7 @@ public class PharmacyBean {
         PharmaceuticalItemCategory cat;
         Map m = new HashMap();
         m.put("name", name.toUpperCase());
-        cat = getPharmaceuticalItemCategoryFacade().findFirstBySQL("SELECT c FROM PharmaceuticalItemCategory c Where upper(c.name) =:name ",m);
+        cat = getPharmaceuticalItemCategoryFacade().findFirstBySQL("SELECT c FROM PharmaceuticalItemCategory c Where upper(c.name) =:name ", m);
         if (cat == null && createNew == true) {
             cat = new PharmaceuticalItemCategory();
             cat.setName(name);
@@ -1208,7 +1211,6 @@ public class PharmacyBean {
         return cat;
     }
 
-    
     public StoreItemCategory getStoreItemCategoryByName(String name, boolean createNew) {
         if (name == null || name.trim().equals("")) {
             return null;
@@ -1228,11 +1230,10 @@ public class PharmacyBean {
         return cat;
     }
 
-    
     public PharmaceuticalItemCategory getPharmaceuticalCategoryByName(String name) {
         return getPharmaceuticalCategoryByName(name, true);
     }
-    
+
     public StoreItemCategory getStoreItemCategoryByName(String name) {
         return getStoreItemCategoryByName(name, true);
     }
@@ -1359,9 +1360,9 @@ public class PharmacyBean {
 
     public Vmp getVmp(Vtm vtm, double strength, MeasurementUnit strengthUnit, PharmaceuticalItemCategory cat) {
         String sql;
-    //    //System.out.println("strength = " + strength);
-    //    //System.out.println("strengthUnit = " + strengthUnit);
-    //    //System.out.println("cat = " + cat);
+        //    //System.out.println("strength = " + strength);
+        //    //System.out.println("strengthUnit = " + strengthUnit);
+        //    //System.out.println("cat = " + cat);
         if (strength == 0 || strengthUnit == null || cat == null) {
             return null;
         }
@@ -1389,7 +1390,7 @@ public class PharmacyBean {
             v.setVmp(vmp);
             v.setPharmaceuticalItemCategory(cat);
             getVtmsVmpsFacade().create(v);
-        //    //System.out.println("v = " + v);
+            //    //System.out.println("v = " + v);
         }
         v.getVmp().setRetired(false);
         return v.getVmp();
@@ -1661,8 +1662,5 @@ public class PharmacyBean {
     public void setStoreItemCategoryFacade(StoreItemCategoryFacade storeItemCategoryFacade) {
         this.storeItemCategoryFacade = storeItemCategoryFacade;
     }
-
-
-
 
 }

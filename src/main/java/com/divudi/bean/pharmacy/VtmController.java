@@ -14,6 +14,7 @@ import com.divudi.ejb.BillBean;
 import com.divudi.entity.pharmacy.Vtm;
 import com.divudi.facade.SpecialityFacade;
 import com.divudi.facade.VtmFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +67,9 @@ public  class VtmController implements Serializable {
         }
         return suggestions;
     }
+    
+    
+    
 
     public boolean isBilledAs() {
         return billedAs;
@@ -124,6 +128,28 @@ public  class VtmController implements Serializable {
         this.bulkText = bulkText;
     }
 
+    public void removeUnusedVtms() {
+        List<Vtm> a = null;
+        a = getFacade().findBySQL("select c from Vtm c ");
+        if (a == null) {
+            a = new ArrayList<>();
+        }
+        int i = 0;
+        for (Vtm p : a) {
+            System.out.println("p = " + p);
+            try {
+                getFacade().remove(p);
+                System.out.println("removed");
+            } catch (Exception e) {
+                System.out.println("e = " + e);
+                System.out.println("e = " + e.getMessage());
+                continue;
+            }
+            i++;
+        }
+        JsfUtil.addSuccessMessage("Removed Count " + i);
+    }
+    
     public List<Vtm> getSelectedItems() {
          
         if (selectText.trim().equals("")) {

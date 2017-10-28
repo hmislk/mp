@@ -127,6 +127,8 @@ public class AmppController implements Serializable {
 //        getVmppFacade().edit(tmp);
 
         recreateModel();
+        setCurrent(null);
+        getCurrent();
         getItems();
     }
 

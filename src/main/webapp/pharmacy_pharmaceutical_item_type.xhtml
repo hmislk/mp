@@ -18,7 +18,14 @@
 
 
 
-                <p:panel header="Manage Pharmaceutical Item Type" >
+                <p:panel >
+
+                    <f:facet name="header" >
+                        <p:outputLabel value="Manage Dosage Forms" ></p:outputLabel>
+                        <p:commandButton ajax="false" value="Back" action="/pharmacy_admin" ></p:commandButton>
+                    </f:facet>
+
+
                     <h:panelGrid id ="gpVeda" columns="2" >
 
                         <h:panelGrid id="gpSelect" columns="1"  >
@@ -35,7 +42,7 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail detailFocus" execute="" >
                                         </f:ajax>
                                     </h:commandButton>
-                                    
+
                                     <h:commandButton id="btnDelete" onclick="if (!confirm('Are you sure you want to delete this record?'))
                                                 return false;" action="#{pharmaceuticalItemTypeController.delete()}"  value="Delete"  >
                                     </h:commandButton>
@@ -59,12 +66,15 @@
                                         <f:ajax render="btnAdd  btnDelete btnSave   lstSelect gpDetail selectFocus"  execute="gpDetail" >
                                         </f:ajax>
                                     </h:commandButton>
-                                     <p:defaultCommand target="btnSave"/>
+                                    <p:defaultCommand target="btnSave"/>
 
                                 </h:panelGrid>
                             </h:panelGrid>
                         </p:panel>
                     </h:panelGrid>
+                       
+                    <p:commandButton value="Removed All Unused Categories" ajax="false" action="#{pharmaceuticalItemTypeController.removeUnusedCategory()}" ></p:commandButton>
+                  
                 </p:panel>
             </h:form>
 

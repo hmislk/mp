@@ -12,4 +12,5 @@
     </jdbc-connection-pool>
     <jdbc-resource enabled="true" jndi-name="java:app/dsMp1" object-type="user" pool-name="mysql_mp_rootPool"/>
     <jdbc-resource enabled="true" jndi-name="java:app/dsM" object-type="user" pool-name="mysql_mp_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="java:app/dsMp1" object-type="user" pool-name="mysql_mp_rootPool"/>
 </resources>

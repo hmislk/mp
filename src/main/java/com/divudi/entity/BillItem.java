@@ -48,8 +48,10 @@ public class BillItem implements Serializable {
     String descreption;
     double remainingQty;
     double Rate;
+    double ratePacks;
     double discountRate;
     double netRate;
+    double netRatePack;
     double expectedRate;
     double grossValue;
     double discount;
@@ -58,6 +60,8 @@ public class BillItem implements Serializable {
 //    private double dblValue;
     @ManyToOne
     Item item;
+    @ManyToOne
+    Item itemAmpp;
     @ManyToOne
     Bill bill;
     Boolean refunded;
@@ -122,6 +126,7 @@ public class BillItem implements Serializable {
        
         agentRefNo = billItem.getAgentRefNo();
         item = billItem.getItem();
+        itemAmpp = billItem.getItemAmpp();
         qty = billItem.getQty();
         qtyPacks = billItem.getQtyPacks();
         grossValue = billItem.getGrossValue();
@@ -130,6 +135,7 @@ public class BillItem implements Serializable {
         adjustedValue = billItem.getAdjustedValue();
         discountRate = billItem.getDiscountRate();
         Rate = billItem.getRate();
+        ratePacks = billItem.getRatePacks();
         expectedRate = billItem.getExpectedRate();
         netRate = billItem.getNetRate();
         searialNo = billItem.getSearialNo();
@@ -138,6 +144,16 @@ public class BillItem implements Serializable {
         retireComments=billItem.getRetireComments();
         //  referanceBillItem=billItem.getReferanceBillItem();
     }
+
+    public Item getItemAmpp() {
+        return itemAmpp;
+    }
+
+    public void setItemAmpp(Item itemAmpp) {
+        this.itemAmpp = itemAmpp;
+    }
+    
+    
 
     public BillItem() {
     }
@@ -591,4 +607,24 @@ public class BillItem implements Serializable {
         this.descreption = descreption;
     }
 
+    public double getRatePacks() {
+        return ratePacks;
+    }
+
+    public void setRatePacks(double ratePacks) {
+        this.ratePacks = ratePacks;
+    }
+
+    public double getNetRatePack() {
+        return netRatePack;
+    }
+
+    public void setNetRatePack(double netRatePack) {
+        this.netRatePack = netRatePack;
+    }
+
+    
+    
+    
+    
 }

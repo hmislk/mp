@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
-
 /**
  *
  * @author Buddhika
@@ -40,7 +39,9 @@ public class PharmaceuticalBillItem implements Serializable {
     ItemBatch itemBatch;
     private String stringValue;
     double qty;
+    double qtyPacks;
     double freeQty;
+    double freeQtyPacks;
     double purchaseRate;
     private double lastPurchaseRate;
     double retailRate;
@@ -54,31 +55,31 @@ public class PharmaceuticalBillItem implements Serializable {
     @ManyToOne
     private Stock staffStock;
 
-    
-    
     public void copy(PharmaceuticalBillItem ph) {
         qty = ph.qty;
         freeQty = ph.freeQty;
-        purchaseRate = ph.purchaseRate;        
+        qtyPacks = ph.qtyPacks;
+        freeQtyPacks = ph.freeQtyPacks;
+        purchaseRate = ph.purchaseRate;
         doe = ph.getDoe();
         stringValue = ph.getStringValue();
         itemBatch = ph.getItemBatch();
         retailRate = ph.getRetailRate();
         stock = ph.getStock();
-        staffStock=ph.getStaffStock();
+        staffStock = ph.getStaffStock();
         stringValue = ph.getStringValue();
         //  remainingQty=ph.getRemainingQty();
 
     }
-    
-    public void invertValue(PharmaceuticalBillItem ph){
-        qty=0-ph.qty;
-       // ////System.err.println("QTY "+qty);
-        freeQty=0-ph.freeQty;
-      //  purchaseRate=0-ph.purchaseRate;
-      //  lastPurchaseRate=0-ph.lastPurchaseRate;
-       // retailRate=0-ph.retailRate;
-      //  wholesaleRate=0-ph.wholesaleRate;
+
+    public void invertValue(PharmaceuticalBillItem ph) {
+        qty = 0 - ph.qty;
+        // ////System.err.println("QTY "+qty);
+        freeQty = 0 - ph.freeQty;
+        //  purchaseRate=0-ph.purchaseRate;
+        //  lastPurchaseRate=0-ph.lastPurchaseRate;
+        // retailRate=0-ph.retailRate;
+        //  wholesaleRate=0-ph.wholesaleRate;
     }
 
     public double getWholesaleFreeFor() {
@@ -97,9 +98,6 @@ public class PharmaceuticalBillItem implements Serializable {
         this.wholesaleFreeQty = wholesaleFreeQty;
     }
 
-    
-    
-    
     public Stock getStock() {
         return stock;
     }
@@ -277,6 +275,25 @@ public class PharmaceuticalBillItem implements Serializable {
     public void setWholesaleRate(double wholesaleRate) {
         this.wholesaleRate = wholesaleRate;
     }
+
+    public double getQtyPacks() {
+        return qtyPacks;
+    }
+
+    public void setQtyPacks(double qtyPacks) {
+        this.qtyPacks = qtyPacks;
+    }
+
+    public double getFreeQtyPacks() {
+        return freeQtyPacks;
+    }
+
+    public void setFreeQtyPacks(double freeQtyPacks) {
+        this.freeQtyPacks = freeQtyPacks;
+    }
+    
+    
+    
 
     @Override
     public int hashCode() {

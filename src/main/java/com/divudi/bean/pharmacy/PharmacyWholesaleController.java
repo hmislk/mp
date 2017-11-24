@@ -118,8 +118,8 @@ public class PharmacyWholesaleController implements Serializable {
     BillItem editingBillItem;
     Double qty;
     Double freeQty;
-    Double qtyPacks;
-    Double freeQtyPacks;
+    private Double qtyPacks;
+    private Double freeQtyPacks;
     Stock stock;
     Ampp ampp;
     Stock replacableStock;
@@ -951,25 +951,38 @@ public class PharmacyWholesaleController implements Serializable {
     public void addBillItem() {
         editingQty = null;
         errorMessage = null;
-
-        if (billItem == null) {
+         if (billItem == null) {
             return;
         }
         if (billItem.getPharmaceuticalBillItem() == null) {
             return;
         }
+        if(ampp==null){
+            errorMessage = "Please select an item";
+            return;
+        }else{
+            billItem.setItemAmpp(selectedAvailableAmp);
+        }
+        
+       
         if (getStock() == null) {
-            errorMessage = "Item?";
-//            UtilityController.addErrorMessage("Item?");
+            errorMessage = "Batch?";
             return;
         }
-        if (getQty() == null) {
+        if (getQtyPacks()== null) {
             errorMessage = "Quentity?";
-//            UtilityController.addErrorMessage("Quentity?");
             return;
+        }else{
+            billItem.setQtyPacks(qtyPacks);
+            billItem.setQty(qtyPacks * billItem.getItemAmpp().getDblValue());
+            qty = qtyPacks * billItem.getItemAmpp().getDblValue();
         }
-        if (freeQty == null) {
-            freeQty = 0.0;
+        if (freeQtyPacks == null) {
+            freeQtyPacks = 0.0;
+            freeQty=0.0;
+        }else{
+            billItem.getPharmaceuticalBillItem().setFreeQty(0);
+            freeQty = freeQtyPacks * billItem.getItemAmpp().getDblValue();
         }
         System.out.println("getFreeQty() = " + getFreeQty());
         if (getQty() + getFreeQty() > getStock().getStock()) {
@@ -1075,6 +1088,9 @@ public class PharmacyWholesaleController implements Serializable {
     }
 
     public void calculateBillItem() {
+        if(ampp==null){
+            return;
+        }
         if (stock == null) {
             return;
         }
@@ -1090,13 +1106,16 @@ public class PharmacyWholesaleController implements Serializable {
         if (billItem.getPharmaceuticalBillItem().getStock() == null) {
             getBillItem().getPharmaceuticalBillItem().setStock(stock);
         }
-        if (getQty() == null) {
+        if (getQtyPacks()== null) {
             qty = 0.0;
         }
-        if (getFreeQty() == null) {
+        if (getFreeQtyPacks()== null) {
             freeQty = 0.0;
         }
-
+        
+        qty = qtyPacks * ampp.getDblValue();
+        freeQty = freeQtyPacks * ampp.getDblValue();
+        
         //Bill Item
 //        billItem.setInwardChargeType(InwardChargeType.Medicine);
         billItem.setItem(getStock().getItemBatch().getItem());
@@ -1533,5 +1552,23 @@ public class PharmacyWholesaleController implements Serializable {
     public void setReplacableStock(Stock replacableStock) {
         this.replacableStock = replacableStock;
     }
+
+    public Double getQtyPacks() {
+        return qtyPacks;
+    }
+
+    public void setQtyPacks(Double qtyPacks) {
+        this.qtyPacks = qtyPacks;
+    }
+
+    public Double getFreeQtyPacks() {
+        return freeQtyPacks;
+    }
+
+    public void setFreeQtyPacks(Double freeQtyPacks) {
+        this.freeQtyPacks = freeQtyPacks;
+    }
+    
+    
 
 }

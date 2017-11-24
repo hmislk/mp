@@ -118,6 +118,8 @@ public class PharmacyWholesaleController implements Serializable {
     BillItem editingBillItem;
     Double qty;
     Double freeQty;
+    Double qtyPacks;
+    Double freeQtyPacks;
     Stock stock;
     Ampp ampp;
     Stock replacableStock;
@@ -132,6 +134,7 @@ public class PharmacyWholesaleController implements Serializable {
     boolean billPreview = false;
     Vmp selectedGeneric;
     /////////////////
+    List<Stock> packStocks;
     List<Stock> replaceableStocks;
     List<Item> itemsWithoutStocks;
     List<Stock> stocksWithGeneric;
@@ -147,6 +150,14 @@ public class PharmacyWholesaleController implements Serializable {
     PaymentMethodData paymentMethodData;
 
     String errorMessage;
+
+    public List<Stock> getPackStocks() {
+        return packStocks;
+    }
+
+    public void setPackStocks(List<Stock> packStocks) {
+        this.packStocks = packStocks;
+    }
 
     public List<Stock> getStocksWithGeneric() {
         return stocksWithGeneric;
@@ -185,8 +196,10 @@ public class PharmacyWholesaleController implements Serializable {
         editingBillItem = null;
         qty = null;
         freeQty = null;
+        qtyPacks=null;
+        freeQtyPacks=null;
         stock = null;
-        ampp=null;
+        ampp = null;
         activeIndex = 0;
         newPatient = null;
         searchedPatient = null;
@@ -250,6 +263,7 @@ public class PharmacyWholesaleController implements Serializable {
 
     private void setZeroToQty(BillItem tmp) {
         tmp.setQty(0.0);
+        tmp.setQtyPacks(0.0);
         tmp.getPharmaceuticalBillItem().setQtyInUnit(0.0f);
 
         tmp.getTransUserStock().setUpdationQty(0);
@@ -398,8 +412,6 @@ public class PharmacyWholesaleController implements Serializable {
     public void setAmpp(Ampp ampp) {
         this.ampp = ampp;
     }
-    
-    
 
     public void setReplaceableStocks(List<Stock> replaceableStocks) {
         this.replaceableStocks = replaceableStocks;
@@ -418,8 +430,6 @@ public class PharmacyWholesaleController implements Serializable {
         setStock(replacableStock);
         ////System.out.println("getStock() = " + getStock());
     }
-
-    
 
     public List<Item> getItemsWithoutStocks() {
         return itemsWithoutStocks;
@@ -588,6 +598,23 @@ public class PharmacyWholesaleController implements Serializable {
             itemsWithoutStocks = completeRetailSaleItemsWithoutStocks(qry);
         }
         return items;
+    }
+
+    public List<Stock> completeAvailableStocksFromNameOrGenericForPack() {
+        String sql;
+        Map m = new HashMap();
+        m.put("d", getSessionController().getLoggedUser().getDepartment());
+        m.put("ampid", getAmpp().getAmp().getId());
+        double d = 0.0;
+        m.put("s", d);
+        sql = "select i from Stock i where i.stock >:s and i.department=:d and i.itemBatch.item.id=:ampid order by i.itemBatch.item.name, i.itemBatch.dateOfExpire";
+        List<Stock> tss;
+        tss = getStockFacade().findBySQL(sql, m, 20);
+        if (tss.size() > 0) {
+            stock = tss.get(0);
+            handleSelectAction();
+        } 
+        return tss;
     }
 
     public BillItem getBillItem() {
@@ -1113,6 +1140,24 @@ public class PharmacyWholesaleController implements Serializable {
         handleSelectAction();
     }
 
+    public void handlePackSelect(SelectEvent event) {
+        handleSelectActionPack();
+    }
+
+    public void handleSelectActionPack() {
+        if (ampp == null) {
+            System.out.println("Stock NOT selected.");
+        }
+        if (getBillItem() == null || getBillItem().getPharmaceuticalBillItem() == null) {
+            System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
+        }
+
+        packStocks = completeAvailableStocksFromNameOrGenericForPack();
+
+        getBillItem().getPharmaceuticalBillItem().setStock(stock);
+        calculateRates(billItem);
+    }
+
     public void handleSelectAction() {
         if (stock == null) {
             ////System.out.println("Stock NOT selected.");
@@ -1146,17 +1191,14 @@ public class PharmacyWholesaleController implements Serializable {
             return;
         }
         getBillItem();
-        if (bi.getRate() == 0.0) {
-            if (bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate() != 0.0) {
-                bi.setRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
-            } else {
-                bi.setRate(bi.getNetRate());
-            }
-        }
-        if (bi.getNetRate() == 0.0) {
-            bi.setNetRate(bi.getPharmaceuticalBillItem().getStock().getItemBatch().getWholesaleRate());
-            bi.setDiscount(bi.getRate() - bi.getNetRate());
-        }
+        double temNetRate=0.0;
+        double temRate=bi.getRate();
+        double temDiscountPercent=bi.getDiscount();
+        
+        temNetRate = (temRate/100) * (100-temDiscountPercent);
+        bi.setNetRate(temNetRate);
+        bi.setDiscountRate(bi.getRate() - bi.getNetRate());
+        
     }
 
     private void clearBill() {

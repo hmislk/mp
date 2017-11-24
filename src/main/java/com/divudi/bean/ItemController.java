@@ -10,6 +10,7 @@ package com.divudi.bean;
 
 import com.divudi.data.DepartmentType;
 import com.divudi.data.FeeType;
+import com.divudi.entity.Department;
 import com.divudi.entity.Institution;
 import com.divudi.facade.ItemFacade;
 import com.divudi.entity.Item;
@@ -54,7 +55,18 @@ public class ItemController implements Serializable {
     private Item current;
     private List<Item> items = null;
     private Institution instituion;
+    private Department department;
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    
+    
     public List<Item> completeDealorItem(String query) {
         List<Item> suggestions;
         String sql;

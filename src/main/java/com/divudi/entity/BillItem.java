@@ -43,6 +43,7 @@ public class BillItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     Double qty = 0.0;
+    Double qtyPacks = 0.0;
     @Lob
     String descreption;
     double remainingQty;
@@ -122,6 +123,7 @@ public class BillItem implements Serializable {
         agentRefNo = billItem.getAgentRefNo();
         item = billItem.getItem();
         qty = billItem.getQty();
+        qtyPacks = billItem.getQtyPacks();
         grossValue = billItem.getGrossValue();
         netValue = billItem.getNetValue();
         discount = billItem.getDiscount();
@@ -138,6 +140,14 @@ public class BillItem implements Serializable {
     }
 
     public BillItem() {
+    }
+
+    public Double getQtyPacks() {
+        return qtyPacks;
+    }
+
+    public void setQtyPacks(Double qtyPacks) {
+        this.qtyPacks = qtyPacks;
     }
 
     

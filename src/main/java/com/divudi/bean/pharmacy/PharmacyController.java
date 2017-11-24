@@ -120,7 +120,7 @@ public class PharmacyController implements Serializable {
         institutionStocks = null;
         institutionTransferIssue = null;
         directPurchase = null;
-        stockAverages=new ArrayList<>();
+        stockAverages = new ArrayList<>();
     }
 
     public List<Stock> completeAllStocks(String qry) {
@@ -493,7 +493,25 @@ public class PharmacyController implements Serializable {
 
     }
 
-    public void averageByMonth() {
+    public void averageByDateDept() {
+        Calendar frm = Calendar.getInstance();
+        frm.setTime(fromDate);
+        Calendar to = Calendar.getInstance();
+        to.setTime(toDate);
+
+        long lValue = to.getTimeInMillis() - frm.getTimeInMillis();
+        double dayCount = 0;
+        if (lValue != 0) {
+            dayCount = lValue / (1000 * 60 * 60 * 24);
+        }
+
+        //System.err.println("Day Count " + dayCount);
+        List<Item> items = getItemController().getDealorItem();
+        createStockAverageDept(dayCount, items);
+
+    }
+
+    public void averageByMonthDept() {
         Calendar frm = Calendar.getInstance();
         frm.setTime(fromDate);
         Calendar to = Calendar.getInstance();
@@ -507,7 +525,7 @@ public class PharmacyController implements Serializable {
 
         //System.err.println("Month Count " + monthCount);
         List<Item> items = getItemController().getDealorItem();
-        createStockAverage(Math.abs(monthCount), items);
+        createStockAverageDept(Math.abs(monthCount), items);
 
     }
 
@@ -534,6 +552,72 @@ public class PharmacyController implements Serializable {
     }
 
     public void createStockAverage(double dayCount, List<Item> itms) {
+
+        stockAverages = new ArrayList<>();
+
+        List<Item> items = itms;
+        //    //System.out.println("items = " + items.size());
+        List<Institution> insList = getCompany();
+        for (Item i : items) {
+
+            System.err.println("i.getName() = " + i.getName());
+
+            double itemStockTotal = 0;
+            double itemAverageTotal = 0;
+            StockAverage stockAverage = new StockAverage();
+            stockAverage.setItem(i);
+            stockAverage.setInstitutionStocks(new ArrayList<InstitutionStock>());
+
+            for (Institution ins : insList) {
+                double insStockTotal = 0;
+                double insAverageTotal = 0;
+                InstitutionStock newTable = new InstitutionStock();
+                newTable.setInstitution(ins);
+                newTable.setDepatmentStocks(new ArrayList<DepartmentStock>());
+                List<Object[]> objs = calDepartmentStock(ins, i);
+
+                for (Object[] obj : objs) {
+//                    //System.err.println("Inside ");
+                    DepartmentStock r = new DepartmentStock();
+                    r.setDepartment((Department) obj[0]);
+                    r.setStock((Double) obj[1]);
+
+                    try {
+                        double qty = calDepartmentSaleQty(r.getDepartment(), i);
+                        qty = 0 - qty;
+                        if (qty != 0 && dayCount != 0) {
+                            double avg = qty / dayCount;
+                            r.setAverage(avg);
+                        }
+
+                        insStockTotal += r.getStock();
+                        insAverageTotal += r.getAverage();
+                        newTable.getDepatmentStocks().add(r);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                newTable.setInstitutionTotal(insStockTotal);
+                newTable.setInstitutionAverage(insAverageTotal);
+
+                if (insStockTotal != 0 || insAverageTotal != 0) {
+                    stockAverage.getInstitutionStocks().add(newTable);
+                    itemStockTotal += insStockTotal;
+                    itemAverageTotal += insAverageTotal;
+                }
+            }
+
+            stockAverage.setItemAverageTotal(itemAverageTotal);
+            stockAverage.setItemStockTotal(itemStockTotal);
+            stockAverages.add(stockAverage);
+        }
+
+    }
+    
+    
+    public void createStockAverageDept(double dayCount, List<Item> itms) {
 
         stockAverages = new ArrayList<>();
 
@@ -1427,7 +1511,7 @@ public class PharmacyController implements Serializable {
         createPoTable();
         createDirectPurchaseTable();
         createInstitutionIssue();
-        
+
         Calendar frm = Calendar.getInstance();
         frm.setTime(fromDate);
         Calendar to = Calendar.getInstance();
@@ -1440,10 +1524,10 @@ public class PharmacyController implements Serializable {
         }
 
         //System.err.println("Day Count " + dayCount);
-        List<Item> items =new ArrayList<>();
+        List<Item> items = new ArrayList<>();
         items.add(pharmacyItem);
         createStockAverage(dayCount, items);
-        
+
     }
 
     public void createInstitutionIssue() {
@@ -1562,7 +1646,7 @@ public class PharmacyController implements Serializable {
     public void setGrantIssueValue(double grantIssueValue) {
         this.grantIssueValue = grantIssueValue;
     }
-    
+
     public void createAllItemTransactionSummery() {
         hasInward = false;
         hasIssue = false;
@@ -1702,22 +1786,21 @@ public class PharmacyController implements Serializable {
                 r.setTransferInVal(Math.abs(v.getValue()));
             }
         }
-        
 
 //        System.out.println("m = " + m);
         itemTransactionSummeryRows = new ArrayList<>(m.values());
-        
+
         List<ItemTransactionSummeryRow> lstRem = new ArrayList<>();
-        
-        for(ItemTransactionSummeryRow r:itemTransactionSummeryRows){
-            if(r.getBhtSaleQty()==0.0 && r.getIssueQty()==0.0 && r.getPurchaseQty()==0.0 && r.getRetailSaleQty()==0.0 
-                    && r.getWholeSaleQty()==0.0 && r.getTransferOutQty()==0.0 && r.getTransferInQty()==0.0){
+
+        for (ItemTransactionSummeryRow r : itemTransactionSummeryRows) {
+            if (r.getBhtSaleQty() == 0.0 && r.getIssueQty() == 0.0 && r.getPurchaseQty() == 0.0 && r.getRetailSaleQty() == 0.0
+                    && r.getWholeSaleQty() == 0.0 && r.getTransferOutQty() == 0.0 && r.getTransferInQty() == 0.0) {
                 lstRem.add(r);
             }
         }
-        
+
         itemTransactionSummeryRows.removeAll(lstRem);
-        
+
         Collections.sort(itemTransactionSummeryRows);
 
     }
@@ -1842,7 +1925,5 @@ public class PharmacyController implements Serializable {
     public void setHasTransferIn(boolean hasTransferIn) {
         this.hasTransferIn = hasTransferIn;
     }
-
-    
 
 }

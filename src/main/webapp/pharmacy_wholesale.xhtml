@@ -78,8 +78,6 @@
                                     <p:focus id="focusItem" for="acStock" ></p:focus>
                                 </h:panelGroup>
 
-                                <p:autoComplete value="#{pharmacyWholesaleController.ampp}" completeMethod="#{amppController.completeAmpp}"
-                                                var="ampp" itemLabel="#{ampp.name}" itemValue="#{ampp}"></p:autoComplete>
 
                                 <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
                                                   action="#{pharmacyWholesaleController.addBillItem}" 
@@ -91,7 +89,7 @@
                                 <tr style="vertical-align: top;">
                                     <td>
                                         <table style="width: 99%;" >
-                                           
+
 
                                             <tr style="vertical-align: top;">
                                                 <td colspan="4"  style="margin: auto; ">
@@ -100,12 +98,18 @@
                                                         .ui-autocomplete-input {width:350px!important;display: block;}
                                                         .ui-autocomplete{display: block!important;}
                                                     </style>
-                                                    <p:autoComplete accesskey="i"    id="acStock" 
-                                                                    value="#{pharmacyWholesaleController.stock}" 
-                                                                    converter="stockCon" 
-                                                                    completeMethod="#{pharmacyWholesaleController.completeAvailableStocksFromNameOrGeneric}" 
-                                                                    var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" 
-                                                                    >
+                                                    <p:autoComplete value="#{pharmacyWholesaleController.ampp}" completeMethod="#{amppController.completeAmpp}"
+                                                                    var="ampp" itemLabel="#{ampp.name}" itemValue="#{ampp}"
+                                                                    id="acPacks">
+                                                        <p:ajax event="focus" process="acPacks"  ></p:ajax>
+                                                        <p:ajax event="itemSelect"  process="acPacks" listener="#{pharmacyWholesaleController.handlePackSelect}"  update="acStock txtQty txtFreeQty txtRate focusQty " ></p:ajax>
+                                                    </p:autoComplete>
+
+                                                    <p:selectOneMenu  id="acStock" 
+                                                                      value="#{pharmacyWholesaleController.stock}" 
+                                                                      >
+                                                        <f:selectItem itemLabel="No Stocks" ></f:selectItem>
+                                                        <f:selectItems value="#{pharmacyWholesaleController.packStocks}" var="i" itemLabel="#{i.itemBatch.item.name}" itemValue="#{i}" ></f:selectItems>
                                                         <p:column headerText="Item">
                                                             <h:outputLabel value="#{i.itemBatch.item.name}"  style="width: 300px!important;"></h:outputLabel>
                                                         </p:column>
@@ -150,8 +154,8 @@
                                                             </h:outputLabel>
                                                         </p:column>
                                                         <p:ajax event="focus" process="acStock :#{p:component('cmbPs')}"  ></p:ajax>
-                                                        <p:ajax event="itemSelect"   listener="#{pharmacyWholesaleController.handleSelect}"  update="txtQty txtFreeQty txtRate focusQty " ></p:ajax>
-                                                    </p:autoComplete>
+                                                        <p:ajax event="change"   listener="#{pharmacyWholesaleController.handleSelect}"  update="txtQty txtFreeQty txtRate focusQty " ></p:ajax>
+                                                    </p:selectOneMenu>
                                                 </td>
                                                 <td style="min-width: 50px;">
                                                     <p:inputText  accesskey="q"  autocomplete="off" id="txtQty" value="#{pharmacyWholesaleController.qty}" style="width: 50px!important;"   >
@@ -166,14 +170,14 @@
                                                     </p:inputText>
                                                 </td>
                                                 <td style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
-                                                    <p:inputText id="txtRate" value="#{pharmacyWholesaleController.billItem.netRate}" >
+                                                    <p:inputText id="txtRate" value="#{pharmacyWholesaleController.billItem.rate}" >
                                                         <f:convertNumber pattern="#,##0.00" />
                                                         <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
                                                         <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
                                                     </p:inputText>
                                                 </td>
                                                 <td  style="padding: 2px;margin: auto; min-width: 50px; text-align: right; font-weight: bolder;">
-                                                    <p:outputLabel id="txtVal" value="#{pharmacyWholesaleController.billItem.netValue}" >
+                                                    <p:outputLabel id="txtVal" value="#{pharmacyWholesaleController.billItem.discount}" >
                                                         <f:convertNumber pattern="#,##0.00" />
                                                     </p:outputLabel>
                                                 </td>
@@ -322,7 +326,7 @@
 
                         </p:panel>
 
-                        
+
 
 
                     </p:panel>

@@ -701,16 +701,6 @@ public class PharmacyWholesaleController implements Serializable {
         errorMessage = null;
         getPaymentSchemeController().errorCheckPaymentScheme(getPreBill().getPaymentMethod(), paymentMethodData);
 
-        if (getPreBill().getPaymentMethod() == PaymentMethod.Cash) {
-            if (cashPaid == 0.0) {
-                errorMessage = "Please enter tendered value correctly.";
-                return true;
-            }
-            if (cashPaid < getNetTotal()) {
-                errorMessage = "Tendered value is less than the bill value.";
-                return true;
-            }
-        }
         return false;
     }
 
@@ -961,7 +951,7 @@ public class PharmacyWholesaleController implements Serializable {
             errorMessage = "Please select an item";
             return;
         } else {
-            billItem.setItemAmpp(selectedAvailableAmp);
+            billItem.setItemAmpp(ampp);
         }
 
         if (getStock() == null) {

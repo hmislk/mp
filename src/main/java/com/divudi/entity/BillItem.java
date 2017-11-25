@@ -4,7 +4,6 @@
  */
 package com.divudi.entity;
 
-
 import com.divudi.entity.pharmacy.Ampp;
 import com.divudi.entity.pharmacy.PharmaceuticalBillItem;
 import com.divudi.entity.pharmacy.UserStock;
@@ -50,6 +49,7 @@ public class BillItem implements Serializable {
     double Rate;
     double ratePacks;
     double discountRate;
+    double discountRatePack;
     double netRate;
     double netRatePack;
     double expectedRate;
@@ -95,12 +95,12 @@ public class BillItem implements Serializable {
     BillItem referanceBillItem;
     @OneToOne
     BillFee paidForBillFee;
-    
+
     @Temporal(javax.persistence.TemporalType.DATE)
     Date sessionDate;
     @ManyToOne
     Bill referenceBill;
-    
+
     String agentRefNo;
 
 //    @Transient
@@ -123,26 +123,32 @@ public class BillItem implements Serializable {
     public void copy(BillItem billItem) {
         item = billItem.getItem();
         sessionDate = billItem.getSessionDate();
-       
+
         agentRefNo = billItem.getAgentRefNo();
         item = billItem.getItem();
         itemAmpp = billItem.getItemAmpp();
+
+        discount = billItem.getDiscount();
+
         qty = billItem.getQty();
         qtyPacks = billItem.getQtyPacks();
+        discountRate = billItem.getDiscountRate();
+        discountRatePack = billItem.getDiscountRatePack();
+
         grossValue = billItem.getGrossValue();
         netValue = billItem.getNetValue();
-        discount = billItem.getDiscount();
-        adjustedValue = billItem.getAdjustedValue();
-        discountRate = billItem.getDiscountRate();
+
         Rate = billItem.getRate();
         ratePacks = billItem.getRatePacks();
-        expectedRate = billItem.getExpectedRate();
         netRate = billItem.getNetRate();
+        netRatePack = billItem.getNetRatePack();
+
+        adjustedValue = billItem.getAdjustedValue();
+        expectedRate = billItem.getExpectedRate();
         searialNo = billItem.getSearialNo();
         tmpQty = billItem.tmpQty;
         referenceBill = billItem.getReferenceBill();
-        retireComments=billItem.getRetireComments();
-        //  referanceBillItem=billItem.getReferanceBillItem();
+        retireComments = billItem.getRetireComments();
     }
 
     public Item getItemAmpp() {
@@ -152,8 +158,14 @@ public class BillItem implements Serializable {
     public void setItemAmpp(Item itemAmpp) {
         this.itemAmpp = itemAmpp;
     }
-    
-    
+
+    public double getDiscountRatePack() {
+        return discountRatePack;
+    }
+
+    public void setDiscountRatePack(double discountRatePack) {
+        this.discountRatePack = discountRatePack;
+    }
 
     public BillItem() {
     }
@@ -166,8 +178,6 @@ public class BillItem implements Serializable {
         this.qtyPacks = qtyPacks;
     }
 
-    
-    
     public void invertValue(BillItem billItem) {
         if (billItem.getQty() != null) {
             qty = 0 - billItem.getQty();
@@ -195,10 +205,10 @@ public class BillItem implements Serializable {
             return false;
         }
         BillItem other = (BillItem) object;
-        if (this.id==null && other.id==null) {
-            if (this.searialNo==other.searialNo) {
+        if (this.id == null && other.id == null) {
+            if (this.searialNo == other.searialNo) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -241,8 +251,6 @@ public class BillItem implements Serializable {
         this.expectedRate = expectedRate;
     }
 
-    
-    
     public void setRate(double Rate) {
         this.Rate = Rate;
     }
@@ -476,8 +484,6 @@ public class BillItem implements Serializable {
         this.remainingQty = remainingQty;
     }
 
-  
-
     public Bill getReferenceBill() {
         return referenceBill;
     }
@@ -485,7 +491,6 @@ public class BillItem implements Serializable {
     public void setReferenceBill(Bill referenceBill) {
         this.referenceBill = referenceBill;
     }
-
 
     public String getAgentRefNo() {
         return agentRefNo;
@@ -623,8 +628,4 @@ public class BillItem implements Serializable {
         this.netRatePack = netRatePack;
     }
 
-    
-    
-    
-    
 }

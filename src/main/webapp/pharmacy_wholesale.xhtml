@@ -74,7 +74,12 @@
                                 <p:outputLabel value="Value" ></p:outputLabel>
 
                                 <h:panelGroup >
+                                    <p:focus id="focusPack" for="acPacks" ></p:focus>
                                     <p:focus id="focusQty" for="txtQty" ></p:focus>
+                                    <p:focus id="focusFree" for="txtFreeQty" ></p:focus>
+                                    <p:focus id="focusRate" for="txtRate" ></p:focus>
+                                    <p:focus id="focusDis" for="txtDis" ></p:focus>
+
                                     <p:focus id="focusItem" for="acStock" ></p:focus>
                                 </h:panelGroup>
 
@@ -83,28 +88,32 @@
                                                 var="ampp" itemLabel="#{ampp.name}" itemValue="#{ampp}"
                                                 id="acPacks" forceSelection="true">
                                     <p:ajax event="focus" process="acPacks"  ></p:ajax>
-                                    <p:ajax event="itemSelect"  process="acPacks" listener="#{pharmacyWholesaleController.handlePackSelect}"  update="acStock txtQty txtFreeQty txtRate focusQty " ></p:ajax>
+                                    <p:ajax event="itemSelect"  process="acPacks" 
+                                            listener="#{pharmacyWholesaleController.handlePackSelect}"  
+                                            update="acStock txtQty txtFreeQty txtRate focusQty " ></p:ajax>
                                 </p:autoComplete>
 
                                 <p:inputText  accesskey="q" placeholder="packs"  autocomplete="off" id="txtQty" value="#{pharmacyWholesaleController.qtyPacks}" style="width: 50px!important;"   >
-                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
-                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtDis txtQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" 
+                                            process="acStock txtDis txtQty :#{p:component('cmbPs')}" 
+                                            update="txtRate txtVal" ></p:ajax>
                                 </p:inputText>
 
                                 <p:inputText  accesskey="f" placeholder="packs"  autocomplete="off" id="txtFreeQty" value="#{pharmacyWholesaleController.freeQtyPacks}" style="width: 50px!important;"   >
-                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtFreeQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
-                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtFreeQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtDis txtFreeQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
+                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="acStock txtDis txtFreeQty :#{p:component('cmbPs')}" update="txtRate txtVal" ></p:ajax>
                                 </p:inputText>
 
                                 <p:inputText id="txtRate" value="#{pharmacyWholesaleController.billItem.ratePacks}" style="width: 60px;" >
                                     <f:convertNumber pattern="#,##0.00" />
-                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
-                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
+                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate txtDis acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
+                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate txtDis acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
                                 </p:inputText>
 
                                 <p:inputText id="txtDis" value="#{pharmacyWholesaleController.billItem.discount}" style="width: 50px;">
-                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
-                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
+                                    <p:ajax event="keyup"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate txtDis acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
+                                    <p:ajax event="blur"  listener="#{pharmacyWholesaleController.calculateBillItemListner}" process="txtRate txtDis acStock txtFreeQty :#{p:component('cmbPs')}" update="txtVal" ></p:ajax>
                                     <f:convertNumber pattern="#,##0.00" />
                                 </p:inputText>
 
@@ -115,7 +124,7 @@
                                 <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
                                                   action="#{pharmacyWholesaleController.addBillItem}" 
                                                   process="@this acStock txtQty txtFreeQty txtRate :#{p:component('cmbPs')}" 
-                                                  update=" :#{p:component('panelErrorMessage')}   :#{p:component('netTotal')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem acPacks" ></p:commandButton>
+                                                  update=" :#{p:component('panelErrorMessage')}   :#{p:component('netTotal')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem acPacks txtFreeQty txtDis" ></p:commandButton>
 
                                 <p:selectOneMenu  id="acStock" 
                                                   value="#{pharmacyWholesaleController.stock}" 
@@ -201,14 +210,14 @@
                                         </f:facet>
                                         <h:outputLabel style="min-width: 150px;" value="#{bi.pharmaceuticalBillItem.itemBatch.item.code}" ></h:outputLabel>
                                     </p:column>
-                                    
+
                                     <p:column style="min-width: 200px;">
                                         <f:facet name="header" >
                                             <h:outputLabel value="Item" style="min-width: 300px;" ></h:outputLabel>
                                         </f:facet>
                                         <h:outputLabel style="min-width: 150px;" value="#{bi.pharmaceuticalBillItem.itemBatch.item.name}" ></h:outputLabel>
                                     </p:column>
-                                    
+
                                     <p:column headerText="Qty" style="width: 50px;">
                                         <f:facet name="header" >
                                             <h:outputLabel value="Qty"  ></h:outputLabel>
@@ -222,7 +231,7 @@
                                             <div style="min-width: 50px;" ></div>
                                             <h:outputLabel value="Free" style="min-width: 300px;" ></h:outputLabel>
                                         </f:facet>
-                                        <h:outputText value="#{bi.pharmaceuticalBillItem.freeQtyInUnit}" >
+                                        <h:outputText value="#{bi.pharmaceuticalBillItem.freeQtyPacks}" >
                                         </h:outputText>
                                     </p:column>
                                     <p:column headerText="Rate"  style="width: 50px;">

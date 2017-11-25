@@ -189,6 +189,12 @@ public class BillItem implements Serializable {
         grossValue = 0 - billItem.getGrossValue();
         netValue = 0 - billItem.getNetValue();
         adjustedValue = 0 - billItem.getAdjustedValue();
+        
+        
+        ratePacks = 0 - billItem.getRatePacks();
+        netRatePack = 0 - billItem.getNetRatePack();
+        grossValue = 0 - billItem.getGrossValue();
+        netValue = 0 - billItem.getNetValue();
     }
 
     @Override

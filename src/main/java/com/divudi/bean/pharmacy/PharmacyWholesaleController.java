@@ -1006,7 +1006,6 @@ public class PharmacyWholesaleController implements Serializable {
     public void calTotal() {
         getPreBill().setTotal(0);
         double netTot = 0.0;
-        double discount = 0.0;
         double grossTot = 0.0;
         int index = 0;
         for (BillItem b : getPreBill().getBillItems()) {
@@ -1017,7 +1016,6 @@ public class PharmacyWholesaleController implements Serializable {
 
             netTot = netTot + b.getNetValue();
             grossTot = grossTot + b.getGrossValue();
-            discount = discount + b.getDiscount();
             getPreBill().setTotal(getPreBill().getTotal() + b.getNetValue());
         }
 
@@ -1025,8 +1023,8 @@ public class PharmacyWholesaleController implements Serializable {
         getPreBill().setNetTotal(netTot);
         getPreBill().setTotal(grossTot);
         getPreBill().setGrantTotal(grossTot);
-        getPreBill().setDiscount(discount);
         setNetTotal(getPreBill().getNetTotal());
+        getPreBill().setDiscount(getPreBill().getGrantTotal() - getPreBill().getNetTotal());
 
     }
 
@@ -1254,6 +1252,7 @@ public class PharmacyWholesaleController implements Serializable {
         qtyPacks = null;
         freeQty = null;
         freeQtyPacks = null;
+        
         stock = null;
         editingQty = null;
         ampp = null;

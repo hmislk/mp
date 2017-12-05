@@ -1134,6 +1134,7 @@ public class PharmacyWholesaleController implements Serializable {
         }
         packStocks = completeAvailableStocksFromNameOrGenericForPack();
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
+        getBillItem().setRatePacks(stock.getItemBatch().getPurcahseRate() * ampp.getDblValue());
         calculateRates();
     }
 
@@ -1145,6 +1146,7 @@ public class PharmacyWholesaleController implements Serializable {
             ////System.out.println("Internal Error at PharmacySaleController.java > handleSelectAction");
         }
         getBillItem().getPharmaceuticalBillItem().setStock(stock);
+        getBillItem().setRatePacks(stock.getItemBatch().getPurcahseRate() * ampp.getDblValue());
         calculateRates();
     }
 

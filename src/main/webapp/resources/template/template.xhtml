@@ -142,6 +142,18 @@
                             <p:menuitem ajax="false" action="/pharmacy_search_dealor_payment" value="GRN Payment Done Search"  actionListener="#{billSearch.recreateModel2()}" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
                         </p:submenu>
 
+
+                        <p:submenu label="Customer Payment" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}">
+                            <p:menuitem  ajax="false" action="/pharmacy_search_customer"  value="Customer Transactions"  rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}" ></p:menuitem>
+                            <p:menuitem  ajax="false" action="/pharmacy_search_customer_due"  value="Customer Due Search"  rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}" ></p:menuitem>
+                            <p:menuitem ajax="false" action="/pharmacy_search_customer_due_age" actionListener="#{dealorDueController.makeNull}" value="Customer Due By Age" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>
+                            <p:submenu label="Payment">
+                                <p:menuitem ajax="false" action="/pharmacy_bill_customer" value="By Wholesale Bill" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
+                                <p:menuitem ajax="false" action="/pharmacy_bill_customer_all" value="By Customer" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
+                            </p:submenu>
+                            <p:menuitem ajax="false" action="/pharmacy_search_Customer_payment" value="Payment Done Search"  actionListener="#{billSearch.recreateModel2()}" rendered="#{webUserController.hasPrivilege('PharmacyDealorPayment')}"/>   
+                        </p:submenu>
+
                         <p:submenu label="Payment"  rendered="#{webUserController.hasPrivilege('Payment')}">
                             <p:menuitem  ajax="false"  action="/payment_staff_bill" value="Pay Doctor/Staff" rendered="#{webUserController.hasPrivilege('PaymentBilling')}" ></p:menuitem>
                             <p:menuitem  ajax="false"  action="/opd_search_professional_payment_due" actionListener="#{searchController.makeListNull}"  value="Payments-due Search" rendered="#{webUserController.hasPrivilege('PaymentBillSearch')}" ></p:menuitem>

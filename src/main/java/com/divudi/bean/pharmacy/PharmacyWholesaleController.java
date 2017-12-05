@@ -769,7 +769,8 @@ public class PharmacyWholesaleController implements Serializable {
             tbi.setPharmaceuticalBillItem(tmpPh);
             getBillItemFacade().edit(tbi);
 
-            double qtyL = tbi.getPharmaceuticalBillItem().getQtyInUnit() + tbi.getPharmaceuticalBillItem().getFreeQtyInUnit();
+            double qtyL = Math.abs(tbi.getPharmaceuticalBillItem().getQtyInUnit()) + 
+                    Math.abs(tbi.getPharmaceuticalBillItem().getFreeQtyInUnit());
 
             //Deduct Stock
             boolean returnFlag = getPharmacyBean().deductFromStock(tbi.getPharmaceuticalBillItem().getStock(),
@@ -1090,9 +1091,18 @@ public class PharmacyWholesaleController implements Serializable {
         billItem.getPharmaceuticalBillItem().setQtyInUnit((double) (0 - qty));
         billItem.getPharmaceuticalBillItem().setFreeQtyInUnit((double) (0 - freeQty));
 
+        billItem.getPharmaceuticalBillItem().setQtyPacks((double)qtyPacks);
+        billItem.getPharmaceuticalBillItem().setFreeQtyPacks((double) freeQtyPacks);
+        billItem.setQtyPacks(qtyPacks);
+        
+
+        
+        System.out.println("billItem.getRatePacks() = " + billItem.getRatePacks());
         billItem.setRate(billItem.getRatePacks() / billItem.getItemAmpp().getDblValue());
+        System.out.println("billItem.getRate() = " + billItem.getRate());
 
         billItem.setNetRatePack((billItem.getRatePacks() * (100 - billItem.getDiscount())) / 100);
+        System.out.println("billItem.getNetRatePack() = " + billItem.getNetRatePack());
         billItem.setNetRate(billItem.getNetRatePack() / billItem.getItemAmpp().getDblValue());
 
         billItem.setDiscountRate(billItem.getRate() - billItem.getNetRate());
@@ -1105,6 +1115,7 @@ public class PharmacyWholesaleController implements Serializable {
 
         billItem.setGrossValue(billItem.getRatePacks() * billItem.getQtyPacks());
         billItem.setNetValue(billItem.getNetRatePack() * billItem.getQtyPacks());
+        System.out.println("billItem.getNetValue() = " + billItem.getNetValue());
 
     }
 
@@ -1121,9 +1132,30 @@ public class PharmacyWholesaleController implements Serializable {
         handleSelectAction();
     }
 
+    
+  public void handleSelect(AjaxBehaviorEvent event) {
+        handleSelectAction();
+    }
+       
+        
+        
+        
+     
+        
+        
+        
     public void handlePackSelect(SelectEvent event) {
         handleSelectActionPack();
     }
+    
+    
+          
+    public void handlePackSelect(AjaxBehaviorEvent event) {
+        handleSelectActionPack();
+    }
+    
+    
+    
 
     public void handleSelectActionPack() {
         if (ampp == null) {
@@ -1244,7 +1276,7 @@ public class PharmacyWholesaleController implements Serializable {
         netTotal = 0;
         balance = 0;
         userStockContainer = null;
-
+        errorMessage=null;
     }
 
     private void clearBillItem() {
@@ -1259,6 +1291,7 @@ public class PharmacyWholesaleController implements Serializable {
         editingQty = null;
         ampp = null;
         packStocks = null;
+        errorMessage = null;
     }
 
     public SessionController getSessionController() {

@@ -10,9 +10,9 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:panel header="Search Bills" >
+                    <p:panel header="Search Wholesale Bills" >
                         <f:facet name="header" >                          
-                            <h:outputLabel value="PHARMACY BILL SEARCH SALE BILL  "/>                         
+                            <h:outputLabel value="PHARMACY WHOLESALE BILL SEARCH"/>                         
                             <h:panelGrid columns="5" >
                                 <h:outputLabel value="From Date"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
@@ -20,7 +20,7 @@
                                 <h:outputLabel value="To Date"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPharmacyTable}"/>
+                                <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createWholesaleBillTable()}"/>
                                 <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
                                 <h:outputLabel value="Bill No"/>
@@ -41,13 +41,13 @@
 
                         <p:dataTable rowIndexVar="i" id="tblBills" value="#{searchController.bills}" var="bill"   >
 
-                            <p:column headerText="No" styleClass="alignTop">
+                            <p:column headerText="No" styleClass="alignTop" width="30">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
 
                             <p:column headerText="View">
                                 <p:commandButton ajax="false" value="View Bill"
-                                                 action="pharmacy_reprint_bill_sale">
+                                                 action="pharmacy_reprint_bill_wholesale">
                                     <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>   
                                 </p:commandButton>
                             </p:column>
@@ -100,15 +100,11 @@
                             </p:column>                      
 
                             <p:column headerText="Client" >
-                                <h:outputLabel value="#{bill.patient.person.nameWithTitle}" />
+                                <h:outputLabel value="#{bill.toInstitution.name}" />
                             </p:column>
 
                             <p:column headerText="Paymentmethod"   >
                                 <h:outputLabel value="#{bill.paymentScheme.paymentMethod}" />
-                            </p:column>
-
-                            <p:column headerText="Paymentscheme" >
-                                <h:outputLabel value="#{bill.paymentScheme.name}" />
                             </p:column>
 
                             <p:column headerText="Gross Value"  >

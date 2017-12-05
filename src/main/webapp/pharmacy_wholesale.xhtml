@@ -53,12 +53,15 @@
                                     <pa:slip paymentMethodData="#{pharmacyWholesaleController.paymentMethodData}"/>
                                 </h:panelGroup>
 
+
+                                <h:panelGroup  id="panelErrorMessage" >
+                                    <p:outputLabel value="#{pharmacyWholesaleController.errorMessage}" rendered="#{pharmacyWholesaleController.errorMessage ne null}" style="color: red; padding: 2px; margin: 2px; border: 1px solid red;" ></p:outputLabel>
+                                </h:panelGroup>
+
                             </h:panelGrid>
                         </h:panelGrid>
 
-                        <h:panelGroup rendered="#{pharmacyWholesaleController.errorMessage ne null}" id="panelErrorMessage" >
-                            <p:outputLabel value="#{pharmacyWholesaleController.errorMessage}" style="color: red; padding: 2px; margin: 2px; border: 1px solid red;" ></p:outputLabel>
-                        </h:panelGroup>
+
 
                         <p:panel >
                             <f:facet name="header" >
@@ -123,7 +126,7 @@
 
                                 <p:commandButton  accesskey="a" id="btnAdd" value="Add" 
                                                   action="#{pharmacyWholesaleController.addBillItem}" 
-                                                  process="@this acStock txtQty txtFreeQty txtRate :#{p:component('cmbPs')}" 
+                                                  process="@this acStock txtQty txtFreeQty txtRate txtDis :#{p:component('cmbPs')}" 
                                                   update=" :#{p:component('panelErrorMessage')}   :#{p:component('netTotal')} :#{p:component('pBillDetails')} :#{p:component('tblBillItem')} txtRate txtQty acStock focusItem acPacks txtFreeQty txtDis" ></p:commandButton>
 
                                 <p:selectOneMenu  id="acStock" 
@@ -297,16 +300,6 @@
                                 <p:printer target="gpBillPreview" ></p:printer>
                             </p:commandButton>
                             <p:commandButton accesskey="n" value="New Pharmacy Bill"  ajax="false" action="#{pharmacyWholesaleController.newSaleBill()}" ></p:commandButton>
-
-
-                            <p:remoteCommand name="rc" update="@all"  actionListener="#{pharmacyWholesaleController.newSaleBill()}" />
-
-                            <p:commandButton value="Imprimir" type="button" 
-                                             icon="ui-icon-print" oncomplete="rc();alert('AA');" ajax="false"
-                                             style="display:block;margin-bottom: 20px">
-                                <p:printer target="gpBillPreview" />
-                            </p:commandButton>
-
                         </div>
                         <div >
                             <h:panelGroup   id="gpBillPreview"   > 

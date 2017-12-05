@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <body>
+        <ui:composition template="./resources/template/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="From Date"/>
+                        <p:calendar id="fromDate" value="#{customerDueController.fromDate}" navigator="false"
+                                    pattern="dd MMMM yyyy" >
+                        </p:calendar>
+                        <h:outputLabel value="To Date"/>
+                        <p:calendar id="toDate" value="#{customerDueController.toDate}" navigator="false" pattern="dd MMMM yyyy" >
+                        </p:calendar>
+                        <h:outputLabel value="Customer"/>
+                        <p:autoComplete converter="deal" value="#{customerDueController.institution}" 
+                                        forceSelection="true"
+                                        completeMethod="#{customerController.completeCustomer}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />
+                        <p:commandButton value="Process" action="#{customerDueController.fillSingleDealerTransactions()}" ajax="false"  />
+                        <p:commandButton value="Excel" action="#{customerDueController.fillSingleDealerTransactions()}" ajax="false">
+                            <pe:exporter type="xlsx" target="tbl" fileName="Detailed_Dealer_Listing"  />
+                        </p:commandButton>
+                    </h:panelGrid>
+
+                    <p:remoteCommand id="rc" name="updateFilters" update=":#{p:component('lblNetTotal')} :#{p:component('lblPaidTotal')} :#{p:component('lblBalanceTotal')}"></p:remoteCommand>
+
+                    <p:dataTable id="tbl" value="#{customerDueController.bills}" var="i"  
+                                 rowKey="#{i.id}" filteredValue="#{customerDueController.filteredBills}"
+                                 paginator="true" paginatorAlwaysVisible="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50"
+                                 rows="20"
+                                 style="width: 100%;">
+                        <p:ajax event="filter" oncomplete="updateFilters()"  />
+
+                        <p:column headerText="Bill No" sortBy="#{i.deptId}" 
+                                  filterBy="#{i.deptId}" filterMatchMode="contains">
+                            <p:outputLabel value="#{i.deptId}" ></p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Bill Date">
+                            <p:outputLabel value="#{i.createdAt}" >
+                                <f:convertDateTime pattern="dd MMM yyy hh:mm a" ></f:convertDateTime>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Bill Type" sortBy="#{i.billType.label}"
+                                  filterBy="#{i.billType.label}"  filterMatchMode="contains">
+                            <p:outputLabel value="#{i.billType.label}" ></p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Payment Method" sortBy="#{i.paymentMethod.label}"
+                                  filterBy="#{i.paymentMethod.label}"  filterMatchMode="contains">
+                            <p:outputLabel value="#{i.paymentMethod.label}" ></p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Reference Bill" sortBy="#{i.referenceBill.insId}"
+                                  filterBy="#{i.referenceBill.insId}"  filterMatchMode="contains">
+                            <p:outputLabel value="#{i.referenceBill.insId}" rendered="#{i.referenceBill ne null}" ></p:outputLabel>
+                            <p:outputLabel value="(#{i.referenceBill.billType.label})"  rendered="#{i.referenceBill ne null}" ></p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Net Total" style="text-align: right;">   
+                            <p:outputLabel value="#{i.netTotal}" rendered="#{i.netTotal ne 0.0}" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:outputLabel>   
+                            <f:facet name="footer" >
+                                <p:outputLabel id="lblNetTotal" value="#{customerDueController.billsNetTotal}" >
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:outputLabel>   
+                            </f:facet>
+                        </p:column>
+                        <p:column style="text-align: right;" headerText="Paid Amount">    
+                            <h:outputLabel value="#{i.paidAmount}" rendered="#{i.paidAmount ne 0.0}" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </h:outputLabel>
+                            <f:facet name="footer" >
+                                <p:outputLabel id="lblPaidTotal" value="#{customerDueController.billsPaidTotal}"  >
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:outputLabel>   
+                            </f:facet>
+                        </p:column>
+                        <p:column style="text-align: right;" headerText="Balance">    
+                            <h:outputLabel value="#{i.netTotal  + i.paidAmount}"  >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </h:outputLabel>
+                            <f:facet name="footer" >
+                                <p:outputLabel id="lblBalanceTotal" value="#{customerDueController.billsBalanceTotal}"  >
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:outputLabel>   
+                            </f:facet>
+
+
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+</html>

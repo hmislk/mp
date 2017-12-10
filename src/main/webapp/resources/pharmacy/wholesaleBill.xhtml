@@ -16,11 +16,10 @@
     <cc:implementation>
 
         <h:outputStylesheet library="css" name="pharmacyA4.css" ></h:outputStylesheet>
-        <div class="posbill">
+        <div class="a4bill">
 
             <div class="institutionName">
                 <h:outputLabel value="#{cc.attrs.bill.department.printingName}" />
-                <h:outputLabel value="#{cc.attrs.bill.department.address}"/>
             </div>
             <div class="institutionContact" >
                 <div>
@@ -157,56 +156,43 @@
 
 
                 <p:dataTable value="#{cc.attrs.bill.billItems}" var="bip"  style="width: 98%;margin: auto;" rowIndexVar="n" >
-                    <p:column headerText="No"  width="20px;" >
-                        <h:outputLabel value="#{n+1}"   >
-                        </h:outputLabel>
-                    </p:column>
+                  
                     <p:column headerText="Item">
                         <h:outputLabel value="#{bip.itemAmpp.name}"  styleClass="itemsBlock" style="text-transform: capitalize!important;"  >
                         </h:outputLabel>
                     </p:column>
-                    <p:column  headerText="Wholesale"  width="70px;" style="text-align: right;" >
+                    <p:column  headerText="Wholesale"  width="60px;" style="text-align: right;" >
                         <h:outputLabel    value="#{bip.ratePacks}"     >
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
-                    <p:column  headerText="Dis%"  width="70px;"  style="text-align: right;" >
+                    <p:column  headerText="Dis%"  width="60px;"  style="text-align: right;" >
                         <h:outputLabel    value="#{bip.discount}"     >
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
-                    <p:column headerText="Qty"  width="70px;"  style="text-align: right;" >
+                    <p:column headerText="Qty"  width="60px;"  style="text-align: right;" >
                         <h:outputLabel    value="#{bip.qtyPacks}"    styleClass="itemsBlock"   style="text-align: right; padding-right: 30px;" >
                             <f:convertNumber integerOnly="true" />
                         </h:outputLabel>
                     </p:column>
-                    <p:column headerText="Free"  width="70px;"  style="text-align: right;" >
+                    <p:column headerText="Free"  width="60px;"  style="text-align: right;" >
                         <h:outputLabel    value="#{bip.pharmaceuticalBillItem.freeQtyPacks}"    styleClass="itemsBlock"   style="text-align: right; padding-right: 30px;" >
                             <f:convertNumber integerOnly="true" />
                         </h:outputLabel>
                     </p:column>
 
-                    <p:column headerText="Rate"  width="70px;"  style="text-align: right;" >
+                    <p:column headerText="Rate"  width="60px;"  style="text-align: right;" >
                         <h:outputLabel    value="#{bip.netRatePack}"    >
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
 
-                    <p:column headerText="Value"  width="70px;"  style="text-align: right;" >
+                    <p:column headerText="Value"  width="60px;"  style="text-align: right;" >
                         <h:outputLabel    value="#{bip.netValue}"    >
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
-
-                    <p:column  headerText="Retail Rate" width="70px;"  style="text-align: right;" >
-                        <h:outputLabel    value="#{bip.pharmaceuticalBillItem.stock.itemBatch.retailsaleRate}"    >
-                            <f:convertNumber pattern="#,##0.00" />
-                        </h:outputLabel>
-                    </p:column>
-
-
-
-
 
 
                 </p:dataTable>
@@ -252,8 +238,7 @@
 
             <div class="footer">
                 <br/>
-                THANK YOU. PLEASE COME AGAIN<br/>
-                Returns Accepted only within 3 days<br/>
+                THANK YOU.<br/>
                 Software by www.weblk.info - 0715812399<br/>
             </div>
 

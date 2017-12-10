@@ -20,6 +20,7 @@
 
             <div class="institutionName">
                 <h:outputLabel value="#{cc.attrs.bill.department.printingName}" />
+                <h:outputLabel value="#{cc.attrs.bill.department.address}"/>
             </div>
             <div class="institutionContact" >
                 <div>
@@ -164,7 +165,7 @@
                         <h:outputLabel value="#{bip.itemAmpp.name}"  styleClass="itemsBlock" style="text-transform: capitalize!important;"  >
                         </h:outputLabel>
                     </p:column>
-                    <p:column  headerText="Rate"  width="70px;" style="text-align: right;" >
+                    <p:column  headerText="Wholesale"  width="70px;" style="text-align: right;" >
                         <h:outputLabel    value="#{bip.ratePacks}"     >
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
@@ -174,14 +175,25 @@
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
-                    <p:column headerText="Quantity"  width="70px;"  style="text-align: right;" >
+                    <p:column headerText="Qty"  width="70px;"  style="text-align: right;" >
                         <h:outputLabel    value="#{bip.qtyPacks}"    styleClass="itemsBlock"   style="text-align: right; padding-right: 30px;" >
                             <f:convertNumber integerOnly="true" />
                         </h:outputLabel>
                     </p:column>
+                    <p:column headerText="Free"  width="70px;"  style="text-align: right;" >
+                        <h:outputLabel    value="#{bip.pharmaceuticalBillItem.freeQtyPacks}"    styleClass="itemsBlock"   style="text-align: right; padding-right: 30px;" >
+                            <f:convertNumber integerOnly="true" />
+                        </h:outputLabel>
+                    </p:column>
+
+                    <p:column headerText="Rate"  width="70px;"  style="text-align: right;" >
+                        <h:outputLabel    value="#{bip.netRatePack}"    >
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputLabel>
+                    </p:column>
 
                     <p:column headerText="Value"  width="70px;"  style="text-align: right;" >
-                        <h:outputLabel    value="#{bip.ratePacks}"    >
+                        <h:outputLabel    value="#{bip.netValue}"    >
                             <f:convertNumber pattern="#,##0.00" />
                         </h:outputLabel>
                     </p:column>
@@ -200,14 +212,14 @@
                 </p:dataTable>
 
 
-            
+
 
 
             </div>
 
 
             <div class="billline">
-               <hr/>                         
+                <hr/>                         
             </div>
 
 

@@ -57,13 +57,13 @@ public class CustomerDueController implements Serializable {
     double billedAmount;
     double returnedAmount;
     double paidAmount;
-    
+
     double value1;
     double value2;
     double value3;
     double value4;
     double GrandDealorAge;
-    
+
     public void makeNull() {
         fromDate = null;
         toDate = null;
@@ -158,10 +158,18 @@ public class CustomerDueController implements Serializable {
     public String fillSingleDealerTransactions() {
         String jpql;
         Map m;
-        jpql = "Select b from Bill b where b.retired=false and (b.fromInstitution=:ins or b.toInstitution=:ins ) order by b.id";
         m = new HashMap();
-        m.put("ins", institution);
-        bills = getBillFacade().findBySQL(jpql, m);
+        BillType[] bts = {BillType.PharmacyWholeSale};
+        m.put("bts", bts);
+        if (institution == null) {
+            jpql = "Select b from Bill b where b.retired=false and b.billType in :bts order by b.id";
+            bills = getBillFacade().findBySQL(jpql,m);
+        } else {
+            jpql = "Select b from Bill b where b.retired=false  and b.billType in :bts and (b.fromInstitution=:ins or b.toInstitution=:ins ) order by b.id";
+            m.put("ins", institution);
+            bills = getBillFacade().findBySQL(jpql, m);
+        }
+
         calculateFilteredBillTotals(bills);
         return "pharmacy_search_customer";
     }
@@ -206,16 +214,14 @@ public class CustomerDueController implements Serializable {
     public void fillItems() {
         //System.err.println("Fill Items");
 //        Set<Institution> setIns = new HashSet<>();
-        
-        List<Institution>setIns=new ArrayList<>();
+
+        List<Institution> setIns = new ArrayList<>();
 
         List<Institution> list = getCreditBean().getDealorFromBills(getFromDate(), getToDate(), InstitutionType.Dealer);
         list.addAll(getCreditBean().getDealorFromReturnBills(getFromDate(), getToDate(), InstitutionType.Dealer));
 
         setIns.addAll(list);
-        
-       
-        
+
         //System.err.println("size " + setIns.size());
         items = new ArrayList<>();
         billCount = 0.0;
@@ -227,11 +233,11 @@ public class CustomerDueController implements Serializable {
 
             double tmp = 0.0;
             tmp = (double) lst.size();
-        //    //System.out.println("tmp = " + tmp);
-        //    //System.out.println("lst.size() = " + lst.size());
-        //    //System.out.println("billCount = " + billCount);
+            //    //System.out.println("tmp = " + tmp);
+            //    //System.out.println("lst.size() = " + lst.size());
+            //    //System.out.println("billCount = " + billCount);
             billCount += tmp;
-        //    //System.out.println("billCount = " + billCount);
+            //    //System.out.println("billCount = " + billCount);
 
             newIns.setBills(lst);
 
@@ -266,11 +272,11 @@ public class CustomerDueController implements Serializable {
         for (InstitutionBills its : items) {
             billedAmount += its.getTotal();
             returnedAmount += its.getReturned();
-            paidAmount +=its.getPaidTotal();
-            grantTotal +=its.getPaidTotal()+its.getReturned()+its.getTotal();
-            
+            paidAmount += its.getPaidTotal();
+            grantTotal += its.getPaidTotal() + its.getReturned() + its.getTotal();
+
         }
-    //    //System.out.println("grantTotal = " + grantTotal);
+        //    //System.out.println("grantTotal = " + grantTotal);
     }
 
     public void fillItemsStore() {
@@ -356,13 +362,13 @@ public class CustomerDueController implements Serializable {
         value3 = 0.0;
         value4 = 0.0;
         GrandDealorAge = 0.0;
-        
-        for (String1Value5 stv : dealorCreditAge){
+
+        for (String1Value5 stv : dealorCreditAge) {
             value1 += stv.getValue1();
             value2 += stv.getValue2();
             value3 += stv.getValue3();
             value4 += stv.getValue4();
-            
+
         }
     }
 
@@ -588,7 +594,5 @@ public class CustomerDueController implements Serializable {
     public void setGrandDealorAge(double GrandDealorAge) {
         this.GrandDealorAge = GrandDealorAge;
     }
-
-   
 
 }

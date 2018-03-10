@@ -240,6 +240,11 @@ public class CommonFunctions {
         calendar.set(year, month, day, 0, 0, 0);
         return calendar.getTime();
     }
+    
+    
+    public Date getStartOfDay() {
+       return  getStartOfDay(new Date());
+    }
 
     public Date getEndOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -250,6 +255,10 @@ public class CommonFunctions {
         calendar.set(year, month, day, 23, 59, 59);
         calendar.set(Calendar.MILLISECOND, 999);
         return calendar.getTime();
+    }
+    
+    public Date getEndOfDay() {
+        return getEndOfDay(new Date());
     }
 
     public Date getStartOfMonth(Date date) {

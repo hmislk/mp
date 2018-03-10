@@ -59,9 +59,6 @@
                                 <p:menuitem ajax="false" action="/pharmacy_search_return_bill_pre" actionListener="#{searchController.makeListNull}"  value="Search Return Bill (Item)" rendered="#{webUserController.hasPrivilege('PharmacySale')}" ></p:menuitem>
                             </p:submenu>
 
-                            <p:menuitem  ajax="false" action="/pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('PharmacyReports')}" ></p:menuitem>
-                            <p:menuitem  ajax="false" action="/pharmacy_summery_index"  value="Summeries" rendered="#{webUserController.hasPrivilege('PharmacySummery')}" ></p:menuitem>                                    
-                            <p:menuitem  ajax="false" action="/pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                         </p:submenu> 
 
 
@@ -172,6 +169,10 @@
                         </p:submenu>
 
                         <p:submenu label="Reports"  rendered="#{webUserController.hasPrivilege('Reports')}">
+                            
+                            <p:menuitem  ajax="false" action="/pharmacy_reports_index"  value="Reports" rendered="#{webUserController.hasPrivilege('PharmacyReports')}" ></p:menuitem>
+                            <p:menuitem  ajax="false" action="/pharmacy_summery_index"  value="Summeries" rendered="#{webUserController.hasPrivilege('PharmacySummery')}" ></p:menuitem>                                    
+                           
                             <p:menuitem  ajax="false"  action="/reportInstitution/report_own" value="Institution Report" rendered="#{webUserController.hasPrivilege('ReportsSearchCashCardOwn')}" ></p:menuitem>                               
                             <p:menuitem  ajax="false"  action="/reportIncome/report_income" value="Income Report"  ></p:menuitem>
                             <p:menuitem  ajax="false"  action="/credit/report_due_access" value="Dues and Access"  ></p:menuitem>
@@ -187,6 +188,7 @@
                             <p:menuitem  ajax="false"  action="/user_preferances" value="Change Preferances"  ></p:menuitem>
                         </p:submenu>
                         <p:submenu label="Administration"  rendered="#{webUserController.hasPrivilege('Admin')}">
+                             <p:menuitem  ajax="false" action="/pharmacy_admin"  value="Administration" rendered="#{webUserController.hasPrivilege('PharmacyAdministration')}" ></p:menuitem>
                             <p:menuitem  ajax="false"  action="/pharmacy_reports_index_administrator" value="Administrator Reports" rendered="#{webUserController.hasPrivilege('AdminPrices')}" ></p:menuitem>
                             <p:menuitem  ajax="false"  action="/admin_manage_users" value="Manage Users" rendered="#{webUserController.hasPrivilege('AdminManagingUsers')}" ></p:menuitem>
                             <p:menuitem  ajax="false"  action="/admin_mange_institutions_index" value="Manage Institutions" rendered="#{webUserController.hasPrivilege('AdminInstitutions')}" ></p:menuitem>

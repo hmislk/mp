@@ -13,4 +13,5 @@ public enum MessageType {
     PharmacyTransferRequest,
     PharmacyTransferIssue,
     PharmacyApproval,
+    ImageReadeRequest,
 }

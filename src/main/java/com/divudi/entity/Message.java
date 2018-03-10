@@ -8,7 +8,10 @@ package com.divudi.entity;
 import com.divudi.data.MessageType;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,6 +63,18 @@ public class Message implements Serializable {
     WebUser invalidator;
     @ManyToOne
     Bill invalidateBill;
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] baImage;
+    private String fileName;
+    private String fileType;
+    @ManyToOne
+    private Resource parent;
+    @ManyToOne
+    private Institution institution;
+    @ManyToOne
+    private Department department;
 
     public Long getId() {
         return id;
@@ -68,6 +83,8 @@ public class Message implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    
 
     public MessageType getType() {
         return type;
@@ -204,8 +221,6 @@ public class Message implements Serializable {
     public void setInvalidateBill(Bill invalidateBill) {
         this.invalidateBill = invalidateBill;
     }
-    
-    
 
     @Override
     public int hashCode() {
@@ -230,6 +245,54 @@ public class Message implements Serializable {
     @Override
     public String toString() {
         return "com.divudi.entity.Message[ id=" + id + " ]";
+    }
+
+    public byte[] getBaImage() {
+        return baImage;
+    }
+
+    public void setBaImage(byte[] baImage) {
+        this.baImage = baImage;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public Resource getParent() {
+        return parent;
+    }
+
+    public void setParent(Resource parent) {
+        this.parent = parent;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
 }

@@ -168,16 +168,18 @@
                                 </p:submenu>                                    
                             </p:submenu>
                         </p:submenu>
-                        
-                        
+
+
                         <p:submenu label="Images" >
                             <p:menuitem value="Upload" ajax="false" action="/image/upload_image" ></p:menuitem>
+                            <p:menuitem value="Capture" ajax="false" action="/image/capture_image" ></p:menuitem>
+
                             <p:menuitem value="View" ajax="false" action="/image/view_images" ></p:menuitem>
-                        
+
                         </p:submenu>
-                        
-                        
-                        
+
+
+
 
                         <p:submenu label="Reports"  rendered="#{webUserController.hasPrivilege('Reports')}">
 

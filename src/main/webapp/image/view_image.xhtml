@@ -11,23 +11,48 @@
         <ui:composition template="./../resources/template/template.xhtml">
 
             <ui:define name="content">
-               
+
                 <p:panel header="View Images" >
                     <h:panelGrid columns="2" >
 
-                      
+
 
                         <h:form >
+                            <p:panelGrid >
+                                <p:row >
+                                    <p:column  >
+                                        <p:outputLabel value="Comments" ></p:outputLabel>
+                                    </p:column>
+                                    <p:column >
+                                        <p:inputTextarea value="#{messageController.selected.comments}" ></p:inputTextarea>
+                                    </p:column>
+                                </p:row>
+                                <p:row >
+                                    <p:column colspan="2">
+                                        <p:commandButton ajax="false" action="#{messageController.saveSelected}" value="Save" >
+                                        </p:commandButton>
+                                   
+                                        <p:commandButton ajax="false" 
+                                                         action="#{messageController.deleteSelected()}"
+                                                         value="Delete" >
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                                <p:row >
+                                    <p:column colspan="2" >
+                                        <p:graphicImage   
+                                            id="photos" cache="false" styleClass="sideImageResponsive"
+                                            rendered="#{imageController.image ne null}"    
+                                            value="#{imageController.image}"  >
+
+                                        </p:graphicImage>
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>
 
 
-                            <p:graphicImage   
-                                id="photos" cache="false" styleClass="sideImageResponsive"
-                                rendered="#{imageController.image ne null}"    
-                                value="#{imageController.image}"  >
 
-                            </p:graphicImage>
-                            
-                            <p:outputLabel value="#{imageController.image}" ></p:outputLabel>
 
                         </h:form>
 

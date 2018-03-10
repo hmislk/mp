@@ -249,11 +249,8 @@ public class CommonFunctions {
     public Date getEndOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DATE);
-        calendar.set(year, month, day, 23, 59, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
+        calendar.add(Calendar.DATE, 1);
+        calendar.add(Calendar.MILLISECOND, -1);
         return calendar.getTime();
     }
     

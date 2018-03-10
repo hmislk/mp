@@ -26,7 +26,9 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
 import org.apache.poi.util.IOUtils;
+import org.primefaces.event.CaptureEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -66,6 +68,7 @@ public class MessageController {
     Department department;
     List<Message> messages;
     String comments;
+
     /**
      * Creates a new instance of MessageController
      */
@@ -74,19 +77,45 @@ public class MessageController {
 
     /**
      * Methods
-     * @return 
+     *
+     * @return
      */
-    public String viewSelectedImage(){
-        if(selected==null){
+    public String viewSelectedImage() {
+        if (selected == null) {
             UtilityController.addErrorMessage("Noting Selected");
             return "";
         }
         System.out.println("selected.getComments() = " + selected.getComments());
         return "/image/view_image";
     }
-    
-    
-    
+
+    public String saveSelected() {
+        if (selected == null) {
+            UtilityController.addErrorMessage("Noting Selected");
+            return "";
+        }
+        if (selected.getId() == null) {
+            getMessageFacade().create(selected);
+            UtilityController.addErrorMessage("Saved");
+        } else {
+            getMessageFacade().edit(selected);
+            UtilityController.addErrorMessage("Updated");
+        }
+        System.out.println("selected.getComments() = " + selected.getComments());
+        return "";
+    }
+
+    public String deleteSelected() {
+        if (selected == null) {
+            UtilityController.addErrorMessage("Noting Selected");
+            return "";
+        }
+        messages = new ArrayList<>();
+        getMessageFacade().remove(selected);
+        UtilityController.addSuccessMessage("Deleted");
+        return "/image/view_images";
+    }
+
     public void listImages() {
         String j;
         Map m = new HashMap();
@@ -98,15 +127,38 @@ public class MessageController {
         m.put("fd", fromDate);
         m.put("td", toDate);
         m.put("t", MessageType.ImageReadeRequest);
-        if(department!=null){
-            j+= " and m.department=:d ";
+        if (department != null) {
+            j += " and m.department=:d ";
             m.put("d", department);
-        }else if(institution!=null){
-            j+= " and m.institution=:i ";
+        } else if (institution != null) {
+            j += " and m.institution=:i ";
             m.put("i", institution);
         }
-        
-        messages = getMessageFacade().findBySQL(j, m);
+
+        messages = getMessageFacade().findBySQL(j, m, TemporalType.DATE);
+    }
+
+    public void oncapture(CaptureEvent captureEvent) {
+
+        try {
+            Message ei = new Message();
+            ei.setFileName("tem.jpeg");
+            ei.setFileType("image/jpeg");
+            ei.setBaImage(captureEvent.getData());
+            ei.setDepartment(sessionController.getDepartment());
+            ei.setInstitution(sessionController.getInstitution());
+            ei.setType(MessageType.ImageReadeRequest);
+            ei.setCreatedAt(new Date());
+            ei.setCreater(getSessionController().getLoggedUser());
+            ei.setComments(comments);
+            messageFacade.create(ei);
+            ei.setFileName(ei.getId() + ".jpeg");
+            UtilityController.addSuccessMessage("Image Captured");
+            comments = "";
+        } catch (Exception e) {
+            System.out.println("Error " + e.getMessage());
+        }
+
     }
 
     public void uploadImage() {
@@ -119,7 +171,6 @@ public class MessageController {
             UtilityController.addErrorMessage("Please select an image");
             return;
         }
-        
 
         try {
             in = getFile().getInputstream();
@@ -416,7 +467,5 @@ public class MessageController {
     public void setComments(String comments) {
         this.comments = comments;
     }
-    
-    
-    
+
 }

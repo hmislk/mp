@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
@@ -16,11 +17,14 @@
                     <h:form enctype="multipart/form-data">
                         <p:growl id="messages" showDetail="true" autoUpdate="true" />
                         <p:panelGrid columns="2" >
-                            <p:fileUpload value="#{messageController.file}" mode="simple"/>
-                            <p:spacer ></p:spacer>
+                            <p:photoCam widgetVar="pc" listener="#{messageController.oncapture}" update="@all" />
+                            <p:commandButton type="button" value="Capture" onclick="PF('pc').capture()"/>
+
 
                             <p:outputLabel value="Comments" ></p:outputLabel>
-                            <p:inputTextarea value="#{messageController.comments}" ></p:inputTextarea>
+                            <p:inputTextarea id="comments" value="#{messageController.comments}" >
+                                <f:ajax event="blur" execute="@this" ></f:ajax>
+                            </p:inputTextarea>
 
                             <p:spacer ></p:spacer>
 

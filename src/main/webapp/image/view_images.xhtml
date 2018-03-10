@@ -11,7 +11,7 @@
         <ui:composition template="./../resources/template/template.xhtml">
 
             <ui:define name="content">
-               
+
                 <p:panel header="View Images" >
                     <h:panelGrid columns="2" >
 
@@ -19,9 +19,9 @@
                             <p:panel header="Images" >
                                 <h:panelGrid columns="2" >
                                     <p:outputLabel value="From" ></p:outputLabel>
-                                    <p:calendar value="#{messageController.fromDate}" pattern="dd MMMM yyyy" ></p:calendar>
+                                    <p:calendar  timeZone="Asia/Colombo"  value="#{messageController.fromDate}" pattern="dd MMMM yyyy hh:mm a" ></p:calendar>
                                     <p:outputLabel value="To" ></p:outputLabel>
-                                    <p:calendar value="#{messageController.toDate}" pattern="dd MMMM yyyy" ></p:calendar>
+                                    <p:calendar timeZone="Asia/Colombo" value="#{messageController.toDate}" pattern="dd MMMM yyyy hh:mm a" ></p:calendar>
                                     <p:outputLabel value="Institution" ></p:outputLabel>
                                     <p:autoComplete id="ins" completeMethod="#{institutionController.completeCompany}"
                                                     value="#{messageController.institution}" var="i"
@@ -46,7 +46,7 @@
                                     </p:column>
                                     <p:column headerText="Date/Time" >
                                         <p:outputLabel value="#{m.createdAt}" >
-                                            <f:convertDateTime pattern="dd MMMM yyyy hh:mm a"></f:convertDateTime>
+                                            <f:convertDateTime  timeZone="Asia/Colombo"  pattern="dd MMMM yyyy hh:mm a"></f:convertDateTime>
                                         </p:outputLabel>
                                     </p:column>
                                     <p:column headerText="Comments" >
@@ -54,7 +54,12 @@
                                         </p:outputLabel>
                                     </p:column>
                                     <p:column headerText="Actions" >
-                                        <p:commandButton ajax="false" value="View Image" action="#{messageController.viewSelectedImage()}" >
+                                        <p:commandButton ajax="false" value="View" action="#{messageController.viewSelectedImage()}" >
+                                            <f:setPropertyActionListener target="#{messageController.selected}"
+                                                                         value="#{m}" >
+                                            </f:setPropertyActionListener>
+                                        </p:commandButton>
+                                        <p:commandButton ajax="false" value="Delete" action="#{messageController.deleteSelected()}" >
                                             <f:setPropertyActionListener target="#{messageController.selected}"
                                                                          value="#{m}" >
                                             </f:setPropertyActionListener>
@@ -64,7 +69,7 @@
                             </p:panel>
                         </h:form>
 
-                        
+
 
                     </h:panelGrid>
 

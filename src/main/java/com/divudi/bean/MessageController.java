@@ -7,14 +7,16 @@ package com.divudi.bean;
 
 import com.divudi.data.MessageType;
 import com.divudi.data.Privileges;
+import com.divudi.ejb.CommonFunctions;
 import com.divudi.entity.Bill;
 import com.divudi.entity.Department;
+import com.divudi.entity.Institution;
 import com.divudi.entity.Message;
 import com.divudi.entity.WebUser;
-import com.divudi.entity.WebUserDepartment;
-import com.divudi.entity.WebUserPrivilege;
 import com.divudi.facade.MessageFacade;
 import com.divudi.facade.WebUserFacade;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +26,10 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
+import org.apache.poi.util.IOUtils;
+import org.primefaces.event.CaptureEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -33,6 +39,7 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class MessageController {
 
+    private UploadedFile file;
     /**
      * EJBs
      */
@@ -40,21 +47,150 @@ public class MessageController {
     WebUserFacade webUserFacade;
     @EJB
     MessageFacade messageFacade;
-    @Inject
-    SessionController sessionController;
+    @EJB
+    CommonFunctions commonFunctions;
     /**
      * Controllers
      */
     @Inject
     WebUserController webUserController;
-
+    @Inject
+    SessionController sessionController;
+    @Inject
+    DepartmentController departmentController;
     /**
-     * Properties
+     * Class Variables
      */
+    Message selected;
+    Date fromDate;
+    Date toDate;
+    Institution institution;
+    Department department;
+    List<Message> messages;
+    String comments;
+
     /**
      * Creates a new instance of MessageController
      */
     public MessageController() {
+    }
+
+    /**
+     * Methods
+     *
+     * @return
+     */
+    public String viewSelectedImage() {
+        if (selected == null) {
+            UtilityController.addErrorMessage("Noting Selected");
+            return "";
+        }
+        System.out.println("selected.getComments() = " + selected.getComments());
+        return "/image/view_image";
+    }
+
+    public String saveSelected() {
+        if (selected == null) {
+            UtilityController.addErrorMessage("Noting Selected");
+            return "";
+        }
+        if (selected.getId() == null) {
+            getMessageFacade().create(selected);
+            UtilityController.addErrorMessage("Saved");
+        } else {
+            getMessageFacade().edit(selected);
+            UtilityController.addErrorMessage("Updated");
+        }
+        System.out.println("selected.getComments() = " + selected.getComments());
+        return "";
+    }
+
+    public String deleteSelected() {
+        if (selected == null) {
+            UtilityController.addErrorMessage("Noting Selected");
+            return "";
+        }
+        messages = new ArrayList<>();
+        getMessageFacade().remove(selected);
+        UtilityController.addSuccessMessage("Deleted");
+        return "/image/view_images";
+    }
+
+    public void listImages() {
+        String j;
+        Map m = new HashMap();
+
+        j = "Select m "
+                + " from Message m "
+                + " where m.createdAt between :fd and :td "
+                + " and m.type=:t ";
+        m.put("fd", fromDate);
+        m.put("td", toDate);
+        m.put("t", MessageType.ImageReadeRequest);
+        if (department != null) {
+            j += " and m.department=:d ";
+            m.put("d", department);
+        } else if (institution != null) {
+            j += " and m.institution=:i ";
+            m.put("i", institution);
+        }
+
+        messages = getMessageFacade().findBySQL(j, m, TemporalType.DATE);
+    }
+
+    public void oncapture(CaptureEvent captureEvent) {
+
+        try {
+            Message ei = new Message();
+            ei.setFileName("tem.jpeg");
+            ei.setFileType("image/jpeg");
+            ei.setBaImage(captureEvent.getData());
+            ei.setDepartment(sessionController.getDepartment());
+            ei.setInstitution(sessionController.getInstitution());
+            ei.setType(MessageType.ImageReadeRequest);
+            ei.setCreatedAt(new Date());
+            ei.setCreater(getSessionController().getLoggedUser());
+            ei.setComments(comments);
+            messageFacade.create(ei);
+            ei.setFileName(ei.getId() + ".jpeg");
+            UtilityController.addSuccessMessage("Image Captured");
+            comments = "";
+        } catch (Exception e) {
+            System.out.println("Error " + e.getMessage());
+        }
+
+    }
+
+    public void uploadImage() {
+        InputStream in;
+        if (file == null || "".equals(file.getFileName())) {
+            UtilityController.addErrorMessage("Please select an image");
+            return;
+        }
+        if (file == null) {
+            UtilityController.addErrorMessage("Please select an image");
+            return;
+        }
+
+        try {
+            in = getFile().getInputstream();
+            Message ei = new Message();
+            ei.setFileName(file.getFileName());
+            ei.setFileType(file.getContentType());
+            ei.setBaImage(IOUtils.toByteArray(in));
+            ei.setDepartment(sessionController.getDepartment());
+            ei.setInstitution(sessionController.getInstitution());
+            ei.setType(MessageType.ImageReadeRequest);
+            ei.setCreatedAt(new Date());
+            ei.setCreater(getSessionController().getLoggedUser());
+            ei.setComments(comments);
+            messageFacade.create(ei);
+            UtilityController.addSuccessMessage("Image Added");
+            comments = "";
+        } catch (IOException e) {
+            System.out.println("Error " + e.getMessage());
+        }
+
     }
 
     public List<Message> userMessages(WebUser u) {
@@ -94,8 +230,6 @@ public class MessageController {
 //            return false;
 //        }
 //    }
-
-    
     public boolean getHasUserMessages() {
         WebUser u = sessionController.getLoggedUser();
         if (u == null) {
@@ -120,7 +254,7 @@ public class MessageController {
             return false;
         }
     }
-    
+
     public void invalidateMessages(Bill originatingbill, Bill invalidatingBill) {
         System.out.println("invalidateMessages");
         if (originatingbill == null) {
@@ -189,6 +323,26 @@ public class MessageController {
         }
     }
 
+    public WebUserFacade getWebUserFacade() {
+        return webUserFacade;
+    }
+
+    public MessageFacade getMessageFacade() {
+        return messageFacade;
+    }
+
+    public SessionController getSessionController() {
+        return sessionController;
+    }
+
+    public CommonFunctions getCommonFunctions() {
+        return commonFunctions;
+    }
+
+    public WebUserController getWebUserController() {
+        return webUserController;
+    }
+
     private List<WebUser> getEligibleWebUsers(Bill bill) {
         System.out.println("getEligibleWebUsers");
         System.out.println("bill = " + bill);
@@ -229,4 +383,89 @@ public class MessageController {
 
         return lst;
     }
+
+    /**
+     * Getters & Setters
+     */
+    public DepartmentController getDepartmentController() {
+        return departmentController;
+    }
+
+    public Date getFromDate() {
+        if (fromDate == null) {
+            fromDate = getCommonFunctions().getStartOfDay();
+        }
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        if (toDate == null) {
+            toDate = getCommonFunctions().getEndOfDay();
+        }
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Institution getInstitution() {
+        if (institution == null) {
+            institution = getSessionController().getInstitution();
+        }
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public List<Department> getDepartments() {
+        return departmentController.getInstitutionDepatrments(institution);
+    }
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
+
+    public Message getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Message selected) {
+        this.selected = selected;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
 }

@@ -35,7 +35,7 @@
                             <p:commandButton ajax="false" value="Average By Date"
                                              actionListener="#{pharmacyController.averageByDate()}" ></p:commandButton>
                             <p:commandButton ajax="false" value="Average By Month"
-                                             actionListener="#{pharmacyController.averageByMonth()}" ></p:commandButton>
+                                             actionListener="#{pharmacyController.averageByMonthDept()}" ></p:commandButton>
                         </h:panelGrid>
 
                         <p:dataTable value="#{pharmacyController.stockAverages}" var="sA" paginator="true" paginatorAlwaysVisible="true"

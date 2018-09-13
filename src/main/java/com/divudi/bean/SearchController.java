@@ -2463,7 +2463,6 @@ public class SearchController implements Serializable {
     }
 
     public void createTableCashInOutNew() {
-
         if (department == null) {
             UtilityController.addErrorMessage("Select a Department");
             return;
@@ -2478,22 +2477,6 @@ public class SearchController implements Serializable {
                 + " and b.retired=false"
                 + " and b.creater=:w "
                 + " and b.department=:dep ";
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.insId) like :billNo )";
-            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
-            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
-            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :total )";
-            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
         sql += " order by b.createdAt ";
 //    
         temMap.put("billType1", BillType.CashIn);
@@ -2552,22 +2535,6 @@ public class SearchController implements Serializable {
                 + " and b.createdAt between :fromDate and :toDate "
                 + " and b.retired=false "
                 + " and b.department=:dep ";
-
-        if (getSearchKeyword().getBillNo() != null && !getSearchKeyword().getBillNo().trim().equals("")) {
-            sql += " and  (upper(b.insId) like :billNo )";
-            temMap.put("billNo", "%" + getSearchKeyword().getBillNo().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getPersonName() != null && !getSearchKeyword().getPersonName().trim().equals("")) {
-            sql += " and  (upper(b.fromWebUser.webUserPerson.name) like :patientName )";
-            temMap.put("patientName", "%" + getSearchKeyword().getPersonName().trim().toUpperCase() + "%");
-        }
-
-        if (getSearchKeyword().getNetTotal() != null && !getSearchKeyword().getNetTotal().trim().equals("")) {
-            sql += " and  (upper(b.netTotal) like :total )";
-            temMap.put("total", "%" + getSearchKeyword().getNetTotal().trim().toUpperCase() + "%");
-        }
-
         sql += " order by b.createdAt ";
 //    
         temMap.put("billType1", BillType.CashIn);

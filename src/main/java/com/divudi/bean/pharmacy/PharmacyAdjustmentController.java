@@ -5,6 +5,7 @@
  */
 package com.divudi.bean.pharmacy;
 
+import com.divudi.bean.ApplicationController;
 import com.divudi.bean.SessionController;
 import com.divudi.data.BillNumberSuffix;
 import com.divudi.data.BillType;
@@ -56,6 +57,8 @@ public class PharmacyAdjustmentController implements Serializable {
 
     @Inject
     SessionController sessionController;
+    @Inject
+    ApplicationController applicationController;
 ////////////////////////
     @EJB
     private BillFacade billFacade;
@@ -274,8 +277,8 @@ public class PharmacyAdjustmentController implements Serializable {
         b.setBillTime(Calendar.getInstance().getTime());
         b.setCreatedAt(Calendar.getInstance().getTime());
         b.setCreater(getSessionController().getLoggedUser());
-        b.setDeptId(getBillNumberBean().institutionBillNumberGenerator(department, b, BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
-        b.setInsId(getBillNumberBean().institutionBillNumberGenerator(department.getInstitution(), b, BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
+        b.setDeptId(getApplicationController().institutionBillNumberGenerator(department, b, BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
+        b.setInsId(getApplicationController().institutionBillNumberGenerator(department.getInstitution(), b, BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
         b.setBillType(BillType.PharmacyAdjustment);
         b.setDepartment(department);
         b.setInstitution(department.getInstitution());
@@ -349,8 +352,8 @@ public class PharmacyAdjustmentController implements Serializable {
         getDeptAdjustmentPreBill().setBillTime(Calendar.getInstance().getTime());
         getDeptAdjustmentPreBill().setCreatedAt(Calendar.getInstance().getTime());
         getDeptAdjustmentPreBill().setCreater(getSessionController().getLoggedUser());
-        getDeptAdjustmentPreBill().setDeptId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getDepartment(), getDeptAdjustmentPreBill(), BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
-        getDeptAdjustmentPreBill().setInsId(getBillNumberBean().institutionBillNumberGenerator(getSessionController().getInstitution(), getDeptAdjustmentPreBill(), BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
+        getDeptAdjustmentPreBill().setDeptId(getApplicationController().institutionBillNumberGenerator(getSessionController().getDepartment(), getDeptAdjustmentPreBill(), BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
+        getDeptAdjustmentPreBill().setInsId(getApplicationController().institutionBillNumberGenerator(getSessionController().getInstitution(), getDeptAdjustmentPreBill(), BillType.PharmacyAdjustment, BillNumberSuffix.NONE));
         getDeptAdjustmentPreBill().setBillType(BillType.PharmacyAdjustment);
         getDeptAdjustmentPreBill().setDepartment(getSessionController().getLoggedUser().getDepartment());
         getDeptAdjustmentPreBill().setInstitution(getSessionController().getLoggedUser().getDepartment().getInstitution());
@@ -803,6 +806,14 @@ public class PharmacyAdjustmentController implements Serializable {
 
     public void setWsfq(Double wsfq) {
         this.wsfq = wsfq;
+    }
+
+    public ApplicationController getApplicationController() {
+        return applicationController;
+    }
+
+    public void setApplicationController(ApplicationController applicationController) {
+        this.applicationController = applicationController;
     }
 
 

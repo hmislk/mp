@@ -7,18 +7,27 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
 
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"></link>
+    </head>
     <body>
 
         <ui:composition template="./resources/template/template.xhtml">
 
+
+
+
             <ui:define name="content">
 
-                <h:form>
+                <div class="w3-row" style="color: red;" >
+                    <h:form>
 
-                    <h:panelGrid columns="2" styleClass="alignTop">
+
 
                         <p:panel header="Department Stock Adjustment : Quantity" rendered="#{!pharmacyAdjustmentController.printPreview}" >
-                            <h:panelGrid columns="3" >
+                            <h:panelGrid columns="1" >
                                 <h:outputLabel value="Item" ></h:outputLabel>
                                 <p:autoComplete   forceSelection="true"  id="acStock" value="#{pharmacyAdjustmentController.item}" 
                                                   completeMethod="#{ampController.completeAmp}" var="i" itemLabel="#{i.name}" itemValue="#{i}" >
@@ -63,27 +72,33 @@
                             </p:dataTable>
 
 
+                            <p:panel header="Adjust">
+                                <h:panelGrid columns="2" rendered="#{pharmacyAdjustmentController.stock ne null}" >
+                                    <h:panelGrid columns="2">
+                                        <h:outputLabel value="Current Quentity" ></h:outputLabel>
+                                        <h:outputLabel value="#{pharmacyAdjustmentController.stock.stock}" ></h:outputLabel>
+                                        <h:outputLabel value="New Quentity" ></h:outputLabel>
+                                        <p:inputText value="#{pharmacyAdjustmentController.qty}" autocomplete="off" ></p:inputText>
+                                        <h:outputLabel value="Comment" ></h:outputLabel>
+                                        <p:inputTextarea value="#{pharmacyAdjustmentController.comment}" ></p:inputTextarea>
+                                        <h:outputLabel value="" ></h:outputLabel>
+                                        <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" 
+                                                         action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
+                                        <p:defaultCommand target="btnAdjust"/>
+                                    </h:panelGrid>
+
+                                </h:panelGrid>
+                            </p:panel>
 
                         </p:panel>
 
-                        <h:panelGrid columns="2" rendered="#{pharmacyAdjustmentController.stock ne null}" >
-                            <h:panelGrid columns="2">
-                                <h:outputLabel value="Current Quentity" ></h:outputLabel>
-                                <h:outputLabel value="#{pharmacyAdjustmentController.stock.stock}" ></h:outputLabel>
-                                <h:outputLabel value="New Quentity" ></h:outputLabel>
-                                <p:inputText value="#{pharmacyAdjustmentController.qty}" autocomplete="off" ></p:inputText>
-                                <h:outputLabel value="Comment" ></h:outputLabel>
-                                <p:inputTextarea value="#{pharmacyAdjustmentController.comment}" ></p:inputTextarea>
-                                <h:outputLabel value="" ></h:outputLabel>
-                                <p:commandButton id="btnAdjust" value="Make Adjustment" ajax="false" 
-                                                 action="#{pharmacyAdjustmentController.adjustDepartmentStock()}" ></p:commandButton>
-                                <p:defaultCommand target="btnAdjust"/>
-                            </h:panelGrid>
 
-                        </h:panelGrid>
 
-                    </h:panelGrid>
-                </h:form>
+
+                    </h:form>
+                </div>
+
+
 
             </ui:define>
 

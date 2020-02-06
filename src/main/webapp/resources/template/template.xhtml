@@ -28,15 +28,15 @@
 
                 <ez:menu/>
 
-                <h:panelGroup id="paymentLogin" rendered="false" >
+                <h:panelGroup id="paymentLogin" rendered="true" >
                     <ez:Login/>
                 </h:panelGroup>
 
-                <h:panelGroup  rendered="#{!sessionController.logged}" >
+                <h:panelGroup  rendered="false" >
                     <ez:PaymentNotice/>
                 </h:panelGroup>
 
-                <h:panelGroup id="paymentContents" rendered="false" >
+                <h:panelGroup id="paymentContents" rendered="true" >
                     <h:panelGroup rendered="#{sessionController.logged}">
                         <ui:insert name="content"  >
                         </ui:insert>
@@ -44,7 +44,7 @@
 
                 </h:panelGroup>
 
-                <h:panelGroup  rendered="true" >
+                <h:panelGroup  rendered="false" >
                     <ez:PaymentNotice/>
                 </h:panelGroup>
 

@@ -13,6 +13,12 @@
             <ui:define name="content">
                 <h:form>
 
+                    <p:poll interval="100" update="nowTime" ></p:poll>
+                    <p:panel id="nowTime">
+                        <p:clock  pattern="HH:mm:ss dd MMM yyyy" mode="client" syncInterval="0" />
+                    </p:panel>
+                    
+                    
                     <p:panel header="Auto ordering by Distributor" >
 
                         <h:panelGrid columns="1" class="alignTop" >

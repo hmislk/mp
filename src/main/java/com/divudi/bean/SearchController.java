@@ -87,6 +87,8 @@ public class SearchController implements Serializable {
 
     boolean withoutCancell = false;
     boolean onlyRealized = false;
+    private boolean showRealized = true;
+    private boolean showYetToRealized = false;
 
     public void realizeBill() {
         if (realizingBill == null) {
@@ -1688,8 +1690,17 @@ public class SearchController implements Serializable {
                 + " and b.createdAt between :fromDate and :toDate"
                 + " and b.retired=false ";
 
-        if (onlyRealized) {
+        if (showRealized && showYetToRealized) {
+
+        } else if (showRealized) {
             sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+
+            List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
+
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        } else if (showYetToRealized) {
+            sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=false)) ";
 
             List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
 
@@ -1774,8 +1785,17 @@ public class SearchController implements Serializable {
                 + " and b.chequeDate between :fromDate and :toDate"
                 + " and b.retired=false ";
 
-        if (onlyRealized) {
+        if (showRealized && showYetToRealized) {
+
+        } else if (showRealized) {
             sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+
+            List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
+
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        } else if (showYetToRealized) {
+            sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=false)) ";
 
             List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
 
@@ -1969,8 +1989,17 @@ public class SearchController implements Serializable {
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.retired=false ";
 
-        if (onlyRealized) {
+        if (showRealized && showYetToRealized) {
+
+        } else if (showRealized) {
             sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+
+            List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
+
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        } else if (showYetToRealized) {
+            sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=false)) ";
 
             List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
 
@@ -2044,8 +2073,17 @@ public class SearchController implements Serializable {
                 + " and b.toInstitution.institutionType=:insTp "
                 + " and b.retired=false ";
 
-        if (onlyRealized) {
+        if (showRealized && showYetToRealized) {
+
+        } else if (showRealized) {
             sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=true)) ";
+
+            List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
+
+            temMap.put("pms", pms);
+            temMap.put("pm", PaymentMethod.Cheque);
+        } else if (showYetToRealized) {
+            sql += " and (b.paymentMethod in :pms or (b.paymentMethod=:pm and b.reactivated=false)) ";
 
             List<PaymentMethod> pms = Arrays.asList(PaymentMethod.Cash, PaymentMethod.Slip, PaymentMethod.Agent, PaymentMethod.Card, PaymentMethod.Credit);
 
@@ -3619,6 +3657,22 @@ public class SearchController implements Serializable {
 
     public void setOnlyRealized(boolean onlyRealized) {
         this.onlyRealized = onlyRealized;
+    }
+
+    public boolean isShowRealized() {
+        return showRealized;
+    }
+
+    public void setShowRealized(boolean showRealized) {
+        this.showRealized = showRealized;
+    }
+
+    public boolean isShowYetToRealized() {
+        return showYetToRealized;
+    }
+
+    public void setShowYetToRealized(boolean showYetToRealized) {
+        this.showYetToRealized = showYetToRealized;
     }
 
 }

@@ -10,46 +10,62 @@
         <ui:composition template="./resources/template/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:panel >
-
+                    <p:panelGrid columns="1" style="text-align: left;"  styleClass="alignTop" >
                         <f:facet name="header" >
                             <h:outputLabel value="GRN DEALOR PAYMENT BILL SEARCH "/>                                                      
-                            <h:panelGrid columns="2" >
-                                <h:outputLabel value="From Date"/>
+                        </f:facet>      
+                        <p:panelGrid columns="3" styleClass="alignTop" >
+                            <p:panelGrid columns="2" >
+                                <h:outputLabel value="From"/>
                                 <p:calendar styleClass="dateTimePicker" id="fromDate" value="#{searchController.fromDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >      
                                 </p:calendar>
-                                <h:outputLabel value="To Date"/>
+                                <h:outputLabel value="To"/>
                                 <p:calendar id="toDate" value="#{searchController.toDate}" navigator="false" pattern="dd MMMM yyyy hh mm a" >                                                                              
                                 </p:calendar>
-                                <h:outputLabel value="Show Cancel "/>
-                                <p:selectBooleanCheckbox value="#{searchController.withoutCancell}" />
-                                <h:outputLabel value="Show Realized Only "/>
-                                <p:selectBooleanCheckbox value="#{searchController.onlyRealized}" />
+                                <h:outputLabel value="Cancel Bills"/>
+                                <p:selectBooleanButton offLabel="Do not show" onLabel="Show" value="#{searchController.withoutCancell}" />
+                                <h:outputLabel value="Realized Bills"/>
+                                <p:selectBooleanButton  offLabel="Do not show" onLabel="Show" value="#{searchController.showRealized}" />
+                                <h:outputLabel value="Yet to Realize Bills"/>
+                                <p:selectBooleanButton  offLabel="Do not show" onLabel="Show" value="#{searchController.showYetToRealized}" />
+
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="2" >
+                                <h:outputLabel value="Bill No"/>
+                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
+
+                                <h:outputLabel value="Distributor Name"/>    
+                                <p:autoComplete completeMethod="#{institutionController.completeSupplier}" var="ins" itemLabel="#{ins.name}" 
+                                                itemValue="#{ins}" forceSelection="true" value="#{searchController.institution}" converter="institutionConverter" >
+                                </p:autoComplete>  
+
+                                <h:outputLabel value="Net Total"/>
+                                <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
+
+                                <h:outputLabel value="Bank"/>
+
+
+                                <p:autoComplete completeMethod="#{institutionController.completeBanks}" var="ins" itemLabel="#{ins.name}" 
+                                                itemValue="#{ins}" forceSelection="true" value="#{searchController.bank}" converter="institutionConverter">
+                                </p:autoComplete>              
+
+                                <h:outputLabel value="Check No"/>
+                                <p:inputText value="#{searchController.searchKeyword.number}"/>
+
+
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="1" >
+
                                 <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createGrnPaymentTable()}"/>
                                 <p:commandButton id="btnSearch2" ajax="false" value="Search All" action="#{searchController.createGrnPaymentTableAll()}"/>
                                 <p:commandButton id="btnSearch3" ajax="false" value="Search (Cheque Date)" action="#{searchController.createGrnPaymentTableChequeDate()}"/>
                                 <p:commandButton id="btnSearch4" ajax="false" value="Search All (Cheque Date)" action="#{searchController.createGrnPaymentTableAllChequeDate()}"/>
-                            </h:panelGrid>
-                            <p:spacer height="30"/><h:outputLabel/><h:outputLabel/><h:outputLabel/><h:outputLabel/>
 
-                            <h:panelGrid columns="5" >
-                                <h:outputLabel value="Bill No"/>
-                                <h:outputLabel value="Distributor Name"/>                               
-                                <h:outputLabel value="Net Total"/>
-                                <h:outputLabel value="Bank"/>
-                                <h:outputLabel value="Check No"/>
-                                <p:inputText  value="#{searchController.searchKeyword.billNo}" />
-                                <p:autoComplete completeMethod="#{institutionController.completeSupplier}" var="ins" itemLabel="#{ins.name}" 
-                                                itemValue="#{ins}" forceSelection="true" value="#{searchController.institution}" converter="institutionConverter" >
-                                </p:autoComplete>                               
-                                <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
-                                <p:autoComplete completeMethod="#{institutionController.completeBanks}" var="ins" itemLabel="#{ins.name}" 
-                                                itemValue="#{ins}" forceSelection="true" value="#{searchController.bank}" converter="institutionConverter">
-                                </p:autoComplete>
-                                <p:inputText value="#{searchController.searchKeyword.number}"/>
-                            </h:panelGrid>
+                            </p:panelGrid>
+                        </p:panelGrid>
 
-                        </f:facet>                               
 
 
 
@@ -183,7 +199,7 @@
                         </p:dataTable>
 
 
-                    </p:panel>
+                    </p:panelGrid>
 
                 </h:form>
             </ui:define>

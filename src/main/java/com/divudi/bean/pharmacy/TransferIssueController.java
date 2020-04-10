@@ -148,17 +148,28 @@ public class TransferIssueController implements Serializable {
 
     public void generateBillComponent() {
 
+        System.out.println("generateBillComponent");
+        
         for (PharmaceuticalBillItem i : getPharmaceuticalBillItemFacade().getPharmaceuticalBillItems(getRequestedBill())) {
 
+            System.out.println("i.getBillItem().getItem().getName() = " + i.getBillItem().getItem().getName());
+            
             double billedIssue = getPharmacyCalculation().getBilledIssuedByRequestedItem(i.getBillItem(), BillType.PharmacyTransferIssue);
+            
+            System.out.println("billedIssue = " + billedIssue);
+            
             double cancelledIssue = getPharmacyCalculation().getCancelledIssuedByRequestedItem(i.getBillItem(), BillType.PharmacyTransferIssue);
-
+            System.out.println("cancelledIssue = " + cancelledIssue);
+            
+            
             double issuableQty = i.getQtyInUnit() - (Math.abs(billedIssue) - Math.abs(cancelledIssue));
-
+            System.out.println("issuableQty = " + issuableQty);
             //System.err.println("Issueable Qty " + issuableQty);
 
             List<StockQty> stockQtys = getPharmacyBean().getStockByQty(i.getBillItem().getItem(), issuableQty, getSessionController().getDepartment());
-
+            System.out.println("stockQtys = " + stockQtys);
+            
+            
             for (StockQty sq : stockQtys) {
                 if (sq.getQty() == 0) {
                     continue;
@@ -217,10 +228,17 @@ public class TransferIssueController implements Serializable {
 
         saveBill();
 
+        boolean completelyIssues;
+        
         for (BillItem i : getBillItems()) {
 
             i.getPharmaceuticalBillItem().setQtyInUnit(0 - i.getPharmaceuticalBillItem().getQtyInUnit());
 
+            double requstedQty;
+            double issuedQty;
+            
+            
+            
             if (i.getQty() == 0.0 || i.getItem() instanceof Vmpp || i.getItem() instanceof Vmp) {
                 continue;
             }

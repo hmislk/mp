@@ -90,6 +90,14 @@ public class SearchController implements Serializable {
     private boolean showRealized = true;
     private boolean showYetToRealized = false;
 
+    
+    public void clearBillSearchValues(){
+        fromDate=null;
+        toDate=null;
+        searchKeyword = null;
+        getSearchKeyword();
+    }
+    
     public void realizeBill() {
         if (realizingBill == null) {
             JsfUtil.addErrorMessage("Please select a  bill");

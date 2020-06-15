@@ -114,7 +114,7 @@ public class PharmacyBillSearch implements Serializable {
     @Inject
     private WebUserController webUserController;
     @Inject
-    EmailController emailController;
+    private EmailController emailController;
 
     public void emailOrder() {
         if (bill == null) {
@@ -388,6 +388,23 @@ public class PharmacyBillSearch implements Serializable {
 
     }
 
+    private Long billId;
+    
+    
+
+    public String toViewSaleBillByBillId() {
+        if (billId == null) {
+            JsfUtil.addErrorMessage("No Bill ID Error");
+            return "";
+        }
+        bill = getBillFacade().find(billId);
+        if (bill == null) {
+            JsfUtil.addErrorMessage("No SUch Bill Error");
+            return "";
+        }
+        return "pharmacy_reprint_bill_sale";
+    }
+
     public void editBill() {
         if (errorCheckForEdit()) {
             return;
@@ -615,7 +632,6 @@ public class PharmacyBillSearch implements Serializable {
     public void setSessionController(SessionController sessionController) {
         this.sessionController = sessionController;
     }
-
 
     public PaymentScheme getPaymentScheme() {
         return paymentScheme;
@@ -2651,6 +2667,22 @@ public class PharmacyBillSearch implements Serializable {
 
     public void setSelectedBills(List<Bill> selectedBills) {
         this.selectedBills = selectedBills;
+    }
+
+    public EmailController getEmailController() {
+        return emailController;
+    }
+
+    public void setEmailController(EmailController emailController) {
+        this.emailController = emailController;
+    }
+
+    public Long getBillId() {
+        return billId;
+    }
+
+    public void setBillId(Long billId) {
+        this.billId = billId;
     }
 
 }

@@ -41,8 +41,8 @@
                             <p:inputText value="#{searchController.searchKeyword.netTotal}"/>
 
                             <p:spacer></p:spacer>
-                            <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.createPharmacyTable}"/>
-                            
+                            <p:commandButton id="btnSearch" ajax="false" value="Search" action="#{searchController.listSaleBills()}"/>
+
                             <p:commandButton id="btnDownload" ajax="false" value="Download" >
                                 <p:dataExporter target="tblBills" type="xls" fileName="Sale Bills" ></p:dataExporter>
                             </p:commandButton>
@@ -53,7 +53,8 @@
 
                         <p:dataTable rowIndexVar="i" reflow="true"
                                      id="tblBills" 
-                                     value="#{searchController.bills}" 
+                                     value="#{searchController.billSummeries}" 
+                                     rowKey="#{bill.id}"
                                      var="bill"   
                                      paginator="true" 
                                      paginatorAlwaysVisible="true"
@@ -62,71 +63,33 @@
                                      rows="10"
                                      >
 
-                            <p:column headerText="No" styleClass="alignTop">
+                            <p:column headerText="No" styleClass="alignTop" width="25">
                                 <h:outputLabel value="#{i+1}"/>
                             </p:column>
 
-                            <p:column headerText="Bill No" >                                
-                                <h:outputLabel  value="#{bill.deptId}"  />
+                            <p:column headerText="Bill No" > 
+                                <p:commandLink ajax="false" value="#{bill.billNo}"
+                                                 action="#{pharmacyBillSearch.toViewSaleBillByBillId()}">
+                                    <f:setPropertyActionListener value="#{bill.id}" target="#{pharmacyBillSearch.billId}"/>   
+                                </p:commandLink>
                             </p:column>
 
                             <p:column headerText="Department"  >                                
-                                <h:outputLabel value="#{bill.department.name}" />                                    
+                                <h:outputLabel value="#{bill.departmentName}" />                                    
                             </p:column>   
 
                             <p:column headerText="Billed at"  >
-                                <h:outputLabel value="#{bill.createdAt}" >
+                                <h:outputLabel value="#{bill.billedAt}" >
                                     <f:convertDateTime pattern="dd MM yyyy hh mm a"/>
                                 </h:outputLabel>
-
-                                <br/>
-                                <h:panelGroup rendered="#{bill.referenceBill.cancelled}" >
-                                    <h:outputLabel style="color: red;" value="Cancelled at " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.cancelled}" 
-                                                   value="#{bill.referenceBill.cancelledBill.createdAt}" >
-                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
-                                    </h:outputLabel>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{bill.refunded}" >
-                                    <h:outputLabel style="color: red;" value="Refunded at " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.refunded}" 
-                                                   value="#{bill.referenceBill.refundedBill.createdAt}" >
-                                        <f:convertDateTime pattern="dd MMM yyyy hh mm a"/>
-                                    </h:outputLabel>
-                                </h:panelGroup>
                             </p:column>                 
                             <p:column headerText="Billed by" >
-                                <h:outputLabel value="#{bill.creater.webUserPerson.name}" />                                      
-                                <br/>
-                                <h:panelGroup rendered="#{bill.referenceBill.cancelled}" >
-                                    <h:outputLabel style="color: red;" value="Cancelled By " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.cancelled}" 
-                                                   value="#{bill.referenceBill.cancelledBill.creater.webUserPerson.name}" >                                       
-                                    </h:outputLabel>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{bill.referenceBill.refunded}" >
-                                    <h:outputLabel style="color: red;" value="Refunded By " />
-                                    <h:outputLabel style="color: red;" rendered="#{bill.referenceBill.refunded}"
-                                                   value="#{bill.referenceBill.refundedBill.creater.webUserPerson.name}" >
-
-                                    </h:outputLabel>
-                                </h:panelGroup>
+                                <h:outputLabel value="#{bill.billedBy}" /> 
                             </p:column>                      
 
-                            <p:column headerText="Client" >
-                                <h:outputLabel value="#{bill.patient.person.nameWithTitle}" />
-                            </p:column>
-
-                            <p:column headerText="Paymentmethod"   >
-                                <h:outputLabel value="#{bill.paymentScheme.paymentMethod}" />
-                            </p:column>
-
-                            <p:column headerText="Paymentscheme" >
-                                <h:outputLabel value="#{bill.paymentScheme.name}" />
-                            </p:column>
 
                             <p:column headerText="Gross Value"  >
-                                <h:outputLabel value="#{bill.total}" >
+                                <h:outputLabel value="#{bill.grossValue}" >
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
                             </p:column>
@@ -138,24 +101,19 @@
                             </p:column>
 
                             <p:column headerText="Net Value"  >
-                                <h:outputLabel value="#{bill.netTotal}" >
+                                <h:outputLabel value="#{bill.netValue}" >
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputLabel>
                             </p:column>
 
                             <p:column headerText="Comments" >
-                                <h:outputLabel rendered="#{bill.refundedBill ne null}" value="#{bill.refundedBill.comments}" >
+                                <h:outputLabel  value="#{bill.cancelled?'Cancelled':''}" >
                                 </h:outputLabel>
-                                <h:outputLabel  rendered="#{bill.cancelledBill ne null}" value="#{bill.cancelledBill.comments}" >
+                                <h:outputLabel  value="#{bill.refunded?'Cancelled':''}" >
                                 </h:outputLabel>
                             </p:column>
 
-                            <p:column headerText="View">
-                                <p:commandButton ajax="false" value="View Bill"
-                                                 action="pharmacy_reprint_bill_sale">
-                                    <f:setPropertyActionListener value="#{bill.referenceBill}" target="#{pharmacyBillSearch.bill}"/>   
-                                </p:commandButton>
-                            </p:column>
+                           
                         </p:dataTable>
 
 

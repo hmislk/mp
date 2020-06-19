@@ -45,119 +45,222 @@
 
                         </h:panelGrid>
                     </f:facet>
-                    <h:panelGrid columns="2" style="min-width: 100%;">
-                        <h:panelGrid columns="3">
-                            <h:outputLabel value="Type GRN No or Dealor Name"/>
-                            <h:outputLabel value="Paying Amount"/>
-                            <h:outputLabel/>
-                            <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true"
-                                            value="#{pharmacyDealorBill.currentBillItem.referenceBill}"
-                                            completeMethod="#{billController.completeBillFromDealor}" 
-                                            var="ix" itemLabel="#{ix.deptId}"
-                                            itemValue="#{ix}" size="30"  style="width: 400px;">                                  
-                                <p:column headerText="Dealor Name">
-                                    #{ix.fromInstitution.name}
+
+
+                    <h:panelGrid columns="1" styleClass="alignTop" >
+
+                        <p:panelGrid columns="2" >
+                            <p:panelGrid columns="2" >
+                                <f:facet name="header" >
+                                    <h:outputLabel value="Search Bills to Settle" ></h:outputLabel>
+                                </f:facet>
+                                <p:outputLabel value="Dealer" ></p:outputLabel>
+                                <p:autoComplete value="#{billController.selectedDealer}"
+                                                completeMethod="#{institutionController.completeSupplier}"
+                                                var="d"
+                                                itemValue="#{d}"
+                                                itemLabel="#{d.name}">
+                                </p:autoComplete>
+                                <p:outputLabel value="Bill No" ></p:outputLabel>
+                                <p:inputText value="#{billController.billNumber}" ></p:inputText>
+                                <p:outputLabel value="Dealer Invoice No" ></p:outputLabel>
+                                <p:inputText value="#{billController.billNumber}" ></p:inputText>
+                                <p:spacer ></p:spacer>
+                                <p:commandButton ajax="false" value="Search" action="#{billController.searchBillsFromDealorPayment()}" >
+                                </p:commandButton>
+                            </p:panelGrid>
+
+                            <p:dataTable value="#{billController.selectedBills}" var="bill" rowKey="#{bill.id}" 
+
+                                         >
+                                <p:column headerText="Dealer" rendered="#{billController.selectedDealer eq null}" >
+                                    <p:outputLabel value="#{bill.fromInstitution.name}" ></p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Grn No">
-                                    #{ix.deptId}
+                                <p:column headerText="Bill No"  >
+                                    <p:outputLabel value="#{bill.deptId}" ></p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Invoice No">
-                                    #{ix.invoiceNumber}
+                                <p:column headerText="Invoice No"  >
+                                    <p:outputLabel value="#{bill.invoiceNumber}" ></p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Grn At">
-                                    <h:outputLabel value="#{ix.createdAt}">
-                                        <f:convertDateTime pattern="dd MM YY"/>
+                                <p:column headerText="GRN Date"  >
+                                    <p:outputLabel value="#{bill.createdAt}" >
+                                        <f:convertDateTime pattern="dd/MMM/yyyy" ></f:convertDateTime>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Invoice Date"  >
+                                    <p:outputLabel value="#{bill.invoiceDate}" >
+                                        <f:convertDateTime pattern="dd/MMM/yyyy" ></f:convertDateTime>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Department"  >
+                                    <p:outputLabel value="#{bill.toDepartment.name}" >
+                                    </p:outputLabel>
+                                </p:column>
+
+                                <p:column headerText="Bill Value">
+                                    <h:outputLabel value="#{bill.netTotal}">
+                                        <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </p:column>
                                 <p:column headerText="Paid Amount">
-                                    <h:outputLabel value="#{ix.paidAmount}">
+                                    <h:outputLabel value="#{bill.paidAmount}">
                                         <f:convertNumber pattern="#,##0.00" />
                                     </h:outputLabel>
                                 </p:column>
-                                <p:column headerText="Value">
-                                    <h:outputLabel value="#{ix.netTotal}">
-                                        <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputLabel>
+                                <p:column headerText="Pay" >
+                                    <p:inputText id="txtPayingAmount" 
+                                                 placeholder="Paying Amount"
+                                                 value="#{pharmacyDealorBill.currentBillItem.netValue}" >
+                                        <p:ajax event="keyup" process="txtPayingAmount" ></p:ajax>
+                                        <f:ajax event="blur" execute="@this" 
+                                                render=":#{p:component('netValue')}" 
+                                                listener="#{pharmacyDealorBill.selectListener()}"/>
+                                    </p:inputText>
+                                    <p:commandButton ajax="false" value="To Settle" action="#{pharmacyDealorBill.addToBill()}" >
+                                        <f:setPropertyActionListener value="#{bill}" target="#{pharmacyDealorBill.currentBillItem.referenceBill}" ></f:setPropertyActionListener>
+                                    </p:commandButton>
                                 </p:column>
-                                <f:ajax event="itemSelect" execute="@this" 
-                                        render="netValue" 
-                                        listener="#{pharmacyDealorBill.selectListener()}"/>
-                            </p:autoComplete>
-                            <p:inputText id="netValue" value="#{pharmacyDealorBill.currentBillItem.netValue}">
-                                <f:convertNumber pattern="#,##0.00" />
-                            </p:inputText>
-                            <p:commandButton id="btnAddIx" value="Add" action="#{pharmacyDealorBill.addToBill()}" ajax="false"/>
+                            </p:dataTable>
+
+                        </p:panelGrid>
+
+
+
+                        <h:panelGrid columns="2" style="min-width: 100%;" styleClass="alignTop" rendered="false" >
+                            <h:panelGrid columns="3">
+                                <h:outputLabel value="Type GRN No or Dealor Name"/>
+                                <h:outputLabel value="Paying Amount"/>
+                                <h:outputLabel/>
+                                <p:autoComplete widgetVar="aIx" id="acIx" forceSelection="true"
+                                                value="#{pharmacyDealorBill.currentBillItem.referenceBill}"
+                                                completeMethod="#{billController.completeBillFromDealor}" 
+                                                var="ix" itemLabel="#{ix.deptId}"
+                                                itemValue="#{ix}" size="30"  style="width: 400px;">                                  
+                                    <p:column headerText="Dealor Name">
+                                        #{ix.fromInstitution.name}
+                                    </p:column>
+                                    <p:column headerText="Grn No">
+                                        #{ix.deptId}
+                                    </p:column>
+                                    <p:column headerText="Invoice No">
+                                        #{ix.invoiceNumber}
+                                    </p:column>
+                                    <p:column headerText="Grn At">
+                                        <h:outputLabel value="#{ix.createdAt}">
+                                            <f:convertDateTime pattern="dd MM YY"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Paid Amount">
+                                        <h:outputLabel value="#{ix.paidAmount}">
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Value">
+                                        <h:outputLabel value="#{ix.netTotal}">
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <f:ajax event="itemSelect" execute="@this" 
+                                            render="netValue" 
+                                            listener="#{pharmacyDealorBill.selectListener()}"/>
+                                </p:autoComplete>
+                                <p:inputText id="netValue" value="#{pharmacyDealorBill.currentBillItem.netValue}">
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                                <p:commandButton id="btnAddIx" value="Add" action="#{pharmacyDealorBill.addToBill()}" ajax="false"/>
+                            </h:panelGrid>
+
+                            <p:panelGrid columns="1" >
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" >
+                            </p:panelGrid>
+
+
+
                         </h:panelGrid>
 
-                        <p:dataTable value="#{pharmacyDealorBill.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
-                            <f:facet name="header">
-                                <h:outputLabel value="Paying GRN : "/>
-                                <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
-                            </f:facet>
-                            <p:column>
-                                <f:facet name="header">No</f:facet>
-                                    #{rowIndex+1}
-                            </p:column>
-                            <p:column >  
+
+                        <h:panelGrid columns="2"  styleClass="alignTop">
+                            <p:dataTable value="#{pharmacyDealorBill.billItems}" rowIndexVar="rowIndex"   var="b" id="items">
                                 <f:facet name="header">
-                                    <h:outputLabel value="GRN No"/>                                  
-                                </f:facet>                              
-                                <p:outputLabel value="#{b.referenceBill.deptId}"/>
-                            </p:column> 
-                            <p:column headerText="GRN Amount">
-                                <p:outputLabel value="#{-b.referenceBill.netTotal}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="GRN Return Amount">
-                                <p:outputLabel value="#{b.referenceBill.tmpReturnTotal}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="Paid Amount">
-                                <p:outputLabel value="#{b.referenceBill.paidAmount}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="Recievable Amount">
-                                <p:outputLabel value="#{0-(b.referenceBill.netTotal+b.referenceBill.tmpReturnTotal+b.referenceBill.paidAmount)}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="Paying Amount">
-                                <p:outputLabel value="#{b.netValue}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="Remove">
-                                <p:commandButton ajax="false" action="#{pharmacyDealorBill.remove(b)}" value="X"/>
-                            </p:column>
-                        </p:dataTable>
+                                    <h:outputLabel value="Paying GRN : "/>
+                                    <h:outputLabel value="#{pharmacyDealorBill.current.toInstitution.name}"/>
+                                </f:facet>
+                                <p:column>
+                                    <f:facet name="header">No</f:facet>
+                                        #{rowIndex+1}
+                                </p:column>
+                                <p:column >  
+                                    <f:facet name="header">
+                                        <h:outputLabel value="GRN No"/>                                  
+                                    </f:facet>                              
+                                    <p:outputLabel value="#{b.referenceBill.deptId}"/>
+                                </p:column> 
+                                <p:column headerText="GRN Amount">
+                                    <p:outputLabel value="#{-b.referenceBill.netTotal}">
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="GRN Return Amount">
+                                    <p:outputLabel value="#{b.referenceBill.tmpReturnTotal}">
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Paid Amount">
+                                    <p:outputLabel value="#{b.referenceBill.paidAmount}">
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Recievable Amount">
+                                    <p:outputLabel value="#{0-(b.referenceBill.netTotal+b.referenceBill.tmpReturnTotal+b.referenceBill.paidAmount)}">
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Paying Amount">
+                                    <p:outputLabel value="#{b.netValue}">
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Remove">
+                                    <p:commandButton ajax="false" action="#{pharmacyDealorBill.remove(b)}" value="X"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <h:panelGrid columns="2" styleClass="alignTop" style="min-width: 20em;">
+                                <p:panelGrid columns="2" style="min-width: 100%;">
+
+                                    <p:panelGrid  columns="2">
+                                        <p:outputLabel value="Net Total" />
+                                        <p:outputLabel id="tot" value="#{pharmacyDealorBill.current.netTotal}">
+                                            <f:convertNumber pattern="#,##0.00" />
+                                        </p:outputLabel>
+                                        <p:outputLabel value="Total Paid Amount"></p:outputLabel>
+                                        <p:outputLabel value="#{pharmacyDealorBill.current.paidAmount}">
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </p:outputLabel>
+                                        <p:outputLabel value="Total Recievable Amount"></p:outputLabel>
+                                        <p:outputLabel value="#{0-(pharmacyDealorBill.current.netTotal+pharmacyDealorBill.current.tmpRefBill+pharmacyDealorBill.current.paidAmount)}">
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </p:outputLabel>
+                                        <p:outputLabel value="Total Paying Amount"></p:outputLabel>
+                                        <p:outputLabel value="#{pharmacyDealorBill.payingAmount}">
+                                            <f:convertNumber pattern="#,000.00" />
+                                        </p:outputLabel>
+                                    </p:panelGrid>
+                                </p:panelGrid>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
 
                     </h:panelGrid>
-                    <h:panelGrid columns="2" styleClass="alignTop">
-                        <p:panelGrid columns="2" style="min-width: 100%;">
 
-                            <p:panelGrid  columns="2">
-                                <p:outputLabel value="Net Total" />
-                                <p:outputLabel id="tot" value="#{pharmacyDealorBill.current.netTotal}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </p:outputLabel>
-                                <p:outputLabel value="Total Paid Amount"></p:outputLabel>
-                                <p:outputLabel value="#{pharmacyDealorBill.current.paidAmount}">
-                                    <f:convertNumber pattern="#,000.00" />
-                                </p:outputLabel>
-                                <p:outputLabel value="Total Recievable Amount"></p:outputLabel>
-                                <p:outputLabel value="#{0-(pharmacyDealorBill.current.netTotal+pharmacyDealorBill.current.tmpRefBill+pharmacyDealorBill.current.paidAmount)}">
-                                    <f:convertNumber pattern="#,000.00" />
-                                </p:outputLabel>
-                                <p:outputLabel value="Total Paying Amount"></p:outputLabel>
-                                <p:outputLabel value="#{pharmacyDealorBill.payingAmount}">
-                                    <f:convertNumber pattern="#,000.00" />
-                                </p:outputLabel>
-                            </p:panelGrid>
-                        </p:panelGrid>
-                    </h:panelGrid>
+
+
+
+
+
+
+
                 </p:panel>
 
 

@@ -49,6 +49,7 @@ import com.divudi.facade.InstitutionFacade;
 import com.divudi.facade.PatientFacade;
 
 import com.divudi.facade.PersonFacade;
+import com.divudi.facade.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -218,6 +219,60 @@ public class BillController implements Serializable {
             a = new ArrayList<>();
         }
         return a;
+    }
+
+    private List<Bill> selectedBills;
+    private Institution selectedDealer;
+    private String billNumber;
+    private String invoiceNumber;
+
+    public void searchBillsFromDealorPayment() {
+        List<Bill> a = null;
+        String sql;
+        HashMap hash = new HashMap();
+
+        sql = "select c from BilledBill c "
+                + "where  abs(c.netTotal)-abs(c.paidAmount)>:val "
+                + " and (c.billType= :btp1 or c.billType= :btp2  )"
+                + " and c.createdAt is not null "
+                + " and c.deptId is not null "
+                + " and c.cancelledBill is null "
+                + " and c.retired=false "
+                + " and c.paymentMethod=:pm  ";
+        if (selectedDealer != null) {
+            hash.put("ins", selectedDealer);
+            sql += " and c.fromInstitution=:ins  ";
+        }
+        if (billNumber != null && !billNumber.trim().equals("")) {
+            sql += " and (upper(c.deptId) like :q or upper(c.insId) like :q) ";
+            hash.put("q", "%" + billNumber.toUpperCase() + "%");
+        }
+        if (invoiceNumber != null && !invoiceNumber.trim().equals("")) {
+            sql += " and upper(c.invoiceNumber) like :q ";
+            hash.put("q", "%" + invoiceNumber.toUpperCase() + "%");
+        }
+        sql += " order by c.deptId";
+        hash.put("btp1", BillType.PharmacyGrnBill);
+        hash.put("btp2", BillType.PharmacyPurchaseBill);
+        hash.put("pm", PaymentMethod.Credit);
+
+        hash.put("val", 0.1);
+
+        //     hash.put("pm", PaymentMethod.Credit);
+        selectedBills = getFacade().findBySQL(sql, hash, 100);
+        if (selectedBills == null) {
+            JsfUtil.addErrorMessage("No Bills Found, please chance search criteria");
+            return;
+        } else {
+            if (selectedBills.size() > 100) {
+                JsfUtil.addErrorMessage("More than 100 bills found. Listing first 100 bills.");
+                return;
+            }
+        }
+        selectedDealer = null;
+        billNumber = null;
+        invoiceNumber = null;
+
     }
 
     public List<Bill> completeBillFromDealor(String qry) {
@@ -1323,13 +1378,44 @@ public class BillController implements Serializable {
 
     }
 
-
     public CashTransactionBean getCashTransactionBean() {
         return cashTransactionBean;
     }
 
     public void setCashTransactionBean(CashTransactionBean cashTransactionBean) {
         this.cashTransactionBean = cashTransactionBean;
+    }
+
+    public List<Bill> getSelectedBills() {
+        return selectedBills;
+    }
+
+    public void setSelectedBills(List<Bill> selectedBills) {
+        this.selectedBills = selectedBills;
+    }
+
+    public Institution getSelectedDealer() {
+        return selectedDealer;
+    }
+
+    public void setSelectedDealer(Institution selectedDealer) {
+        this.selectedDealer = selectedDealer;
+    }
+
+    public String getBillNumber() {
+        return billNumber;
+    }
+
+    public void setBillNumber(String billNumber) {
+        this.billNumber = billNumber;
+    }
+
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
     }
 
     /**

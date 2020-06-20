@@ -2,7 +2,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:head>
         <meta charset="utf-8"/>
@@ -12,22 +15,115 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         </link>
         <title><ui:insert name="title">Pharmacy System</ui:insert></title>
+         <h:outputStylesheet library="css" name="maincss.css" />
     </h:head>
 
-    <h:body sty>
-        
+    <h:body style="font-family: Nunito;">
 
-        <div id="top">
-            <ui:insert name="top">Top</ui:insert>
+
+        <div class="row">
+            <div class="col" >
+                <ui:insert name="top">
+                    <ez:menu/>
+
+
+                </ui:insert>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" >
+                <ui:insert name="content">
+                    <h:panelGroup id="paymentLogin" rendered="true" >
+                        <ez:Login/>
+                    </h:panelGroup>
+
+                    <h:panelGroup  rendered="false" >
+                        <ez:PaymentNotice/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="paymentContents" rendered="true" >
+                        <h:panelGroup rendered="#{sessionController.logged}">
+                            <ui:insert name="content"  >
+                            </ui:insert>
+                        </h:panelGroup>
+
+                    </h:panelGroup>
+
+                    <h:panelGroup  rendered="false" >
+                        <ez:PaymentNotice/>
+                    </h:panelGroup>
+
+
+
+
+
+
+                    <h:panelGroup id="gpMessages"  >
+                        <p:panel id="pnl" rendered="#{messageController.hasUserMessages}"
+                                 style="width: 300px; top: 10px; right: 10px; position: fixed;">
+                            <p:dataTable value="#{messageController.userMessages(sessionController.loggedUser)}" var="m" >
+                                <p:column headerText="Messages" >
+                                    <h:outputText rendered="#{m.type eq 'PharmacyApproval'}" 
+                                                  value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toInstitution.name}." ></h:outputText>
+                                    <h:outputText rendered="#{m.type eq 'PharmacyTransferIssue'}"  
+                                                  value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                                    <h:outputText rendered="#{m.type eq 'PharmacyTransferRequest'}"  
+                                                  value="#{m.topic} from #{m.originatingBill.department.name} to #{m.originatingBill.toDepartment.name}." ></h:outputText>
+                                    <p:spacer width="5" ></p:spacer>
+                                    <p:commandLink value="x" action="#{messageController.makeMessageAsNoted(m)}" 
+                                                   update=":#{p:component('gpMessages')}"  ></p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </h:panelGroup>
+
+                    <p:draggable for="pnl" />
+                </ui:insert>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" >
+                <ui:insert name="bottom">
+                    <h:panelGroup styleClass="nonPrintBlock" >
+                        <h:form>
+                            <h:panelGrid columns="24" rendered ="#{sessionController.logged}">
+                                <h:commandLink value="Logout" action="#{sessionController.logout}"   ></h:commandLink>
+                                <h:outputLabel value="||" ></h:outputLabel>
+                                <h:outputLabel value="User - #{sessionController.loggedUser.webUserPerson.name}" ></h:outputLabel>
+                                <h:outputLabel value=" ||" ></h:outputLabel>
+                                <h:outputLabel value="Department  - #{sessionController.loggedUser.department.name} " ></h:outputLabel>
+                                <h:outputLabel value="||" ></h:outputLabel>
+                                <h:outputLabel value="Institution  - #{sessionController.loggedUser.institution.name}" ></h:outputLabel>
+                                <h:outputLabel value="||" ></h:outputLabel>
+
+                                <h:outputLabel value="Cash" />
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.runningBallance}" > 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+                                <h:outputLabel value="||" ></h:outputLabel>
+                                <h:outputLabel value="Card" />
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.creditCardBallance}" > 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+                                <h:outputLabel value="||" ></h:outputLabel>
+                                <h:outputLabel value="Cheque" />
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.chequeBallance}" > 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+                                <h:outputLabel value="||" ></h:outputLabel>
+                                <h:outputLabel value="Slip" />
+                                <h:outputLabel value="#{sessionController.loggedUser.drawer.slipBallance}" > 
+                                    <f:convertNumber pattern="#,##0.00" ></f:convertNumber>
+                                </h:outputLabel>
+
+                            </h:panelGrid>
+                        </h:form>
+                    </h:panelGroup>
+                </ui:insert>
+            </div>
         </div>
 
-        <div id="content" class="center_content">
-            <ui:insert name="content">Content</ui:insert>
-        </div>
 
-        <div id="bottom">
-            <ui:insert name="bottom">Bottom</ui:insert>
-        </div>
 
     </h:body>
 

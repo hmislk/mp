@@ -7,8 +7,8 @@
         <property name="databaseName" value="mp"/>
         <property name="User" value="root"/>
         <property name="Password" value="Bud7NilB"/>
-        <property name="URL" value="jdbc:mysql://34.87.57.68:3306/mp?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
-        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="URL" value="jdbc:mysql://34.87.57.68:3306/mp?zeroDateTimeBehavior=convertToNull"/>
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/dsA" object-type="user" pool-name="mysql_mp_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="java:app/dsMp2" object-type="user" pool-name="mysql_mp_rootPool"/>
 </resources>

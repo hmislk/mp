@@ -1,0 +1,1 @@
+select distinct(`BILLTYPE`),count(id)  from bill group by `BILLTYPE`;

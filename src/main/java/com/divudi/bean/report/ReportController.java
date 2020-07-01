@@ -59,9 +59,13 @@ import javax.persistence.TemporalType;
 @RequestScoped
 public class ReportController implements Serializable {
 
+//    <editor-fold desc="EJBs">
+//    </editor-fold>
+//    <editor-fold desc="Controllers">
     @Inject
     private SessionController sessionController;
-    // private List<DailyCash> dailyCashs;
+//    </editor-fold>
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date fromDate;
     @Temporal(TemporalType.TIMESTAMP)
@@ -192,10 +196,10 @@ public class ReportController implements Serializable {
     public void processInstitutionCashReport() {
         dailyCash = null;
         categoryWithItem = null;
-        pharmacySale=null;
-        
-        pharmacyTotal=0.0;
-        
+        pharmacySale = null;
+
+        pharmacyTotal = 0.0;
+
         findPharmacySale();
     }
 

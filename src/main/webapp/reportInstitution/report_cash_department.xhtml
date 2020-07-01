@@ -13,133 +13,39 @@
         <h:form>
 
             <p:panel header="Daily Cash Report" >
-                <p:panelGrid columns="2" style="min-width: 100%;border: none;">
+                <p:panelGrid columns="2" >
+                    <p:panelGrid columns="2" style="min-width: 100%;border: none;">
+                        <h:outputLabel value="Institution"/>
+                        <p:outputLabel value="#{sessionController.institution.name}"/>
+                        <h:outputLabel value="From"/>
+                        <p:calendar id="frmDate" value="#{reportController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
+                        </p:calendar>
+                        <h:outputLabel value="To"/>
+                        <p:calendar id="toDate" value="#{reportController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
+                        </p:calendar>
+                    </p:panelGrid>
 
-                    <h:outputLabel value="Institution"/>
-                    <p:outputLabel value="#{sessionController.institution.name}"/>
-
-                    <h:outputLabel value="From Date"/>
-                    <p:calendar id="frmDate" value="#{reportController.fromDate}" navigator="true"  pattern="dd MMMM yyyy HH:mm" >
-                    </p:calendar>
-
-                    <h:outputLabel value="To Date"/>
-                    <p:calendar id="toDate" value="#{reportController.toDate}" navigator="true" pattern="dd MMMM yyyy HH:mm" >
-                    </p:calendar>
-
-
-                    <p:commandButton id="btnRefresh" value="Refresh" ajax="false"  styleClass="noPrintButton" style="float: right;" 
-                                     action="#{reportController.processInstitutionCashReport}" />
-
-
-                    <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
-                        <p:printer target="panelPrint" />
-                    </p:commandButton>
-
+                    <p:panelGrid columns="1" >
+                        <p:commandButton id="btnRefresh" value="Process" ajax="false"  styleClass="noPrintButton" style="float: right;" 
+                                         action="#{reportController.processInstitutionCashReport}" />
+                        <p:commandButton ajax="false" value="Print"  styleClass="noPrintButton" style="float: right;" >
+                            <p:printer target="panelPrint" />
+                        </p:commandButton>
+                    </p:panelGrid>
                 </p:panelGrid>
 
-                <ca:pharmacy_collection controller="#{reportController}"/>
-                
-                #{reportController.pharmacySale}
+
+                <p:panelGrid id="panelPrint" columns="1" >
+                    <ca:pharmacy_collection controller="#{reportController}"/>
+                </p:panelGrid>
+
+
+
 
             </p:panel>
 
         </h:form>
 
-        <h:form id="panelPrint" >
-
-
-
-
-
-            <h:panelGroup rendered="false" >
-
-
-
-
-                <p:spacer height="30"/>
-
-
-
-                <ca:pharmacy controller="#{reportController}"/>
-
-                <p:spacer height="30"/>
-
-
-
-                <p:spacer height="30"/>
-
-                <ca:agentCollection controller="#{reportController}"/>
-
-                <p:spacer height="30"/>
-
-                <ca:creditCompanyCollection controller="#{reportController}"/>
-
-                <p:spacer height="30"/>
-
-                <p:dataTable value="#{reportController.collections}" var="sm">
-                    <p:column >
-                        <h:outputLabel value="#{sm.string}" ></h:outputLabel>
-                    </p:column>
-                    <p:column style="text-align: right;" >
-                        <h:outputLabel value="#{sm.value}" >
-                            <f:convertNumber pattern="#,##0.00"/>
-                        </h:outputLabel>
-                    </p:column>
-                </p:dataTable>
-
-                <p:spacer height="30"/>
-
-                <ca:departmentPayment controller="#{reportController}"/>
-
-                <p:spacer height="30"/>
-
-
-
-                <p:spacer height="30"/>
-
-                <ca:creditCard controller="#{reportController}"/>
-
-                <p:spacer height="30"/>
-
-                <ca:slip controller="#{reportController}"/>
-
-                <p:spacer height="30"/>
-
-                <ca:cheque controller="#{reportController}"/>
-
-
-                <p:spacer height="30"/>
-
-                <p:dataTable value="#{reportController.finalSummery}" var="s">
-                    <p:column>
-                        <h:outputLabel value="#{s.string}"/>
-                    </p:column>
-                    <p:column style="text-align: right;">
-                        <h:outputLabel value="#{s.value}" rendered="#{s.value>0}">
-                            <f:convertNumber pattern="#,##0.00"/>
-                        </h:outputLabel>
-                        <h:outputLabel value="................" rendered="#{s.value==0}"/>
-                    </p:column>
-                </p:dataTable>
-
-                <p:spacer height="30"/>
-
-                <p:dataTable value="#{reportController.bankingData}" var="b">
-                    <f:facet name="header">
-                        <h:outputLabel value="Bank Deposit" />
-                    </f:facet>
-                    <p:column >
-                        <h:outputLabel value="#{b.string}"/>
-                    </p:column>
-                    <p:column style="text-align: right;" >
-                        <h:outputLabel value="......................." />
-                    </p:column>
-                </p:dataTable>
-
-            </h:panelGroup>
-
-
-        </h:form>
     </ui:define>
 
 

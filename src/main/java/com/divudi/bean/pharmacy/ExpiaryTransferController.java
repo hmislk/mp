@@ -102,6 +102,7 @@ public class ExpiaryTransferController implements Serializable {
 
     // <editor-fold defaultstate="collapsed" desc="Functions">
     public void prepaireForNewBill() {
+        printPreview=false;
         expiaryTransferBill = new BilledBill();
         expiaryTransferBill.setBillType(BillType.PharmacyTransferIssue);
         selectedStocks = null;

@@ -46,7 +46,7 @@
 
                 <p:dataTable id="tbl" 
                              rowIndexVar="n"
-                             rowKey="id"
+                             rowKey="#{i.id}"
                              selection="#{expiaryTransferController.selectedStocks}"
                              value="#{reportsStock.stocks}" var="i"  
                              paginator="true" paginatorAlwaysVisible="true"
@@ -81,12 +81,30 @@
                         <h:outputLabel value="#{i.itemBatch.item.code}"  ></h:outputLabel>
                     </p:column>
 
-                    <p:column headerText="Quantity" width="160" sortBy="#{i.stock}">
+                    <p:column headerText="Quantity" width="160" sortBy="#{i.stock}" style="text-align: right;">
                         <f:facet name="header">
                             <h:outputLabel value="Quantity"/>                                     
                         </f:facet>
                         <h:outputLabel value="#{i.stock}"  >
                             <f:convertNumber pattern="#,###" ></f:convertNumber>
+                        </h:outputLabel>                                 
+                    </p:column>
+
+                    <p:column headerText="Purchase Rate" width="160" sortBy="#{i.stock}" style="text-align: right;">
+                        <f:facet name="header">
+                            <h:outputLabel value="Quantity"/>                                     
+                        </f:facet>
+                        <h:outputLabel value="#{i.itemBatch.purcahseRate}"  >
+                            <f:convertNumber pattern="#,###.00" ></f:convertNumber>
+                        </h:outputLabel>                                 
+                    </p:column>
+                    
+                    <p:column headerText="Purchase Value" width="160" sortBy="#{i.stock}" style="text-align: right;">
+                        <f:facet name="header">
+                            <h:outputLabel value="Quantity"/>                                     
+                        </f:facet>
+                        <h:outputLabel value="#{i.itemBatch.purcahseRate * i.stock}"  >
+                            <f:convertNumber pattern="#,###.00" ></f:convertNumber>
                         </h:outputLabel>                                 
                     </p:column>
 

@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/resources/template/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ph="http://java.sun.com/jsf/composite/pharmacy">
+
+    <ui:define name="content">
+        <h:form>
+
+            <p:panel rendered="#{!expiaryTransferController.printPreview}">
+                <f:facet name="header" >                                  
+                    <h:outputLabel value="Expiary Transfer Issue" />
+                </f:facet>
+
+                <h:panelGrid columns="5"   >
+
+                    <h:outputLabel value="Department to transfer" />
+                    <p:autoComplete converter="dep" value="#{expiaryTransferController.expiaryTransferBill.toDepartment}" 
+                                    forceSelection="true" placeholder="Select Department to request"
+                                    completeMethod="#{departmentController.completeDept}" var="vt" itemLabel="#{vt.name}" itemValue="#{vt}" />                    
+                    <p:spacer height="1" width="20" ></p:spacer>
+                    <p:commandButton  value="Issue" 
+                                      action="#{expiaryTransferController.settle}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                    </p:commandButton>  
+                    <p:commandButton  value="Clear" 
+                                      action="#{expiaryTransferController.toNewExpiaryTransferBill()}" ajax="false"  style="width: 150px; padding: 1px;border: 1px solid ; margin: auto;">
+                    </p:commandButton>  
+
+                    <h:outputLabel value="Employee to Handover Items" />
+                    <p:autoComplete converter="stfcon" completeMethod="#{staffController.completeStaffWithoutDoctors}" styleClass="noPrintButton"
+                                    forceSelection="true"
+                                    var="w" itemLabel="#{w.person.name}" itemValue="#{w}"
+                                    value="#{expiaryTransferController.expiaryTransferBill.toStaff}" ></p:autoComplete>
+
+
+
+                </h:panelGrid>
+
+
+
+
+
+
+                <p:dataTable id="tbl" 
+                             rowIndexVar="n"
+                             rowKey="id"
+                             selection="#{expiaryTransferController.selectedStocks}"
+                             value="#{reportsStock.stocks}" var="i"  
+                             paginator="true" paginatorAlwaysVisible="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="10,30,50"
+                             rows="50">
+                    <f:facet name="header">
+                        <h:outputLabel value="#{reportsStock.department.name} Expired Stock"/>                                     
+                    </f:facet>
+
+                    <p:column selectionMode="multiple" width="20">
+                    </p:column>
+
+                    <p:column headerText="Item" 
+                              filterStyle="width: 360px;"
+                              sortBy="#{i.itemBatch.item.name}" 
+                              filterBy="#{i.itemBatch.item.name}" 
+                              filterMatchMode="contains">
+                        <f:facet name="header">
+                            <h:outputLabel value="Item"/>                                     
+                        </f:facet>
+                        <h:outputLabel value="#{i.itemBatch.item.name}"  ></h:outputLabel>
+                    </p:column>
+
+                    <p:column headerText="Code" width="140"
+                              sortBy="#{i.itemBatch.item.code}" 
+                              filterBy="#{i.itemBatch.item.code}" 
+                              filterMatchMode="contains">
+                        <f:facet name="header">
+                            <h:outputLabel value="Code"/>
+                        </f:facet>
+                        <h:outputLabel value="#{i.itemBatch.item.code}"  ></h:outputLabel>
+                    </p:column>
+
+                    <p:column headerText="Quantity" width="160" sortBy="#{i.stock}">
+                        <f:facet name="header">
+                            <h:outputLabel value="Quantity"/>                                     
+                        </f:facet>
+                        <h:outputLabel value="#{i.stock}"  >
+                            <f:convertNumber pattern="#,###" ></f:convertNumber>
+                        </h:outputLabel>                                 
+                    </p:column>
+
+                    <p:column headerText="Expiary" width="160" sortBy="#{i.itemBatch.dateOfExpire}">
+                        <f:facet name="header">
+                            <h:outputLabel value="Expiry"/>                                     
+                        </f:facet>
+                        <h:outputLabel value="#{i.itemBatch.dateOfExpire}"  >
+                            <f:convertDateTime pattern="dd/MMMM/yyyy" ></f:convertDateTime>
+                        </h:outputLabel>
+                    </p:column>
+
+
+
+                </p:dataTable>
+
+
+
+
+
+
+            </p:panel>
+            <p:panel rendered="#{expiaryTransferController.printPreview}">
+                <p:commandButton ajax="false" action="#{expiaryTransferController.toNewExpiaryTransferBill()}" 
+                                 value="New Expiary Transfer Bill"/>                    
+                <p:commandButton value="Print" ajax="false" action="#" >
+                    <p:printer target="gpBillPreview" ></p:printer>
+                </p:commandButton>
+
+                <p:panel   id="gpBillPreview"   >
+
+                    <ph:transferIssue bill="#{expiaryTransferController.expiaryTransferBill}"/>
+
+                </p:panel>
+
+            </p:panel>
+
+        </h:form>
+    </ui:define>  
+
+</ui:composition>

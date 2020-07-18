@@ -20,21 +20,22 @@ import javax.persistence.Transient;
  */
 @Entity
 public class Stock implements Serializable {
-    
-  
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Double stock=0.0;
+    private Double stock = 0.0;
     @Transient
-    private double calculated=0;
+    private double calculated = 0;
     @ManyToOne
     private ItemBatch itemBatch;
     @ManyToOne
     private Department department;
     @ManyToOne
     Staff staff;
+    @Transient
+    private Double temporaryStock;
 
     public Staff getStaff() {
         return staff;
@@ -44,8 +45,6 @@ public class Stock implements Serializable {
         this.staff = staff;
     }
 
-    
-    
     public Long getId() {
         return id;
     }
@@ -63,7 +62,7 @@ public class Stock implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+
         if (!(object instanceof Stock)) {
             return false;
         }
@@ -111,5 +110,15 @@ public class Stock implements Serializable {
         this.calculated = calculated;
     }
 
-    
+    public Double getTemporaryStock() {
+        if (temporaryStock == null) {
+            temporaryStock = this.getStock();
+        }
+        return temporaryStock;
+    }
+
+    public void setTemporaryStock(Double temporaryStock) {
+        this.temporaryStock = temporaryStock;
+    }
+
 }

@@ -24,7 +24,7 @@
             </p:ajaxStatus>
 
 
-            <p:menubar styleClass="nonPrintBlock"  rendered="#{sessionController.logged}" >
+            <p:menubar styleClass="nonPrintBlock"  rendered="#{sessionController.logged}" style="text-align: left;" >
                 <p:menuitem  ajax="false"  value="Home" action="index" ></p:menuitem>
 
                 <p:submenu label="Sale" rendered="#{webUserController.hasPrivilege('PharmacySale')}"> 
@@ -106,6 +106,10 @@
                     <p:menuitem  ajax="false" action="/pharmacy_transfer_request"  value="Request" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>
                     <p:menuitem  ajax="false" action="/pharmacy_transfer_request_list"  value="Issue for New Requests" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>                                           
                     <p:menuitem  ajax="false" action="/pharmacy_transfer_request_list"  value="Issues for Remaining Requests" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>                                           
+                    <p:menuitem  ajax="false" action="#{expiaryTransferController.toNewExpiaryTransferBill()}"  
+                                 value="Issues Expiary" 
+                                 rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>                                           
+                   
                     <p:menuitem  ajax="false" action="/pharmacy_transfer_issued_list"  value="Recieve" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>
                     <p:menuitem  ajax="false" action="/pharmacy_report_transfer"  value="Reports" actionListener="#{searchController.makeListNull()}" rendered="#{webUserController.hasPrivilege('PharmacyTransfer')}" ></p:menuitem>
                 </p:submenu>  

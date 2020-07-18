@@ -650,10 +650,25 @@ public class ReportsStock implements Serializable {
         }
         Map m = new HashMap();
         String sql;
-        sql = "select s from Stock s where s.department=:d and s.itemBatch.dateOfExpire between :fd and :td order by s.itemBatch.dateOfExpire";
+        sql = "select s from Stock s "
+                + "where s.department=:d "
+                + " and s.stock > :sq ";
         m.put("d", department);
-        m.put("fd", getFromDate());
-        m.put("td", getToDate());
+        m.put("sq", 0.0);
+        if (fromDate != null && toDate != null) {
+            sql += "and s.itemBatch.dateOfExpire between :fd and :td ";
+            m.put("fd", fromDate);
+            m.put("td", toDate);
+        } else if (fromDate != null) {
+            sql += "and s.itemBatch.dateOfExpire > :fd ";
+            m.put("fd", fromDate);
+        } else if (toDate != null) {
+            sql += "and s.itemBatch.dateOfExpire < :td ";
+            m.put("td", toDate);
+        }
+
+        sql += "order by s.itemBatch.dateOfExpire";
+
         stocks = getStockFacade().findBySQL(sql, m);
         stockPurchaseValue = 0.0;
         stockSaleValue = 0.0;

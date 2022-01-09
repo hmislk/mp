@@ -288,8 +288,8 @@ public class PharmacySaleController implements Serializable {
             return true;
         }
 
-        tmp.getTransUserStock().setUpdationQty(tmp.getQty());
-        getUserStockFacade().edit(tmp.getTransUserStock());
+//        tmp.getTransUserStock().setUpdationQty(tmp.getQty());
+//        getUserStockFacade().edit(tmp.getTransUserStock());
 
         onEditCalculation(tmp);
 
@@ -1036,12 +1036,12 @@ public class PharmacySaleController implements Serializable {
         billItem.setSearialNo(getPreBill().getBillItems().size() + 1);
         getPreBill().getBillItems().add(billItem);
 
-        if (getUserStockContainer().getId() == null) {
-            saveUserStockContainer();
-        }
+//        if (getUserStockContainer().getId() == null) {
+//            saveUserStockContainer();
+//        }
 
-        UserStock us = saveUserStock(billItem);
-        billItem.setTransUserStock(us);
+//        UserStock us = saveUserStock(billItem);
+//        billItem.setTransUserStock(us);
 
         calculateAllRates();
 
